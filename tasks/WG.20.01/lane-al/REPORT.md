@@ -262,3 +262,56 @@ Exit 0. This pass did not edit a plugin.
 - `PROPOSED-AL-14` — generation log, yield store, and routing re-benchmark on the golden test set.
 - `PROPOSED-AL-15` — icon and 144 px portrait for every non-face entity.
 - `PROPOSED-AL-16` — the 11 window skins and the hair, balding and face-gene part expansion.
+
+## Addendum A9b
+
+Resume on `task/lane-al` at `5acdaefa`, the addendum brief on top of `origin/main` `2fb1bc92`. This pass is Owner items 12–15 only. The A1–A9 rules already on main stay. No art was generated. No image prompt was run. No PNG was written.
+
+- **Item 12 (13:30–13:37 CT).** **AS-SRC-001**, **AS-REPO-001**, **AS-PREVIEW-001**, **AS-GEN-005**. A paper-doll layer is one sheet per design: all 30 action rows, 16 by 30 squares, 768 by 1440. RMMZ-native sizes stay: charset 576 by 384, faces 576 by 288, SV battler 576 by 384, tileset B–E 768 by 768, balloon 384 by 720, window 192 by 192. No source side is over 2048 px. Large and larger creature rows stay strips. The blank template committed here is that geometry plus the 480-cell slot map for `paperdoll:elf:f:hair:07`. The pixels are not in the repo (DEC-007). Approved art is Git LFS under `art/approved/**`. Raw generations, rejects and logs stay out. Putting those patterns into Git is `PROPOSED-AL-17`. Every generated asset is previewed in an animated in-game 1:1 scene and needs an Owner yea before merge. One generator per category, and one generator id per layered set. A named roster is 2 or 3 generators. The roster in this file is empty (`unassigned`), the same posture as **AS-GEN-004**. A set that mixes two ids fails now.
+- **Item 13 (13:50 CT).** **AS-SEX-001**, **AS-SEX-002**. Each of the nine races has a male and a female adult body, a male and a female elder body, and its own child body. Hair, beards and face bases are per sex. The 135 outfits are drawn on `adult-male`, `adult-female` and `child` (`outfitId__race__body`). Elder garb stays the adult sheet of the same sex (**AS-ELDER-001**). A creature is `sexVariant` `none` or `dimorphic`. Dimorphic requires a male set and a female set, each with `base`, `tamed` and `saddle`. A sex set on a `none` creature fails. Exact-name check of `game/data/srd51/creatures.json` (317 entries): Lion, Deer, Elk, Giant Elk, Boar, Giant Boar, Goat, Giant Goat, Draft Horse, Riding Horse, Warhorse, Pony, Elephant, Mammoth, Baboon and Ape are in that file once each, and each is a beast. Cattle, Sheep, Pig, Chicken and Duck are not in that file. Wolf is the `none` sample. Adding another dimorphic name is Appendix B.
+- **Item 14 (13:56 CT).** **AS-ID-001**. Every slot has a permanent unique human-readable id. The committed example is `CH.HAIR.ELF.F.07.WALK.D.F2` at column 2, row 1. Grammars cover charset layers, faces, creatures (including sex), icons, portraits, tiles, buildings, effects and UI. Retired id `CH.HAIR.ELF.F.06.WALK.D.F0` stays reserved. The runtime and the packer resolve by id only. Each id links to a catalogue id, a sheet, a cell, an anchor and a provenance record (attempts, reviewer, Owner decision, timestamps). Blank cells are `pending`. The checker counts 495 ids: the 480 sheet cells plus 15 grammar samples.
+- **Item 15 (14:09 and 14:10 CT).** **AS-ANCHOR-001**, **AS-EQUIP-001**. The tool detects feet, head, main hand and off hand and shifts the frame by whole pixels onto the slot anchor. That shift is not scaling. Clipping, wrong proportions, wrong size and head drift are rejected and generated again. All 236 body frames store main-hand, off-hand, a grip angle and a draw-order flag. Down is in front. Up is behind. The side facings in this file are a baseline `in-front`, the same kind of baseline as the elder stoop offsets. A weapon or shield is drawn once per grip pose and pinned by the compositor. The hand numbers are the **AS-HUM-002** stand-down baseline.
+
+`slotId` is now required on every prompt-spec template (**AS-PROMPT-001**). The other template fields are unchanged. No registry, catalogue or tool file outside `allowedPaths` was edited.
+
+### Catalogue coverage (this pass)
+
+`node tools/art/validate_asset_standard.js` against `art/catalogue/catalogue.json`. Exit 0. Per-entry counts match the A9 table above: 10089 entries, 77 pass, 11 violate, 10001 unknown. The 11 filename violations are unchanged. New rules are global passes. `--strict` would exit 1 because violations are non-zero (11 filenames plus 3 biome-set globals). Nothing was written under `art/` or `game/img/`.
+
+```
+entries 10089 pass 77 violate 11 unknown 10001
+rule-results pass 10985 violate 11 unknown 10195
+global-violations 3
+global violate AS-BIOME-005 game/data/DEUS_BiomeRegistry.json canonical TEMP,WET,ARID,HIGH,VOLC
+global violate AS-BIOME-005 docs/art/DEUS_BiomeRegistry.json canonical TEMP,WET,ARID,HIGH,VOLC
+global violate AS-BIOME-005 catalogue canonical TEMP,WET,ARID,HIGH,VOLC
+```
+
+New global passes from this pass: **AS-SRC-001** (768 by 1440, cap 2048, RMMZ sizes), **AS-REPO-001**, **AS-PREVIEW-001**, **AS-GEN-005**, **AS-SEX-001**, **AS-SEX-002** (21 dimorphic creatures), **AS-ID-001** (495 slot ids), **AS-ANCHOR-001**, **AS-EQUIP-001** (236 body frames).
+
+### Gate output (this pass)
+
+`node tools/art/test_validate_asset_standard.js`
+
+```
+RESULT: 217 passed, 0 failed
+```
+
+Exit 0. Each new check printed `PASS` for the good record and for the mutant before that result line. The count was 171 at the A9 tip. This pass adds 46 (23 killed mutants).
+
+`node tools/check_deus_syntax.js`
+
+```
+Checked 52 DEUS plugin files. Errors: 0
+```
+
+Exit 0. This pass did not edit a plugin.
+
+### Follow-ups added
+
+- `PROPOSED-AL-17` — Git LFS for `art/approved/**`, and exclude rules for `art/raw/**`, `art/rejects/**` and `art/logs/**`. Those paths are outside this lane.
+- `PROPOSED-AL-18` — the animated in-game 1:1 preview sent to the Owner before merge.
+- `PROPOSED-AL-19` — the anchor tool: landmark detection, whole-pixel shift, and pinning weapons and shields.
+- `PROPOSED-AL-13` already names the slot-map generator and the packer. It now also means the 768 by 1440 sheet and lookup by slot id. The other blank maps (every race, layer and dimorphic set) stay on that follow-up.
+
+Appendix B items 9 and 10 are open and were not answered: further dimorphic creatures, and the picture in the fourth cell of bow-loose, dodge and parry. The schema header is `deus-asset-standard/1.2.0` in the markdown and the JSON.

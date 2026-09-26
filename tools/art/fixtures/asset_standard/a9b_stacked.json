@@ -1,0 +1,7 @@
+{
+  "kind": "creature-strip",
+  "w": 768,
+  "h": 768,
+  "stacked": true,
+  "footprint": [4, 4]
+}

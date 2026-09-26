@@ -1,7 +1,7 @@
 # DEUS Master Asset Standard
 
 **Document ID:** `DEUS-ASSET-STANDARD-01`
-**Machine form:** `game/data/UF_AssetStandard.json` (`schemaVersion` `deus-asset-standard/1.0.0`)
+**Machine form:** `game/data/UF_AssetStandard.json` (`schemaVersion` `deus-asset-standard/1.2.0`)
 **Spell rows:** `game/data/UF_SpellVisualTable.schema.json` (JSON Schema draft 2020-12)
 **Checker:** `tools/art/validate_asset_standard.js`
 **Status:** Normative for new asset work. No art is produced by this document (DEC-007).
@@ -10,7 +10,7 @@ This standard is the required set for every DEUS asset: what must exist, what it
 
 Owner rulings win over older art docs. The conflicts and the winning line are in Appendix A. Questions this document does not answer are in Appendix B. How today's files sit against the standard is in Appendix C.
 
-The pose grid in **AS-HUM-016** is the standard's default and is marked **PM-proposed, Owner may amend**. Addenda A7 through A9 (Owner 12:56 CT through 13:24 CT, and the PM decisions marked on those rules) are §§2.13–2.16.
+The pose grid in **AS-HUM-016** is the standard's default and is marked **PM-proposed, Owner may amend**. Addenda A7 through A9 (Owner 12:56 CT through 13:24 CT, and the PM decisions marked on those rules) are §§2.13–2.16. Addendum A9b (Owner 13:30 CT through 14:10 CT) is §2.17.
 
 ## 1. Global rules
 
@@ -496,9 +496,11 @@ One Gargantuan square action row is 4 frames by 4 directions of 4-square cells: 
 | `tileset-b-e` | 768 by 768 | 16 by 16 cells of 48, anchor `[24, 24]` |
 | `action-row` | 4 frames by 4 directions, times the footprint | a 1 by 1 footprint is 192 by 192; a 4 by 4 footprint is 768 by 768 |
 
+Paper-doll layers do not use the 192 by 192 strip. Owner 13:30 CT stacks the 30 action rows into the one sheet in **AS-SRC-001**. Large and larger creature rows stay strips so no source side exceeds 2048 px.
+
 The runtime packs 2048 by 2048 atlases. The cell grid is 42 by 42 squares of 48 px (2016 px). The remaining 32 px is the padding budget, 1 or 2 px, and origins stay on the 48 px grid. A 4096 atlas is allowed for terrain only after a benchmark. The packer writes a lookup (`atlasId`, `x`, `y`, `w`, `h`, `catalogueId`, `sheetId`, `col`, `row`). That file is not created in this lane.
 
-**AS-PIPE-001.** Owner 13:16–13:21 CT. The manifest records `catalogueId`, grid squares, frame count, anchor, `templateId`, palette ramp and layer role. The slot map records `sheetId`, column, row, `catalogueId`, facing, frame index, anchor and pixel size. Output must already be the final pixel size, on the grid, in the palette, on the anchor. Off-size, off-palette or off-anchor output is rejected and generated again. It is not resized. Cropping removes transparent margins only. `MISSING` is derived from an empty slot. One generation may target a whole strip; each slot is validated on its own, still at exact size. The tools are another lane. This lane generates no art.
+**AS-PIPE-001.** Owner 13:16–13:21 CT. The manifest records `catalogueId`, grid squares, frame count, anchor, `templateId`, palette ramp and layer role. The slot map records `sheetId`, column, row, `catalogueId`, facing, frame index, anchor and pixel size. Output must already be the final pixel size, on the grid, in the palette, on the anchor. Off-size, off-palette or off-anchor output is rejected and generated again. It is not resized. Cropping removes transparent margins only. `MISSING` is derived from an empty slot. One generation may target a whole strip; each slot is validated on its own, still at exact size. A whole-pixel shift onto the slot anchor, and a trim of transparent margins, are not scaling (**AS-ANCHOR-001**). The tools are another lane. This lane generates no art.
 
 **AS-PROMPT-001.** Owner 13:21 CT. `promptSpecTemplates` has one field template for each of: `humanoid-layer`, `face-layer`, `creature`, `terrain-tile`, `building-piece`, `item-icon`, `portrait`, `effect`, `ui`. Each template lists the same fields and the place the value comes from. There is no prose prompt. Nothing in this block is sent to a generator.
 
@@ -511,6 +513,7 @@ The runtime packs 2048 by 2048 atlases. The cell grid is 42 by 42 squares of 48 
 | `shadingRules`, `lightDirection` | **AS-GLOBAL-005** |
 | `referenceImages` | golden reference library |
 | `negativeConstraints` | rejection notes |
+| `slotId` | slot map |
 
 **AS-GEN-001.** Owner 13:22 CT and 13:24 CT. A generation log row has `slotId`, `promptSpecId`, `promptTemplateVersion`, `generator`, `generatorVersion`, `model`, `seed`, `settings`, `references`, `outcome` (`pass` or `fail`) and `reasons`. Reason codes are `size`, `palette`, `anchor`, `outline`, `style`. A fail with no reason is a violation.
 
@@ -518,7 +521,43 @@ The runtime packs 2048 by 2048 atlases. The cell grid is 42 by 42 squares of 48 
 
 **AS-GEN-003.** A prompt-template version is promoted only when an A/B comparison beats the current version's yield. Candidates stay candidates until then. Adapters for each generator are built from the one shared field template, not from a second spec.
 
-**AS-GEN-004.** Generator records have `id` and `version`. No generator is assigned in this standard (`status: unassigned`). Routing sends a category to the generator with the best current yield per cost, and that choice is re-benchmarked on the fixed golden test set. The golden checks are palette, outline, anchor and style, against the shared reference library. A style LoRA or fine-tune is `optional-later` and needs an Owner decision after approved art exists. It is not a required set. No art is generated here.
+**AS-GEN-004.** Generator records have `id` and `version`. No generator is assigned in this standard (`status: unassigned`). Routing sends a category to the generator with the best current yield per cost, and that choice is re-benchmarked on the fixed golden test set. The golden checks are palette, outline, anchor and style, against the shared reference library. A style LoRA or fine-tune is `optional-later` and needs an Owner decision after approved art exists. It is not a required set. The roster size, and the ban on mixing inside a layered set, are **AS-GEN-005**. No art is generated here.
+
+### 2.17 Source sheets, sex, slot ids, anchors (A9b)
+
+Owner 13:30–13:37 CT, 13:50 CT, 13:56 CT and 14:09–14:10 CT. No art is generated here. No image is written.
+
+**AS-SRC-001.** A paper-doll layer source sheet is one sheet per layer design. It holds all 30 action rows in `humanoidRows`. Each row is 4 directions by 4 frames, so the sheet is 16 by 30 squares of 48 px: 768 by 1440. Direction columns run D, L, R, U, which are facings S, W, E, N. Frames in a row are F0, F1, F2, F3. Walk's four frames are the RMMZ cycle written out as stand, left, stand, right. RMMZ-native sheets keep their RMMZ sizes: charset 576 by 384, faces 576 by 288, SV battler 576 by 384, tileset B–E 768 by 768, balloon 384 by 720, window 192 by 192. No source sheet side is over 2048 px. A side of 2048 is still allowed. Large, Huge and Gargantuan creature rows stay strips (**AS-SLOT-001**). A stacked sheet of those sizes fails. This replaces the 192 by 192 per-row strip for paper-doll layers only.
+
+**AS-REPO-001.** Blank template geometry and the slot map are committed in this file. The example sheet is `paperdoll:elf:f:hair:07`, 480 cells, and its pixels are not in the repo. Approved art is Git LFS under `art/approved/**`. Raw generations, rejects and logs stay out (`art/raw/**`, `art/rejects/**`, `art/logs/**`). Putting those patterns into Git is a follow-up, because those files are outside this lane. This lane writes no PNG.
+
+**AS-PREVIEW-001.** Every generated asset is shown in an animated in-game scene at 1 source pixel to 1 screen pixel, sent to the Owner in chat, and merged only after yea. Nay sends it back to be generated again. The preview uses the drawn frames at 1:1.
+
+**AS-GEN-005.** Routing stays one generator per category (**AS-GEN-004**). A paper-doll set and a creature family each carry one generator id. A set whose members disagree fails. The named roster is two or three generators when `status` is `assigned`, and empty while `unassigned`. No generator is named in this lane.
+
+**AS-SEX-001.** Each of the nine races has `body:<race>:adult-male`, `body:<race>:adult-female`, `body:<race>:elder-male`, `body:<race>:elder-female` and `body:<race>:child`. The child body is its own sheet, drawn at the child frame class. Hair, beards and face bases are per sex (`face:<race>:male` and `face:<race>:female`). Age still sits on those bases (**AS-GENE-001**). Every outfit in the 135-row matrix is drawn on `adult-male`, `adult-female` and `child`. The drawn key is `outfitId__race__body`. Elder garb, gear and hair stay the adult sheets of the same sex, placed by the offset table (**AS-ELDER-001**).
+
+**AS-SEX-002.** `sexVariant` is `none` or `dimorphic`. A dimorphic creature has a male set and a female set, and each of those has `base`, `tamed` and `saddle`. A `none` creature has no sex set. A creature that is not in the dimorphic list is `none`. The list was checked by exact name against `game/data/srd51/creatures.json` (317 entries). These 16 names are in that file, once each, and each is a beast: Lion, Deer, Elk, Giant Elk, Boar, Giant Boar, Goat, Giant Goat, Draft Horse, Riding Horse, Warhorse, Pony, Elephant, Mammoth, Baboon, Ape. These five are not in that file: Cattle, Sheep, Pig, Chicken, Duck. Pair labels use the Owner's words where that creature is the one named: lion/lioness, stag/doe, boar/sow, stallion/mare, bull/cow, ram/ewe, rooster/hen. The other rows are labelled `male/female`. Wolf is the `none` sample. Saddle here is the visual marker in **AS-TAME-001**. It is not a creature equipment slot (**AS-TAME-002**).
+
+**AS-ID-001.** Every slot id is permanent, unique and human-readable. A retired id stays reserved and is never issued again. The runtime and the atlas packer resolve by that id only. Packed x and y record the rectangle after packing. The committed map includes `CH.HAIR.ELF.F.07.WALK.D.F2` at column 2, row 1 (walk, facing D, frame F2). Each id links to a catalogue id in the six-field shape, a sheet file, a cell, an integer anchor and a provenance record. Provenance holds every attempt (prompt spec, generator, version, seed, validation), the reviewer model, the Owner decision (`pending`, `yea` or `nay`) and the timestamps. A blank cell has an empty attempt list, decision `pending`, and null detected anchors. An accepted cell needs a passing attempt, a yea, and the detected anchors.
+
+| Category | Shape | Example |
+|---|---|---|
+| Charset layer | `CH.LAYER.RACE.SEX.DESIGN.ROW.DIR.FRAME` | `CH.HAIR.ELF.F.07.WALK.D.F2` |
+| Face | `FA.LAYER.RACE.SEX.DESIGN.EXPR.CELL` | `FA.BG.ELF.F.07.NEUTRAL.C0` |
+| Creature | `CR.SPECIES.SEX.VARIANT.ROW.DIR.FRAME` | `CR.LION.F.BASE.WALK.D.F0` |
+| Icon | `IC.DOMAIN.NAME.STATE` | `IC.WEAPON.LONGSWORD.DEFAULT` |
+| Portrait | `PO.DOMAIN.NAME.VARIANT` | `PO.CREATURE.LION.N` |
+| Tile | `TL.BIOME.BAND.KIND.VARIANT.SEASON` | `TL.TEMPERATE.LOWLAND.GROUND.01.SUMMER` |
+| Building | `BD.PROFILE.PIECE.STATE.VARIANT` | `BD.DWARF-STONEHOLD.WALL.INTACT.01` |
+| Effect | `FX.PHASE.SHAPE.DAMAGE.FRAME` | `FX.IMPACT.SPHERE.FIRE.F0` |
+| UI | `UI.SKIN.PART.STATE` | `UI.DEUS.WINDOW.NORMAL` |
+
+Sex tokens are `M`, `F` and `C` (the child body, which is not split by sex). Creature sex `N` is the single design on a `none` creature. Variant tokens are `BASE`, `TAMED` and `SADDLE`. Direction tokens are `D`, `L`, `R` and `U`. Frame tokens on a charset or creature row are `F0` through `F3`. The pattern strings are `slotMap.grammar`. One id is already retired: `CH.HAIR.ELF.F.06.WALK.D.F0`.
+
+**AS-ANCHOR-001.** Generators do not supply anchors. After a generation the tool reads the transparent-pixel mask, the silhouette, the foot line and the head outline. It finds the feet at the bottom centre, the head centre, and the main-hand and off-hand points. It shifts the frame by whole pixels until those landmarks sit on that cell's slot-map anchor, and it writes the detected points onto the slot (**AS-ID-001**). Whole-pixel shifts, and trimming transparent margins, are not scaling (**AS-PIPE-001**). A frame that would clip, or that has the wrong proportions, the wrong size, or head drift against the body, is rejected and generated again. A pose reference with the body already placed may be sent. The usual correction is 1 or 2 px. The reference is not required on every call.
+
+**AS-EQUIP-001.** Every body frame in the 236-frame table stores `mainHand` and `offHand` as integer pairs, a `gripAngle` from the eight pre-drawn angles (**AS-HUM-016**), and `drawOrder` of `in-front` or `behind`. Facing down (`S`) is in front of the body. Facing up (`N`) is behind it. The side facings in this file are `in-front`. That value is a baseline so every frame has a flag. Authored frames replace it. A weapon or a shield is drawn once per grip pose and pinned to those anchors by the compositor. It is not redrawn per frame, per race or per body. The hand numbers in this file are the stand-down pair from **AS-HUM-002** (`mainHand` 14, 30 and `offHand` 34, 30) and grip `A0`. Authored frames replace those too.
 
 ## 3. Worked spell rows
 
@@ -561,6 +600,13 @@ Owner rulings win. The source line is the conflict. The resolution is the ruling
 31. **Creature equipment.** Owner 13:01 CT supersedes any creature-gear slot. **AS-TAME-002**. No barding.
 32. **Window background opacity.** A generator handoff describes the RMMZ window background at 75% opacity. **AS-UI-004** keeps the rectangles and requires opaque pixels.
 33. **Separate elder bakes.** The generator pool bakes elder keys as their own charsets. **AS-ELDER-001**: only the stooped body is a new sheet. Garb, gear and hair are the adult sheets plus the offset table.
+34. **Per-row strips vs one paper-doll sheet.** **AS-SLOT-001** still describes a 192 by 192 action-row strip. Owner 13:30 CT stacks paper-doll layers into 768 by 1440 (**AS-SRC-001**). The strip remains for Large and larger creature rows. The RMMZ charset is not that sheet.
+35. **Walk is 3 columns vs 4 frames on the layer sheet.** **AS-GLOBAL-013** keeps the RMMZ 3-column walk on the charset. The paper-doll sheet writes that cycle as stand, left, stand, right.
+36. **Pose-grid counts of 3 vs 4 columns.** **AS-HUM-016** still counts bow-loose, dodge and parry at 3 frames for the 236-frame offset table. The source sheet has 4 columns on every row. What the fourth cell shows on those three rows is open (Appendix B). The cell still has an id.
+37. **Garb on each body vs elder reuse.** Owner 13:50 CT draws garb and armour on each body. **AS-ELDER-001** still reuses the adult sheet. **AS-SEX-001** draws adult male, adult female and the child body, and places the same sex's adult sheet on the elder with the offset table.
+38. **One anchor vs two hands.** **AS-HUM-016** stores one `{x, y, angle}` cel. **AS-EQUIP-001** stores main-hand and off-hand points, the grip angle and the draw-order flag. The eight angle cels stay.
+39. **Catalogue slot ids vs permanent ids.** Existing catalogue `slot.slotId` values are atlas addresses. **AS-ID-001** is the id the runtime keeps. The catalogue file was not edited.
+40. **Generator routing vs a hard cap.** **AS-GEN-004** routes a category by yield per cost and leaves generators unassigned. **AS-GEN-005** caps a named roster at two or three and forbids two generators inside one layered set. The roster in this file is empty.
 
 ## Appendix B. Open questions
 
@@ -588,8 +634,10 @@ These are not answered here.
 6. **Collar, saddle, harness.** After the 13:01 correction these are not slots and not stats. Are the visual markers wanted at all?
 7. **Biome code mapping.** This lane does not map `HIGH` to `COLD` and does not invent a source token for `WILD`. `TEMP`, `WET`, `ARID` and `VOLC` already have identity-standard counterparts named in **AS-BIOME-003**. The Owner decides the migration, including `HIGH` and `WILD`.
 8. **Beards.** Which of the nine races skip the eight facial-hair parts? `beardlessRaces` stays empty until that answer. Dwarf has the eight plus at least `dwarf-plait`. How many further dwarf extras?
+9. **Further dimorphic creatures.** The verified list is the 21 names in **AS-SEX-002**. A creature that is not on that list stays `none`. Adding another is an Owner call.
+10. **Fourth frame on three-frame poses.** Bow-loose, dodge and parry have a fourth cell on the 768 by 1440 sheet. What that cell shows is open. The id is already reserved.
 
-The four-direction rule is decided (12:38 CT). It is not in this appendix. Huge and Gargantuan frame squares are decided (13:16–13:20 CT). Balding overlays are three (PM 13:02 CT, Owner may amend). Those are not open questions.
+The four-direction rule is decided (12:38 CT). It is not in this appendix. Huge and Gargantuan frame squares are decided (13:16–13:20 CT). Balding overlays are three (PM 13:02 CT, Owner may amend). The paper-doll sheet size, the 2048 px cap, the dimorphic list above, and permanent slot ids are decided (13:30–14:10 CT). Those are not open questions.
 
 ## Appendix C. Existing assets
 
@@ -734,3 +782,12 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-GEN-002.** Yield, cost and time per usable slot, per generator, category and template.
 - **AS-GEN-003.** Template versions promote only when A/B yield wins.
 - **AS-GEN-004.** Adapters, routing, golden test set. Style tune is optional and later.
+- **AS-SRC-001.** Paper-doll layer sheet 768 by 1440. RMMZ sizes stay. No source side over 2048 px.
+- **AS-REPO-001.** Slot map in the repo. Approved art on Git LFS. Raw generations, rejects and logs stay out.
+- **AS-PREVIEW-001.** Animated in-game 1:1 preview. Owner yea or nay before merge.
+- **AS-GEN-005.** One generator per category and per layered set. Two or three once named.
+- **AS-SEX-001.** Male and female adult and elder bodies. Own child body. Garb on each adult sex and on the child.
+- **AS-SEX-002.** Creature `sexVariant` none or dimorphic. Both sets, with tamed and saddle, only when dimorphic.
+- **AS-ID-001.** Permanent unique slot id per cell. Grammar, no reuse, catalogue link. Resolve by id only.
+- **AS-ANCHOR-001.** Whole-pixel shift onto the slot anchor. Reject clip, proportion, size and head drift.
+- **AS-EQUIP-001.** Main-hand, off-hand, grip angle and draw order on every body frame. One weapon drawing, pinned.

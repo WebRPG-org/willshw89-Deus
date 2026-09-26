@@ -4,11 +4,13 @@
  * tools/art/validate_asset_standard.js
  *
  * WG.20.01 coverage report for the DEUS asset standard.
- * Reads the catalogue, UF_AssetStandard.json, the spell-visual schema and the SRD spell list.
+ * Reads the catalogue, UF_AssetStandard.json, the spell-visual schema, the SRD spell list
+ * and (read only) game/data/srd51/creatures.json for the dimorphic-name check.
  * It does not create or modify files, and it does not read or draw pixels (DEC-007).
  *
  *   node tools/art/validate_asset_standard.js [--json] [--category CAT] [--strict]
  *        [--catalogue path] [--standard path] [--spell-schema path] [--spells path]
+ *        [--creatures path]
  *        [--biome-registry path]   (repeatable; default is the two DEUS biome registries, read only)
  *
  * Default exit is 0 when the files parse. --strict exits 1 when any rule result is a violation.
@@ -30,6 +32,47 @@ const DIR_CATS = { CHARACTER: 1, CREATURE: 1, EQUIPMENT: 1 };
 const FRAME_CATS = { CHARACTER: 1, CREATURE: 1, EQUIPMENT: 1 };
 const PORTRAIT_CATS = { ITEM: 1, EQUIPMENT: 1, CREATURE: 1, TREE: 1, VEIN: 1, FLORA: 1, STONE: 1, STRUCTURE: 1, FURNITURE: 1, WORKSHOP: 1 };
 const PORTRAIT_FILE_RE = /^UF_Portrait_[a-z0-9_]+(?:__[a-z]+(?:-[a-z]+)*)?\.png$/;
+const SEXED_KEY_RE = /^[a-z0-9_]+__[a-z]+(?:-[a-z]+)*__(adult-male|adult-female|child)$/;
+
+// A9b constants. The JSON must match these. A loosened copy in the JSON fails.
+const DIR_TOKENS = [
+    { id: 'D', facing: 'S' },
+    { id: 'L', facing: 'W' },
+    { id: 'R', facing: 'E' },
+    { id: 'U', facing: 'N' }
+];
+const SOURCE_CAP = 2048;
+const RMMZ_NATIVE = {
+    charset: [576, 384],
+    faces: [576, 288],
+    'sv-battler': [576, 384],
+    'tileset-b-e': [768, 768],
+    balloon: [384, 720],
+    window: [192, 192]
+};
+const PAPER_DOLL = { w: 768, h: 1440, cols: 16, rows: 30, cell: 48, actionRows: 30 };
+const DIMORPHIC_SRD = ['Lion', 'Deer', 'Elk', 'Giant Elk', 'Boar', 'Giant Boar', 'Goat', 'Giant Goat', 'Draft Horse', 'Riding Horse', 'Warhorse', 'Pony', 'Elephant', 'Mammoth', 'Baboon', 'Ape'];
+const DIMORPHIC_LIVESTOCK = ['Cattle', 'Sheep', 'Pig', 'Chicken', 'Duck'];
+const GEN_CATEGORIES = ['humanoid-layer', 'face-layer', 'creature', 'terrain-tile', 'building-piece', 'item-icon', 'portrait', 'effect', 'ui'];
+const GARB_BODIES = ['adult-male', 'adult-female', 'child'];
+const SEX_PARTS = ['hair', 'beard', 'face-base'];
+const ANCHOR_REJECT = ['clipping', 'wrong-proportions', 'wrong-size', 'head-drift'];
+const ANCHOR_LANDMARKS = ['feet-bottom-centre', 'head-centre', 'main-hand', 'off-hand'];
+const ANCHOR_DETECTION = ['transparent-pixel-mask', 'silhouette', 'foot-line', 'head-outline'];
+const EXAMPLE_SLOT_ID = 'CH.HAIR.ELF.F.07.WALK.D.F2';
+const EXAMPLE_SHEET_ID = 'paperdoll:elf:f:hair:07';
+const EXAMPLE_SHEET_FILE = 'art/approved/paperdoll/CH_HAIR_ELF_F_07.png';
+const ID_GRAMMAR = {
+    'charset-layer': '^CH\\.(BODY-ELDER|BODY-CHILD|BODY|HAIR-BACK|HAIR|BALD|BEARD|EYES|EARS|HORNS|TAIL|SCALES|GARB|ARMOR|LEGS|TORSO|HEAD|BACK|CAPE|ROBE)\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F|C)\\.[0-9]{2}\\.(IDLE|WALK|MELEE-SWING|THRUST|BOW-DRAW|BOW-LOOSE|XBOW-AIM|XBOW-FIRE|XBOW-RELOAD|THROWN|CAST-ONE-HAND|CAST-TWO-HAND|CAST-FOCUS|HAMMER|SAW|CHOP|DIG|STIR|CARRY|KNEEL|HURT|DODGE|PARRY|DEATH|SNEAK|CLIMB|PRONE|UNCONSCIOUS|SLEEP|SIT)\\.(D|L|R|U)\\.F[0-3]$',
+    face: '^FA\\.(BG|FRAME|BODY|FEATURES|HAIR|GEAR|OVERLAY)\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F|C)\\.[0-9]{2}\\.(NEUTRAL|HAPPY|ANGRY|SAD|SURPRISED|HURT|DETERMINED|AFRAID)\\.C[0-7]$',
+    creature: '^CR\\.[A-Z][A-Z0-9-]*\\.(M|F|N)\\.(BASE|TAMED|SADDLE)\\.[A-Z][A-Z0-9-]*\\.(D|L|R|U)\\.F[0-3]$',
+    icon: '^IC\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*$',
+    portrait: '^PO\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*\\.[A-Z0-9-]+$',
+    tile: '^TL\\.(VOLCANIC|WET|ARID|TEMPERATE|COLD|WILD)\\.(DEEP|CAVERN|LOWLAND|UPLAND|HIGHLAND|AIR)\\.[A-Z][A-Z0-9-]*\\.[0-9]{2}\\.(SPRING|SUMMER|AUTUMN|WINTER)$',
+    building: '^BD\\.(HUMAN-FRONTIER|DWARF-STONEHOLD|ELF-GLADE|HALFLING-HOMESTEAD|DRAGONBORN-CITADEL|GOBLIN-SALVAGE)\\.(FOUNDATION|WALL-TOP|WALL|ROOF-EDGE|ROOF-FILL|DOOR|WINDOW|FLOOR|PILLAR|CONNECTOR|FURNITURE|WORKSTATION)\\.(INTACT|RUINED|CHARRED)\\.[0-9]{2}$',
+    effect: '^FX\\.(CAST|DELIVERY|IMPACT|AURA)\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*\\.F[0-9]{1,2}$',
+    ui: '^UI\\.(DEUS-DARK|DEUS|RACE-HALF-ELF|RACE-HALF-ORC|RACE-DRAGONBORN|RACE-HALFLING|RACE-HUMAN|RACE-DWARF|RACE-GNOME|RACE-TIEFLING|RACE-ELF)\\.(WINDOW|BUTTON|CURSOR|TITLE|LOADING|FONT|PAUSE|TEXT)\\.(NORMAL|HOVER|PRESSED|DEFAULT|DISABLED)$'
+};
 
 function readJson(file) {
     const text = fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, '');
@@ -927,7 +970,7 @@ function checkPipeline(rec) {
 
 function checkPromptTemplates(block) {
     const cats = ['humanoid-layer', 'face-layer', 'creature', 'terrain-tile', 'building-piece', 'item-icon', 'portrait', 'effect', 'ui'];
-    const fields = ['pixelSize', 'frameGrid', 'facing', 'poseFrameIndex', 'anchor', 'paletteRampHex', 'outlineRules', 'shadingRules', 'lightDirection', 'layerRole', 'catalogueId', 'referenceImages', 'negativeConstraints'];
+    const fields = ['pixelSize', 'frameGrid', 'facing', 'poseFrameIndex', 'anchor', 'paletteRampHex', 'outlineRules', 'shadingRules', 'lightDirection', 'layerRole', 'catalogueId', 'slotId', 'referenceImages', 'negativeConstraints'];
     if (!block || block.policy !== 'field-list-only' || block.prosePrompt) {
         return [result('AS-PROMPT-001', 'violate', 'template is a runnable prompt')];
     }
@@ -999,7 +1042,472 @@ function checkGenerators(standard) {
     return [result('AS-GEN-004', 'pass', 'generator policy')];
 }
 
-function collectGlobals(standard, spells, schema) {
+function intPair(p) {
+    return Array.isArray(p) && p.length === 2 && Number.isInteger(p[0]) && Number.isInteger(p[1]);
+}
+
+function overSourceCap(w, h) {
+    return !Number.isInteger(w) || !Number.isInteger(h) || w < 1 || h < 1 || w > SOURCE_CAP || h > SOURCE_CAP;
+}
+
+function checkSourceSheet(sheet) {
+    if (!sheet || !sheet.kind) return [result('AS-SRC-001', 'violate', 'sheet kind')];
+    if (overSourceCap(sheet.w, sheet.h)) return [result('AS-SRC-001', 'violate', 'over 2048 px')];
+    if (sheet.kind === 'paper-doll-layer') {
+        if (sheet.w !== PAPER_DOLL.w || sheet.h !== PAPER_DOLL.h || sheet.cols !== PAPER_DOLL.cols || sheet.rows !== PAPER_DOLL.rows || sheet.cell !== PAPER_DOLL.cell) {
+            return [result('AS-SRC-001', 'violate', 'paper-doll sheet ' + sheet.w + 'x' + sheet.h)];
+        }
+        return [result('AS-SRC-001', 'pass', '768x1440')];
+    }
+    if (sheet.kind === 'rmmz-native') {
+        const native = RMMZ_NATIVE[sheet.template];
+        if (!native || sheet.w !== native[0] || sheet.h !== native[1]) {
+            return [result('AS-SRC-001', 'violate', 'RMMZ size ' + (sheet.template || ''))];
+        }
+        return [result('AS-SRC-001', 'pass', sheet.template)];
+    }
+    if (sheet.kind === 'creature-strip') {
+        const fp = sheet.footprint || [1, 1];
+        const large = fp[0] > 1 || fp[1] > 1;
+        if (large && sheet.stacked === true) return [result('AS-SRC-001', 'violate', 'stacked large creature sheet')];
+        return [result('AS-SRC-001', 'pass', 'creature strip')];
+    }
+    return [result('AS-SRC-001', 'violate', 'sheet kind ' + sheet.kind)];
+}
+
+function checkSourcePolicy(standard) {
+    const policy = standard && standard.sourceSheets;
+    if (!policy || policy.maxPx !== SOURCE_CAP) return [result('AS-SRC-001', 'violate', 'cap')];
+    const paper = policy.paperDoll;
+    if (!paper || paper.w !== PAPER_DOLL.w || paper.h !== PAPER_DOLL.h || paper.cols !== PAPER_DOLL.cols || paper.rows !== PAPER_DOLL.rows || paper.cell !== PAPER_DOLL.cell || paper.actionRows !== PAPER_DOLL.actionRows || paper.oneSheetPerLayerDesign !== true) {
+        return [result('AS-SRC-001', 'violate', 'paper-doll policy')];
+    }
+    if (policy.largeCreatureRows !== 'strips') return [result('AS-SRC-001', 'violate', 'large creature rows')];
+    const native = policy.rmmzNative || {};
+    const keys = Object.keys(RMMZ_NATIVE);
+    for (let i = 0; i < keys.length; i++) {
+        const row = native[keys[i]];
+        if (!row || row.w !== RMMZ_NATIVE[keys[i]][0] || row.h !== RMMZ_NATIVE[keys[i]][1]) {
+            return [result('AS-SRC-001', 'violate', 'native ' + keys[i])];
+        }
+    }
+    const samples = policy.samples || {};
+    const named = ['paperDoll', 'charset', 'gargantuanStrip'];
+    for (let i = 0; i < named.length; i++) {
+        const got = checkSourceSheet(samples[named[i]]);
+        if (got[0].result !== 'pass') return got;
+    }
+    return [result('AS-SRC-001', 'pass', '768x1440, cap 2048, RMMZ sizes')];
+}
+
+function checkRepoPolicy(policy) {
+    if (!policy || policy.pixelsInRepo !== false) return [result('AS-REPO-001', 'violate', 'pixels are in the repo')];
+    if (!sameSet(policy.committed, ['blank-template-geometry', 'slot-map'])) {
+        return [result('AS-REPO-001', 'violate', 'committed set')];
+    }
+    if (!sameSet(policy.gitLfs, ['approved-art'])) return [result('AS-REPO-001', 'violate', 'git LFS set')];
+    if (!sameSet(policy.excluded, ['raw-generations', 'rejects', 'logs'])) {
+        return [result('AS-REPO-001', 'violate', 'excluded set')];
+    }
+    if (!sameSet(policy.lfsPatterns, ['art/approved/**'])) return [result('AS-REPO-001', 'violate', 'LFS pattern')];
+    if (!sameSet(policy.excludePatterns, ['art/raw/**', 'art/rejects/**', 'art/logs/**'])) {
+        return [result('AS-REPO-001', 'violate', 'exclude pattern')];
+    }
+    return [result('AS-REPO-001', 'pass', 'slot map in repo, approved art on LFS, raw out')];
+}
+
+function checkOwnerPreview(preview) {
+    if (!preview || preview.required !== true) return [result('AS-PREVIEW-001', 'violate', 'preview is not required')];
+    if (preview.scene !== 'in-game-1:1-animated' || preview.scale !== '1:1' || preview.animated !== true) {
+        return [result('AS-PREVIEW-001', 'violate', 'scene is not an animated 1:1 in-game preview')];
+    }
+    if (preview.channel !== 'owner-chat' || preview.before !== 'merge') {
+        return [result('AS-PREVIEW-001', 'violate', 'preview is not before merge')];
+    }
+    if (!sameSet(preview.decision, ['yea', 'nay'])) return [result('AS-PREVIEW-001', 'violate', 'decision is not yea or nay')];
+    return [result('AS-PREVIEW-001', 'pass', 'owner yea or nay before merge')];
+}
+
+function checkGeneratorCap(roster, sets) {
+    if (!roster || roster.perCategory !== true || roster.mixWithinLayeredSet !== false || roster.min !== 2 || roster.max !== 3) {
+        return [result('AS-GEN-005', 'violate', 'generator cap')];
+    }
+    const ids = roster.ids || [];
+    const cats = roster.categories || {};
+    const catKeys = Object.keys(cats);
+    if (!sameSet(catKeys, GEN_CATEGORIES)) return [result('AS-GEN-005', 'violate', 'category list')];
+    if (roster.status !== 'unassigned' && roster.status !== 'assigned') {
+        return [result('AS-GEN-005', 'violate', 'roster status')];
+    }
+    if (roster.status === 'unassigned' && ids.length !== 0) return [result('AS-GEN-005', 'violate', 'unassigned roster is not empty')];
+    if (roster.status === 'assigned' && (ids.length < 2 || ids.length > 3)) {
+        return [result('AS-GEN-005', 'violate', 'assigned roster is not 2 or 3')];
+    }
+    const seenIds = new Set();
+    for (let i = 0; i < ids.length; i++) {
+        if (typeof ids[i] !== 'string' || !ids[i] || seenIds.has(ids[i])) return [result('AS-GEN-005', 'violate', 'roster id')];
+        seenIds.add(ids[i]);
+    }
+    for (let i = 0; i < GEN_CATEGORIES.length; i++) {
+        const value = cats[GEN_CATEGORIES[i]];
+        if (Array.isArray(value)) return [result('AS-GEN-005', 'violate', 'category has more than one generator')];
+        if (roster.status === 'unassigned' && value !== null) return [result('AS-GEN-005', 'violate', 'category assigned while roster is unassigned')];
+        if (roster.status === 'assigned' && !seenIds.has(value)) return [result('AS-GEN-005', 'violate', 'category generator is outside the roster')];
+    }
+    if (!Array.isArray(sets) || !sets.length) return [result('AS-GEN-005', 'violate', 'no layered sets')];
+    let paper = false;
+    let family = false;
+    const setIds = new Set();
+    for (let i = 0; i < sets.length; i++) {
+        const set = sets[i];
+        if (!set || !set.id || setIds.has(set.id)) return [result('AS-GEN-005', 'violate', 'layered set id')];
+        setIds.add(set.id);
+        if (set.kind === 'paper-doll') paper = true;
+        else if (set.kind === 'creature-family') family = true;
+        else return [result('AS-GEN-005', 'violate', 'layered set kind')];
+        const members = set.memberGeneratorIds;
+        if (!Array.isArray(members) || !members.length) return [result('AS-GEN-005', 'violate', 'layered set members')];
+        for (let m = 0; m < members.length; m++) {
+            if (members[m] !== set.generatorId) return [result('AS-GEN-005', 'violate', set.id + ' mixes generators')];
+        }
+        if (roster.status === 'unassigned' && set.generatorId !== null) {
+            return [result('AS-GEN-005', 'violate', 'layered set assigned while roster is unassigned')];
+        }
+        if (roster.status === 'assigned' && set.generatorId !== cats[set.category]) {
+            return [result('AS-GEN-005', 'violate', set.id + ' does not use the category generator')];
+        }
+    }
+    if (!paper || !family) return [result('AS-GEN-005', 'violate', 'missing paper-doll or creature family')];
+    return [result('AS-GEN-005', 'pass', 'one generator per layered set')];
+}
+
+function sexSetOk(sexes) {
+    if (!sexes || !sexes.male || !sexes.female) return false;
+    const keys = ['base', 'tamed', 'saddle'];
+    for (const sex of ['male', 'female']) {
+        for (let i = 0; i < keys.length; i++) {
+            if (sexes[sex][keys[i]] !== true) return false;
+        }
+    }
+    return true;
+}
+
+function creatureSlug(name) {
+    return String(name || '').toLowerCase().replace(/ /g, '-');
+}
+
+function creatureRecords(doc) {
+    if (Array.isArray(doc)) return doc;
+    if (doc && Array.isArray(doc.entries)) return doc.entries;
+    return null;
+}
+
+function checkSexedBodies(block, standard) {
+    if (!block || !standard) return [result('AS-SEX-001', 'violate', 'sexed bodies')];
+    if (!sameSet(block.races, standard.races)) return [result('AS-SEX-001', 'violate', 'races')];
+    if (!sameSet(block.adult, ['male', 'female']) || !sameSet(block.elder, ['male', 'female'])) {
+        return [result('AS-SEX-001', 'violate', 'adult or elder sex')];
+    }
+    if (block.child !== 'own-body' || block.childScaledFromAdult !== false) {
+        return [result('AS-SEX-001', 'violate', 'child body')];
+    }
+    if (!sameSet(block.perSexParts, SEX_PARTS)) return [result('AS-SEX-001', 'violate', 'per-sex parts')];
+    if (!sameSet(block.garbOnBodies, GARB_BODIES) || !sameSet(block.armourOnBodies, GARB_BODIES)) {
+        return [result('AS-SEX-001', 'violate', 'garb or armour bodies')];
+    }
+    if (block.elderGarb !== 'adult-same-sex-offset') return [result('AS-SEX-001', 'violate', 'elder garb')];
+    const templates = block.templates || {};
+    for (let i = 0; i < standard.races.length; i++) {
+        const race = standard.races[i];
+        const row = templates[race];
+        if (!row) return [result('AS-SEX-001', 'violate', race + ' templates')];
+        if (row['adult-male'] !== 'body:' + race + ':adult-male') return [result('AS-SEX-001', 'violate', race + ' adult male')];
+        if (row['adult-female'] !== 'body:' + race + ':adult-female') return [result('AS-SEX-001', 'violate', race + ' adult female')];
+        if (row['elder-male'] !== 'body:' + race + ':elder-male') return [result('AS-SEX-001', 'violate', race + ' elder male')];
+        if (row['elder-female'] !== 'body:' + race + ':elder-female') return [result('AS-SEX-001', 'violate', race + ' elder female')];
+        if (row.child !== 'body:' + race + ':child') return [result('AS-SEX-001', 'violate', race + ' child')];
+        if (row['face-male'] !== 'face:' + race + ':male' || row['face-female'] !== 'face:' + race + ':female') {
+            return [result('AS-SEX-001', 'violate', race + ' face base')];
+        }
+    }
+    const matrix = standard.outfitMatrix || [];
+    const expect = standard.races.length * (standard.classes.length + standard.armorWeights.length);
+    if (matrix.length !== expect) return [result('AS-SEX-001', 'violate', 'outfit matrix')];
+    for (let i = 0; i < matrix.length; i++) {
+        const row = matrix[i];
+        for (let b = 0; b < GARB_BODIES.length; b++) {
+            const key = row.outfitId + '__' + row.race + '__' + GARB_BODIES[b];
+            if (!SEXED_KEY_RE.test(key)) return [result('AS-SEX-001', 'violate', 'garb key ' + key)];
+        }
+    }
+    return [result('AS-SEX-001', 'pass', 'male and female bodies, child body, garb on each')];
+}
+
+function checkCreatureSex(registry, creatureDoc) {
+    if (!registry) return [result('AS-SEX-002', 'violate', 'creature sex registry')];
+    if (!sameSet(registry.flags, ['none', 'dimorphic'])) return [result('AS-SEX-002', 'violate', 'sexVariant flag')];
+    if (registry.unlistedAre !== 'none') return [result('AS-SEX-002', 'violate', 'unlisted creatures')];
+    const dimorphic = registry.dimorphic || [];
+    const required = DIMORPHIC_SRD.concat(DIMORPHIC_LIVESTOCK);
+    if (dimorphic.length !== required.length || !sameSet(dimorphic.map(entry => entry.name), required)) {
+        return [result('AS-SEX-002', 'violate', 'dimorphic list')];
+    }
+    const names = [];
+    for (let i = 0; i < dimorphic.length; i++) {
+        const entry = dimorphic[i];
+        names.push(entry.name);
+        if (entry.sexVariant !== 'dimorphic' || !entry.pair || typeof entry.pair !== 'string') {
+            return [result('AS-SEX-002', 'violate', entry.name + ' flag')];
+        }
+        if (!sexSetOk(entry.sexes)) return [result('AS-SEX-002', 'violate', entry.name + ' sex sets')];
+        const slug = creatureSlug(entry.name);
+        if (DIMORPHIC_SRD.indexOf(entry.name) !== -1) {
+            if (entry.srd !== true || entry.inCreaturesJson !== true || entry.id !== 'srd:creature:' + slug) {
+                return [result('AS-SEX-002', 'violate', entry.name + ' srd id')];
+            }
+        } else if (entry.srd !== false || entry.inCreaturesJson !== false || entry.id !== 'livestock:' + slug) {
+            return [result('AS-SEX-002', 'violate', entry.name + ' livestock id')];
+        }
+    }
+    const noneSamples = registry.noneSamples || [];
+    if (!noneSamples.length) return [result('AS-SEX-002', 'violate', 'no none sample')];
+    for (let i = 0; i < noneSamples.length; i++) {
+        const entry = noneSamples[i];
+        if (!entry || entry.sexVariant !== 'none' || entry.sexes !== null || names.indexOf(entry.name) !== -1) {
+            return [result('AS-SEX-002', 'violate', (entry && entry.name) + ' is none but has a sex set')];
+        }
+    }
+    if (creatureDoc) {
+        const records = creatureRecords(creatureDoc);
+        if (!records) return [result('AS-SEX-002', 'violate', 'creatures file')];
+        if (!registry.derivation || registry.derivation.srdFileCount !== records.length) {
+            return [result('AS-SEX-002', 'violate', 'srd file count')];
+        }
+        const counts = {};
+        for (let i = 0; i < records.length; i++) {
+            const name = records[i] && records[i].name;
+            counts[name] = (counts[name] || 0) + 1;
+        }
+        for (let i = 0; i < DIMORPHIC_SRD.length; i++) {
+            if (counts[DIMORPHIC_SRD[i]] !== 1) return [result('AS-SEX-002', 'violate', DIMORPHIC_SRD[i] + ' in creatures.json')];
+        }
+        for (let i = 0; i < DIMORPHIC_LIVESTOCK.length; i++) {
+            if (counts[DIMORPHIC_LIVESTOCK[i]]) return [result('AS-SEX-002', 'violate', DIMORPHIC_LIVESTOCK[i] + ' is not an SRD row')];
+        }
+    }
+    return [result('AS-SEX-002', 'pass', required.length + ' dimorphic creatures')];
+}
+
+function grammarMap() {
+    const out = {};
+    const keys = Object.keys(ID_GRAMMAR);
+    for (let i = 0; i < keys.length; i++) out[keys[i]] = new RegExp(ID_GRAMMAR[keys[i]]);
+    return out;
+}
+
+function matchesGrammar(id, regs) {
+    const keys = Object.keys(regs);
+    for (let i = 0; i < keys.length; i++) {
+        if (regs[keys[i]].test(id)) return keys[i];
+    }
+    return '';
+}
+
+function blankProvenance(p) {
+    return !!(p && p.status === 'blank' && Array.isArray(p.attempts) && p.attempts.length === 0
+        && p.ownerApproval === 'pending' && p.reviewerModel === null
+        && p.timestamps && p.timestamps.generated === null && p.timestamps.reviewed === null && p.timestamps.owner === null);
+}
+
+function acceptedProvenance(p) {
+    if (!p || p.status !== 'accepted' || p.ownerApproval !== 'yea' || !p.reviewerModel) return false;
+    if (!p.timestamps || !p.timestamps.generated || !p.timestamps.owner) return false;
+    if (!Array.isArray(p.attempts) || !p.attempts.length) return false;
+    return p.attempts.some(attempt => attempt && attempt.promptSpecId && attempt.generator && attempt.generatorVersion
+        && attempt.seed !== undefined && attempt.seed !== null && attempt.validation && attempt.validation.outcome === 'pass');
+}
+
+function anchorsWritten(value) {
+    if (!value) return false;
+    const keys = ['feet', 'head', 'mainHand', 'offHand'];
+    for (let i = 0; i < keys.length; i++) {
+        if (!intPair(value[keys[i]])) return false;
+    }
+    return true;
+}
+
+function checkSlotRecord(rec, regs, live, retired) {
+    if (!rec || !rec.id || live.has(rec.id)) return 'duplicate id ' + (rec && rec.id);
+    if (retired.has(rec.id)) return 'retired id ' + rec.id;
+    if (!matchesGrammar(rec.id, regs)) return 'grammar ' + rec.id;
+    if (!rec.catalogueId || !ID_RE.test(rec.catalogueId)) return 'catalogue link ' + rec.id;
+    if (!rec.sheetFile) return 'sheet file ' + rec.id;
+    const anchor = rec.anchor || (rec.cell && rec.cell.anchor);
+    if (!intPair(anchor)) return 'anchor ' + rec.id;
+    const provenance = rec.provenance;
+    if (provenance && provenance.status === 'blank') {
+        if (!blankProvenance(provenance) || rec.detectedAnchors !== null) return 'blank provenance ' + rec.id;
+    } else if (provenance && provenance.status === 'accepted') {
+        if (!acceptedProvenance(provenance) || !anchorsWritten(rec.detectedAnchors)) return 'accepted provenance ' + rec.id;
+    } else {
+        return 'provenance ' + rec.id;
+    }
+    live.add(rec.id);
+    return '';
+}
+
+function checkSlotIds(slotMap, standard) {
+    if (!slotMap || slotMap.resolveBy !== 'slot-id-only' || slotMap.packerResolveBy !== 'slot-id-only') {
+        return [result('AS-ID-001', 'violate', 'resolve by pixel position')];
+    }
+    const tokens = slotMap.directionTokens || [];
+    if (tokens.length !== DIR_TOKENS.length) return [result('AS-ID-001', 'violate', 'direction tokens')];
+    for (let i = 0; i < DIR_TOKENS.length; i++) {
+        if (!tokens[i] || tokens[i].id !== DIR_TOKENS[i].id || tokens[i].facing !== DIR_TOKENS[i].facing) {
+            return [result('AS-ID-001', 'violate', 'direction token ' + DIR_TOKENS[i].id)];
+        }
+    }
+    const declared = slotMap.grammar || {};
+    const keys = Object.keys(ID_GRAMMAR);
+    if (Object.keys(declared).length !== keys.length) return [result('AS-ID-001', 'violate', 'grammar keys')];
+    for (let i = 0; i < keys.length; i++) {
+        if (declared[keys[i]] !== ID_GRAMMAR[keys[i]]) return [result('AS-ID-001', 'violate', 'grammar ' + keys[i])];
+    }
+    const rows = (standard && standard.humanoidRows) || [];
+    if (rows.length !== PAPER_DOLL.rows) return [result('AS-ID-001', 'violate', 'action rows ' + rows.length)];
+    const regs = grammarMap();
+    for (let i = 0; i < rows.length; i++) {
+        const probe = 'CH.HAIR.ELF.F.07.' + String(rows[i]).toUpperCase() + '.D.F0';
+        if (!regs['charset-layer'].test(probe)) return [result('AS-ID-001', 'violate', 'row token ' + rows[i])];
+    }
+    const retiredList = slotMap.retiredIds || [];
+    if (!retiredList.length) return [result('AS-ID-001', 'violate', 'no retired ids')];
+    const retired = new Set();
+    for (let i = 0; i < retiredList.length; i++) {
+        if (!matchesGrammar(retiredList[i], regs) || retired.has(retiredList[i])) {
+            return [result('AS-ID-001', 'violate', 'retired grammar ' + retiredList[i])];
+        }
+        retired.add(retiredList[i]);
+    }
+    const live = new Set();
+    const sheet = slotMap.sheet;
+    if (!sheet || sheet.id !== EXAMPLE_SHEET_ID || sheet.file !== EXAMPLE_SHEET_FILE || sheet.pixels !== 'not-in-repo') {
+        return [result('AS-ID-001', 'violate', 'example sheet')];
+    }
+    if (sheet.cols !== PAPER_DOLL.cols || sheet.rows !== PAPER_DOLL.rows) {
+        return [result('AS-ID-001', 'violate', 'example sheet grid')];
+    }
+    const cells = sheet.cells || [];
+    if (cells.length !== PAPER_DOLL.cols * PAPER_DOLL.rows) return [result('AS-ID-001', 'violate', 'cell count ' + cells.length)];
+    const seenPos = new Set();
+    let example = false;
+    for (let i = 0; i < cells.length; i++) {
+        const cell = cells[i];
+        const pos = cell && (cell.col + ',' + cell.row);
+        if (!cell || seenPos.has(pos)) return [result('AS-ID-001', 'violate', 'cell ' + pos)];
+        if (!Number.isInteger(cell.col) || !Number.isInteger(cell.row) || cell.col < 0 || cell.row < 0 || cell.col >= PAPER_DOLL.cols || cell.row >= PAPER_DOLL.rows) {
+            return [result('AS-ID-001', 'violate', 'cell range ' + pos)];
+        }
+        const expectId = 'CH.HAIR.ELF.F.07.' + String(rows[cell.row]).toUpperCase() + '.' + DIR_TOKENS[Math.floor(cell.col / 4)].id + '.F' + (cell.col % 4);
+        if (cell.id !== expectId) return [result('AS-ID-001', 'violate', 'cell id ' + pos)];
+        if (cell.sheetFile !== EXAMPLE_SHEET_FILE) return [result('AS-ID-001', 'violate', 'cell sheet ' + pos)];
+        const bad = checkSlotRecord(cell, regs, live, retired);
+        if (bad) return [result('AS-ID-001', 'violate', bad)];
+        seenPos.add(pos);
+        if (cell.id === EXAMPLE_SLOT_ID) example = true;
+    }
+    for (let r = 0; r < PAPER_DOLL.rows; r++) {
+        for (let c = 0; c < PAPER_DOLL.cols; c++) {
+            if (!seenPos.has(c + ',' + r)) return [result('AS-ID-001', 'violate', 'missing cell ' + c + ',' + r)];
+        }
+    }
+    if (!example) return [result('AS-ID-001', 'violate', 'missing ' + EXAMPLE_SLOT_ID)];
+    const samples = slotMap.grammarSamples || [];
+    const seenCats = new Set();
+    for (let i = 0; i < samples.length; i++) {
+        const sample = samples[i];
+        if (!sample || !ID_GRAMMAR[sample.category]) return [result('AS-ID-001', 'violate', 'sample category')];
+        if (!regs[sample.category].test(sample.id)) return [result('AS-ID-001', 'violate', 'sample grammar ' + sample.id)];
+        const bad = checkSlotRecord(sample, regs, live, retired);
+        if (bad) return [result('AS-ID-001', 'violate', bad)];
+        seenCats.add(sample.category);
+    }
+    for (let i = 0; i < keys.length; i++) {
+        if (!seenCats.has(keys[i])) return [result('AS-ID-001', 'violate', 'no sample for ' + keys[i])];
+    }
+    return [result('AS-ID-001', 'pass', live.size + ' slot ids')];
+}
+
+function checkAnchorAlignment(rec) {
+    if (!rec || rec.shift !== 'whole-pixels' || rec.scaling !== false || rec.trimTransparentMargins !== true || rec.writesDetectedAnchorsToSlot !== true) {
+        return [result('AS-ANCHOR-001', 'violate', 'shift is not whole pixels')];
+    }
+    if (rec.generatorProvidesAnchors !== false) return [result('AS-ANCHOR-001', 'violate', 'generator anchors')];
+    if (!sameSet(rec.rejectRegenerate, ANCHOR_REJECT) || !sameSet(rec.landmarks, ANCHOR_LANDMARKS) || !sameSet(rec.detection, ANCHOR_DETECTION)) {
+        return [result('AS-ANCHOR-001', 'violate', 'landmarks or reject list')];
+    }
+    if (rec.optionalPoseReference !== true || !rec.typicalCorrectionPx || rec.typicalCorrectionPx[0] !== 1 || rec.typicalCorrectionPx[1] !== 2) {
+        return [result('AS-ANCHOR-001', 'violate', 'pose reference')];
+    }
+    const frame = rec.sample;
+    if (!frame || !Number.isInteger(frame.shiftX) || !Number.isInteger(frame.shiftY)) {
+        return [result('AS-ANCHOR-001', 'violate', 'sample shift')];
+    }
+    if (frame.accepted === true) {
+        if (frame.clipping || frame.wrongProportions || frame.wrongSize || frame.headDrift) {
+            return [result('AS-ANCHOR-001', 'violate', 'accepted a frame that should be regenerated')];
+        }
+        if (!anchorsWritten(frame.detectedAnchors) || !anchorsWritten(frame.slotAnchors)) {
+            return [result('AS-ANCHOR-001', 'violate', 'detected anchors were not written')];
+        }
+        const keys = ['feet', 'head', 'mainHand', 'offHand'];
+        for (let i = 0; i < keys.length; i++) {
+            const detected = frame.detectedAnchors[keys[i]];
+            const slot = frame.slotAnchors[keys[i]];
+            if (detected[0] !== slot[0] || detected[1] !== slot[1]) {
+                return [result('AS-ANCHOR-001', 'violate', keys[i] + ' missed the slot anchor')];
+            }
+        }
+    } else if (!frame.reason) {
+        return [result('AS-ANCHOR-001', 'violate', 'rejected frame has no reason')];
+    }
+    return [result('AS-ANCHOR-001', 'pass', 'whole-pixel anchor alignment')];
+}
+
+function checkEquipmentAnchors(standard) {
+    const policy = standard && standard.equipmentAnchors;
+    if (!policy || policy.weaponDrawn !== 'once-per-grip-pose' || policy.pinnedBy !== 'compositor') {
+        return [result('AS-EQUIP-001', 'violate', 'weapon is not pinned by the compositor')];
+    }
+    if (policy.redrawPerFrame !== false || policy.redrawPerRace !== false || policy.redrawPerBody !== false) {
+        return [result('AS-EQUIP-001', 'violate', 'weapon redrawn per frame or body')];
+    }
+    if (!sameSet(policy.gripAngles, standard.angles) || !sameSet(policy.drawOrderValues, ['in-front', 'behind'])) {
+        return [result('AS-EQUIP-001', 'violate', 'grip angles or draw order')];
+    }
+    if (!policy.directionDrawOrder || policy.directionDrawOrder.S !== 'in-front' || policy.directionDrawOrder.N !== 'behind') {
+        return [result('AS-EQUIP-001', 'violate', 'down and up draw order')];
+    }
+    const frames = standard.elderReuse && standard.elderReuse.frames;
+    const expect = expectedBodyFrames(standard);
+    if (!frames || frames.length !== expect) return [result('AS-EQUIP-001', 'violate', 'body frames ' + (frames ? frames.length : 0))];
+    for (let i = 0; i < frames.length; i++) {
+        const frame = frames[i];
+        if (!frame || !intPair(frame.mainHand) || !intPair(frame.offHand)) {
+            return [result('AS-EQUIP-001', 'violate', 'frame ' + i + ' hand anchor')];
+        }
+        if (standard.angles.indexOf(frame.gripAngle) === -1) return [result('AS-EQUIP-001', 'violate', 'frame ' + i + ' grip angle')];
+        if (frame.drawOrder !== 'in-front' && frame.drawOrder !== 'behind') {
+            return [result('AS-EQUIP-001', 'violate', 'frame ' + i + ' draw order')];
+        }
+        if (['S', 'W', 'E', 'N'].indexOf(frame.dir) === -1) return [result('AS-EQUIP-001', 'violate', 'frame ' + i + ' direction')];
+        if (frame.dir === 'S' && frame.drawOrder !== 'in-front') return [result('AS-EQUIP-001', 'violate', 'frame ' + i + ' down is not in front')];
+        if (frame.dir === 'N' && frame.drawOrder !== 'behind') return [result('AS-EQUIP-001', 'violate', 'frame ' + i + ' up is not behind')];
+    }
+    return [result('AS-EQUIP-001', 'pass', expect + ' body frames')];
+}
+
+function collectGlobals(standard, spells, schema, creatures) {
     const out = [];
     out.push.apply(out, checkMatrix(standard.outfitMatrix, standard));
     out.push.apply(out, checkLife(standard.bodyTemplates));
@@ -1040,6 +1548,15 @@ function collectGlobals(standard, spells, schema) {
     out.push.apply(out, checkYield(standard.yieldSample));
     out.push.apply(out, checkPromptVersion(standard.promptVersionSample));
     out.push.apply(out, checkGenerators(standard));
+    out.push.apply(out, checkSourcePolicy(standard));
+    out.push.apply(out, checkRepoPolicy(standard.repoStorage));
+    out.push.apply(out, checkOwnerPreview(standard.ownerPreview));
+    out.push.apply(out, checkGeneratorCap(standard.generatorRoster, standard.layeredSets));
+    out.push.apply(out, checkSexedBodies(standard.sexedBodies, standard));
+    out.push.apply(out, checkCreatureSex(standard.creatureSex, creatures));
+    out.push.apply(out, checkSlotIds(standard.slotMap, standard));
+    out.push.apply(out, checkAnchorAlignment(standard.anchorTool));
+    out.push.apply(out, checkEquipmentAnchors(standard));
     return out;
 }
 
@@ -1048,10 +1565,11 @@ function run(opts) {
     const catalogue = readJson(opts.catalogue);
     const schema = readJson(opts.spellSchema);
     const spells = readJson(opts.spells);
+    const creatures = readJson(opts.creatures);
     let entries = catalogue.entries || [];
     if (opts.category) entries = entries.filter(e => e.category === opts.category);
     const perEntry = entries.map(e => checkEntry(e, standard));
-    const globals = collectGlobals(standard, spells, schema);
+    const globals = collectGlobals(standard, spells, schema, creatures);
     const registryPaths = opts.biomeRegistries && opts.biomeRegistries.length ? opts.biomeRegistries : [
         path.join(ROOT, 'game', 'data', 'DEUS_BiomeRegistry.json'),
         path.join(ROOT, 'docs', 'art', 'DEUS_BiomeRegistry.json')
@@ -1077,6 +1595,7 @@ function parseArgs(argv) {
         catalogue: path.join(ROOT, 'art', 'catalogue', 'catalogue.json'),
         spellSchema: path.join(ROOT, 'game', 'data', 'UF_SpellVisualTable.schema.json'),
         spells: path.join(ROOT, 'game', 'data', 'srd51', 'spells.json'),
+        creatures: path.join(ROOT, 'game', 'data', 'srd51', 'creatures.json'),
         biomeRegistries: []
     };
     for (let i = 0; i < argv.length; i++) {
@@ -1088,6 +1607,7 @@ function parseArgs(argv) {
         else if (a === '--catalogue') opts.catalogue = argv[++i];
         else if (a === '--spell-schema') opts.spellSchema = argv[++i];
         else if (a === '--spells') opts.spells = argv[++i];
+        else if (a === '--creatures') opts.creatures = argv[++i];
         else if (a === '--biome-registry') opts.biomeRegistries.push(argv[++i]);
         else throw new Error('unknown argument ' + a);
     }
@@ -1148,7 +1668,12 @@ module.exports = {
     checkTame, checkVariety, checkGenes, checkPortrait, checkHeadLayer, checkBodyAnchors,
     checkElder, checkGear, checkMirror, checkPoses, checkBiomeRegistry, checkCatalogueBiomes,
     checkSheet, checkAtlas, checkPipeline, checkPromptTemplates, checkGenerationLog, checkYield,
-    checkPromptVersion, checkGenerators, sizeResult
+    checkPromptVersion, checkGenerators, sizeResult,
+    checkSourceSheet, checkSourcePolicy, checkRepoPolicy, checkOwnerPreview, checkGeneratorCap,
+    checkSexedBodies, checkCreatureSex, checkSlotIds, checkAnchorAlignment, checkEquipmentAnchors,
+    ID_GRAMMAR, DIR_TOKENS, RMMZ_NATIVE, PAPER_DOLL, SOURCE_CAP, DIMORPHIC_SRD, DIMORPHIC_LIVESTOCK,
+    GEN_CATEGORIES, EXAMPLE_SLOT_ID, EXAMPLE_SHEET_ID, EXAMPLE_SHEET_FILE, ANCHOR_REJECT,
+    ANCHOR_LANDMARKS, ANCHOR_DETECTION
 };
 
 if (require.main === module) main(process.argv.slice(2));
