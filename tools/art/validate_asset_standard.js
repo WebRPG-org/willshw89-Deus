@@ -1568,6 +1568,81 @@ function noteOk(manual, key) {
     return !!(manual && typeof manual[key] === 'string' && manual[key].length > 20);
 }
 
+function viewTextOk(text) {
+    if (typeof text !== 'string' || !text) return false;
+    const banned = [
+        /oblique/i,
+        /diagonal\s+movement/i,
+        /diagonal\s+glid/i,
+        /diagonal\s+step/i,
+        /px\s+per\s+axis/i,
+        /diagonalPxPerAxis/,
+        /diagonalMovement/,
+        /top-and-front/,
+        /ultima-vii-oblique/
+    ];
+    for (let i = 0; i < banned.length; i++) {
+        if (banned[i].test(text)) return false;
+    }
+    const re = /5-5-5/g;
+    let n = 0;
+    let m;
+    while ((m = re.exec(text))) {
+        n++;
+        const w = text.slice(Math.max(0, m.index - 240), Math.min(text.length, m.index + 240));
+        if (!/spell/i.test(w) || !/area/i.test(w) || !/range/i.test(w)) return false;
+        if (/movement/i.test(w) && !/orthogonal/i.test(w)) return false;
+    }
+    return n >= 1;
+}
+
+function viewDocOk(text) {
+    return viewTextOk(text)
+        && text.indexOf('RMMZ standard top-down 3/4') !== -1
+        && text.indexOf('orthogonal only') !== -1
+        && text.indexOf('4-way on the grid') !== -1
+        && (text.indexOf('row, then by Z layer') !== -1 || text.indexOf('row-then-layer') !== -1);
+}
+
+function standardDocText() {
+    try {
+        return fs.readFileSync(path.join(ROOT, 'docs', 'art', 'DEUS_ASSET_STANDARD.md'), 'utf8');
+    } catch (e) {
+        return '';
+    }
+}
+
+function rowById(rows, id) {
+    if (!Array.isArray(rows)) return null;
+    for (let i = 0; i < rows.length; i++) if (rows[i] && rows[i].id === id) return rows[i];
+    return null;
+}
+
+function droppedOk(proj, retired) {
+    const rows = proj && proj.dropped;
+    const need = {
+        'quarter-front': 'rmmz-tile',
+        'side-wall': 'none',
+        'side-roof': 'none',
+        'corner-joint': 'none',
+        'tall-split': 'single-sprite'
+    };
+    if (!Array.isArray(rows)) return false;
+    const seen = {};
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        if (!row || row.status !== 'removed' || need[row.id] !== row.replacement || !Array.isArray(row.retiredSlotIds)) return false;
+        seen[row.id] = true;
+        if (row.id === 'quarter-front') {
+            if (row.retiredSlotIds.length !== 1 || row.retiredSlotIds[0] !== 'DP.CLIFF.TEMPERATE.FACE') return false;
+            if (!retired || retired.indexOf('DP.CLIFF.TEMPERATE.FACE') === -1) return false;
+        } else if (row.retiredSlotIds.length !== 0) return false;
+    }
+    const ids = Object.keys(need);
+    for (let i = 0; i < ids.length; i++) if (!seen[ids[i]]) return false;
+    return true;
+}
+
 function categoryOk(standard, ruleId) {
     const rows = standard && standard.a9c && standard.a9c.catalogueCategories;
     const samples = standard && standard.slotMap && standard.slotMap.grammarSamples;
@@ -1596,7 +1671,7 @@ function checkA9c(standard) {
     const proportion = a && a.proportion;
     let proportionOk = !!(proportion && proportion.target === '1/5' && proportion.min === 0.18 && proportion.max === 0.22
         && proportion.chibi === false && proportion.tone === 'readable-high-contrast-fantasy'
-        && proportion.obliqueReference === 'ultima-vii' && noteOk(manual, '16')
+        && proportion.feelReference === 'ultima-vii' && proportion.view === 'rmmz-top-down-3-4' && noteOk(manual, '16')
         && Array.isArray(proportion.samples) && proportion.samples.length >= 9);
     if (proportionOk) {
         for (let i = 0; i < proportion.samples.length; i++) {
@@ -1615,10 +1690,16 @@ function checkA9c(standard) {
     out.push(result('AS-LOOK-001', proportionOk ? 'pass' : 'violate', proportionOk ? 'head about 1/5' : 'proportion or art direction'));
 
     const proj = a && a.projection;
-    const projOk = !!(proj && proj.faces === 'top-and-front' && proj.drawOrder === 'row-then-layer'
-        && sameSet(proj.directions, ['S', 'W', 'E', 'N']) && proj.eightDirection === 'declined'
-        && proj.diagonalMovement === 'free' && noteOk(manual, '17'));
-    out.push(result('AS-PROJ-001', projOk ? 'pass' : 'violate', projOk ? 'oblique, row then layer, 4 directions' : 'projection'));
+    const retired = standard && standard.slotMap && standard.slotMap.retiredIds;
+    const docOk = viewDocOk(JSON.stringify(standard)) && viewDocOk(standardDocText());
+    const projOk = !!(proj && proj.view === 'rmmz-top-down-3-4' && proj.drawOrder === 'row-then-layer'
+        && sameSet(proj.directions, ['S', 'W', 'E', 'N']) && proj.sprites === '4-direction'
+        && proj.eightDirection === 'declined' && proj.movement === 'orthogonal-4-way'
+        && proj.cliffWall === 'rmmz-tile' && proj.quarterHeightFrontFaces === false
+        && proj.sideWall === false && proj.sideRoof === false && proj.cornerJoint === false
+        && proj.tallObjectSplit === false && droppedOk(proj, retired)
+        && noteOk(manual, '17') && noteOk(manual, '38') && docOk);
+    out.push(result('AS-PROJ-001', projOk ? 'pass' : 'violate', projOk ? 'RMMZ top-down 3/4, orthogonal 4-way' : 'projection'));
 
     const furn = a && a.furniture;
     let furnOk = !!(furn && furn.facings === 4 && sameSet(furn.directions, ['S', 'W', 'E', 'N'])
@@ -1645,8 +1726,8 @@ function checkA9c(standard) {
         && trial && trial.characterRequestPx === 42 && trial.characterTallPx[0] === 42 && trial.characterTallPx[1] === 43
         && trial.animation === 'skeleton-v3-on-create-character-v3' && sameSet(trial.layerPropagation, ['armour', 'helmet', 'hair'])
         && trial.weaponsShields === 'anchored-sprites' && trial.southWalk && trial.southWalk.offsetPx[0] === 0 && trial.southWalk.offsetPx[1] === 2
-        && trial.weaponAngles === 'rotate-tool-one-generation-per-angle' && trial.view === 'ultima-vii-oblique-straight-on'
-        && trial.forbiddenView === 'three-quarter-isometric' && trial.smallItemWorldSprites === 'open-test'
+        && trial.weaponAngles === 'rotate-tool-one-generation-per-angle' && trial.view === 'rmmz-top-down-3-4'
+        && trial.smallItemWorldSprites === 'open-test'
         && Array.isArray(terr.biomes) && sameSet(terr.biomes.map(row => row && row.id), ['VOLCANIC', 'WET', 'ARID', 'TEMPERATE', 'COLD', 'WILD']));
     let groundsOk = terrOk;
     if (groundsOk) {
@@ -1688,15 +1769,23 @@ function checkA9c(standard) {
     out.push(result('AS-GLOW-001', glowOk ? 'pass' : 'violate', glowOk ? 'glow id, colour, radius' : 'glow'));
 
     const depth = a && a.depth;
+    const depthCat = rowById(a && a.catalogueCategories, 'DEPTH');
+    const depthSize = rowById(a && a.sizingManifest, 'DEPTH');
     const toggles = ['whole-pixel-parallax', 'unit-height-shift', 'camera-layer-easing', 'dithered-cutaways', 'cross-layer-effects', 'glows-light-lower-layers', 'weather-by-exposed-layer'];
-    const depthOk = !!(depth && depth.palettePerLayer === true && depth.cliffFaces === 'per-biome-and-material'
+    const depthOk = !!(depth && depth.palettePerLayer === true && depth.cliffWall === 'rmmz-tile'
+        && depth.quarterHeightFrontFaces === false
         && depth.dropShadow === 'hard-dithered' && depth.ledgeRimPx === 1 && depth.halfStepQuarters === 2 && depth.halfStepPx === 24
         && depth.overlayOutline === true && depth.terrainOutline === false && sameSet(depth.toggles, toggles)
-        && depth.rendererInLane === false && noteOk(manual, '22') && categoryOk(standard, 'AS-DEPTH-001'));
+        && depth.rendererInLane === false && noteOk(manual, '22') && categoryOk(standard, 'AS-DEPTH-001')
+        && depthCat && depthCat.sampleSlotId === 'DP.CLIFF.TEMPERATE.TILE'
+        && depthCat.sizing && depthCat.sizing.form === 'rmmz-tile'
+        && depthCat.sizing.px && depthCat.sizing.px[0] === 48 && depthCat.sizing.px[1] === 48
+        && depthSize && depthSize.form === 'rmmz-tile'
+        && depthSize.px && depthSize.px[0] === 48 && depthSize.px[1] === 48);
     out.push(result('AS-DEPTH-001', depthOk ? 'pass' : 'violate', depthOk ? 'depth look and demo toggles' : 'depth'));
 
     const world = a && a.worldItems;
-    let worldOk = !!(world && world.oblique === true && sameSet(world.alongside, ['icon', 'portrait-144'])
+    let worldOk = !!(world && world.view === 'rmmz-top-down-3-4' && sameSet(world.alongside, ['icon', 'portrait-144'])
         && world.placement === 'pixel-offset' && sameSet(world.hosts, ['tile', 'surface', 'container'])
         && sameSet(world.fields, ['anchor', 'footprint', 'simHook']) && world.nativeScale === 1 && world.scaled === false
         && noteOk(manual, '23') && categoryOk(standard, 'AS-WITEM-001')
@@ -1755,10 +1844,13 @@ function checkA9c(standard) {
     const scaleOk = !!(g && g.cellFt === 5 && g.cellPx === 48 && g.layerFt === 5 && g.layerPx === 48
         && g.zLayers === 32 && g.zMin === -16 && g.zMax === 15 && (g.zMax - g.zMin + 1) === 32
         && g.tilePx === 48 && Array.isArray(g.tilePxNotAdopted) && g.tilePxNotAdopted.indexOf(64) !== -1
-        && g.tilePx !== 64 && scale && scale.diagonals === '5-5-5' && scale.torchBrightFt === 20 && scale.torchDimFt === 20
+        && g.tilePx !== 64 && scale && scale.diagonals === '5-5-5'
+        && scale.diagonalScope === 'spell-areas-and-ranges' && scale.unitMovement === 'orthogonal'
+        && scale.diagonalPxPerAxis === undefined
+        && scale.torchBrightFt === 20 && scale.torchDimFt === 20
         && scale.torchBrightTiles === 4 && scale.torchDimTiles === 4 && scale.falling === '1d6 per 2 layers'
         && scale.carry === 'Str × 15 lb' && scale.walkPxPerFrame === 4 && scale.runPxPerFrame === 6
-        && scale.diagonalPxPerAxis === 3 && scale.fps === 60 && scale.tickSeconds === 6 && scale.ticksPerGameMinute === 10
+        && scale.fps === 60 && scale.tickSeconds === 6 && scale.ticksPerGameMinute === 10
         && scale.dayLengthRealMinutes && scale.dayLengthRealMinutes[0] === 24 && scale.dayLengthRealMinutes[1] === 48
         && scale.brightLight === 'solid-glow' && scale.dimLight === 'dither-2-3' && scale.gradients === false
         && scale.positions === 'whole-pixels' && scale.historicalDomain === 'unchanged'
@@ -2150,7 +2242,7 @@ module.exports = {
     checkPromptVersion, checkGenerators, sizeResult,
     checkSourceSheet, checkSourcePolicy, checkRepoPolicy, checkOwnerPreview, checkGeneratorCap,
     checkSexedBodies, checkCreatureSex, checkSlotIds, checkAnchorAlignment, checkEquipmentAnchors,
-    checkA9c, colourValue,
+    checkA9c, colourValue, viewTextOk, viewDocOk,
     ID_GRAMMAR, DIR_TOKENS, RMMZ_NATIVE, PAPER_DOLL, SOURCE_CAP, DIMORPHIC_SRD, DIMORPHIC_LIVESTOCK,
     GEN_CATEGORIES, EXAMPLE_SLOT_ID, EXAMPLE_SHEET_ID, EXAMPLE_SHEET_FILE, ANCHOR_REJECT,
     ANCHOR_LANDMARKS, ANCHOR_DETECTION

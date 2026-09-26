@@ -1,7 +1,7 @@
 # DEUS Master Asset Standard
 
 **Document ID:** `DEUS-ASSET-STANDARD-01`
-**Machine form:** `game/data/UF_AssetStandard.json` (`schemaVersion` `deus-asset-standard/1.3.0`)
+**Machine form:** `game/data/UF_AssetStandard.json` (`schemaVersion` `deus-asset-standard/1.3.1`)
 **Spell rows:** `game/data/UF_SpellVisualTable.schema.json` (JSON Schema draft 2020-12)
 **Checker:** `tools/art/validate_asset_standard.js`
 **Status:** Normative for new asset work. No art is produced by this document (DEC-007).
@@ -10,7 +10,7 @@ This standard is the required set for every DEUS asset: what must exist, what it
 
 Owner rulings win over older art docs. The conflicts and the winning line are in Appendix A. Questions this document does not answer are in Appendix B. How today's files sit against the standard is in Appendix C.
 
-The pose grid in **AS-HUM-016** is the standard's default and is marked **PM-proposed, Owner may amend**. Addenda A7 through A9 (Owner 12:56 CT through 13:24 CT, and the PM decisions marked on those rules) are §§2.13–2.16. Addendum A9b (Owner 13:30 CT through 14:10 CT) is §2.17. Addendum A9c (Owner 14:38 CT through 15:12 CT) is §2.18. Each A9c rule ends with a note for the future Deus Art manual.
+The pose grid in **AS-HUM-016** is the standard's default and is marked **PM-proposed, Owner may amend**. Addenda A7 through A9 (Owner 12:56 CT through 13:24 CT, and the PM decisions marked on those rules) are §§2.13–2.16. Addendum A9b (Owner 13:30 CT through 14:10 CT) is §2.17. Addendum A9c (Owner 14:38 CT through 15:40 CT) is §2.18. Item 38 sets the RMMZ standard top-down 3/4 view and 4-way grid movement. Each A9c rule ends with a note for the future Deus Art manual.
 
 ## 1. Global rules
 
@@ -260,7 +260,7 @@ Walk stays the RMMZ 3-column cycle (**AS-GLOBAL-013**).
 
 **AS-BIOME-001.** Six biomes times five depth bands is 30 sets. Pairwise transitions are the 15 ids `VOLCANIC-WET`, `VOLCANIC-ARID`, `VOLCANIC-TEMPERATE`, `VOLCANIC-COLD`, `VOLCANIC-WILD`, `WET-ARID`, `WET-TEMPERATE`, `WET-COLD`, `WET-WILD`, `ARID-TEMPERATE`, `ARID-COLD`, `ARID-WILD`, `TEMPERATE-COLD`, `TEMPERATE-WILD`, `COLD-WILD`. The earlier biome in the DEC-030 list comes first.
 
-**AS-BIOME-002.** Each of the 30 sets, and each transition, has: ground tiles, cliffs, multi-layer ramps (one 5 ft layer, heights in 12 px quarters; a half-step slope is 2 quarters, 24 px), water, vegetation, props, four season frames, and a colour ramp id. Terrain rendering is the 48 px dual-grid Wang path in **AS-TERR-001**.
+**AS-BIOME-002.** Each of the 30 sets, and each transition, has: ground tiles, cliffs (RMMZ-style tiles, **AS-DEPTH-001**), multi-layer ramps (one 5 ft layer, heights in 12 px quarters; a half-step slope is 2 quarters, 24 px), water, vegetation, props, four season frames, and a colour ramp id. Terrain rendering is the 48 px dual-grid Wang path in **AS-TERR-001**.
 
 **AS-BIOME-003.** `TEMPERATE`, `WET`, `ARID` and `VOLCANIC` keep the physical identities in `DEUS_BIOME_IDENTITY_STANDARD.md` (there TEMP, WET, ARID, VOLC). `COLD` and `WILD` are required ids. What they look like is open (Appendix B). `HIGH` / Highland is not a sixth biome. Existing `HIGH_*` ramps stay in the registry until an Owner maps them.
 
@@ -270,7 +270,7 @@ Walk stays the RMMZ 3-column cycle (**AS-GLOBAL-013**).
 
 **AS-BLDG-004.** Function, grammar and style are three layers (`DEUS_FACTION_ARCHITECTURE_STANDARD.md` §2). The sim sees the functional contract. The grammar is the layout (compact rectangle, L, longhouse, terrace, stilted pavilion). The style is the art kit. Universal classes: `dwelling_small`, `dwelling_medium`, `communal_hall`, `workshop_general`, `workshop_specialized`, `storehouse`, `shrine`, `watchtower`, `wall_gate`, `farm_outbuilding`, `stockpile_border`, `quarry_mine_support`.
 
-**AS-BLDG-001.** The piece list is the same for every style: foundation, wall, wall-top, roof-edge, roof-fill, door, window, floor, pillar, connector, furniture, workstation. Each structural piece has states `intact`, `ruined` and `charred`. Construction is the same pieces shown as foundation, then walls, then roof, then finished openings and floors. It is not a second illustration style.
+**AS-BLDG-001.** The piece list is the same for every style: foundation, wall, wall-top, roof-edge, roof-fill, door, window, floor, pillar, connector, furniture, workstation. Each structural piece has states `intact`, `ruined` and `charred`. Construction is the same pieces shown as foundation, then walls, then roof, then finished openings and floors. It is not a second illustration style. Side-wall, side-roof and corner-joint pieces are not on this list. A tall object is one sprite and is not split into stacked pieces (**AS-PROJ-001**).
 
 **AS-BLDG-002.** Style profiles, visual rules quoted from that standard and not extended: `human_frontier`, `dwarf_stonehold`, `elf_glade`, `halfling_homestead`, `dragonborn_citadel`, `goblin_salvage`.
 
@@ -553,7 +553,7 @@ Owner 13:30–13:37 CT, 13:50 CT, 13:56 CT and 14:09–14:10 CT. No art is gener
 | Effect | `FX.PHASE.SHAPE.DAMAGE.FRAME` | `FX.IMPACT.SPHERE.FIRE.F0` |
 | UI | `UI.SKIN.PART.STATE` | `UI.DEUS.WINDOW.NORMAL` |
 
-Sex tokens are `M`, `F` and `C` (the child body, which is not split by sex). Creature sex `N` is the single design on a `none` creature. Variant tokens are `BASE`, `TAMED` and `SADDLE`. Direction tokens are `D`, `L`, `R` and `U`. Frame tokens on a charset or creature row are `F0` through `F3`. The pattern strings are `slotMap.grammar`. One id is already retired: `CH.HAIR.ELF.F.06.WALK.D.F0`.
+Sex tokens are `M`, `F` and `C` (the child body, which is not split by sex). Creature sex `N` is the single design on a `none` creature. Variant tokens are `BASE`, `TAMED` and `SADDLE`. Direction tokens are `D`, `L`, `R` and `U`. Frame tokens on a charset or creature row are `F0` through `F3`. The pattern strings are `slotMap.grammar`. Retired ids stay reserved: `CH.HAIR.ELF.F.06.WALK.D.F0` and `DP.CLIFF.TEMPERATE.FACE`. The live cliff tile is `DP.CLIFF.TEMPERATE.TILE`.
 
 **AS-ANCHOR-001.** Generators do not supply anchors. After a generation the tool reads the transparent-pixel mask, the silhouette, the foot line and the head outline. It finds the feet at the bottom centre, the head centre, and the main-hand and off-hand points. It shifts the frame by whole pixels until those landmarks sit on that cell's slot-map anchor, and it writes the detected points onto the slot (**AS-ID-001**). Whole-pixel shifts, and trimming transparent margins, are not scaling (**AS-PIPE-001**). A frame that would clip, or that has the wrong proportions, the wrong size, or head drift against the body, is rejected and generated again. A pose reference with the body already placed may be sent. The usual correction is 1 or 2 px. The reference is not required on every call.
 
@@ -561,15 +561,15 @@ Sex tokens are `M`, `F` and `C` (the child body, which is not split by sex). Cre
 
 ### 2.18 Readable fantasy, quarters, and visible gear (A9c)
 
-Owner 14:38 CT through 15:12 CT. No art is generated here. No image is written. A 64 px tile was considered and was not adopted. Terrain stays 48 px, with a 2× integer presentation scale (**AS-RENDER-001**). RMMZ-native sizes elsewhere, including the 64 by 64 SV battler frame and the 144 by 144 face, are unchanged. Notes under each rule are for the future Deus Art manual.
+Owner 14:38 CT through 15:40 CT. No art is generated here. No image is written. A 64 px tile was considered and was not adopted. Terrain stays 48 px, with a 2× integer presentation scale (**AS-RENDER-001**). RMMZ-native sizes elsewhere, including the 64 by 64 SV battler frame and the 144 by 144 face, are unchanged. Notes under each rule are for the future Deus Art manual.
 
-**AS-LOOK-001.** Item 16. The art direction is readable high-contrast fantasy at the 48 px scale. The Ultima VII oblique reference stays (**AS-PROJ-001**). Proportions are realistic, not chibi. A head is about 1/5 of the body height. That is a proportion rule. It is not a height split (**AS-QTR-001**). The checker requires `headPx / bodyPx` from 0.18 through 0.22 on every race sample. The human sample is body 42 px and head 8 px.
+**AS-LOOK-001.** Item 16, as amended by item 38. The art direction is readable high-contrast fantasy at the 48 px scale. Ultima VII stays a feel and readability reference. The view is the RMMZ standard top-down 3/4 view (**AS-PROJ-001**). Proportions are realistic, not chibi. A head is about 1/5 of the body height. That is a proportion rule. It is not a height split (**AS-QTR-001**). The checker requires `headPx / bodyPx` from 0.18 through 0.22 on every race sample. The human sample is body 42 px and head 8 px.
 
-Manual note. Draw readable high-contrast fantasy at the 48 px scale. Keep the Ultima VII oblique reference. A head is about 1/5 of the body height.
+Manual note. Draw readable high-contrast fantasy at the 48 px scale. Ultima VII stays a feel and readability reference. The view is the RMMZ standard top-down 3/4 view. A head is about 1/5 of the body height.
 
-**AS-PROJ-001.** Item 17. Tiles and objects show a top face and a front face. The height of a Z layer is drawn as front walls and cliff faces. Map draw order is by row, then by Z layer. Sprites stay four-direction. Eight-direction sheets stay declined. Diagonal movement stays free. This does not add diagonal sprite rows.
+**AS-PROJ-001.** Item 17, as amended by item 38. The view is the RMMZ standard top-down 3/4 view. Map draw order is by row, then by Z layer. Sprites stay four-direction. Eight-direction sheets stay declined. Movement is 4-way on the grid. Unit movement is orthogonal only. Cliff and wall pieces are standard RMMZ-style tiles with the depth cues in **AS-DEPTH-001**. They are not a stack of quarter-height front strips. The building piece list does not add a side-wall piece, a side-roof piece, or a corner-joint piece. A tall object is one sprite. It is not split into stacked pieces. The retired slot id `DP.CLIFF.TEMPERATE.FACE` stays reserved. The live cliff tile is `DP.CLIFF.TEMPERATE.TILE`.
 
-Manual note. Tiles and objects show a top face and a front face. Draw the map by row, then by Z layer. Sprites stay four-direction. Diagonal movement stays free.
+Manual note. The view is the RMMZ standard top-down 3/4 view. Draw the map by row, then by Z layer. Sprites stay four-direction. Movement is 4-way on the grid. Unit movement is orthogonal only. SRD 5-5-5 applies to spell areas and ranges only. Cliff and wall pieces are RMMZ-style tiles. Side-wall, side-roof and corner-joint pieces are not added. Tall objects are not split.
 
 **AS-FURN-001.** Item 18. Furniture and other placeables have four facings, S, W, E, N. A symmetric object may reuse a view only when `symmetric` is true and `reuse` is `flagged`. An unflagged object has four unique views. Catalogue category `PLACEABLE`. Slot grammar `placeable`, for example `PL.TABLE.D`.
 
@@ -577,13 +577,13 @@ Manual note. Furniture and placeables have four facings. A symmetric object may 
 
 **AS-TERR-001.** Items 19 and 34. Terrain is 48 px PixelLab tiles-pro Wang tiles, rendered by a custom dual-grid tile renderer. That replaces 24 by 24 tiles assembled into an RMMZ A2 autotile. Big features are separate map objects. Each of the six biomes has 3 to 5 ground types, joined in a chain of transition pairs, with 2 or 3 plain variants each. The names `ground-a`, `ground-b` and `ground-c` are structural. What `COLD` and `WILD` look like stays open (Appendix B). Detail decals stay 24 px, on an overlay: pebbles, tufts, cracks and leaves. Wang tiles, decals and the 12, 24 and 48 px item sprites are native 1:1. They are not scaled. The renderer is a follow-on on the depth-demo lane. It is not code in this lane.
 
-Trial findings, recorded as generation rules and not run here. Characters are requested at size 42, and land 42 to 43 px tall in the 48 px frame. Animation is skeleton-v3 on bare create-character-v3 bodies, then layer propagation to armour, helmet and hair. Weapons and shields are anchored sprites, not propagated layers. Anchors are per row. The south walk row sits 2 px low, and **AS-ANCHOR-001** corrects that row. Weapon angles use the rotate tool, one generation per angle, which feeds the grip angles. The view must be a straight-on Ultima VII oblique, not a three-quarter isometric angle. Small item world sprites remain an open test (Appendix B).
+Trial findings, recorded as generation rules and not run here. Characters are requested at size 42, and land 42 to 43 px tall in the 48 px frame. Animation is skeleton-v3 on bare create-character-v3 bodies, then layer propagation to armour, helmet and hair. Weapons and shields are anchored sprites, not propagated layers. Anchors are per row. The south walk row sits 2 px low, and **AS-ANCHOR-001** corrects that row. Weapon angles use the rotate tool, one generation per angle, which feeds the grip angles. Prompts must force the RMMZ standard top-down 3/4 view. Small item world sprites remain an open test (Appendix B).
 
 Catalogue categories `WANG` and `DECAL`. Slot examples `WG.TEMPERATE.GRASS.DIRT.01` and `DC.TEMPERATE.LEAF.01`.
 
 Manual note. Terrain is 48 px tiles-pro Wang on a dual-grid renderer. Each biome has 3 to 5 ground types in a transition chain, with 2 or 3 plain variants. Detail decals stay 24 px.
 
-Trial note. Request characters at size 42, animate with skeleton-v3 on create-character-v3 bodies, then propagate armour, helmet and hair. The south walk row sits 2 px low. Force a straight-on Ultima VII view. Small item world sprites remain an open test.
+Trial note. Request characters at size 42, animate with skeleton-v3 on create-character-v3 bodies, then propagate armour, helmet and hair. The south walk row sits 2 px low. Prompts must force the RMMZ standard top-down 3/4 view. Small item world sprites remain an open test.
 
 **AS-TRACK-001.** Item 20. Ground marks are boot, bare, paw and hoof prints on snow, mud, sand, blood and wet ground. Each has four directions and three fade steps (the allowed range is 2 or 3). A worn path may become a road. Catalogue category `GROUNDMARK`. Slot example `GM.SNOW.BOOT.D.F0`.
 
@@ -593,13 +593,13 @@ Manual note. Ground marks cover boot, bare, paw and hoof on snow, mud, sand, blo
 
 Manual note. Every light source has a glow id. The glow is pixel-stepped art on the additive light layer, and it stores colour and radius with that id.
 
-**AS-DEPTH-001.** Item 22. The Z-layer look uses a depth palette ramp per layer, cliff and wall faces per biome and material, hard dithered drop shadows, a 1 px ledge rim highlight, ramps, and half-step slopes of 2 quarters (24 px). Depth-toned overlays may have outlines. Terrain tiles do not. Renderer toggles for the depth demo, recorded with their asset needs, are: whole-pixel parallax, unit height shift on ramps, camera layer easing, dithered cutaways, cross-layer effects, glows lighting lower layers, and weather by exposed layer. Day length and the 1x/2x/3x scale toggle are **AS-SCALE-001** and **AS-RENDER-001**. Renderer code is not in this lane. Catalogue category `DEPTH`. Slot example `DP.CLIFF.TEMPERATE.FACE`.
+**AS-DEPTH-001.** Item 22, as amended by item 38. The Z-layer look uses a depth palette ramp per layer, standard RMMZ-style cliff and wall tiles per biome and material, hard dithered drop shadows, a 1 px ledge rim highlight, ramps, and half-step slopes of 2 quarters (24 px). Those tiles carry the depth cues. They are not quarter-height front strips. Depth-toned overlays may have outlines. Terrain tiles do not. Renderer toggles for the depth demo, recorded with their asset needs, are: whole-pixel parallax, unit height shift on ramps, camera layer easing, dithered cutaways, cross-layer effects, glows lighting lower layers, and weather by exposed layer. Day length and the 1x/2x/3x scale toggle are **AS-SCALE-001** and **AS-RENDER-001**. Renderer code is not in this lane. Catalogue category `DEPTH`. Slot example `DP.CLIFF.TEMPERATE.TILE`. The earlier sample `DP.CLIFF.TEMPERATE.FACE` is retired and stays reserved.
 
-Manual note. Depth uses per-layer ramps, cliff faces, hard dithered shadows, a 1 px ledge rim, ramps and a 24 px half-step. The depth demo toggles are recorded here. The renderer is another lane.
+Manual note. Depth uses per-layer ramps, RMMZ-style cliff and wall tiles, hard dithered shadows, a 1 px ledge rim, ramps and a 24 px half-step. Quarter-height front strips are not the cliff or wall class. The depth demo toggles are recorded here. The renderer is another lane.
 
-**AS-WITEM-001.** Item 23. Every item has an oblique world sprite beside its 32 px icon and its 144 px portrait. Legal drawn sizes are the 12, 24 and 48 px classes in **AS-PLAY-001**, which is how the 16 to 24 px description is met: the 24 px class is the ordinary small sprite. Items are placed at whole-pixel offsets on tiles, on surfaces and in containers. The world sprite stores an anchor, a footprint and a sim hook. The runtime placer is another lane. Catalogue category `WORLDSPRITE`. Slot example `WS.LONGSWORD.24.D`.
+**AS-WITEM-001.** Item 23, as amended by item 38. Every item has a world sprite in the RMMZ standard top-down 3/4 view beside its 32 px icon and its 144 px portrait. Legal drawn sizes are the 12, 24 and 48 px classes in **AS-PLAY-001**, which is how the 16 to 24 px description is met: the 24 px class is the ordinary small sprite. Items are placed at whole-pixel offsets on tiles, on surfaces and in containers. The world sprite stores an anchor, a footprint and a sim hook. The runtime placer is another lane. Catalogue category `WORLDSPRITE`. Slot example `WS.LONGSWORD.24.D`.
 
-Manual note. Every item has an oblique world sprite beside its icon and its 144 px portrait. Placement stores an anchor, a footprint and the sim hook.
+Manual note. Every item has a world sprite in the RMMZ standard top-down 3/4 view beside its icon and its 144 px portrait. Placement stores an anchor, a footprint and the sim hook.
 
 **AS-FEAT-001.** Section F. Seasonal variants cover terrain, vegetation, and buildings or objects where they change, in spring, summer, autumn and winter. Building and object damage uses 4 stages (the allowed wall range is 3 or 4). Sim work animations sit on the humanoid layered system: farming, mining, chopping, building, crafting, carrying, fishing and cooking. Chop and carry are already rows. Farm, mine, build, craft, fish and cook are the six added rows, 6 frames each, four directions. Catalogue categories `SEASON`, `DAMAGE` and `WORKANIM`. Slot examples `SE.TERRAIN.TEMPERATE.SUMMER.01`, `DM.WALL.WALL.S1` and `WK.FARM.D.F0`.
 
@@ -613,9 +613,9 @@ Manual note. Near the player, items are drawn in full. Far away, the sim keeps c
 
 Manual note. A container opens a movable window of free-placed sprites. Backpack capacity in the worked example is 1 cu ft and 30 lb. Art is open and closed, four facings, plus a window background.
 
-**AS-SCALE-001.** Item 26. One Z layer is 5 ft and 48 px. One quarter is 1.25 ft and 12 px. SRD squares are 5 ft, and SRD diagonals are 5-5-5. Feet convert to squares for movement, spell areas, light and vision. A torch is 20 ft bright and 20 ft dim, which is 4 tiles plus 4 tiles. Falling is 1d6 per 2 layers. Carry is Str × 15 lb. On-screen walk is 4 px per frame and run is 6 px per frame at 60 fps. A diagonal step is 3 px on each axis. Animation holds are an integer number of 60 fps frames (150 ms is 9 frames and still divides evenly). One sim tick is one 6 s SRD round, and 10 ticks are one game minute. This is the action-domain tick. The historical domain stays as already recorded. Day length targets 24 to 48 real minutes, as a depth-demo toggle. Bright light is a solid glow. Dim light is a 2 or 3 step dithered palette falloff, with no gradients, and that falloff is also a depth-demo toggle. Positions are whole pixels. Terrain sits on the 48 px tile grid. Heights sit on 12 px steps. A 64 px tile is not adopted.
+**AS-SCALE-001.** Item 26, as amended by item 38. One Z layer is 5 ft and 48 px. One quarter is 1.25 ft and 12 px. SRD squares are 5 ft. SRD 5-5-5 applies to spell areas and ranges only. Unit movement is orthogonal only. Feet convert to squares for movement, spell areas, light and vision. A torch is 20 ft bright and 20 ft dim, which is 4 tiles plus 4 tiles. Falling is 1d6 per 2 layers. Carry is Str × 15 lb. On-screen walk is 4 px per frame and run is 6 px per frame at 60 fps, on orthogonal steps. Animation holds are an integer number of 60 fps frames (150 ms is 9 frames and still divides evenly). One sim tick is one 6 s SRD round, and 10 ticks are one game minute. This is the action-domain tick. The historical domain stays as already recorded. Day length targets 24 to 48 real minutes, as a depth-demo toggle. Bright light is a solid glow. Dim light is a 2 or 3 step dithered palette falloff, with no gradients, and that falloff is also a depth-demo toggle. Positions are whole pixels. Terrain sits on the 48 px tile grid. Heights sit on 12 px steps. A 64 px tile is not adopted.
 
-Manual note. One Z layer is 5 ft and 48 px. A quarter is 1.25 ft and 12 px. Movement, light, falling, carry and the 6 second tick use that scale. A 64 px tile is not adopted.
+Manual note. One Z layer is 5 ft and 48 px. A quarter is 1.25 ft and 12 px. SRD 5-5-5 applies to spell areas and ranges only. Unit movement is orthogonal only. Movement, light, falling, carry and the 6 second tick use that scale. A 64 px tile is not adopted.
 
 **AS-RENDER-001.** Item 27. Scale is an integer only. The default is 2×. The game picks the largest integer that keeps at least about 20 tiles across: 2× on 1080p, 3× on 1440p and on 4K. The player may override. Sampling is nearest-neighbour, with no smoothing and no blur. The camera moves in whole art pixels. UI and window skins use the same factor. Extra space is a letterbox, or it shows more map. It is never stretched. The depth demo has a 1×, 2× and 3× toggle.
 
@@ -625,9 +625,9 @@ Manual note. The finished frame scales by an integer only. The default is 2×, n
 
 Manual note. Cross-layer destruction covers ground collapse, wall breaches of 4 stages, and cave-ins, through the mass ledger.
 
-**AS-QTR-001.** Item 29. Partial heights are quarters of a layer, 12 px steps. That replaces the earlier strata split on strata, ramps, half-step slopes, cliff and edge strips, wall faces and surfaces. `strataPerLayer` is 4. `stratumPx` is `[12, 12, 12, 12]`. `stratumFt` is 1.25. The head ratio of about 1/5 stays a proportion rule.
+**AS-QTR-001.** Item 29, as amended by item 38. Partial heights are quarters of a layer, 12 px steps. That replaces the earlier strata split on strata, ramps, half-step slopes, cliff and edge strips, and surfaces. Cliff and wall pieces are standard RMMZ-style tiles (**AS-DEPTH-001**), not quarter-height front strips. `strataPerLayer` is 4. `stratumPx` is `[12, 12, 12, 12]`. `stratumFt` is 1.25. The head ratio of about 1/5 stays a proportion rule.
 
-Manual note. Partial heights are quarters of 12 px. The old strata split is not used. The head ratio of about 1/5 stays a proportion rule.
+Manual note. Partial heights are quarters of 12 px. Cliff and wall pieces are RMMZ-style tiles, not quarter-height front strips. The old strata split is not used. The head ratio of about 1/5 stays a proportion rule.
 
 **AS-SITE-001.** Item 30. The construction category is a placement ghost tinted by a precomputed palette swap (not an alpha fade), a blueprint, a foundation, scaffolding, partial build stages, site props and a build animation. Catalogue category `CONSTRUCTION`. Slot example `CS.HUMAN-FRONTIER.SCAFFOLD.01`.
 
@@ -678,7 +678,7 @@ Owner rulings win. The source line is the conflict. The resolution is the ruling
 5. **Nine layers and the five-Z model vs 32 layers.** Identity standard line 274, "five physical Z levels" Z+2..Z−2. The production charter's five-Z section and the lattice's Z+2..Z−2 are the same model. DEC-013 line 179 and DEC-030 line 407: 32 layers, −16..+15. A 9-layer automated test remains allowed. It is not the world.
 6. **Band ranges.** DEC-013 lines 189–193: Lower-2 −16..−9, Lower-1 −8..−1, Surface 0..+3, Upper-1 +4..+9, Upper-2 +10..+15. Catalogue `geometry.json` `bands` still use those ranges. **DEC-030 wins** with the table in **AS-GLOBAL-019**.
 7. **V64 vs SRD 5.1.** DEC-027 lines 368–374 retires V64. These still describe V64 or OSRS combat as live: `docs/VISION.md` lines 73, 106, 112 and 116; `docs/design/COMBAT_CHAINS.md` lines 5–7; `docs/design/ABILITIES.md`; `docs/design/CRAFTING.md`; `docs/design/CLASSES.md` line 26; `docs/design/CHAIN_OF_COMMAND.md` line 9. **DEC-027 wins.**
-8. **Eight-way sheets vs four directions.** `docs/VISION.md` line 15 (V3) requires eight facings. `docs/RMMZ_ASSET_SPEC.md` lines 49 and 101 describe the AR-600 8-row master. `docs/handoffs/GENERATOR_PROMPTS.md` rule 10 requires eight facings for every action. `docs/ASSET_REQUESTS.md` AR-600 does the same. **Owner 12:38 CT wins** for sprites: four directions, and 8-way sheets are mined for S, W, E, N. The charter line 38 already says "standard 4-directional locomotion". Engine text that keeps 8-direction movement (`docs/ART_STANDARD.md` F5, VISION V110) is movement, not a sheet rule. This standard does not change pathfinding.
+8. **Eight-way sheets vs four directions.** `docs/VISION.md` line 15 (V3) requires eight facings. `docs/RMMZ_ASSET_SPEC.md` lines 49 and 101 describe the AR-600 8-row master. `docs/handoffs/GENERATOR_PROMPTS.md` rule 10 requires eight facings for every action. `docs/ASSET_REQUESTS.md` AR-600 does the same. **Owner 12:38 CT wins** for sprites: four directions, and 8-way sheets are mined for S, W, E, N. The charter line 38 already says "standard 4-directional locomotion". Engine files that describe stepping on more than the four grid directions are not edited here. They are not the rule. Unit steps are orthogonal, 4-way on the grid (**AS-PROJ-001**, Owner 15:40 CT).
 9. **Tint, alpha, blur, glow shaders vs DEC-011.** Charter lines 190–191 (Invisible at 20% alpha, Poisoned as a tint pulse) and lines 266–268 (VFX exempt from binary alpha). Crosswalk lines 207–208 (the same alpha and tint). `DEUS_VFX_UI_INFORMATION_STANDARD.md` line 29 (permissive alpha and additive blend) and lines 141–142 (fog desaturated and dimmed). Environment standard lines 57–66 (time of day as a WebGL color matrix) and line 107 (seasons as a colour LUT). Native-resolution text that allows smooth VFX alpha. Visual-QC text that exempts translucent VFX from the palette clamp. Build-ghost text at 35% alpha in the VFX standard. **DEC-011 wins** for all of those: drawn frames and ramps, binary alpha. **AS-LIGHT-001**, Owner 12:52 CT, adds one later hook: optional per-pixel or per-tile tint, blur forbidden, default off. That hook does not revive ColorMatrix, blur, or alpha fades.
 10. **Invisible and poisoned.** Resolved by **AS-HUM-012**. The 20% alpha and the green tint pulse are not the standard.
 11. **Giant sockets "scaled by 2.0×".** Charter line 303. **DEC-011 / AS-GLOBAL-017:** Large frames are authored at 96 px, not scaled at runtime.
@@ -723,6 +723,7 @@ Owner rulings win. The source line is the conflict. The resolution is the ruling
 50. **Where maximum brightness sits.** It sits only on additive glow frames.
 51. **Half-step slopes.** Item 22's half-step is 2 quarters, 24 px.
 52. **Action tick.** One action-domain tick is one 6 s SRD round. The historical domain is unchanged.
+53. **View and stepping.** The projection drawing from item 17 and the old trial view are withdrawn (Owner 15:40 CT). The view is the RMMZ standard top-down 3/4 view. Sprites stay four-direction. Draw order stays row, then layer. Movement is 4-way on the grid. Unit movement is orthogonal only. SRD 5-5-5 applies to spell areas and ranges only. Cliff and wall pieces are RMMZ-style tiles with the depth cues. Side-wall, side-roof and corner-joint pieces are not added. Tall objects are not split. Quarter-height front strips are not a cliff or wall class. The retired slot id is `DP.CLIFF.TEMPERATE.FACE`. The live cliff tile is `DP.CLIFF.TEMPERATE.TILE`.
 
 ## Appendix B. Open questions
 
@@ -910,21 +911,21 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-ID-001.** Permanent unique slot id per cell. Grammar, no reuse, catalogue link. Resolve by id only.
 - **AS-ANCHOR-001.** Whole-pixel shift onto the slot anchor. Reject clip, proportion, size and head drift.
 - **AS-EQUIP-001.** Main-hand, off-hand, grip angle and draw order on every body frame. One weapon drawing, pinned.
-- **AS-LOOK-001.** Readable high-contrast fantasy. Head about 1/5 of body height.
-- **AS-PROJ-001.** Oblique top and front. Row, then layer. Four directions.
+- **AS-LOOK-001.** Readable high-contrast fantasy. RMMZ standard top-down 3/4 view. Head about 1/5 of body height.
+- **AS-PROJ-001.** RMMZ standard top-down 3/4 view. Row, then layer. Four directions. Movement is 4-way on the grid. Unit movement is orthogonal only.
 - **AS-FURN-001.** Four facings. Symmetric reuse only by flag.
 - **AS-TERR-001.** 48 px Wang dual-grid. 24 px decals. Trial findings recorded.
 - **AS-TRACK-001.** Ground marks, four directions, three fade steps, path to road.
 - **AS-GLOW-001.** Glow id, colour and radius on every light source.
-- **AS-DEPTH-001.** Depth look and the depth-demo toggles.
-- **AS-WITEM-001.** Oblique world sprite, anchor, footprint, sim hook.
+- **AS-DEPTH-001.** RMMZ-style cliff and wall tiles, depth cues, and the depth-demo toggles.
+- **AS-WITEM-001.** World sprite in the RMMZ standard top-down 3/4 view, anchor, footprint, sim hook.
 - **AS-FEAT-001.** Seasons, damage stages, sim work rows.
 - **AS-PLAY-001.** Placement sizes 12, 24 and 48. 6 px cells. 100,000 item benchmark.
 - **AS-CONT-001.** Container window, four facings, open and closed, capacity.
-- **AS-SCALE-001.** 5 ft layer, 48 px, 6 s tick. 64 px tiles not adopted.
+- **AS-SCALE-001.** 5 ft layer, 48 px, 6 s tick. SRD 5-5-5 applies to spell areas and ranges only. Unit movement is orthogonal only. 64 px tiles not adopted.
 - **AS-RENDER-001.** Integer scale, 2× default, nearest-neighbour.
 - **AS-XLAYER-001.** Cross-layer collapse, breach and cave-in.
-- **AS-QTR-001.** Four quarters of 12 px.
+- **AS-QTR-001.** Four quarters of 12 px. Cliff and wall pieces are RMMZ-style tiles.
 - **AS-SITE-001.** Construction ghost, scaffold, partial build.
 - **AS-READ-001.** Grayscale value step. Table-with-items reference at true 2×.
 - **AS-PAL-001.** Saturated palette, value first, grayscale before approval.

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "deus-asset-standard/1.3.0",
+  "schemaVersion": "deus-asset-standard/1.3.1",
   "documentId": "DEUS-ASSET-STANDARD-01",
   "authority": "Owner rulings DEC-007, DEC-011, DEC-013, DEC-016, DEC-027, DEC-030, and 2026-09-26 12:38 through 15:12 CT, including addenda A1-A9, A9b and A9c. PM decisions are marked on the rule. Lane brief WG.20.01.",
   "artGeneration": "forbidden",
@@ -517,11 +517,11 @@
       "check": "equipment-anchors"
     },
     "AS-LOOK-001": {
-      "norm": "Readable high-contrast fantasy. Ultima VII oblique reference. Head about 1/5 of body height. The checker tests the ratio.",
+      "norm": "Readable high-contrast fantasy. Ultima VII is a feel and readability reference. The view is the RMMZ standard top-down 3/4 view. Head about 1/5 of body height. The checker tests the ratio.",
       "check": "a9c"
     },
     "AS-PROJ-001": {
-      "norm": "Oblique top and front. Draw order is row, then layer. Four directions. Eight directions stay declined. Diagonal movement is free.",
+      "norm": "RMMZ standard top-down 3/4 view. Draw order is row, then layer. Four-direction sprites. Movement is 4-way on the grid. Unit movement is orthogonal only. Cliff and wall pieces are RMMZ-style tiles. Side-wall, side-roof and corner-joint pieces are not added. Tall objects are not split.",
       "check": "a9c"
     },
     "AS-FURN-001": {
@@ -541,11 +541,11 @@
       "check": "a9c"
     },
     "AS-DEPTH-001": {
-      "norm": "Depth ramps, cliff faces, dithered shadows, ledge rims, ramps and half-steps. Depth-demo toggles are listed. Renderer code is not this lane.",
+      "norm": "Depth ramps, RMMZ-style cliff and wall tiles, dithered shadows, ledge rims, ramps and half-steps. Quarter-height front strips are not used. Depth-demo toggles are listed. Renderer code is not this lane.",
       "check": "a9c"
     },
     "AS-WITEM-001": {
-      "norm": "Every item has an oblique world sprite, an icon and a 144 portrait, with anchor, footprint and sim-hook fields.",
+      "norm": "Every item has a world sprite in the RMMZ standard top-down 3/4 view, an icon and a 144 portrait, with anchor, footprint and sim-hook fields.",
       "check": "a9c"
     },
     "AS-FEAT-001": {
@@ -561,7 +561,7 @@
       "check": "a9c"
     },
     "AS-SCALE-001": {
-      "norm": "1 Z layer = 5 ft = 48 px. Movement, light, falling, carry and the 6 second tick. 64 px tiles are not adopted.",
+      "norm": "1 Z layer = 5 ft = 48 px. SRD 5-5-5 applies to spell areas and ranges only. Unit movement is orthogonal only. Movement, light, falling, carry and the 6 second tick. 64 px tiles are not adopted.",
       "check": "a9c"
     },
     "AS-RENDER-001": {
@@ -573,7 +573,7 @@
       "check": "a9c"
     },
     "AS-QTR-001": {
-      "norm": "Four quarters of 12 px replace the old strata split. The head ratio is not a quarter split.",
+      "norm": "Four quarters of 12 px replace the old strata split. Cliff and wall pieces are RMMZ-style tiles, not quarter-height front strips. The head ratio is not a quarter split.",
       "check": "a9c"
     },
     "AS-SITE-001": {
@@ -16646,7 +16646,8 @@
       "hit-spark": "^SP\\.(SLASH|PIERCE|BLUDGEON)\\.F[0-2]$"
     },
     "retiredIds": [
-      "CH.HAIR.ELF.F.06.WALK.D.F0"
+      "CH.HAIR.ELF.F.06.WALK.D.F0",
+      "DP.CLIFF.TEMPERATE.FACE"
     ],
     "sheet": {
       "id": "paperdoll:elf:f:hair:07",
@@ -28277,9 +28278,9 @@
       },
       {
         "category": "depth",
-        "id": "DP.CLIFF.TEMPERATE.FACE",
+        "id": "DP.CLIFF.TEMPERATE.TILE",
         "catalogueId": "ALL_SHARED_DEPTH_CLIFF_V1_DEFAULT",
-        "sheetFile": "art/approved/a9c/DP_CLIFF_TEMPERATE_FACE.png",
+        "sheetFile": "art/approved/a9c/DP_CLIFF_TEMPERATE_TILE.png",
         "anchor": [
           24,
           24
@@ -29003,33 +29004,35 @@
   ],
   "a9c": {
     "artManual": {
-      "16": "Draw readable high-contrast fantasy at the 48 px scale. Keep the Ultima VII oblique reference. A head is about 1/5 of the body height. That ratio is a proportion, not a height split.",
-      "17": "Tiles and objects show a top face and a front face. Draw the map by row, then by Z layer. Sprites stay four-direction. Diagonal movement stays free.",
+      "16": "Draw readable high-contrast fantasy at the 48 px scale. Ultima VII stays a feel and readability reference. The view is the RMMZ standard top-down 3/4 view. A head is about 1/5 of the body height. That ratio is a proportion, not a height split.",
+      "17": "The view is the RMMZ standard top-down 3/4 view. Draw the map by row, then by Z layer. Sprites stay four-direction. Movement is 4-way on the grid. Unit movement is orthogonal only.",
       "18": "Furniture and placeables have four facings. A symmetric object may reuse a view only when its symmetric flag is set.",
       "19": "Terrain is 48 px tiles-pro Wang on a dual-grid renderer. Each biome has 3 to 5 ground types in a transition chain, with 2 or 3 plain variants. Detail decals stay 24 px.",
       "20": "Ground marks cover boot, bare, paw and hoof on snow, mud, sand, blood and wet ground, in four directions, with three fade steps. A worn path may become a road.",
       "21": "Every light source has a glow id. The glow is pixel-stepped art on the additive light layer, and it stores colour and radius with that id.",
-      "22": "Depth uses per-layer ramps, cliff faces, hard dithered shadows, a 1 px ledge rim, ramps and a 24 px half-step. The depth demo toggles are recorded here. The renderer is another lane.",
-      "23": "Every item has an oblique world sprite beside its icon and its 144 px portrait. Placement stores an anchor, a footprint and the sim hook.",
+      "22": "Depth uses per-layer ramps, RMMZ-style cliff and wall tiles, hard dithered shadows, a 1 px ledge rim, ramps and a 24 px half-step. Quarter-height front strips are not the cliff or wall class. The depth demo toggles are recorded here. The renderer is another lane.",
+      "23": "Every item has a world sprite in the RMMZ standard top-down 3/4 view beside its icon and its 144 px portrait. Placement stores an anchor, a footprint and the sim hook.",
       "24": "Near the player, items are drawn in full. Far away, the sim keeps counts and replaces them from a fixed seed. Legal drawn sizes are 12, 24 and 48 px, with no scaling.",
       "25": "A container opens a movable window of free-placed sprites. Backpack capacity in the worked example is 1 cu ft and 30 lb. Art is open and closed, four facings, plus a window background.",
-      "26": "One Z layer is 5 ft and 48 px. A quarter is 1.25 ft and 12 px. Movement, light, falling, carry and the 6 second tick use that scale. A 64 px tile is not adopted.",
+      "26": "One Z layer is 5 ft and 48 px. A quarter is 1.25 ft and 12 px. SRD 5-5-5 applies to spell areas and ranges only. Unit movement is orthogonal only. Movement, light, falling, carry and the 6 second tick use that scale. A 64 px tile is not adopted.",
       "27": "The finished frame scales by an integer only. The default is 2x, nearest-neighbour. Extra space letterboxes or shows more map.",
       "28": "Cross-layer destruction covers ground collapse, wall breaches of 4 stages, and cave-ins, through the mass ledger.",
-      "29": "Partial heights are quarters of 12 px. The old five-strata split is not used. The head ratio of about 1/5 stays a proportion rule.",
+      "29": "Partial heights are quarters of 12 px. Cliff and wall pieces are RMMZ-style tiles, not quarter-height front strips. The old five-strata split is not used. The head ratio of about 1/5 stays a proportion rule.",
       "30": "Construction art is a palette-swap ghost, a blueprint, foundation, scaffolding, partial stages, site props and build animation. The ghost is not an alpha fade.",
       "31": "Characters and items must clear their ground by the grayscale value step before approval. The table-with-items trial is the reference, reviewed at true 2x. No image is generated here.",
       "32": "The palette is saturated and controlled, with no gray mush. Value carries the read. The brightest colours are reserved. Mood comes from light and grading. Every asset passes grayscale before approval.",
       "33": "Style defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision keeps one master, caps colours, and sets the frame budgets. Re-run the cost on 708 cells, not on the 3.5 average.",
-      "34": "Trial findings: request characters at size 42, animate with skeleton-v3 on create-character-v3 bodies, then propagate armour, helmet and hair. The south walk row sits 2 px low. Force a straight-on Ultima VII view. Small item world sprites remain an open test.",
+      "34": "Trial findings: request characters at size 42, animate with skeleton-v3 on create-character-v3 bodies, then propagate armour, helmet and hair. The south walk row sits 2 px low. Prompts must force the RMMZ standard top-down 3/4 view. Small item world sprites remain an open test.",
       "35": "A melee weapon is a separate sprite on the hand anchors. The attack is six frames. Draw the weapon 10 to 20 percent larger in native pixels. Do not scale it.",
       "36": "These size, footprint, door, mirror, fortress, marker and font defaults are the PM defaults. The Owner may override them. West may be mirrored from east. Weapons and shields stay on the hand anchors.",
       "37": "PM assumption, Owner may amend: class garb is part of the race and class base body. Faces show armour and helmet only. Charsets show armour, helmet, weapon and shield. Other gear is an item, an icon, a portrait or a world sprite. Elder base bodies by race and class are 216 sheets.",
+      "38": "The view is the RMMZ standard top-down 3/4 view. Movement is 4-way on the grid. Unit movement is orthogonal only. Sprites stay four-direction. Draw order stays row, then layer. SRD 5-5-5 applies to spell areas and ranges only. Cliff and wall pieces are RMMZ-style tiles with the depth cues. Side-wall, side-roof and corner-joint pieces are not added. Tall objects are not split.",
       "F": "Seasonal variants, building and object damage stages, and the sim work rows sit on the layered humanoid system. New work rows are farm, mine, build, craft, fish and cook, at 6 frames. Chop and carry are already rows."
     },
     "proportion": {
       "tone": "readable-high-contrast-fantasy",
-      "obliqueReference": "ultima-vii",
+      "feelReference": "ultima-vii",
+      "view": "rmmz-top-down-3-4",
       "chibi": false,
       "target": "1/5",
       "min": 0.18,
@@ -29083,7 +29086,7 @@
       ]
     },
     "projection": {
-      "faces": "top-and-front",
+      "view": "rmmz-top-down-3-4",
       "drawOrder": "row-then-layer",
       "directions": [
         "S",
@@ -29091,8 +29094,49 @@
         "E",
         "N"
       ],
+      "sprites": "4-direction",
       "eightDirection": "declined",
-      "diagonalMovement": "free"
+      "movement": "orthogonal-4-way",
+      "cliffWall": "rmmz-tile",
+      "quarterHeightFrontFaces": false,
+      "sideWall": false,
+      "sideRoof": false,
+      "cornerJoint": false,
+      "tallObjectSplit": false,
+      "dropped": [
+        {
+          "id": "quarter-front",
+          "status": "removed",
+          "replacement": "rmmz-tile",
+          "retiredSlotIds": [
+            "DP.CLIFF.TEMPERATE.FACE"
+          ]
+        },
+        {
+          "id": "side-wall",
+          "status": "removed",
+          "replacement": "none",
+          "retiredSlotIds": []
+        },
+        {
+          "id": "side-roof",
+          "status": "removed",
+          "replacement": "none",
+          "retiredSlotIds": []
+        },
+        {
+          "id": "corner-joint",
+          "status": "removed",
+          "replacement": "none",
+          "retiredSlotIds": []
+        },
+        {
+          "id": "tall-split",
+          "status": "removed",
+          "replacement": "single-sprite",
+          "retiredSlotIds": []
+        }
+      ]
     },
     "furniture": {
       "facings": 4,
@@ -29274,8 +29318,7 @@
           "correctedBy": "AS-ANCHOR-001"
         },
         "weaponAngles": "rotate-tool-one-generation-per-angle",
-        "view": "ultima-vii-oblique-straight-on",
-        "forbiddenView": "three-quarter-isometric",
+        "view": "rmmz-top-down-3-4",
         "smallItemWorldSprites": "open-test"
       }
     },
@@ -29324,7 +29367,8 @@
     },
     "depth": {
       "palettePerLayer": true,
-      "cliffFaces": "per-biome-and-material",
+      "cliffWall": "rmmz-tile",
+      "quarterHeightFrontFaces": false,
       "dropShadow": "hard-dithered",
       "ledgeRimPx": 1,
       "halfStepQuarters": 2,
@@ -29343,7 +29387,7 @@
       "rendererInLane": false
     },
     "worldItems": {
-      "oblique": true,
+      "view": "rmmz-top-down-3-4",
       "alongside": [
         "icon",
         "portrait-144"
@@ -29541,6 +29585,8 @@
     },
     "scale": {
       "diagonals": "5-5-5",
+      "diagonalScope": "spell-areas-and-ranges",
+      "unitMovement": "orthogonal",
       "torchBrightFt": 20,
       "torchDimFt": 20,
       "torchBrightTiles": 4,
@@ -29549,7 +29595,6 @@
       "carry": "Str × 15 lb",
       "walkPxPerFrame": 4,
       "runPxPerFrame": 6,
-      "diagonalPxPerAxis": 3,
       "fps": 60,
       "tickSeconds": 6,
       "ticksPerGameMinute": 10,
@@ -30355,7 +30400,7 @@
         "id": "DEPTH",
         "ruleId": "AS-DEPTH-001",
         "slotGrammar": "depth",
-        "sampleSlotId": "DP.CLIFF.TEMPERATE.FACE",
+        "sampleSlotId": "DP.CLIFF.TEMPERATE.TILE",
         "sizing": {
           "px": [
             48,
@@ -30363,6 +30408,7 @@
           ],
           "frames": 1,
           "facings": 1,
+          "form": "rmmz-tile",
           "nativeScale": 1,
           "scaled": false
         }
@@ -30577,7 +30623,8 @@
           48
         ],
         "frames": 1,
-        "facings": 1
+        "facings": 1,
+        "form": "rmmz-tile"
       },
       {
         "id": "PLACEABLE",

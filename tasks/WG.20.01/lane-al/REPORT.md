@@ -392,3 +392,59 @@ Exit 0. This pass did not edit a plugin.
 - `PROPOSED-AL-22` — per-row anchor correction for the south walk row, and rotate-tool weapon angles. No art in that follow-up until the Owner allows generation.
 
 Appendix B items 11–13 are open and were not answered: whether 216 elder class bodies should shrink, the open small-item world-sprite test, and the picture in the fourth walk cell of the committed example sheet. World item placement and U7 melee runtime stay on their own queued lanes. The schema header is `deus-asset-standard/1.3.0` in the markdown and the JSON.
+
+## Addendum A9c item 38
+
+Resume on `task/lane-al` at `ef9488823e94d2ad152653694f32c55f392b6a91`, the Owner override on top of the A9c tip `0c2a1cbc50f955ceb5c77f0aa206629592abcf48`. This pass applies item 38 only. Other A9b and A9c rules stay. No art was generated. No image prompt was run. No PNG was written. Schema header is now `deus-asset-standard/1.3.1` in the markdown and the JSON.
+
+The view is the RMMZ standard top-down 3/4 view. Sprites stay four-direction. Map draw order stays row, then Z layer. Movement is 4-way on the grid. Unit movement is orthogonal only. SRD 5-5-5 stays for spell areas and ranges only. World sprites, U7-style placement, containers and the U7 melee rules stay. The checker reads the standard and the JSON and fails if either one carries a projection rule or a diagonal-movement rule. A 5-5-5 mention passes only when the same passage names spell areas and ranges, and names orthogonal movement when it also names movement.
+
+Removed or reverted:
+
+- **Item 16 / AS-LOOK-001.** The Ultima VII oblique reference as the view is removed. Ultima VII stays a feel and readability reference. The view sentence now points at **AS-PROJ-001**. The head ratio is unchanged.
+- **Item 17 / AS-PROJ-001.** The top-and-front projection rule is removed. The rule that drew a Z layer as front walls and cliff faces is removed. "Diagonal movement stays free" is removed. The sentence that said this does not add diagonal sprite rows is removed with it. Four-direction sprites, declined eight-direction sheets, and row-then-layer draw order stay.
+- **Item 22 / AS-DEPTH-001.** Cliff and wall front faces, including the four quarter-height front strips per material, revert to standard RMMZ-style cliff and wall tiles. The depth cues stay: a palette ramp per layer, a hard dithered drop shadow, a 1 px ledge rim, ramps, and the 24 px half-step. Catalogue category `DEPTH` stays. The sizing row is 48 by 48, form `rmmz-tile`.
+- **Slot `DP.CLIFF.TEMPERATE.FACE`.** This was the live cliff front-face sample. It is retired and stays reserved (**AS-ID-001**). The live sample is `DP.CLIFF.TEMPERATE.TILE`. The checker still counts 512 slot ids.
+- **Side walls, side roofs, corner joints.** These pieces were not given slot ids in the A9c pass, so none were added to `retiredIds`. They are not on the building piece list (**AS-BLDG-001**). The building grammar does not grow a token for them.
+- **Tall-object splits.** No split slot was issued. A tall object stays one sprite. It is not split into stacked pieces. The Large, Huge and Gargantuan frame classes are unchanged.
+- **Item 23 / AS-WITEM-001.** The word that called the world sprite an oblique sprite is removed. The world sprite stays, in the RMMZ standard top-down 3/4 view, with the anchor, footprint and sim hook. Placement and containers are unchanged.
+- **Item 26 / AS-SCALE-001.** "A diagonal step is 3 px on each axis" is removed, and `diagonalPxPerAxis` is removed. There was no separate gliding sentence. Free diagonal movement was the rule that allowed a glide, and that rule is removed. Walk stays 4 px per frame and run stays 6, on orthogonal steps. SRD 5-5-5 is limited to spell areas and ranges. `diagonalScope` is `spell-areas-and-ranges`. `unitMovement` is `orthogonal`.
+- **Item 29 / AS-QTR-001.** Wall faces are no longer a quarter-height front class. Quarters stay on strata, ramps, half-step slopes, cliff and edge strips, and surfaces. Cliff and wall pieces are the RMMZ-style tiles.
+- **Item 34 trial.** "Straight-on Ultima VII oblique" and the ban on a three-quarter isometric angle are removed. Prompts must force the RMMZ standard top-down 3/4 view. The rest of the trial record stays: size 42, skeleton-v3, layer propagation, the south walk row 2 px low, and the open small-item test.
+
+Left in place, and not a movement rule: **AS-GLOBAL-023** still says the diagonal rows of a legacy 8-way sheet are not standard, and `diagonalFacings` is still the list the checker uses for that. That is the 12:38 CT four-direction sheet rule.
+
+### Catalogue coverage (this pass)
+
+`node tools/art/validate_asset_standard.js --json` against `art/catalogue/catalogue.json`. Exit 0. Per-entry counts match the A9c tip. `--strict` would exit 1 because violations are non-zero (11 filenames plus 3 biome-set globals). Nothing was written under `art/` or `game/img/`.
+
+```
+entries 10089 pass 77 violate 11 unknown 10001
+rule-results pass 10985 violate 11 unknown 10195
+global-violations 3
+global violate AS-BIOME-005 game/data/DEUS_BiomeRegistry.json canonical TEMP,WET,ARID,HIGH,VOLC
+global violate AS-BIOME-005 docs/art/DEUS_BiomeRegistry.json canonical TEMP,WET,ARID,HIGH,VOLC
+global violate AS-BIOME-005 catalogue canonical TEMP,WET,ARID,HIGH,VOLC
+```
+
+**AS-PROJ-001**, **AS-LOOK-001**, **AS-DEPTH-001**, **AS-WITEM-001**, **AS-SCALE-001**, **AS-QTR-001** and **AS-ID-001** are global passes. **AS-ID-001** reports 512 slot ids.
+
+### Gate output (this pass)
+
+`node tools/art/test_validate_asset_standard.js`
+
+```
+RESULT: 353 passed, 0 failed
+```
+
+Exit 0. The count was 333 at the A9c tip. This pass adds the item 38 mutants and the text checks. A copy that puts the projection word back, or that restores free stepping, the 3 px rule, an unscoped 5-5-5, a quarter-height front flag, or a dropped piece, fails.
+
+`node tools/check_deus_syntax.js`
+
+```
+Checked 52 DEUS plugin files. Errors: 0
+```
+
+Exit 0. This pass did not edit a plugin.
+
+Gemini reviews. This lane does not certify the result. No merge.

@@ -401,16 +401,21 @@ function a9cBad(mutate) {
 }
 kills('look', 'AS-LOOK-001', a9cGood, a9cBad(s => { s.a9c.proportion.samples[0].headPx = 20; }));
 kills('proj', 'AS-PROJ-001', a9cGood, a9cBad(s => { s.a9c.projection.eightDirection = 'allowed'; }));
+kills('proj-move', 'AS-PROJ-001', a9cGood, a9cBad(s => { s.a9c.projection.movement = 'free'; }));
+kills('proj-drop', 'AS-PROJ-001', a9cGood, a9cBad(s => { s.a9c.projection.dropped[1].status = 'kept'; }));
+kills('proj-retired', 'AS-PROJ-001', a9cGood, a9cBad(s => { s.slotMap.retiredIds = s.slotMap.retiredIds.filter(id => id !== 'DP.CLIFF.TEMPERATE.FACE'); }));
 kills('furn', 'AS-FURN-001', a9cGood, a9cBad(s => { s.a9c.furniture.samples[1].reuse = 'flagged'; }));
 kills('terr', 'AS-TERR-001', a9cGood, a9cBad(s => { s.a9c.terrain.a2Autotile = true; }));
 kills('track', 'AS-TRACK-001', a9cGood, a9cBad(s => { s.a9c.groundMarks.fadeSteps = 1; }));
 kills('glow', 'AS-GLOW-001', a9cGood, a9cBad(s => { delete s.a9c.lights.sources[0].radiusPx; }));
 kills('depth', 'AS-DEPTH-001', a9cGood, a9cBad(s => { s.a9c.depth.toggles.pop(); }));
+kills('depth-tile', 'AS-DEPTH-001', a9cGood, a9cBad(s => { s.a9c.depth.quarterHeightFrontFaces = true; }));
 kills('world-sprite', 'AS-WITEM-001', a9cGood, a9cBad(s => { s.a9c.worldItems.samples[0].scaled = true; }));
 kills('feature', 'AS-FEAT-001', a9cGood, a9cBad(s => { s.a9c.features.work = s.a9c.features.work.filter(id => id !== 'fish'); }));
 kills('placement', 'AS-PLAY-001', a9cGood, a9cBad(s => { s.a9c.placement.sizePx = [16, 24, 48]; }));
 kills('container', 'AS-CONT-001', a9cGood, a9cBad(s => { s.a9c.containers.types[0].facings = ['S']; }));
 kills('scale', 'AS-SCALE-001', a9cGood, a9cBad(s => { s.geometry.layerFt = 10; }));
+kills('scale-scope', 'AS-SCALE-001', a9cGood, a9cBad(s => { s.a9c.scale.diagonalScope = 'unit-steps'; s.a9c.scale.unitMovement = 'free'; }));
 kills('render', 'AS-RENDER-001', a9cGood, a9cBad(s => { s.a9c.render.defaultScale = 1.5; }));
 kills('cross-layer', 'AS-XLAYER-001', a9cGood, a9cBad(s => { s.a9c.crossLayer.wallBreachStages = 2; }));
 kills('quarters', 'AS-QTR-001', a9cGood, a9cBad(s => { s.geometry.stratumPx = [19, 19, 19, 19, 20]; }));
@@ -442,10 +447,10 @@ const legacyFile = hexLines('art/palette/uf.hex');
 check('master-file', masterFile.join('|') === standard.masterPalette.colours.join('|'), 'canonical list');
 check('legacy-file', legacyFile.length === 256 && new Set(legacyFile).size === 250 && masterFile.every(c => legacyFile.indexOf(c) === -1));
 const phrases = [
-    'readable high-contrast fantasy', 'about 1/5', 'top face and a front face', 'by row, then by Z layer',
-    'Eight-direction sheets stay declined', 'Diagonal movement stays free', 'symmetric flag', 'tiles-pro',
+    'readable high-contrast fantasy', 'about 1/5', 'RMMZ standard top-down 3/4', 'by row, then by Z layer',
+    'Eight-direction sheets stay declined', '4-way on the grid', 'orthogonal only', 'symmetric flag', 'tiles-pro',
     'dual-grid', 'pebbles, tufts, cracks and leaves', 'skeleton-v3', 'create-character-v3', 'size 42',
-    '2 px low', 'three-quarter isometric', 'open test', 'boot, bare, paw and hoof',
+    '2 px low', 'open test', 'boot, bare, paw and hoof',
     'snow, mud, sand, blood and wet', 'additive light layer', 'whole-pixel parallax', 'camera layer easing',
     'dithered cutaways', '100,000', '6 px cells', '12, 24 and 48', '1 cu ft', '30 lb', '1.25 ft', '5-5-5',
     'Str × 15', '4 px per frame', '6 px per frame', 'nearest-neighbour', 'letterbox', 'wall breaches',
@@ -456,6 +461,17 @@ const phrases = [
     'PM assumption', 'not adopted', 'four quarters', 'table-with-items', 'true 2×', '708', '441', '216'
 ];
 phrases.forEach(phrase => check('phrase-' + phrase, md.indexOf(phrase) !== -1, 'missing'));
+check('view-doc', V.viewDocOk(md) && V.viewDocOk(JSON.stringify(standard)), 'view doc');
+check('view-ban-word', V.viewTextOk('keep the oblique reference. SRD 5-5-5 applies to spell areas and ranges only. Unit movement is orthogonal only.') === false);
+check('view-ban-step', V.viewTextOk('a diagonal step stays. SRD 5-5-5 applies to spell areas and ranges only.') === false);
+check('view-ban-glide', V.viewTextOk('diagonal gliding stays. SRD 5-5-5 applies to spell areas and ranges only.') === false);
+check('view-ban-axis', V.viewTextOk('3 px per axis. SRD 5-5-5 applies to spell areas and ranges only.') === false);
+check('view-ban-move', V.viewTextOk('diagonal movement stays free. SRD 5-5-5 applies to spell areas and ranges only. Unit movement is orthogonal only.') === false);
+check('view-ban-555', V.viewTextOk('SRD 5-5-5 for movement') === false);
+check('view-allow-legacy', V.viewTextOk('The diagonal rows are not standard. SRD 5-5-5 applies to spell areas and ranges only. Unit movement is orthogonal only.') === true);
+const bannedCopy = V.clone(standard);
+bannedCopy.a9c.projection.view = 'oblique';
+kills('proj-ban', 'AS-PROJ-001', a9cGood, V.checkA9c(bannedCopy));
 const dropped = V.clone(standard);
 delete dropped.rules[jsonIds[0]];
 check('rule-ids-mutant', idsMatch(md, dropped.rules) === false);
