@@ -234,8 +234,11 @@ flipBad.surface.ARID.flip = true;
 kills('variety-flip', 'AS-VAR-002', V.checkVariety(standard.variety, standard), V.checkVariety(flipBad, standard));
 
 const geneBad = V.clone(standard.genes);
-geneBad.perRace.human.bodyTypes.male.styles.pop();
+geneBad.drivesArt = true;
 kills('genes', 'AS-GENE-001', V.checkGenes(standard.genes, standard), V.checkGenes(geneBad, standard));
+const presetBad = V.clone(standard.genes);
+presetBad.presets.adultMale = 7;
+kills('preset-count', 'AS-GENE-001', V.checkGenes(standard.genes, standard), V.checkGenes(presetBad, standard));
 
 const portraitBad = V.clone(standard.portraitSample);
 delete portraitBad.portrait;
@@ -332,7 +335,7 @@ const mixSets = V.clone(standard.layeredSets);
 mixSets[0].memberGeneratorIds = [null, 'gen-a'];
 kills('generator-mix', 'AS-GEN-005', V.checkGeneratorCap(standard.generatorRoster, standard.layeredSets), V.checkGeneratorCap(standard.generatorRoster, mixSets));
 const capRoster = V.clone(standard.generatorRoster);
-capRoster.max = 4;
+capRoster.bakeOff = true;
 kills('generator-cap', 'AS-GEN-005', V.checkGeneratorCap(standard.generatorRoster, standard.layeredSets), V.checkGeneratorCap(capRoster, standard.layeredSets));
 
 const sexBad = V.clone(standard.sexedBodies);
@@ -425,6 +428,13 @@ kills('palette', 'AS-PAL-001', a9cGood, a9cBad(s => { s.a9c.palette.grayMush = t
 kills('lock-cycle', 'AS-LOCK-001', a9cGood, a9cBad(s => { s.slotMap.frameLayout.playbackWalk = [0, 1, 2, 1]; }));
 kills('lock-cap', 'AS-LOCK-001', a9cGood, a9cBad(s => { s.a9c.styleLock.colourUse[0].colours = s.masterPalette.colours.slice(0, 17); }));
 kills('melee', 'AS-MELEE-001', a9cGood, a9cBad(s => { s.a9c.melee.sample.scaled = true; }));
+kills('melee-body', 'AS-MELEE-001', a9cGood, a9cBad(s => { s.slotMap.frameLayout.rows.find(row => row.id === 'melee-swing').bodyDrawn = true; }));
+kills('class-kit', 'AS-VIS-001', a9cGood, a9cBad(s => { s.a9c.classKits.layers.pop(); }));
+kills('dwarf-px', 'AS-SEX-001', V.checkSexedBodies(standard.sexedBodies, standard), (function () {
+    const copy = V.clone(standard);
+    copy.sexedBodies.bodyPx.dwarf['adult-male'] = 42;
+    return V.checkSexedBodies(copy.sexedBodies, copy);
+})());
 kills('pm-mirror', 'AS-PM-001', a9cGood, a9cBad(s => { s.a9c.pmDefaults.mirror.samples.weapon.mirroredOntoHand = true; }));
 kills('visible-gear', 'AS-VIS-001', a9cGood, a9cBad(s => { s.a9c.visibleGear.layerSamples.push({ layer: 'cloak', drawn: true }); }));
 kills('tile-64', 'AS-SCALE-001', a9cGood, a9cBad(s => { s.geometry.tilePxNotAdopted = []; }));
@@ -457,8 +467,10 @@ const phrases = [
     'palette swap', 'scaffolding', 'grayscale', 'gray mush', 'LOCKED', '15:05 CT', 'about 16', 'about 32',
     'about 48', '1, 2, 1, 0', 'dawn, day, dusk, night and underground', 'colour-blind-safe',
     '10 to 20 percent', 'knockback', 'Owner may override', 'shares a square', '1.5 layers',
-    'Mirroring is allowed', 'fortress', 'pixel font', 'class garb is part of the race and class base body',
-    'PM assumption', 'not adopted', 'four quarters', 'table-with-items', 'true 2×', '708', '441', '216'
+    'Mirroring is allowed', 'fortress', 'pixel font', 'no class outfits',
+    'Facesets never change with gear', 'fixed upright', 'mostly still', 'PixelLab',
+    'Retro Diffusion', 'Nano Banana Pro', '2 authored', '18 race garbs', '36 px',
+    'not adopted', 'four quarters', 'table-with-items', 'true 2×', '708', '660', '216'
 ];
 phrases.forEach(phrase => check('phrase-' + phrase, md.indexOf(phrase) !== -1, 'missing'));
 check('view-doc', V.viewDocOk(md) && V.viewDocOk(JSON.stringify(standard)), 'view doc');

@@ -1,7 +1,7 @@
 # DEUS Master Asset Standard
 
 **Document ID:** `DEUS-ASSET-STANDARD-01`
-**Machine form:** `game/data/UF_AssetStandard.json` (`schemaVersion` `deus-asset-standard/1.3.1`)
+**Machine form:** `game/data/UF_AssetStandard.json` (`schemaVersion` `deus-asset-standard/1.4.0`)
 **Spell rows:** `game/data/UF_SpellVisualTable.schema.json` (JSON Schema draft 2020-12)
 **Checker:** `tools/art/validate_asset_standard.js`
 **Status:** Normative for new asset work. No art is produced by this document (DEC-007).
@@ -10,7 +10,7 @@ This standard is the required set for every DEUS asset: what must exist, what it
 
 Owner rulings win over older art docs. The conflicts and the winning line are in Appendix A. Questions this document does not answer are in Appendix B. How today's files sit against the standard is in Appendix C.
 
-The pose grid in **AS-HUM-016** is the standard's default and is marked **PM-proposed, Owner may amend**. Addenda A7 through A9 (Owner 12:56 CT through 13:24 CT, and the PM decisions marked on those rules) are §§2.13–2.16. Addendum A9b (Owner 13:30 CT through 14:10 CT) is §2.17. Addendum A9c (Owner 14:38 CT through 15:40 CT) is §2.18. Item 38 sets the RMMZ standard top-down 3/4 view and 4-way grid movement. Each A9c rule ends with a note for the future Deus Art manual.
+The pose grid in **AS-HUM-016** is the standard's default and is marked **PM-proposed, Owner may amend**. Addenda A7 through A9 (Owner 12:56 CT through 13:24 CT, and the PM decisions marked on those rules) are §§2.13–2.16. Addendum A9b (Owner 13:30 CT through 14:10 CT) is §2.17. Addendum A9c (Owner 14:38 CT through 15:58 CT) is §2.18. Item 38 sets the RMMZ standard top-down 3/4 view and 4-way grid movement. Items 39, 40 and 41 set the fixed melee grip, the 18 race garbs with class signature kits, and the preset pool. Each A9c rule ends with a note for the future Deus Art manual.
 
 ## 1. Global rules
 
@@ -32,7 +32,7 @@ The pose grid in **AS-HUM-016** is the standard's default and is marked **PM-pro
 
 **AS-GLOBAL-008.** Back-to-front draw order inside a layer: ground, strata faces and ramps, objects, the unit body, equipment, effects, UI. Map order is by row, then by Z layer (**AS-PROJ-001**). Item order inside that is footprint bottom line, then height offset (**AS-PLAY-001**).
 
-**AS-GLOBAL-009.** Equipment on a unit draws in the `DEUS_Anim` slot order, bottom to top: feet, legs, waist, armor, torso, neck, shoulders, arms, hands, ring1, ring2, head, eyes, back, offHand, shield, mainHand, weapon.
+**AS-GLOBAL-009.** The `DEUS_Anim` data order, bottom to top, stays: feet, legs, waist, armor, torso, neck, shoulders, arms, hands, ring1, ring2, head, eyes, back, offHand, shield, mainHand, weapon. Pixels drawn on a charset follow **AS-VIS-001**. Slots outside that stack are items, icons, portraits and world sprites.
 
 **AS-GLOBAL-018.** Thirty-two Z layers (−16..+15) and exactly nine races stay (human, elf, halfling, dwarf, gnome, dragonborn, half-elf, half-orc, tiefling). Which race lives on which layer is open (Appendix B). A 9-layer test configuration may still exist. It is not the world. Owner items 26 and 29 replace the layer height. One Z layer is 5 ft and 48 px. Partial height is four quarters of 1.25 ft, 12 px each. `stratumPx` is `[12, 12, 12, 12]`. The earlier 10 ft layer, and the five 2 ft strata, are not the geometry. The numbers are **AS-SCALE-001** and **AS-QTR-001**. A 64 px tile was not adopted.
 
@@ -134,32 +134,15 @@ Also required, from the crosswalk, and stored the same way: `ROOT_PELVIS`, `PALM
 
 **AS-HUM-014.** `dominantHand` is `right` or `left` (charter: 88% right, 12% left). `HAND_PRIMARY` binds to the dominant hand. Grips: `ONE_HANDED`, `OFF_HAND`, `TWO_HANDED`, `VERSATILE`. Presentation states: `HELD`, `HIP`, `BACK`, `SLUNG`, `HIDDEN`. A heraldic shield, an eye patch, or any other asymmetrical piece is drawn for the facing it needs. The only mirror is **AS-MIRROR-001**.
 
-**AS-HUM-003.** Part layers, back to front where they overlap the body: hair back (behind the body), body/skin, eyes, racial ears, horns, tail, scales, hair front, beard. Racial parts exist on the races that have them (elf and gnome and halfling ears, tiefling and dragonborn horns, tiefling tail, dragonborn scales). They are parts, not extra character sheets.
+**AS-HUM-003.** Race features sit on the body template: ears on elf, gnome and halfling; horns on tiefling and dragonborn; a tiefling tail; dragonborn scales. They are features of that template, not a genetics pick and not extra character sheets. Head, hair and beard are the preset in **AS-GENE-001**.
 
 **AS-HUM-004.** Catalogue paper-doll z-order, matching the 34 existing equipment rows: `legs` 1, `torso` 2, `clothes` 2 (the clothes alias of torso), `head` 3, `back` 4, `shield` 5, `held` 6, `fx` 7. The 18 runtime slots still draw in **AS-GLOBAL-009** order. The coarse paper-doll layer is what the catalogue stores.
 
-**AS-HUM-008.** Visible loci and the part or ramp they select. Inheritance rules stay in the sim. Today `geneticsFor` stores `variation`, `skinTone`, `hairColor`, `hairStyle`, `beard`, `clothing`, and inherits only `skinTone` and `hairColor`.
+**AS-HUM-008.** Visible looks are the preset pool in **AS-GENE-001**. A player picks one preset and one of three skin and hair palette swaps. Sim genetics may store stats. They do not select a sprite, a face, a hair style or a colour. `geneticsLoci` is retired as an art selector. Race features in **AS-HUM-003** stay on the body template. `dominantHand` is still `right` or `left` and binds `HAND_PRIMARY`.
 
-| Locus | Values | Maps to |
-|---|---|---|
-| `skinTone` | 1, 2, 3 | body part, ramp family `RAMP_SKIN` |
-| `hairStyle` | 1, 2, 3, 4 | `hair-front` and `hair-back` |
-| `hairColor` | brown, blonde, black, red | ramp family `RAMP_HAIR` |
-| `greying` | natural, salt-and-pepper, grey, white | `RAMP_HAIR_GREY` on the hair parts |
-| `beard` | 0 none, 1 goatee, 2 full, 3 braided | beard part, same hair ramp |
-| `clothing` | 1, 2, 3, 4 | cloth part (today's bake only) |
-| `balding` | `receding`, `crown`, `advanced` | three overlays on any hair style (**AS-GENE-001**) |
-| `height` | low, mid, high | drawn height inside the scale-chart min/target/max |
-| `build` | slight, average, broad | drawn width inside the scale-chart min/target/max |
-| `horns` | 0, 1, 2 | `horns` part |
-| `tail` | 0, 1 | `tail` part |
-| `ears` | the race's ear part | `ears_<race>` |
-| `scaleColor` | a step of family `RAMP_SCALE` | dragonborn `scales` part. Step count is open |
-| `dominantHand` | right, left | socket binding |
+**AS-HUM-018.** Horns, tail, ears and dragonborn scale colour are race features on the body template. They do not change the frame class. Body height is the race height in **AS-PM-001**, including the dwarf male and female templates at 36 px.
 
-**AS-HUM-018.** Height, build, horns, tail, ears and dragonborn scale colour are the body-variety loci in the table above. They do not change the frame class.
-
-**AS-HUM-007.** Greying is the four-step ramp in that table, not a tint. The current baker's elder colour is a single silver ramp. Silver is the legacy bake of the white end (Appendix C), not an extra step. Balding is the three overlays in **AS-GENE-001** (PM decision 13:02 CT, Owner may amend). They sit on any hair style.
+**AS-HUM-007.** Greying and balding belong to the elder presets only. There is no separate balding overlay and no greying ramp painted onto an adult preset. The current baker's elder silver is the legacy bake (Appendix C).
 
 **AS-HUM-006.** The age axis is required. This standard requires three templates and does not freeze any further step.
 
@@ -208,11 +191,11 @@ Also required, from the crosswalk, and stored the same way: `ROOT_PELVIS`, `PALM
 | unconscious | Row `unconscious`, distinct from prone and from death |
 | invisible | The body is replaced by a 1 px selout contour in `RAMP_CONDITION_INVISIBLE` (opaque pixels) for viewers who can perceive the creature, plus the condition icon. Everyone else gets no sprite. There is no alpha and no shimmer shader |
 
-**AS-HUM-005.** The face shows the armour and helmet the charset is wearing. It does not show a cloak or a collar. Gear on the face is layer 6, and that layer is armour and helmet only (**AS-FACE-002**, **AS-VIS-001**).
+**AS-HUM-005.** A faceset never changes with gear. It is the face preset, the preset hair, the race background and the 8 expressions in **AS-FACE-003**. Armour, helmets and class headwear are charset layers only (**AS-FACE-002**, **AS-VIS-001**).
 
-**AS-HUM-015.** Each of the nine races has a default garb for each of the 12 SRD classes (barbarian, bard, cleric, druid, fighter, monk, paladin, ranger, rogue, sorcerer, warlock, wizard) and a light, medium and heavy armour set. That is 15 outfit ids and 135 art variants. The outfit id is race-neutral (`outfit_class_wizard`, `outfit_armor_heavy`). The art key is `outfitId__race` (**AS-ITEM-002**).
+**AS-HUM-015.** Each race has one standard garb per sex, fitted to that race's body template and drawn in the race palette. Nine races by two sexes is 18 garbs. Light, medium and heavy armour stay as three race-neutral armour ids with custom pixels per race (`outfit_armor_light`, `outfit_armor_medium`, `outfit_armor_heavy`). That is 27 armour variants. The art key is `outfitId__race` for armour and `race_garb_<sex>__<race>` for the garb (**AS-ITEM-002**). Class outfit ids are icon-only. They are not required sprite variants. The former class-outfit slot ids stay reserved.
 
-Owner 13:14 CT: these 135 outfits are fully custom drawings per race. The silhouette name below is the slot pattern, not a shared drawing. Ramp `RAMP_RACE_<RACE>` and motif `MOTIF_RACE_<RACE>` still apply. Weapons, tools and accessories are not in this custom set (**AS-GEAR-001**).
+Owner 13:14 CT, as amended by item 40: armour pixels stay custom per race. The silhouette name below is the slot pattern for armour. Ramp `RAMP_RACE_<RACE>` and motif `MOTIF_RACE_<RACE>` still apply. Weapons, tools and accessories are not in this custom set (**AS-GEAR-001**). Class signature kits are **AS-VIS-001**.
 
 | Silhouette | Runtime slots | Paper-doll layers |
 |---|---|---|
@@ -220,9 +203,9 @@ Owner 13:14 CT: these 135 outfits are fully custom drawings per race. The silhou
 | medium | feet, legs, torso, arms, shoulders | legs, torso |
 | heavy | feet, legs, waist, torso, arms, shoulders, hands, head | legs, torso, head |
 
-Class garb uses light, except cleric, fighter and paladin, which use medium. Motifs: `MOTIF_CLASS_<CLASS>` and `MOTIF_ARMOR_<WEIGHT>`. The full 135-row matrix is `outfitMatrix` in the JSON. The outfit ids stay item and icon ids. **AS-VIS-001** draws each class row as the race and class base body (`spriteDraw` `base-body`) and each armour-weight row as an armour layer. Capes are not drawn. Long robes are part of that base body. Large shields and bows keep their own frames (**AS-HUM-017**).
+Armour motifs are `MOTIF_ARMOR_<WEIGHT>`. `outfitMatrix` is the 27 armour rows. Each row is an armour layer (`spriteDraw` `armour-layer`). Race garbs are the 18 rows in `raceGarbs`. A generic cape is not drawn. The wizard robe, the bard cape and the warlock cloak are kit layers. Large shields and bows keep their own frames (**AS-HUM-017**).
 
-**AS-HUM-016.** PM-proposed, Owner may amend. Body poses are drawn once per body template. Every non-deforming garb and armour layer is drawn frame-for-frame on that same grid. A weapon or shield does not rotate at runtime. Each frame stores an anchor `{x, y, angle}`. `angle` is one of `A0`, `A45`, `A90`, `A135`, `A180`, `A225`, `A270`, `A315`, and each of those is a pre-drawn cel.
+**AS-HUM-016.** PM-proposed, Owner may amend, and item 39 amends melee. Body poses are drawn once per body template. Race garb, kit layers and armour are drawn on that grid. A weapon or shield does not rotate at runtime. Each body frame stores one right-hand grip anchor. The eight baked weapon cels are `A0`, `A45`, `A90`, `A135`, `A180`, `A225`, `A270` and `A315`. Two of those angles are authored. The other six are lossless 90 degree turns and flips, baked offline (**AS-MELEE-001**).
 
 Default pose grid (four directions each):
 
@@ -234,13 +217,13 @@ Default pose grid (four directions each):
 
 Walk stays the RMMZ 3-column cycle (**AS-GLOBAL-013**).
 
-**AS-HUM-017.** Large shields and bows mid-draw (`large-shield`, `bow-draw`) have their own frames for every pose in the grid. They are not one angled cel. Capes are not a drawn layer. Long robes are part of the class base body (**AS-VIS-001**). The retired names are `deformingRetired` in the JSON.
+**AS-HUM-017.** Large shields and bows mid-draw (`large-shield`, `bow-draw`) have their own frames for every pose in the grid. They are not one angled cel. A generic cape is not a drawn layer. The wizard robe, the bard short cape and the warlock jagged cloak are class kit layers (**AS-VIS-001**). `deformingRetired` names `generic-cape` only.
 
 ### 2.4 Faces
 
 **AS-FACE-001.** Every race has its own faceset background, using that race's ramp and motif from **AS-HUM-015**.
 
-**AS-FACE-002.** Layers, bottom to top: (1) race background, (2) optional faction frame/trim, (3) race body base (shoulders, neck, skin, age applied), (4) face (features, age lines, expression), (5) hair and facial hair, (6) armour and helmet only, (7) overlays (condition marks, scars, paint, tattoos). Collar and cloak are not on this stack. The machine layer id for (6) stays `gear`, and `gearKinds` may name only `armour` and `helmet`.
+**AS-FACE-002.** Layers, bottom to top: (1) race background, (2) preset face, (3) preset hair, including facial hair that belongs to that preset. The 8 expressions are the cells, not an extra layer. A faceset has no armour, no helmet, no class headwear and no other gear. Faction identity is trim, banners and buildings, not the face. Greying and balding appear only when the preset is an elder preset. Retired face slot ids that named a gear layer or a genetic-feature layer stay reserved.
 
 **AS-FACE-003.** The 4 by 2 sheet is exactly these expressions, index order: 0 neutral, 1 happy, 2 angry, 3 sad, 4 surprised, 5 hurt, 6 determined, 7 afraid.
 
@@ -287,9 +270,9 @@ Walk stays the RMMZ 3-column cycle (**AS-GLOBAL-013**).
 
 ### 2.7 Items and icons
 
-**AS-ITEM-001.** Items are race-neutral SRD items. There is one Plate Armor, one item id, one stat block. There is no Elven Plate Armor, no Dwarven Longsword, and no race token inside the item id. This covers armour, weapons, shields and the class garb in **AS-HUM-015**. The 135 outfits are art variants of 15 outfit ids, not 135 items.
+**AS-ITEM-001.** Items are race-neutral SRD items. There is one Plate Armor, one item id, one stat block. There is no Elven Plate Armor, no Dwarven Longsword, and no race token inside the item id. This covers armour, weapons and shields. Armour weights keep race art variants. Class outfit ids, when they remain, are icon-only. They are not required sprite variants.
 
-**AS-ITEM-002.** The layer key is `<itemId>__<race>`, for example `outfit_class_wizard__elf` and `armor_plate__dwarf`. Lookup order: the race key, then `<itemId>__human`, then nothing. A missing variant is not tinted and is not replaced with another race's art. The runtime file is `$UF_Layer_<itemId>__<race>.png`. For weapons, tools and accessories the race key selects the ramp and the decal (**AS-GEAR-001**), not a second silhouette. Class garb and armour weights stay custom drawings.
+**AS-ITEM-002.** The layer key is `<itemId>__<race>`, for example `outfit_armor_heavy__elf` and `armor_plate__dwarf`. Lookup order: the race key, then `<itemId>__human`, then nothing. A missing variant is not tinted and is not replaced with another race's art. The runtime file is `$UF_Layer_<itemId>__<race>.png`. For weapons, tools and accessories the race key selects the ramp and the decal (**AS-GEAR-001**), not a second silhouette. Armour weights stay custom drawings. A class outfit id has no required race art variant.
 
 Weapon presentation still uses the crosswalk's 17 families (`BLADE_ONE_HAND` through `UNARMED`). The closed SRD weapon list counted in the presentation data is 37. Armour plus shield is 13: padded, leather, studded leather, hide, chain shirt, scale mail, breastplate, half plate, ring mail, chain mail, splint, plate, shield. The material heading says 18 and the list names 20 (`IRON`, `STEEL`, `BRONZE`, `COPPER`, `SILVER`, `GOLD`, `ADAMANTINE`, `MITHRAL`, `WOOD_LIGHT`, `WOOD_DARK`, `LEATHER`, `HIDE`, `BONE`, `HORN`, `LINEN`, `WOOL`, `SILK`, `STONE`, `GLASS`, `CRYSTAL`). Icon slots cover the 20 names. The count mismatch is in Appendix A.
 
@@ -432,36 +415,17 @@ Fog is a drawn dither with binary alpha. UI pulse is two drawn frames, not a tin
 
 **AS-VAR-002.** PM decision 13:01 CT, Owner may amend. Season states on those pieces are palette-swap frames of the base drawing, on `RAMP_SEASON_SPRING`, `RAMP_SEASON_SUMMER`, `RAMP_SEASON_AUTUMN` and `RAMP_SEASON_WINTER`. That swap is precomputed ramp data. It is not a runtime ColorMatrix. A horizontal flip is an offline bake, and only for a piece whose shading is light-neutral. A piece drawn with the top-left light is not flipped.
 
-**AS-GENE-001.** PM decision 13:02 CT, Owner may amend. Counts, per race and per adult body type `male` and `female`:
-
-| Locus | Count |
-|---|---|
-| Hair styles | 12, of which 3 or 4 are race-distinctive |
-| Balding overlays | 3: `receding`, `crown`, `advanced`, on any style |
-| Facial hair | 8: `stubble`, `short`, `full`, `long`, `braided`, `mustache`, `goatee`, `forked` |
-| Dwarf facial hair | those 8 plus at least `dwarf-plait` |
-| Face shape | 4: `oval`, `round`, `square`, `long` |
-| Eyes | 5 shapes; colour from `RAMP_EYE` |
-| Brows | 4 |
-| Nose | 5 |
-| Mouth | 4 |
-| Ears | 3 ids per race |
-| Jaw | 3 |
-| Skin | ramp `RAMP_SKIN`, steps 1, 2, 3 |
-| Markings | 4 overlays: `freckles`, `moles`, `birthmark`, `patch` |
-| Race features | 3 or 4 option ids per race |
-
-Hair colour is one ramp, `RAMP_HAIR`, with 12 steps. The legacy names `black`, `brown`, `blonde` and `red` are four of the steps. The other eight ids are `step-05` through `step-12` until the Owner names them. Race-specific hair colours are an empty list until named (Appendix B). Greying stays the four steps in **AS-HUM-007**. No step gets its own drawing. The sim mixes the parents' genes and may apply a rare mutation. Age layers `child`, `adult` and `elder` sit on the same gene ids so the face stays recognisable. Races in `beardlessRaces` get no facial-hair parts. That list is empty until the Owner names a race (Appendix B). Option pictures for `rf1`–`rf3` are not named here.
+**AS-GENE-001.** Owner 15:54 CT. Children do not visibly inherit a parent's face or hair. The part library is retired. Each race has a fixed preset pool: 8 male and 8 female adult looks, 2 elder looks per sex and 2 child looks per sex. That is 24 presets per race and 216 for the nine races. Each preset is one complete head, hair and face for the charset and the matching 144 by 144 faceset, with the 8 expressions in **AS-FACE-003**. Three skin and hair palette swaps are applied in game from master-palette ramps. They are not extra drawings. The player picks a preset and one colour variant at character creation. Factions are trim, banners and building styles. Sim genetics may remain for stats only. Catalogue category `PRESET`. Slot example `FA.PRESET.HUMAN.M.01.NEUTRAL.C0`. Retired part-library slot ids stay reserved.
 
 **AS-PORT-001.** Owner 13:03 CT. Every non-face entity (item, creature, resource, building, workstation, spell) has a 32 by 32 icon and a 144 by 144 portrait for the inspect, tooltip and crafting view. The portrait uses a per-category background, the same palette and selout as the icon, and the rarity overlay from **AS-ICON-003**. A race-styled item uses that race's background. A race-neutral item has one portrait per race art variant. The file name is in **AS-STYLE-001**. A catalogue row that does not yet carry the fields is `unknown`. A row that has one of the two and not the other fails.
 
 ### 2.15 Head layers, elders, gear, mirrors, poses, biome files (A9)
 
-**AS-HEAD-001.** Owner 13:14 CT. Hair, balding, beards and head-only race features are a grid of 12 frames: directions S, W, E, N, and head-state indices 0, 1 and 2, one frame each, each with an anchor. The gestures those indices draw are not named (Appendix B). Every body-template frame stores `headAnchor` `[x, y]` and `headState` in `0..2`. Long hair may add frames on `death` and `dodge` only. No other extra row is allowed. Placement is the anchor. There is no runtime transform.
+**AS-HEAD-001.** Owner 13:14 CT, as amended by item 41. A preset head is one complete look on a grid of 12 frames: directions S, W, E, N, and head-state indices 0, 1 and 2, one frame each, each with an anchor. The gestures those indices draw are not named (Appendix B). Every body-template frame stores `headAnchor` `[x, y]` and `headState` in `0..2`. Long hair on a preset may add frames on `death` and `dodge` only. Placement is the anchor. There is no runtime transform and no combinatorial hair, beard or balding library.
 
-**AS-ELDER-001.** Only the stooped elder body is a new sheet (**AS-HUM-019**). Offsets apply to armour, helmet and hair, which use the adult sheets. Each body frame has a torso offset and a head offset, in pixels, that move those adult layers onto the elder body. The checker flags an elder-specific armour, helmet or hair sheet, and any frame index with no offset. The numbers shipped here are a baseline stoop (`torso [0, 2]`, `head [0, 4]`) so the table is complete; authored frames replace the pair. Elder base bodies now vary by race and class, because class garb is in the base body. That is 216 elder sheets. Whether that count is too many is open (Appendix B). It is not reduced here.
+**AS-ELDER-001.** Only the stooped elder body is a new sheet (**AS-HUM-019**). There are 18 elder bodies: 9 races by male and female. Dwarf elder male and dwarf elder female are 36 px, the same height as the dwarf adult templates. Offsets apply to armour, helmet and the adult preset head of the same sex. Each body frame has a torso offset and a head offset, in pixels. The checker flags an elder-specific armour, helmet or preset-head sheet, and any frame index with no offset. The numbers shipped here are a baseline stoop (`torso [0, 2]`, `head [0, 4]`) so the table is complete; authored frames replace the pair. Class does not multiply elder bodies. Elder looks in the preset pool are 2 per sex per race, and those presets already include greying or balding.
 
-**AS-GEAR-001.** An accessory, a weapon or a tool has one silhouette. Race selects `RAMP_RACE_<RACE>` and a motif decal whose anchor is stored per frame and per angle. A second silhouette for the same item id fails. The 135 class and armour outfits stay custom per race (`pixels: custom-per-race` on `outfitMatrix`).
+**AS-GEAR-001.** An accessory, a weapon or a tool has one silhouette. Race selects `RAMP_RACE_<RACE>` and a motif decal whose anchor is stored per frame and per angle. A second silhouette for the same item id fails. The 27 armour rows stay custom per race (`pixels: custom-per-race` on `outfitMatrix`). The 18 race garbs are custom per race and sex. Class kits are drawn per adult body template. Class outfit ids are not a custom sprite set.
 
 **AS-MIRROR-001.** A layer may use this bake only when it is flagged `symmetric` and its shading is light-neutral. The mirror is an offline bake from W to E. The E frame is then stored. The runtime does not flip. A mirrored frame on any other layer fails this rule. **AS-PM-001** is the later Owner rule for west-from-east on bodies, gear layers and creatures. Weapons and shields stay on the hand anchors under that rule. Furniture uses **AS-FURN-001**.
 
@@ -521,7 +485,7 @@ The runtime packs 2048 by 2048 atlases. The cell grid is 42 by 42 squares of 48 
 
 **AS-GEN-003.** A prompt-template version is promoted only when an A/B comparison beats the current version's yield. Candidates stay candidates until then. Adapters for each generator are built from the one shared field template, not from a second spec.
 
-**AS-GEN-004.** Generator records have `id` and `version`. No generator is assigned in this standard (`status: unassigned`). Routing sends a category to the generator with the best current yield per cost, and that choice is re-benchmarked on the fixed golden test set. The golden checks are palette, outline, anchor and style, against the shared reference library. A style LoRA or fine-tune is `optional-later` and needs an Owner decision after approved art exists. It is not a required set. The roster size, and the ban on mixing inside a layered set, are **AS-GEN-005**. No art is generated here.
+**AS-GEN-004.** Owner 15:44 CT. PixelLab is the primary generator for every category. Retro Diffusion is standby and is not assigned to a category. Nano Banana Pro is for concepts only and is not a production generator. The multi-generator bake-off is off. Records still have `id` and `version`. The golden checks stay palette, outline, anchor and style, on the fixed golden test set. A style LoRA or fine-tune is `optional-later` and needs an Owner decision after approved art exists. It is not a required set. One generator per layered set is **AS-GEN-005**. No art is generated here.
 
 ### 2.17 Source sheets, sex, slot ids, anchors (A9b)
 
@@ -533,9 +497,9 @@ Owner 13:30–13:37 CT, 13:50 CT, 13:56 CT and 14:09–14:10 CT. No art is gener
 
 **AS-PREVIEW-001.** Every generated asset is shown in an animated in-game scene at 1 source pixel to 1 screen pixel, sent to the Owner in chat, and merged only after yea. Nay sends it back to be generated again. The preview uses the drawn frames at 1:1.
 
-**AS-GEN-005.** Routing stays one generator per category (**AS-GEN-004**). A paper-doll set and a creature family each carry one generator id. A set whose members disagree fails. The named roster is two or three generators when `status` is `assigned`, and empty while `unassigned`. No generator is named in this lane.
+**AS-GEN-005.** One generator per category and per layered set. That generator is PixelLab. A paper-doll set and a creature family each carry that one id. A set whose members disagree fails. Retro Diffusion and Nano Banana Pro are not mixed into a layered set.
 
-**AS-SEX-001.** Each of the nine races has `body:<race>:adult-male`, `body:<race>:adult-female`, `body:<race>:elder-male`, `body:<race>:elder-female` and `body:<race>:child`. The child body is its own sheet, drawn at the child frame class. Hair, beards and face bases are per sex (`face:<race>:male` and `face:<race>:female`). Age still sits on those bases (**AS-GENE-001**). Class garb is in the race and class base body (**AS-VIS-001**). Armour and helmet are drawn on `adult-male`, `adult-female` and `child`. The art key `outfitId__race__body` remains the item and icon key. Elder armour, helmet and hair stay the adult sheets of the same sex, placed by the offset table (**AS-ELDER-001**). Children have no class. Child garb is part of the child base body.
+**AS-SEX-001.** Each of the nine races has `body:<race>:adult-male`, `body:<race>:adult-female`, `body:<race>:elder-male`, `body:<race>:elder-female` and `body:<race>:child`. The child body is its own sheet, drawn at the child frame class, and it is not split by sex. Dwarf `adult-male`, `adult-female`, `elder-male` and `elder-female` are 36 px tall. The head is a preset from **AS-GENE-001**, grouped by sex, not a hair and beard part library. The base body is the body template plus that sex's race garb. Armour and helmet are drawn on `adult-male`, `adult-female` and `child`. Elder armour, helmet and the preset head stay the adult sheets of the same sex, placed by the offset table (**AS-ELDER-001**). Children have no class kit. Child clothing is part of the child body. The art key `outfitId__race__body` remains the armour and icon key.
 
 **AS-SEX-002.** `sexVariant` is `none` or `dimorphic`. A dimorphic creature has a male set and a female set, and each of those has `base`, `tamed` and `saddle`. A `none` creature has no sex set. A creature that is not in the dimorphic list is `none`. The list was checked by exact name against `game/data/srd51/creatures.json` (317 entries). These 16 names are in that file, once each, and each is a beast: Lion, Deer, Elk, Giant Elk, Boar, Giant Boar, Goat, Giant Goat, Draft Horse, Riding Horse, Warhorse, Pony, Elephant, Mammoth, Baboon, Ape. These five are not in that file: Cattle, Sheep, Pig, Chicken, Duck. Pair labels use the Owner's words where that creature is the one named: lion/lioness, stag/doe, boar/sow, stallion/mare, bull/cow, ram/ewe, rooster/hen. The other rows are labelled `male/female`. Wolf is the `none` sample. Saddle here is the visual marker in **AS-TAME-001**. It is not a creature equipment slot (**AS-TAME-002**).
 
@@ -557,7 +521,7 @@ Sex tokens are `M`, `F` and `C` (the child body, which is not split by sex). Cre
 
 **AS-ANCHOR-001.** Generators do not supply anchors. After a generation the tool reads the transparent-pixel mask, the silhouette, the foot line and the head outline. It finds the feet at the bottom centre, the head centre, and the main-hand and off-hand points. It shifts the frame by whole pixels until those landmarks sit on that cell's slot-map anchor, and it writes the detected points onto the slot (**AS-ID-001**). Whole-pixel shifts, and trimming transparent margins, are not scaling (**AS-PIPE-001**). A frame that would clip, or that has the wrong proportions, the wrong size, or head drift against the body, is rejected and generated again. A pose reference with the body already placed may be sent. The usual correction is 1 or 2 px. The reference is not required on every call.
 
-**AS-EQUIP-001.** Every body frame in the 236-frame table stores `mainHand` and `offHand` as integer pairs, a `gripAngle` from the eight pre-drawn angles (**AS-HUM-016**), and `drawOrder` of `in-front` or `behind`. Facing down (`S`) is in front of the body. Facing up (`N`) is behind it. The side facings in this file are `in-front`. That value is a baseline so every frame has a flag. Authored frames replace it. A weapon or a shield is drawn once per grip pose and pinned to those anchors by the compositor. It is not redrawn per frame, per race or per body. The hand numbers in this file are the stand-down pair from **AS-HUM-002** (`mainHand` 14, 30 and `offHand` 34, 30) and grip `A0`. Authored frames replace those too.
+**AS-EQUIP-001.** Every body frame in the 236-frame table stores `mainHand` and `offHand` as integer pairs, one right-hand grip anchor, and `drawOrder` of `in-front` or `behind`. The melee grip is fixed and upright. Facing down (`S`) is in front of the body. Facing up (`N`) is behind it. The side facings in this file are `in-front`. That value is a baseline so every frame has a flag. Authored frames replace it. A weapon or a shield is an upright sprite plus baked angles, pinned to those anchors by the compositor. It is not redrawn per frame, per race or per body, and the runtime does not rotate it. The hand numbers in this file are the stand-down pair from **AS-HUM-002** (`mainHand` 14, 30 and `offHand` 34, 30). Authored frames replace those too. Cast, bow and work tools keep their body pose rows.
 
 ### 2.18 Readable fantasy, quarters, and visible gear (A9c)
 
@@ -577,13 +541,13 @@ Manual note. Furniture and placeables have four facings. A symmetric object may 
 
 **AS-TERR-001.** Items 19 and 34. Terrain is 48 px PixelLab tiles-pro Wang tiles, rendered by a custom dual-grid tile renderer. That replaces 24 by 24 tiles assembled into an RMMZ A2 autotile. Big features are separate map objects. Each of the six biomes has 3 to 5 ground types, joined in a chain of transition pairs, with 2 or 3 plain variants each. The names `ground-a`, `ground-b` and `ground-c` are structural. What `COLD` and `WILD` look like stays open (Appendix B). Detail decals stay 24 px, on an overlay: pebbles, tufts, cracks and leaves. Wang tiles, decals and the 12, 24 and 48 px item sprites are native 1:1. They are not scaled. The renderer is a follow-on on the depth-demo lane. It is not code in this lane.
 
-Trial findings, recorded as generation rules and not run here. Characters are requested at size 42, and land 42 to 43 px tall in the 48 px frame. Animation is skeleton-v3 on bare create-character-v3 bodies, then layer propagation to armour, helmet and hair. Weapons and shields are anchored sprites, not propagated layers. Anchors are per row. The south walk row sits 2 px low, and **AS-ANCHOR-001** corrects that row. Weapon angles use the rotate tool, one generation per angle, which feeds the grip angles. Prompts must force the RMMZ standard top-down 3/4 view. Small item world sprites remain an open test (Appendix B).
+Trial findings, recorded as generation rules and not run here. Characters are requested at size 42, and land 42 to 43 px tall in the 48 px frame. Animation is skeleton-v3 on bare create-character-v3 bodies, then layer propagation to armour, helmet, the preset head and class kit layers. Weapons and shields are anchored sprites, not propagated layers. Anchors are per row. The south walk row sits 2 px low, and **AS-ANCHOR-001** corrects that row. A melee weapon is an upright sprite plus 2 authored angles. Lossless 90 degree turns and flips bake that set to 8 frames. Prompts must force the RMMZ standard top-down 3/4 view. PixelLab is the primary generator (**AS-GEN-004**). Small item world sprites remain an open test (Appendix B).
 
 Catalogue categories `WANG` and `DECAL`. Slot examples `WG.TEMPERATE.GRASS.DIRT.01` and `DC.TEMPERATE.LEAF.01`.
 
 Manual note. Terrain is 48 px tiles-pro Wang on a dual-grid renderer. Each biome has 3 to 5 ground types in a transition chain, with 2 or 3 plain variants. Detail decals stay 24 px.
 
-Trial note. Request characters at size 42, animate with skeleton-v3 on create-character-v3 bodies, then propagate armour, helmet and hair. The south walk row sits 2 px low. Prompts must force the RMMZ standard top-down 3/4 view. Small item world sprites remain an open test.
+Trial note. Request characters at size 42, animate with skeleton-v3 on create-character-v3 bodies, then propagate armour, helmet, the preset head and class kits. Weapon angles are 2 authored angles plus lossless 90 degree turns and flips. The south walk row sits 2 px low. Prompts must force the RMMZ standard top-down 3/4 view. PixelLab is the primary generator. Small item world sprites remain an open test.
 
 **AS-TRACK-001.** Item 20. Ground marks are boot, bare, paw and hoof prints on snow, mud, sand, blood and wet ground. Each has four directions and three fade steps (the allowed range is 2 or 3). A worn path may become a road. Catalogue category `GROUNDMARK`. Slot example `GM.SNOW.BOOT.D.F0`.
 
@@ -643,25 +607,61 @@ Manual note. The palette is saturated and controlled, with no gray mush. Value c
 
 **AS-LOCK-001.** Item 33. These defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision is included. Light is top-left. The outline is 1 px and self-tinted on characters and items, and none on terrain. The master is the single S/T master in **AS-GLOBAL-004**: 226 active colours, 30 reserved slots, 256 slots, and no shrink of that list. Per-asset caps, drawn from that master, are about 16 for a small item or icon, about 32 for a character or creature sheet including its layers, and about 48 for a tileset. The checker uses those counts as maxima. Race and biome sub-palettes are drawn from the same master. The grayscale rules still apply.
 
-Frame budgets replace the 3.5 frames-per-row average. Walk is 3 authored frames per direction, in RMMZ column order, played as the RMMZ 4-step cycle 1, 2, 1, 0. Idle is 4. Attack is 6, on `melee-swing` and `thrust`. Cast is 6, on the three cast rows. Work is 6, on hammer, saw, chop, dig, stir, carry and kneel, and on the section F rows. Death is 6. Those extension rows are DEUS rows in RMMZ-compatible form, on the 60 fps clock. Hurt, dodge, parry, bow, crossbow, thrown, sneak, climb, prone, unconscious, sleep and sit keep their A9 frame counts. They are not renamed by this budget. Effects use the same palette and outline. Additive glow is the only place maximum brightness is allowed. Grading for dawn, day, dusk, night and underground is a fixed palette shift, not a colour matrix. Icons are 32 px and match the world sprites. Markers for selection, faction, summon controller and low HP are colour-blind-safe and shape-coded: diamond, square, triangle and circle. Colour is not the only channel.
+Frame budgets replace the 3.5 frames-per-row average. Walk is 3 authored frames per direction, in RMMZ column order, played as the RMMZ 4-step cycle 1, 2, 1, 0. Idle is 4. Attack is 6 as weapon-rotation timing on the melee weapon sprite. The body rows `melee-swing` and `thrust` are not drawn. Cast is 6, on the three cast rows, and those body rows stay. Work is 6, on hammer, saw, chop, dig, stir, carry and kneel, and on the section F rows, and those body rows stay. Bow rows stay. Death is 6. Those extension rows are DEUS rows in RMMZ-compatible form, on the 60 fps clock. Hurt, dodge, parry, bow, crossbow, thrown, sneak, climb, prone, unconscious, sleep and sit keep their A9 frame counts. They are not renamed by this budget. Effects use the same palette and outline. Additive glow is the only place maximum brightness is allowed. Grading for dawn, day, dusk, night and underground is a fixed palette shift, not a colour matrix. Icons are 32 px and match the world sprites. Markers for selection, faction, summon controller and low HP are colour-blind-safe and shape-coded: diamond, square, triangle and circle. Colour is not the only channel.
 
-Estimate, which replaces 30 rows × 3.5 × 4 = 420 cells. The 30 rows at the budgets above are 141 frames per direction and 564 cells. Section F adds 6 × 6 × 4 = 144 cells. A full layer design is 708 cells. The bounding sheet for 6-frame rows and 36 rows is 1152 by 1728, under the 2048 cap. The committed example in **AS-SRC-001** stays 768 by 1440. The PM re-runs the sizing cost on 708 cells per full sheet, not on 420. Catalogue category `MARKER`. Slot example `CB.SELECT.DIAMOND`.
+Estimate, which replaces 30 rows × 3.5 × 4 = 420 cells. The 30 rows at the budgets above are 141 frames per direction and 564 cells. Section F adds 6 × 6 × 4 = 144 cells. Item 33's full layer is 708 cells. Item 39 drops the two melee body rows, 12 frames by 4 directions = 48 cells, so a drawn full layer is 660 cells. The bounding sheet for the drawn rows is 1152 by 1632, under the 2048 cap. The committed example in **AS-SRC-001** stays 768 by 1440, and the two melee rows stay reserved on that example. Catalogue category `MARKER`. Slot example `CB.SELECT.DIAMOND`.
 
-Manual note. Style defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision keeps one master, caps colours, and sets the frame budgets. Re-run the cost on 708 cells, not on the 3.5 average.
+Manual note. Style defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision keeps one master, caps colours, and sets the frame budgets. Item 33 counted 708 cells. Item 39 draws 660.
 
-**AS-MELEE-001.** Item 35. The weapon is a separate sprite pinned to the per-frame hand anchors. Angles come from the rotate tool, one generation per angle. The 6-frame attack is wind-up, raise, arc-1, arc-2, arc-3 and recovery. The strike frame is arc-3. It is held longer: 12 frames at 60 fps, against 6 frames for the other attack frames. Swing types are overhead chop (axes and hammers), side slash (swords), thrust (spears and daggers), and a heavier, slower arc for two-handers. The strike frame carries a hit spark. A heavy hit uses 1 or 2 px of knockback, as a drawn offset, not a filter. Weapons are drawn 10 to 20 percent larger than the body-scale length, in native pixels. The longsword sample is 20 px body-scale and 24 px drawn. They are not scaled. Catalogue category `SPARK`. Slot example `SP.SLASH.F0`. Runtime use is the combat lane, not this file.
+**AS-MELEE-001.** Items 35 and 39. The right hand holds a fixed upright grip. In combat the body stays mostly still and only the weapon sprite moves. One grip anchor is stored on every body frame. The weapon is an upright sprite plus rotated angles: 2 authored angles, then lossless 90 degree turns and flips, baked offline to 8 frames. The runtime does not rotate a frame. The 6-frame timing is wind-up, raise, 45 forward, level, strike and recovery. The strike frame is held longer: 12 frames at 60 fps, against 6 frames for the other weapon frames. The arc reads up, 45 forward, level and back. Swing timing by weapon class stays on the weapon sprite: overhead chop for axes and hammers, side slash for swords, thrust for spears and daggers, and a heavier, slower arc for two-handers. Those timings are not body frames. The body rows `melee-swing` and `thrust` are not drawn. Cast, bow and work rows stay on the body. The strike frame carries a hit spark. A heavy hit uses 1 or 2 px of knockback, as a drawn offset, not a filter. Weapons are drawn 10 to 20 percent larger than the body-scale length, in native pixels. The longsword sample is 20 px body-scale and 24 px drawn. They are not scaled. Draw order is behind or in front per direction. Catalogue categories `SPARK` and `WEAPONCEL`. Slot examples `SP.SLASH.F0` and `WP.LONGSWORD.UPRIGHT.F0`. Runtime use is the combat lane, not this file.
 
-Manual note. A melee weapon is a separate sprite on the hand anchors. The attack is six frames. Draw the weapon 10 to 20 percent larger in native pixels. Do not scale it.
+Manual note. The right hand holds a fixed upright grip and the body stays mostly still. The weapon sprite plays the arc. Bake 8 frames from 2 authored angles plus lossless turns and flips. Draw the weapon 10 to 20 percent larger in native pixels. Do not scale it. Hold the strike, then the hit spark and 1 or 2 px of knockback.
 
 **AS-PM-001.** Item 36. These are PM defaults. The Owner may override them. On-screen size classes: Tiny 24 px, Small about 36 px in the 48 frame, Medium 42 px, Large 48 by 96 or 96 by 48, Huge 144 px frames, Gargantuan 192 px frames. Combat footprints stay SRD: Tiny shares a square, Small and Medium are 1, Large is 2 by 2, Huge is 3 by 3, Gargantuan is 4 by 4. Race heights in the 48 frame: halfling and gnome 33 px inside 32–34, dwarf 36, human and elf 42, half-orc and dragonborn 44. The nine-race adjustment sets half-elf and tiefling at 42, the human and elf height. Doors are 1 tile wide and at least 1.5 layers tall (72 px, 6 quarters). Walls are whole layers. Floors are 1 layer. Mirroring is allowed. West-facing bodies, gear layers and creatures may be mirrored from east, offline, and the west frame is then stored. The runtime does not flip. Weapons and shields are placed on the correct per-frame hand anchor, so a hand does not swap. Gear flagged asymmetric in the slot map gets its own west view. Fortress zoom-out is a 1× render plus a colour-coded tile minimap, with no downscaled blur. Range and area markers are whole squares on the tile grid and match the SRD shape. One pixel font draws damage numbers and status, at native size, at a whole-pixel scale, coloured by damage type through a precomputed ramp. Catalogue categories `FONT` and `RANGE`. Slot examples `FN.PIXEL.DAMAGE` and `RG.SQUARE.01`.
 
 Manual note. These size, footprint, door, mirror, fortress, marker and font defaults are the PM defaults. The Owner may override them. West may be mirrored from east. Weapons and shields stay on the hand anchors.
 
-**AS-VIS-001.** Item 37. Faces show only armour and helmet on top of the race background, body, face, hair and expression stack. Charsets show only armour, helmet, weapon and shield as gear. Cloaks, boots, gloves, belts, rings, amulets and the rest are not drawn on sprites or faces. They exist as items, icons, 144 px portraits and world sprites. PM assumption, Owner may amend: the race's default class garb is part of the race and class base body, and armour is layered over it. Children have no class, so child garb is part of the child base body. Charset order, bottom to top, is base body (race, class garb, sex, age), race features, hair and beard, armour, then helmet. Weapon and shield are anchored sprites and use the per-direction draw-order flag, in front of or behind the body. The checker rejects a drawn charset layer outside that set, and a face gear kind outside armour and helmet.
+**AS-VIS-001.** Items 37, 40 and 41. There are no class outfits. The base body is the race body template plus one standard race garb for that sex. Charset order, bottom to top: base body and race garb; race features; preset head and hair; body-hugging kit layers (monk wraps, monk sash); long kit overlays (wizard robe, cleric tabard); armour; mantles (sorcerer mantle, druid fur mantle); capes, cloaks and back-slung items (bard cape, warlock cloak, bard lute, behind or in front per direction); one headwear slot (helmet, or wizard hat, or wizard hood, or warlock hood, or druid circlet, or bard cap); held class items, weapon and shield as anchored sprites; sorcerer hand glow on the hand anchor as an additive effect. The monk topknot is a head overlay. The sorcerer head is bare. A faceset never changes with gear: face preset, hair, race background and 8 expressions only.
 
-Sheet counts, for the PM to re-run cost. Adult base bodies are 9 races × 2 sexes × 12 classes = 216. Elder base bodies are the same 216, and that multiplier is flagged in Appendix B. Child base bodies are 9, with no class. Base sheets are 441. Armour is 3 weights × 9 races × 3 bodies (adult male, adult female, child) = 81. Helmets use the same 81. Elder armour and helmet add 0 sheets, because the offset table reuses the adult sheet. Separate class-garb sheets go from 324 to 0. Cloak, cape, boot, glove, belt, ring and amulet sheets are not drawn. Hair and beard counts stay the **AS-GENE-001** counts and are not re-estimated here. Drawn body, armour and helmet designs are 441 + 81 + 81 = 603. Each full sheet is 708 cells (**AS-LOCK-001**), in place of the old 420. The 135 outfit ids remain item and icon ids.
+Class signature kits are 14 overlay layers per adult body template. They change the silhouette. Each class also has one fixed accent colour from the master palette. The accent clears the sample ground `#333B45` by at least the grayscale step in **AS-READ-001**, and colour is not the only channel: the kit or the armour is the second channel. Martial classes (barbarian, fighter, paladin, ranger, rogue) have no kit layer. Armour and weapons, plus the accent, distinguish them.
 
-Manual note. Class garb is part of the race and class base body. Faces show armour and helmet only. Charsets show armour, helmet, weapon and shield. Other gear is an item, an icon, a portrait or a world sprite. Elder base bodies by race and class are 216 sheets.
+| Kit | Class | Group |
+|---|---|---|
+| Hand and foot wraps | monk | body-hugging |
+| Sash | monk | body-hugging |
+| Long robe | wizard | long |
+| Tabard with a large holy symbol | cleric | long |
+| Short mantle | sorcerer | mantle |
+| Fur mantle | druid | mantle |
+| Short cape | bard | cape |
+| Jagged-hem hooded cloak | warlock | cape |
+| Pointed hat | wizard | headwear |
+| Deep hood | wizard | headwear |
+| Hood | warlock | headwear |
+| Leaf or antler circlet | druid | headwear |
+| Feathered cap | bard | headwear |
+| Topknot | monk | head overlay |
+
+Held class items are anchored like weapons, with 2 authored angles and lossless 90 degree turns and flips allowed, baked to 8 frames: wizard staff, druid staff, warlock orb on an offset anchor, cleric mace, cleric censer, and the bard lute slung on the back. The monk has no held item. The monk stance idle is 4 frames in four directions on each adult body template. Wizard hat, bard cap and warlock cloak are flagged asymmetric and keep their own west view (**AS-PM-001**). Boots, gloves, belts, rings, amulets, collars and a generic cloak stay items, icons, portraits and world sprites. Children have no class kit. Catalogue categories `RACEGARB`, `CLASSKIT`, `HELD` and `MONKIDLE`. Slot examples `CH.RACEGARB.HUMAN.M.01.IDLE.D.F0`, `CH.KIT.HUMAN.M.01.IDLE.D.F0`, `HI.WIZARD-STAFF.UPRIGHT.F0` and `CH.MONK.HUMAN.M.01.MONK-IDLE.D.F0`.
+
+| Class | Accent | Value |
+|---|---|---|
+| barbarian | `#F26018` | 8 |
+| bard | `#FFF2A3` | 14 |
+| cleric | `#FFB833` | 11 |
+| druid | `#57E095` | 10 |
+| fighter | `#4F8FB2` | 8 |
+| monk | `#E6BAFF` | 12 |
+| paladin | `#E2EFF8` | 14 |
+| ranger | `#91B851` | 9 |
+| rogue | `#938E7C` | 8 |
+| sorcerer | `#A8F3FF` | 13 |
+| warlock | `#BE65FA` | 9 |
+| wizard | `#DEDF5E` | 12 |
+
+Sizing, re-run for items 39, 40 and 41. Item 33's full layer was 708 cells. Dropping the melee body rows removes 48 cells, so a drawn full layer is 660. Adult body templates are 18 and elder body templates are 18. Child bodies are 9. Base sheets are 45. Race garbs are 18. Kit sheets are 14 layers by 18 adult templates = 252. Elder kits add 0, because the offset table reuses the adult sheet. Child kits add 0. Armour stays 81 and helmets stay 81. Those body, garb, kit, armour and helmet sheets are 45 + 18 + 252 + 81 + 81 = 477. Held class items are 6, with 2 authored angles each, baked to 8 frames. The monk idle adds 4 frames by 4 directions on 18 templates = 288 cells. Preset looks are 216 charset heads and 216 faceset sheets. The 3 palette swaps add 0 sheets. The former class-outfit designs, 108 of them, and the old separate sheet count 324, stay retired. Class outfit slot ids and the part-library slot ids stay reserved.
+
+Manual note. There are no class outfits. Eighteen race garbs and fourteen signature kits carry class and people. Facesets never change with gear. Dwarf male and female adult and elder bodies are 36 px. The preset pool is 216 looks.
 
 ## 3. Worked spell rows
 
@@ -696,34 +696,37 @@ Owner rulings win. The source line is the conflict. The resolution is the ruling
 23. **Child labour.** Charter §8: a child is ineligible for heavy labour. **AS-HUM-019** still requires the work rows on the child template.
 24. **WG.00.01–.05**, for the record, not all of them conflict: WG.00.01 visual charter (flat 3/4, chibi 3.0–3.2 heads); WG.00.02 native 48 px, 1:1, binary alpha; WG.00.03 human scale, 42 px adult; WG.00.04 five biomes and 10 transitions (superseded); WG.00.05 master palette and 58 ramps (still the target architecture).
 25. **Registry canonical set is five.** `game/data/DEUS_BiomeRegistry.json` `canonicalBiomes` (lines 9–15) is `TEMP`, `WET`, `ARID`, `HIGH`, `VOLC`. The same array is `docs/art/DEUS_BiomeRegistry.json` lines 7–13. The game file also keys `biomes`, `materialTaxonomy.signatureMaterials` and `horizontalTransitions` (10 keys, lines 562–653) with that five. `art/catalogue/catalogue.json` `biomes.canonical` (lines 110–116) is the same five, and all 10,089 entry biome tokens are `SHARED`. **AS-BIOME-005** flags a declared canonical set that is not the six DEC-030 ids. Those three files are not edited here.
-26. **Shared outfit silhouette vs custom 135.** A1 said armour-weight silhouettes are shared and only the ramp and motif change. Owner 13:14 CT says the 135 class and armour outfits stay fully custom per race. **AS-HUM-015** and **AS-GEAR-001** follow 13:14. The silhouette field remains the slot pattern.
+26. **Shared outfit silhouette vs custom armour.** A1 said armour-weight silhouettes are shared and only the ramp and motif change. Owner 13:14 CT keeps armour pixels custom per race. Item 40 withdraws class outfits. **AS-HUM-015** keeps 27 custom armour rows and 18 race garbs. The silhouette field remains the armour slot pattern.
 27. **Season frames vs palette swaps.** **AS-BIOME-004** names four season states and rejects a runtime LUT. PM 13:01 CT (**AS-VAR-002**, Owner may amend) builds variety-piece seasons as palette-swap frames on precomputed season ramps. That is not a ColorMatrix. The four names stay.
 28. **Six profile window skins vs eleven selectable skins.** **AS-UI-001** had named a window sheet per building profile. Owner 12:57 CT (**AS-UI-004**) requires Deus, Deus Dark and one skin per race. The six profiles remain building styles and banners.
 29. **Legal mirror.** Item 12 stands. **AS-MIRROR-001** is the only added path: an offline W-to-E bake of a layer flagged `symmetric` with light-neutral shading.
 30. **Huge and Gargantuan multiples.** They were open. Owner 13:16–13:20 CT sets them in **AS-SIZE-001**. `geometry.json` still has nulls and was not edited.
 31. **Creature equipment.** Owner 13:01 CT supersedes any creature-gear slot. **AS-TAME-002**. No barding.
 32. **Window background opacity.** A generator handoff describes the RMMZ window background at 75% opacity. **AS-UI-004** keeps the rectangles and requires opaque pixels.
-33. **Separate elder bakes.** The generator pool bakes elder keys as their own charsets. **AS-ELDER-001**: only the stooped body is a new sheet. Garb, gear and hair are the adult sheets plus the offset table.
+33. **Separate elder bakes.** The generator pool bakes elder keys as their own charsets. **AS-ELDER-001**: only the stooped body is a new sheet, one per race and sex. Race garb, armour and the preset head are the adult sheets plus the offset table.
 34. **Per-row strips vs one paper-doll sheet.** **AS-SLOT-001** still describes a 192 by 192 action-row strip. Owner 13:30 CT stacks paper-doll layers into 768 by 1440 (**AS-SRC-001**). The strip remains for Large and larger creature rows. The RMMZ charset is not that sheet.
 35. **Walk is 3 columns vs 4 frames on the layer sheet.** **AS-GLOBAL-013** keeps the RMMZ 3-column walk on the charset. The paper-doll sheet writes that cycle as stand, left, stand, right.
 36. **Pose-grid counts of 3 vs 4 columns.** **AS-HUM-016** still counts bow-loose, dodge and parry at 3 frames for the 236-frame offset table. The source sheet has 4 columns on every row. What the fourth cell shows on those three rows is open (Appendix B). The cell still has an id.
 37. **Garb on each body vs elder reuse.** Owner 13:50 CT draws garb and armour on each body. **AS-ELDER-001** still reuses the adult sheet. **AS-SEX-001** draws adult male, adult female and the child body, and places the same sex's adult sheet on the elder with the offset table.
 38. **One anchor vs two hands.** **AS-HUM-016** stores one `{x, y, angle}` cel. **AS-EQUIP-001** stores main-hand and off-hand points, the grip angle and the draw-order flag. The eight angle cels stay.
 39. **Catalogue slot ids vs permanent ids.** Existing catalogue `slot.slotId` values are atlas addresses. **AS-ID-001** is the id the runtime keeps. The catalogue file was not edited.
-40. **Generator routing vs a hard cap.** **AS-GEN-004** routes a category by yield per cost and leaves generators unassigned. **AS-GEN-005** caps a named roster at two or three and forbids two generators inside one layered set. The roster in this file is empty.
+40. **Generator routing.** Item 39 names PixelLab as the primary generator for every category. Retro Diffusion is standby. Nano Banana Pro is for concepts only. The multi-generator bake-off is off. One generator per layered set still holds, and that generator is PixelLab.
 41. **Layer height.** DEC-013, and **AS-GLOBAL-018** as first written, used 1 layer = 10 ft and five strata of 2 ft. Owner items 26 and 29 replace that with 1 layer = 5 ft = 48 px and four quarters of 12 px. `stratumPx` is `[12, 12, 12, 12]`. Lanes that still assume a 10 ft step are not edited here.
 42. **A 64 px tile.** It was considered and was not adopted. Terrain stays 48 px. Integer presentation scale is **AS-RENDER-001**. The 64 by 64 SV battler frame stays.
 43. **Art-direction wording.** The 14:38 CT direction is replaced by readable high-contrast fantasy (Owner 15:02 CT). Mood sits in lighting and grading.
 44. **Outline weight.** A heavier outline gives way to the 1 px self-tinted outline on characters and items, and none on terrain (**AS-LOCK-001**).
 45. **Two palette files.** `uf.hex` (256 lines, 250 unique, no shared hex) is not a second master. The S/T file's 226 colours are the active canonical set. Thirty reserved slots make 256 slots. The active list is not shrunk.
-46. **Frame average.** The 3.5 frames-per-row estimate (420 cells) is replaced by the budgets in **AS-LOCK-001** (708 cells on a full sheet).
-47. **Visible gear.** Separate class-garb sheets, capes, and cloaks on faces give way to **AS-VIS-001**. Outfit ids stay item and icon ids. The A1 addendum file is not edited.
+46. **Frame average.** The 3.5 frames-per-row estimate (420 cells) is replaced by the budgets in **AS-LOCK-001**. Item 33 counted 708 cells. Item 39 draws 660 after the melee body rows drop.
+47. **Visible gear.** Item 40 withdraws class outfits. **AS-VIS-001** draws 18 race garbs, class signature kits and held class items on charsets. Facesets never change with gear. The A1 addendum file is not edited.
 48. **West from east.** Owner 15:11 CT allows that mirror for bodies, gear layers and creatures. Weapons and shields stay on hand anchors. **AS-MIRROR-001** still forbids a runtime flip.
 49. **Terrain assembly.** A 24 px Wang tile assembled into an RMMZ A2 autotile is not the terrain path. 48 px tiles-pro Wang on a dual-grid renderer is. 24 px remains the detail-decal size.
 50. **Where maximum brightness sits.** It sits only on additive glow frames.
 51. **Half-step slopes.** Item 22's half-step is 2 quarters, 24 px.
 52. **Action tick.** One action-domain tick is one 6 s SRD round. The historical domain is unchanged.
 53. **View and stepping.** The projection drawing from item 17 and the old trial view are withdrawn (Owner 15:40 CT). The view is the RMMZ standard top-down 3/4 view. Sprites stay four-direction. Draw order stays row, then layer. Movement is 4-way on the grid. Unit movement is orthogonal only. SRD 5-5-5 applies to spell areas and ranges only. Cliff and wall pieces are RMMZ-style tiles with the depth cues. Side-wall, side-roof and corner-joint pieces are not added. Tall objects are not split. Quarter-height front strips are not a cliff or wall class. The retired slot id is `DP.CLIFF.TEMPERATE.FACE`. The live cliff tile is `DP.CLIFF.TEMPERATE.TILE`.
+54. **Melee body frames.** Item 39 replaces the item 35 body swing for melee. The right hand holds a fixed upright grip, the body stays mostly still, and the weapon sprite plays the arc. Cast, bow and work body rows stay.
+55. **Class outfits.** Item 40 withdraws them. The standard uses 18 race garbs, 14 class signature kit layers, held class items and one accent colour per class.
+56. **Visible genetics.** Item 41 withdraws them. Art uses 216 presets. Sim genetics stay on stats only. Dwarf male and female adult and elder bodies are 36 px.
 
 ## Appendix B. Open questions
 
@@ -736,9 +739,7 @@ These are not answered here.
    - What `COLD` looks like, given WG.00.04 forbids a snow biome, and where the existing `HIGH_*` ramps go.
    - What `WILD` looks like. No WG.00.04 entry describes it.
    - How many dragonborn scale-colour steps in `RAMP_SCALE`.
-   - Eight of the twelve hair-ramp steps are still unnamed (`step-05` through `step-12`). Race-specific hair colours are unnamed.
-   - The fourth marking id is `patch`. The Owner renames it if that is the wrong mark.
-   - Race-feature option pictures (`rf1`, `rf2`, `rf3`) are unnamed. Ears, horns, tail and scales stay their own parts.
+   - Ears, horns, tail and scales stay race features on the body template. The old hair, beard, balding and face-part lists are retired with the preset pool.
    - Do `DEEP` and `CAVERN` exhaust "underground depth band", or does `LOWLAND`'s negative Z count too?
    - Head-state indices 0, 1 and 2 are not named gestures.
    - DEC-016's open sentence: if "the scale chart" means a file other than the registry plus the strip, the Owner names it.
@@ -750,14 +751,14 @@ These are not answered here.
 5. **Deity roster.** No DEUS pantheon is on file. `docs/design/EMERGENT_SOCIETY.md` says not to add unapproved named gods. The SRD historical-pantheon appendix is not this roster. Which deities, if any, get a holy symbol?
 6. **Collar, saddle, harness.** After the 13:01 correction these are not slots and not stats. Are the visual markers wanted at all?
 7. **Biome code mapping.** This lane does not map `HIGH` to `COLD` and does not invent a source token for `WILD`. `TEMP`, `WET`, `ARID` and `VOLC` already have identity-standard counterparts named in **AS-BIOME-003**. The Owner decides the migration, including `HIGH` and `WILD`.
-8. **Beards.** Which of the nine races skip the eight facial-hair parts? `beardlessRaces` stays empty until that answer. Dwarf has the eight plus at least `dwarf-plait`. How many further dwarf extras?
+8. **Beards.** Closed by item 41. Facial hair is part of the preset. Elder presets carry greying and balding. There is no separate facial-hair part list.
 9. **Further dimorphic creatures.** The verified list is the 21 names in **AS-SEX-002**. A creature that is not on that list stays `none`. Adding another is an Owner call.
 10. **Fourth frame on three-frame poses.** Bow-loose, dodge and parry have a fourth cell on the 768 by 1440 sheet. What that cell shows is open. The id is already reserved.
-11. **Elder base bodies by race and class.** **AS-VIS-001** counts 216 elder sheets (9 races × 2 sexes × 12 classes), because class garb is in the base body. Whether that should shrink to race and sex, with only an offset on the elder, is open. The count is not reduced here.
+11. **Elder bodies.** Closed by items 40 and 41. Elder bodies are 18, one male and one female per race, at that race's height. Dwarf elder male and dwarf elder female are 36 px. The offset table reuses the adult armour, helmet and preset head.
 12. **Small item world sprites.** The PixelLab trial left them as an open test (**AS-TERR-001**). No size was accepted or rejected here beyond the 12, 24 and 48 px classes already set for placement.
 13. **Fourth walk cell.** Walk now authors three frames. The committed example sheet still has a fourth walk cell. What that cell shows is open. The id stays reserved.
 
-The four-direction rule is decided (12:38 CT). It is not in this appendix. Huge and Gargantuan frame squares are decided (13:16–13:20 CT). Balding overlays are three (PM 13:02 CT, Owner may amend). The paper-doll example sheet size, the 2048 px cap, the dimorphic list above, and permanent slot ids are decided (13:30–14:10 CT). Layer height, the single master palette, the frame budgets, the visible-gear limit and the PM size defaults are decided in §2.18 (Owner 14:38–15:12 CT), except the three items above. Those are not open questions.
+The four-direction rule is decided (12:38 CT). It is not in this appendix. Huge and Gargantuan frame squares are decided (13:16–13:20 CT). The paper-doll example sheet size, the 2048 px cap, the dimorphic list above, and permanent slot ids are decided (13:30–14:10 CT). Layer height, the single master palette, the frame budgets, the visible-gear limit and the PM size defaults are decided in §2.18 (Owner 14:38–15:12 CT). The fixed melee grip, the 18 race garbs, the class kits and the 216 presets are decided (Owner 15:44–15:58 CT). The open items above are the ones still listed.
 
 ## Appendix C. Existing assets
 
@@ -775,7 +776,7 @@ Counts below are names and JSON only, from this worktree, not from pixel reads.
 | `$UF_Layer_*` | 24 PNGs | Names have no `__<race>` suffix. They fail **AS-STYLE-001** until renamed. Seven are cited by the catalogue. |
 | Generator pool loci | skin 1–3, hair style 1–4, hair brown/blonde/black/red/silver, beard 0–3, clothing 1–4 | The visible-locus table extends this. Silver is the elder bake only. |
 | People sheets | human 12 walk sheets; elf, dwarf, gnome have sheets; halfling, dragonborn, half-elf, half-orc, tiefling are empty strings | The nine race templates are not drawn. |
-| SV battlers, spell-visual rows, summon slots, 135 outfit variants, resource states, night ramps | not in the catalogue as this standard describes them | Follow-up leaves. Not this lane. |
+| SV battlers, spell-visual rows, summon slots, the 18 race garbs, the 216 presets, resource states, night ramps | not in the catalogue as this standard describes them | Follow-up leaves. Not this lane. |
 
 Reusable now: the 48 px grid, the 3 by 4 S/W/E/N charset, the 144 face cell, the paper-doll z-order, the 18-slot draw order, the human 42 px scale row, the four-direction rows already on catalogue entries, and the SRD ids in `game/data/srd51/`. Legacy, to be mined or replaced rather than extended: 8-way sidecars, `$gen_*` mirrors, `$UF_Layer_*` names without a race, face sheets in the old 4-mood layout, and catalogue band ids from DEC-013.
 
@@ -818,23 +819,23 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-HUM-002.** Fixed socket ids, per-frame coordinates, human baseline.
 - **AS-HUM-003.** Body, eyes, hair front/back, beard, racial parts.
 - **AS-HUM-004.** Paper-doll z-order legs 1 through fx 7.
-- **AS-HUM-005.** Face matches worn charset gear.
+- **AS-HUM-005.** Faceset is preset, hair, race background and 8 expressions. Gear does not change it.
 - **AS-HUM-006.** Age axis. Further steps open.
-- **AS-HUM-007.** Greying ramp and three balding overlays.
-- **AS-HUM-008.** Visible genetic loci and their parts.
+- **AS-HUM-007.** Greying and balding belong to the elder presets.
+- **AS-HUM-008.** Preset pool. Sim genetics are stats only.
 - **AS-HUM-009.** Humanoid action rows.
 - **AS-HUM-010.** F01–F14 mapped onto those rows.
 - **AS-HUM-011.** RMMZ balloons.
 - **AS-HUM-012.** Fifteen conditions, DEC-011 treatments, Invisible as a contour.
 - **AS-HUM-013.** Pregnancy stages 0–3 as a torso decal.
 - **AS-HUM-014.** Handedness and grips. No blind mirror.
-- **AS-HUM-015.** 9 × 15 outfit matrix. Pixels are custom per race. Slot pattern stays named.
-- **AS-HUM-016.** Pose grid and pre-drawn weapon angles. PM-proposed, Owner may amend.
-- **AS-HUM-017.** Deforming pieces have per-pose frames.
+- **AS-HUM-015.** 18 race garbs. 27 custom armour variants. Class outfits are icon-only.
+- **AS-HUM-016.** Pose grid. Eight baked weapon cels from 2 authored angles. PM-proposed, Owner may amend.
+- **AS-HUM-017.** Large shields and bows keep per-pose frames. Generic cape is not drawn.
 - **AS-HUM-018.** Height, build, horns, tail, ears, scale colour.
 - **AS-HUM-019.** Child template and stooped working elder.
 - **AS-FACE-001.** Per-race faceset background.
-- **AS-FACE-002.** Seven-layer face stack.
+- **AS-FACE-002.** Face stack is race background, preset face and preset hair. No gear.
 - **AS-FACE-003.** Eight expressions in index order.
 - **AS-FACE-004.** 144 px face anchors.
 - **AS-BIOME-001.** 30 biome-depth sets and 15 transitions.
@@ -886,11 +887,11 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-TAME-002.** No creature armour, barding or crafted creature gear.
 - **AS-VAR-001.** Per-biome and per-underground-band piece floors. PM decision, Owner may amend.
 - **AS-VAR-002.** Variety seasons are palette swaps. Flip only when light-neutral.
-- **AS-GENE-001.** Hair, balding, facial hair and face-gene counts. PM decision, Owner may amend.
+- **AS-GENE-001.** 216 presets. 3 in-game palette swaps. Genetics do not select art.
 - **AS-PORT-001.** Icon and 144 px portrait for every non-face entity.
-- **AS-HEAD-001.** 12-frame head grid and a head anchor on every body frame.
-- **AS-ELDER-001.** Elder reuses adult garb, gear and hair via per-frame offsets.
-- **AS-GEAR-001.** One silhouette for weapons, tools and accessories, plus ramp and decal.
+- **AS-HEAD-001.** Preset head on a 12-frame grid and a head anchor on every body frame.
+- **AS-ELDER-001.** 18 elder bodies. Adult armour, helmet and preset head via per-frame offsets. Dwarf elders are 36 px.
+- **AS-GEAR-001.** One silhouette for weapons, tools and accessories, plus ramp and decal. Armour and race garb stay custom.
 - **AS-MIRROR-001.** Offline W-to-E bake only, symmetric and light-neutral.
 - **AS-POSE-001.** Prone, unconscious, sleep, sit, sneak, climb, with the condition map.
 - **AS-BIOME-005.** Declared canonical biome sets must be the six DEC-030 ids.
@@ -901,16 +902,16 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-GEN-001.** Generation log: generator, version, seed, outcome, reason codes.
 - **AS-GEN-002.** Yield, cost and time per usable slot, per generator, category and template.
 - **AS-GEN-003.** Template versions promote only when A/B yield wins.
-- **AS-GEN-004.** Adapters, routing, golden test set. Style tune is optional and later.
+- **AS-GEN-004.** PixelLab primary. Retro Diffusion standby. Nano Banana Pro for concepts only. Bake-off off.
 - **AS-SRC-001.** Paper-doll layer sheet 768 by 1440. RMMZ sizes stay. No source side over 2048 px.
 - **AS-REPO-001.** Slot map in the repo. Approved art on Git LFS. Raw generations, rejects and logs stay out.
 - **AS-PREVIEW-001.** Animated in-game 1:1 preview. Owner yea or nay before merge.
-- **AS-GEN-005.** One generator per category and per layered set. Two or three once named.
-- **AS-SEX-001.** Male and female adult and elder bodies. Own child body. Garb on each adult sex and on the child.
+- **AS-GEN-005.** One generator per category and per layered set. That generator is PixelLab.
+- **AS-SEX-001.** Male and female adult and elder bodies, including dwarf at 36 px. Own child body. Preset head.
 - **AS-SEX-002.** Creature `sexVariant` none or dimorphic. Both sets, with tamed and saddle, only when dimorphic.
 - **AS-ID-001.** Permanent unique slot id per cell. Grammar, no reuse, catalogue link. Resolve by id only.
 - **AS-ANCHOR-001.** Whole-pixel shift onto the slot anchor. Reject clip, proportion, size and head drift.
-- **AS-EQUIP-001.** Main-hand, off-hand, grip angle and draw order on every body frame. One weapon drawing, pinned.
+- **AS-EQUIP-001.** Fixed upright right-hand grip, off-hand and draw order. Weapon sprite pinned. No runtime rotation.
 - **AS-LOOK-001.** Readable high-contrast fantasy. RMMZ standard top-down 3/4 view. Head about 1/5 of body height.
 - **AS-PROJ-001.** RMMZ standard top-down 3/4 view. Row, then layer. Four directions. Movement is 4-way on the grid. Unit movement is orthogonal only.
 - **AS-FURN-001.** Four facings. Symmetric reuse only by flag.
@@ -930,6 +931,6 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-READ-001.** Grayscale value step. Table-with-items reference at true 2×.
 - **AS-PAL-001.** Saturated palette, value first, grayscale before approval.
 - **AS-LOCK-001.** LOCKED style defaults. Caps, frame budgets, one master.
-- **AS-MELEE-001.** Six-frame melee. Weapon drawn 10 to 20 percent larger.
+- **AS-MELEE-001.** Fixed upright grip. Weapon sprite arc. 8 baked frames. Body stays mostly still.
 - **AS-PM-001.** PM defaults the Owner may override, including west-from-east.
-- **AS-VIS-001.** Visible gear limited. Class garb in the base body. 441 base sheets.
+- **AS-VIS-001.** No class outfits. 18 race garbs, 14 kits, held items, monk idle. Facesets never change with gear.

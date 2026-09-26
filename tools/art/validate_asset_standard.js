@@ -55,7 +55,12 @@ const DIMORPHIC_SRD = ['Lion', 'Deer', 'Elk', 'Giant Elk', 'Boar', 'Giant Boar',
 const DIMORPHIC_LIVESTOCK = ['Cattle', 'Sheep', 'Pig', 'Chicken', 'Duck'];
 const GEN_CATEGORIES = ['humanoid-layer', 'face-layer', 'creature', 'terrain-tile', 'building-piece', 'item-icon', 'portrait', 'effect', 'ui'];
 const GARB_BODIES = ['adult-male', 'adult-female', 'child'];
-const SEX_PARTS = ['hair', 'beard', 'face-base'];
+const SEX_PARTS = ['preset-head'];
+const KIT_LAYERS = ['kit-monk-wraps', 'kit-monk-sash', 'kit-wizard-robe', 'kit-cleric-tabard', 'kit-sorcerer-mantle', 'kit-druid-mantle', 'kit-bard-cape', 'kit-warlock-cloak', 'kit-wizard-hat', 'kit-wizard-hood', 'kit-warlock-hood', 'kit-druid-circlet', 'kit-bard-cap', 'kit-monk-topknot'];
+const HELD_ITEMS = ['wizard-staff', 'druid-staff', 'warlock-orb', 'cleric-mace', 'cleric-censer', 'bard-lute'];
+const MARTIAL_CLASSES = ['barbarian', 'fighter', 'paladin', 'ranger', 'rogue'];
+const CHARSET_ORDER = ['base-body-race-garb', 'race-features', 'preset-head', 'kit-body-hugging', 'kit-long', 'armour', 'kit-mantle', 'kit-cape-cloak', 'headwear', 'held-and-weapon', 'hand-glow'];
+const FACE_LAYERS = ['background', 'preset-face', 'preset-hair'];
 const ANCHOR_REJECT = ['clipping', 'wrong-proportions', 'wrong-size', 'head-drift'];
 const ANCHOR_LANDMARKS = ['feet-bottom-centre', 'head-centre', 'main-hand', 'off-hand'];
 const ANCHOR_DETECTION = ['transparent-pixel-mask', 'silhouette', 'foot-line', 'head-outline'];
@@ -63,8 +68,8 @@ const EXAMPLE_SLOT_ID = 'CH.HAIR.ELF.F.07.WALK.D.F2';
 const EXAMPLE_SHEET_ID = 'paperdoll:elf:f:hair:07';
 const EXAMPLE_SHEET_FILE = 'art/approved/paperdoll/CH_HAIR_ELF_F_07.png';
 const ID_GRAMMAR = {
-    'charset-layer': '^CH\\.(BODY-ELDER|BODY-CHILD|BODY|HAIR-BACK|HAIR|BALD|BEARD|EYES|EARS|HORNS|TAIL|SCALES|GARB|ARMOR|LEGS|TORSO|HEAD|BACK|CAPE|ROBE)\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F|C)\\.[0-9]{2}\\.(IDLE|WALK|MELEE-SWING|THRUST|BOW-DRAW|BOW-LOOSE|XBOW-AIM|XBOW-FIRE|XBOW-RELOAD|THROWN|CAST-ONE-HAND|CAST-TWO-HAND|CAST-FOCUS|HAMMER|SAW|CHOP|DIG|STIR|CARRY|KNEEL|HURT|DODGE|PARRY|DEATH|SNEAK|CLIMB|PRONE|UNCONSCIOUS|SLEEP|SIT)\\.(D|L|R|U)\\.F[0-3]$',
-    face: '^FA\\.(BG|FRAME|BODY|FEATURES|HAIR|GEAR|OVERLAY)\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F|C)\\.[0-9]{2}\\.(NEUTRAL|HAPPY|ANGRY|SAD|SURPRISED|HURT|DETERMINED|AFRAID)\\.C[0-7]$',
+    'charset-layer': '^CH\\.(BODY-ELDER|BODY-CHILD|BODY|HAIR-BACK|HAIR|BALD|BEARD|EYES|EARS|HORNS|TAIL|SCALES|GARB|ARMOR|LEGS|TORSO|HEAD|BACK|CAPE|ROBE|CLASS|KIT|RACEGARB|MONK)\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F|C)\\.[0-9]{2}\\.(IDLE|WALK|MELEE-SWING|THRUST|BOW-DRAW|BOW-LOOSE|XBOW-AIM|XBOW-FIRE|XBOW-RELOAD|THROWN|CAST-ONE-HAND|CAST-TWO-HAND|CAST-FOCUS|HAMMER|SAW|CHOP|DIG|STIR|CARRY|KNEEL|HURT|DODGE|PARRY|DEATH|SNEAK|CLIMB|PRONE|UNCONSCIOUS|SLEEP|SIT|MONK-IDLE)\\.(D|L|R|U)\\.F[0-3]$',
+    face: '^FA\\.(BG|FRAME|BODY|FEATURES|HAIR|GEAR|OVERLAY|PRESET)\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F|C)\\.[0-9]{2}\\.(NEUTRAL|HAPPY|ANGRY|SAD|SURPRISED|HURT|DETERMINED|AFRAID)\\.C[0-7]$',
     creature: '^CR\\.[A-Z][A-Z0-9-]*\\.(M|F|N)\\.(BASE|TAMED|SADDLE)\\.[A-Z][A-Z0-9-]*\\.(D|L|R|U)\\.F[0-3]$',
     icon: '^IC\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*$',
     portrait: '^PO\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*\\.[A-Z0-9-]+$',
@@ -88,7 +93,9 @@ const ID_GRAMMAR = {
     marker: '^CB\\.(SELECT|FACTION|SUMMON|LOWHP)\\.[A-Z][A-Z0-9-]*$',
     font: '^FN\\.[A-Z0-9]+\\.(DAMAGE|STATUS)$',
     'range-marker': '^RG\\.(SQUARE|LINE|CONE|SPHERE|CYLINDER)\\.[0-9]{2}$',
-    'hit-spark': '^SP\\.(SLASH|PIERCE|BLUDGEON)\\.F[0-2]$'
+    'hit-spark': '^SP\\.(SLASH|PIERCE|BLUDGEON)\\.F[0-2]$',
+    'weapon-angle': '^WP\\.[A-Z0-9-]+\\.(UPRIGHT|BAKED)\\.F[0-7]$',
+    'held-item': '^HI\\.(WIZARD-STAFF|DRUID-STAFF|WARLOCK-ORB|CLERIC-MACE|CLERIC-CENSER|BARD-LUTE)\\.(UPRIGHT|A45|A90)\\.F[0-7]$'
 };
 
 function readJson(file) {
@@ -106,6 +113,12 @@ function sameSet(a, b) {
     if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
     const s = new Set(a);
     return b.every(x => s.has(x));
+}
+
+function sameList(a, b) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+    return true;
 }
 
 function frameOf(entry) {
@@ -335,19 +348,12 @@ function checkFace(face, standard) {
         out.push(result('AS-FACE-001', 'violate', 'race background is not the bottom layer with a ramp id'));
     } else out.push(result('AS-FACE-001', 'pass', face.rampId));
 
-    const required = ['background', 'body-base', 'face', 'hair', 'gear', 'overlay'];
-    let idx = 0;
-    let orderOk = true;
-    for (let i = 0; i < layers.length; i++) {
-        const layer = layers[i];
-        if (layer === 'faction-trim') {
-            if (i === 0 || layers[i - 1] !== 'background') orderOk = false;
-            continue;
-        }
-        if (layer !== required[idx]) orderOk = false;
-        else idx++;
+    const bannedFace = { gear: 1, 'faction-trim': 1, 'genetic-features': 1, 'inherited-balding': 1, armour: 1, helmet: 1, 'class-headwear': 1, 'body-base': 1 };
+    let orderOk = sameList(layers, FACE_LAYERS);
+    if (orderOk) {
+        for (let i = 0; i < layers.length; i++) if (bannedFace[layers[i]]) orderOk = false;
     }
-    if (!orderOk || idx !== required.length) out.push(result('AS-FACE-002', 'violate', 'layer order ' + layers.join(',')));
+    if (!orderOk) out.push(result('AS-FACE-002', 'violate', 'layer order ' + layers.join(',')));
     else out.push(result('AS-FACE-002', 'pass', layers.join(',')));
 
     const expr = face.expressions || [];
@@ -482,12 +488,20 @@ function checkSummons(spellEntries, table, derivation) {
 }
 
 function checkMatrix(matrix, standard) {
-    const expect = standard.races.length * (standard.classes.length + standard.armorWeights.length);
+    const expect = standard.races.length * standard.armorWeights.length;
     if (!Array.isArray(matrix) || matrix.length !== expect) {
-        return [result('AS-HUM-015', 'violate', 'outfit matrix length ' + (matrix ? matrix.length : 0) + ' is not ' + expect)];
+        return [result('AS-HUM-015', 'violate', 'armour matrix length ' + (matrix ? matrix.length : 0) + ' is not ' + expect)];
     }
     const keys = new Set();
     for (const row of matrix) {
+        if (!row || String(row.outfitId || '').indexOf('outfit_class_') === 0) {
+            return [result('AS-HUM-015', 'violate', 'class outfit is still required')];
+        }
+        const weight = row.armorWeight || row.silhouette;
+        if (standard.armorWeights.indexOf(weight) === -1 || row.outfitId !== 'outfit_armor_' + weight) {
+            return [result('AS-HUM-015', 'violate', 'not an armour weight ' + row.outfitId)];
+        }
+        if (row.spriteDraw !== 'armour-layer') return [result('AS-HUM-015', 'violate', row.artKey + ' is not an armour layer')];
         if (!ART_KEY_RE.test(row.artKey) || keys.has(row.artKey)) {
             return [result('AS-HUM-015', 'violate', 'bad or duplicate art key ' + row.artKey)];
         }
@@ -503,7 +517,30 @@ function checkMatrix(matrix, standard) {
             return [result('AS-HUM-015', 'violate', row.artKey + ' pixels are not custom per race')];
         }
     }
-    return [result('AS-HUM-015', 'pass', expect + ' outfit variants')];
+    const garbs = standard.raceGarbs || [];
+    if (garbs.length !== standard.races.length * 2) {
+        return [result('AS-HUM-015', 'violate', 'race garbs ' + garbs.length)];
+    }
+    const seenGarb = {};
+    for (let i = 0; i < garbs.length; i++) {
+        const row = garbs[i];
+        if (!row || standard.races.indexOf(row.race) === -1 || (row.sex !== 'male' && row.sex !== 'female')) {
+            return [result('AS-HUM-015', 'violate', 'race garb row')];
+        }
+        if (row.classId || String(row.garbId || '').indexOf('class') !== -1) {
+            return [result('AS-HUM-015', 'violate', 'race garb is a class outfit')];
+        }
+        if (row.pixels !== 'custom-per-race' || !ART_KEY_RE.test(row.artKey)) {
+            return [result('AS-HUM-015', 'violate', 'race garb art key')];
+        }
+        const key = row.race + ':' + row.sex;
+        if (seenGarb[key]) return [result('AS-HUM-015', 'violate', 'duplicate race garb ' + key)];
+        seenGarb[key] = true;
+    }
+    if (Object.keys(seenGarb).length !== standard.races.length * 2) {
+        return [result('AS-HUM-015', 'violate', 'race garb coverage')];
+    }
+    return [result('AS-HUM-015', 'pass', expect + ' armour variants, 18 race garbs')];
 }
 
 function checkLife(templates) {
@@ -739,41 +776,53 @@ function checkVariety(variety, standard) {
 }
 
 function checkGenes(genes, standard) {
-    if (!genes || !genes.inheritance || genes.inheritance.owner !== 'sim' || genes.inheritance.ageLayersPreserveIdentity !== true) {
-        return [result('AS-GENE-001', 'violate', 'inheritance is not the sim, or age layers do not keep identity')];
+    if (!genes || genes.drivesArt !== false || genes.simGenetics !== 'stats-only' || genes.partLibrary !== 'retired') {
+        return [result('AS-GENE-001', 'violate', 'genetics still select art')];
     }
-    if (!genes.hairNaturalSteps || genes.hairNaturalSteps.length !== 12 || !genes.greying || genes.greying.length !== 4 || !genes.balding || genes.balding.length !== 3) {
-        return [result('AS-GENE-001', 'violate', 'hair ramp, greying or balding count')];
+    const inheritance = genes.inheritance || {};
+    if (inheritance.owner !== 'sim' || inheritance.drivesArt !== false || inheritance.artSelection !== false) {
+        return [result('AS-GENE-001', 'violate', 'inheritance selects art')];
     }
-    if (genes.faceShape.length !== 4 || genes.eyes.length !== 5 || genes.brows.length !== 4 || genes.nose.length !== 5
-        || genes.mouth.length !== 4 || genes.jaw.length !== 3 || genes.markings.length !== 4) {
-        return [result('AS-GENE-001', 'violate', 'face-gene counts')];
+    const loci = standard && standard.geneticsLoci;
+    if (!loci || loci.drivesArt !== false || loci.status !== 'retired') {
+        return [result('AS-GENE-001', 'violate', 'genetics loci still select art')];
     }
-    for (const race of standard.races) {
-        const block = genes.perRace && genes.perRace[race];
-        if (!block || !block.ears || block.ears.length !== 3) return [result('AS-GENE-001', 'violate', race + ' ears')];
-        const features = block.raceFeatures ? block.raceFeatures.length : 0;
-        if (features < 3 || features > 4) return [result('AS-GENE-001', 'violate', race + ' race features')];
-        const skip = (genes.beardlessRaces || []).indexOf(race) !== -1;
-        const bodies = block.bodyTypes || {};
-        for (const bodyType of ['male', 'female']) {
-            const body = bodies[bodyType];
-            if (!body || !body.styles || body.styles.length !== 12) return [result('AS-GENE-001', 'violate', race + ' ' + bodyType + ' hair styles')];
-            const distinctive = body.styles.filter(style => style.raceDistinctive).length;
-            if (distinctive < 3 || distinctive > 4) return [result('AS-GENE-001', 'violate', race + ' ' + bodyType + ' distinctive hair')];
-            const facial = body.facialHair || [];
-            if (skip) {
-                if (facial.length !== 0) return [result('AS-GENE-001', 'violate', race + ' should skip facial hair')];
-            } else if (race === 'dwarf') {
-                const base = genes.facialHair.every(name => facial.indexOf(name) !== -1);
-                const extra = (genes.dwarfExtra || []).every(name => facial.indexOf(name) !== -1);
-                if (!base || !extra || !(genes.dwarfExtra || []).length) return [result('AS-GENE-001', 'violate', 'dwarf facial hair')];
-            } else if (!sameSet(facial, genes.facialHair)) {
-                return [result('AS-GENE-001', 'violate', race + ' facial hair')];
+    const pool = genes.presets;
+    if (!pool || pool.adultMale !== 8 || pool.adultFemale !== 8 || pool.elderPerSex !== 2 || pool.childPerSex !== 2) {
+        return [result('AS-GENE-001', 'violate', 'preset counts')];
+    }
+    if (pool.perRace !== 24 || pool.total !== standard.races.length * 24 || pool.paletteSwaps !== 3 || pool.expressions !== 8 || pool.facesetPx !== 144) {
+        return [result('AS-GENE-001', 'violate', 'preset pool size')];
+    }
+    if (pool.paletteSwapWhen !== 'in-game' || pool.factionFaces !== false || pool.factions !== 'trim-banners-buildings') {
+        return [result('AS-GENE-001', 'violate', 'preset colour or faction')];
+    }
+    if (!sameSet(pool.playerPicks, ['preset', 'colour-variant'])) {
+        return [result('AS-GENE-001', 'violate', 'player pick')];
+    }
+    const buckets = ['adult-male', 'adult-female', 'elder-male', 'elder-female', 'child-male', 'child-female'];
+    const needCount = { 'adult-male': 8, 'adult-female': 8, 'elder-male': 2, 'elder-female': 2, 'child-male': 2, 'child-female': 2 };
+    const seen = new Set();
+    for (let r = 0; r < standard.races.length; r++) {
+        const race = standard.races[r];
+        const block = genes.byRace && genes.byRace[race];
+        if (!block || block.charset !== true || block.faceset !== true || block.expressions !== 8) {
+            return [result('AS-GENE-001', 'violate', race + ' preset look')];
+        }
+        for (let b = 0; b < buckets.length; b++) {
+            const ids = block.ids && block.ids[buckets[b]];
+            if (!ids || ids.length !== needCount[buckets[b]]) return [result('AS-GENE-001', 'violate', race + ' ' + buckets[b])];
+            for (let i = 0; i < ids.length; i++) {
+                const id = ids[i];
+                if (seen.has(id) || id !== 'preset:' + race + ':' + buckets[b] + ':' + String(i + 1).padStart(2, '0')) {
+                    return [result('AS-GENE-001', 'violate', 'preset id ' + id)];
+                }
+                seen.add(id);
             }
         }
     }
-    return [result('AS-GENE-001', 'pass', 'gene counts')];
+    if (seen.size !== pool.total) return [result('AS-GENE-001', 'violate', 'preset total ' + seen.size)];
+    return [result('AS-GENE-001', 'pass', pool.total + ' presets')];
 }
 
 function checkPortrait(entity, standard) {
@@ -1043,7 +1092,9 @@ function checkGenerators(standard) {
     const fields = generators.fields || [];
     if (fields.indexOf('id') === -1 || fields.indexOf('version') === -1) return [result('AS-GEN-004', 'violate', 'generator fields')];
     if (adapters.from !== 'shared-prompt-spec' || adapters.perGenerator !== true) return [result('AS-GEN-004', 'violate', 'adapters')];
-    if (routing.objective !== 'best-yield-per-cost' || routing.rebenchmark !== 'periodic' || routing.testSet !== 'goldenTestSet') {
+    if (routing.objective !== 'pixellab-primary' || routing.bakeOff !== false || routing.primary !== 'pixellab'
+        || routing.standby !== 'retro-diffusion' || routing.conceptsOnly !== 'nano-banana-pro'
+        || routing.rebenchmark !== 'periodic' || routing.testSet !== 'goldenTestSet') {
         return [result('AS-GEN-004', 'violate', 'routing')];
     }
     if (golden.fixed !== true || !sameSet(golden.checks, ['palette', 'outline', 'anchor', 'style'])) {
@@ -1146,30 +1197,24 @@ function checkOwnerPreview(preview) {
 }
 
 function checkGeneratorCap(roster, sets) {
-    if (!roster || roster.perCategory !== true || roster.mixWithinLayeredSet !== false || roster.min !== 2 || roster.max !== 3) {
+    if (!roster || roster.perCategory !== true || roster.mixWithinLayeredSet !== false || roster.bakeOff !== false) {
         return [result('AS-GEN-005', 'violate', 'generator cap')];
     }
+    if (roster.primary !== 'pixellab' || roster.standby !== 'retro-diffusion' || roster.conceptsOnly !== 'nano-banana-pro') {
+        return [result('AS-GEN-005', 'violate', 'generator roles')];
+    }
+    if (roster.status !== 'assigned') return [result('AS-GEN-005', 'violate', 'roster status')];
     const ids = roster.ids || [];
+    if (!sameSet(ids, ['pixellab'])) return [result('AS-GEN-005', 'violate', 'production roster')];
     const cats = roster.categories || {};
     const catKeys = Object.keys(cats);
     if (!sameSet(catKeys, GEN_CATEGORIES)) return [result('AS-GEN-005', 'violate', 'category list')];
-    if (roster.status !== 'unassigned' && roster.status !== 'assigned') {
-        return [result('AS-GEN-005', 'violate', 'roster status')];
-    }
-    if (roster.status === 'unassigned' && ids.length !== 0) return [result('AS-GEN-005', 'violate', 'unassigned roster is not empty')];
-    if (roster.status === 'assigned' && (ids.length < 2 || ids.length > 3)) {
-        return [result('AS-GEN-005', 'violate', 'assigned roster is not 2 or 3')];
-    }
-    const seenIds = new Set();
-    for (let i = 0; i < ids.length; i++) {
-        if (typeof ids[i] !== 'string' || !ids[i] || seenIds.has(ids[i])) return [result('AS-GEN-005', 'violate', 'roster id')];
-        seenIds.add(ids[i]);
-    }
+    const seenIds = new Set(ids);
     for (let i = 0; i < GEN_CATEGORIES.length; i++) {
         const value = cats[GEN_CATEGORIES[i]];
         if (Array.isArray(value)) return [result('AS-GEN-005', 'violate', 'category has more than one generator')];
-        if (roster.status === 'unassigned' && value !== null) return [result('AS-GEN-005', 'violate', 'category assigned while roster is unassigned')];
-        if (roster.status === 'assigned' && !seenIds.has(value)) return [result('AS-GEN-005', 'violate', 'category generator is outside the roster')];
+        if (value !== 'pixellab' || !seenIds.has(value)) return [result('AS-GEN-005', 'violate', 'category generator is outside the roster')];
+        if (value === roster.standby || value === roster.conceptsOnly) return [result('AS-GEN-005', 'violate', 'standby or concepts generator is assigned')];
     }
     if (!Array.isArray(sets) || !sets.length) return [result('AS-GEN-005', 'violate', 'no layered sets')];
     let paper = false;
@@ -1187,10 +1232,7 @@ function checkGeneratorCap(roster, sets) {
         for (let m = 0; m < members.length; m++) {
             if (members[m] !== set.generatorId) return [result('AS-GEN-005', 'violate', set.id + ' mixes generators')];
         }
-        if (roster.status === 'unassigned' && set.generatorId !== null) {
-            return [result('AS-GEN-005', 'violate', 'layered set assigned while roster is unassigned')];
-        }
-        if (roster.status === 'assigned' && set.generatorId !== cats[set.category]) {
+        if (set.generatorId !== 'pixellab' || set.generatorId !== cats[set.category]) {
             return [result('AS-GEN-005', 'violate', set.id + ' does not use the category generator')];
         }
     }
@@ -1233,6 +1275,9 @@ function checkSexedBodies(block, standard) {
         return [result('AS-SEX-001', 'violate', 'garb or armour bodies')];
     }
     if (block.elderGarb !== 'adult-same-sex-offset') return [result('AS-SEX-001', 'violate', 'elder garb')];
+    if (block.classGarb !== 'none' || block.elderBaseBodies !== 'race-and-sex') {
+        return [result('AS-SEX-001', 'violate', 'class garb is still in the base body')];
+    }
     const templates = block.templates || {};
     for (let i = 0; i < standard.races.length; i++) {
         const race = standard.races[i];
@@ -1247,8 +1292,14 @@ function checkSexedBodies(block, standard) {
             return [result('AS-SEX-001', 'violate', race + ' face base')];
         }
     }
+    const dwarfPx = block.bodyPx && block.bodyPx.dwarf;
+    const dwarfAges = ['adult-male', 'adult-female', 'elder-male', 'elder-female'];
+    if (!dwarfPx) return [result('AS-SEX-001', 'violate', 'dwarf body px')];
+    for (let i = 0; i < dwarfAges.length; i++) {
+        if (dwarfPx[dwarfAges[i]] !== 36) return [result('AS-SEX-001', 'violate', 'dwarf ' + dwarfAges[i] + ' px')];
+    }
     const matrix = standard.outfitMatrix || [];
-    const expect = standard.races.length * (standard.classes.length + standard.armorWeights.length);
+    const expect = standard.races.length * standard.armorWeights.length;
     if (matrix.length !== expect) return [result('AS-SEX-001', 'violate', 'outfit matrix')];
     for (let i = 0; i < matrix.length; i++) {
         const row = matrix[i];
@@ -1493,8 +1544,11 @@ function checkAnchorAlignment(rec) {
 
 function checkEquipmentAnchors(standard) {
     const policy = standard && standard.equipmentAnchors;
-    if (!policy || policy.weaponDrawn !== 'once-per-grip-pose' || policy.pinnedBy !== 'compositor') {
+    if (!policy || policy.weaponDrawn !== 'upright-sprite-plus-baked-angles' || policy.pinnedBy !== 'compositor') {
         return [result('AS-EQUIP-001', 'violate', 'weapon is not pinned by the compositor')];
+    }
+    if (policy.grip !== 'fixed-upright-right-hand' || policy.runtimeRotation !== false || policy.bodyAttackRow !== false) {
+        return [result('AS-EQUIP-001', 'violate', 'melee body swing')];
     }
     if (policy.redrawPerFrame !== false || policy.redrawPerRace !== false || policy.redrawPerBody !== false) {
         return [result('AS-EQUIP-001', 'violate', 'weapon redrawn per frame or body')];
@@ -1532,6 +1586,22 @@ function colourValue(hex) {
     const g = (n >> 8) & 255;
     const b = n & 255;
     return Math.round((0.299 * r + 0.587 * g + 0.114 * b) / 255 * 15);
+}
+
+function colourChannel(hex) {
+    const n = parseInt(String(hex).slice(1), 16);
+    const r = (n >> 16) & 255;
+    const g = (n >> 8) & 255;
+    const b = n & 255;
+    if (r > g + 30 && r > b) return 'R';
+    if (g > r + 30 && g > b) return 'G';
+    return 'other';
+}
+
+function redGreenPair(a, b) {
+    const ca = colourChannel(a);
+    const cb = colourChannel(b);
+    return (ca === 'R' && cb === 'G') || (ca === 'G' && cb === 'R');
 }
 
 function paletteSet(standard) {
@@ -1724,9 +1794,9 @@ function checkA9c(standard) {
         && terr.nativeScale === 1 && terr.scaled === false && noteOk(manual, '19') && noteOk(manual, '34')
         && categoryOk(standard, 'AS-TERR-001')
         && trial && trial.characterRequestPx === 42 && trial.characterTallPx[0] === 42 && trial.characterTallPx[1] === 43
-        && trial.animation === 'skeleton-v3-on-create-character-v3' && sameSet(trial.layerPropagation, ['armour', 'helmet', 'hair'])
+        && trial.animation === 'skeleton-v3-on-create-character-v3' && sameSet(trial.layerPropagation, ['armour', 'helmet', 'preset-head', 'class-kit'])
         && trial.weaponsShields === 'anchored-sprites' && trial.southWalk && trial.southWalk.offsetPx[0] === 0 && trial.southWalk.offsetPx[1] === 2
-        && trial.weaponAngles === 'rotate-tool-one-generation-per-angle' && trial.view === 'rmmz-top-down-3-4'
+        && trial.weaponAngles === 'two-authored-plus-lossless-90' && trial.view === 'rmmz-top-down-3-4'
         && trial.smallItemWorldSprites === 'open-test'
         && Array.isArray(terr.biomes) && sameSet(terr.biomes.map(row => row && row.id), ['VOLCANIC', 'WET', 'ARID', 'TEMPERATE', 'COLD', 'WILD']));
     let groundsOk = terrOk;
@@ -1936,8 +2006,12 @@ function checkA9c(standard) {
         && layout.featureRows.every(row => row && row.frames === 6 && row.class === 'work'
             && ['farm', 'mine', 'build', 'craft', 'fish', 'cook'].indexOf(row.id) !== -1)
         && perDir * 4 === layout.cells30 && featureSum * 4 === layout.featureCells
-        && layout.cells30 + layout.featureCells === layout.cellsPerFullSheet
-        && layout.boundingPx && layout.boundingPx[0] === 1152 && layout.boundingPx[1] === 1728
+        && layout.item33Cells === 708 && layout.cells30 + layout.featureCells === layout.item33Cells
+        && layout.droppedMeleeBodyCells === 48 && layout.drawnBodyCells === 516
+        && layout.cells30 - layout.droppedMeleeBodyCells === layout.drawnBodyCells
+        && layout.drawnBodyCells + layout.featureCells === layout.cellsPerFullSheet
+        && layout.cellsPerFullSheet === 660
+        && layout.boundingPx && layout.boundingPx[0] === 1152 && layout.boundingPx[1] === 1632
         && layout.boundingPx[0] <= 2048 && layout.boundingPx[1] <= 2048
         && lock.extensionRows === 'rmmz-compatible' && lock.additiveGlow === 'max-brightness-only'
         && sameSet(lock.grading, ['dawn', 'day', 'dusk', 'night', 'underground'])
@@ -1970,19 +2044,37 @@ function checkA9c(standard) {
     out.push(result('AS-LOCK-001', markerOk ? 'pass' : 'violate', markerOk ? 'locked style defaults' : 'style lock'));
 
     const melee = a && a.melee;
-    const meleeOk = !!(melee && melee.weapon === 'separate-sprite' && melee.pin === 'hand-anchor'
-        && melee.angles === 'rotate-tool-one-generation-per-angle' && melee.frames === 6
-        && sameSet(melee.frameNames, ['wind-up', 'raise', 'arc-1', 'arc-2', 'arc-3', 'recovery'])
+    const swingRow = layout && rowById(layout.rows, 'melee-swing');
+    const thrustRow = layout && rowById(layout.rows, 'thrust');
+    const keptRows = ['bow-draw', 'bow-loose', 'xbow-aim', 'xbow-fire', 'xbow-reload', 'cast-one-hand', 'cast-two-hand', 'cast-focus', 'hammer', 'saw', 'chop', 'dig', 'stir', 'carry', 'kneel'];
+    let keptOk = !!(layout && Array.isArray(layout.rows));
+    if (keptOk) {
+        for (let i = 0; i < keptRows.length; i++) {
+            const row = rowById(layout.rows, keptRows[i]);
+            if (!row || row.bodyDrawn === false) keptOk = false;
+        }
+    }
+    const meleeOk = !!(melee && melee.weapon === 'separate-sprite' && melee.pin === 'one-grip-anchor'
+        && melee.body === 'mostly-still' && melee.grip === 'fixed-upright-right-hand'
+        && melee.runtimeRotation === false && melee.authoredAngles === 2 && melee.bakedFrames === 8
+        && melee.lossless === '90-degree-turns-and-flips' && melee.uprightSprite === true
+        && sameList(melee.arc, ['up', '45-forward', 'level', 'back'])
+        && melee.frames === 6 && melee.bodyAttackRow === false
+        && sameSet(melee.frameNames, ['wind-up', 'raise', '45-forward', 'level', 'strike', 'recovery'])
         && melee.strikeFrame === 4 && melee.strikeHeldLonger === true
         && melee.swingTypes && melee.swingTypes['overhead-chop'] && melee.swingTypes['side-slash']
         && melee.swingTypes.thrust && melee.swingTypes['two-hand'] && melee.swingTypes['two-hand'].pace === 'heavier-slower'
+        && melee.swingTypes['overhead-chop'].bodyFrames === false
         && melee.hitSpark === 'strike-frame' && melee.knockbackPx[0] === 1 && melee.knockbackPx[1] === 2
         && melee.strikeHoldFrames === 12 && melee.otherHoldFrames === 6 && melee.strikeHoldFrames > melee.otherHoldFrames
         && melee.oversizeMin === 1.1 && melee.oversizeMax === 1.2 && melee.scaled === false
         && melee.sample && melee.sample.scaled === false
         && melee.sample.drawnPx >= Math.round(melee.sample.basePx * 1.1) && melee.sample.drawnPx <= Math.round(melee.sample.basePx * 1.2)
-        && noteOk(manual, '35') && categoryOk(standard, 'AS-MELEE-001'));
-    out.push(result('AS-MELEE-001', meleeOk ? 'pass' : 'violate', meleeOk ? 'melee swings' : 'melee'));
+        && swingRow && thrustRow && swingRow.bodyDrawn === false && thrustRow.bodyDrawn === false
+        && swingRow.frames === 6 && thrustRow.frames === 6 && keptOk
+        && manual && manual['39'] && manual['39'].indexOf('PixelLab') !== -1 && manual['39'].indexOf('Retro Diffusion') !== -1
+        && noteOk(manual, '35') && noteOk(manual, '39') && categoryOk(standard, 'AS-MELEE-001'));
+    out.push(result('AS-MELEE-001', meleeOk ? 'pass' : 'violate', meleeOk ? 'weapon rotation, body still' : 'melee'));
 
     const pm = a && a.pmDefaults;
     const heights = {
@@ -2034,27 +2126,86 @@ function checkA9c(standard) {
 
     const vis = a && a.visibleGear;
     const sizing = a && a.sizing;
-    const allowedDrawn = ['base-body', 'race-features', 'hair', 'beard', 'armour', 'helmet', 'weapon', 'shield'];
-    let visOk = !!(vis && sizing && vis.assumption === 'class-garb-in-race-class-base-body' && vis.assumptionFlag === 'PM assumption, Owner may amend'
-        && sameSet(vis.charsetDrawn, allowedDrawn)
-        && sameSet(vis.charsetOrder, ['base-body', 'race-features', 'hair-beard', 'armour', 'helmet'])
-        && sameSet(vis.anchored, ['weapon', 'shield'])
-        && sameSet(vis.faceGear, ['armour', 'helmet'])
-        && sameSet(vis.faceDropped, ['collar', 'cloak'])
-        && sameSet(vis.notDrawn, ['cloak', 'cape', 'boots', 'gloves', 'belts', 'rings', 'amulets', 'collar'])
-        && vis.otherGear === 'item-icon-portrait-world-sprite' && vis.childClass === false && vis.childGarb === 'child-base-body'
-        && vis.outfitIdsRemain === 'item-and-icon' && sameSet(vis.armourLayers, ['light', 'medium', 'heavy'])
-        && sameSet(vis.deformingKept, ['large-shield', 'bow-draw']) && sameSet(vis.deformingDropped, ['cape', 'long-robe'])
-        && vis.elderOffsetsApplyTo && sameSet(vis.elderOffsetsApplyTo, ['armour', 'helmet', 'hair'])
-        && vis.elderBaseBodies === 'race-and-class' && typeof vis.elderFlag === 'string' && vis.elderFlag.indexOf('216') !== -1
-        && noteOk(manual, '37')
-        && sizing.adultBaseSheets === 216 && sizing.elderBaseSheets === 216 && sizing.childBaseSheets === 9
-        && sizing.baseBodySheets === 441 && sizing.armourSheets === 81 && sizing.helmetSheets === 81
-        && sizing.elderArmourExtraSheets === 0 && sizing.removedClassGarbSheets === 324
+    const kits = a && a.classKits;
+    const allowedDrawn = CHARSET_ORDER.concat(KIT_LAYERS, ['weapon', 'shield', 'race-garb']);
+    let visOk = !!(vis && sizing && kits && vis.classOutfits === 'none'
+        && vis.raceGarbs === 18 && sameList(vis.charsetOrder, CHARSET_ORDER)
+        && sameSet(vis.anchored, ['weapon', 'shield', 'held-class-item'])
+        && Array.isArray(vis.faceGear) && vis.faceGear.length === 0
+        && vis.facesetGear === 'none'
+        && sameSet(vis.notDrawn, ['generic-cloak', 'boots', 'gloves', 'belts', 'rings', 'amulets', 'collar', 'class-outfit'])
+        && vis.otherGear === 'item-icon-portrait-world-sprite' && vis.childClass === false && vis.childGarb === 'in-child-body'
+        && vis.outfitIdsRemain === 'icon-only' && sameSet(vis.armourLayers, ['light', 'medium', 'heavy'])
+        && sameSet(vis.deformingKept, ['large-shield', 'bow-draw']) && sameSet(vis.deformingDropped, ['generic-cape'])
+        && vis.elderOffsetsApplyTo && sameSet(vis.elderOffsetsApplyTo, ['armour', 'helmet', 'preset-head'])
+        && vis.elderBaseBodies === 'race-and-sex' && typeof vis.elderFlag === 'string' && vis.elderFlag.indexOf('18') !== -1
+        && noteOk(manual, '37') && noteOk(manual, '40') && noteOk(manual, '41')
+        && sizing.adultBaseSheets === 18 && sizing.elderBaseSheets === 18 && sizing.childBaseSheets === 9
+        && sizing.baseBodySheets === 45 && sizing.raceGarbDesigns === 18
+        && sizing.kitLayers === 14 && sizing.kitBodyTemplates === 18 && sizing.kitSheets === 252
+        && sizing.elderKitSheets === 0 && sizing.childKitSheets === 0
+        && sizing.heldClassItems === 6 && sizing.heldAuthoredAngles === 2 && sizing.heldBakedFrames === 8
+        && sizing.monkIdleFrames === 4 && sizing.monkIdleDirections === 4 && sizing.monkIdleCells === 288
+        && sizing.armourSheets === 81 && sizing.helmetSheets === 81
+        && sizing.elderArmourExtraSheets === 0 && sizing.retiredClassGarbDesigns === 108 && sizing.retiredClassGarbSheets === 324
+        && sizing.presetLooks === 216 && sizing.presetPaletteSwapSheets === 0
+        && sizing.droppedMeleeBodyCells === 48 && sizing.cellsPerFullSheet === 660
         && sizing.cellsPerFullSheet === (layout && layout.cellsPerFullSheet)
         && Array.isArray(a.sizingManifest) && a.sizingManifest.length >= 18
-        && Array.isArray(vis.layerSamples) && Array.isArray(standard.outfitMatrix));
+        && Array.isArray(vis.layerSamples) && Array.isArray(standard.outfitMatrix)
+        && categoryOk(standard, 'AS-VIS-001') && categoryOk(standard, 'AS-GENE-001'));
     if (visOk) {
+        const layers = kits.layers || [];
+        visOk = layers.length === 14 && sameSet(layers.map(row => row && row.id), KIT_LAYERS);
+        const kitClass = {};
+        for (let i = 0; i < layers.length; i++) {
+            const row = layers[i];
+            if (!row || !row.classId || !row.group) visOk = false;
+            else kitClass[row.classId] = true;
+            if (row && MARTIAL_CLASSES.indexOf(row.classId) !== -1) visOk = false;
+        }
+        if (MARTIAL_CLASSES.some(id => kitClass[id])) visOk = false;
+        if (!kits.monk || kits.monk.heldItem !== false || kits.monk.idleFrames !== 4 || kits.monk.topknot !== 'head-overlay') visOk = false;
+        if (!kits.headwear || kits.headwear.oneSlot !== true || kits.headwear.sorcerer !== 'bare') visOk = false;
+        const held = kits.held || [];
+        visOk = visOk && held.length === 6 && sameSet(held.map(row => row && row.id), HELD_ITEMS);
+        for (let i = 0; i < held.length; i++) {
+            const row = held[i];
+            if (!row || row.authoredAngles !== 2 || row.bakedFrames !== 8 || row.runtimeRotation !== false) visOk = false;
+        }
+        const lute = held.filter(row => row && row.id === 'bard-lute')[0];
+        const orb = held.filter(row => row && row.id === 'warlock-orb')[0];
+        if (!lute || lute.mount !== 'back-slung' || !orb || orb.anchor !== 'offset') visOk = false;
+        const accents = kits.accents || [];
+        const ground = colourValue('#333B45');
+        const usedClass = {};
+        if (accents.length !== standard.classes.length) visOk = false;
+        for (let i = 0; i < accents.length; i++) {
+            const row = accents[i];
+            if (!row || standard.classes.indexOf(row.classId) === -1 || usedClass[row.classId]) visOk = false;
+            else usedClass[row.classId] = true;
+            if (!row || !set.has(row.hex) || row.colourOnly !== false || row.secondChannel !== 'silhouette') visOk = false;
+            const value = row && colourValue(row.hex);
+            if (value === null || value !== row.value || Math.abs(value - ground) < 3) visOk = false;
+        }
+        for (let i = 0; i < accents.length; i++) {
+            for (let j = i + 1; j < accents.length; j++) {
+                if (accents[i].hex === accents[j].hex) visOk = false;
+                else if (accents[i].value === accents[j].value && redGreenPair(accents[i].hex, accents[j].hex)) visOk = false;
+            }
+        }
+        const flags = standard.slotMap && standard.slotMap.asymmetricGear;
+        const needPiece = { 'kit-wizard-hat': 1, 'kit-bard-cap': 1, 'kit-warlock-cloak': 1 };
+        if (!Array.isArray(flags)) visOk = false;
+        else {
+            for (let i = 0; i < flags.length; i++) {
+                const flag = flags[i];
+                if (!flag || flag.asymmetric !== true || !needPiece[flag.piece]) visOk = false;
+                else if (!ID_GRAMMAR['charset-layer'] || !new RegExp(ID_GRAMMAR['charset-layer']).test(flag.id)) visOk = false;
+                else delete needPiece[flag.piece];
+            }
+            if (Object.keys(needPiece).length) visOk = false;
+        }
         for (let i = 0; i < vis.layerSamples.length; i++) {
             const row = vis.layerSamples[i];
             if (!row) visOk = false;
@@ -2064,16 +2215,18 @@ function checkA9c(standard) {
         for (let i = 0; i < standard.outfitMatrix.length; i++) {
             const row = standard.outfitMatrix[i];
             if (!row || !Array.isArray(row.drawnDeforming)) visOk = false;
-            else if (row.drawnDeforming.some(piece => piece === 'cape' || piece === 'long-robe')) visOk = false;
-            else if (String(row.outfitId || '').indexOf('outfit_class_') === 0 && row.spriteDraw !== 'base-body') visOk = false;
+            else if (String(row.outfitId || '').indexOf('outfit_class_') === 0) visOk = false;
             else if (String(row.outfitId || '').indexOf('outfit_armor_') === 0 && row.spriteDraw !== 'armour-layer') visOk = false;
         }
+        const outfitList = standard.outfits || [];
+        for (let i = 0; i < outfitList.length; i++) {
+            const row = outfitList[i];
+            if (row && row.kind === 'class' && (row.spriteDraw !== 'none' || row.requiredArtVariants !== 0)) visOk = false;
+        }
         const face = vis.faceSample;
-        if (!face || !Array.isArray(face.layers) || !Array.isArray(face.gearKinds)) visOk = false;
-        else if (face.gearKinds.some(kind => kind !== 'armour' && kind !== 'helmet')) visOk = false;
-        else if (face.layers.some(layer => ['background', 'faction-trim', 'body-base', 'face', 'hair', 'gear', 'overlay'].indexOf(layer) === -1)) visOk = false;
+        if (!face || !sameList(face.layers, FACE_LAYERS) || !Array.isArray(face.gearKinds) || face.gearKinds.length !== 0) visOk = false;
     }
-    out.push(result('AS-VIS-001', visOk ? 'pass' : 'violate', visOk ? 'visible gear limit' : 'visible gear'));
+    out.push(result('AS-VIS-001', visOk ? 'pass' : 'violate', visOk ? 'race garb and class kits' : 'visible gear'));
     return out;
 }
 

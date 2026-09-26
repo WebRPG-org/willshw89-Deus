@@ -19,7 +19,7 @@
     "cols": 4,
     "rows": 2,
     "expressions": ["neutral", "happy", "angry", "sad", "surprised", "hurt", "determined", "afraid"],
-    "layers": ["background", "faction-trim", "body-base", "face", "hair", "gear", "overlay"],
+    "layers": ["background", "preset-face", "preset-hair"],
     "anchors": {
       "neckBase": [72, 120],
       "collarLine": [72, 108],

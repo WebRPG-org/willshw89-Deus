@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "deus-asset-standard/1.3.1",
+  "schemaVersion": "deus-asset-standard/1.4.0",
   "documentId": "DEUS-ASSET-STANDARD-01",
   "authority": "Owner rulings DEC-007, DEC-011, DEC-013, DEC-016, DEC-027, DEC-030, and 2026-09-26 12:38 through 15:12 CT, including addenda A1-A9, A9b and A9c. PM decisions are marked on the rule. Lane brief WG.20.01.",
   "artGeneration": "forbidden",
@@ -145,7 +145,7 @@
       "check": "paperdoll-z"
     },
     "AS-HUM-005": {
-      "norm": "The face shows the same armour and helmet as the charset, and no cloak or collar. Gear on a face is armour and helmet only.",
+      "norm": "A faceset does not change with gear. It is the preset face, preset hair, race background and 8 expressions.",
       "check": null
     },
     "AS-HUM-006": {
@@ -153,11 +153,11 @@
       "check": null
     },
     "AS-HUM-007": {
-      "norm": "Hair greying is a four-step ramp: natural, salt-and-pepper, grey, white. Balding is three overlays (receding, crown, advanced) that sit on any hair style. PM decision 13:02 CT, Owner may amend.",
+      "norm": "Greying and balding belong to the elder presets only. There is no separate balding overlay.",
       "check": null
     },
     "AS-HUM-008": {
-      "norm": "Visible genetic loci and the parts they select are defined here. Inheritance math stays in the sim.",
+      "norm": "Visible looks are the preset pool. Sim genetics are stats only and do not select art.",
       "check": null
     },
     "AS-HUM-009": {
@@ -185,15 +185,15 @@
       "check": null
     },
     "AS-HUM-015": {
-      "norm": "The 135 outfit ids stay as item and icon ids. Class garb is drawn in the race and class base body. Light, medium and heavy stay armour layers. Pixels stay custom per race.",
+      "norm": "One standard race garb per sex, 18 in all, plus 3 armour weights as race art variants. Class outfits are not required.",
       "check": "outfit-matrix"
     },
     "AS-HUM-016": {
-      "norm": "PM-proposed, Owner may amend: body poses are drawn once. Garb layers match that grid. Weapons and shields pick a pre-drawn angle at a per-frame anchor. No runtime rotation.",
+      "norm": "Body poses are drawn once. A melee weapon does not rotate at runtime. Its 8 angles are baked from 2 authored angles plus lossless turns and flips.",
       "check": "pose-grid"
     },
     "AS-HUM-017": {
-      "norm": "Large shields and bows mid-draw keep per-pose frames. Capes are not drawn. Long robes are part of the class base body.",
+      "norm": "Large shields and bows mid-draw keep per-pose frames. A generic cape is not drawn. The wizard robe, bard cape and warlock cloak are class kit layers.",
       "check": "deforming"
     },
     "AS-HUM-018": {
@@ -209,7 +209,7 @@
       "check": "face-background"
     },
     "AS-FACE-002": {
-      "norm": "Face layers stay in order. Layer 6, worn gear, is armour and helmet only. Collar and cloak are not drawn on the face.",
+      "norm": "Face layers are race background, preset face and preset hair. No gear, helmet or class headwear.",
       "check": "face-layers"
     },
     "AS-FACE-003": {
@@ -269,11 +269,11 @@
       "check": null
     },
     "AS-ITEM-001": {
-      "norm": "An item id is race-neutral. One Plate Armor, one item id, one stat block. No Elven Plate Armor.",
+      "norm": "Items stay race-neutral. Armour weights keep race art variants. Class outfit ids are icon-only and are not required sprite variants.",
       "check": "item-id"
     },
     "AS-ITEM-002": {
-      "norm": "Layer art key is itemId + __ + race. Missing race variant falls back to __human, then to nothing. No tint and no other race.",
+      "norm": "The layer key is itemId__race. Armour weights stay custom drawings. A class outfit has no required race art variant.",
       "check": "art-key"
     },
     "AS-NODE-001": {
@@ -417,7 +417,7 @@
       "check": "variety-season"
     },
     "AS-GENE-001": {
-      "norm": "PM decision, Owner may amend. Hair, balding, facial hair and face-gene counts per race and body type. The sim owns inheritance.",
+      "norm": "216 presets replace the part library. 8 adult looks per sex, 2 elder and 2 child per sex, 3 in-game palette swaps. Genetics do not drive art.",
       "check": "genes"
     },
     "AS-PORT-001": {
@@ -425,15 +425,15 @@
       "check": "portrait"
     },
     "AS-HEAD-001": {
-      "norm": "Hair, balding, beards and head race-features are 12 frames: 4 directions times 3 head states, on a per-frame head anchor. Long-hair extras only on death and dodge.",
+      "norm": "A preset head uses the 12-frame grid: 4 directions times 3 head states, on a per-frame head anchor. It is not a combinatorial part library.",
       "check": "head"
     },
     "AS-ELDER-001": {
-      "norm": "Offsets place adult armour, helmet and hair on the elder. Elder base bodies vary by race and class (216 sheets). That count is flagged for the Owner.",
+      "norm": "The stooped elder body is one sheet per race and sex, 18 in all. Offsets place adult armour, helmet and the preset head. Class does not multiply elder bodies.",
       "check": "elder"
     },
     "AS-GEAR-001": {
-      "norm": "Accessories, weapons and tools are one silhouette, a race ramp and a motif decal slot. The 135 outfits stay custom per race.",
+      "norm": "A weapon, tool or accessory has one silhouette. Race garbs and armour weights are custom per race. Class outfits are not a custom set.",
       "check": "gear"
     },
     "AS-MIRROR-001": {
@@ -477,7 +477,7 @@
       "check": "prompt-version"
     },
     "AS-GEN-004": {
-      "norm": "Generators, per-generator adapters from one shared spec, routing by yield per cost on a fixed golden test set, and cross-generator checks. Style tune is optional and later.",
+      "norm": "PixelLab is the primary generator. Retro Diffusion is standby. Nano Banana Pro is concepts only. The multi-generator bake-off is off.",
       "check": "generators"
     },
     "AS-SRC-001": {
@@ -493,11 +493,11 @@
       "check": "owner-preview"
     },
     "AS-GEN-005": {
-      "norm": "One generator per category. One generator id per layered set. Two or three generators once the roster is assigned. No mixing inside a paper-doll set or a creature family.",
+      "norm": "One generator per category and per layered set. That generator is PixelLab. Standby and concepts generators are not mixed into a set.",
       "check": "generator-cap"
     },
     "AS-SEX-001": {
-      "norm": "Male and female adult and elder bodies, and a child body, stay. Class garb is in the base body. Armour and helmet are drawn on adult male, adult female and the child. Elder armour and helmet reuse the adult sheet.",
+      "norm": "Each race has male and female adult and elder bodies and its own child body. Dwarf male and female adult and elder bodies are 36 px. The head is a preset, not a per-sex part library.",
       "check": "sexed-bodies"
     },
     "AS-SEX-002": {
@@ -513,7 +513,7 @@
       "check": "anchor-tool"
     },
     "AS-EQUIP-001": {
-      "norm": "Every body frame stores main-hand and off-hand anchors, a grip angle and a draw-order flag. Down is in front. Up is behind. Weapons and shields are drawn once per grip pose and pinned by the compositor.",
+      "norm": "Every body frame stores the right-hand grip anchor, the off hand, and draw order. The melee weapon is an upright sprite plus baked angles, pinned by the compositor.",
       "check": "equipment-anchors"
     },
     "AS-LOOK-001": {
@@ -593,7 +593,7 @@
       "check": "a9c"
     },
     "AS-MELEE-001": {
-      "norm": "U7 melee: separate weapon sprite, six-frame attack, swing types, hit spark, knockback, drawn 10 to 20 percent larger, not scaled.",
+      "norm": "Melee is a fixed upright right-hand grip. The body stays mostly still. The weapon sprite plays the arc. 2 authored angles plus lossless turns and flips bake 8 frames.",
       "check": "a9c"
     },
     "AS-PM-001": {
@@ -601,7 +601,7 @@
       "check": "a9c"
     },
     "AS-VIS-001": {
-      "norm": "Visible gear is limited. Class garb is in the base body. Sheet counts are recomputed. The elder race-and-class count is flagged.",
+      "norm": "No class outfits. 18 race garbs, 14 kit layers, held class items and the monk idle are drawn on charsets. Facesets never change with gear.",
       "check": "a9c"
     }
   },
@@ -1026,7 +1026,10 @@
       ],
       "deforming": [],
       "motifId": "MOTIF_CLASS_BARBARIAN",
-      "note": "Race-neutral class garb. Race selects the art variant only."
+      "note": "Icon only. The class-outfit sprite is withdrawn. The id stays reserved and is not a required art variant.",
+      "spriteDraw": "none",
+      "requiredArtVariants": 0,
+      "status": "retired-sprite"
     },
     {
       "outfitId": "outfit_class_bard",
@@ -1044,11 +1047,12 @@
         "legs",
         "torso"
       ],
-      "deforming": [
-        "cape"
-      ],
+      "deforming": [],
       "motifId": "MOTIF_CLASS_BARD",
-      "note": "Race-neutral class garb. Race selects the art variant only."
+      "note": "Icon only. The class-outfit sprite is withdrawn. The id stays reserved and is not a required art variant.",
+      "spriteDraw": "none",
+      "requiredArtVariants": 0,
+      "status": "retired-sprite"
     },
     {
       "outfitId": "outfit_class_cleric",
@@ -1067,11 +1071,12 @@
         "legs",
         "torso"
       ],
-      "deforming": [
-        "long-robe"
-      ],
+      "deforming": [],
       "motifId": "MOTIF_CLASS_CLERIC",
-      "note": "Race-neutral class garb. Race selects the art variant only."
+      "note": "Icon only. The class-outfit sprite is withdrawn. The id stays reserved and is not a required art variant.",
+      "spriteDraw": "none",
+      "requiredArtVariants": 0,
+      "status": "retired-sprite"
     },
     {
       "outfitId": "outfit_class_druid",
@@ -1091,7 +1096,10 @@
       ],
       "deforming": [],
       "motifId": "MOTIF_CLASS_DRUID",
-      "note": "Race-neutral class garb. Race selects the art variant only."
+      "note": "Icon only. The class-outfit sprite is withdrawn. The id stays reserved and is not a required art variant.",
+      "spriteDraw": "none",
+      "requiredArtVariants": 0,
+      "status": "retired-sprite"
     },
     {
       "outfitId": "outfit_class_fighter",
@@ -1112,7 +1120,10 @@
       ],
       "deforming": [],
       "motifId": "MOTIF_CLASS_FIGHTER",
-      "note": "Race-neutral class garb. Race selects the art variant only."
+      "note": "Icon only. The class-outfit sprite is withdrawn. The id stays reserved and is not a required art variant.",
+      "spriteDraw": "none",
+      "requiredArtVariants": 0,
+      "status": "retired-sprite"
     },
     {
       "outfitId": "outfit_class_monk",
@@ -1132,7 +1143,10 @@
       ],
       "deforming": [],
       "motifId": "MOTIF_CLASS_MONK",
-      "note": "Race-neutral class garb. Race selects the art variant only."
+      "note": "Icon only. The class-outfit sprite is withdrawn. The id stays reserved and is not a required art variant.",
+      "spriteDraw": "none",
+      "requiredArtVariants": 0,
+      "status": "retired-sprite"
     },
     {
       "outfitId": "outfit_class_paladin",
@@ -1153,7 +1167,10 @@
       ],
       "deforming": [],
       "motifId": "MOTIF_CLASS_PALADIN",
-      "note": "Race-neutral class garb. Race selects the art variant only."
+      "note": "Icon only. The class-outfit sprite is withdrawn. The id stays reserved and is not a required art variant.",
+      "spriteDraw": "none",
+      "requiredArtVariants": 0,
+      "status": "retired-sprite"
     },
     {
       "outfitId": "outfit_class_ranger",
@@ -1173,7 +1190,10 @@
       ],
       "deforming": [],
       "motifId": "MOTIF_CLASS_RANGER",
-      "note": "Race-neutral class garb. Race selects the art variant only."
+      "note": "Icon only. The class-outfit sprite is withdrawn. The id stays reserved and is not a required art variant.",
+      "spriteDraw": "none",
+      "requiredArtVariants": 0,
+      "status": "retired-sprite"
     },
     {
       "outfitId": "outfit_class_rogue",
@@ -1193,7 +1213,10 @@
       ],
       "deforming": [],
       "motifId": "MOTIF_CLASS_ROGUE",
-      "note": "Race-neutral class garb. Race selects the art variant only."
+      "note": "Icon only. The class-outfit sprite is withdrawn. The id stays reserved and is not a required art variant.",
+      "spriteDraw": "none",
+      "requiredArtVariants": 0,
+      "status": "retired-sprite"
     },
     {
       "outfitId": "outfit_class_sorcerer",
@@ -1211,11 +1234,12 @@
         "legs",
         "torso"
       ],
-      "deforming": [
-        "long-robe"
-      ],
+      "deforming": [],
       "motifId": "MOTIF_CLASS_SORCERER",
-      "note": "Race-neutral class garb. Race selects the art variant only."
+      "note": "Icon only. The class-outfit sprite is withdrawn. The id stays reserved and is not a required art variant.",
+      "spriteDraw": "none",
+      "requiredArtVariants": 0,
+      "status": "retired-sprite"
     },
     {
       "outfitId": "outfit_class_warlock",
@@ -1233,11 +1257,12 @@
         "legs",
         "torso"
       ],
-      "deforming": [
-        "cape"
-      ],
+      "deforming": [],
       "motifId": "MOTIF_CLASS_WARLOCK",
-      "note": "Race-neutral class garb. Race selects the art variant only."
+      "note": "Icon only. The class-outfit sprite is withdrawn. The id stays reserved and is not a required art variant.",
+      "spriteDraw": "none",
+      "requiredArtVariants": 0,
+      "status": "retired-sprite"
     },
     {
       "outfitId": "outfit_class_wizard",
@@ -1255,11 +1280,12 @@
         "legs",
         "torso"
       ],
-      "deforming": [
-        "long-robe"
-      ],
+      "deforming": [],
       "motifId": "MOTIF_CLASS_WIZARD",
-      "note": "Race-neutral class garb. Race selects the art variant only."
+      "note": "Icon only. The class-outfit sprite is withdrawn. The id stays reserved and is not a required art variant.",
+      "spriteDraw": "none",
+      "requiredArtVariants": 0,
+      "status": "retired-sprite"
     },
     {
       "outfitId": "outfit_armor_light",
@@ -1329,2715 +1355,6 @@
     }
   ],
   "outfitMatrix": [
-    {
-      "outfitId": "outfit_class_barbarian",
-      "race": "human",
-      "artKey": "outfit_class_barbarian__human",
-      "fallbackArtKey": "outfit_class_barbarian__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_BARBARIAN",
-      "rampId": "RAMP_RACE_HUMAN",
-      "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_barbarian",
-      "race": "elf",
-      "artKey": "outfit_class_barbarian__elf",
-      "fallbackArtKey": "outfit_class_barbarian__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_BARBARIAN",
-      "rampId": "RAMP_RACE_ELF",
-      "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_barbarian",
-      "race": "halfling",
-      "artKey": "outfit_class_barbarian__halfling",
-      "fallbackArtKey": "outfit_class_barbarian__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_BARBARIAN",
-      "rampId": "RAMP_RACE_HALFLING",
-      "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_barbarian",
-      "race": "dwarf",
-      "artKey": "outfit_class_barbarian__dwarf",
-      "fallbackArtKey": "outfit_class_barbarian__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_BARBARIAN",
-      "rampId": "RAMP_RACE_DWARF",
-      "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_barbarian",
-      "race": "gnome",
-      "artKey": "outfit_class_barbarian__gnome",
-      "fallbackArtKey": "outfit_class_barbarian__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_BARBARIAN",
-      "rampId": "RAMP_RACE_GNOME",
-      "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_barbarian",
-      "race": "dragonborn",
-      "artKey": "outfit_class_barbarian__dragonborn",
-      "fallbackArtKey": "outfit_class_barbarian__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_BARBARIAN",
-      "rampId": "RAMP_RACE_DRAGONBORN",
-      "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_barbarian",
-      "race": "half-elf",
-      "artKey": "outfit_class_barbarian__half-elf",
-      "fallbackArtKey": "outfit_class_barbarian__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_BARBARIAN",
-      "rampId": "RAMP_RACE_HALF_ELF",
-      "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_barbarian",
-      "race": "half-orc",
-      "artKey": "outfit_class_barbarian__half-orc",
-      "fallbackArtKey": "outfit_class_barbarian__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_BARBARIAN",
-      "rampId": "RAMP_RACE_HALF_ORC",
-      "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_barbarian",
-      "race": "tiefling",
-      "artKey": "outfit_class_barbarian__tiefling",
-      "fallbackArtKey": "outfit_class_barbarian__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_BARBARIAN",
-      "rampId": "RAMP_RACE_TIEFLING",
-      "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_bard",
-      "race": "human",
-      "artKey": "outfit_class_bard__human",
-      "fallbackArtKey": "outfit_class_bard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_BARD",
-      "rampId": "RAMP_RACE_HUMAN",
-      "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_bard",
-      "race": "elf",
-      "artKey": "outfit_class_bard__elf",
-      "fallbackArtKey": "outfit_class_bard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_BARD",
-      "rampId": "RAMP_RACE_ELF",
-      "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_bard",
-      "race": "halfling",
-      "artKey": "outfit_class_bard__halfling",
-      "fallbackArtKey": "outfit_class_bard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_BARD",
-      "rampId": "RAMP_RACE_HALFLING",
-      "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_bard",
-      "race": "dwarf",
-      "artKey": "outfit_class_bard__dwarf",
-      "fallbackArtKey": "outfit_class_bard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_BARD",
-      "rampId": "RAMP_RACE_DWARF",
-      "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_bard",
-      "race": "gnome",
-      "artKey": "outfit_class_bard__gnome",
-      "fallbackArtKey": "outfit_class_bard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_BARD",
-      "rampId": "RAMP_RACE_GNOME",
-      "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_bard",
-      "race": "dragonborn",
-      "artKey": "outfit_class_bard__dragonborn",
-      "fallbackArtKey": "outfit_class_bard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_BARD",
-      "rampId": "RAMP_RACE_DRAGONBORN",
-      "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_bard",
-      "race": "half-elf",
-      "artKey": "outfit_class_bard__half-elf",
-      "fallbackArtKey": "outfit_class_bard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_BARD",
-      "rampId": "RAMP_RACE_HALF_ELF",
-      "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_bard",
-      "race": "half-orc",
-      "artKey": "outfit_class_bard__half-orc",
-      "fallbackArtKey": "outfit_class_bard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_BARD",
-      "rampId": "RAMP_RACE_HALF_ORC",
-      "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_bard",
-      "race": "tiefling",
-      "artKey": "outfit_class_bard__tiefling",
-      "fallbackArtKey": "outfit_class_bard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_BARD",
-      "rampId": "RAMP_RACE_TIEFLING",
-      "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_cleric",
-      "race": "human",
-      "artKey": "outfit_class_cleric__human",
-      "fallbackArtKey": "outfit_class_cleric__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_CLERIC",
-      "rampId": "RAMP_RACE_HUMAN",
-      "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_cleric",
-      "race": "elf",
-      "artKey": "outfit_class_cleric__elf",
-      "fallbackArtKey": "outfit_class_cleric__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_CLERIC",
-      "rampId": "RAMP_RACE_ELF",
-      "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_cleric",
-      "race": "halfling",
-      "artKey": "outfit_class_cleric__halfling",
-      "fallbackArtKey": "outfit_class_cleric__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_CLERIC",
-      "rampId": "RAMP_RACE_HALFLING",
-      "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_cleric",
-      "race": "dwarf",
-      "artKey": "outfit_class_cleric__dwarf",
-      "fallbackArtKey": "outfit_class_cleric__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_CLERIC",
-      "rampId": "RAMP_RACE_DWARF",
-      "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_cleric",
-      "race": "gnome",
-      "artKey": "outfit_class_cleric__gnome",
-      "fallbackArtKey": "outfit_class_cleric__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_CLERIC",
-      "rampId": "RAMP_RACE_GNOME",
-      "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_cleric",
-      "race": "dragonborn",
-      "artKey": "outfit_class_cleric__dragonborn",
-      "fallbackArtKey": "outfit_class_cleric__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_CLERIC",
-      "rampId": "RAMP_RACE_DRAGONBORN",
-      "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_cleric",
-      "race": "half-elf",
-      "artKey": "outfit_class_cleric__half-elf",
-      "fallbackArtKey": "outfit_class_cleric__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_CLERIC",
-      "rampId": "RAMP_RACE_HALF_ELF",
-      "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_cleric",
-      "race": "half-orc",
-      "artKey": "outfit_class_cleric__half-orc",
-      "fallbackArtKey": "outfit_class_cleric__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_CLERIC",
-      "rampId": "RAMP_RACE_HALF_ORC",
-      "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_cleric",
-      "race": "tiefling",
-      "artKey": "outfit_class_cleric__tiefling",
-      "fallbackArtKey": "outfit_class_cleric__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_CLERIC",
-      "rampId": "RAMP_RACE_TIEFLING",
-      "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_druid",
-      "race": "human",
-      "artKey": "outfit_class_druid__human",
-      "fallbackArtKey": "outfit_class_druid__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_DRUID",
-      "rampId": "RAMP_RACE_HUMAN",
-      "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_druid",
-      "race": "elf",
-      "artKey": "outfit_class_druid__elf",
-      "fallbackArtKey": "outfit_class_druid__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_DRUID",
-      "rampId": "RAMP_RACE_ELF",
-      "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_druid",
-      "race": "halfling",
-      "artKey": "outfit_class_druid__halfling",
-      "fallbackArtKey": "outfit_class_druid__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_DRUID",
-      "rampId": "RAMP_RACE_HALFLING",
-      "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_druid",
-      "race": "dwarf",
-      "artKey": "outfit_class_druid__dwarf",
-      "fallbackArtKey": "outfit_class_druid__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_DRUID",
-      "rampId": "RAMP_RACE_DWARF",
-      "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_druid",
-      "race": "gnome",
-      "artKey": "outfit_class_druid__gnome",
-      "fallbackArtKey": "outfit_class_druid__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_DRUID",
-      "rampId": "RAMP_RACE_GNOME",
-      "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_druid",
-      "race": "dragonborn",
-      "artKey": "outfit_class_druid__dragonborn",
-      "fallbackArtKey": "outfit_class_druid__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_DRUID",
-      "rampId": "RAMP_RACE_DRAGONBORN",
-      "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_druid",
-      "race": "half-elf",
-      "artKey": "outfit_class_druid__half-elf",
-      "fallbackArtKey": "outfit_class_druid__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_DRUID",
-      "rampId": "RAMP_RACE_HALF_ELF",
-      "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_druid",
-      "race": "half-orc",
-      "artKey": "outfit_class_druid__half-orc",
-      "fallbackArtKey": "outfit_class_druid__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_DRUID",
-      "rampId": "RAMP_RACE_HALF_ORC",
-      "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_druid",
-      "race": "tiefling",
-      "artKey": "outfit_class_druid__tiefling",
-      "fallbackArtKey": "outfit_class_druid__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_DRUID",
-      "rampId": "RAMP_RACE_TIEFLING",
-      "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_fighter",
-      "race": "human",
-      "artKey": "outfit_class_fighter__human",
-      "fallbackArtKey": "outfit_class_fighter__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_FIGHTER",
-      "rampId": "RAMP_RACE_HUMAN",
-      "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_fighter",
-      "race": "elf",
-      "artKey": "outfit_class_fighter__elf",
-      "fallbackArtKey": "outfit_class_fighter__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_FIGHTER",
-      "rampId": "RAMP_RACE_ELF",
-      "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_fighter",
-      "race": "halfling",
-      "artKey": "outfit_class_fighter__halfling",
-      "fallbackArtKey": "outfit_class_fighter__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_FIGHTER",
-      "rampId": "RAMP_RACE_HALFLING",
-      "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_fighter",
-      "race": "dwarf",
-      "artKey": "outfit_class_fighter__dwarf",
-      "fallbackArtKey": "outfit_class_fighter__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_FIGHTER",
-      "rampId": "RAMP_RACE_DWARF",
-      "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_fighter",
-      "race": "gnome",
-      "artKey": "outfit_class_fighter__gnome",
-      "fallbackArtKey": "outfit_class_fighter__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_FIGHTER",
-      "rampId": "RAMP_RACE_GNOME",
-      "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_fighter",
-      "race": "dragonborn",
-      "artKey": "outfit_class_fighter__dragonborn",
-      "fallbackArtKey": "outfit_class_fighter__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_FIGHTER",
-      "rampId": "RAMP_RACE_DRAGONBORN",
-      "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_fighter",
-      "race": "half-elf",
-      "artKey": "outfit_class_fighter__half-elf",
-      "fallbackArtKey": "outfit_class_fighter__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_FIGHTER",
-      "rampId": "RAMP_RACE_HALF_ELF",
-      "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_fighter",
-      "race": "half-orc",
-      "artKey": "outfit_class_fighter__half-orc",
-      "fallbackArtKey": "outfit_class_fighter__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_FIGHTER",
-      "rampId": "RAMP_RACE_HALF_ORC",
-      "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_fighter",
-      "race": "tiefling",
-      "artKey": "outfit_class_fighter__tiefling",
-      "fallbackArtKey": "outfit_class_fighter__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_FIGHTER",
-      "rampId": "RAMP_RACE_TIEFLING",
-      "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_monk",
-      "race": "human",
-      "artKey": "outfit_class_monk__human",
-      "fallbackArtKey": "outfit_class_monk__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_MONK",
-      "rampId": "RAMP_RACE_HUMAN",
-      "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_monk",
-      "race": "elf",
-      "artKey": "outfit_class_monk__elf",
-      "fallbackArtKey": "outfit_class_monk__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_MONK",
-      "rampId": "RAMP_RACE_ELF",
-      "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_monk",
-      "race": "halfling",
-      "artKey": "outfit_class_monk__halfling",
-      "fallbackArtKey": "outfit_class_monk__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_MONK",
-      "rampId": "RAMP_RACE_HALFLING",
-      "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_monk",
-      "race": "dwarf",
-      "artKey": "outfit_class_monk__dwarf",
-      "fallbackArtKey": "outfit_class_monk__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_MONK",
-      "rampId": "RAMP_RACE_DWARF",
-      "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_monk",
-      "race": "gnome",
-      "artKey": "outfit_class_monk__gnome",
-      "fallbackArtKey": "outfit_class_monk__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_MONK",
-      "rampId": "RAMP_RACE_GNOME",
-      "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_monk",
-      "race": "dragonborn",
-      "artKey": "outfit_class_monk__dragonborn",
-      "fallbackArtKey": "outfit_class_monk__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_MONK",
-      "rampId": "RAMP_RACE_DRAGONBORN",
-      "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_monk",
-      "race": "half-elf",
-      "artKey": "outfit_class_monk__half-elf",
-      "fallbackArtKey": "outfit_class_monk__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_MONK",
-      "rampId": "RAMP_RACE_HALF_ELF",
-      "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_monk",
-      "race": "half-orc",
-      "artKey": "outfit_class_monk__half-orc",
-      "fallbackArtKey": "outfit_class_monk__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_MONK",
-      "rampId": "RAMP_RACE_HALF_ORC",
-      "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_monk",
-      "race": "tiefling",
-      "artKey": "outfit_class_monk__tiefling",
-      "fallbackArtKey": "outfit_class_monk__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_MONK",
-      "rampId": "RAMP_RACE_TIEFLING",
-      "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_paladin",
-      "race": "human",
-      "artKey": "outfit_class_paladin__human",
-      "fallbackArtKey": "outfit_class_paladin__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_PALADIN",
-      "rampId": "RAMP_RACE_HUMAN",
-      "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_paladin",
-      "race": "elf",
-      "artKey": "outfit_class_paladin__elf",
-      "fallbackArtKey": "outfit_class_paladin__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_PALADIN",
-      "rampId": "RAMP_RACE_ELF",
-      "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_paladin",
-      "race": "halfling",
-      "artKey": "outfit_class_paladin__halfling",
-      "fallbackArtKey": "outfit_class_paladin__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_PALADIN",
-      "rampId": "RAMP_RACE_HALFLING",
-      "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_paladin",
-      "race": "dwarf",
-      "artKey": "outfit_class_paladin__dwarf",
-      "fallbackArtKey": "outfit_class_paladin__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_PALADIN",
-      "rampId": "RAMP_RACE_DWARF",
-      "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_paladin",
-      "race": "gnome",
-      "artKey": "outfit_class_paladin__gnome",
-      "fallbackArtKey": "outfit_class_paladin__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_PALADIN",
-      "rampId": "RAMP_RACE_GNOME",
-      "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_paladin",
-      "race": "dragonborn",
-      "artKey": "outfit_class_paladin__dragonborn",
-      "fallbackArtKey": "outfit_class_paladin__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_PALADIN",
-      "rampId": "RAMP_RACE_DRAGONBORN",
-      "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_paladin",
-      "race": "half-elf",
-      "artKey": "outfit_class_paladin__half-elf",
-      "fallbackArtKey": "outfit_class_paladin__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_PALADIN",
-      "rampId": "RAMP_RACE_HALF_ELF",
-      "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_paladin",
-      "race": "half-orc",
-      "artKey": "outfit_class_paladin__half-orc",
-      "fallbackArtKey": "outfit_class_paladin__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_PALADIN",
-      "rampId": "RAMP_RACE_HALF_ORC",
-      "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_paladin",
-      "race": "tiefling",
-      "artKey": "outfit_class_paladin__tiefling",
-      "fallbackArtKey": "outfit_class_paladin__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms",
-        "shoulders"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "medium",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_PALADIN",
-      "rampId": "RAMP_RACE_TIEFLING",
-      "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_ranger",
-      "race": "human",
-      "artKey": "outfit_class_ranger__human",
-      "fallbackArtKey": "outfit_class_ranger__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_RANGER",
-      "rampId": "RAMP_RACE_HUMAN",
-      "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_ranger",
-      "race": "elf",
-      "artKey": "outfit_class_ranger__elf",
-      "fallbackArtKey": "outfit_class_ranger__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_RANGER",
-      "rampId": "RAMP_RACE_ELF",
-      "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_ranger",
-      "race": "halfling",
-      "artKey": "outfit_class_ranger__halfling",
-      "fallbackArtKey": "outfit_class_ranger__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_RANGER",
-      "rampId": "RAMP_RACE_HALFLING",
-      "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_ranger",
-      "race": "dwarf",
-      "artKey": "outfit_class_ranger__dwarf",
-      "fallbackArtKey": "outfit_class_ranger__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_RANGER",
-      "rampId": "RAMP_RACE_DWARF",
-      "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_ranger",
-      "race": "gnome",
-      "artKey": "outfit_class_ranger__gnome",
-      "fallbackArtKey": "outfit_class_ranger__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_RANGER",
-      "rampId": "RAMP_RACE_GNOME",
-      "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_ranger",
-      "race": "dragonborn",
-      "artKey": "outfit_class_ranger__dragonborn",
-      "fallbackArtKey": "outfit_class_ranger__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_RANGER",
-      "rampId": "RAMP_RACE_DRAGONBORN",
-      "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_ranger",
-      "race": "half-elf",
-      "artKey": "outfit_class_ranger__half-elf",
-      "fallbackArtKey": "outfit_class_ranger__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_RANGER",
-      "rampId": "RAMP_RACE_HALF_ELF",
-      "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_ranger",
-      "race": "half-orc",
-      "artKey": "outfit_class_ranger__half-orc",
-      "fallbackArtKey": "outfit_class_ranger__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_RANGER",
-      "rampId": "RAMP_RACE_HALF_ORC",
-      "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_ranger",
-      "race": "tiefling",
-      "artKey": "outfit_class_ranger__tiefling",
-      "fallbackArtKey": "outfit_class_ranger__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_RANGER",
-      "rampId": "RAMP_RACE_TIEFLING",
-      "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_rogue",
-      "race": "human",
-      "artKey": "outfit_class_rogue__human",
-      "fallbackArtKey": "outfit_class_rogue__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_ROGUE",
-      "rampId": "RAMP_RACE_HUMAN",
-      "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_rogue",
-      "race": "elf",
-      "artKey": "outfit_class_rogue__elf",
-      "fallbackArtKey": "outfit_class_rogue__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_ROGUE",
-      "rampId": "RAMP_RACE_ELF",
-      "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_rogue",
-      "race": "halfling",
-      "artKey": "outfit_class_rogue__halfling",
-      "fallbackArtKey": "outfit_class_rogue__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_ROGUE",
-      "rampId": "RAMP_RACE_HALFLING",
-      "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_rogue",
-      "race": "dwarf",
-      "artKey": "outfit_class_rogue__dwarf",
-      "fallbackArtKey": "outfit_class_rogue__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_ROGUE",
-      "rampId": "RAMP_RACE_DWARF",
-      "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_rogue",
-      "race": "gnome",
-      "artKey": "outfit_class_rogue__gnome",
-      "fallbackArtKey": "outfit_class_rogue__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_ROGUE",
-      "rampId": "RAMP_RACE_GNOME",
-      "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_rogue",
-      "race": "dragonborn",
-      "artKey": "outfit_class_rogue__dragonborn",
-      "fallbackArtKey": "outfit_class_rogue__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_ROGUE",
-      "rampId": "RAMP_RACE_DRAGONBORN",
-      "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_rogue",
-      "race": "half-elf",
-      "artKey": "outfit_class_rogue__half-elf",
-      "fallbackArtKey": "outfit_class_rogue__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_ROGUE",
-      "rampId": "RAMP_RACE_HALF_ELF",
-      "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_rogue",
-      "race": "half-orc",
-      "artKey": "outfit_class_rogue__half-orc",
-      "fallbackArtKey": "outfit_class_rogue__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_ROGUE",
-      "rampId": "RAMP_RACE_HALF_ORC",
-      "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_rogue",
-      "race": "tiefling",
-      "artKey": "outfit_class_rogue__tiefling",
-      "fallbackArtKey": "outfit_class_rogue__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [],
-      "motifId": "MOTIF_CLASS_ROGUE",
-      "rampId": "RAMP_RACE_TIEFLING",
-      "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_sorcerer",
-      "race": "human",
-      "artKey": "outfit_class_sorcerer__human",
-      "fallbackArtKey": "outfit_class_sorcerer__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_SORCERER",
-      "rampId": "RAMP_RACE_HUMAN",
-      "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_sorcerer",
-      "race": "elf",
-      "artKey": "outfit_class_sorcerer__elf",
-      "fallbackArtKey": "outfit_class_sorcerer__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_SORCERER",
-      "rampId": "RAMP_RACE_ELF",
-      "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_sorcerer",
-      "race": "halfling",
-      "artKey": "outfit_class_sorcerer__halfling",
-      "fallbackArtKey": "outfit_class_sorcerer__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_SORCERER",
-      "rampId": "RAMP_RACE_HALFLING",
-      "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_sorcerer",
-      "race": "dwarf",
-      "artKey": "outfit_class_sorcerer__dwarf",
-      "fallbackArtKey": "outfit_class_sorcerer__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_SORCERER",
-      "rampId": "RAMP_RACE_DWARF",
-      "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_sorcerer",
-      "race": "gnome",
-      "artKey": "outfit_class_sorcerer__gnome",
-      "fallbackArtKey": "outfit_class_sorcerer__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_SORCERER",
-      "rampId": "RAMP_RACE_GNOME",
-      "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_sorcerer",
-      "race": "dragonborn",
-      "artKey": "outfit_class_sorcerer__dragonborn",
-      "fallbackArtKey": "outfit_class_sorcerer__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_SORCERER",
-      "rampId": "RAMP_RACE_DRAGONBORN",
-      "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_sorcerer",
-      "race": "half-elf",
-      "artKey": "outfit_class_sorcerer__half-elf",
-      "fallbackArtKey": "outfit_class_sorcerer__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_SORCERER",
-      "rampId": "RAMP_RACE_HALF_ELF",
-      "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_sorcerer",
-      "race": "half-orc",
-      "artKey": "outfit_class_sorcerer__half-orc",
-      "fallbackArtKey": "outfit_class_sorcerer__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_SORCERER",
-      "rampId": "RAMP_RACE_HALF_ORC",
-      "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_sorcerer",
-      "race": "tiefling",
-      "artKey": "outfit_class_sorcerer__tiefling",
-      "fallbackArtKey": "outfit_class_sorcerer__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_SORCERER",
-      "rampId": "RAMP_RACE_TIEFLING",
-      "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_warlock",
-      "race": "human",
-      "artKey": "outfit_class_warlock__human",
-      "fallbackArtKey": "outfit_class_warlock__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_WARLOCK",
-      "rampId": "RAMP_RACE_HUMAN",
-      "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_warlock",
-      "race": "elf",
-      "artKey": "outfit_class_warlock__elf",
-      "fallbackArtKey": "outfit_class_warlock__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_WARLOCK",
-      "rampId": "RAMP_RACE_ELF",
-      "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_warlock",
-      "race": "halfling",
-      "artKey": "outfit_class_warlock__halfling",
-      "fallbackArtKey": "outfit_class_warlock__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_WARLOCK",
-      "rampId": "RAMP_RACE_HALFLING",
-      "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_warlock",
-      "race": "dwarf",
-      "artKey": "outfit_class_warlock__dwarf",
-      "fallbackArtKey": "outfit_class_warlock__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_WARLOCK",
-      "rampId": "RAMP_RACE_DWARF",
-      "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_warlock",
-      "race": "gnome",
-      "artKey": "outfit_class_warlock__gnome",
-      "fallbackArtKey": "outfit_class_warlock__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_WARLOCK",
-      "rampId": "RAMP_RACE_GNOME",
-      "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_warlock",
-      "race": "dragonborn",
-      "artKey": "outfit_class_warlock__dragonborn",
-      "fallbackArtKey": "outfit_class_warlock__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_WARLOCK",
-      "rampId": "RAMP_RACE_DRAGONBORN",
-      "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_warlock",
-      "race": "half-elf",
-      "artKey": "outfit_class_warlock__half-elf",
-      "fallbackArtKey": "outfit_class_warlock__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_WARLOCK",
-      "rampId": "RAMP_RACE_HALF_ELF",
-      "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_warlock",
-      "race": "half-orc",
-      "artKey": "outfit_class_warlock__half-orc",
-      "fallbackArtKey": "outfit_class_warlock__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_WARLOCK",
-      "rampId": "RAMP_RACE_HALF_ORC",
-      "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_warlock",
-      "race": "tiefling",
-      "artKey": "outfit_class_warlock__tiefling",
-      "fallbackArtKey": "outfit_class_warlock__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "cape"
-      ],
-      "motifId": "MOTIF_CLASS_WARLOCK",
-      "rampId": "RAMP_RACE_TIEFLING",
-      "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_wizard",
-      "race": "human",
-      "artKey": "outfit_class_wizard__human",
-      "fallbackArtKey": "outfit_class_wizard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_WIZARD",
-      "rampId": "RAMP_RACE_HUMAN",
-      "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_wizard",
-      "race": "elf",
-      "artKey": "outfit_class_wizard__elf",
-      "fallbackArtKey": "outfit_class_wizard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_WIZARD",
-      "rampId": "RAMP_RACE_ELF",
-      "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_wizard",
-      "race": "halfling",
-      "artKey": "outfit_class_wizard__halfling",
-      "fallbackArtKey": "outfit_class_wizard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_WIZARD",
-      "rampId": "RAMP_RACE_HALFLING",
-      "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_wizard",
-      "race": "dwarf",
-      "artKey": "outfit_class_wizard__dwarf",
-      "fallbackArtKey": "outfit_class_wizard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_WIZARD",
-      "rampId": "RAMP_RACE_DWARF",
-      "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_wizard",
-      "race": "gnome",
-      "artKey": "outfit_class_wizard__gnome",
-      "fallbackArtKey": "outfit_class_wizard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_WIZARD",
-      "rampId": "RAMP_RACE_GNOME",
-      "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_wizard",
-      "race": "dragonborn",
-      "artKey": "outfit_class_wizard__dragonborn",
-      "fallbackArtKey": "outfit_class_wizard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_WIZARD",
-      "rampId": "RAMP_RACE_DRAGONBORN",
-      "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_wizard",
-      "race": "half-elf",
-      "artKey": "outfit_class_wizard__half-elf",
-      "fallbackArtKey": "outfit_class_wizard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_WIZARD",
-      "rampId": "RAMP_RACE_HALF_ELF",
-      "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_wizard",
-      "race": "half-orc",
-      "artKey": "outfit_class_wizard__half-orc",
-      "fallbackArtKey": "outfit_class_wizard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_WIZARD",
-      "rampId": "RAMP_RACE_HALF_ORC",
-      "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
-    {
-      "outfitId": "outfit_class_wizard",
-      "race": "tiefling",
-      "artKey": "outfit_class_wizard__tiefling",
-      "fallbackArtKey": "outfit_class_wizard__human",
-      "slots": [
-        "feet",
-        "legs",
-        "torso",
-        "arms"
-      ],
-      "layers": [
-        "legs",
-        "torso"
-      ],
-      "silhouette": "light",
-      "deforming": [
-        "long-robe"
-      ],
-      "motifId": "MOTIF_CLASS_WIZARD",
-      "rampId": "RAMP_RACE_TIEFLING",
-      "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race",
-      "spriteDraw": "base-body",
-      "drawnDeforming": []
-    },
     {
       "outfitId": "outfit_armor_light",
       "race": "human",
@@ -4902,127 +2219,10 @@
     }
   },
   "geneticsLoci": {
-    "skinTone": {
-      "values": [
-        1,
-        2,
-        3
-      ],
-      "part": "body",
-      "ramp": "RAMP_SKIN"
-    },
-    "hairStyle": {
-      "values": [
-        1,
-        2,
-        3,
-        4
-      ],
-      "part": "hair-front",
-      "note": "Legacy bake has 4 styles. AS-GENE-001 requires 12 per body type."
-    },
-    "hairColor": {
-      "values": [
-        "brown",
-        "blonde",
-        "black",
-        "red"
-      ],
-      "part": "hair-front",
-      "ramp": "RAMP_HAIR"
-    },
-    "greying": {
-      "values": [
-        "natural",
-        "salt-and-pepper",
-        "grey",
-        "white"
-      ],
-      "part": "hair-front",
-      "ramp": "RAMP_HAIR_GREY"
-    },
-    "beard": {
-      "values": [
-        0,
-        1,
-        2,
-        3
-      ],
-      "labels": [
-        "none",
-        "goatee",
-        "full",
-        "braided"
-      ],
-      "part": "beard"
-    },
-    "clothing": {
-      "values": [
-        1,
-        2,
-        3,
-        4
-      ],
-      "part": "cloth"
-    },
-    "balding": {
-      "values": [
-        "receding",
-        "crown",
-        "advanced"
-      ],
-      "part": "hair-front",
-      "mask": true,
-      "status": "PM decision 13:02 CT, Owner may amend"
-    },
-    "height": {
-      "values": [
-        "low",
-        "mid",
-        "high"
-      ],
-      "part": "body",
-      "limit": "scale-chart envelope"
-    },
-    "build": {
-      "values": [
-        "slight",
-        "average",
-        "broad"
-      ],
-      "part": "body",
-      "limit": "scale-chart envelope"
-    },
-    "horns": {
-      "values": [
-        0,
-        1,
-        2
-      ],
-      "part": "horns"
-    },
-    "tail": {
-      "values": [
-        0,
-        1
-      ],
-      "part": "tail"
-    },
-    "ears": {
-      "values": "race-part",
-      "part": "ears"
-    },
-    "scaleColor": {
-      "values": "RAMP_SCALE family, step count OPEN",
-      "part": "scales"
-    },
-    "dominantHand": {
-      "values": [
-        "right",
-        "left"
-      ],
-      "part": "sockets"
-    }
+    "drivesArt": false,
+    "simGenetics": "stats-only",
+    "status": "retired",
+    "note": "Item 41. Visible genetic loci do not select art. Presets in genes are the art. Retired slot ids stay reserved."
   },
   "buildingPieces": [
     "foundation",
@@ -6050,1367 +3250,421 @@
     "note": "one Gargantuan 4x4 action row, 4 frames by 4 directions"
   },
   "genes": {
-    "status": "PM decision 13:02 CT, Owner may amend",
+    "status": "Owner 15:54 CT",
+    "drivesArt": false,
+    "simGenetics": "stats-only",
+    "partLibrary": "retired",
     "inheritance": {
       "owner": "sim",
-      "mix": "parents",
-      "mutation": "rare",
-      "ageLayersPreserveIdentity": true,
-      "ageLayers": [
-        "child",
-        "adult",
-        "elder"
-      ]
+      "drivesArt": false,
+      "artSelection": false
     },
-    "hairStylesPerBodyType": 12,
-    "raceDistinctive": {
-      "min": 3,
-      "max": 4
+    "presets": {
+      "adultMale": 8,
+      "adultFemale": 8,
+      "elderPerSex": 2,
+      "childPerSex": 2,
+      "perRace": 24,
+      "total": 216,
+      "paletteSwaps": 3,
+      "paletteSwapWhen": "in-game",
+      "expressions": 8,
+      "facesetPx": 144,
+      "charset": "complete-head-hair-face",
+      "faceset": "matching",
+      "playerPicks": [
+        "preset",
+        "colour-variant"
+      ],
+      "factions": "trim-banners-buildings",
+      "factionFaces": false
     },
-    "balding": [
-      "receding",
-      "crown",
-      "advanced"
-    ],
-    "facialHair": [
-      "stubble",
-      "short",
-      "full",
-      "long",
-      "braided",
-      "mustache",
-      "goatee",
-      "forked"
-    ],
-    "dwarfExtra": [
-      "dwarf-plait"
-    ],
-    "beardlessRaces": [],
-    "hairRamp": "RAMP_HAIR",
-    "hairNaturalSteps": [
-      "black",
-      "brown",
-      "blonde",
-      "red",
-      "step-05",
-      "step-06",
-      "step-07",
-      "step-08",
-      "step-09",
-      "step-10",
-      "step-11",
-      "step-12"
-    ],
-    "raceHairColours": {},
-    "greying": [
-      "natural",
-      "salt-and-pepper",
-      "grey",
-      "white"
-    ],
-    "faceShape": [
-      "oval",
-      "round",
-      "square",
-      "long"
-    ],
-    "eyes": [
-      "almond",
-      "round",
-      "narrow",
-      "wide",
-      "hooded"
-    ],
-    "eyeColorRamp": "RAMP_EYE",
-    "brows": [
-      "straight",
-      "arched",
-      "thick",
-      "thin"
-    ],
-    "nose": [
-      "straight",
-      "broad",
-      "aquiline",
-      "button",
-      "flat"
-    ],
-    "mouth": [
-      "thin",
-      "full",
-      "wide",
-      "small"
-    ],
-    "jaw": [
-      "narrow",
-      "average",
-      "heavy"
-    ],
-    "skinRamp": "RAMP_SKIN",
-    "skinSteps": [
-      1,
-      2,
-      3
-    ],
-    "markings": [
-      "freckles",
-      "moles",
-      "birthmark",
-      "patch"
-    ],
-    "earsPerRace": 3,
-    "raceFeaturesPerRace": {
-      "min": 3,
-      "max": 4
-    },
-    "headStates": [
-      0,
-      1,
-      2
-    ],
-    "perRace": {
+    "byRace": {
       "human": {
-        "ears": [
-          "human-ear-1",
-          "human-ear-2",
-          "human-ear-3"
-        ],
-        "raceFeatures": [
-          "rf1",
-          "rf2",
-          "rf3"
-        ],
-        "bodyTypes": {
-          "male": {
-            "styles": [
-              {
-                "id": "human-male-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "human-male-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "human-male-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "human-male-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-male-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-male-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-male-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-male-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-male-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-male-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-male-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-male-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          },
-          "female": {
-            "styles": [
-              {
-                "id": "human-female-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "human-female-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "human-female-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "human-female-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-female-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-female-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-female-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-female-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-female-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-female-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-female-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "human-female-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          }
+        "charset": true,
+        "faceset": true,
+        "expressions": 8,
+        "ids": {
+          "adult-male": [
+            "preset:human:adult-male:01",
+            "preset:human:adult-male:02",
+            "preset:human:adult-male:03",
+            "preset:human:adult-male:04",
+            "preset:human:adult-male:05",
+            "preset:human:adult-male:06",
+            "preset:human:adult-male:07",
+            "preset:human:adult-male:08"
+          ],
+          "adult-female": [
+            "preset:human:adult-female:01",
+            "preset:human:adult-female:02",
+            "preset:human:adult-female:03",
+            "preset:human:adult-female:04",
+            "preset:human:adult-female:05",
+            "preset:human:adult-female:06",
+            "preset:human:adult-female:07",
+            "preset:human:adult-female:08"
+          ],
+          "elder-male": [
+            "preset:human:elder-male:01",
+            "preset:human:elder-male:02"
+          ],
+          "elder-female": [
+            "preset:human:elder-female:01",
+            "preset:human:elder-female:02"
+          ],
+          "child-male": [
+            "preset:human:child-male:01",
+            "preset:human:child-male:02"
+          ],
+          "child-female": [
+            "preset:human:child-female:01",
+            "preset:human:child-female:02"
+          ]
         }
       },
       "elf": {
-        "ears": [
-          "elf-ear-1",
-          "elf-ear-2",
-          "elf-ear-3"
-        ],
-        "raceFeatures": [
-          "rf1",
-          "rf2",
-          "rf3"
-        ],
-        "bodyTypes": {
-          "male": {
-            "styles": [
-              {
-                "id": "elf-male-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "elf-male-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "elf-male-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "elf-male-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-male-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-male-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-male-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-male-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-male-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-male-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-male-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-male-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          },
-          "female": {
-            "styles": [
-              {
-                "id": "elf-female-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "elf-female-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "elf-female-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "elf-female-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-female-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-female-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-female-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-female-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-female-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-female-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-female-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "elf-female-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          }
+        "charset": true,
+        "faceset": true,
+        "expressions": 8,
+        "ids": {
+          "adult-male": [
+            "preset:elf:adult-male:01",
+            "preset:elf:adult-male:02",
+            "preset:elf:adult-male:03",
+            "preset:elf:adult-male:04",
+            "preset:elf:adult-male:05",
+            "preset:elf:adult-male:06",
+            "preset:elf:adult-male:07",
+            "preset:elf:adult-male:08"
+          ],
+          "adult-female": [
+            "preset:elf:adult-female:01",
+            "preset:elf:adult-female:02",
+            "preset:elf:adult-female:03",
+            "preset:elf:adult-female:04",
+            "preset:elf:adult-female:05",
+            "preset:elf:adult-female:06",
+            "preset:elf:adult-female:07",
+            "preset:elf:adult-female:08"
+          ],
+          "elder-male": [
+            "preset:elf:elder-male:01",
+            "preset:elf:elder-male:02"
+          ],
+          "elder-female": [
+            "preset:elf:elder-female:01",
+            "preset:elf:elder-female:02"
+          ],
+          "child-male": [
+            "preset:elf:child-male:01",
+            "preset:elf:child-male:02"
+          ],
+          "child-female": [
+            "preset:elf:child-female:01",
+            "preset:elf:child-female:02"
+          ]
         }
       },
       "halfling": {
-        "ears": [
-          "halfling-ear-1",
-          "halfling-ear-2",
-          "halfling-ear-3"
-        ],
-        "raceFeatures": [
-          "rf1",
-          "rf2",
-          "rf3"
-        ],
-        "bodyTypes": {
-          "male": {
-            "styles": [
-              {
-                "id": "halfling-male-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "halfling-male-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "halfling-male-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "halfling-male-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-male-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-male-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-male-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-male-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-male-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-male-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-male-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-male-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          },
-          "female": {
-            "styles": [
-              {
-                "id": "halfling-female-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "halfling-female-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "halfling-female-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "halfling-female-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-female-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-female-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-female-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-female-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-female-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-female-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-female-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "halfling-female-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          }
+        "charset": true,
+        "faceset": true,
+        "expressions": 8,
+        "ids": {
+          "adult-male": [
+            "preset:halfling:adult-male:01",
+            "preset:halfling:adult-male:02",
+            "preset:halfling:adult-male:03",
+            "preset:halfling:adult-male:04",
+            "preset:halfling:adult-male:05",
+            "preset:halfling:adult-male:06",
+            "preset:halfling:adult-male:07",
+            "preset:halfling:adult-male:08"
+          ],
+          "adult-female": [
+            "preset:halfling:adult-female:01",
+            "preset:halfling:adult-female:02",
+            "preset:halfling:adult-female:03",
+            "preset:halfling:adult-female:04",
+            "preset:halfling:adult-female:05",
+            "preset:halfling:adult-female:06",
+            "preset:halfling:adult-female:07",
+            "preset:halfling:adult-female:08"
+          ],
+          "elder-male": [
+            "preset:halfling:elder-male:01",
+            "preset:halfling:elder-male:02"
+          ],
+          "elder-female": [
+            "preset:halfling:elder-female:01",
+            "preset:halfling:elder-female:02"
+          ],
+          "child-male": [
+            "preset:halfling:child-male:01",
+            "preset:halfling:child-male:02"
+          ],
+          "child-female": [
+            "preset:halfling:child-female:01",
+            "preset:halfling:child-female:02"
+          ]
         }
       },
       "dwarf": {
-        "ears": [
-          "dwarf-ear-1",
-          "dwarf-ear-2",
-          "dwarf-ear-3"
-        ],
-        "raceFeatures": [
-          "rf1",
-          "rf2",
-          "rf3"
-        ],
-        "bodyTypes": {
-          "male": {
-            "styles": [
-              {
-                "id": "dwarf-male-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "dwarf-male-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "dwarf-male-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "dwarf-male-hair-04",
-                "raceDistinctive": true
-              },
-              {
-                "id": "dwarf-male-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-male-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-male-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-male-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-male-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-male-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-male-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-male-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked",
-              "dwarf-plait"
-            ]
-          },
-          "female": {
-            "styles": [
-              {
-                "id": "dwarf-female-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "dwarf-female-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "dwarf-female-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "dwarf-female-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-female-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-female-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-female-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-female-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-female-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-female-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-female-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dwarf-female-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked",
-              "dwarf-plait"
-            ]
-          }
+        "charset": true,
+        "faceset": true,
+        "expressions": 8,
+        "ids": {
+          "adult-male": [
+            "preset:dwarf:adult-male:01",
+            "preset:dwarf:adult-male:02",
+            "preset:dwarf:adult-male:03",
+            "preset:dwarf:adult-male:04",
+            "preset:dwarf:adult-male:05",
+            "preset:dwarf:adult-male:06",
+            "preset:dwarf:adult-male:07",
+            "preset:dwarf:adult-male:08"
+          ],
+          "adult-female": [
+            "preset:dwarf:adult-female:01",
+            "preset:dwarf:adult-female:02",
+            "preset:dwarf:adult-female:03",
+            "preset:dwarf:adult-female:04",
+            "preset:dwarf:adult-female:05",
+            "preset:dwarf:adult-female:06",
+            "preset:dwarf:adult-female:07",
+            "preset:dwarf:adult-female:08"
+          ],
+          "elder-male": [
+            "preset:dwarf:elder-male:01",
+            "preset:dwarf:elder-male:02"
+          ],
+          "elder-female": [
+            "preset:dwarf:elder-female:01",
+            "preset:dwarf:elder-female:02"
+          ],
+          "child-male": [
+            "preset:dwarf:child-male:01",
+            "preset:dwarf:child-male:02"
+          ],
+          "child-female": [
+            "preset:dwarf:child-female:01",
+            "preset:dwarf:child-female:02"
+          ]
         }
       },
       "gnome": {
-        "ears": [
-          "gnome-ear-1",
-          "gnome-ear-2",
-          "gnome-ear-3"
-        ],
-        "raceFeatures": [
-          "rf1",
-          "rf2",
-          "rf3"
-        ],
-        "bodyTypes": {
-          "male": {
-            "styles": [
-              {
-                "id": "gnome-male-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "gnome-male-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "gnome-male-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "gnome-male-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-male-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-male-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-male-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-male-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-male-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-male-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-male-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-male-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          },
-          "female": {
-            "styles": [
-              {
-                "id": "gnome-female-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "gnome-female-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "gnome-female-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "gnome-female-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-female-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-female-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-female-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-female-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-female-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-female-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-female-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "gnome-female-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          }
+        "charset": true,
+        "faceset": true,
+        "expressions": 8,
+        "ids": {
+          "adult-male": [
+            "preset:gnome:adult-male:01",
+            "preset:gnome:adult-male:02",
+            "preset:gnome:adult-male:03",
+            "preset:gnome:adult-male:04",
+            "preset:gnome:adult-male:05",
+            "preset:gnome:adult-male:06",
+            "preset:gnome:adult-male:07",
+            "preset:gnome:adult-male:08"
+          ],
+          "adult-female": [
+            "preset:gnome:adult-female:01",
+            "preset:gnome:adult-female:02",
+            "preset:gnome:adult-female:03",
+            "preset:gnome:adult-female:04",
+            "preset:gnome:adult-female:05",
+            "preset:gnome:adult-female:06",
+            "preset:gnome:adult-female:07",
+            "preset:gnome:adult-female:08"
+          ],
+          "elder-male": [
+            "preset:gnome:elder-male:01",
+            "preset:gnome:elder-male:02"
+          ],
+          "elder-female": [
+            "preset:gnome:elder-female:01",
+            "preset:gnome:elder-female:02"
+          ],
+          "child-male": [
+            "preset:gnome:child-male:01",
+            "preset:gnome:child-male:02"
+          ],
+          "child-female": [
+            "preset:gnome:child-female:01",
+            "preset:gnome:child-female:02"
+          ]
         }
       },
       "dragonborn": {
-        "ears": [
-          "dragonborn-ear-1",
-          "dragonborn-ear-2",
-          "dragonborn-ear-3"
-        ],
-        "raceFeatures": [
-          "rf1",
-          "rf2",
-          "rf3"
-        ],
-        "bodyTypes": {
-          "male": {
-            "styles": [
-              {
-                "id": "dragonborn-male-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "dragonborn-male-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "dragonborn-male-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "dragonborn-male-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-male-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-male-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-male-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-male-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-male-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-male-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-male-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-male-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          },
-          "female": {
-            "styles": [
-              {
-                "id": "dragonborn-female-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "dragonborn-female-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "dragonborn-female-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "dragonborn-female-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-female-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-female-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-female-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-female-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-female-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-female-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-female-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "dragonborn-female-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          }
+        "charset": true,
+        "faceset": true,
+        "expressions": 8,
+        "ids": {
+          "adult-male": [
+            "preset:dragonborn:adult-male:01",
+            "preset:dragonborn:adult-male:02",
+            "preset:dragonborn:adult-male:03",
+            "preset:dragonborn:adult-male:04",
+            "preset:dragonborn:adult-male:05",
+            "preset:dragonborn:adult-male:06",
+            "preset:dragonborn:adult-male:07",
+            "preset:dragonborn:adult-male:08"
+          ],
+          "adult-female": [
+            "preset:dragonborn:adult-female:01",
+            "preset:dragonborn:adult-female:02",
+            "preset:dragonborn:adult-female:03",
+            "preset:dragonborn:adult-female:04",
+            "preset:dragonborn:adult-female:05",
+            "preset:dragonborn:adult-female:06",
+            "preset:dragonborn:adult-female:07",
+            "preset:dragonborn:adult-female:08"
+          ],
+          "elder-male": [
+            "preset:dragonborn:elder-male:01",
+            "preset:dragonborn:elder-male:02"
+          ],
+          "elder-female": [
+            "preset:dragonborn:elder-female:01",
+            "preset:dragonborn:elder-female:02"
+          ],
+          "child-male": [
+            "preset:dragonborn:child-male:01",
+            "preset:dragonborn:child-male:02"
+          ],
+          "child-female": [
+            "preset:dragonborn:child-female:01",
+            "preset:dragonborn:child-female:02"
+          ]
         }
       },
       "half-elf": {
-        "ears": [
-          "half-elf-ear-1",
-          "half-elf-ear-2",
-          "half-elf-ear-3"
-        ],
-        "raceFeatures": [
-          "rf1",
-          "rf2",
-          "rf3"
-        ],
-        "bodyTypes": {
-          "male": {
-            "styles": [
-              {
-                "id": "half-elf-male-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "half-elf-male-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "half-elf-male-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "half-elf-male-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-male-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-male-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-male-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-male-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-male-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-male-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-male-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-male-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          },
-          "female": {
-            "styles": [
-              {
-                "id": "half-elf-female-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "half-elf-female-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "half-elf-female-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "half-elf-female-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-female-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-female-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-female-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-female-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-female-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-female-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-female-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-elf-female-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          }
+        "charset": true,
+        "faceset": true,
+        "expressions": 8,
+        "ids": {
+          "adult-male": [
+            "preset:half-elf:adult-male:01",
+            "preset:half-elf:adult-male:02",
+            "preset:half-elf:adult-male:03",
+            "preset:half-elf:adult-male:04",
+            "preset:half-elf:adult-male:05",
+            "preset:half-elf:adult-male:06",
+            "preset:half-elf:adult-male:07",
+            "preset:half-elf:adult-male:08"
+          ],
+          "adult-female": [
+            "preset:half-elf:adult-female:01",
+            "preset:half-elf:adult-female:02",
+            "preset:half-elf:adult-female:03",
+            "preset:half-elf:adult-female:04",
+            "preset:half-elf:adult-female:05",
+            "preset:half-elf:adult-female:06",
+            "preset:half-elf:adult-female:07",
+            "preset:half-elf:adult-female:08"
+          ],
+          "elder-male": [
+            "preset:half-elf:elder-male:01",
+            "preset:half-elf:elder-male:02"
+          ],
+          "elder-female": [
+            "preset:half-elf:elder-female:01",
+            "preset:half-elf:elder-female:02"
+          ],
+          "child-male": [
+            "preset:half-elf:child-male:01",
+            "preset:half-elf:child-male:02"
+          ],
+          "child-female": [
+            "preset:half-elf:child-female:01",
+            "preset:half-elf:child-female:02"
+          ]
         }
       },
       "half-orc": {
-        "ears": [
-          "half-orc-ear-1",
-          "half-orc-ear-2",
-          "half-orc-ear-3"
-        ],
-        "raceFeatures": [
-          "rf1",
-          "rf2",
-          "rf3"
-        ],
-        "bodyTypes": {
-          "male": {
-            "styles": [
-              {
-                "id": "half-orc-male-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "half-orc-male-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "half-orc-male-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "half-orc-male-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-male-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-male-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-male-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-male-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-male-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-male-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-male-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-male-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          },
-          "female": {
-            "styles": [
-              {
-                "id": "half-orc-female-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "half-orc-female-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "half-orc-female-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "half-orc-female-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-female-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-female-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-female-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-female-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-female-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-female-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-female-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "half-orc-female-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          }
+        "charset": true,
+        "faceset": true,
+        "expressions": 8,
+        "ids": {
+          "adult-male": [
+            "preset:half-orc:adult-male:01",
+            "preset:half-orc:adult-male:02",
+            "preset:half-orc:adult-male:03",
+            "preset:half-orc:adult-male:04",
+            "preset:half-orc:adult-male:05",
+            "preset:half-orc:adult-male:06",
+            "preset:half-orc:adult-male:07",
+            "preset:half-orc:adult-male:08"
+          ],
+          "adult-female": [
+            "preset:half-orc:adult-female:01",
+            "preset:half-orc:adult-female:02",
+            "preset:half-orc:adult-female:03",
+            "preset:half-orc:adult-female:04",
+            "preset:half-orc:adult-female:05",
+            "preset:half-orc:adult-female:06",
+            "preset:half-orc:adult-female:07",
+            "preset:half-orc:adult-female:08"
+          ],
+          "elder-male": [
+            "preset:half-orc:elder-male:01",
+            "preset:half-orc:elder-male:02"
+          ],
+          "elder-female": [
+            "preset:half-orc:elder-female:01",
+            "preset:half-orc:elder-female:02"
+          ],
+          "child-male": [
+            "preset:half-orc:child-male:01",
+            "preset:half-orc:child-male:02"
+          ],
+          "child-female": [
+            "preset:half-orc:child-female:01",
+            "preset:half-orc:child-female:02"
+          ]
         }
       },
       "tiefling": {
-        "ears": [
-          "tiefling-ear-1",
-          "tiefling-ear-2",
-          "tiefling-ear-3"
-        ],
-        "raceFeatures": [
-          "rf1",
-          "rf2",
-          "rf3"
-        ],
-        "bodyTypes": {
-          "male": {
-            "styles": [
-              {
-                "id": "tiefling-male-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "tiefling-male-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "tiefling-male-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "tiefling-male-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-male-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-male-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-male-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-male-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-male-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-male-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-male-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-male-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          },
-          "female": {
-            "styles": [
-              {
-                "id": "tiefling-female-hair-01",
-                "raceDistinctive": true
-              },
-              {
-                "id": "tiefling-female-hair-02",
-                "raceDistinctive": true
-              },
-              {
-                "id": "tiefling-female-hair-03",
-                "raceDistinctive": true
-              },
-              {
-                "id": "tiefling-female-hair-04",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-female-hair-05",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-female-hair-06",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-female-hair-07",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-female-hair-08",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-female-hair-09",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-female-hair-10",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-female-hair-11",
-                "raceDistinctive": false
-              },
-              {
-                "id": "tiefling-female-hair-12",
-                "raceDistinctive": false
-              }
-            ],
-            "facialHair": [
-              "stubble",
-              "short",
-              "full",
-              "long",
-              "braided",
-              "mustache",
-              "goatee",
-              "forked"
-            ]
-          }
+        "charset": true,
+        "faceset": true,
+        "expressions": 8,
+        "ids": {
+          "adult-male": [
+            "preset:tiefling:adult-male:01",
+            "preset:tiefling:adult-male:02",
+            "preset:tiefling:adult-male:03",
+            "preset:tiefling:adult-male:04",
+            "preset:tiefling:adult-male:05",
+            "preset:tiefling:adult-male:06",
+            "preset:tiefling:adult-male:07",
+            "preset:tiefling:adult-male:08"
+          ],
+          "adult-female": [
+            "preset:tiefling:adult-female:01",
+            "preset:tiefling:adult-female:02",
+            "preset:tiefling:adult-female:03",
+            "preset:tiefling:adult-female:04",
+            "preset:tiefling:adult-female:05",
+            "preset:tiefling:adult-female:06",
+            "preset:tiefling:adult-female:07",
+            "preset:tiefling:adult-female:08"
+          ],
+          "elder-male": [
+            "preset:tiefling:elder-male:01",
+            "preset:tiefling:elder-male:02"
+          ],
+          "elder-female": [
+            "preset:tiefling:elder-female:01",
+            "preset:tiefling:elder-female:02"
+          ],
+          "child-male": [
+            "preset:tiefling:child-male:01",
+            "preset:tiefling:child-male:02"
+          ],
+          "child-female": [
+            "preset:tiefling:child-female:01",
+            "preset:tiefling:child-female:02"
+          ]
         }
       }
     }
@@ -14569,11 +10823,11 @@
         "perRaceSilhouette": false
       },
       {
-        "itemId": "outfit_class_wizard",
+        "itemId": "race_garb_male",
         "kind": "outfit",
-        "race": "elf",
+        "race": "human",
         "custom": true,
-        "silhouetteId": "custom:outfit_class_wizard__elf"
+        "silhouetteId": "custom:race_garb_male__human"
       }
     ]
   },
@@ -15491,12 +11745,28 @@
     "abYieldBeatsCurrent": true
   },
   "generators": {
-    "status": "unassigned",
+    "status": "assigned",
     "fields": [
       "id",
       "version"
     ],
-    "entries": []
+    "entries": [
+      {
+        "id": "pixellab",
+        "version": "primary",
+        "role": "primary"
+      },
+      {
+        "id": "retro-diffusion",
+        "version": "standby",
+        "role": "standby"
+      },
+      {
+        "id": "nano-banana-pro",
+        "version": "concepts",
+        "role": "concepts-only"
+      }
+    ]
   },
   "generatorAdapters": {
     "from": "shared-prompt-spec",
@@ -15504,10 +11774,51 @@
     "adapters": []
   },
   "routingPolicy": {
-    "objective": "best-yield-per-cost",
+    "objective": "pixellab-primary",
     "rebenchmark": "periodic",
     "testSet": "goldenTestSet",
-    "assignments": []
+    "assignments": [
+      {
+        "category": "humanoid-layer",
+        "generator": "pixellab"
+      },
+      {
+        "category": "face-layer",
+        "generator": "pixellab"
+      },
+      {
+        "category": "creature",
+        "generator": "pixellab"
+      },
+      {
+        "category": "terrain-tile",
+        "generator": "pixellab"
+      },
+      {
+        "category": "building-piece",
+        "generator": "pixellab"
+      },
+      {
+        "category": "item-icon",
+        "generator": "pixellab"
+      },
+      {
+        "category": "portrait",
+        "generator": "pixellab"
+      },
+      {
+        "category": "effect",
+        "generator": "pixellab"
+      },
+      {
+        "category": "ui",
+        "generator": "pixellab"
+      }
+    ],
+    "bakeOff": false,
+    "primary": "pixellab",
+    "standby": "retro-diffusion",
+    "conceptsOnly": "nano-banana-pro"
   },
   "goldenTestSet": {
     "fixed": true,
@@ -15980,22 +12291,26 @@
     ]
   },
   "generatorRoster": {
-    "status": "unassigned",
-    "min": 2,
-    "max": 3,
-    "ids": [],
+    "status": "assigned",
+    "primary": "pixellab",
+    "standby": "retro-diffusion",
+    "conceptsOnly": "nano-banana-pro",
+    "bakeOff": false,
+    "ids": [
+      "pixellab"
+    ],
     "perCategory": true,
     "mixWithinLayeredSet": false,
     "categories": {
-      "humanoid-layer": null,
-      "face-layer": null,
-      "creature": null,
-      "terrain-tile": null,
-      "building-piece": null,
-      "item-icon": null,
-      "portrait": null,
-      "effect": null,
-      "ui": null
+      "humanoid-layer": "pixellab",
+      "face-layer": "pixellab",
+      "creature": "pixellab",
+      "terrain-tile": "pixellab",
+      "building-piece": "pixellab",
+      "item-icon": "pixellab",
+      "portrait": "pixellab",
+      "effect": "pixellab",
+      "ui": "pixellab"
     }
   },
   "layeredSets": [
@@ -16003,20 +12318,20 @@
       "id": "paperdoll:elf:f:hair:07",
       "kind": "paper-doll",
       "category": "humanoid-layer",
-      "generatorId": null,
+      "generatorId": "pixellab",
       "memberGeneratorIds": [
-        null,
-        null
+        "pixellab",
+        "pixellab"
       ]
     },
     {
       "id": "creature-family:lion",
       "kind": "creature-family",
       "category": "creature",
-      "generatorId": null,
+      "generatorId": "pixellab",
       "memberGeneratorIds": [
-        null,
-        null
+        "pixellab",
+        "pixellab"
       ]
     }
   ],
@@ -16489,9 +12804,7 @@
     "child": "own-body",
     "childScaledFromAdult": false,
     "perSexParts": [
-      "hair",
-      "beard",
-      "face-base"
+      "preset-head"
     ],
     "garbOnBodies": [
       "adult-male",
@@ -16588,13 +12901,22 @@
         "face-female": "face:tiefling:female"
       }
     },
-    "classGarb": "in-base-body",
-    "elderBaseBodies": "race-and-class",
+    "classGarb": "none",
+    "elderBaseBodies": "race-and-sex",
     "elderOffsetsApplyTo": [
       "armour",
       "helmet",
-      "hair"
-    ]
+      "preset-head"
+    ],
+    "garb": "one-standard-per-sex",
+    "bodyPx": {
+      "dwarf": {
+        "adult-male": 36,
+        "adult-female": 36,
+        "elder-male": 36,
+        "elder-female": 36
+      }
+    }
   },
   "slotMap": {
     "resolveBy": "slot-id-only",
@@ -16618,8 +12940,8 @@
       }
     ],
     "grammar": {
-      "charset-layer": "^CH\\.(BODY-ELDER|BODY-CHILD|BODY|HAIR-BACK|HAIR|BALD|BEARD|EYES|EARS|HORNS|TAIL|SCALES|GARB|ARMOR|LEGS|TORSO|HEAD|BACK|CAPE|ROBE)\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F|C)\\.[0-9]{2}\\.(IDLE|WALK|MELEE-SWING|THRUST|BOW-DRAW|BOW-LOOSE|XBOW-AIM|XBOW-FIRE|XBOW-RELOAD|THROWN|CAST-ONE-HAND|CAST-TWO-HAND|CAST-FOCUS|HAMMER|SAW|CHOP|DIG|STIR|CARRY|KNEEL|HURT|DODGE|PARRY|DEATH|SNEAK|CLIMB|PRONE|UNCONSCIOUS|SLEEP|SIT)\\.(D|L|R|U)\\.F[0-3]$",
-      "face": "^FA\\.(BG|FRAME|BODY|FEATURES|HAIR|GEAR|OVERLAY)\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F|C)\\.[0-9]{2}\\.(NEUTRAL|HAPPY|ANGRY|SAD|SURPRISED|HURT|DETERMINED|AFRAID)\\.C[0-7]$",
+      "charset-layer": "^CH\\.(BODY-ELDER|BODY-CHILD|BODY|HAIR-BACK|HAIR|BALD|BEARD|EYES|EARS|HORNS|TAIL|SCALES|GARB|ARMOR|LEGS|TORSO|HEAD|BACK|CAPE|ROBE|CLASS|KIT|RACEGARB|MONK)\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F|C)\\.[0-9]{2}\\.(IDLE|WALK|MELEE-SWING|THRUST|BOW-DRAW|BOW-LOOSE|XBOW-AIM|XBOW-FIRE|XBOW-RELOAD|THROWN|CAST-ONE-HAND|CAST-TWO-HAND|CAST-FOCUS|HAMMER|SAW|CHOP|DIG|STIR|CARRY|KNEEL|HURT|DODGE|PARRY|DEATH|SNEAK|CLIMB|PRONE|UNCONSCIOUS|SLEEP|SIT|MONK-IDLE)\\.(D|L|R|U)\\.F[0-3]$",
+      "face": "^FA\\.(BG|FRAME|BODY|FEATURES|HAIR|GEAR|OVERLAY|PRESET)\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F|C)\\.[0-9]{2}\\.(NEUTRAL|HAPPY|ANGRY|SAD|SURPRISED|HURT|DETERMINED|AFRAID)\\.C[0-7]$",
       "creature": "^CR\\.[A-Z][A-Z0-9-]*\\.(M|F|N)\\.(BASE|TAMED|SADDLE)\\.[A-Z][A-Z0-9-]*\\.(D|L|R|U)\\.F[0-3]$",
       "icon": "^IC\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*$",
       "portrait": "^PO\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*\\.[A-Z0-9-]+$",
@@ -16643,11 +12965,163 @@
       "marker": "^CB\\.(SELECT|FACTION|SUMMON|LOWHP)\\.[A-Z][A-Z0-9-]*$",
       "font": "^FN\\.[A-Z0-9]+\\.(DAMAGE|STATUS)$",
       "range-marker": "^RG\\.(SQUARE|LINE|CONE|SPHERE|CYLINDER)\\.[0-9]{2}$",
-      "hit-spark": "^SP\\.(SLASH|PIERCE|BLUDGEON)\\.F[0-2]$"
+      "hit-spark": "^SP\\.(SLASH|PIERCE|BLUDGEON)\\.F[0-2]$",
+      "weapon-angle": "^WP\\.[A-Z0-9-]+\\.(UPRIGHT|BAKED)\\.F[0-7]$",
+      "held-item": "^HI\\.(WIZARD-STAFF|DRUID-STAFF|WARLOCK-ORB|CLERIC-MACE|CLERIC-CENSER|BARD-LUTE)\\.(UPRIGHT|A45|A90)\\.F[0-7]$"
     },
     "retiredIds": [
       "CH.HAIR.ELF.F.06.WALK.D.F0",
-      "DP.CLIFF.TEMPERATE.FACE"
+      "DP.CLIFF.TEMPERATE.FACE",
+      "CH.CLASS.HUMAN.M.01.IDLE.D.F0",
+      "CH.CLASS.ELF.M.01.IDLE.D.F0",
+      "CH.CLASS.HALFLING.M.01.IDLE.D.F0",
+      "CH.CLASS.DWARF.M.01.IDLE.D.F0",
+      "CH.CLASS.GNOME.M.01.IDLE.D.F0",
+      "CH.CLASS.DRAGONBORN.M.01.IDLE.D.F0",
+      "CH.CLASS.HALF-ELF.M.01.IDLE.D.F0",
+      "CH.CLASS.HALF-ORC.M.01.IDLE.D.F0",
+      "CH.CLASS.TIEFLING.M.01.IDLE.D.F0",
+      "CH.CLASS.HUMAN.M.02.IDLE.D.F0",
+      "CH.CLASS.ELF.M.02.IDLE.D.F0",
+      "CH.CLASS.HALFLING.M.02.IDLE.D.F0",
+      "CH.CLASS.DWARF.M.02.IDLE.D.F0",
+      "CH.CLASS.GNOME.M.02.IDLE.D.F0",
+      "CH.CLASS.DRAGONBORN.M.02.IDLE.D.F0",
+      "CH.CLASS.HALF-ELF.M.02.IDLE.D.F0",
+      "CH.CLASS.HALF-ORC.M.02.IDLE.D.F0",
+      "CH.CLASS.TIEFLING.M.02.IDLE.D.F0",
+      "CH.CLASS.HUMAN.M.03.IDLE.D.F0",
+      "CH.CLASS.ELF.M.03.IDLE.D.F0",
+      "CH.CLASS.HALFLING.M.03.IDLE.D.F0",
+      "CH.CLASS.DWARF.M.03.IDLE.D.F0",
+      "CH.CLASS.GNOME.M.03.IDLE.D.F0",
+      "CH.CLASS.DRAGONBORN.M.03.IDLE.D.F0",
+      "CH.CLASS.HALF-ELF.M.03.IDLE.D.F0",
+      "CH.CLASS.HALF-ORC.M.03.IDLE.D.F0",
+      "CH.CLASS.TIEFLING.M.03.IDLE.D.F0",
+      "CH.CLASS.HUMAN.M.04.IDLE.D.F0",
+      "CH.CLASS.ELF.M.04.IDLE.D.F0",
+      "CH.CLASS.HALFLING.M.04.IDLE.D.F0",
+      "CH.CLASS.DWARF.M.04.IDLE.D.F0",
+      "CH.CLASS.GNOME.M.04.IDLE.D.F0",
+      "CH.CLASS.DRAGONBORN.M.04.IDLE.D.F0",
+      "CH.CLASS.HALF-ELF.M.04.IDLE.D.F0",
+      "CH.CLASS.HALF-ORC.M.04.IDLE.D.F0",
+      "CH.CLASS.TIEFLING.M.04.IDLE.D.F0",
+      "CH.CLASS.HUMAN.M.05.IDLE.D.F0",
+      "CH.CLASS.ELF.M.05.IDLE.D.F0",
+      "CH.CLASS.HALFLING.M.05.IDLE.D.F0",
+      "CH.CLASS.DWARF.M.05.IDLE.D.F0",
+      "CH.CLASS.GNOME.M.05.IDLE.D.F0",
+      "CH.CLASS.DRAGONBORN.M.05.IDLE.D.F0",
+      "CH.CLASS.HALF-ELF.M.05.IDLE.D.F0",
+      "CH.CLASS.HALF-ORC.M.05.IDLE.D.F0",
+      "CH.CLASS.TIEFLING.M.05.IDLE.D.F0",
+      "CH.CLASS.HUMAN.M.06.IDLE.D.F0",
+      "CH.CLASS.ELF.M.06.IDLE.D.F0",
+      "CH.CLASS.HALFLING.M.06.IDLE.D.F0",
+      "CH.CLASS.DWARF.M.06.IDLE.D.F0",
+      "CH.CLASS.GNOME.M.06.IDLE.D.F0",
+      "CH.CLASS.DRAGONBORN.M.06.IDLE.D.F0",
+      "CH.CLASS.HALF-ELF.M.06.IDLE.D.F0",
+      "CH.CLASS.HALF-ORC.M.06.IDLE.D.F0",
+      "CH.CLASS.TIEFLING.M.06.IDLE.D.F0",
+      "CH.CLASS.HUMAN.M.07.IDLE.D.F0",
+      "CH.CLASS.ELF.M.07.IDLE.D.F0",
+      "CH.CLASS.HALFLING.M.07.IDLE.D.F0",
+      "CH.CLASS.DWARF.M.07.IDLE.D.F0",
+      "CH.CLASS.GNOME.M.07.IDLE.D.F0",
+      "CH.CLASS.DRAGONBORN.M.07.IDLE.D.F0",
+      "CH.CLASS.HALF-ELF.M.07.IDLE.D.F0",
+      "CH.CLASS.HALF-ORC.M.07.IDLE.D.F0",
+      "CH.CLASS.TIEFLING.M.07.IDLE.D.F0",
+      "CH.CLASS.HUMAN.M.08.IDLE.D.F0",
+      "CH.CLASS.ELF.M.08.IDLE.D.F0",
+      "CH.CLASS.HALFLING.M.08.IDLE.D.F0",
+      "CH.CLASS.DWARF.M.08.IDLE.D.F0",
+      "CH.CLASS.GNOME.M.08.IDLE.D.F0",
+      "CH.CLASS.DRAGONBORN.M.08.IDLE.D.F0",
+      "CH.CLASS.HALF-ELF.M.08.IDLE.D.F0",
+      "CH.CLASS.HALF-ORC.M.08.IDLE.D.F0",
+      "CH.CLASS.TIEFLING.M.08.IDLE.D.F0",
+      "CH.CLASS.HUMAN.M.09.IDLE.D.F0",
+      "CH.CLASS.ELF.M.09.IDLE.D.F0",
+      "CH.CLASS.HALFLING.M.09.IDLE.D.F0",
+      "CH.CLASS.DWARF.M.09.IDLE.D.F0",
+      "CH.CLASS.GNOME.M.09.IDLE.D.F0",
+      "CH.CLASS.DRAGONBORN.M.09.IDLE.D.F0",
+      "CH.CLASS.HALF-ELF.M.09.IDLE.D.F0",
+      "CH.CLASS.HALF-ORC.M.09.IDLE.D.F0",
+      "CH.CLASS.TIEFLING.M.09.IDLE.D.F0",
+      "CH.CLASS.HUMAN.M.10.IDLE.D.F0",
+      "CH.CLASS.ELF.M.10.IDLE.D.F0",
+      "CH.CLASS.HALFLING.M.10.IDLE.D.F0",
+      "CH.CLASS.DWARF.M.10.IDLE.D.F0",
+      "CH.CLASS.GNOME.M.10.IDLE.D.F0",
+      "CH.CLASS.DRAGONBORN.M.10.IDLE.D.F0",
+      "CH.CLASS.HALF-ELF.M.10.IDLE.D.F0",
+      "CH.CLASS.HALF-ORC.M.10.IDLE.D.F0",
+      "CH.CLASS.TIEFLING.M.10.IDLE.D.F0",
+      "CH.CLASS.HUMAN.M.11.IDLE.D.F0",
+      "CH.CLASS.ELF.M.11.IDLE.D.F0",
+      "CH.CLASS.HALFLING.M.11.IDLE.D.F0",
+      "CH.CLASS.DWARF.M.11.IDLE.D.F0",
+      "CH.CLASS.GNOME.M.11.IDLE.D.F0",
+      "CH.CLASS.DRAGONBORN.M.11.IDLE.D.F0",
+      "CH.CLASS.HALF-ELF.M.11.IDLE.D.F0",
+      "CH.CLASS.HALF-ORC.M.11.IDLE.D.F0",
+      "CH.CLASS.TIEFLING.M.11.IDLE.D.F0",
+      "CH.CLASS.HUMAN.M.12.IDLE.D.F0",
+      "CH.CLASS.ELF.M.12.IDLE.D.F0",
+      "CH.CLASS.HALFLING.M.12.IDLE.D.F0",
+      "CH.CLASS.DWARF.M.12.IDLE.D.F0",
+      "CH.CLASS.GNOME.M.12.IDLE.D.F0",
+      "CH.CLASS.DRAGONBORN.M.12.IDLE.D.F0",
+      "CH.CLASS.HALF-ELF.M.12.IDLE.D.F0",
+      "CH.CLASS.HALF-ORC.M.12.IDLE.D.F0",
+      "CH.CLASS.TIEFLING.M.12.IDLE.D.F0",
+      "CH.BALD.HUMAN.M.01.IDLE.D.F0",
+      "CH.BALD.HUMAN.M.02.IDLE.D.F0",
+      "CH.BALD.HUMAN.M.03.IDLE.D.F0",
+      "CH.BEARD.HUMAN.M.01.IDLE.D.F0",
+      "CH.BEARD.HUMAN.F.01.IDLE.D.F0",
+      "FA.FEATURES.HUMAN.M.01.NEUTRAL.C0",
+      "FA.GEAR.HUMAN.M.01.NEUTRAL.C0",
+      "FA.FEATURES.HUMAN.F.01.NEUTRAL.C0",
+      "FA.GEAR.HUMAN.F.01.NEUTRAL.C0",
+      "FA.FEATURES.ELF.M.01.NEUTRAL.C0",
+      "FA.GEAR.ELF.M.01.NEUTRAL.C0",
+      "FA.FEATURES.ELF.F.01.NEUTRAL.C0",
+      "FA.GEAR.ELF.F.01.NEUTRAL.C0",
+      "FA.FEATURES.HALFLING.M.01.NEUTRAL.C0",
+      "FA.GEAR.HALFLING.M.01.NEUTRAL.C0",
+      "FA.FEATURES.HALFLING.F.01.NEUTRAL.C0",
+      "FA.GEAR.HALFLING.F.01.NEUTRAL.C0",
+      "FA.FEATURES.DWARF.M.01.NEUTRAL.C0",
+      "FA.GEAR.DWARF.M.01.NEUTRAL.C0",
+      "FA.FEATURES.DWARF.F.01.NEUTRAL.C0",
+      "FA.GEAR.DWARF.F.01.NEUTRAL.C0",
+      "FA.FEATURES.GNOME.M.01.NEUTRAL.C0",
+      "FA.GEAR.GNOME.M.01.NEUTRAL.C0",
+      "FA.FEATURES.GNOME.F.01.NEUTRAL.C0",
+      "FA.GEAR.GNOME.F.01.NEUTRAL.C0",
+      "FA.FEATURES.DRAGONBORN.M.01.NEUTRAL.C0",
+      "FA.GEAR.DRAGONBORN.M.01.NEUTRAL.C0",
+      "FA.FEATURES.DRAGONBORN.F.01.NEUTRAL.C0",
+      "FA.GEAR.DRAGONBORN.F.01.NEUTRAL.C0",
+      "FA.FEATURES.HALF-ELF.M.01.NEUTRAL.C0",
+      "FA.GEAR.HALF-ELF.M.01.NEUTRAL.C0",
+      "FA.FEATURES.HALF-ELF.F.01.NEUTRAL.C0",
+      "FA.GEAR.HALF-ELF.F.01.NEUTRAL.C0",
+      "FA.FEATURES.HALF-ORC.M.01.NEUTRAL.C0",
+      "FA.GEAR.HALF-ORC.M.01.NEUTRAL.C0",
+      "FA.FEATURES.HALF-ORC.F.01.NEUTRAL.C0",
+      "FA.GEAR.HALF-ORC.F.01.NEUTRAL.C0",
+      "FA.FEATURES.TIEFLING.M.01.NEUTRAL.C0",
+      "FA.GEAR.TIEFLING.M.01.NEUTRAL.C0",
+      "FA.FEATURES.TIEFLING.F.01.NEUTRAL.C0",
+      "FA.GEAR.TIEFLING.F.01.NEUTRAL.C0",
+      "FA.HAIR.HUMAN.M.01.NEUTRAL.C0"
     ],
     "sheet": {
       "id": "paperdoll:elf:f:hair:07",
@@ -28407,6 +24881,138 @@
             "owner": null
           }
         }
+      },
+      {
+        "category": "charset-layer",
+        "id": "CH.RACEGARB.HUMAN.M.01.IDLE.D.F0",
+        "catalogueId": "ALL_SHARED_CHARACTER_HUMAN-M-RACEGARB-01_IDLE_D-F0",
+        "sheetFile": "art/approved/a9c/CH_RACEGARB_HUMAN_M_01.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "charset-layer",
+        "id": "CH.KIT.HUMAN.M.01.IDLE.D.F0",
+        "catalogueId": "ALL_SHARED_CHARACTER_HUMAN-M-KIT-01_IDLE_D-F0",
+        "sheetFile": "art/approved/a9c/CH_KIT_HUMAN_M_01.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "charset-layer",
+        "id": "CH.MONK.HUMAN.M.01.MONK-IDLE.D.F0",
+        "catalogueId": "ALL_SHARED_CHARACTER_HUMAN-M-MONK-01_MONK-IDLE_D-F0",
+        "sheetFile": "art/approved/a9c/CH_MONK_HUMAN_M_01.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "face",
+        "id": "FA.PRESET.HUMAN.M.01.NEUTRAL.C0",
+        "catalogueId": "ALL_SHARED_FACE_HUMAN-M-PRESET-01_NEUTRAL_C0",
+        "sheetFile": "art/approved/a9c/FA_PRESET_HUMAN_M_01.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "weapon-angle",
+        "id": "WP.LONGSWORD.UPRIGHT.F0",
+        "catalogueId": "ALL_SHARED_WEAPON_LONGSWORD_UPRIGHT_F0",
+        "sheetFile": "art/approved/a9c/WP_LONGSWORD_UPRIGHT.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "held-item",
+        "id": "HI.WIZARD-STAFF.UPRIGHT.F0",
+        "catalogueId": "ALL_SHARED_HELD_WIZARD-STAFF_UPRIGHT_F0",
+        "sheetFile": "art/approved/a9c/HI_WIZARD_STAFF_UPRIGHT.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
       }
     ],
     "frameLayout": {
@@ -28423,152 +25029,182 @@
         {
           "id": "idle",
           "class": "idle",
-          "frames": 4
+          "frames": 4,
+          "bodyDrawn": true
         },
         {
           "id": "walk",
           "class": "walk",
-          "frames": 3
+          "frames": 3,
+          "bodyDrawn": true
         },
         {
           "id": "melee-swing",
           "class": "attack",
-          "frames": 6
+          "frames": 6,
+          "bodyDrawn": false
         },
         {
           "id": "thrust",
           "class": "attack",
-          "frames": 6
+          "frames": 6,
+          "bodyDrawn": false
         },
         {
           "id": "bow-draw",
           "class": "kept",
-          "frames": 4
+          "frames": 4,
+          "bodyDrawn": true
         },
         {
           "id": "bow-loose",
           "class": "kept",
-          "frames": 3
+          "frames": 3,
+          "bodyDrawn": true
         },
         {
           "id": "xbow-aim",
           "class": "kept",
-          "frames": 4
+          "frames": 4,
+          "bodyDrawn": true
         },
         {
           "id": "xbow-fire",
           "class": "kept",
-          "frames": 4
+          "frames": 4,
+          "bodyDrawn": true
         },
         {
           "id": "xbow-reload",
           "class": "kept",
-          "frames": 4
+          "frames": 4,
+          "bodyDrawn": true
         },
         {
           "id": "thrown",
           "class": "kept",
-          "frames": 4
+          "frames": 4,
+          "bodyDrawn": true
         },
         {
           "id": "cast-one-hand",
           "class": "cast",
-          "frames": 6
+          "frames": 6,
+          "bodyDrawn": true
         },
         {
           "id": "cast-two-hand",
           "class": "cast",
-          "frames": 6
+          "frames": 6,
+          "bodyDrawn": true
         },
         {
           "id": "cast-focus",
           "class": "cast",
-          "frames": 6
+          "frames": 6,
+          "bodyDrawn": true
         },
         {
           "id": "hammer",
           "class": "work",
-          "frames": 6
+          "frames": 6,
+          "bodyDrawn": true
         },
         {
           "id": "saw",
           "class": "work",
-          "frames": 6
+          "frames": 6,
+          "bodyDrawn": true
         },
         {
           "id": "chop",
           "class": "work",
-          "frames": 6
+          "frames": 6,
+          "bodyDrawn": true
         },
         {
           "id": "dig",
           "class": "work",
-          "frames": 6
+          "frames": 6,
+          "bodyDrawn": true
         },
         {
           "id": "stir",
           "class": "work",
-          "frames": 6
+          "frames": 6,
+          "bodyDrawn": true
         },
         {
           "id": "carry",
           "class": "work",
-          "frames": 6
+          "frames": 6,
+          "bodyDrawn": true
         },
         {
           "id": "kneel",
           "class": "work",
-          "frames": 6
+          "frames": 6,
+          "bodyDrawn": true
         },
         {
           "id": "hurt",
           "class": "kept",
-          "frames": 3
+          "frames": 3,
+          "bodyDrawn": true
         },
         {
           "id": "dodge",
           "class": "kept",
-          "frames": 3
+          "frames": 3,
+          "bodyDrawn": true
         },
         {
           "id": "parry",
           "class": "kept",
-          "frames": 3
+          "frames": 3,
+          "bodyDrawn": true
         },
         {
           "id": "death",
           "class": "death",
-          "frames": 6
+          "frames": 6,
+          "bodyDrawn": true
         },
         {
           "id": "sneak",
           "class": "kept",
-          "frames": 4
+          "frames": 4,
+          "bodyDrawn": true
         },
         {
           "id": "climb",
           "class": "kept",
-          "frames": 4
+          "frames": 4,
+          "bodyDrawn": true
         },
         {
           "id": "prone",
           "class": "kept",
-          "frames": 4
+          "frames": 4,
+          "bodyDrawn": true
         },
         {
           "id": "unconscious",
           "class": "kept",
-          "frames": 4
+          "frames": 4,
+          "bodyDrawn": true
         },
         {
           "id": "sleep",
           "class": "kept",
-          "frames": 4
+          "frames": 4,
+          "bodyDrawn": true
         },
         {
           "id": "sit",
           "class": "kept",
-          "frames": 4
+          "frames": 4,
+          "bodyDrawn": true
         }
       ],
       "featureRows": [
@@ -28606,15 +25242,35 @@
       "cellsPerDirection": 141,
       "cells30": 564,
       "featureCells": 144,
-      "cellsPerFullSheet": 708,
+      "cellsPerFullSheet": 660,
       "maxFrames": 6,
       "boundingPx": [
         1152,
-        1728
+        1632
       ],
       "exampleSheetUnchanged": "768x1440",
-      "note": "Item 33 replaces the 3.5 frames-per-row average (30 x 3.5 x 4 = 420). The 30 rows at the locked budgets, with rows the budgets do not name left at their A9 counts, are 564 cells. Section F adds six work rows, 144 cells. A full layer design is 708 cells. The committed hair example stays 768 by 1440."
-    }
+      "note": "Item 33 counted 708 cells on a full layer. Item 39 does not draw the melee-swing or thrust body rows (12 frames by 4 directions = 48 cells). Drawn body cells are 516. Section F stays 144. A drawn full layer is 660 cells. The committed example sheet stays 768 by 1440, and those two rows stay reserved on it.",
+      "item33Cells": 708,
+      "droppedMeleeBodyCells": 48,
+      "drawnBodyCells": 516
+    },
+    "asymmetricGear": [
+      {
+        "id": "CH.KIT.HUMAN.M.09.IDLE.D.F0",
+        "piece": "kit-wizard-hat",
+        "asymmetric": true
+      },
+      {
+        "id": "CH.KIT.HUMAN.M.13.IDLE.D.F0",
+        "piece": "kit-bard-cap",
+        "asymmetric": true
+      },
+      {
+        "id": "CH.KIT.HUMAN.M.08.IDLE.D.F0",
+        "piece": "kit-warlock-cloak",
+        "asymmetric": true
+      }
+    ]
   },
   "anchorTool": {
     "shift": "whole-pixels",
@@ -28693,7 +25349,7 @@
     }
   },
   "equipmentAnchors": {
-    "weaponDrawn": "once-per-grip-pose",
+    "weaponDrawn": "upright-sprite-plus-baked-angles",
     "pinnedBy": "compositor",
     "redrawPerFrame": false,
     "redrawPerRace": false,
@@ -28729,7 +25385,10 @@
         34,
         30
       ]
-    }
+    },
+    "grip": "fixed-upright-right-hand",
+    "runtimeRotation": false,
+    "bodyAttackRow": false
   },
   "geometry": {
     "cellFt": 5,
@@ -28999,8 +25658,7 @@
     ]
   },
   "deformingRetired": [
-    "cape",
-    "long-robe"
+    "generic-cape"
   ],
   "a9c": {
     "artManual": {
@@ -29021,12 +25679,15 @@
       "30": "Construction art is a palette-swap ghost, a blueprint, foundation, scaffolding, partial stages, site props and build animation. The ghost is not an alpha fade.",
       "31": "Characters and items must clear their ground by the grayscale value step before approval. The table-with-items trial is the reference, reviewed at true 2x. No image is generated here.",
       "32": "The palette is saturated and controlled, with no gray mush. Value carries the read. The brightest colours are reserved. Mood comes from light and grading. Every asset passes grayscale before approval.",
-      "33": "Style defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision keeps one master, caps colours, and sets the frame budgets. Re-run the cost on 708 cells, not on the 3.5 average.",
-      "34": "Trial findings: request characters at size 42, animate with skeleton-v3 on create-character-v3 bodies, then propagate armour, helmet and hair. The south walk row sits 2 px low. Prompts must force the RMMZ standard top-down 3/4 view. Small item world sprites remain an open test.",
-      "35": "A melee weapon is a separate sprite on the hand anchors. The attack is six frames. Draw the weapon 10 to 20 percent larger in native pixels. Do not scale it.",
+      "33": "Style defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision keeps one master and the frame budgets. Item 33 counted 708 cells. Item 39 draws 660 because the melee body rows are not drawn.",
+      "34": "Trial findings: request characters at size 42, animate with skeleton-v3 on create-character-v3 bodies, then propagate armour, helmet, the preset head and class kits. Weapon angles are 2 authored angles plus lossless 90 degree turns and flips, baked to 8 frames. The south walk row sits 2 px low. Prompts must force the RMMZ standard top-down 3/4 view. Small item world sprites remain an open test.",
+      "35": "Melee timing is the weapon sprite, not a body swing. The body holds a fixed upright right-hand grip. Draw the weapon 10 to 20 percent larger in native pixels. Do not scale it. The strike frame is held, with a hit spark and 1 or 2 px of knockback.",
       "36": "These size, footprint, door, mirror, fortress, marker and font defaults are the PM defaults. The Owner may override them. West may be mirrored from east. Weapons and shields stay on the hand anchors.",
-      "37": "PM assumption, Owner may amend: class garb is part of the race and class base body. Faces show armour and helmet only. Charsets show armour, helmet, weapon and shield. Other gear is an item, an icon, a portrait or a world sprite. Elder base bodies by race and class are 216 sheets.",
+      "37": "Facesets never change with gear. A faceset is the face preset, the hair, the race background and 8 expressions. Charsets draw the race garb, the class signature kits, armour, helmet, held class items, weapon and shield. Other gear is an item, an icon, a portrait or a world sprite.",
       "38": "The view is the RMMZ standard top-down 3/4 view. Movement is 4-way on the grid. Unit movement is orthogonal only. Sprites stay four-direction. Draw order stays row, then layer. SRD 5-5-5 applies to spell areas and ranges only. Cliff and wall pieces are RMMZ-style tiles with the depth cues. Side-wall, side-roof and corner-joint pieces are not added. Tall objects are not split.",
+      "39": "The right hand holds a fixed upright grip. The body stays mostly still and the weapon sprite rotates through up, 45 forward, level and back. Two authored angles plus lossless 90 degree turns and flips bake 8 frames. There is no runtime rotation. PixelLab is the primary generator. Retro Diffusion is standby. Nano Banana Pro is for concepts only. The bake-off is off. Cast, bow and work rows stay on the body.",
+      "40": "There are no class outfits. Each race has one standard garb per sex, 18 in all, on that race body template in the race palette. Casters and monks use 14 signature kit layers and one accent colour. Martial classes use armour, weapons and their accent. Held class items use 2 authored angles. The monk has a 4-frame stance idle and no held item.",
+      "41": "Art uses a fixed preset pool: 8 male and 8 female adults, 2 elder and 2 child looks per sex, 24 per race and 216 in all. Each preset is a complete head, hair and face for the charset and a matching 144 px faceset with 8 expressions, plus 3 in-game skin and hair palette swaps. The player picks a preset and a colour. Sim genetics stay on stats only. Dwarf male and female adult and elder bodies are 36 px.",
       "F": "Seasonal variants, building and object damage stages, and the sim work rows sit on the layered humanoid system. New work rows are farm, mine, build, craft, fish and cook, at 6 frames. Chop and carry are already rows."
     },
     "proportion": {
@@ -29305,7 +25966,8 @@
         "layerPropagation": [
           "armour",
           "helmet",
-          "hair"
+          "preset-head",
+          "class-kit"
         ],
         "weaponsShields": "anchored-sprites",
         "southWalk": {
@@ -29317,7 +25979,7 @@
           ],
           "correctedBy": "AS-ANCHOR-001"
         },
-        "weaponAngles": "rotate-tool-one-generation-per-angle",
+        "weaponAngles": "two-authored-plus-lossless-90",
         "view": "rmmz-top-down-3-4",
         "smallItemWorldSprites": "open-test"
       }
@@ -29831,15 +26493,28 @@
     },
     "melee": {
       "weapon": "separate-sprite",
-      "pin": "hand-anchor",
-      "angles": "rotate-tool-one-generation-per-angle",
+      "pin": "one-grip-anchor",
+      "body": "mostly-still",
+      "grip": "fixed-upright-right-hand",
+      "runtimeRotation": false,
+      "uprightSprite": true,
+      "authoredAngles": 2,
+      "lossless": "90-degree-turns-and-flips",
+      "bakedFrames": 8,
+      "arc": [
+        "up",
+        "45-forward",
+        "level",
+        "back"
+      ],
       "frames": 6,
+      "bodyAttackRow": false,
       "frameNames": [
         "wind-up",
         "raise",
-        "arc-1",
-        "arc-2",
-        "arc-3",
+        "45-forward",
+        "level",
+        "strike",
         "recovery"
       ],
       "strikeFrame": 4,
@@ -29852,46 +26527,31 @@
             "axe",
             "hammer"
           ],
-          "angles": [
-            "A0",
-            "A45",
-            "A90",
-            "A135"
-          ]
+          "bodyFrames": false,
+          "pace": "weapon-rotation"
         },
         "side-slash": {
           "weapons": [
             "sword"
           ],
-          "angles": [
-            "A0",
-            "A315",
-            "A270",
-            "A225"
-          ]
+          "bodyFrames": false,
+          "pace": "weapon-rotation"
         },
         "thrust": {
           "weapons": [
             "spear",
             "dagger"
           ],
-          "angles": [
-            "A0",
-            "A90"
-          ]
+          "bodyFrames": false,
+          "pace": "weapon-rotation"
         },
         "two-hand": {
           "weapons": [
             "greatsword",
             "greataxe"
           ],
-          "pace": "heavier-slower",
-          "angles": [
-            "A0",
-            "A45",
-            "A90",
-            "A135"
-          ]
+          "bodyFrames": false,
+          "pace": "heavier-slower"
         }
       },
       "hitSpark": "strike-frame",
@@ -29907,7 +26567,12 @@
         "basePx": 20,
         "drawnPx": 24,
         "scaled": false
-      }
+      },
+      "bodyPoseRowsKept": [
+        "cast",
+        "bow",
+        "work"
+      ]
     },
     "pmDefaults": {
       "ownerMayOverride": true,
@@ -30046,51 +26711,42 @@
       }
     },
     "visibleGear": {
-      "assumption": "class-garb-in-race-class-base-body",
-      "assumptionFlag": "PM assumption, Owner may amend",
-      "charsetDrawn": [
-        "base-body",
-        "race-features",
-        "hair",
-        "beard",
-        "armour",
-        "helmet",
-        "weapon",
-        "shield"
-      ],
+      "classOutfits": "none",
+      "raceGarbs": 18,
       "charsetOrder": [
-        "base-body",
+        "base-body-race-garb",
         "race-features",
-        "hair-beard",
+        "preset-head",
+        "kit-body-hugging",
+        "kit-long",
         "armour",
-        "helmet"
+        "kit-mantle",
+        "kit-cape-cloak",
+        "headwear",
+        "held-and-weapon",
+        "hand-glow"
       ],
       "anchored": [
         "weapon",
-        "shield"
+        "shield",
+        "held-class-item"
       ],
-      "faceGear": [
-        "armour",
-        "helmet"
-      ],
-      "faceDropped": [
-        "collar",
-        "cloak"
-      ],
+      "faceGear": [],
+      "facesetGear": "none",
       "notDrawn": [
-        "cloak",
-        "cape",
+        "generic-cloak",
         "boots",
         "gloves",
         "belts",
         "rings",
         "amulets",
-        "collar"
+        "collar",
+        "class-outfit"
       ],
       "otherGear": "item-icon-portrait-world-sprite",
       "childClass": false,
-      "childGarb": "child-base-body",
-      "outfitIdsRemain": "item-and-icon",
+      "childGarb": "in-child-body",
+      "outfitIdsRemain": "icon-only",
       "armourLayers": [
         "light",
         "medium",
@@ -30101,19 +26757,18 @@
         "bow-draw"
       ],
       "deformingDropped": [
-        "cape",
-        "long-robe"
+        "generic-cape"
       ],
       "elderOffsetsApplyTo": [
         "armour",
         "helmet",
-        "hair"
+        "preset-head"
       ],
-      "elderBaseBodies": "race-and-class",
-      "elderFlag": "Elder base bodies vary by race and class: 9 races x 2 sexes x 12 classes = 216 sheets. Owner may amend.",
+      "elderBaseBodies": "race-and-sex",
+      "elderFlag": "Elder base bodies are 18: 9 races by 2 sexes. Class does not multiply them. The adult sheet is placed by the offset table.",
       "layerSamples": [
         {
-          "layer": "base-body",
+          "layer": "base-body-race-garb",
           "drawn": true
         },
         {
@@ -30121,19 +26776,19 @@
           "drawn": true
         },
         {
-          "layer": "hair",
+          "layer": "preset-head",
           "drawn": true
         },
         {
-          "layer": "beard",
+          "layer": "kit-wizard-robe",
+          "drawn": true
+        },
+        {
+          "layer": "kit-bard-cape",
           "drawn": true
         },
         {
           "layer": "armour",
-          "drawn": true
-        },
-        {
-          "layer": "helmet",
           "drawn": true
         },
         {
@@ -30145,11 +26800,11 @@
           "drawn": true
         },
         {
-          "layer": "cloak",
-          "drawn": false
+          "layer": "hand-glow",
+          "drawn": true
         },
         {
-          "layer": "cape",
+          "layer": "generic-cloak",
           "drawn": false
         },
         {
@@ -30171,37 +26826,59 @@
         {
           "layer": "amulets",
           "drawn": false
+        },
+        {
+          "layer": "collar",
+          "drawn": false
+        },
+        {
+          "layer": "class-outfit",
+          "drawn": false
         }
       ],
       "faceSample": {
         "layers": [
           "background",
-          "faction-trim",
-          "body-base",
-          "face",
-          "hair",
-          "gear",
-          "overlay"
+          "preset-face",
+          "preset-hair"
         ],
-        "gearKinds": [
-          "armour",
-          "helmet"
-        ]
+        "gearKinds": []
       }
     },
     "sizing": {
       "races": 9,
+      "sexes": 2,
+      "raceGarbDesigns": 18,
       "classes": 12,
-      "adultBaseSheets": 216,
-      "elderBaseSheets": 216,
+      "adultBaseSheets": 18,
+      "elderBaseSheets": 18,
       "childBaseSheets": 9,
-      "baseBodySheets": 441,
+      "baseBodySheets": 45,
+      "kitLayers": 14,
+      "kitBodyTemplates": 18,
+      "kitSheets": 252,
+      "elderKitSheets": 0,
+      "childKitSheets": 0,
+      "heldClassItems": 6,
+      "heldAuthoredAngles": 2,
+      "heldBakedFrames": 8,
+      "monkIdleFrames": 4,
+      "monkIdleDirections": 4,
+      "monkIdleTemplates": 18,
+      "monkIdleCells": 288,
       "armourSheets": 81,
       "helmetSheets": 81,
       "elderArmourExtraSheets": 0,
-      "removedClassGarbSheets": 324,
-      "cellsPerFullSheet": 708,
-      "hairAndBeard": "unchanged from AS-GENE-001"
+      "retiredClassGarbDesigns": 108,
+      "retiredClassGarbSheets": 324,
+      "presetLooks": 216,
+      "presetFacesetSheets": 216,
+      "presetCharsetHeads": 216,
+      "presetPaletteSwapSheets": 0,
+      "droppedMeleeBodyCells": 48,
+      "item33Cells": 708,
+      "cellsPerFullSheet": 660,
+      "hairAndBeard": "replaced by the preset pool"
     },
     "catalogueCategories": [
       {
@@ -30492,6 +27169,102 @@
           "nativeScale": 1,
           "scaled": false
         }
+      },
+      {
+        "id": "RACEGARB",
+        "ruleId": "AS-VIS-001",
+        "slotGrammar": "charset-layer",
+        "sampleSlotId": "CH.RACEGARB.HUMAN.M.01.IDLE.D.F0",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 4,
+          "facings": 4,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "CLASSKIT",
+        "ruleId": "AS-VIS-001",
+        "slotGrammar": "charset-layer",
+        "sampleSlotId": "CH.KIT.HUMAN.M.01.IDLE.D.F0",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 4,
+          "facings": 4,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "MONKIDLE",
+        "ruleId": "AS-VIS-001",
+        "slotGrammar": "charset-layer",
+        "sampleSlotId": "CH.MONK.HUMAN.M.01.MONK-IDLE.D.F0",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 4,
+          "facings": 4,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "HELD",
+        "ruleId": "AS-VIS-001",
+        "slotGrammar": "held-item",
+        "sampleSlotId": "HI.WIZARD-STAFF.UPRIGHT.F0",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 8,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "PRESET",
+        "ruleId": "AS-GENE-001",
+        "slotGrammar": "face",
+        "sampleSlotId": "FA.PRESET.HUMAN.M.01.NEUTRAL.C0",
+        "sizing": {
+          "px": [
+            144,
+            144
+          ],
+          "frames": 8,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "WEAPONCEL",
+        "ruleId": "AS-MELEE-001",
+        "slotGrammar": "weapon-angle",
+        "sampleSlotId": "WP.LONGSWORD.UPRIGHT.F0",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 8,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
       }
     ],
     "sizingManifest": [
@@ -30679,14 +27452,767 @@
       {
         "id": "HUMANOID-LAYER",
         "ruleId": "AS-VIS-001",
-        "sheets": 603,
-        "cells": 708,
+        "sheets": 477,
+        "cells": 660,
         "px": [
           1152,
-          1728
+          1632
         ],
-        "note": "441 base bodies + 81 armour + 81 helmets. Hair and beard are not in the 603."
+        "note": "45 base bodies + 18 race garbs + 252 kit sheets + 81 armour + 81 helmets = 477. Preset heads are 216 and are not in the 477. Melee body rows are not in the 660."
+      },
+      {
+        "id": "RACEGARB",
+        "ruleId": "AS-VIS-001",
+        "sheets": 18,
+        "cells": 660,
+        "px": [
+          1152,
+          1632
+        ]
+      },
+      {
+        "id": "CLASSKIT",
+        "ruleId": "AS-VIS-001",
+        "sheets": 252,
+        "cells": 660,
+        "px": [
+          1152,
+          1632
+        ]
+      },
+      {
+        "id": "HELD",
+        "ruleId": "AS-VIS-001",
+        "items": 6,
+        "authoredAngles": 2,
+        "bakedFrames": 8
+      },
+      {
+        "id": "MONKIDLE",
+        "ruleId": "AS-VIS-001",
+        "frames": 4,
+        "facings": 4,
+        "templates": 18,
+        "cells": 288
+      },
+      {
+        "id": "PRESET",
+        "ruleId": "AS-GENE-001",
+        "looks": 216,
+        "facesetPx": 144,
+        "expressions": 8,
+        "paletteSwaps": 3
+      },
+      {
+        "id": "WEAPONCEL",
+        "ruleId": "AS-MELEE-001",
+        "authoredAngles": 2,
+        "bakedFrames": 8,
+        "runtimeRotation": false
       }
-    ]
-  }
+    ],
+    "classKits": {
+      "layers": [
+        {
+          "id": "kit-monk-wraps",
+          "classId": "monk",
+          "group": "body-hugging",
+          "design": "01",
+          "asymmetric": false,
+          "note": "Hand and foot wraps."
+        },
+        {
+          "id": "kit-monk-sash",
+          "classId": "monk",
+          "group": "body-hugging",
+          "design": "02",
+          "asymmetric": false,
+          "note": "Sash."
+        },
+        {
+          "id": "kit-wizard-robe",
+          "classId": "wizard",
+          "group": "long",
+          "design": "03",
+          "asymmetric": false,
+          "note": "Long robe."
+        },
+        {
+          "id": "kit-cleric-tabard",
+          "classId": "cleric",
+          "group": "long",
+          "design": "04",
+          "asymmetric": false,
+          "note": "Tabard with a large holy symbol."
+        },
+        {
+          "id": "kit-sorcerer-mantle",
+          "classId": "sorcerer",
+          "group": "mantle",
+          "design": "05",
+          "asymmetric": false,
+          "note": "Short mantle. Head is bare."
+        },
+        {
+          "id": "kit-druid-mantle",
+          "classId": "druid",
+          "group": "mantle",
+          "design": "06",
+          "asymmetric": false,
+          "note": "Fur mantle."
+        },
+        {
+          "id": "kit-bard-cape",
+          "classId": "bard",
+          "group": "cape",
+          "design": "07",
+          "asymmetric": false,
+          "note": "Short cape."
+        },
+        {
+          "id": "kit-warlock-cloak",
+          "classId": "warlock",
+          "group": "cape",
+          "design": "08",
+          "asymmetric": true,
+          "note": "Jagged-hem hooded cloak."
+        },
+        {
+          "id": "kit-wizard-hat",
+          "classId": "wizard",
+          "group": "headwear",
+          "design": "09",
+          "asymmetric": true,
+          "note": "Pointed hat. One headwear slot."
+        },
+        {
+          "id": "kit-wizard-hood",
+          "classId": "wizard",
+          "group": "headwear",
+          "design": "10",
+          "asymmetric": false,
+          "note": "Deep hood. Alternative to the pointed hat."
+        },
+        {
+          "id": "kit-warlock-hood",
+          "classId": "warlock",
+          "group": "headwear",
+          "design": "11",
+          "asymmetric": false,
+          "note": "Hood in the one headwear slot."
+        },
+        {
+          "id": "kit-druid-circlet",
+          "classId": "druid",
+          "group": "headwear",
+          "design": "12",
+          "asymmetric": false,
+          "note": "Leaf or antler circlet."
+        },
+        {
+          "id": "kit-bard-cap",
+          "classId": "bard",
+          "group": "headwear",
+          "design": "13",
+          "asymmetric": true,
+          "note": "Feathered cap."
+        },
+        {
+          "id": "kit-monk-topknot",
+          "classId": "monk",
+          "group": "head-overlay",
+          "design": "14",
+          "asymmetric": false,
+          "note": "Topknot. A head overlay, not the headwear slot."
+        }
+      ],
+      "martial": [
+        "barbarian",
+        "fighter",
+        "paladin",
+        "ranger",
+        "rogue"
+      ],
+      "martialBy": "armour-and-weapons",
+      "monk": {
+        "heldItem": false,
+        "idleFrames": 4,
+        "idleDirections": 4,
+        "topknot": "head-overlay",
+        "head": "bare-or-topknot"
+      },
+      "headwear": {
+        "oneSlot": true,
+        "sorcerer": "bare",
+        "choices": [
+          "helmet",
+          "kit-wizard-hat",
+          "kit-wizard-hood",
+          "kit-warlock-hood",
+          "kit-druid-circlet",
+          "kit-bard-cap"
+        ]
+      },
+      "held": [
+        {
+          "id": "wizard-staff",
+          "classId": "wizard",
+          "slotPrefix": "HI.WIZARD-STAFF",
+          "anchor": "grip",
+          "mount": "hand",
+          "authoredAngles": 2,
+          "bakedFrames": 8,
+          "runtimeRotation": false
+        },
+        {
+          "id": "druid-staff",
+          "classId": "druid",
+          "slotPrefix": "HI.DRUID-STAFF",
+          "anchor": "grip",
+          "mount": "hand",
+          "authoredAngles": 2,
+          "bakedFrames": 8,
+          "runtimeRotation": false
+        },
+        {
+          "id": "warlock-orb",
+          "classId": "warlock",
+          "slotPrefix": "HI.WARLOCK-ORB",
+          "anchor": "offset",
+          "mount": "float",
+          "authoredAngles": 2,
+          "bakedFrames": 8,
+          "runtimeRotation": false
+        },
+        {
+          "id": "cleric-mace",
+          "classId": "cleric",
+          "slotPrefix": "HI.CLERIC-MACE",
+          "anchor": "grip",
+          "mount": "hand",
+          "authoredAngles": 2,
+          "bakedFrames": 8,
+          "runtimeRotation": false
+        },
+        {
+          "id": "cleric-censer",
+          "classId": "cleric",
+          "slotPrefix": "HI.CLERIC-CENSER",
+          "anchor": "grip",
+          "mount": "hand",
+          "authoredAngles": 2,
+          "bakedFrames": 8,
+          "runtimeRotation": false
+        },
+        {
+          "id": "bard-lute",
+          "classId": "bard",
+          "slotPrefix": "HI.BARD-LUTE",
+          "anchor": "back",
+          "mount": "back-slung",
+          "authoredAngles": 2,
+          "bakedFrames": 8,
+          "runtimeRotation": false
+        }
+      ],
+      "accents": [
+        {
+          "classId": "barbarian",
+          "hex": "#F26018",
+          "value": 8,
+          "colourOnly": false,
+          "secondChannel": "silhouette",
+          "groundHex": "#333B45"
+        },
+        {
+          "classId": "bard",
+          "hex": "#FFF2A3",
+          "value": 14,
+          "colourOnly": false,
+          "secondChannel": "silhouette",
+          "groundHex": "#333B45"
+        },
+        {
+          "classId": "cleric",
+          "hex": "#FFB833",
+          "value": 11,
+          "colourOnly": false,
+          "secondChannel": "silhouette",
+          "groundHex": "#333B45"
+        },
+        {
+          "classId": "druid",
+          "hex": "#57E095",
+          "value": 10,
+          "colourOnly": false,
+          "secondChannel": "silhouette",
+          "groundHex": "#333B45"
+        },
+        {
+          "classId": "fighter",
+          "hex": "#4F8FB2",
+          "value": 8,
+          "colourOnly": false,
+          "secondChannel": "silhouette",
+          "groundHex": "#333B45"
+        },
+        {
+          "classId": "monk",
+          "hex": "#E6BAFF",
+          "value": 12,
+          "colourOnly": false,
+          "secondChannel": "silhouette",
+          "groundHex": "#333B45"
+        },
+        {
+          "classId": "paladin",
+          "hex": "#E2EFF8",
+          "value": 14,
+          "colourOnly": false,
+          "secondChannel": "silhouette",
+          "groundHex": "#333B45"
+        },
+        {
+          "classId": "ranger",
+          "hex": "#91B851",
+          "value": 9,
+          "colourOnly": false,
+          "secondChannel": "silhouette",
+          "groundHex": "#333B45"
+        },
+        {
+          "classId": "rogue",
+          "hex": "#938E7C",
+          "value": 8,
+          "colourOnly": false,
+          "secondChannel": "silhouette",
+          "groundHex": "#333B45"
+        },
+        {
+          "classId": "sorcerer",
+          "hex": "#A8F3FF",
+          "value": 13,
+          "colourOnly": false,
+          "secondChannel": "silhouette",
+          "groundHex": "#333B45"
+        },
+        {
+          "classId": "warlock",
+          "hex": "#BE65FA",
+          "value": 9,
+          "colourOnly": false,
+          "secondChannel": "silhouette",
+          "groundHex": "#333B45"
+        },
+        {
+          "classId": "wizard",
+          "hex": "#DEDF5E",
+          "value": 12,
+          "colourOnly": false,
+          "secondChannel": "silhouette",
+          "groundHex": "#333B45"
+        }
+      ]
+    }
+  },
+  "retiredClassOutfitArtKeys": [
+    "outfit_class_barbarian__human",
+    "outfit_class_barbarian__elf",
+    "outfit_class_barbarian__halfling",
+    "outfit_class_barbarian__dwarf",
+    "outfit_class_barbarian__gnome",
+    "outfit_class_barbarian__dragonborn",
+    "outfit_class_barbarian__half-elf",
+    "outfit_class_barbarian__half-orc",
+    "outfit_class_barbarian__tiefling",
+    "outfit_class_bard__human",
+    "outfit_class_bard__elf",
+    "outfit_class_bard__halfling",
+    "outfit_class_bard__dwarf",
+    "outfit_class_bard__gnome",
+    "outfit_class_bard__dragonborn",
+    "outfit_class_bard__half-elf",
+    "outfit_class_bard__half-orc",
+    "outfit_class_bard__tiefling",
+    "outfit_class_cleric__human",
+    "outfit_class_cleric__elf",
+    "outfit_class_cleric__halfling",
+    "outfit_class_cleric__dwarf",
+    "outfit_class_cleric__gnome",
+    "outfit_class_cleric__dragonborn",
+    "outfit_class_cleric__half-elf",
+    "outfit_class_cleric__half-orc",
+    "outfit_class_cleric__tiefling",
+    "outfit_class_druid__human",
+    "outfit_class_druid__elf",
+    "outfit_class_druid__halfling",
+    "outfit_class_druid__dwarf",
+    "outfit_class_druid__gnome",
+    "outfit_class_druid__dragonborn",
+    "outfit_class_druid__half-elf",
+    "outfit_class_druid__half-orc",
+    "outfit_class_druid__tiefling",
+    "outfit_class_fighter__human",
+    "outfit_class_fighter__elf",
+    "outfit_class_fighter__halfling",
+    "outfit_class_fighter__dwarf",
+    "outfit_class_fighter__gnome",
+    "outfit_class_fighter__dragonborn",
+    "outfit_class_fighter__half-elf",
+    "outfit_class_fighter__half-orc",
+    "outfit_class_fighter__tiefling",
+    "outfit_class_monk__human",
+    "outfit_class_monk__elf",
+    "outfit_class_monk__halfling",
+    "outfit_class_monk__dwarf",
+    "outfit_class_monk__gnome",
+    "outfit_class_monk__dragonborn",
+    "outfit_class_monk__half-elf",
+    "outfit_class_monk__half-orc",
+    "outfit_class_monk__tiefling",
+    "outfit_class_paladin__human",
+    "outfit_class_paladin__elf",
+    "outfit_class_paladin__halfling",
+    "outfit_class_paladin__dwarf",
+    "outfit_class_paladin__gnome",
+    "outfit_class_paladin__dragonborn",
+    "outfit_class_paladin__half-elf",
+    "outfit_class_paladin__half-orc",
+    "outfit_class_paladin__tiefling",
+    "outfit_class_ranger__human",
+    "outfit_class_ranger__elf",
+    "outfit_class_ranger__halfling",
+    "outfit_class_ranger__dwarf",
+    "outfit_class_ranger__gnome",
+    "outfit_class_ranger__dragonborn",
+    "outfit_class_ranger__half-elf",
+    "outfit_class_ranger__half-orc",
+    "outfit_class_ranger__tiefling",
+    "outfit_class_rogue__human",
+    "outfit_class_rogue__elf",
+    "outfit_class_rogue__halfling",
+    "outfit_class_rogue__dwarf",
+    "outfit_class_rogue__gnome",
+    "outfit_class_rogue__dragonborn",
+    "outfit_class_rogue__half-elf",
+    "outfit_class_rogue__half-orc",
+    "outfit_class_rogue__tiefling",
+    "outfit_class_sorcerer__human",
+    "outfit_class_sorcerer__elf",
+    "outfit_class_sorcerer__halfling",
+    "outfit_class_sorcerer__dwarf",
+    "outfit_class_sorcerer__gnome",
+    "outfit_class_sorcerer__dragonborn",
+    "outfit_class_sorcerer__half-elf",
+    "outfit_class_sorcerer__half-orc",
+    "outfit_class_sorcerer__tiefling",
+    "outfit_class_warlock__human",
+    "outfit_class_warlock__elf",
+    "outfit_class_warlock__halfling",
+    "outfit_class_warlock__dwarf",
+    "outfit_class_warlock__gnome",
+    "outfit_class_warlock__dragonborn",
+    "outfit_class_warlock__half-elf",
+    "outfit_class_warlock__half-orc",
+    "outfit_class_warlock__tiefling",
+    "outfit_class_wizard__human",
+    "outfit_class_wizard__elf",
+    "outfit_class_wizard__halfling",
+    "outfit_class_wizard__dwarf",
+    "outfit_class_wizard__gnome",
+    "outfit_class_wizard__dragonborn",
+    "outfit_class_wizard__half-elf",
+    "outfit_class_wizard__half-orc",
+    "outfit_class_wizard__tiefling"
+  ],
+  "raceGarbs": [
+    {
+      "garbId": "race_garb_male",
+      "sex": "male",
+      "race": "human",
+      "classId": null,
+      "artKey": "race_garb_male__human",
+      "fallbackArtKey": "race_garb_male__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_HUMAN",
+      "bodyTemplate": "body:human:adult-male",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_female",
+      "sex": "female",
+      "race": "human",
+      "classId": null,
+      "artKey": "race_garb_female__human",
+      "fallbackArtKey": "race_garb_female__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_HUMAN",
+      "bodyTemplate": "body:human:adult-female",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_male",
+      "sex": "male",
+      "race": "elf",
+      "classId": null,
+      "artKey": "race_garb_male__elf",
+      "fallbackArtKey": "race_garb_male__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_ELF",
+      "bodyTemplate": "body:elf:adult-male",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_female",
+      "sex": "female",
+      "race": "elf",
+      "classId": null,
+      "artKey": "race_garb_female__elf",
+      "fallbackArtKey": "race_garb_female__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_ELF",
+      "bodyTemplate": "body:elf:adult-female",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_male",
+      "sex": "male",
+      "race": "halfling",
+      "classId": null,
+      "artKey": "race_garb_male__halfling",
+      "fallbackArtKey": "race_garb_male__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_HALFLING",
+      "bodyTemplate": "body:halfling:adult-male",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_female",
+      "sex": "female",
+      "race": "halfling",
+      "classId": null,
+      "artKey": "race_garb_female__halfling",
+      "fallbackArtKey": "race_garb_female__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_HALFLING",
+      "bodyTemplate": "body:halfling:adult-female",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_male",
+      "sex": "male",
+      "race": "dwarf",
+      "classId": null,
+      "artKey": "race_garb_male__dwarf",
+      "fallbackArtKey": "race_garb_male__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_DWARF",
+      "bodyTemplate": "body:dwarf:adult-male",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_female",
+      "sex": "female",
+      "race": "dwarf",
+      "classId": null,
+      "artKey": "race_garb_female__dwarf",
+      "fallbackArtKey": "race_garb_female__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_DWARF",
+      "bodyTemplate": "body:dwarf:adult-female",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_male",
+      "sex": "male",
+      "race": "gnome",
+      "classId": null,
+      "artKey": "race_garb_male__gnome",
+      "fallbackArtKey": "race_garb_male__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_GNOME",
+      "bodyTemplate": "body:gnome:adult-male",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_female",
+      "sex": "female",
+      "race": "gnome",
+      "classId": null,
+      "artKey": "race_garb_female__gnome",
+      "fallbackArtKey": "race_garb_female__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_GNOME",
+      "bodyTemplate": "body:gnome:adult-female",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_male",
+      "sex": "male",
+      "race": "dragonborn",
+      "classId": null,
+      "artKey": "race_garb_male__dragonborn",
+      "fallbackArtKey": "race_garb_male__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_DRAGONBORN",
+      "bodyTemplate": "body:dragonborn:adult-male",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_female",
+      "sex": "female",
+      "race": "dragonborn",
+      "classId": null,
+      "artKey": "race_garb_female__dragonborn",
+      "fallbackArtKey": "race_garb_female__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_DRAGONBORN",
+      "bodyTemplate": "body:dragonborn:adult-female",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_male",
+      "sex": "male",
+      "race": "half-elf",
+      "classId": null,
+      "artKey": "race_garb_male__half-elf",
+      "fallbackArtKey": "race_garb_male__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_HALF_ELF",
+      "bodyTemplate": "body:half-elf:adult-male",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_female",
+      "sex": "female",
+      "race": "half-elf",
+      "classId": null,
+      "artKey": "race_garb_female__half-elf",
+      "fallbackArtKey": "race_garb_female__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_HALF_ELF",
+      "bodyTemplate": "body:half-elf:adult-female",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_male",
+      "sex": "male",
+      "race": "half-orc",
+      "classId": null,
+      "artKey": "race_garb_male__half-orc",
+      "fallbackArtKey": "race_garb_male__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_HALF_ORC",
+      "bodyTemplate": "body:half-orc:adult-male",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_female",
+      "sex": "female",
+      "race": "half-orc",
+      "classId": null,
+      "artKey": "race_garb_female__half-orc",
+      "fallbackArtKey": "race_garb_female__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_HALF_ORC",
+      "bodyTemplate": "body:half-orc:adult-female",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_male",
+      "sex": "male",
+      "race": "tiefling",
+      "classId": null,
+      "artKey": "race_garb_male__tiefling",
+      "fallbackArtKey": "race_garb_male__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_TIEFLING",
+      "bodyTemplate": "body:tiefling:adult-male",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    },
+    {
+      "garbId": "race_garb_female",
+      "sex": "female",
+      "race": "tiefling",
+      "classId": null,
+      "artKey": "race_garb_female__tiefling",
+      "fallbackArtKey": "race_garb_female__human",
+      "pixels": "custom-per-race",
+      "rampId": "RAMP_RACE_TIEFLING",
+      "bodyTemplate": "body:tiefling:adult-female",
+      "ages": [
+        "adult"
+      ],
+      "elder": "adult-same-sex-offset",
+      "child": "in-child-body"
+    }
+  ]
 }

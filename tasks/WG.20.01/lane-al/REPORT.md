@@ -448,3 +448,33 @@ Checked 52 DEUS plugin files. Errors: 0
 Exit 0. This pass did not edit a plugin.
 
 Gemini reviews. This lane does not certify the result. No merge.
+
+## Addendum A9c items 39-41
+
+Resume on `task/lane-al` at `69e5ca6c45cb0965ca693c97f603328d26deb5dd`, the PM brief for items 39-41, on top of the item-38 tip `66199063ebc6741f0be2c736584d580f870e9e37`. This pass applies items 39, 40 and 41 only. No art was generated. No image prompt was run. No PNG was written. Schema header is `deus-asset-standard/1.4.0`.
+
+- **Item 39.** Melee is a fixed upright right-hand grip. The body stays mostly still. The weapon sprite plays the arc (up, 45 forward, level, back). The strike is held, with a hit spark and 1-2 px knockback. Two authored angles plus lossless 90 degree turns and flips bake 8 frames. There is no runtime rotation. Body rows `melee-swing` and `thrust` are not drawn. Cast, bow and work rows stay. PixelLab is the primary generator. Retro Diffusion is standby. Nano Banana Pro is concepts only. The bake-off is off. One generator per layered set remains, and that generator is PixelLab.
+- **Item 40.** There are no class outfits. Eighteen race garbs (9 races by 2 sexes) sit on the race body template in the race palette. Fourteen class signature kit layers, one accent colour per class, held class items with 2 authored angles, and a 4-frame monk stance idle replace the class-outfit matrix. Martial classes are armour, weapons and the accent. Facesets never change with gear. Class-outfit slot ids stay reserved.
+- **Item 41.** Visible genetics are withdrawn. Each race has 24 presets (8 male and 8 female adults, 2 elder and 2 child per sex), 216 in all. Each preset is a charset head and a matching 144 px faceset with 8 expressions, plus 3 in-game palette swaps. The player picks a preset and a colour. Sim genetics stay on stats only. Dwarf adult and elder, male and female, are explicit body templates at 36 px.
+
+Sizing re-run. Item 33's full layer was 708 cells. Dropping the two melee body rows removes 48 cells, so a drawn full layer is 660. Base bodies are 45 (18 adult, 18 elder, 9 child). Race garbs are 18. Kit sheets are 14 by 18 adult templates = 252. Armour stays 81 and helmets stay 81. Those sheets sum to 477. Preset looks are 216 charset heads and 216 facesets. Palette swaps add 0 sheets. The former 108 class-outfit designs, and the old 324 separate sheets, stay retired.
+
+### Gate output (this pass)
+
+`node tools/art/test_validate_asset_standard.js`
+
+```
+RESULT: 369 passed, 0 failed
+```
+
+Exit 0.
+
+`node tools/check_deus_syntax.js`
+
+```
+Checked 52 DEUS plugin files. Errors: 0
+```
+
+Exit 0. This pass did not edit a plugin.
+
+Gemini reviews the combined tip for items 12-41. This lane does not certify the result. No merge.
