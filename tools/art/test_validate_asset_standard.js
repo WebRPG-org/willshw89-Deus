@@ -113,10 +113,11 @@ kills('deforming', 'AS-HUM-017', V.checkLayer(deform, standard), V.checkLayer(de
 
 const face = addenda.face;
 const faceOrder = V.clone(face);
-faceOrder.layers = ['background', 'face', 'body-base', 'hair', 'gear', 'overlay'];
+faceOrder.builtFromLayers = true;
+faceOrder.layers = ['background', 'preset-face', 'preset-hair'];
 kills('face-layers', 'AS-FACE-002', V.checkFace(face, standard), V.checkFace(faceOrder, standard));
 const faceBg = V.clone(face);
-faceBg.layers = face.layers.slice(1);
+faceBg.raceBackground = 'separate-layer';
 kills('face-background', 'AS-FACE-001', V.checkFace(face, standard), V.checkFace(faceBg, standard));
 const faceExpr = V.clone(face);
 faceExpr.expressions = face.expressions.slice().reverse();
@@ -239,6 +240,12 @@ kills('genes', 'AS-GENE-001', V.checkGenes(standard.genes, standard), V.checkGen
 const presetBad = V.clone(standard.genes);
 presetBad.presets.adultMale = 7;
 kills('preset-count', 'AS-GENE-001', V.checkGenes(standard.genes, standard), V.checkGenes(presetBad, standard));
+const methodBad = V.clone(standard.genes);
+delete methodBad.portraitRecords[methodBad.byRace.human.ids['adult-male'][0]];
+kills('portrait-method', 'AS-GENE-001', V.checkGenes(standard.genes, standard), V.checkGenes(methodBad, standard));
+const stackedFace = V.clone(standard.genes);
+stackedFace.byRace.human.builtFromLayers = true;
+kills('portrait-stack', 'AS-GENE-001', V.checkGenes(standard.genes, standard), V.checkGenes(stackedFace, standard));
 
 const portraitBad = V.clone(standard.portraitSample);
 delete portraitBad.portrait;
@@ -427,6 +434,20 @@ kills('readability', 'AS-READ-001', a9cGood, a9cBad(s => { s.a9c.readability.rec
 kills('palette', 'AS-PAL-001', a9cGood, a9cBad(s => { s.a9c.palette.grayMush = true; }));
 kills('lock-cycle', 'AS-LOCK-001', a9cGood, a9cBad(s => { s.slotMap.frameLayout.playbackWalk = [0, 1, 2, 1]; }));
 kills('lock-cap', 'AS-LOCK-001', a9cGood, a9cBad(s => { s.a9c.styleLock.colourUse[0].colours = s.masterPalette.colours.slice(0, 17); }));
+kills('lock-portrait', 'AS-LOCK-001', a9cGood, a9cBad(s => { s.a9c.styleLock.portrait.blackContour = 'forbidden'; }));
+kills('lock-portrait-cap', 'AS-LOCK-001', a9cGood, a9cBad(s => {
+    const row = s.a9c.styleLock.colourUse.find(entry => entry.kind === 'portrait');
+    row.colours = s.masterPalette.colours.slice(0, 65);
+}));
+kills('lock-portrait-off-master', 'AS-LOCK-001', a9cGood, a9cBad(s => {
+    const row = s.a9c.styleLock.colourUse.find(entry => entry.kind === 'portrait');
+    row.colours = row.colours.concat(['#FF00FF']);
+}));
+const portraitExt = V.clone(standard);
+const portraitRow = portraitExt.a9c.styleLock.colourUse.find(entry => entry.kind === 'portrait');
+portraitRow.colours = portraitRow.colours.concat(['#FF00FF']);
+portraitExt.a9c.styleLock.portrait.rampExtension.colours = ['#FF00FF'];
+check('portrait-extension', hit(V.checkA9c(portraitExt), 'AS-LOCK-001', 'pass'), JSON.stringify(V.checkA9c(portraitExt).filter(r => r.ruleId === 'AS-LOCK-001')));
 kills('melee', 'AS-MELEE-001', a9cGood, a9cBad(s => { s.a9c.melee.sample.scaled = true; }));
 kills('melee-body', 'AS-MELEE-001', a9cGood, a9cBad(s => { s.slotMap.frameLayout.rows.find(row => row.id === 'melee-swing').bodyDrawn = true; }));
 kills('class-kit', 'AS-VIS-001', a9cGood, a9cBad(s => { s.a9c.classKits.layers.pop(); }));
@@ -437,6 +458,10 @@ kills('dwarf-px', 'AS-SEX-001', V.checkSexedBodies(standard.sexedBodies, standar
 })());
 kills('pm-mirror', 'AS-PM-001', a9cGood, a9cBad(s => { s.a9c.pmDefaults.mirror.samples.weapon.mirroredOntoHand = true; }));
 kills('visible-gear', 'AS-VIS-001', a9cGood, a9cBad(s => { s.a9c.visibleGear.layerSamples.push({ layer: 'cloak', drawn: true }); }));
+kills('faceset-stack', 'AS-VIS-001', a9cGood, a9cBad(s => {
+    s.a9c.visibleGear.faceSample.builtFromLayers = true;
+    s.a9c.visibleGear.faceSample.layers = ['background', 'preset-face', 'preset-hair'];
+}));
 kills('tile-64', 'AS-SCALE-001', a9cGood, a9cBad(s => { s.geometry.tilePxNotAdopted = []; }));
 
 function idsMatch(mdText, rules) {
@@ -470,7 +495,10 @@ const phrases = [
     'Mirroring is allowed', 'fortress', 'pixel font', 'no class outfits',
     'Facesets never change with gear', 'fixed upright', 'mostly still', 'PixelLab',
     'Retro Diffusion', 'Nano Banana Pro', '2 authored', '18 race garbs', '36 px',
-    'not adopted', 'four quarters', 'table-with-items', 'true 2×', '708', '660', '216'
+    'not adopted', 'four quarters', 'table-with-items', 'true 2×', '708', '660', '216',
+    'one complete 144', 'not built from layers', 'up to 64 colours', 'painterly soft shading',
+    'black contour', 'OWNER_PORTRAIT_STYLE_REF_01.png', 'RAMP_PORTRAIT_SKIN_HAIR',
+    'separate-generation', '864', '6912'
 ];
 phrases.forEach(phrase => check('phrase-' + phrase, md.indexOf(phrase) !== -1, 'missing'));
 check('view-doc', V.viewDocOk(md) && V.viewDocOk(JSON.stringify(standard)), 'view doc');

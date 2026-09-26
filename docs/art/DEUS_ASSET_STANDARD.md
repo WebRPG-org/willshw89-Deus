@@ -10,7 +10,7 @@ This standard is the required set for every DEUS asset: what must exist, what it
 
 Owner rulings win over older art docs. The conflicts and the winning line are in Appendix A. Questions this document does not answer are in Appendix B. How today's files sit against the standard is in Appendix C.
 
-The pose grid in **AS-HUM-016** is the standard's default and is marked **PM-proposed, Owner may amend**. Addenda A7 through A9 (Owner 12:56 CT through 13:24 CT, and the PM decisions marked on those rules) are §§2.13–2.16. Addendum A9b (Owner 13:30 CT through 14:10 CT) is §2.17. Addendum A9c (Owner 14:38 CT through 15:58 CT) is §2.18. Item 38 sets the RMMZ standard top-down 3/4 view and 4-way grid movement. Items 39, 40 and 41 set the fixed melee grip, the 18 race garbs with class signature kits, and the preset pool. Each A9c rule ends with a note for the future Deus Art manual.
+The pose grid in **AS-HUM-016** is the standard's default and is marked **PM-proposed, Owner may amend**. Addenda A7 through A9 (Owner 12:56 CT through 13:24 CT, and the PM decisions marked on those rules) are §§2.13–2.16. Addendum A9b (Owner 13:30 CT through 14:10 CT) is §2.17. Addendum A9c (Owner 14:38 CT through 16:39 CT) is §2.18. Item 38 sets the RMMZ standard top-down 3/4 view and 4-way grid movement. Items 39, 40 and 41 set the fixed melee grip, the 18 race garbs with class signature kits, and the preset pool. Item 42 makes each faceset one complete image. Each A9c rule ends with a note for the future Deus Art manual.
 
 ## 1. Global rules
 
@@ -22,11 +22,11 @@ The pose grid in **AS-HUM-016** is the standard's default and is marked **PM-pro
 
 **AS-GLOBAL-017.** The runtime MUST NOT scale, rotate or tint a frame as a substitute for a drawn frame. A weapon angle is chosen from a pre-drawn cel (**AS-HUM-016**, **AS-MELEE-001**). **AS-RENDER-001** is nearest-neighbour integer scale of the finished frame, not of one asset. **AS-PM-001** allows an offline east-to-west mirror for bodies, gear layers and creatures. Weapons and shields are separate sprites on the hand anchors and are not mirrored onto the wrong hand. Furniture still needs the symmetric flag (**AS-FURN-001**). **AS-MIRROR-001** remains the rule for its own offline bake.
 
-**AS-GLOBAL-004.** Colour is named by ramp id, never by a fresh hex invented for one asset. The canonical master is the Lanes S/T file `art/palette/deus_master_world_palette_v1.hex`: 226 active colours, copied into `masterPalette.colours` in the JSON. Thirty reserved slots bring the master slot count to 256. Those reserved slots are empty. They are not filled from anywhere else. `art/palette/uf.hex` is a different file: 256 lines, 250 unique colours, six repeated lines, and zero colours in common with the master. It is not a second master. The active list is not shrunk. `game/data/DEUS_PaletteRegistry.json` (58 material ramps) stays the ramp architecture. This lane does not edit `art/palette/**`. The asset standard adds ramp ids the registry does not have yet (`RAMP_DMG_*`, `RAMP_SCHOOL_*`, `RAMP_RACE_*`, `RAMP_NIGHT`, `RAMP_HAIR_GREY`, `RAMP_CONDITION_*`, `RAMP_SCALE`). Those ids are the contract. Filling their hex is a follow-up, not a licence to pick colours in a generator prompt. Membership, caps and the grayscale step are **AS-LOCK-001** and **AS-READ-001**.
+**AS-GLOBAL-004.** Colour is named by ramp id, never by a fresh hex invented for one asset. The canonical master is the Lanes S/T file `art/palette/deus_master_world_palette_v1.hex`: 226 active colours, copied into `masterPalette.colours` in the JSON. Thirty reserved slots bring the master slot count to 256. Those reserved slots are empty. They are not filled from anywhere else. `art/palette/uf.hex` is a different file: 256 lines, 250 unique colours, six repeated lines, and zero colours in common with the master. It is not a second master. The active list is not shrunk. `game/data/DEUS_PaletteRegistry.json` (58 material ramps) stays the ramp architecture. This lane does not edit `art/palette/**`. The asset standard adds ramp ids the registry does not have yet (`RAMP_DMG_*`, `RAMP_SCHOOL_*`, `RAMP_RACE_*`, `RAMP_NIGHT`, `RAMP_HAIR_GREY`, `RAMP_CONDITION_*`, `RAMP_SCALE`, `RAMP_PORTRAIT_SKIN_HAIR`). Those ids are the contract. Filling their hex is a follow-up, not a licence to pick colours in a generator prompt. Membership, caps and the grayscale step are **AS-LOCK-001** and **AS-READ-001**.
 
 **AS-GLOBAL-005.** One light direction for every asset: top-left, 315° azimuth, 45° elevation (`docs/art/DEUS_ENVIRONMENT_MATERIAL_STANDARD.md` §2.1). Highlights sit on top and left edges. Core shadow sits on the bottom and right. The light is baked into the pixels.
 
-**AS-GLOBAL-006.** Selout is a 1 px outline on the outer silhouette only. Its colour is the darkest step of the local material ramp, and the bottom and right of the silhouette use the deep-shadow step. It is not a global black. Internal edges (fingers on a grip, hair against the face) are not outlined. **AS-LOCK-001** locks this outline on characters and items, self-tinted, and locks none on terrain tiles. A depth-toned overlay may keep an outline (**AS-DEPTH-001**). A terrain tile does not. Seamless ground fills have no silhouette outline.
+**AS-GLOBAL-006.** Selout is a 1 px outline on the outer silhouette only. Its colour is the darkest step of the local material ramp, and the bottom and right of the silhouette use the deep-shadow step. It is not a global black. Internal edges (fingers on a grip, hair against the face) are not outlined. **AS-LOCK-001** locks this outline on map sprites and items, self-tinted, and locks none on terrain tiles. A character faceset does not require it. A character faceset may use a black contour. A depth-toned overlay may keep an outline (**AS-DEPTH-001**). A terrain tile does not. Seamless ground fills have no silhouette outline.
 
 **AS-GLOBAL-007.** The contact shadow is a drawn ellipse at the shadow anchor (human baseline `[24, 45]` in a 48 px cell). Seamless ground tiles MUST NOT carry a baked shadow of an off-screen tree or mountain. There is no drop-shadow filter.
 
@@ -67,7 +67,7 @@ Natural terrain stops at +11. `AIR` has no natural terrain. Biome ids are `VOLCA
 
 **AS-GLOBAL-016.** Tall Large frames are 48 by 96. Long Large frames are 96 by 48. The matching RMMZ blocks are 144 by 384 and 288 by 192. Further actions are more `$` sheets, or sidecar-declared rows on those sheets. They do not change the 3 by 4 walk read.
 
-**AS-GLOBAL-014.** A face sheet is 576 by 288: 4 columns by 2 rows of 144 by 144 cells.
+**AS-GLOBAL-014.** A face sheet is 576 by 288: 4 columns by 2 rows of 144 by 144 cells. Each cell is one complete portrait. The sheet is not a stack of face layers (**AS-FACE-002**).
 
 **AS-GLOBAL-015.** DEUS uses SV battlers on the RMMZ battle screen (DEC-017 keeps that screen). An SV sheet is 9 columns by 6 rows of 64 by 64 (576 by 384, 18 motions). Humanoids MUST have one. Creatures of size Medium, Large, Huge and Gargantuan MUST have one. Tiny and Small critters have none. The SV sheet does not replace the map action rows.
 
@@ -138,7 +138,7 @@ Also required, from the crosswalk, and stored the same way: `ROOT_PELVIS`, `PALM
 
 **AS-HUM-004.** Catalogue paper-doll z-order, matching the 34 existing equipment rows: `legs` 1, `torso` 2, `clothes` 2 (the clothes alias of torso), `head` 3, `back` 4, `shield` 5, `held` 6, `fx` 7. The 18 runtime slots still draw in **AS-GLOBAL-009** order. The coarse paper-doll layer is what the catalogue stores.
 
-**AS-HUM-008.** Visible looks are the preset pool in **AS-GENE-001**. A player picks one preset and one of three skin and hair palette swaps. Sim genetics may store stats. They do not select a sprite, a face, a hair style or a colour. `geneticsLoci` is retired as an art selector. Race features in **AS-HUM-003** stay on the body template. `dominantHand` is still `right` or `left` and binds `HAND_PRIMARY`.
+**AS-HUM-008.** Visible looks are the preset pool in **AS-GENE-001**. A player picks one preset and one of three skin and hair colour variants. On the charset those three variants are in-game master-palette swaps. On the portrait, each preset records `colourVariantMethod`: `palette-swap` when the skin and hair ramps map onto the master plus `RAMP_PORTRAIT_SKIN_HAIR`, and `separate-generation` otherwise. Sim genetics may store stats. They do not select a sprite, a face, a hair style or a colour. `geneticsLoci` is retired as an art selector. Race features in **AS-HUM-003** stay on the body template. `dominantHand` is still `right` or `left` and binds `HAND_PRIMARY`.
 
 **AS-HUM-018.** Horns, tail, ears and dragonborn scale colour are race features on the body template. They do not change the frame class. Body height is the race height in **AS-PM-001**, including the dwarf male and female templates at 36 px.
 
@@ -191,7 +191,7 @@ Also required, from the crosswalk, and stored the same way: `ROOT_PELVIS`, `PALM
 | unconscious | Row `unconscious`, distinct from prone and from death |
 | invisible | The body is replaced by a 1 px selout contour in `RAMP_CONDITION_INVISIBLE` (opaque pixels) for viewers who can perceive the creature, plus the condition icon. Everyone else gets no sprite. There is no alpha and no shimmer shader |
 
-**AS-HUM-005.** A faceset never changes with gear. It is the face preset, the preset hair, the race background and the 8 expressions in **AS-FACE-003**. Armour, helmets and class headwear are charset layers only (**AS-FACE-002**, **AS-VIS-001**).
+**AS-HUM-005.** A faceset never changes with gear. It is one complete 144 by 144 image for that preset. The race background is painted into the image. The 8 expressions in **AS-FACE-003** are generated from it and keep its identity. The faceset is not built from layers. Armour, helmets and class headwear are charset layers only (**AS-FACE-002**, **AS-VIS-001**).
 
 **AS-HUM-015.** Each race has one standard garb per sex, fitted to that race's body template and drawn in the race palette. Nine races by two sexes is 18 garbs. Light, medium and heavy armour stay as three race-neutral armour ids with custom pixels per race (`outfit_armor_light`, `outfit_armor_medium`, `outfit_armor_heavy`). That is 27 armour variants. The art key is `outfitId__race` for armour and `race_garb_<sex>__<race>` for the garb (**AS-ITEM-002**). Class outfit ids are icon-only. They are not required sprite variants. The former class-outfit slot ids stay reserved.
 
@@ -221,13 +221,13 @@ Walk stays the RMMZ 3-column cycle (**AS-GLOBAL-013**).
 
 ### 2.4 Faces
 
-**AS-FACE-001.** Every race has its own faceset background, using that race's ramp and motif from **AS-HUM-015**.
+**AS-FACE-001.** Owner 16:05 CT. The race background is part of the portrait. It is painted into the one complete image, in that race's ramp and motif from **AS-HUM-015**. It has no layer of its own and no sheet of its own.
 
-**AS-FACE-002.** Layers, bottom to top: (1) race background, (2) preset face, (3) preset hair, including facial hair that belongs to that preset. The 8 expressions are the cells, not an extra layer. A faceset has no armour, no helmet, no class headwear and no other gear. Faction identity is trim, banners and buildings, not the face. Greying and balding appear only when the preset is an elder preset. Retired face slot ids that named a gear layer or a genetic-feature layer stay reserved.
+**AS-FACE-002.** Owner 16:05 CT. A faceset is not paper-dolled. Each preset is one complete 144 by 144 image. The 8 expressions in **AS-FACE-003** are generated from that image and keep its identity. Those expressions are the 8 cells of one 576 by 288 sheet. A faceset built from layers fails this rule. A faceset has no armour, no helmet, no class headwear and no other gear. Faction identity is trim, banners and buildings, not the face. Greying and balding appear only when the preset is an elder preset. Face-layer slot ids stay reserved (**AS-ID-001**). The retired kind tokens are `BG`, `FRAME`, `BODY`, `FEATURES`, `HAIR`, `GEAR` and `OVERLAY`. The live kind token is `PRESET`.
 
-**AS-FACE-003.** The 4 by 2 sheet is exactly these expressions, index order: 0 neutral, 1 happy, 2 angry, 3 sad, 4 surprised, 5 hurt, 6 determined, 7 afraid.
+**AS-FACE-003.** The 4 by 2 sheet is exactly these expressions, index order: 0 neutral, 1 happy, 2 angry, 3 sad, 4 surprised, 5 hurt, 6 determined, 7 afraid. Neutral is the complete source image. The other seven cells are generated from it.
 
-**AS-FACE-004.** Anchors on the 144 px cell, human baseline (other races keep the ids and may store new coordinates):
+**AS-FACE-004.** Anchors on the 144 px cell, human baseline (other races keep the ids and may store new coordinates). They are landmarks on the complete image:
 
 | Anchor | x, y |
 |---|---|
@@ -237,7 +237,7 @@ Walk stays the RMMZ 3-column cycle (**AS-GLOBAL-013**).
 | `collarLine` | 72, 108 |
 | `neckBase` | 72, 120 |
 
-`collarLine` y = 108 matches the current portrait baker, which paints cloth on y 108..144. The stone arch in today's `face_gen_*` portraits is faction trim (layer 2), not the race background.
+`collarLine` y = 108 is the landmark where the bust meets the painted background. The race background is already in the image. Faction trim is not a faceset layer. The stone arch on today's `face_gen_*` portraits is old art, not a layer of this faceset.
 
 ### 2.5 Biomes
 
@@ -415,9 +415,9 @@ Fog is a drawn dither with binary alpha. UI pulse is two drawn frames, not a tin
 
 **AS-VAR-002.** PM decision 13:01 CT, Owner may amend. Season states on those pieces are palette-swap frames of the base drawing, on `RAMP_SEASON_SPRING`, `RAMP_SEASON_SUMMER`, `RAMP_SEASON_AUTUMN` and `RAMP_SEASON_WINTER`. That swap is precomputed ramp data. It is not a runtime ColorMatrix. A horizontal flip is an offline bake, and only for a piece whose shading is light-neutral. A piece drawn with the top-left light is not flipped.
 
-**AS-GENE-001.** Owner 15:54 CT. Children do not visibly inherit a parent's face or hair. The part library is retired. Each race has a fixed preset pool: 8 male and 8 female adult looks, 2 elder looks per sex and 2 child looks per sex. That is 24 presets per race and 216 for the nine races. Each preset is one complete head, hair and face for the charset and the matching 144 by 144 faceset, with the 8 expressions in **AS-FACE-003**. Three skin and hair palette swaps are applied in game from master-palette ramps. They are not extra drawings. The player picks a preset and one colour variant at character creation. Factions are trim, banners and building styles. Sim genetics may remain for stats only. Catalogue category `PRESET`. Slot example `FA.PRESET.HUMAN.M.01.NEUTRAL.C0`. Retired part-library slot ids stay reserved.
+**AS-GENE-001.** Owner 15:54 CT, as amended by item 42. Children do not visibly inherit a parent's face or hair. The part library is retired. Each race has a fixed preset pool: 8 male and 8 female adult looks, 2 elder looks per sex and 2 child looks per sex. That is 24 presets per race and 216 for the nine races. Each preset is one complete head, hair and face for the charset, and one complete 144 by 144 portrait. The 8 expressions in **AS-FACE-003** are generated from that portrait and keep its identity. The player picks a preset and one of three skin and hair colour variants at character creation. Charset variants are in-game master-palette swaps and add no charset sheet. Portrait variants are recorded per preset on `colourVariantMethod`. The value is `palette-swap` when that preset's skin and hair ramps map onto the master plus `RAMP_PORTRAIT_SKIN_HAIR`. The value is `separate-generation` otherwise. Factions are trim, banners and building styles. Sim genetics may remain for stats only. Catalogue category `PRESET`. Slot example `FA.PRESET.HUMAN.M.01.NEUTRAL.C0`. Retired part-library slot ids and retired face-layer slot ids stay reserved.
 
-**AS-PORT-001.** Owner 13:03 CT. Every non-face entity (item, creature, resource, building, workstation, spell) has a 32 by 32 icon and a 144 by 144 portrait for the inspect, tooltip and crafting view. The portrait uses a per-category background, the same palette and selout as the icon, and the rarity overlay from **AS-ICON-003**. A race-styled item uses that race's background. A race-neutral item has one portrait per race art variant. The file name is in **AS-STYLE-001**. A catalogue row that does not yet carry the fields is `unknown`. A row that has one of the two and not the other fails.
+**AS-PORT-001.** Owner 13:03 CT. Every non-face entity (item, creature, resource, building, workstation, spell) has a 32 by 32 icon and a 144 by 144 portrait for the inspect, tooltip and crafting view. The portrait uses a per-category background, the same palette and selout as the icon, and the rarity overlay from **AS-ICON-003**. A race-styled item uses that race's background. A race-neutral item has one portrait per race art variant. The file name is in **AS-STYLE-001**. A catalogue row that does not yet carry the fields is `unknown`. A row that has one of the two and not the other fails. A character faceset is not this portrait. The character faceset is **AS-FACE-002** and the portrait colour class in **AS-LOCK-001**.
 
 ### 2.15 Head layers, elders, gear, mirrors, poses, biome files (A9)
 
@@ -466,7 +466,7 @@ The runtime packs 2048 by 2048 atlases. The cell grid is 42 by 42 squares of 48 
 
 **AS-PIPE-001.** Owner 13:16–13:21 CT. The manifest records `catalogueId`, grid squares, frame count, anchor, `templateId`, palette ramp and layer role. The slot map records `sheetId`, column, row, `catalogueId`, facing, frame index, anchor and pixel size. Output must already be the final pixel size, on the grid, in the palette, on the anchor. Off-size, off-palette or off-anchor output is rejected and generated again. It is not resized. Cropping removes transparent margins only. `MISSING` is derived from an empty slot. One generation may target a whole strip; each slot is validated on its own, still at exact size. A whole-pixel shift onto the slot anchor, and a trim of transparent margins, are not scaling (**AS-ANCHOR-001**). The tools are another lane. This lane generates no art.
 
-**AS-PROMPT-001.** Owner 13:21 CT. `promptSpecTemplates` has one field template for each of: `humanoid-layer`, `face-layer`, `creature`, `terrain-tile`, `building-piece`, `item-icon`, `portrait`, `effect`, `ui`. Each template lists the same fields and the place the value comes from. There is no prose prompt. Nothing in this block is sent to a generator.
+**AS-PROMPT-001.** Owner 13:21 CT. `promptSpecTemplates` has one field template for each of: `humanoid-layer`, `face-layer`, `creature`, `terrain-tile`, `building-piece`, `item-icon`, `portrait`, `effect`, `ui`. Each template lists the same fields and the place the value comes from. There is no prose prompt. Nothing in this block is sent to a generator. The category id `face-layer` is the historical field template for one complete character portrait. It does not authorise a faceset layer stack.
 
 | Field | Source |
 |---|---|
@@ -508,7 +508,7 @@ Owner 13:30–13:37 CT, 13:50 CT, 13:56 CT and 14:09–14:10 CT. No art is gener
 | Category | Shape | Example |
 |---|---|---|
 | Charset layer | `CH.LAYER.RACE.SEX.DESIGN.ROW.DIR.FRAME` | `CH.HAIR.ELF.F.07.WALK.D.F2` |
-| Face | `FA.LAYER.RACE.SEX.DESIGN.EXPR.CELL` | `FA.BG.ELF.F.07.NEUTRAL.C0` |
+| Face | `FA.PRESET.RACE.SEX.DESIGN.EXPR.CELL` | `FA.PRESET.HUMAN.M.01.NEUTRAL.C0` |
 | Creature | `CR.SPECIES.SEX.VARIANT.ROW.DIR.FRAME` | `CR.LION.F.BASE.WALK.D.F0` |
 | Icon | `IC.DOMAIN.NAME.STATE` | `IC.WEAPON.LONGSWORD.DEFAULT` |
 | Portrait | `PO.DOMAIN.NAME.VARIANT` | `PO.CREATURE.LION.N` |
@@ -517,7 +517,7 @@ Owner 13:30–13:37 CT, 13:50 CT, 13:56 CT and 14:09–14:10 CT. No art is gener
 | Effect | `FX.PHASE.SHAPE.DAMAGE.FRAME` | `FX.IMPACT.SPHERE.FIRE.F0` |
 | UI | `UI.SKIN.PART.STATE` | `UI.DEUS.WINDOW.NORMAL` |
 
-Sex tokens are `M`, `F` and `C` (the child body, which is not split by sex). Creature sex `N` is the single design on a `none` creature. Variant tokens are `BASE`, `TAMED` and `SADDLE`. Direction tokens are `D`, `L`, `R` and `U`. Frame tokens on a charset or creature row are `F0` through `F3`. The pattern strings are `slotMap.grammar`. Retired ids stay reserved: `CH.HAIR.ELF.F.06.WALK.D.F0` and `DP.CLIFF.TEMPERATE.FACE`. The live cliff tile is `DP.CLIFF.TEMPERATE.TILE`.
+Sex tokens are `M`, `F` and `C` (the child body, which is not split by sex). Creature sex `N` is the single design on a `none` creature. Variant tokens are `BASE`, `TAMED` and `SADDLE`. Direction tokens are `D`, `L`, `R` and `U`. Frame tokens on a charset or creature row are `F0` through `F3`. The pattern strings are `slotMap.grammar`. The face grammar still matches the retired kind tokens so those ids can stay reserved. A live face sample uses `PRESET` only. Retired ids stay reserved: `CH.HAIR.ELF.F.06.WALK.D.F0`, `DP.CLIFF.TEMPERATE.FACE`, and the face-layer ids `FA.BG.ELF.F.07.NEUTRAL.C0`, `FA.FRAME.HUMAN.M.01.NEUTRAL.C0`, `FA.BODY.HUMAN.M.01.NEUTRAL.C0`, `FA.HAIR.HUMAN.M.01.NEUTRAL.C0` and `FA.OVERLAY.HUMAN.M.01.NEUTRAL.C0`. The live cliff tile is `DP.CLIFF.TEMPERATE.TILE`. The live face example is `FA.PRESET.HUMAN.M.01.NEUTRAL.C0`.
 
 **AS-ANCHOR-001.** Generators do not supply anchors. After a generation the tool reads the transparent-pixel mask, the silhouette, the foot line and the head outline. It finds the feet at the bottom centre, the head centre, and the main-hand and off-hand points. It shifts the frame by whole pixels until those landmarks sit on that cell's slot-map anchor, and it writes the detected points onto the slot (**AS-ID-001**). Whole-pixel shifts, and trimming transparent margins, are not scaling (**AS-PIPE-001**). A frame that would clip, or that has the wrong proportions, the wrong size, or head drift against the body, is rejected and generated again. A pose reference with the body already placed may be sent. The usual correction is 1 or 2 px. The reference is not required on every call.
 
@@ -605,13 +605,13 @@ Manual note. Characters and items must clear their ground by the grayscale value
 
 Manual note. The palette is saturated and controlled, with no gray mush. Value carries the read. The brightest colours are reserved. Mood comes from light and grading. Every asset passes grayscale before approval.
 
-**AS-LOCK-001.** Item 33. These defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision is included. Light is top-left. The outline is 1 px and self-tinted on characters and items, and none on terrain. The master is the single S/T master in **AS-GLOBAL-004**: 226 active colours, 30 reserved slots, 256 slots, and no shrink of that list. Per-asset caps, drawn from that master, are about 16 for a small item or icon, about 32 for a character or creature sheet including its layers, and about 48 for a tileset. The checker uses those counts as maxima. Race and biome sub-palettes are drawn from the same master. The grayscale rules still apply.
+**AS-LOCK-001.** Item 33, with the portrait class from item 42. These defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision is included. Light is top-left. The outline is 1 px and self-tinted on map sprites and items, and none on terrain. A character faceset does not require that outline. A black contour is allowed on a character faceset, because the Owner reference has one (correction 16:39 CT). The master is the single S/T master in **AS-GLOBAL-004**: 226 active colours, 30 reserved slots, 256 slots, and no shrink of that list. Per-asset caps, drawn from that master, are about 16 for a small item or icon, about 32 for a character or creature sheet including its layers, and about 48 for a tileset. A character faceset is its own class: up to 64 colours, drawn from the master plus `RAMP_PORTRAIT_SKIN_HAIR` when the master is short of a skin or hair step. Painterly soft shading is allowed on that class. Map sprites keep the 16, 32 and 48 caps and the 1 px self-tinted outline. The checker uses those counts as maxima. Race and biome sub-palettes are drawn from the same master. The grayscale rules still apply, including to the character faceset. The style bar is `tasks/WG.20.01/lane-al/refs/OWNER_PORTRAIT_STYLE_REF_01.png`: a painterly pixel portrait, soft detailed shading, warm light, and a plain dark background. Its sha256 is `b1c0c721bcbd7eca39b69488073b4d0beff73fb590cb39dcd9c74a86ccafb984`. This lane does not generate that image. It is the reference the PM committed with the brief.
 
 Frame budgets replace the 3.5 frames-per-row average. Walk is 3 authored frames per direction, in RMMZ column order, played as the RMMZ 4-step cycle 1, 2, 1, 0. Idle is 4. Attack is 6 as weapon-rotation timing on the melee weapon sprite. The body rows `melee-swing` and `thrust` are not drawn. Cast is 6, on the three cast rows, and those body rows stay. Work is 6, on hammer, saw, chop, dig, stir, carry and kneel, and on the section F rows, and those body rows stay. Bow rows stay. Death is 6. Those extension rows are DEUS rows in RMMZ-compatible form, on the 60 fps clock. Hurt, dodge, parry, bow, crossbow, thrown, sneak, climb, prone, unconscious, sleep and sit keep their A9 frame counts. They are not renamed by this budget. Effects use the same palette and outline. Additive glow is the only place maximum brightness is allowed. Grading for dawn, day, dusk, night and underground is a fixed palette shift, not a colour matrix. Icons are 32 px and match the world sprites. Markers for selection, faction, summon controller and low HP are colour-blind-safe and shape-coded: diamond, square, triangle and circle. Colour is not the only channel.
 
 Estimate, which replaces 30 rows × 3.5 × 4 = 420 cells. The 30 rows at the budgets above are 141 frames per direction and 564 cells. Section F adds 6 × 6 × 4 = 144 cells. Item 33's full layer is 708 cells. Item 39 drops the two melee body rows, 12 frames by 4 directions = 48 cells, so a drawn full layer is 660 cells. The bounding sheet for the drawn rows is 1152 by 1632, under the 2048 cap. The committed example in **AS-SRC-001** stays 768 by 1440, and the two melee rows stay reserved on that example. Catalogue category `MARKER`. Slot example `CB.SELECT.DIAMOND`.
 
-Manual note. Style defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision keeps one master, caps colours, and sets the frame budgets. Item 33 counted 708 cells. Item 39 draws 660.
+Manual note. Style defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision keeps one master, caps colours, and sets the frame budgets. Item 33 counted 708 cells. Item 39 draws 660. A character faceset may use up to 64 colours, painterly soft shading, and a black contour. Map sprites keep the 1 px self-tinted outline.
 
 **AS-MELEE-001.** Items 35 and 39. The right hand holds a fixed upright grip. In combat the body stays mostly still and only the weapon sprite moves. One grip anchor is stored on every body frame. The weapon is an upright sprite plus rotated angles: 2 authored angles, then lossless 90 degree turns and flips, baked offline to 8 frames. The runtime does not rotate a frame. The 6-frame timing is wind-up, raise, 45 forward, level, strike and recovery. The strike frame is held longer: 12 frames at 60 fps, against 6 frames for the other weapon frames. The arc reads up, 45 forward, level and back. Swing timing by weapon class stays on the weapon sprite: overhead chop for axes and hammers, side slash for swords, thrust for spears and daggers, and a heavier, slower arc for two-handers. Those timings are not body frames. The body rows `melee-swing` and `thrust` are not drawn. Cast, bow and work rows stay on the body. The strike frame carries a hit spark. A heavy hit uses 1 or 2 px of knockback, as a drawn offset, not a filter. Weapons are drawn 10 to 20 percent larger than the body-scale length, in native pixels. The longsword sample is 20 px body-scale and 24 px drawn. They are not scaled. Draw order is behind or in front per direction. Catalogue categories `SPARK` and `WEAPONCEL`. Slot examples `SP.SLASH.F0` and `WP.LONGSWORD.UPRIGHT.F0`. Runtime use is the combat lane, not this file.
 
@@ -621,7 +621,7 @@ Manual note. The right hand holds a fixed upright grip and the body stays mostly
 
 Manual note. These size, footprint, door, mirror, fortress, marker and font defaults are the PM defaults. The Owner may override them. West may be mirrored from east. Weapons and shields stay on the hand anchors.
 
-**AS-VIS-001.** Items 37, 40 and 41. There are no class outfits. The base body is the race body template plus one standard race garb for that sex. Charset order, bottom to top: base body and race garb; race features; preset head and hair; body-hugging kit layers (monk wraps, monk sash); long kit overlays (wizard robe, cleric tabard); armour; mantles (sorcerer mantle, druid fur mantle); capes, cloaks and back-slung items (bard cape, warlock cloak, bard lute, behind or in front per direction); one headwear slot (helmet, or wizard hat, or wizard hood, or warlock hood, or druid circlet, or bard cap); held class items, weapon and shield as anchored sprites; sorcerer hand glow on the hand anchor as an additive effect. The monk topknot is a head overlay. The sorcerer head is bare. A faceset never changes with gear: face preset, hair, race background and 8 expressions only.
+**AS-VIS-001.** Items 37, 40, 41 and 42. There are no class outfits. The base body is the race body template plus one standard race garb for that sex. Charset order, bottom to top: base body and race garb; race features; preset head and hair; body-hugging kit layers (monk wraps, monk sash); long kit overlays (wizard robe, cleric tabard); armour; mantles (sorcerer mantle, druid fur mantle); capes, cloaks and back-slung items (bard cape, warlock cloak, bard lute, behind or in front per direction); one headwear slot (helmet, or wizard hat, or wizard hood, or warlock hood, or druid circlet, or bard cap); held class items, weapon and shield as anchored sprites; sorcerer hand glow on the hand anchor as an additive effect. The monk topknot is a head overlay. The sorcerer head is bare. Facesets never change with gear. Each faceset is one complete 144 by 144 image. The race background is part of that image. The 8 expressions are generated from it. A faceset is not built from layers.
 
 Class signature kits are 14 overlay layers per adult body template. They change the silhouette. Each class also has one fixed accent colour from the master palette. The accent clears the sample ground `#333B45` by at least the grayscale step in **AS-READ-001**, and colour is not the only channel: the kit or the armour is the second channel. Martial classes (barbarian, fighter, paladin, ranger, rogue) have no kit layer. Armour and weapons, plus the accent, distinguish them.
 
@@ -659,9 +659,11 @@ Held class items are anchored like weapons, with 2 authored angles and lossless 
 | warlock | `#BE65FA` | 9 |
 | wizard | `#DEDF5E` | 12 |
 
-Sizing, re-run for items 39, 40 and 41. Item 33's full layer was 708 cells. Dropping the melee body rows removes 48 cells, so a drawn full layer is 660. Adult body templates are 18 and elder body templates are 18. Child bodies are 9. Base sheets are 45. Race garbs are 18. Kit sheets are 14 layers by 18 adult templates = 252. Elder kits add 0, because the offset table reuses the adult sheet. Child kits add 0. Armour stays 81 and helmets stay 81. Those body, garb, kit, armour and helmet sheets are 45 + 18 + 252 + 81 + 81 = 477. Held class items are 6, with 2 authored angles each, baked to 8 frames. The monk idle adds 4 frames by 4 directions on 18 templates = 288 cells. Preset looks are 216 charset heads and 216 faceset sheets. The 3 palette swaps add 0 sheets. The former class-outfit designs, 108 of them, and the old separate sheet count 324, stay retired. Class outfit slot ids and the part-library slot ids stay reserved.
+Sizing, re-run for items 39, 40 and 41, and again for item 42. Item 33's full layer was 708 cells. Dropping the melee body rows removes 48 cells, so a drawn full layer is 660. Adult body templates are 18 and elder body templates are 18. Child bodies are 9. Base sheets are 45. Race garbs are 18. Kit sheets are 14 layers by 18 adult templates = 252. Elder kits add 0, because the offset table reuses the adult sheet. Child kits add 0. Armour stays 81 and helmets stay 81. Those body, garb, kit, armour and helmet sheets are 45 + 18 + 252 + 81 + 81 = 477. Held class items are 6, with 2 authored angles each, baked to 8 frames. The monk idle adds 4 frames by 4 directions on 18 templates = 288 cells. Preset looks are 216 charset heads. The 3 charset skin and hair variants stay in-game master-palette swaps and add 0 charset sheets. The former class-outfit designs, 108 of them, and the old separate sheet count 324, stay retired. Class outfit slot ids, the part-library slot ids and the face-layer slot ids stay reserved.
 
-Manual note. There are no class outfits. Eighteen race garbs and fourteen signature kits carry class and people. Facesets never change with gear. Dwarf male and female adult and elder bodies are 36 px. The preset pool is 216 looks.
+Item 42 drops the faceset layer stack, so face-layer sheets are 0. Each of the 216 presets has one complete 144 by 144 portrait, and that portrait is the neutral cell of one 576 by 288 sheet. The other 7 expressions are generated from it and keep its identity. Portrait skin and hair variants are the per-preset field `colourVariantMethod`. No portrait has been drawn in this lane, so no skin and hair ramp has been shown to map onto the master plus `RAMP_PORTRAIT_SKIN_HAIR`. All 216 presets are recorded `separate-generation`. That is 216 × 3 = 648 variant sheets. Complete faceset sheets are 216 + 648 = 864. Expression cells are 864 × 8 = 6912. Generation calls are the same 6912: 864 source images plus 864 × 7 expression passes. A preset later recorded as `palette-swap` drops its 3 variant sheets. If all 216 were recorded that way, the faceset sheet count would return to 216 and the variant sheets to 0.
+
+Manual note. There are no class outfits. Eighteen race garbs and fourteen signature kits carry class and people. Facesets never change with gear. Each faceset is one complete image and is not built from layers. Dwarf male and female adult and elder bodies are 36 px. The preset pool is 216 looks. Item 42 records 864 complete faceset sheets and 6912 generation calls.
 
 ## 3. Worked spell rows
 
@@ -714,7 +716,7 @@ Owner rulings win. The source line is the conflict. The resolution is the ruling
 41. **Layer height.** DEC-013, and **AS-GLOBAL-018** as first written, used 1 layer = 10 ft and five strata of 2 ft. Owner items 26 and 29 replace that with 1 layer = 5 ft = 48 px and four quarters of 12 px. `stratumPx` is `[12, 12, 12, 12]`. Lanes that still assume a 10 ft step are not edited here.
 42. **A 64 px tile.** It was considered and was not adopted. Terrain stays 48 px. Integer presentation scale is **AS-RENDER-001**. The 64 by 64 SV battler frame stays.
 43. **Art-direction wording.** The 14:38 CT direction is replaced by readable high-contrast fantasy (Owner 15:02 CT). Mood sits in lighting and grading.
-44. **Outline weight.** A heavier outline gives way to the 1 px self-tinted outline on characters and items, and none on terrain (**AS-LOCK-001**).
+44. **Outline weight.** A heavier outline gives way to the 1 px self-tinted outline on map sprites and items, and none on terrain (**AS-LOCK-001**). A character faceset does not require that outline. A black contour is allowed on a character faceset (Owner 16:39 CT).
 45. **Two palette files.** `uf.hex` (256 lines, 250 unique, no shared hex) is not a second master. The S/T file's 226 colours are the active canonical set. Thirty reserved slots make 256 slots. The active list is not shrunk.
 46. **Frame average.** The 3.5 frames-per-row estimate (420 cells) is replaced by the budgets in **AS-LOCK-001**. Item 33 counted 708 cells. Item 39 draws 660 after the melee body rows drop.
 47. **Visible gear.** Item 40 withdraws class outfits. **AS-VIS-001** draws 18 race garbs, class signature kits and held class items on charsets. Facesets never change with gear. The A1 addendum file is not edited.
@@ -727,6 +729,7 @@ Owner rulings win. The source line is the conflict. The resolution is the ruling
 54. **Melee body frames.** Item 39 replaces the item 35 body swing for melee. The right hand holds a fixed upright grip, the body stays mostly still, and the weapon sprite plays the arc. Cast, bow and work body rows stay.
 55. **Class outfits.** Item 40 withdraws them. The standard uses 18 race garbs, 14 class signature kit layers, held class items and one accent colour per class.
 56. **Visible genetics.** Item 41 withdraws them. Art uses 216 presets. Sim genetics stay on stats only. Dwarf male and female adult and elder bodies are 36 px.
+57. **Faceset layer stack.** Items 37, 40 and 41, and the A1 face-stack rule, described a faceset as layers. Owner 16:05 CT withdraws that stack (**AS-FACE-002**). Each preset is one complete 144 by 144 image. The 8 expressions are generated from it. The race background is painted into the image. The checker requires one complete sheet of 8 expressions per preset, and it rejects a faceset built from layers. Face-layer slot ids stay reserved. Portrait colour variants are recorded per preset. All 216 are `separate-generation` until a ramp map is proven, which is 864 faceset sheets and 6912 generation calls.
 
 ## Appendix B. Open questions
 
@@ -758,7 +761,7 @@ These are not answered here.
 12. **Small item world sprites.** The PixelLab trial left them as an open test (**AS-TERR-001**). No size was accepted or rejected here beyond the 12, 24 and 48 px classes already set for placement.
 13. **Fourth walk cell.** Walk now authors three frames. The committed example sheet still has a fourth walk cell. What that cell shows is open. The id stays reserved.
 
-The four-direction rule is decided (12:38 CT). It is not in this appendix. Huge and Gargantuan frame squares are decided (13:16–13:20 CT). The paper-doll example sheet size, the 2048 px cap, the dimorphic list above, and permanent slot ids are decided (13:30–14:10 CT). Layer height, the single master palette, the frame budgets, the visible-gear limit and the PM size defaults are decided in §2.18 (Owner 14:38–15:12 CT). The fixed melee grip, the 18 race garbs, the class kits and the 216 presets are decided (Owner 15:44–15:58 CT). The open items above are the ones still listed.
+The four-direction rule is decided (12:38 CT). It is not in this appendix. Huge and Gargantuan frame squares are decided (13:16–13:20 CT). The paper-doll example sheet size, the 2048 px cap, the dimorphic list above, and permanent slot ids are decided (13:30–14:10 CT). Layer height, the single master palette, the frame budgets, the visible-gear limit and the PM size defaults are decided in §2.18 (Owner 14:38–15:12 CT). The fixed melee grip, the 18 race garbs, the class kits and the 216 presets are decided (Owner 15:44–15:58 CT). The complete faceset, the portrait colour class and the per-preset colour method are decided (Owner 16:05 CT and 16:39 CT). The open items above are the ones still listed.
 
 ## Appendix C. Existing assets
 
@@ -819,7 +822,7 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-HUM-002.** Fixed socket ids, per-frame coordinates, human baseline.
 - **AS-HUM-003.** Body, eyes, hair front/back, beard, racial parts.
 - **AS-HUM-004.** Paper-doll z-order legs 1 through fx 7.
-- **AS-HUM-005.** Faceset is preset, hair, race background and 8 expressions. Gear does not change it.
+- **AS-HUM-005.** Faceset is one complete image, with the race background painted in and 8 expressions generated from it. Gear does not change it.
 - **AS-HUM-006.** Age axis. Further steps open.
 - **AS-HUM-007.** Greying and balding belong to the elder presets.
 - **AS-HUM-008.** Preset pool. Sim genetics are stats only.
@@ -834,8 +837,8 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-HUM-017.** Large shields and bows keep per-pose frames. Generic cape is not drawn.
 - **AS-HUM-018.** Height, build, horns, tail, ears, scale colour.
 - **AS-HUM-019.** Child template and stooped working elder.
-- **AS-FACE-001.** Per-race faceset background.
-- **AS-FACE-002.** Face stack is race background, preset face and preset hair. No gear.
+- **AS-FACE-001.** Race background is painted into the complete portrait.
+- **AS-FACE-002.** One complete faceset sheet of 8 expressions per preset. A faceset is not built from layers.
 - **AS-FACE-003.** Eight expressions in index order.
 - **AS-FACE-004.** 144 px face anchors.
 - **AS-BIOME-001.** 30 biome-depth sets and 15 transitions.
@@ -887,7 +890,7 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-TAME-002.** No creature armour, barding or crafted creature gear.
 - **AS-VAR-001.** Per-biome and per-underground-band piece floors. PM decision, Owner may amend.
 - **AS-VAR-002.** Variety seasons are palette swaps. Flip only when light-neutral.
-- **AS-GENE-001.** 216 presets. 3 in-game palette swaps. Genetics do not select art.
+- **AS-GENE-001.** 216 presets. One complete faceset each. Portrait colour method recorded per preset. Genetics do not select art.
 - **AS-PORT-001.** Icon and 144 px portrait for every non-face entity.
 - **AS-HEAD-001.** Preset head on a 12-frame grid and a head anchor on every body frame.
 - **AS-ELDER-001.** 18 elder bodies. Adult armour, helmet and preset head via per-frame offsets. Dwarf elders are 36 px.
@@ -930,7 +933,7 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-SITE-001.** Construction ghost, scaffold, partial build.
 - **AS-READ-001.** Grayscale value step. Table-with-items reference at true 2×.
 - **AS-PAL-001.** Saturated palette, value first, grayscale before approval.
-- **AS-LOCK-001.** LOCKED style defaults. Caps, frame budgets, one master.
+- **AS-LOCK-001.** LOCKED style defaults. Map-sprite caps, frame budgets, one master. Character facesets may use up to 64 colours, painterly soft shading and a black contour.
 - **AS-MELEE-001.** Fixed upright grip. Weapon sprite arc. 8 baked frames. Body stays mostly still.
 - **AS-PM-001.** PM defaults the Owner may override, including west-from-east.
-- **AS-VIS-001.** No class outfits. 18 race garbs, 14 kits, held items, monk idle. Facesets never change with gear.
+- **AS-VIS-001.** No class outfits. 18 race garbs, 14 kits, held items, monk idle. Facesets never change with gear and are not built from layers.

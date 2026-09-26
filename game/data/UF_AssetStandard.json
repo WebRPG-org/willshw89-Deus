@@ -1,7 +1,7 @@
 {
   "schemaVersion": "deus-asset-standard/1.4.0",
   "documentId": "DEUS-ASSET-STANDARD-01",
-  "authority": "Owner rulings DEC-007, DEC-011, DEC-013, DEC-016, DEC-027, DEC-030, and 2026-09-26 12:38 through 15:12 CT, including addenda A1-A9, A9b and A9c. PM decisions are marked on the rule. Lane brief WG.20.01.",
+  "authority": "Owner rulings DEC-007, DEC-011, DEC-013, DEC-016, DEC-027, DEC-030, and 2026-09-26 12:38 through 16:39 CT, including addenda A1-A9, A9b and A9c. Item 42 (Owner 16:05 CT, contour correction 16:39 CT) makes each faceset one complete image. PM decisions are marked on the rule. Lane brief WG.20.01.",
   "artGeneration": "forbidden",
   "rules": {
     "AS-GLOBAL-001": {
@@ -25,7 +25,7 @@
       "check": null
     },
     "AS-GLOBAL-006": {
-      "norm": "Selout is 1 px on the outer silhouette, local ramp, darker on the bottom and right. AS-LOCK-001 locks it on characters and items. Terrain tiles have none. Depth overlays may keep one.",
+      "norm": "Selout is 1 px on the outer silhouette, local ramp, darker on the bottom and right. AS-LOCK-001 locks it on map sprites and items. Terrain tiles have none. A character faceset does not require it and may use a black contour. Depth overlays may keep one.",
       "check": null
     },
     "AS-GLOBAL-007": {
@@ -145,7 +145,7 @@
       "check": "paperdoll-z"
     },
     "AS-HUM-005": {
-      "norm": "A faceset does not change with gear. It is the preset face, preset hair, race background and 8 expressions.",
+      "norm": "A faceset never changes with gear. Each preset is one complete 144 px image. The race background is painted into that image. Eight expressions are generated from it. The faceset is not built from layers.",
       "check": null
     },
     "AS-HUM-006": {
@@ -205,12 +205,12 @@
       "check": "life-templates"
     },
     "AS-FACE-001": {
-      "norm": "Each race has a faceset background keyed by that race ramp and motif.",
+      "norm": "The race background is painted into the complete portrait, using that race ramp and motif. It is not a separate layer.",
       "check": "face-background"
     },
     "AS-FACE-002": {
-      "norm": "Face layers are race background, preset face and preset hair. No gear, helmet or class headwear.",
-      "check": "face-layers"
+      "norm": "Each preset has one complete 576 by 288 faceset sheet of 8 expressions generated from one 144 px image. A faceset built from layers fails. Face-layer slot ids stay reserved.",
+      "check": "face-complete"
     },
     "AS-FACE-003": {
       "norm": "Eight expressions in index order: neutral, happy, angry, sad, surprised, hurt, determined, afraid.",
@@ -417,7 +417,7 @@
       "check": "variety-season"
     },
     "AS-GENE-001": {
-      "norm": "216 presets replace the part library. 8 adult looks per sex, 2 elder and 2 child per sex, 3 in-game palette swaps. Genetics do not drive art.",
+      "norm": "216 presets. Each faceset is one complete image with 8 expressions. Portrait skin and hair variants are palette swaps when the ramps map cleanly, otherwise separate generations, recorded per preset. Genetics do not select art.",
       "check": "genes"
     },
     "AS-PORT-001": {
@@ -589,7 +589,7 @@
       "check": "a9c"
     },
     "AS-LOCK-001": {
-      "norm": "LOCKED style defaults, including the 15:05 CT revision. One master, colour caps, frame budgets, additive glow, grading, 32 px icons, shape markers.",
+      "norm": "LOCKED style defaults, one master, and the frame budgets. Map sprites and items keep the 1 px self-tinted outline and the 16, 32 and 48 caps. A character faceset may use up to 64 colours from the master plus the portrait skin and hair ramp, with painterly soft shading and a black contour.",
       "check": "a9c"
     },
     "AS-MELEE-001": {
@@ -929,15 +929,22 @@
     "determined",
     "afraid"
   ],
-  "faceLayers": [
-    "background",
-    "faction-trim",
-    "body-base",
-    "face",
-    "hair",
-    "gear",
-    "overlay"
-  ],
+  "faceLayers": {
+    "status": "retired",
+    "item": 42,
+    "reason": "A faceset is one complete image. These names are reserved and are not a draw stack.",
+    "retiredNames": [
+      "background",
+      "faction-trim",
+      "body-base",
+      "face",
+      "hair",
+      "gear",
+      "overlay",
+      "preset-face",
+      "preset-hair"
+    ]
+  },
   "faceAnchors": {
     "neckBase": [
       72,
@@ -3267,17 +3274,22 @@
       "perRace": 24,
       "total": 216,
       "paletteSwaps": 3,
-      "paletteSwapWhen": "in-game",
       "expressions": 8,
       "facesetPx": 144,
       "charset": "complete-head-hair-face",
-      "faceset": "matching",
+      "faceset": "one-complete-image",
       "playerPicks": [
         "preset",
         "colour-variant"
       ],
       "factions": "trim-banners-buildings",
-      "factionFaces": false
+      "factionFaces": false,
+      "builtFromLayers": false,
+      "raceBackground": "in-composition",
+      "expressionsFrom": "complete-image",
+      "identityKept": true,
+      "charsetPaletteSwapWhen": "in-game",
+      "portraitColourVariantRule": "palette-swap-when-ramps-map-else-separate-generation"
     },
     "byRace": {
       "human": {
@@ -3321,7 +3333,10 @@
             "preset:human:child-female:01",
             "preset:human:child-female:02"
           ]
-        }
+        },
+        "completeImage": true,
+        "builtFromLayers": false,
+        "raceBackground": "in-composition"
       },
       "elf": {
         "charset": true,
@@ -3364,7 +3379,10 @@
             "preset:elf:child-female:01",
             "preset:elf:child-female:02"
           ]
-        }
+        },
+        "completeImage": true,
+        "builtFromLayers": false,
+        "raceBackground": "in-composition"
       },
       "halfling": {
         "charset": true,
@@ -3407,7 +3425,10 @@
             "preset:halfling:child-female:01",
             "preset:halfling:child-female:02"
           ]
-        }
+        },
+        "completeImage": true,
+        "builtFromLayers": false,
+        "raceBackground": "in-composition"
       },
       "dwarf": {
         "charset": true,
@@ -3450,7 +3471,10 @@
             "preset:dwarf:child-female:01",
             "preset:dwarf:child-female:02"
           ]
-        }
+        },
+        "completeImage": true,
+        "builtFromLayers": false,
+        "raceBackground": "in-composition"
       },
       "gnome": {
         "charset": true,
@@ -3493,7 +3517,10 @@
             "preset:gnome:child-female:01",
             "preset:gnome:child-female:02"
           ]
-        }
+        },
+        "completeImage": true,
+        "builtFromLayers": false,
+        "raceBackground": "in-composition"
       },
       "dragonborn": {
         "charset": true,
@@ -3536,7 +3563,10 @@
             "preset:dragonborn:child-female:01",
             "preset:dragonborn:child-female:02"
           ]
-        }
+        },
+        "completeImage": true,
+        "builtFromLayers": false,
+        "raceBackground": "in-composition"
       },
       "half-elf": {
         "charset": true,
@@ -3579,7 +3609,10 @@
             "preset:half-elf:child-female:01",
             "preset:half-elf:child-female:02"
           ]
-        }
+        },
+        "completeImage": true,
+        "builtFromLayers": false,
+        "raceBackground": "in-composition"
       },
       "half-orc": {
         "charset": true,
@@ -3622,7 +3655,10 @@
             "preset:half-orc:child-female:01",
             "preset:half-orc:child-female:02"
           ]
-        }
+        },
+        "completeImage": true,
+        "builtFromLayers": false,
+        "raceBackground": "in-composition"
       },
       "tiefling": {
         "charset": true,
@@ -3665,7 +3701,660 @@
             "preset:tiefling:child-female:01",
             "preset:tiefling:child-female:02"
           ]
-        }
+        },
+        "completeImage": true,
+        "builtFromLayers": false,
+        "raceBackground": "in-composition"
+      }
+    },
+    "portraitRecords": {
+      "preset:human:adult-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-male:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-male:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-male:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-male:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-male:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-male:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-female:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-female:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-female:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-female:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-female:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:adult-female:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:elder-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:elder-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:elder-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:elder-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:child-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:child-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:child-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:human:child-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-male:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-male:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-male:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-male:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-male:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-male:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-female:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-female:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-female:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-female:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-female:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:adult-female:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:elder-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:elder-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:elder-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:elder-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:child-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:child-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:child-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:elf:child-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-male:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-male:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-male:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-male:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-male:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-male:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-female:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-female:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-female:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-female:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-female:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:adult-female:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:elder-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:elder-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:elder-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:elder-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:child-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:child-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:child-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:halfling:child-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-male:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-male:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-male:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-male:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-male:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-male:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-female:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-female:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-female:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-female:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-female:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:adult-female:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:elder-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:elder-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:elder-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:elder-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:child-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:child-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:child-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dwarf:child-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-male:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-male:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-male:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-male:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-male:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-male:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-female:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-female:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-female:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-female:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-female:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:adult-female:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:elder-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:elder-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:elder-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:elder-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:child-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:child-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:child-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:gnome:child-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-male:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-male:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-male:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-male:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-male:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-male:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-female:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-female:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-female:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-female:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-female:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:adult-female:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:elder-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:elder-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:elder-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:elder-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:child-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:child-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:child-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:dragonborn:child-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-male:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-male:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-male:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-male:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-male:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-male:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-female:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-female:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-female:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-female:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-female:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:adult-female:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:elder-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:elder-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:elder-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:elder-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:child-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:child-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:child-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-elf:child-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-male:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-male:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-male:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-male:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-male:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-male:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-female:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-female:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-female:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-female:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-female:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:adult-female:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:elder-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:elder-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:elder-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:elder-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:child-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:child-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:child-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:half-orc:child-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-male:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-male:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-male:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-male:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-male:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-male:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-female:03": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-female:04": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-female:05": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-female:06": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-female:07": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:adult-female:08": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:elder-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:elder-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:elder-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:elder-female:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:child-male:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:child-male:02": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:child-female:01": {
+        "colourVariantMethod": "separate-generation"
+      },
+      "preset:tiefling:child-female:02": {
+        "colourVariantMethod": "separate-generation"
       }
     }
   },
@@ -11664,7 +12353,8 @@
           "slotId": "slot-map"
         }
       }
-    }
+    },
+    "faceTemplate": "The face-layer category id is the historical field template for one complete character portrait. It does not authorise a faceset layer stack."
   },
   "generationLog": {
     "requiredFields": [
@@ -13121,7 +13811,11 @@
       "FA.GEAR.TIEFLING.M.01.NEUTRAL.C0",
       "FA.FEATURES.TIEFLING.F.01.NEUTRAL.C0",
       "FA.GEAR.TIEFLING.F.01.NEUTRAL.C0",
-      "FA.HAIR.HUMAN.M.01.NEUTRAL.C0"
+      "FA.HAIR.HUMAN.M.01.NEUTRAL.C0",
+      "FA.BG.ELF.F.07.NEUTRAL.C0",
+      "FA.FRAME.HUMAN.M.01.NEUTRAL.C0",
+      "FA.BODY.HUMAN.M.01.NEUTRAL.C0",
+      "FA.OVERLAY.HUMAN.M.01.NEUTRAL.C0"
     ],
     "sheet": {
       "id": "paperdoll:elf:f:hair:07",
@@ -24267,28 +24961,6 @@
         }
       },
       {
-        "category": "face",
-        "id": "FA.BG.ELF.F.07.NEUTRAL.C0",
-        "catalogueId": "ALL_SHARED_FACE_ELF-F-BG-07_NEUTRAL_C0",
-        "sheetFile": "art/approved/faces/FA_BG_ELF_F_07.png",
-        "anchor": [
-          72,
-          36
-        ],
-        "detectedAnchors": null,
-        "provenance": {
-          "status": "blank",
-          "attempts": [],
-          "reviewerModel": null,
-          "ownerApproval": "pending",
-          "timestamps": {
-            "generated": null,
-            "reviewed": null,
-            "owner": null
-          }
-        }
-      },
-      {
         "category": "creature",
         "id": "CR.LION.F.BASE.WALK.D.F0",
         "catalogueId": "ALL_SHARED_CREATURE_LION-F-BASE_WALK_D-F0",
@@ -25679,15 +26351,16 @@
       "30": "Construction art is a palette-swap ghost, a blueprint, foundation, scaffolding, partial stages, site props and build animation. The ghost is not an alpha fade.",
       "31": "Characters and items must clear their ground by the grayscale value step before approval. The table-with-items trial is the reference, reviewed at true 2x. No image is generated here.",
       "32": "The palette is saturated and controlled, with no gray mush. Value carries the read. The brightest colours are reserved. Mood comes from light and grading. Every asset passes grayscale before approval.",
-      "33": "Style defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision keeps one master and the frame budgets. Item 33 counted 708 cells. Item 39 draws 660 because the melee body rows are not drawn.",
+      "33": "Style defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision keeps one master and the frame budgets. Item 33 counted 708 cells. Item 39 draws 660 because the melee body rows are not drawn. A character faceset may use up to 64 colours, painterly soft shading, and a black contour. Map sprites keep the 1 px self-tinted outline and the 16, 32 and 48 caps.",
       "34": "Trial findings: request characters at size 42, animate with skeleton-v3 on create-character-v3 bodies, then propagate armour, helmet, the preset head and class kits. Weapon angles are 2 authored angles plus lossless 90 degree turns and flips, baked to 8 frames. The south walk row sits 2 px low. Prompts must force the RMMZ standard top-down 3/4 view. Small item world sprites remain an open test.",
       "35": "Melee timing is the weapon sprite, not a body swing. The body holds a fixed upright right-hand grip. Draw the weapon 10 to 20 percent larger in native pixels. Do not scale it. The strike frame is held, with a hit spark and 1 or 2 px of knockback.",
       "36": "These size, footprint, door, mirror, fortress, marker and font defaults are the PM defaults. The Owner may override them. West may be mirrored from east. Weapons and shields stay on the hand anchors.",
-      "37": "Facesets never change with gear. A faceset is the face preset, the hair, the race background and 8 expressions. Charsets draw the race garb, the class signature kits, armour, helmet, held class items, weapon and shield. Other gear is an item, an icon, a portrait or a world sprite.",
+      "37": "Facesets never change with gear. Each faceset is one complete 144 px image per preset. The race background is part of that image. Eight expressions are generated from it and keep its identity. A faceset is not built from layers. Charsets draw the race garb, the class signature kits, armour, helmet, held class items, weapon and shield. Other gear is an item, an icon, a portrait or a world sprite.",
       "38": "The view is the RMMZ standard top-down 3/4 view. Movement is 4-way on the grid. Unit movement is orthogonal only. Sprites stay four-direction. Draw order stays row, then layer. SRD 5-5-5 applies to spell areas and ranges only. Cliff and wall pieces are RMMZ-style tiles with the depth cues. Side-wall, side-roof and corner-joint pieces are not added. Tall objects are not split.",
       "39": "The right hand holds a fixed upright grip. The body stays mostly still and the weapon sprite rotates through up, 45 forward, level and back. Two authored angles plus lossless 90 degree turns and flips bake 8 frames. There is no runtime rotation. PixelLab is the primary generator. Retro Diffusion is standby. Nano Banana Pro is for concepts only. The bake-off is off. Cast, bow and work rows stay on the body.",
       "40": "There are no class outfits. Each race has one standard garb per sex, 18 in all, on that race body template in the race palette. Casters and monks use 14 signature kit layers and one accent colour. Martial classes use armour, weapons and their accent. Held class items use 2 authored angles. The monk has a 4-frame stance idle and no held item.",
-      "41": "Art uses a fixed preset pool: 8 male and 8 female adults, 2 elder and 2 child looks per sex, 24 per race and 216 in all. Each preset is a complete head, hair and face for the charset and a matching 144 px faceset with 8 expressions, plus 3 in-game skin and hair palette swaps. The player picks a preset and a colour. Sim genetics stay on stats only. Dwarf male and female adult and elder bodies are 36 px.",
+      "41": "Art uses a fixed preset pool: 8 male and 8 female adults, 2 elder and 2 child looks per sex, 24 per race and 216 in all. Each preset is a complete head, hair and face for the charset and one complete 144 px faceset with 8 expressions. Portrait skin and hair variants are recorded per preset: a palette swap when the ramps map cleanly, otherwise a separate generation. The player picks a preset and a colour. Sim genetics stay on stats only. Dwarf male and female adult and elder bodies are 36 px.",
+      "42": "Each preset is one complete 144 px portrait on one sheet of 8 expressions. The race background is painted into the portrait. Portraits may use up to 64 colours from the master plus RAMP_PORTRAIT_SKIN_HAIR, with painterly soft shading. A black contour is allowed. Map sprites keep the 1 px self-tinted outline. The style reference is OWNER_PORTRAIT_STYLE_REF_01.png. All 216 presets are recorded separate-generation, so complete faceset sheets are 864 and generation calls are 6912. Face-layer slot ids stay reserved. No art is generated here.",
       "F": "Seasonal variants, building and object damage stages, and the sim work rows sit on the layered humanoid system. New work rows are farm, mine, build, craft, fish and cook, at 6 frames. Chop and carry are already rows."
     },
     "proportion": {
@@ -26357,6 +27030,12 @@
           "sizePx": 12,
           "subjectHex": "#060709",
           "groundHex": "#525D6B"
+        },
+        {
+          "id": "portrait-on-dark",
+          "sizePx": 144,
+          "subjectHex": "#EDE9DE",
+          "groundHex": "#060709"
         }
       ]
     },
@@ -26391,7 +27070,8 @@
       "caps": {
         "itemOrIcon": 16,
         "characterOrCreatureSheet": 32,
-        "tileset": 48
+        "tileset": 48,
+        "portrait": 64
       },
       "extensionRows": "rmmz-compatible",
       "additiveGlow": "max-brightness-only",
@@ -26488,8 +27168,62 @@
             "#1D2315",
             "#353C20"
           ]
+        },
+        {
+          "kind": "portrait",
+          "colours": [
+            "#060709",
+            "#0C0D12",
+            "#14161C",
+            "#1C2126",
+            "#333B45",
+            "#525D6B",
+            "#798797",
+            "#A7B4C2",
+            "#23211D",
+            "#3D3833",
+            "#5F5851",
+            "#867E75",
+            "#B4ABA1",
+            "#6D6961",
+            "#9B968C",
+            "#C8C3B7",
+            "#EDE9DE",
+            "#142216",
+            "#26421C",
+            "#3E6328",
+            "#628C38",
+            "#91B851",
+            "#1D2315",
+            "#353C20"
+          ]
         }
-      ]
+      ],
+      "portrait": {
+        "assetClass": "character-faceset",
+        "colourCap": 64,
+        "source": "master-plus-portrait-skin-hair-ramp",
+        "shading": "painterly-soft",
+        "outlineRequired": false,
+        "selfTintedOutlineRequired": false,
+        "blackContour": "allowed",
+        "mapSpritesKeepCaps": true,
+        "mapSpritesKeepOutline": true,
+        "grayscale": true,
+        "styleRef": "tasks/WG.20.01/lane-al/refs/OWNER_PORTRAIT_STYLE_REF_01.png",
+        "styleRefSha256": "b1c0c721bcbd7eca39b69488073b4d0beff73fb590cb39dcd9c74a86ccafb984",
+        "style": [
+          "painterly-pixel",
+          "soft-detailed-shading",
+          "warm-light",
+          "plain-dark-background"
+        ],
+        "rampExtension": {
+          "id": "RAMP_PORTRAIT_SKIN_HAIR",
+          "status": "allowed-when-master-is-short",
+          "colours": []
+        }
+      }
     },
     "melee": {
       "weapon": "separate-sprite",
@@ -26837,10 +27571,17 @@
         }
       ],
       "faceSample": {
-        "layers": [
-          "background",
-          "preset-face",
-          "preset-hair"
+        "completeImage": true,
+        "builtFromLayers": false,
+        "raceBackground": "in-composition",
+        "expressions": 8,
+        "cell": [
+          144,
+          144
+        ],
+        "sheet": [
+          576,
+          288
         ],
         "gearKinds": []
       }
@@ -26872,13 +27613,23 @@
       "retiredClassGarbDesigns": 108,
       "retiredClassGarbSheets": 324,
       "presetLooks": 216,
-      "presetFacesetSheets": 216,
+      "presetFacesetSheets": 864,
       "presetCharsetHeads": 216,
       "presetPaletteSwapSheets": 0,
       "droppedMeleeBodyCells": 48,
       "item33Cells": 708,
       "cellsPerFullSheet": 660,
-      "hairAndBeard": "replaced by the preset pool"
+      "hairAndBeard": "replaced by the preset pool",
+      "presetFacesetBaseSheets": 216,
+      "faceLayerSheets": 0,
+      "portraitSeparateGenerationPresets": 216,
+      "portraitPaletteSwapPresets": 0,
+      "portraitVariantSheets": 648,
+      "expressionCells": 6912,
+      "portraitSourceImages": 864,
+      "portraitExpressionPasses": 6048,
+      "portraitGenerationCalls": 6912,
+      "portraitColourNote": "All 216 presets are separate-generation until a skin and hair ramp map is proven. A palette-swap preset adds 0 variant sheets."
     },
     "catalogueCategories": [
       {
@@ -27501,7 +28252,16 @@
         "looks": 216,
         "facesetPx": 144,
         "expressions": 8,
-        "paletteSwaps": 3
+        "paletteSwaps": 3,
+        "builtFromLayers": false,
+        "faceLayerSheets": 0,
+        "baseSheets": 216,
+        "separateGenerationPresets": 216,
+        "paletteSwapPresets": 0,
+        "variantSheets": 648,
+        "facesetSheets": 864,
+        "expressionCells": 6912,
+        "generationCalls": 6912
       },
       {
         "id": "WEAPONCEL",
