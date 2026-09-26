@@ -1,13 +1,17 @@
 # WG.20.01 lane-al report
 
+## Item 43 (2026-09-26)
+
 Writer: grok. Reviewer: gemini, not this lane. This report does not certify the work.
+
+ADDENDUM 0509 (Owner 17:09 CT, sha256 `87210fe055efa306…`) was applied with item 43. Character map sprites are 18 unarmored PixelLab v3 bases, 72 armor States (90 armor states), and 19 animations in eight directions. Prompts are plain language. The canvas is 48 px, the outline is Selective outline, and the PixelLab camera is High Top-Down. The one-hand group is ATK_1H. ATK_1H_SHIELD is reserved. The recorded first pass is 15,200 generation calls. Production waits for Owner sign-off. No art was generated. No PixelLab call was made. The combat brief and the world-item brief live outside this lane's allow-list, so they were not edited; the normative structure is AS-CHMAP-001.
 
 No art was generated. No image prompts. Deliverables are markdown, JSON and Node.
 
 ## Files
 
-- `docs/art/DEUS_ASSET_STANDARD.md` — normative standard, 119 rule ids, appendices A–C.
-- `game/data/UF_AssetStandard.json` — `schemaVersion` `deus-asset-standard/1.1.0`. Same 119 rule ids. `outfitMatrix` length 135. `summons` length 29.
+- `docs/art/DEUS_ASSET_STANDARD.md` — normative standard, 151 rule ids, appendices A–C. Item 43 is AS-CHMAP-001.
+- `game/data/UF_AssetStandard.json` — `schemaVersion` `deus-asset-standard/1.5.0`. Same 151 rule ids. `outfitMatrix` length 27. `summons` length 29.
 - `game/data/UF_SpellVisualTable.schema.json` — JSON Schema draft 2020-12 (`$schema` is `https://json-schema.org/draft/2020-12/schema`). Six example rows: Fire Bolt, Fireball, Cone of Cold, Lightning Bolt, Shield, Cure Wounds. Not the 319-spell table.
 - `tools/art/validate_asset_standard.js` — coverage checker. Reads the catalogue, the standard, the spell schema and `game/data/srd51/spells.json`. Does not write files and does not read pixels.
 - `tools/art/test_validate_asset_standard.js` and `tools/art/fixtures/asset_standard/**` — each check has a passing case and a mutant that the check must reject.

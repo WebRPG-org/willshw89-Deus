@@ -450,7 +450,15 @@ portraitExt.a9c.styleLock.portrait.rampExtension.colours = ['#FF00FF'];
 check('portrait-extension', hit(V.checkA9c(portraitExt), 'AS-LOCK-001', 'pass'), JSON.stringify(V.checkA9c(portraitExt).filter(r => r.ruleId === 'AS-LOCK-001')));
 kills('melee', 'AS-MELEE-001', a9cGood, a9cBad(s => { s.a9c.melee.sample.scaled = true; }));
 kills('melee-body', 'AS-MELEE-001', a9cGood, a9cBad(s => { s.slotMap.frameLayout.rows.find(row => row.id === 'melee-swing').bodyDrawn = true; }));
-kills('class-kit', 'AS-VIS-001', a9cGood, a9cBad(s => { s.a9c.classKits.layers.pop(); }));
+kills('class-kit', 'AS-VIS-001', a9cGood, a9cBad(s => { s.a9c.visibleGear.classKitsOnMap = true; }));
+kills('character-map', 'AS-CHMAP-001', a9cGood, a9cBad(s => { s.a9c.characterMap.shieldsAnimated = true; }));
+kills('character-prompt', 'AS-CHMAP-001', a9cGood, a9cBad(s => { s.a9c.characterMap.workedExamples[0] = 'human man #112233 at row 2, 42 px tall'; }));
+kills('character-shield-id', 'AS-CHMAP-001', a9cGood, a9cBad(s => {
+    s.slotMap.retiredIds = s.slotMap.retiredIds.filter(id => id !== 'CH.HUMAN.M.MEDIUM.ATK_1H_SHIELD.S.F0');
+}));
+const clipFix = load('character_clip.json');
+check('clip-fixture-good', new RegExp(V.ID_GRAMMAR['character-clip']).test(clipFix.good));
+check('clip-fixture-retired', new RegExp(V.ID_GRAMMAR['retired-attack']).test(clipFix.retired) && !new RegExp(V.ID_GRAMMAR['character-clip']).test(clipFix.retired));
 kills('dwarf-px', 'AS-SEX-001', V.checkSexedBodies(standard.sexedBodies, standard), (function () {
     const copy = V.clone(standard);
     copy.sexedBodies.bodyPx.dwarf['adult-male'] = 42;
@@ -483,7 +491,7 @@ check('master-file', masterFile.join('|') === standard.masterPalette.colours.joi
 check('legacy-file', legacyFile.length === 256 && new Set(legacyFile).size === 250 && masterFile.every(c => legacyFile.indexOf(c) === -1));
 const phrases = [
     'readable high-contrast fantasy', 'about 1/5', 'RMMZ standard top-down 3/4', 'by row, then by Z layer',
-    'Eight-direction sheets stay declined', '4-way on the grid', 'orthogonal only', 'symmetric flag', 'tiles-pro',
+    'eight directions', '3 px per axis', 'square grid', 'symmetric flag', 'tiles-pro',
     'dual-grid', 'pebbles, tufts, cracks and leaves', 'skeleton-v3', 'create-character-v3', 'size 42',
     '2 px low', 'open test', 'boot, bare, paw and hoof',
     'snow, mud, sand, blood and wet', 'additive light layer', 'whole-pixel parallax', 'camera layer easing',
@@ -491,14 +499,17 @@ const phrases = [
     'Str × 15', '4 px per frame', '6 px per frame', 'nearest-neighbour', 'letterbox', 'wall breaches',
     'palette swap', 'scaffolding', 'grayscale', 'gray mush', 'LOCKED', '15:05 CT', 'about 16', 'about 32',
     'about 48', '1, 2, 1, 0', 'dawn, day, dusk, night and underground', 'colour-blind-safe',
-    '10 to 20 percent', 'knockback', 'Owner may override', 'shares a square', '1.5 layers',
+    'knockback', 'Owner may override', 'shares a square', '1.5 layers',
     'Mirroring is allowed', 'fortress', 'pixel font', 'no class outfits',
-    'Facesets never change with gear', 'fixed upright', 'mostly still', 'PixelLab',
-    'Retro Diffusion', 'Nano Banana Pro', '2 authored', '18 race garbs', '36 px',
+    'Facesets never change with gear', 'PixelLab',
+    'Retro Diffusion', 'Nano Banana Pro', '36 px',
     'not adopted', 'four quarters', 'table-with-items', 'true 2×', '708', '660', '216',
     'one complete 144', 'not built from layers', 'up to 64 colours', 'painterly soft shading',
     'black contour', 'OWNER_PORTRAIT_STYLE_REF_01.png', 'RAMP_PORTRAIT_SKIN_HAIR',
-    'separate-generation', '864', '6912'
+    'separate-generation', '864', '6912',
+    'Selective outline', 'High Top-Down', 'one-hand sword', 'ATK_1H', '15,200',
+    'plain language', 'Owner sign-off', 'scale_chart', 'row 6',
+    'CH.HUMAN.M.MEDIUM', '48 px canvas', 'weapon length'
 ];
 phrases.forEach(phrase => check('phrase-' + phrase, md.indexOf(phrase) !== -1, 'missing'));
 check('view-doc', V.viewDocOk(md) && V.viewDocOk(JSON.stringify(standard)), 'view doc');
@@ -545,7 +556,7 @@ check('cli-strict-clean', strictOk === 0, 'exit ' + strictOk);
 const strictBad = quiet(() => V.main(['--catalogue', path.join(FIX, 'eight_catalogue.json'), '--strict'], { noExit: true }));
 check('cli-strict-eight', strictBad === 1, 'exit ' + strictBad);
 
-const checked = ['AS-GLOBAL-010', 'AS-GLOBAL-014', 'AS-GLOBAL-019', 'AS-GLOBAL-022', 'AS-GLOBAL-023', 'AS-CRIT-001', 'AS-CRIT-004', 'AS-BEAST-001', 'AS-HUM-004', 'AS-HUM-009', 'AS-HUM-015', 'AS-HUM-016', 'AS-HUM-017', 'AS-HUM-019', 'AS-FACE-001', 'AS-FACE-002', 'AS-FACE-003', 'AS-FACE-004', 'AS-ICON-001', 'AS-ICON-003', 'AS-ITEM-001', 'AS-ITEM-002', 'AS-NODE-001', 'AS-ANIM-001', 'AS-FX-003', 'AS-FX-005', 'AS-UI-003', 'AS-UI-004', 'AS-SUMMON-001', 'AS-SUMMON-002', 'AS-REMAIN-001', 'AS-HAUL-001', 'AS-VEH-001', 'AS-LIGHT-001', 'AS-MAP-001', 'AS-PROP-001', 'AS-STYLE-001', 'AS-REL-001', 'AS-FARM-001', 'AS-FOOD-001', 'AS-DUNG-001', 'AS-TRAP-001', 'AS-LORE-001', 'AS-SCENE-001', 'AS-ZONE-001', 'AS-MKTG-001', 'AS-TAME-001', 'AS-TAME-002', 'AS-VAR-001', 'AS-VAR-002', 'AS-GENE-001', 'AS-PORT-001', 'AS-HEAD-001', 'AS-ELDER-001', 'AS-GEAR-001', 'AS-MIRROR-001', 'AS-POSE-001', 'AS-BIOME-005', 'AS-SIZE-001', 'AS-SLOT-001', 'AS-PIPE-001', 'AS-PROMPT-001', 'AS-GEN-001', 'AS-GEN-002', 'AS-GEN-003', 'AS-GEN-004', 'AS-SRC-001', 'AS-REPO-001', 'AS-PREVIEW-001', 'AS-GEN-005', 'AS-SEX-001', 'AS-SEX-002', 'AS-ID-001', 'AS-ANCHOR-001', 'AS-EQUIP-001', 'AS-LOOK-001', 'AS-PROJ-001', 'AS-FURN-001', 'AS-TERR-001', 'AS-TRACK-001', 'AS-GLOW-001', 'AS-DEPTH-001', 'AS-WITEM-001', 'AS-FEAT-001', 'AS-PLAY-001', 'AS-CONT-001', 'AS-SCALE-001', 'AS-RENDER-001', 'AS-XLAYER-001', 'AS-QTR-001', 'AS-SITE-001', 'AS-READ-001', 'AS-PAL-001', 'AS-LOCK-001', 'AS-MELEE-001', 'AS-PM-001', 'AS-VIS-001'];
+const checked = ['AS-GLOBAL-010', 'AS-GLOBAL-014', 'AS-GLOBAL-019', 'AS-GLOBAL-022', 'AS-GLOBAL-023', 'AS-CRIT-001', 'AS-CRIT-004', 'AS-BEAST-001', 'AS-HUM-004', 'AS-HUM-009', 'AS-HUM-015', 'AS-HUM-016', 'AS-HUM-017', 'AS-HUM-019', 'AS-FACE-001', 'AS-FACE-002', 'AS-FACE-003', 'AS-FACE-004', 'AS-ICON-001', 'AS-ICON-003', 'AS-ITEM-001', 'AS-ITEM-002', 'AS-NODE-001', 'AS-ANIM-001', 'AS-FX-003', 'AS-FX-005', 'AS-UI-003', 'AS-UI-004', 'AS-SUMMON-001', 'AS-SUMMON-002', 'AS-REMAIN-001', 'AS-HAUL-001', 'AS-VEH-001', 'AS-LIGHT-001', 'AS-MAP-001', 'AS-PROP-001', 'AS-STYLE-001', 'AS-REL-001', 'AS-FARM-001', 'AS-FOOD-001', 'AS-DUNG-001', 'AS-TRAP-001', 'AS-LORE-001', 'AS-SCENE-001', 'AS-ZONE-001', 'AS-MKTG-001', 'AS-TAME-001', 'AS-TAME-002', 'AS-VAR-001', 'AS-VAR-002', 'AS-GENE-001', 'AS-PORT-001', 'AS-HEAD-001', 'AS-ELDER-001', 'AS-GEAR-001', 'AS-MIRROR-001', 'AS-POSE-001', 'AS-BIOME-005', 'AS-SIZE-001', 'AS-SLOT-001', 'AS-PIPE-001', 'AS-PROMPT-001', 'AS-GEN-001', 'AS-GEN-002', 'AS-GEN-003', 'AS-GEN-004', 'AS-SRC-001', 'AS-REPO-001', 'AS-PREVIEW-001', 'AS-GEN-005', 'AS-SEX-001', 'AS-SEX-002', 'AS-ID-001', 'AS-ANCHOR-001', 'AS-EQUIP-001', 'AS-LOOK-001', 'AS-PROJ-001', 'AS-FURN-001', 'AS-TERR-001', 'AS-TRACK-001', 'AS-GLOW-001', 'AS-DEPTH-001', 'AS-WITEM-001', 'AS-FEAT-001', 'AS-PLAY-001', 'AS-CONT-001', 'AS-SCALE-001', 'AS-RENDER-001', 'AS-XLAYER-001', 'AS-QTR-001', 'AS-SITE-001', 'AS-READ-001', 'AS-PAL-001', 'AS-LOCK-001', 'AS-MELEE-001', 'AS-PM-001', 'AS-VIS-001', 'AS-CHMAP-001'];
 const srcHas = checked.filter(id => src.indexOf(id) === -1);
 check('checks-present', srcHas.length === 0, srcHas.join(','));
 

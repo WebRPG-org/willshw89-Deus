@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "deus-asset-standard/1.4.0",
+  "schemaVersion": "deus-asset-standard/1.5.0",
   "documentId": "DEUS-ASSET-STANDARD-01",
-  "authority": "Owner rulings DEC-007, DEC-011, DEC-013, DEC-016, DEC-027, DEC-030, and 2026-09-26 12:38 through 16:39 CT, including addenda A1-A9, A9b and A9c. Item 42 (Owner 16:05 CT, contour correction 16:39 CT) makes each faceset one complete image. PM decisions are marked on the rule. Lane brief WG.20.01.",
+  "authority": "Owner rulings DEC-007, DEC-011, DEC-013, DEC-016, DEC-027, DEC-030, and 2026-09-26 12:38 through 17:09 CT, including addenda A1-A9, A9b and A9c. Item 43 (Owner 16:10-16:47 CT, addendum 17:09 CT) makes character map sprites whole PixelLab v3 characters: 18 unarmored bases, armor as States, 19 animations in eight directions. The Owner generates art in the PixelLab web UI. PM decisions are marked on the rule. Lane brief WG.20.01.",
   "artGeneration": "forbidden",
   "rules": {
     "AS-GLOBAL-001": {
@@ -53,7 +53,7 @@
       "check": null
     },
     "AS-GLOBAL-013": {
-      "norm": "An RMMZ charset block is 3 columns by 4 rows. Walk playback is stand, left, stand, right. The walk block is never given another facing row.",
+      "norm": "An RMMZ charset block is 3 columns by 4 rows. Walk playback is stand, left, stand, right. Character map sprite clips use eight direction rows (AS-CHMAP-001).",
       "check": null
     },
     "AS-GLOBAL-014": {
@@ -89,11 +89,11 @@
       "check": null
     },
     "AS-GLOBAL-022": {
-      "norm": "Characters and creatures use four directions, row order South, West, East, North.",
+      "norm": "Creatures use four directions, row order South, West, East, North. Character map sprites use eight directions (AS-CHMAP-001).",
       "check": "directions"
     },
     "AS-GLOBAL-023": {
-      "norm": "A sheet that declares SW, NW, NE or SE is a legacy 8-way source. Mine S, W, E, N only. The diagonals are not standard.",
+      "norm": "A creature sheet that declares SW, NW, NE or SE is a legacy source. Character map sprites use those diagonal facings with S, W, E and N.",
       "check": "eight-dir"
     },
     "AS-CRIT-001": {
@@ -185,15 +185,15 @@
       "check": null
     },
     "AS-HUM-015": {
-      "norm": "One standard race garb per sex, 18 in all, plus 3 armour weights as race art variants. Class outfits are not required.",
+      "norm": "Armour weights are PixelLab States of one unarmored base per race and sex. Race garb records stay reserved and are not the map sprite. Class outfits are not required.",
       "check": "outfit-matrix"
     },
     "AS-HUM-016": {
-      "norm": "Body poses are drawn once. A melee weapon does not rotate at runtime. Its 8 angles are baked from 2 authored angles plus lossless turns and flips.",
+      "norm": "Character attacks are whole-sprite weapon-group clips (AS-CHMAP-001). Runtime rotation is not a substitute for a drawn frame.",
       "check": "pose-grid"
     },
     "AS-HUM-017": {
-      "norm": "Large shields and bows mid-draw keep per-pose frames. A generic cape is not drawn. The wizard robe, bard cape and warlock cloak are class kit layers.",
+      "norm": "Class kit layers and a generic cape are not drawn on the character map sprite. Shields are items, not character clips.",
       "check": "deforming"
     },
     "AS-HUM-018": {
@@ -497,7 +497,7 @@
       "check": "generator-cap"
     },
     "AS-SEX-001": {
-      "norm": "Each race has male and female adult and elder bodies and its own child body. Dwarf male and female adult and elder bodies are 36 px. The head is a preset, not a per-sex part library.",
+      "norm": "Each race has male and female adult and elder bodies and its own child body. Dwarf male and female adult and elder bodies are 36 px. Character map sprites are the 18 unarmored bases. Children and elders have no map-sprite base yet.",
       "check": "sexed-bodies"
     },
     "AS-SEX-002": {
@@ -513,7 +513,7 @@
       "check": "anchor-tool"
     },
     "AS-EQUIP-001": {
-      "norm": "Every body frame stores the right-hand grip anchor, the off hand, and draw order. The melee weapon is an upright sprite plus baked angles, pinned by the compositor.",
+      "norm": "The landmark anchor tool shifts whole pixels onto the slot anchor. Equipment-anchor compositing is retired for character map sprites.",
       "check": "equipment-anchors"
     },
     "AS-LOOK-001": {
@@ -521,7 +521,7 @@
       "check": "a9c"
     },
     "AS-PROJ-001": {
-      "norm": "RMMZ standard top-down 3/4 view. Draw order is row, then layer. Four-direction sprites. Movement is 4-way on the grid. Unit movement is orthogonal only. Cliff and wall pieces are RMMZ-style tiles. Side-wall, side-roof and corner-joint pieces are not added. Tall objects are not split.",
+      "norm": "RMMZ standard top-down 3/4 view. Draw order is row, then layer. Characters use eight directions and move 8-way. The diagonal walk step is 3 px per axis per frame. Terrain, walls and caves stay on the square grid. Cliff and wall pieces are RMMZ-style tiles.",
       "check": "a9c"
     },
     "AS-FURN-001": {
@@ -529,7 +529,7 @@
       "check": "a9c"
     },
     "AS-TERR-001": {
-      "norm": "48 px tiles-pro Wang tiles on a dual-grid renderer. 24 px detail decals. Trial findings are recorded. 64 px tiles are not adopted.",
+      "norm": "48 px tiles-pro Wang tiles on a dual-grid renderer. 24 px detail decals. Character map sprites are whole-sprite PixelLab v3. The item 34 layer trial is retired for characters.",
       "check": "a9c"
     },
     "AS-TRACK-001": {
@@ -549,7 +549,7 @@
       "check": "a9c"
     },
     "AS-FEAT-001": {
-      "norm": "Seasonal variants, damage stages, and sim work animations on the layered humanoid system.",
+      "norm": "Seasonal variants and damage stages. Character work is one clip per armor state. Shared job overlays stay separate.",
       "check": "a9c"
     },
     "AS-PLAY-001": {
@@ -561,7 +561,7 @@
       "check": "a9c"
     },
     "AS-SCALE-001": {
-      "norm": "1 Z layer = 5 ft = 48 px. SRD 5-5-5 applies to spell areas and ranges only. Unit movement is orthogonal only. Movement, light, falling, carry and the 6 second tick. 64 px tiles are not adopted.",
+      "norm": "1 Z layer = 5 ft = 48 px. SRD 5-5-5 applies to spell areas and ranges only. Characters move 8-way. The diagonal walk step is 3 px per axis per frame. Terrain stays on the square grid. 64 px tiles are not adopted.",
       "check": "a9c"
     },
     "AS-RENDER-001": {
@@ -589,19 +589,23 @@
       "check": "a9c"
     },
     "AS-LOCK-001": {
-      "norm": "LOCKED style defaults, one master, and the frame budgets. Map sprites and items keep the 1 px self-tinted outline and the 16, 32 and 48 caps. A character faceset may use up to 64 colours from the master plus the portrait skin and hair ramp, with painterly soft shading and a black contour.",
+      "norm": "LOCKED style defaults, one master, and the frame budgets. Map sprites and items keep the 1 px self-tinted outline and the 16, 32 and 48 caps. Character map sprites use 4 idle frames, 4 walk frames and 6 frames on every other clip. A character faceset may use up to 64 colours from the master plus the portrait skin and hair ramp, with painterly soft shading and a black contour.",
       "check": "a9c"
     },
     "AS-MELEE-001": {
-      "norm": "Melee is a fixed upright right-hand grip. The body stays mostly still. The weapon sprite plays the arc. 2 authored angles plus lossless turns and flips bake 8 frames.",
+      "norm": "Character attacks are the eight weapon-group clips. A fixed upright grip and a rotating weapon sprite are retired for character map sprites. Shields are not animated.",
       "check": "a9c"
     },
     "AS-PM-001": {
-      "norm": "PM defaults the Owner may override: size classes, footprints, the nine race heights, doors, mirroring, fortress view, range markers, pixel font.",
+      "norm": "PM defaults the Owner may override. Elf height follows the scale chart at 43. Characters are authored in eight directions. Creatures and props may mirror west from east.",
       "check": "a9c"
     },
     "AS-VIS-001": {
-      "norm": "No class outfits. 18 race garbs, 14 kit layers, held class items and the monk idle are drawn on charsets. Facesets never change with gear.",
+      "norm": "Character map sprites are whole PixelLab v3 sprites. Paper-doll layers, race garb and class kits are not the map sprite. Facesets never change with gear and are one complete image.",
+      "check": "a9c"
+    },
+    "AS-CHMAP-001": {
+      "norm": "Eighteen unarmored PixelLab v3 bases. ROBE, LIGHT, MEDIUM and HEAVY are States, 90 armor states in all. Nineteen animations in eight directions. Idle and walk are 4 frames. The other clips are 6. Prompts are plain language. The post-process checks palette, anchor, height and weapon length. Production waits for Owner sign-off.",
       "check": "a9c"
     }
   },
@@ -13657,7 +13661,9 @@
       "range-marker": "^RG\\.(SQUARE|LINE|CONE|SPHERE|CYLINDER)\\.[0-9]{2}$",
       "hit-spark": "^SP\\.(SLASH|PIERCE|BLUDGEON)\\.F[0-2]$",
       "weapon-angle": "^WP\\.[A-Z0-9-]+\\.(UPRIGHT|BAKED)\\.F[0-7]$",
-      "held-item": "^HI\\.(WIZARD-STAFF|DRUID-STAFF|WARLOCK-ORB|CLERIC-MACE|CLERIC-CENSER|BARD-LUTE)\\.(UPRIGHT|A45|A90)\\.F[0-7]$"
+      "held-item": "^HI\\.(WIZARD-STAFF|DRUID-STAFF|WARLOCK-ORB|CLERIC-MACE|CLERIC-CENSER|BARD-LUTE)\\.(UPRIGHT|A45|A90)\\.F[0-7]$",
+      "character-clip": "^CH\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F)\\.(UNARMORED|ROBE|LIGHT|MEDIUM|HEAVY)\\.(IDLE|WALK|WORK|SLEEP|SIT|EAT|CARRY|HURT|KNOCKDOWN|DEAD|ATK_UNARMED|ATK_DAGGER|ATK_1H|ATK_2H|ATK_POLEARM|ATK_STAFF|ATK_BOW|ATK_XBOW|CAST)\\.(S|SW|W|NW|N|NE|E|SE)\\.F[0-5]$",
+      "retired-attack": "^CH\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F)\\.(UNARMORED|ROBE|LIGHT|MEDIUM|HEAVY)\\.ATK_1H_SHIELD\\.(S|SW|W|NW|N|NE|E|SE)\\.F[0-5]$"
     },
     "retiredIds": [
       "CH.HAIR.ELF.F.06.WALK.D.F0",
@@ -13815,7 +13821,13 @@
       "FA.BG.ELF.F.07.NEUTRAL.C0",
       "FA.FRAME.HUMAN.M.01.NEUTRAL.C0",
       "FA.BODY.HUMAN.M.01.NEUTRAL.C0",
-      "FA.OVERLAY.HUMAN.M.01.NEUTRAL.C0"
+      "FA.OVERLAY.HUMAN.M.01.NEUTRAL.C0",
+      "CH.RACEGARB.HUMAN.M.01.IDLE.D.F0",
+      "CH.KIT.HUMAN.M.01.IDLE.D.F0",
+      "CH.MONK.HUMAN.M.01.MONK-IDLE.D.F0",
+      "WP.LONGSWORD.UPRIGHT.F0",
+      "HI.WIZARD-STAFF.UPRIGHT.F0",
+      "CH.HUMAN.M.MEDIUM.ATK_1H_SHIELD.S.F0"
     ],
     "sheet": {
       "id": "paperdoll:elf:f:hair:07",
@@ -24869,7 +24881,8 @@
             }
           }
         }
-      ]
+      ],
+      "role": "reserved-example"
     },
     "grammarSamples": [
       {
@@ -25555,72 +25568,6 @@
         }
       },
       {
-        "category": "charset-layer",
-        "id": "CH.RACEGARB.HUMAN.M.01.IDLE.D.F0",
-        "catalogueId": "ALL_SHARED_CHARACTER_HUMAN-M-RACEGARB-01_IDLE_D-F0",
-        "sheetFile": "art/approved/a9c/CH_RACEGARB_HUMAN_M_01.png",
-        "anchor": [
-          24,
-          24
-        ],
-        "detectedAnchors": null,
-        "provenance": {
-          "status": "blank",
-          "attempts": [],
-          "reviewerModel": null,
-          "ownerApproval": "pending",
-          "timestamps": {
-            "generated": null,
-            "reviewed": null,
-            "owner": null
-          }
-        }
-      },
-      {
-        "category": "charset-layer",
-        "id": "CH.KIT.HUMAN.M.01.IDLE.D.F0",
-        "catalogueId": "ALL_SHARED_CHARACTER_HUMAN-M-KIT-01_IDLE_D-F0",
-        "sheetFile": "art/approved/a9c/CH_KIT_HUMAN_M_01.png",
-        "anchor": [
-          24,
-          24
-        ],
-        "detectedAnchors": null,
-        "provenance": {
-          "status": "blank",
-          "attempts": [],
-          "reviewerModel": null,
-          "ownerApproval": "pending",
-          "timestamps": {
-            "generated": null,
-            "reviewed": null,
-            "owner": null
-          }
-        }
-      },
-      {
-        "category": "charset-layer",
-        "id": "CH.MONK.HUMAN.M.01.MONK-IDLE.D.F0",
-        "catalogueId": "ALL_SHARED_CHARACTER_HUMAN-M-MONK-01_MONK-IDLE_D-F0",
-        "sheetFile": "art/approved/a9c/CH_MONK_HUMAN_M_01.png",
-        "anchor": [
-          24,
-          24
-        ],
-        "detectedAnchors": null,
-        "provenance": {
-          "status": "blank",
-          "attempts": [],
-          "reviewerModel": null,
-          "ownerApproval": "pending",
-          "timestamps": {
-            "generated": null,
-            "reviewed": null,
-            "owner": null
-          }
-        }
-      },
-      {
         "category": "face",
         "id": "FA.PRESET.HUMAN.M.01.NEUTRAL.C0",
         "catalogueId": "ALL_SHARED_FACE_HUMAN-M-PRESET-01_NEUTRAL_C0",
@@ -25643,35 +25590,13 @@
         }
       },
       {
-        "category": "weapon-angle",
-        "id": "WP.LONGSWORD.UPRIGHT.F0",
-        "catalogueId": "ALL_SHARED_WEAPON_LONGSWORD_UPRIGHT_F0",
-        "sheetFile": "art/approved/a9c/WP_LONGSWORD_UPRIGHT.png",
+        "category": "character-clip",
+        "id": "CH.HUMAN.M.UNARMORED.IDLE.S.F0",
+        "catalogueId": "ALL_SHARED_CHARACTER_HUMAN-M-UNARMORED_IDLE_S-F0",
+        "sheetFile": "art/approved/characters/CH_HUMAN_M_UNARMORED_IDLE.png",
         "anchor": [
           24,
-          24
-        ],
-        "detectedAnchors": null,
-        "provenance": {
-          "status": "blank",
-          "attempts": [],
-          "reviewerModel": null,
-          "ownerApproval": "pending",
-          "timestamps": {
-            "generated": null,
-            "reviewed": null,
-            "owner": null
-          }
-        }
-      },
-      {
-        "category": "held-item",
-        "id": "HI.WIZARD-STAFF.UPRIGHT.F0",
-        "catalogueId": "ALL_SHARED_HELD_WIZARD-STAFF_UPRIGHT_F0",
-        "sheetFile": "art/approved/a9c/HI_WIZARD_STAFF_UPRIGHT.png",
-        "anchor": [
-          24,
-          24
+          47
         ],
         "detectedAnchors": null,
         "provenance": {
@@ -25942,7 +25867,13 @@
         "piece": "kit-warlock-cloak",
         "asymmetric": true
       }
-    ]
+    ],
+    "reservedGrammars": [
+      "held-item",
+      "weapon-angle",
+      "retired-attack"
+    ],
+    "characterMapGrammar": "character-clip"
   },
   "anchorTool": {
     "shift": "whole-pixels",
@@ -26335,7 +26266,7 @@
   "a9c": {
     "artManual": {
       "16": "Draw readable high-contrast fantasy at the 48 px scale. Ultima VII stays a feel and readability reference. The view is the RMMZ standard top-down 3/4 view. A head is about 1/5 of the body height. That ratio is a proportion, not a height split.",
-      "17": "The view is the RMMZ standard top-down 3/4 view. Draw the map by row, then by Z layer. Sprites stay four-direction. Movement is 4-way on the grid. Unit movement is orthogonal only.",
+      "17": "The view is the RMMZ standard top-down 3/4 view. Draw the map by row, then by Z layer. Characters use eight directions. The diagonal walk step is 3 px per axis per frame. Terrain, walls and caves stay on the square grid.",
       "18": "Furniture and placeables have four facings. A symmetric object may reuse a view only when its symmetric flag is set.",
       "19": "Terrain is 48 px tiles-pro Wang on a dual-grid renderer. Each biome has 3 to 5 ground types in a transition chain, with 2 or 3 plain variants. Detail decals stay 24 px.",
       "20": "Ground marks cover boot, bare, paw and hoof on snow, mud, sand, blood and wet ground, in four directions, with three fade steps. A worn path may become a road.",
@@ -26344,24 +26275,25 @@
       "23": "Every item has a world sprite in the RMMZ standard top-down 3/4 view beside its icon and its 144 px portrait. Placement stores an anchor, a footprint and the sim hook.",
       "24": "Near the player, items are drawn in full. Far away, the sim keeps counts and replaces them from a fixed seed. Legal drawn sizes are 12, 24 and 48 px, with no scaling.",
       "25": "A container opens a movable window of free-placed sprites. Backpack capacity in the worked example is 1 cu ft and 30 lb. Art is open and closed, four facings, plus a window background.",
-      "26": "One Z layer is 5 ft and 48 px. A quarter is 1.25 ft and 12 px. SRD 5-5-5 applies to spell areas and ranges only. Unit movement is orthogonal only. Movement, light, falling, carry and the 6 second tick use that scale. A 64 px tile is not adopted.",
+      "26": "One Z layer is 5 ft and 48 px. A quarter is 1.25 ft and 12 px. SRD 5-5-5 applies to spell areas and ranges only. Character movement is 8-way on the eight directions. The diagonal walk step is 3 px per axis per frame. Terrain stays on the square grid. A 64 px tile is not adopted.",
       "27": "The finished frame scales by an integer only. The default is 2x, nearest-neighbour. Extra space letterboxes or shows more map.",
       "28": "Cross-layer destruction covers ground collapse, wall breaches of 4 stages, and cave-ins, through the mass ledger.",
       "29": "Partial heights are quarters of 12 px. Cliff and wall pieces are RMMZ-style tiles, not quarter-height front strips. The old five-strata split is not used. The head ratio of about 1/5 stays a proportion rule.",
       "30": "Construction art is a palette-swap ghost, a blueprint, foundation, scaffolding, partial stages, site props and build animation. The ghost is not an alpha fade.",
       "31": "Characters and items must clear their ground by the grayscale value step before approval. The table-with-items trial is the reference, reviewed at true 2x. No image is generated here.",
       "32": "The palette is saturated and controlled, with no gray mush. Value carries the read. The brightest colours are reserved. Mood comes from light and grading. Every asset passes grayscale before approval.",
-      "33": "Style defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision keeps one master and the frame budgets. Item 33 counted 708 cells. Item 39 draws 660 because the melee body rows are not drawn. A character faceset may use up to 64 colours, painterly soft shading, and a black contour. Map sprites keep the 1 px self-tinted outline and the 16, 32 and 48 caps.",
-      "34": "Trial findings: request characters at size 42, animate with skeleton-v3 on create-character-v3 bodies, then propagate armour, helmet, the preset head and class kits. Weapon angles are 2 authored angles plus lossless 90 degree turns and flips, baked to 8 frames. The south walk row sits 2 px low. Prompts must force the RMMZ standard top-down 3/4 view. Small item world sprites remain an open test.",
-      "35": "Melee timing is the weapon sprite, not a body swing. The body holds a fixed upright right-hand grip. Draw the weapon 10 to 20 percent larger in native pixels. Do not scale it. The strike frame is held, with a hit spark and 1 or 2 px of knockback.",
-      "36": "These size, footprint, door, mirror, fortress, marker and font defaults are the PM defaults. The Owner may override them. West may be mirrored from east. Weapons and shields stay on the hand anchors.",
-      "37": "Facesets never change with gear. Each faceset is one complete 144 px image per preset. The race background is part of that image. Eight expressions are generated from it and keep its identity. A faceset is not built from layers. Charsets draw the race garb, the class signature kits, armour, helmet, held class items, weapon and shield. Other gear is an item, an icon, a portrait or a world sprite.",
-      "38": "The view is the RMMZ standard top-down 3/4 view. Movement is 4-way on the grid. Unit movement is orthogonal only. Sprites stay four-direction. Draw order stays row, then layer. SRD 5-5-5 applies to spell areas and ranges only. Cliff and wall pieces are RMMZ-style tiles with the depth cues. Side-wall, side-roof and corner-joint pieces are not added. Tall objects are not split.",
-      "39": "The right hand holds a fixed upright grip. The body stays mostly still and the weapon sprite rotates through up, 45 forward, level and back. Two authored angles plus lossless 90 degree turns and flips bake 8 frames. There is no runtime rotation. PixelLab is the primary generator. Retro Diffusion is standby. Nano Banana Pro is for concepts only. The bake-off is off. Cast, bow and work rows stay on the body.",
-      "40": "There are no class outfits. Each race has one standard garb per sex, 18 in all, on that race body template in the race palette. Casters and monks use 14 signature kit layers and one accent colour. Martial classes use armour, weapons and their accent. Held class items use 2 authored angles. The monk has a 4-frame stance idle and no held item.",
-      "41": "Art uses a fixed preset pool: 8 male and 8 female adults, 2 elder and 2 child looks per sex, 24 per race and 216 in all. Each preset is a complete head, hair and face for the charset and one complete 144 px faceset with 8 expressions. Portrait skin and hair variants are recorded per preset: a palette swap when the ramps map cleanly, otherwise a separate generation. The player picks a preset and a colour. Sim genetics stay on stats only. Dwarf male and female adult and elder bodies are 36 px.",
+      "33": "Style defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision keeps one master. The reserved paper-doll sheet counted 708 cells, then 660. Character map sprites use 4 idle frames and 4 walk frames. A character faceset may use up to 64 colours, painterly soft shading, and a black contour. Map sprites keep the 1 px self-tinted outline and the 16, 32 and 48 caps.",
+      "34": "The item 34 trial asked for skeleton-v3 on create-character-v3 bodies, then layer propagation, and for size 42. That path is retired for character map sprites. Characters are whole-sprite PixelLab v3 on a 48 px canvas. The south walk row of that trial sat 2 px low, and the anchor check still corrects a row. Prompts use High Top-Down and Selective outline. Small item world sprites remain an open test.",
+      "35": "Shared swing poses and a rotating weapon sprite are retired for character map sprites. A heavy hit may draw 1 or 2 px of knockback as a separate offset. Weapon length is a post-process check.",
+      "36": "These size, footprint, door, mirror, fortress, marker and font defaults are the PM defaults. The Owner may override them. Elf height follows the scale chart at 43. Characters are authored in eight directions. Creatures and props may mirror west from east.",
+      "37": "Facesets never change with gear. Each faceset is one complete 144 px image per preset. The race background is part of that image. Eight expressions are generated from it and keep its identity. A faceset is not built from layers. The character map sprite follows the worn armor state and the wielded weapon group. Other gear is an item, an icon, a portrait or a world sprite.",
+      "38": "The view is the RMMZ standard top-down 3/4 view. Characters use eight directions and move 8-way. The diagonal walk step is 3 px per axis per frame. Terrain, walls and caves stay on the square grid with rounded and ragged corners. Draw order stays row, then layer. SRD 5-5-5 applies to spell areas and ranges only. Cliff and wall pieces are RMMZ-style tiles with the depth cues. Side-wall, side-roof and corner-joint pieces are not added. Tall objects are not split.",
+      "39": "The fixed upright grip and the rotating weapon sprite are retired for character map sprites. Attacks are whole-sprite weapon-group clips. PixelLab is the primary generator. Retro Diffusion is standby. Nano Banana Pro is for concepts only. The bake-off is off.",
+      "40": "There are no class outfits. Race garb and class signature kits are not the character map sprite. Class shows in the portrait and the selected-unit panel. The map sprite follows the worn armor state.",
+      "41": "Art uses a fixed preset pool: 8 male and 8 female adults, 2 elder and 2 child looks per sex, 24 per race and 216 in all. Presets serve portraits. Each preset is one complete 144 px faceset with 8 expressions. Sim genetics stay on stats only. Dwarf male and female adult and elder bodies are 36 px. Children and elders have no character-map base yet.",
       "42": "Each preset is one complete 144 px portrait on one sheet of 8 expressions. The race background is painted into the portrait. Portraits may use up to 64 colours from the master plus RAMP_PORTRAIT_SKIN_HAIR, with painterly soft shading. A black contour is allowed. Map sprites keep the 1 px self-tinted outline. The style reference is OWNER_PORTRAIT_STYLE_REF_01.png. All 216 presets are recorded separate-generation, so complete faceset sheets are 864 and generation calls are 6912. Face-layer slot ids stay reserved. No art is generated here.",
-      "F": "Seasonal variants, building and object damage stages, and the sim work rows sit on the layered humanoid system. New work rows are farm, mine, build, craft, fish and cook, at 6 frames. Chop and carry are already rows."
+      "43": "Eighteen unarmored bases and 72 armor States make 90 armor states. Each state has 19 animations in eight directions. Idle and walk are 4 frames. The other clips are 6. The first-pass estimate is 15,200 generation calls, and production waits for Owner sign-off. Prompts are plain language. The post-process checks palette, anchor, height and weapon length. No art is generated here.",
+      "F": "Seasonal variants and building damage stay. Character work is one WORK clip on each armor state. Colony jobs that need a different tool use a shared overlay, and that match is Owner-open. Chop and carry are not separate character sheets."
     },
     "proportion": {
       "tone": "readable-high-contrast-fantasy",
@@ -26379,8 +26311,8 @@
         },
         {
           "id": "elf",
-          "bodyPx": 42,
-          "headPx": 8
+          "bodyPx": 43,
+          "headPx": 9
         },
         {
           "id": "half-elf",
@@ -26428,9 +26360,8 @@
         "E",
         "N"
       ],
-      "sprites": "4-direction",
-      "eightDirection": "declined",
-      "movement": "orthogonal-4-way",
+      "eightDirection": "characters",
+      "movement": "8-way-plugin",
       "cliffWall": "rmmz-tile",
       "quarterHeightFrontFaces": false,
       "sideWall": false,
@@ -26470,7 +26401,22 @@
           "replacement": "single-sprite",
           "retiredSlotIds": []
         }
-      ]
+      ],
+      "characterDirections": [
+        "S",
+        "SW",
+        "W",
+        "NW",
+        "N",
+        "NE",
+        "E",
+        "SE"
+      ],
+      "characterSprites": "8-direction",
+      "diagonalStepPx": 3,
+      "terrainGrid": "square",
+      "terrainCorners": "rounded-ragged",
+      "nonCharacterSprites": "4-direction"
     },
     "furniture": {
       "facings": 4,
@@ -26635,14 +26581,9 @@
           42,
           43
         ],
-        "animation": "skeleton-v3-on-create-character-v3",
-        "layerPropagation": [
-          "armour",
-          "helmet",
-          "preset-head",
-          "class-kit"
-        ],
-        "weaponsShields": "anchored-sprites",
+        "animation": "pixellab-v3-whole-sprite",
+        "layerPropagation": "retired-for-characters",
+        "weaponsShields": "weapon-inside-attack-clip",
         "southWalk": {
           "row": "walk",
           "facing": "S",
@@ -26652,9 +26593,12 @@
           ],
           "correctedBy": "AS-ANCHOR-001"
         },
-        "weaponAngles": "two-authored-plus-lossless-90",
+        "weaponAngles": "retired-for-characters",
         "view": "rmmz-top-down-3-4",
-        "smallItemWorldSprites": "open-test"
+        "smallItemWorldSprites": "open-test",
+        "canvasPx": 48,
+        "outline": "selective",
+        "pixellabCamera": "high-top-down"
       }
     },
     "groundMarks": {
@@ -26784,7 +26728,8 @@
       ],
       "workFrames": 6,
       "workDirections": 4,
-      "onLayeredSystem": true
+      "onLayeredSystem": false,
+      "characterWork": "armor-state-clip"
     },
     "placement": {
       "near": "full-detail",
@@ -26921,7 +26866,7 @@
     "scale": {
       "diagonals": "5-5-5",
       "diagonalScope": "spell-areas-and-ranges",
-      "unitMovement": "orthogonal",
+      "unitMovement": "characters-8-way",
       "torchBrightFt": 20,
       "torchDimFt": 20,
       "torchBrightTiles": 4,
@@ -26941,7 +26886,8 @@
       "dimLight": "dither-2-3",
       "gradients": false,
       "positions": "whole-pixels",
-      "historicalDomain": "unchanged"
+      "historicalDomain": "unchanged",
+      "diagonalStepPx": 3
     },
     "render": {
       "integerOnly": true,
@@ -27223,89 +27169,40 @@
           "status": "allowed-when-master-is-short",
           "colours": []
         }
+      },
+      "characterClipFrames": {
+        "idle": 4,
+        "walk": 4,
+        "other": 6
+      },
+      "characterWalk": "four-frames",
+      "reservedSheetWalk": "rmmz-1-2-1-0",
+      "characterClipPalette": {
+        "promptStatesCount": false,
+        "item33Cap": 32,
+        "afterSnapCap": 40,
+        "afterSnapStatus": "tune-owner-open"
       }
     },
     "melee": {
-      "weapon": "separate-sprite",
-      "pin": "one-grip-anchor",
-      "body": "mostly-still",
-      "grip": "fixed-upright-right-hand",
-      "runtimeRotation": false,
-      "uprightSprite": true,
-      "authoredAngles": 2,
-      "lossless": "90-degree-turns-and-flips",
-      "bakedFrames": 8,
-      "arc": [
-        "up",
-        "45-forward",
-        "level",
-        "back"
-      ],
-      "frames": 6,
+      "status": "retired-for-characters",
+      "characterAttack": "weapon-group-clip",
+      "fixedGrip": "retired",
+      "rotatingWeapon": "retired",
+      "sharedSwing": "retired",
+      "shieldsAnimated": false,
       "bodyAttackRow": false,
-      "frameNames": [
-        "wind-up",
-        "raise",
-        "45-forward",
-        "level",
-        "strike",
-        "recovery"
-      ],
-      "strikeFrame": 4,
-      "strikeHeldLonger": true,
-      "strikeHoldFrames": 12,
-      "otherHoldFrames": 6,
-      "swingTypes": {
-        "overhead-chop": {
-          "weapons": [
-            "axe",
-            "hammer"
-          ],
-          "bodyFrames": false,
-          "pace": "weapon-rotation"
-        },
-        "side-slash": {
-          "weapons": [
-            "sword"
-          ],
-          "bodyFrames": false,
-          "pace": "weapon-rotation"
-        },
-        "thrust": {
-          "weapons": [
-            "spear",
-            "dagger"
-          ],
-          "bodyFrames": false,
-          "pace": "weapon-rotation"
-        },
-        "two-hand": {
-          "weapons": [
-            "greatsword",
-            "greataxe"
-          ],
-          "bodyFrames": false,
-          "pace": "heavier-slower"
-        }
-      },
-      "hitSpark": "strike-frame",
-      "knockbackPx": [
-        1,
-        2
-      ],
-      "oversizeMin": 1.1,
-      "oversizeMax": 1.2,
       "scaled": false,
       "sample": {
         "id": "longsword",
-        "basePx": 20,
-        "drawnPx": 24,
+        "lengthPx": 18,
+        "tolerancePx": 1,
         "scaled": false
       },
-      "bodyPoseRowsKept": [
-        "cast",
-        "bow",
-        "work"
+      "hitSpark": "separate-fx",
+      "knockbackPx": [
+        1,
+        2
       ]
     },
     "pmDefaults": {
@@ -27360,7 +27257,7 @@
         },
         {
           "id": "elf",
-          "px": 42
+          "px": 43
         },
         {
           "id": "half-elf",
@@ -27395,7 +27292,7 @@
           "px": 44
         }
       ],
-      "raceHeightNote": "Halfling and gnome use 33 inside 32-34. Half-elf and tiefling use 42, the human and elf height. The Owner may override.",
+      "raceHeightNote": "Elf follows the scale chart at 43. Halfling and gnome stay at 33 inside 32-34 until the Owner resolves the size-class gap. The Owner may override.",
       "doors": {
         "widthTiles": 1,
         "minHeightLayers": 1.5,
@@ -27406,18 +27303,22 @@
       "mirror": {
         "westFromEast": true,
         "subjects": [
-          "bodies",
-          "gear-layers",
-          "creatures"
+          "creatures",
+          "props"
         ],
         "weapons": "hand-anchor",
-        "shields": "hand-anchor",
+        "shields": "item-not-character-clip",
         "runtimeFlip": false,
         "asymmetric": "own-west-view",
         "samples": {
-          "body": {
-            "id": "body",
+          "creature": {
+            "id": "wolf",
             "westView": "mirror-from-east"
+          },
+          "character": {
+            "id": "human-male",
+            "authoredDirections": 8,
+            "mirrored": false
           },
           "weapon": {
             "id": "longsword",
@@ -27429,7 +27330,8 @@
             "asymmetric": true,
             "westView": "own"
           }
-        }
+        },
+        "characterMirror": false
       },
       "fortress": {
         "scale": 1,
@@ -27468,6 +27370,9 @@
       "faceGear": [],
       "facesetGear": "none",
       "notDrawn": [
+        "paper-doll",
+        "race-garb",
+        "class-kit",
         "generic-cloak",
         "boots",
         "gloves",
@@ -27502,40 +27407,20 @@
       "elderFlag": "Elder base bodies are 18: 9 races by 2 sexes. Class does not multiply them. The adult sheet is placed by the offset table.",
       "layerSamples": [
         {
-          "layer": "base-body-race-garb",
+          "layer": "whole-sprite",
           "drawn": true
         },
         {
-          "layer": "race-features",
-          "drawn": true
+          "layer": "paper-doll",
+          "drawn": false
         },
         {
-          "layer": "preset-head",
-          "drawn": true
+          "layer": "race-garb",
+          "drawn": false
         },
         {
-          "layer": "kit-wizard-robe",
-          "drawn": true
-        },
-        {
-          "layer": "kit-bard-cape",
-          "drawn": true
-        },
-        {
-          "layer": "armour",
-          "drawn": true
-        },
-        {
-          "layer": "weapon",
-          "drawn": true
-        },
-        {
-          "layer": "shield",
-          "drawn": true
-        },
-        {
-          "layer": "hand-glow",
-          "drawn": true
+          "layer": "class-kit",
+          "drawn": false
         },
         {
           "layer": "generic-cloak",
@@ -27584,7 +27469,22 @@
           288
         ],
         "gearKinds": []
-      }
+      },
+      "mapSprite": "whole-sprite-v3",
+      "paperDollMapSprite": false,
+      "raceGarbIsMapSource": false,
+      "classKitsOnMap": false,
+      "perClassMapSprites": false,
+      "commonerSpriteSets": false,
+      "fixedWeaponPerLook": false,
+      "gearThatChangesMap": [
+        "armor-category",
+        "weapon-group"
+      ],
+      "classShownIn": [
+        "portrait",
+        "selected-unit-panel"
+      ]
     },
     "sizing": {
       "races": 9,
@@ -27614,7 +27514,7 @@
       "retiredClassGarbSheets": 324,
       "presetLooks": 216,
       "presetFacesetSheets": 864,
-      "presetCharsetHeads": 216,
+      "presetCharsetHeads": 0,
       "presetPaletteSwapSheets": 0,
       "droppedMeleeBodyCells": 48,
       "item33Cells": 708,
@@ -27629,7 +27529,21 @@
       "portraitSourceImages": 864,
       "portraitExpressionPasses": 6048,
       "portraitGenerationCalls": 6912,
-      "portraitColourNote": "All 216 presets are separate-generation until a skin and hair ramp map is proven. A palette-swap preset adds 0 variant sheets."
+      "portraitColourNote": "All 216 presets are separate-generation until a skin and hair ramp map is proven. A palette-swap preset adds 0 variant sheets.",
+      "retiredPaperDoll": {
+        "item33Cells": 708,
+        "cellsPerFullSheet": 660,
+        "raceGarbDesigns": 18,
+        "kitSheets": 252,
+        "baseBodySheets": 45,
+        "presetCharsetHeads": 216
+      },
+      "mapKitSheets": 0,
+      "mapRaceGarbSheets": 0,
+      "characterBases": 18,
+      "characterArmorStates": 72,
+      "characterArmorTotal": 90,
+      "firstPassRecorded": 15200
     },
     "catalogueCategories": [
       {
@@ -27646,7 +27560,8 @@
           "facings": 4,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "GLOW",
@@ -27662,7 +27577,8 @@
           "facings": 1,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "DECAL",
@@ -27678,7 +27594,8 @@
           "facings": 1,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "WANG",
@@ -27694,7 +27611,8 @@
           "facings": 1,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "WORLDSPRITE",
@@ -27710,7 +27628,8 @@
           "facings": 4,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "PLACEMENT",
@@ -27726,7 +27645,8 @@
           "facings": 4,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "CONTAINER",
@@ -27742,7 +27662,8 @@
           "facings": 4,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "DAMAGE",
@@ -27758,7 +27679,8 @@
           "facings": 1,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "SEASON",
@@ -27774,7 +27696,8 @@
           "facings": 1,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "WORKANIM",
@@ -27790,7 +27713,8 @@
           "facings": 4,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "CONSTRUCTION",
@@ -27806,7 +27730,8 @@
           "facings": 1,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "XLAYER",
@@ -27822,7 +27747,8 @@
           "facings": 1,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "DEPTH",
@@ -27839,7 +27765,8 @@
           "form": "rmmz-tile",
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "PLACEABLE",
@@ -27855,7 +27782,8 @@
           "facings": 4,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "MARKER",
@@ -27871,7 +27799,8 @@
           "facings": 1,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "FONT",
@@ -27887,7 +27816,8 @@
           "facings": 1,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "RANGE",
@@ -27903,7 +27833,8 @@
           "facings": 1,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "SPARK",
@@ -27919,7 +27850,8 @@
           "facings": 1,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "RACEGARB",
@@ -27935,7 +27867,8 @@
           "facings": 4,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "retired"
       },
       {
         "id": "CLASSKIT",
@@ -27951,7 +27884,8 @@
           "facings": 4,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "retired"
       },
       {
         "id": "MONKIDLE",
@@ -27967,7 +27901,8 @@
           "facings": 4,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "retired"
       },
       {
         "id": "HELD",
@@ -27983,7 +27918,8 @@
           "facings": 1,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "retired"
       },
       {
         "id": "PRESET",
@@ -27999,7 +27935,8 @@
           "facings": 1,
           "nativeScale": 1,
           "scaled": false
-        }
+        },
+        "status": "live"
       },
       {
         "id": "WEAPONCEL",
@@ -28013,6 +27950,24 @@
           ],
           "frames": 8,
           "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        },
+        "status": "retired"
+      },
+      {
+        "id": "CHARACTER",
+        "ruleId": "AS-CHMAP-001",
+        "slotGrammar": "character-clip",
+        "sampleSlotId": "CH.HUMAN.M.UNARMORED.IDLE.S.F0",
+        "status": "live",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 4,
+          "facings": 8,
           "nativeScale": 1,
           "scaled": false
         }
@@ -28269,123 +28224,24 @@
         "authoredAngles": 2,
         "bakedFrames": 8,
         "runtimeRotation": false
+      },
+      {
+        "id": "CHARACTER",
+        "ruleId": "AS-CHMAP-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 4,
+        "facings": 8,
+        "bases": 18,
+        "armorStates": 72,
+        "armorTotal": 90,
+        "anims": 19,
+        "firstPassRecorded": 15200
       }
     ],
     "classKits": {
-      "layers": [
-        {
-          "id": "kit-monk-wraps",
-          "classId": "monk",
-          "group": "body-hugging",
-          "design": "01",
-          "asymmetric": false,
-          "note": "Hand and foot wraps."
-        },
-        {
-          "id": "kit-monk-sash",
-          "classId": "monk",
-          "group": "body-hugging",
-          "design": "02",
-          "asymmetric": false,
-          "note": "Sash."
-        },
-        {
-          "id": "kit-wizard-robe",
-          "classId": "wizard",
-          "group": "long",
-          "design": "03",
-          "asymmetric": false,
-          "note": "Long robe."
-        },
-        {
-          "id": "kit-cleric-tabard",
-          "classId": "cleric",
-          "group": "long",
-          "design": "04",
-          "asymmetric": false,
-          "note": "Tabard with a large holy symbol."
-        },
-        {
-          "id": "kit-sorcerer-mantle",
-          "classId": "sorcerer",
-          "group": "mantle",
-          "design": "05",
-          "asymmetric": false,
-          "note": "Short mantle. Head is bare."
-        },
-        {
-          "id": "kit-druid-mantle",
-          "classId": "druid",
-          "group": "mantle",
-          "design": "06",
-          "asymmetric": false,
-          "note": "Fur mantle."
-        },
-        {
-          "id": "kit-bard-cape",
-          "classId": "bard",
-          "group": "cape",
-          "design": "07",
-          "asymmetric": false,
-          "note": "Short cape."
-        },
-        {
-          "id": "kit-warlock-cloak",
-          "classId": "warlock",
-          "group": "cape",
-          "design": "08",
-          "asymmetric": true,
-          "note": "Jagged-hem hooded cloak."
-        },
-        {
-          "id": "kit-wizard-hat",
-          "classId": "wizard",
-          "group": "headwear",
-          "design": "09",
-          "asymmetric": true,
-          "note": "Pointed hat. One headwear slot."
-        },
-        {
-          "id": "kit-wizard-hood",
-          "classId": "wizard",
-          "group": "headwear",
-          "design": "10",
-          "asymmetric": false,
-          "note": "Deep hood. Alternative to the pointed hat."
-        },
-        {
-          "id": "kit-warlock-hood",
-          "classId": "warlock",
-          "group": "headwear",
-          "design": "11",
-          "asymmetric": false,
-          "note": "Hood in the one headwear slot."
-        },
-        {
-          "id": "kit-druid-circlet",
-          "classId": "druid",
-          "group": "headwear",
-          "design": "12",
-          "asymmetric": false,
-          "note": "Leaf or antler circlet."
-        },
-        {
-          "id": "kit-bard-cap",
-          "classId": "bard",
-          "group": "headwear",
-          "design": "13",
-          "asymmetric": true,
-          "note": "Feathered cap."
-        },
-        {
-          "id": "kit-monk-topknot",
-          "classId": "monk",
-          "group": "head-overlay",
-          "design": "14",
-          "asymmetric": false,
-          "note": "Topknot. A head overlay, not the headwear slot."
-        }
-      ],
       "martial": [
         "barbarian",
         "fighter",
@@ -28571,6 +28427,755 @@
           "colourOnly": false,
           "secondChannel": "silhouette",
           "groundHex": "#333B45"
+        }
+      ],
+      "retiredLayers": [
+        {
+          "id": "kit-monk-wraps",
+          "classId": "monk",
+          "group": "body-hugging",
+          "design": "01",
+          "asymmetric": false,
+          "note": "Hand and foot wraps."
+        },
+        {
+          "id": "kit-monk-sash",
+          "classId": "monk",
+          "group": "body-hugging",
+          "design": "02",
+          "asymmetric": false,
+          "note": "Sash."
+        },
+        {
+          "id": "kit-wizard-robe",
+          "classId": "wizard",
+          "group": "long",
+          "design": "03",
+          "asymmetric": false,
+          "note": "Long robe."
+        },
+        {
+          "id": "kit-cleric-tabard",
+          "classId": "cleric",
+          "group": "long",
+          "design": "04",
+          "asymmetric": false,
+          "note": "Tabard with a large holy symbol."
+        },
+        {
+          "id": "kit-sorcerer-mantle",
+          "classId": "sorcerer",
+          "group": "mantle",
+          "design": "05",
+          "asymmetric": false,
+          "note": "Short mantle. Head is bare."
+        },
+        {
+          "id": "kit-druid-mantle",
+          "classId": "druid",
+          "group": "mantle",
+          "design": "06",
+          "asymmetric": false,
+          "note": "Fur mantle."
+        },
+        {
+          "id": "kit-bard-cape",
+          "classId": "bard",
+          "group": "cape",
+          "design": "07",
+          "asymmetric": false,
+          "note": "Short cape."
+        },
+        {
+          "id": "kit-warlock-cloak",
+          "classId": "warlock",
+          "group": "cape",
+          "design": "08",
+          "asymmetric": true,
+          "note": "Jagged-hem hooded cloak."
+        },
+        {
+          "id": "kit-wizard-hat",
+          "classId": "wizard",
+          "group": "headwear",
+          "design": "09",
+          "asymmetric": true,
+          "note": "Pointed hat. One headwear slot."
+        },
+        {
+          "id": "kit-wizard-hood",
+          "classId": "wizard",
+          "group": "headwear",
+          "design": "10",
+          "asymmetric": false,
+          "note": "Deep hood. Alternative to the pointed hat."
+        },
+        {
+          "id": "kit-warlock-hood",
+          "classId": "warlock",
+          "group": "headwear",
+          "design": "11",
+          "asymmetric": false,
+          "note": "Hood in the one headwear slot."
+        },
+        {
+          "id": "kit-druid-circlet",
+          "classId": "druid",
+          "group": "headwear",
+          "design": "12",
+          "asymmetric": false,
+          "note": "Leaf or antler circlet."
+        },
+        {
+          "id": "kit-bard-cap",
+          "classId": "bard",
+          "group": "headwear",
+          "design": "13",
+          "asymmetric": true,
+          "note": "Feathered cap."
+        },
+        {
+          "id": "kit-monk-topknot",
+          "classId": "monk",
+          "group": "head-overlay",
+          "design": "14",
+          "asymmetric": false,
+          "note": "Topknot. A head overlay, not the headwear slot."
+        }
+      ],
+      "status": "retired-not-map-sprite",
+      "mapSprite": false
+    },
+    "characterMap": {
+      "bases": 18,
+      "armorStates": 72,
+      "armorTotal": 90,
+      "armors": [
+        "UNARMORED",
+        "ROBE",
+        "LIGHT",
+        "MEDIUM",
+        "HEAVY"
+      ],
+      "anims": [
+        "IDLE",
+        "WALK",
+        "WORK",
+        "SLEEP",
+        "SIT",
+        "EAT",
+        "CARRY",
+        "HURT",
+        "KNOCKDOWN",
+        "DEAD",
+        "ATK_UNARMED",
+        "ATK_DAGGER",
+        "ATK_1H",
+        "ATK_2H",
+        "ATK_POLEARM",
+        "ATK_STAFF",
+        "ATK_BOW",
+        "ATK_XBOW",
+        "CAST"
+      ],
+      "directions": [
+        "S",
+        "SW",
+        "W",
+        "NW",
+        "N",
+        "NE",
+        "E",
+        "SE"
+      ],
+      "perClassMapSprites": false,
+      "commonerSpriteSets": false,
+      "fixedWeaponPerLook": false,
+      "paperDollMapSprite": false,
+      "raceGarbIsMapSource": false,
+      "kitOverlayOnMap": false,
+      "rotatingWeapon": false,
+      "fixedGrip": false,
+      "sharedSwing": false,
+      "gearThatChangesMap": [
+        "armor-category",
+        "weapon-group"
+      ],
+      "classShownIn": [
+        "portrait",
+        "selected-unit-panel"
+      ],
+      "shieldsAnimated": false,
+      "oneHandGroup": "one-hand-sword",
+      "oneHandDrawsShield": false,
+      "unarmoredRole": "commoners-villagers",
+      "robeRole": "casters",
+      "idleFrames": 4,
+      "walkFrames": 4,
+      "otherFrames": 6,
+      "styleRow": 6,
+      "canvasPx": 48,
+      "humanTall": 42,
+      "humanWide": 18,
+      "outline": "selective",
+      "camera": "high-top-down",
+      "gameView": "rmmz-top-down-3-4",
+      "otherClassesCamera": "owner-open",
+      "scaleChartWins": true,
+      "sizeClassesConflict": "owner-open",
+      "promptForm": "plain-language",
+      "promptHasPixelSpecs": false,
+      "weaponLengthTolerancePx": 1,
+      "artGeneration": "owner-web-ui-only",
+      "writerRunsGenerator": false,
+      "production": "owner-sign-off",
+      "characterMirror": false,
+      "slotGrammar": "character-clip",
+      "sampleSlotId": "CH.HUMAN.M.UNARMORED.IDLE.S.F0",
+      "postProcess": [
+        "palette-snap",
+        "anchor",
+        "height",
+        "weapon-length",
+        "outline",
+        "grayscale"
+      ],
+      "raceThemeFeeds": [
+        "armor-states",
+        "buildings",
+        "walls",
+        "furniture",
+        "workstations",
+        "constructed-objects",
+        "ui-window-skin",
+        "faceset-background"
+      ],
+      "selectedUnit": {
+        "panel": "race-window-skin",
+        "facesetBackground": "race-background"
+      },
+      "sources": {
+        "classStandardSha256": "27f74ee271f3777f8ab1d11606c17ca2d56638ed8f714be010a964b4ce5593ce",
+        "classStandardV1Sha256": "7baffd45ce4e05584a870d5ab9783bd99794422676f1fd9e486945274ccab3db",
+        "classStandardV2Sha256": "bf34763f41327644cadc9b8fcf7cad1c1555cdb99de3974d44613efcf904c7ac",
+        "recipesSha256": "9785c0690a402be8916b1c9ceaed93ac14c24c6e5c2ed873c408f67e9c2ba32e",
+        "addendumSha256": "87210fe055efa306c4ba4ec55b9e286e27161da71fa88425f47803d4790077f4",
+        "scaleChartSha256": "f3af0b1140eaa8643914832fced0e0f07a260662e331bf8da2cf1c8ae805d29d",
+        "recipesSection30": "superseded"
+      },
+      "estimate": {
+        "bases": 18,
+        "baseGens": 36,
+        "armorStates": 72,
+        "armorStateGens": 1440,
+        "armorTotal": 90,
+        "anims": 19,
+        "directions": 8,
+        "animationCalls": 13680,
+        "firstPassComputed": 15156,
+        "firstPassRecorded": 15200,
+        "firstPassRange": [
+          15200,
+          19300
+        ],
+        "retryRange": [
+          18900,
+          24000
+        ],
+        "perRaceSex": 842,
+        "acceptedBudget": 40000,
+        "rerun": true,
+        "firstTest": {
+          "race": "human",
+          "sex": "M",
+          "armor": "MEDIUM",
+          "weaponAnims": 8,
+          "directions": 8,
+          "gens": 86,
+          "withRetries": 110
+        }
+      },
+      "heights": [
+        {
+          "id": "human",
+          "source": "scale_chart",
+          "px": 42,
+          "min": 40,
+          "max": 44,
+          "wide": 18
+        },
+        {
+          "id": "dwarf",
+          "source": "scale_chart",
+          "px": 36,
+          "min": 34,
+          "max": 38,
+          "wide": 20,
+          "conflictPx": 32,
+          "conflict": "owner-open"
+        },
+        {
+          "id": "elf",
+          "source": "scale_chart",
+          "px": 43,
+          "min": 42,
+          "max": 46,
+          "wide": 16,
+          "conflictPx": 39,
+          "conflict": "owner-open"
+        },
+        {
+          "id": "half-elf",
+          "source": "size_classes",
+          "px": 39,
+          "min": 35,
+          "max": 42,
+          "wide": 18,
+          "conflict": "owner-open"
+        },
+        {
+          "id": "halfling",
+          "source": "size_classes",
+          "px": 21,
+          "min": 21,
+          "max": 21,
+          "wide": 18,
+          "conflict": "owner-open"
+        },
+        {
+          "id": "gnome",
+          "source": "size_classes",
+          "px": 25,
+          "min": 21,
+          "max": 28,
+          "wide": 18,
+          "conflict": "owner-open"
+        },
+        {
+          "id": "half-orc",
+          "source": "size_classes",
+          "px": 41,
+          "min": 35,
+          "max": 46,
+          "wide": 18,
+          "conflict": "owner-open"
+        },
+        {
+          "id": "tiefling",
+          "source": "size_classes",
+          "px": 42,
+          "min": 35,
+          "max": 46,
+          "wide": 18,
+          "conflict": "owner-open"
+        },
+        {
+          "id": "dragonborn",
+          "source": "size_classes",
+          "px": 47,
+          "min": 46,
+          "max": 48,
+          "wide": 18,
+          "conflict": "owner-open"
+        }
+      ],
+      "raceThemes": [
+        {
+          "id": "human",
+          "status": "owner-open",
+          "theme": "human clothing, trim, materials, motifs and silhouette cues"
+        },
+        {
+          "id": "dwarf",
+          "status": "owner-open",
+          "theme": "dwarf clothing, trim, materials, motifs and silhouette cues"
+        },
+        {
+          "id": "elf",
+          "status": "owner-open",
+          "theme": "elf clothing, trim, materials, motifs and silhouette cues"
+        },
+        {
+          "id": "half-elf",
+          "status": "owner-open",
+          "theme": "half-elf clothing, trim, materials, motifs and silhouette cues"
+        },
+        {
+          "id": "halfling",
+          "status": "owner-open",
+          "theme": "halfling clothing, trim, materials, motifs and silhouette cues"
+        },
+        {
+          "id": "gnome",
+          "status": "owner-open",
+          "theme": "gnome clothing, trim, materials, motifs and silhouette cues"
+        },
+        {
+          "id": "half-orc",
+          "status": "owner-open",
+          "theme": "half-orc clothing, trim, materials, motifs and silhouette cues"
+        },
+        {
+          "id": "tiefling",
+          "status": "owner-open",
+          "theme": "tiefling clothing, trim, materials, motifs and silhouette cues"
+        },
+        {
+          "id": "dragonborn",
+          "status": "owner-open",
+          "theme": "dragonborn clothing, trim, materials, motifs and silhouette cues"
+        }
+      ],
+      "armorSheet": [
+        {
+          "id": "UNARMORED",
+          "madeAs": "base",
+          "prompt": "plain linen work clothes, a leather belt and leather boots, empty hands",
+          "castGesture": "hands clasped at the chest, then hands open forward",
+          "work": "tilling soil with a hoe"
+        },
+        {
+          "id": "ROBE",
+          "madeAs": "state",
+          "prompt": "an ankle-length robe with wide sleeves, a cowl, a sash and a belt pouch, empty hands",
+          "castGesture": "both hands raised, one tracing a rune, the other palm forward",
+          "work": "grinding herbs with a mortar and pestle"
+        },
+        {
+          "id": "LIGHT",
+          "madeAs": "state",
+          "prompt": "a fitted leather jerkin, bracers, a belt and soft boots, empty hands",
+          "castGesture": "one hand thrust forward, the other at the belt",
+          "work": "fletching an arrow with a knife"
+        },
+        {
+          "id": "MEDIUM",
+          "madeAs": "state",
+          "prompt": "a mail shirt, a tabard with an emblem, pauldrons, a belt and boots, empty hands",
+          "castGesture": "raises a holy emblem, the other palm open",
+          "work": "striking an anvil with a smith hammer"
+        },
+        {
+          "id": "HEAVY",
+          "madeAs": "state",
+          "prompt": "full plate with an open-face helm, a surcoat and an emblem, empty hands",
+          "castGesture": "a gauntleted fist to the brow, then the palm thrust forward",
+          "work": "swinging a pickaxe at a rock"
+        }
+      ],
+      "weaponGroups": [
+        {
+          "id": "ATK_UNARMED",
+          "group": "unarmed",
+          "shield": false,
+          "drawn": "none",
+          "lengthPx": 0,
+          "motion": "throws a straight right punch, then a left follow-up",
+          "srd": [
+            "unarmed-strike",
+            "gauntlet",
+            "improvised"
+          ]
+        },
+        {
+          "id": "ATK_DAGGER",
+          "group": "dagger",
+          "shield": false,
+          "drawn": "dagger",
+          "lengthPx": 7,
+          "motion": "stabs with a dagger in a short reverse grip",
+          "srd": [
+            "dagger",
+            "sickle",
+            "light-hammer",
+            "handaxe"
+          ]
+        },
+        {
+          "id": "ATK_1H",
+          "group": "one-hand-sword",
+          "shield": false,
+          "drawn": "longsword",
+          "lengthPx": 18,
+          "motion": "swings a longsword in a rising diagonal slash",
+          "srd": [
+            "longsword",
+            "shortsword",
+            "scimitar",
+            "rapier",
+            "mace",
+            "club",
+            "morningstar",
+            "flail",
+            "warhammer",
+            "battleaxe",
+            "war-pick",
+            "whip"
+          ]
+        },
+        {
+          "id": "ATK_2H",
+          "group": "two-hand",
+          "shield": false,
+          "drawn": "greatsword",
+          "lengthPx": 22,
+          "motion": "cuts downward with a greatsword held in both hands",
+          "srd": [
+            "greatsword",
+            "greataxe",
+            "maul",
+            "greatclub"
+          ]
+        },
+        {
+          "id": "ATK_POLEARM",
+          "group": "polearm",
+          "shield": false,
+          "drawn": "spear",
+          "lengthPx": 30,
+          "motion": "thrusts a spear forward with both hands",
+          "srd": [
+            "spear",
+            "trident",
+            "glaive",
+            "halberd",
+            "pike",
+            "lance"
+          ]
+        },
+        {
+          "id": "ATK_STAFF",
+          "group": "staff",
+          "shield": false,
+          "drawn": "quarterstaff",
+          "lengthPx": 30,
+          "motion": "sweeps a quarterstaff with both hands",
+          "srd": [
+            "quarterstaff"
+          ]
+        },
+        {
+          "id": "ATK_BOW",
+          "group": "bow",
+          "shield": false,
+          "drawn": "shortbow",
+          "lengthPx": 20,
+          "motion": "draws a shortbow to the cheek, releases, and recovers",
+          "srd": [
+            "shortbow",
+            "longbow"
+          ]
+        },
+        {
+          "id": "ATK_XBOW",
+          "group": "crossbow",
+          "shield": false,
+          "drawn": "light-crossbow",
+          "lengthPx": 12,
+          "motion": "aims a light crossbow, releases, and reloads",
+          "srd": [
+            "light-crossbow",
+            "heavy-crossbow",
+            "hand-crossbow"
+          ]
+        }
+      ],
+      "templates": {
+        "base": "{race} {sex}, {clothes}, empty hands, standing relaxed, high top-down view, readable high-contrast fantasy pixel art",
+        "armorState": "Change the clothes to {armor clothes}. Keep the face, hair, skin, body and standing pose. Empty hands. No weapon.",
+        "animation": "{facing}. {motion}. High top-down view, readable high-contrast fantasy pixel art.",
+        "animations": {
+          "IDLE": "standing idle, breathing, a small sway, feet planted",
+          "WALK": "walking in place, left foot forward, passing, right foot forward, passing, arms swinging opposite the legs",
+          "WORK": "working with the armor tool in a loop, raising it, making contact, and returning",
+          "SLEEP": "lies down on one side and sleeps, eyes closed, with slow breathing",
+          "SIT": "sits down cross-legged, hands on the knees, then a small breath",
+          "EAT": "eats from a bowl with a spoon, lifting, eating, lowering, then a pause",
+          "CARRY": "walks while holding a wooden crate at the chest, arms locked around it",
+          "HURT": "flinches from a hit, recoils, hunches, then recovers to standing",
+          "KNOCKDOWN": "is knocked down, falls backward, and ends lying on the back with eyes open",
+          "DEAD": "collapses, falls to the knees, and ends lying face down, still",
+          "ATK_UNARMED": "throws a straight right punch, then a left follow-up",
+          "ATK_DAGGER": "stabs with a dagger in a short reverse grip",
+          "ATK_1H": "swings a longsword in a rising diagonal slash",
+          "ATK_2H": "cuts downward with a greatsword held in both hands",
+          "ATK_POLEARM": "thrusts a spear forward with both hands",
+          "ATK_STAFF": "sweeps a quarterstaff with both hands",
+          "ATK_BOW": "draws a shortbow to the cheek, releases, and recovers",
+          "ATK_XBOW": "aims a light crossbow, releases, and reloads",
+          "CAST": "performs the armor cast gesture, gathering, releasing, and returning to ready"
+        }
+      },
+      "facingPhrases": {
+        "S": "facing the viewer",
+        "SW": "facing down and to the left, three-quarter front view",
+        "W": "facing left, side profile",
+        "NW": "facing up and to the left, three-quarter back view",
+        "N": "facing away from the viewer",
+        "NE": "facing up and to the right, three-quarter back view",
+        "E": "facing right, side profile",
+        "SE": "facing down and to the right, three-quarter front view"
+      },
+      "workedExamples": [
+        "human man, plain linen work clothes, a leather belt and leather boots, empty hands, standing relaxed, high top-down view, readable high-contrast fantasy pixel art",
+        "Change his clothes to a mail shirt and a tabard with a gold sun emblem, steel pauldrons, a leather belt and leather boots. Keep his face, hair, skin, body and standing pose. Empty hands. No weapon.",
+        "facing the viewer. He swings a longsword in a rising diagonal slash. High top-down view, readable high-contrast fantasy pixel art."
+      ],
+      "process": [
+        {
+          "id": "0",
+          "text": "The Owner fills the plain-language template from the race theme, the armor row and, for an attack, the weapon group. This lane does not generate."
+        },
+        {
+          "id": "1",
+          "text": "Web UI Create Character. Canvas 48. Selective outline. High Top-Down. Medium detail. The base is unarmored, with empty hands."
+        },
+        {
+          "id": "2",
+          "text": "Web UI Create State for robe, light, medium and heavy. The base is the only reference. Empty hands. Same standing pose."
+        },
+        {
+          "id": "3",
+          "text": "Web UI Animations, one direction at a time, eight directions. Idle and walk use four frames. Every other clip uses six."
+        },
+        {
+          "id": "5",
+          "text": "All eight directions are production directions. Characters are not mirrored."
+        },
+        {
+          "id": "6",
+          "text": "Pack 48 by 48 frames. Row order is south, southwest, west, northwest, north, northeast, east, southeast, unless the Owner changes the plugin order."
+        },
+        {
+          "id": "7",
+          "text": "Post-process crops and anchors the figure, snaps the palette, and checks height, outline, grayscale and weapon length before acceptance."
+        }
+      ],
+      "openItems": [
+        {
+          "id": "O1",
+          "status": "owner-open",
+          "text": "Dwarf and elf height: scale chart wins over size classes until the Owner picks one file."
+        },
+        {
+          "id": "O2",
+          "status": "owner-open",
+          "text": "Cast gesture per armor state."
+        },
+        {
+          "id": "O3",
+          "status": "owner-open",
+          "text": "Whether a cast clip may carry a small glow."
+        },
+        {
+          "id": "O4",
+          "status": "owner-open",
+          "text": "Whether a long weapon may use a larger frame. Default is the 48 cell, and a clip is retried."
+        },
+        {
+          "id": "O5",
+          "status": "resolved",
+          "text": "Bases and armor states carry no weapon. Life clips show empty hands."
+        },
+        {
+          "id": "O6",
+          "status": "owner-open",
+          "text": "Weapon groups are a PM proposal. One work clip per armor state may not match every colony job."
+        },
+        {
+          "id": "O7",
+          "status": "owner-open",
+          "text": "Prompt enhancement stays off until the Owner compares it."
+        },
+        {
+          "id": "O8",
+          "status": "owner-open",
+          "text": "Halfling and gnome heights versus the readability floor."
+        },
+        {
+          "id": "O9",
+          "status": "owner-open",
+          "text": "Widths for races the chart does not list."
+        },
+        {
+          "id": "O10",
+          "status": "owner-open",
+          "text": "Head ratios for races the chart does not list."
+        },
+        {
+          "id": "O11",
+          "status": "owner-open",
+          "text": "Skin and hair ramps the master palette does not yet hold."
+        },
+        {
+          "id": "O12",
+          "status": "owner-open",
+          "text": "Dragonborn ancestry as one bronze sprite plus palette swaps."
+        },
+        {
+          "id": "O13",
+          "status": "owner-open",
+          "text": "Whether tiefling horns and tail sit inside the height."
+        },
+        {
+          "id": "O14",
+          "status": "owner-open",
+          "text": "Budget sign-off. The recorded first pass is about 15,200."
+        },
+        {
+          "id": "O15",
+          "status": "owner-open",
+          "text": "An unarmored unit shows robe when the highest-level class is a caster, otherwise unarmored."
+        },
+        {
+          "id": "O16",
+          "status": "owner-open",
+          "text": "Class in the portrait is a badge and the panel name, with no extra portrait generation."
+        },
+        {
+          "id": "O17",
+          "status": "owner-open",
+          "text": "Children and elders have no character-map bases yet."
+        },
+        {
+          "id": "O18",
+          "status": "owner-open",
+          "text": "The plugin may change the eight-direction row order. The recorded order is the proposal."
+        },
+        {
+          "id": "O19",
+          "status": "owner-open",
+          "text": "Unarmored barbarians and monks share the commoner base. Classes may look alike."
+        },
+        {
+          "id": "O20",
+          "status": "resolved",
+          "text": "No fixed weapon per look. Shields are not drawn on any character clip."
+        },
+        {
+          "id": "O21",
+          "status": "owner-open",
+          "text": "Weapon length may drift. The first test is human man medium with all weapon animations. Fallbacks stay open."
+        },
+        {
+          "id": "O22",
+          "status": "owner-open",
+          "text": "Sleep, knocked down and dead may need a lying end frame."
+        },
+        {
+          "id": "O23",
+          "status": "owner-open",
+          "text": "Sit is on the ground unless the Owner wants a chair."
+        },
+        {
+          "id": "O24",
+          "status": "owner-open",
+          "text": "The life list is the PM list. The Owner may edit it."
+        },
+        {
+          "id": "O25",
+          "status": "owner-open",
+          "text": "Thrown weapons have no group yet."
         }
       ]
     }
@@ -28974,5 +29579,10 @@
       "elder": "adult-same-sex-offset",
       "child": "in-child-body"
     }
-  ]
+  ],
+  "raceGarbPolicy": {
+    "mapSprite": false,
+    "status": "retired",
+    "count": 18
+  }
 }

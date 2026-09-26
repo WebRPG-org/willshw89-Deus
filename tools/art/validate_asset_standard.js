@@ -42,6 +42,12 @@ const DIR_TOKENS = [
     { id: 'R', facing: 'E' },
     { id: 'U', facing: 'N' }
 ];
+const DIR8_IDS = ['S', 'SW', 'W', 'NW', 'N', 'NE', 'E', 'SE'];
+const ARMOR_IDS = ['UNARMORED', 'ROBE', 'LIGHT', 'MEDIUM', 'HEAVY'];
+const LIFE_ANIMS = ['IDLE', 'WALK', 'WORK', 'SLEEP', 'SIT', 'EAT', 'CARRY', 'HURT', 'KNOCKDOWN', 'DEAD'];
+const ATTACK_ANIMS = ['ATK_UNARMED', 'ATK_DAGGER', 'ATK_1H', 'ATK_2H', 'ATK_POLEARM', 'ATK_STAFF', 'ATK_BOW', 'ATK_XBOW'];
+const CLIP_ANIMS = LIFE_ANIMS.concat(ATTACK_ANIMS, ['CAST']);
+const RESERVED_GRAMMAR = ['held-item', 'weapon-angle', 'retired-attack'];
 const SOURCE_CAP = 2048;
 const RMMZ_NATIVE = {
     charset: [576, 384],
@@ -104,7 +110,9 @@ const ID_GRAMMAR = {
     'range-marker': '^RG\\.(SQUARE|LINE|CONE|SPHERE|CYLINDER)\\.[0-9]{2}$',
     'hit-spark': '^SP\\.(SLASH|PIERCE|BLUDGEON)\\.F[0-2]$',
     'weapon-angle': '^WP\\.[A-Z0-9-]+\\.(UPRIGHT|BAKED)\\.F[0-7]$',
-    'held-item': '^HI\\.(WIZARD-STAFF|DRUID-STAFF|WARLOCK-ORB|CLERIC-MACE|CLERIC-CENSER|BARD-LUTE)\\.(UPRIGHT|A45|A90)\\.F[0-7]$'
+    'held-item': '^HI\\.(WIZARD-STAFF|DRUID-STAFF|WARLOCK-ORB|CLERIC-MACE|CLERIC-CENSER|BARD-LUTE)\\.(UPRIGHT|A45|A90)\\.F[0-7]$',
+    'character-clip': '^CH\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F)\\.(UNARMORED|ROBE|LIGHT|MEDIUM|HEAVY)\\.(IDLE|WALK|WORK|SLEEP|SIT|EAT|CARRY|HURT|KNOCKDOWN|DEAD|ATK_UNARMED|ATK_DAGGER|ATK_1H|ATK_2H|ATK_POLEARM|ATK_STAFF|ATK_BOW|ATK_XBOW|CAST)\\.(S|SW|W|NW|N|NE|E|SE)\\.F[0-5]$',
+    'retired-attack': '^CH\\.(HUMAN|ELF|HALFLING|DWARF|GNOME|DRAGONBORN|HALF-ELF|HALF-ORC|TIEFLING)\\.(M|F)\\.(UNARMORED|ROBE|LIGHT|MEDIUM|HEAVY)\\.ATK_1H_SHIELD\\.(S|SW|W|NW|N|NE|E|SE)\\.F[0-5]$'
 };
 
 function readJson(file) {
@@ -552,7 +560,11 @@ function checkMatrix(matrix, standard) {
     if (Object.keys(seenGarb).length !== standard.races.length * 2) {
         return [result('AS-HUM-015', 'violate', 'race garb coverage')];
     }
-    return [result('AS-HUM-015', 'pass', expect + ' armour variants, 18 race garbs')];
+    const policy = standard.raceGarbPolicy;
+    if (!policy || policy.mapSprite !== false || policy.status !== 'retired' || policy.count !== 18) {
+        return [result('AS-HUM-015', 'violate', 'race garb is still the map sprite')];
+    }
+    return [result('AS-HUM-015', 'pass', expect + ' armour icon variants, race garb reserved')];
 }
 
 function checkLife(templates) {
@@ -1496,6 +1508,9 @@ function checkSlotIds(slotMap, standard) {
     for (let i = 0; i < keys.length; i++) {
         if (declared[keys[i]] !== ID_GRAMMAR[keys[i]]) return [result('AS-ID-001', 'violate', 'grammar ' + keys[i])];
     }
+    const reservedList = slotMap.reservedGrammars || [];
+    if (!sameSet(reservedList, RESERVED_GRAMMAR)) return [result('AS-ID-001', 'violate', 'reserved grammars')];
+    const reservedGrammar = new Set(RESERVED_GRAMMAR);
     const rows = (standard && standard.humanoidRows) || [];
     if (rows.length !== PAPER_DOLL.rows) return [result('AS-ID-001', 'violate', 'action rows ' + rows.length)];
     const regs = grammarMap();
@@ -1550,12 +1565,14 @@ function checkSlotIds(slotMap, standard) {
     for (let i = 0; i < samples.length; i++) {
         const sample = samples[i];
         if (!sample || !ID_GRAMMAR[sample.category]) return [result('AS-ID-001', 'violate', 'sample category')];
+        if (reservedGrammar.has(sample.category)) return [result('AS-ID-001', 'violate', 'reserved grammar is live ' + sample.id)];
         if (!regs[sample.category].test(sample.id)) return [result('AS-ID-001', 'violate', 'sample grammar ' + sample.id)];
         const bad = checkSlotRecord(sample, regs, live, retired);
         if (bad) return [result('AS-ID-001', 'violate', bad)];
         seenCats.add(sample.category);
     }
     for (let i = 0; i < keys.length; i++) {
+        if (reservedGrammar.has(keys[i])) continue;
         if (!seenCats.has(keys[i])) return [result('AS-ID-001', 'violate', 'no sample for ' + keys[i])];
     }
     return [result('AS-ID-001', 'pass', live.size + ' slot ids')];
@@ -1717,17 +1734,16 @@ function viewTextOk(text) {
     if (typeof text !== 'string' || !text) return false;
     const banned = [
         /oblique/i,
-        /diagonal\s+movement/i,
         /diagonal\s+glid/i,
-        /diagonal\s+step/i,
-        /px\s+per\s+axis/i,
-        /diagonalPxPerAxis/,
-        /diagonalMovement/,
         /top-and-front/,
         /ultima-vii-oblique/
     ];
     for (let i = 0; i < banned.length; i++) {
         if (banned[i].test(text)) return false;
+    }
+    if (/px\s+per\s+axis|diagonal\s+step|diagonal\s+movement/i.test(text)) {
+        if (!/eight directions|8 directions|8-way/i.test(text)) return false;
+        if (!/square grid/i.test(text)) return false;
     }
     const re = /5-5-5/g;
     let n = 0;
@@ -1736,7 +1752,7 @@ function viewTextOk(text) {
         n++;
         const w = text.slice(Math.max(0, m.index - 240), Math.min(text.length, m.index + 240));
         if (!/spell/i.test(w) || !/area/i.test(w) || !/range/i.test(w)) return false;
-        if (/movement/i.test(w) && !/orthogonal/i.test(w)) return false;
+        if (/movement/i.test(w) && !/orthogonal/i.test(w) && !/8-way|eight direction|8 direction/i.test(w)) return false;
     }
     return n >= 1;
 }
@@ -1744,8 +1760,9 @@ function viewTextOk(text) {
 function viewDocOk(text) {
     return viewTextOk(text)
         && text.indexOf('RMMZ standard top-down 3/4') !== -1
-        && text.indexOf('orthogonal only') !== -1
-        && text.indexOf('4-way on the grid') !== -1
+        && text.indexOf('eight directions') !== -1
+        && text.indexOf('square grid') !== -1
+        && text.indexOf('3 px per axis') !== -1
         && (text.indexOf('row, then by Z layer') !== -1 || text.indexOf('row-then-layer') !== -1);
 }
 
@@ -1792,7 +1809,7 @@ function categoryOk(standard, ruleId) {
     const rows = standard && standard.a9c && standard.a9c.catalogueCategories;
     const samples = standard && standard.slotMap && standard.slotMap.grammarSamples;
     if (!Array.isArray(rows) || !Array.isArray(samples)) return false;
-    const mine = rows.filter(row => row && row.ruleId === ruleId);
+    const mine = rows.filter(row => row && row.ruleId === ruleId && row.status !== 'retired');
     if (!mine.length) return false;
     const seen = new Set(samples.map(sample => sample && sample.id));
     for (let i = 0; i < mine.length; i++) {
@@ -1803,6 +1820,154 @@ function categoryOk(standard, ruleId) {
         if (!new RegExp(ID_GRAMMAR[row.slotGrammar]).test(row.sampleSlotId)) return false;
     }
     return true;
+}
+
+function promptTextOk(text) {
+    if (typeof text !== 'string' || text.length < 12) return false;
+    if (/#[0-9A-Fa-f]{3,8}/.test(text)) return false;
+    if (/\d+\s*px\b/i.test(text)) return false;
+    if (/\(\s*-?\d+\s*,\s*-?\d+\s*\)/.test(text)) return false;
+    if (/at most\s+\d+\s+colours/i.test(text)) return false;
+    if (/\brow\s+\d+/i.test(text)) return false;
+    if (/\bcolumn\s+\d+/i.test(text)) return false;
+    if (/\bshield\b/i.test(text)) return false;
+    if (/ATK_1H_SHIELD/.test(text)) return false;
+    if (/one-hand\s*\+\s*shield/i.test(text)) return false;
+    if (/1H\+shield/i.test(text)) return false;
+    return true;
+}
+
+function walkStrings(value, out) {
+    if (typeof value === 'string') out.push(value);
+    else if (Array.isArray(value)) {
+        for (let i = 0; i < value.length; i++) walkStrings(value[i], out);
+    } else if (value && typeof value === 'object') {
+        const keys = Object.keys(value);
+        for (let i = 0; i < keys.length; i++) walkStrings(value[keys[i]], out);
+    }
+}
+
+function checkCharacterMap(standard) {
+    const a = standard && standard.a9c;
+    const ch = a && a.characterMap;
+    const retired = standard && standard.slotMap && standard.slotMap.retiredIds;
+    const clipRe = new RegExp(ID_GRAMMAR['character-clip']);
+    const retiredRe = new RegExp(ID_GRAMMAR['retired-attack']);
+    let ok = !!(ch && ch.bases === 18 && ch.armorStates === 72 && ch.armorTotal === 90
+        && sameList(ch.armors, ARMOR_IDS) && sameList(ch.anims, CLIP_ANIMS) && ch.anims.length === 19
+        && sameList(ch.directions, DIR8_IDS)
+        && ch.perClassMapSprites === false && ch.commonerSpriteSets === false && ch.fixedWeaponPerLook === false
+        && ch.paperDollMapSprite === false && ch.raceGarbIsMapSource === false && ch.kitOverlayOnMap === false
+        && ch.rotatingWeapon === false && ch.fixedGrip === false && ch.sharedSwing === false
+        && sameSet(ch.gearThatChangesMap, ['armor-category', 'weapon-group'])
+        && sameSet(ch.classShownIn, ['portrait', 'selected-unit-panel'])
+        && ch.shieldsAnimated === false && ch.oneHandGroup === 'one-hand-sword' && ch.oneHandDrawsShield === false
+        && ch.unarmoredRole === 'commoners-villagers' && ch.robeRole === 'casters'
+        && ch.idleFrames === 4 && ch.walkFrames === 4 && ch.otherFrames === 6
+        && ch.styleRow === 6 && ch.canvasPx === 48 && ch.humanTall === 42 && ch.humanWide === 18
+        && ch.outline === 'selective' && ch.camera === 'high-top-down' && ch.gameView === 'rmmz-top-down-3-4'
+        && ch.otherClassesCamera === 'owner-open' && ch.scaleChartWins === true
+        && ch.sizeClassesConflict === 'owner-open'
+        && ch.promptForm === 'plain-language' && ch.promptHasPixelSpecs === false
+        && ch.weaponLengthTolerancePx === 1
+        && ch.artGeneration === 'owner-web-ui-only' && ch.writerRunsGenerator === false
+        && ch.production === 'owner-sign-off' && ch.characterMirror === false
+        && ch.slotGrammar === 'character-clip' && clipRe.test(ch.sampleSlotId)
+        && ch.sampleSlotId === 'CH.HUMAN.M.UNARMORED.IDLE.S.F0'
+        && categoryOk(standard, 'AS-CHMAP-001')
+        && sameSet(ch.postProcess, ['palette-snap', 'anchor', 'height', 'weapon-length', 'outline', 'grayscale'])
+        && sameSet(ch.raceThemeFeeds, ['armor-states', 'buildings', 'walls', 'furniture', 'workstations', 'constructed-objects', 'ui-window-skin', 'faceset-background'])
+        && ch.selectedUnit && ch.selectedUnit.panel === 'race-window-skin' && ch.selectedUnit.facesetBackground === 'race-background'
+        && ch.sources && String(ch.sources.classStandardSha256 || '').indexOf('27f74ee271f3777f') === 0
+        && String(ch.sources.recipesSha256 || '').indexOf('9785c0690a402be8') === 0
+        && String(ch.sources.addendumSha256 || '').indexOf('87210fe055efa306') === 0
+        && String(ch.sources.scaleChartSha256 || '').indexOf('f3af0b1140eaa864') === 0
+        && ch.sources.recipesSection30 === 'superseded'
+        && ch.estimate && ch.estimate.bases === 18 && ch.estimate.baseGens === 36
+        && ch.estimate.armorStates === 72 && ch.estimate.armorStateGens === 1440
+        && ch.estimate.armorTotal === 90 && ch.estimate.anims === 19 && ch.estimate.directions === 8
+        && ch.estimate.animationCalls === 13680 && ch.estimate.firstPassComputed === 15156
+        && ch.estimate.firstPassRecorded === 15200
+        && ch.estimate.firstPassRange && ch.estimate.firstPassRange[0] === 15200 && ch.estimate.firstPassRange[1] === 19300
+        && ch.estimate.retryRange && ch.estimate.retryRange[0] === 18900 && ch.estimate.retryRange[1] === 24000
+        && ch.estimate.perRaceSex === 842 && ch.estimate.acceptedBudget === 40000 && ch.estimate.rerun === true
+        && ch.estimate.firstTest && ch.estimate.firstTest.race === 'human' && ch.estimate.firstTest.sex === 'M'
+        && ch.estimate.firstTest.armor === 'MEDIUM' && ch.estimate.firstTest.gens === 86
+        && ch.estimate.firstTest.withRetries === 110 && ch.estimate.firstTest.weaponAnims === 8);
+    if (ok) {
+        const heights = {};
+        const rows = ch.heights || [];
+        if (rows.length !== 9) ok = false;
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            if (!row || !row.id) ok = false;
+            else heights[row.id] = row;
+        }
+        const chart = { human: 42, dwarf: 36, elf: 43 };
+        const ids = Object.keys(chart);
+        for (let i = 0; i < ids.length; i++) {
+            const row = heights[ids[i]];
+            if (!row || row.px !== chart[ids[i]] || row.source !== 'scale_chart') ok = false;
+        }
+        if (!heights.dwarf || heights.dwarf.conflictPx !== 32 || heights.dwarf.conflict !== 'owner-open') ok = false;
+        if (!heights.elf || heights.elf.conflictPx !== 39 || heights.elf.conflict !== 'owner-open') ok = false;
+        const themes = ch.raceThemes || [];
+        if (themes.length !== 9) ok = false;
+        for (let i = 0; i < themes.length; i++) {
+            const row = themes[i];
+            if (!row || row.status !== 'owner-open' || !row.theme) ok = false;
+        }
+        const armors = ch.armorSheet || [];
+        if (!sameSet(armors.map(row => row && row.id), ARMOR_IDS)) ok = false;
+        for (let i = 0; i < armors.length; i++) {
+            const row = armors[i];
+            if (!row || !promptTextOk(row.prompt) || !promptTextOk(row.castGesture) || !promptTextOk(row.work)) ok = false;
+            if (row.id === 'UNARMORED' && row.madeAs !== 'base') ok = false;
+            if (row.id !== 'UNARMORED' && row.madeAs !== 'state') ok = false;
+        }
+        const weapons = ch.weaponGroups || [];
+        if (!sameList(weapons.map(row => row && row.id), ATTACK_ANIMS)) ok = false;
+        for (let i = 0; i < weapons.length; i++) {
+            const row = weapons[i];
+            if (!row || row.shield !== false || !promptTextOk(row.motion)) ok = false;
+            if (!Number.isInteger(row.lengthPx) || row.lengthPx < 0) ok = false;
+        }
+        const one = weapons.filter(row => row && row.id === 'ATK_1H')[0];
+        if (!one || one.group !== 'one-hand-sword' || one.drawn !== 'longsword' || one.lengthPx !== 18) ok = false;
+        const unarmed = weapons.filter(row => row && row.id === 'ATK_UNARMED')[0];
+        if (!unarmed || unarmed.lengthPx !== 0) ok = false;
+        const spoken = [];
+        walkStrings(ch.templates, spoken);
+        walkStrings(ch.facingPhrases, spoken);
+        walkStrings(ch.workedExamples, spoken);
+        if (!spoken.length) ok = false;
+        for (let i = 0; i < spoken.length; i++) if (!promptTextOk(spoken[i])) ok = false;
+        const facing = ch.facingPhrases || {};
+        for (let i = 0; i < DIR8_IDS.length; i++) if (!promptTextOk(facing[DIR8_IDS[i]] || '')) ok = false;
+        const templates = ch.templates || {};
+        if (!templates.base || !templates.armorState || !templates.animation) ok = false;
+        const animTexts = templates.animations || {};
+        if (!sameSet(Object.keys(animTexts), CLIP_ANIMS)) ok = false;
+        const open = ch.openItems || [];
+        if (open.length !== 25) ok = false;
+        const seenOpen = {};
+        for (let i = 0; i < open.length; i++) {
+            const row = open[i];
+            if (!row || !row.id) ok = false;
+            else seenOpen[row.id] = row.status;
+        }
+        for (let n = 1; n <= 25; n++) if (!seenOpen['O' + n]) ok = false;
+        if (seenOpen.O5 !== 'resolved' || seenOpen.O20 !== 'resolved') ok = false;
+        if (seenOpen.O6 !== 'owner-open') ok = false;
+        const retiredId = 'CH.HUMAN.M.MEDIUM.ATK_1H_SHIELD.S.F0';
+        if (!retiredRe.test(retiredId) || clipRe.test(retiredId)) ok = false;
+        if (!Array.isArray(retired) || retired.indexOf(retiredId) === -1) ok = false;
+        if (!Array.isArray(retired) || retired.indexOf('CH.RACEGARB.HUMAN.M.01.IDLE.D.F0') === -1) ok = false;
+        if (!Array.isArray(retired) || retired.indexOf('CH.KIT.HUMAN.M.01.IDLE.D.F0') === -1) ok = false;
+        const proc = JSON.stringify(ch.process || []);
+        if (/curl\s|api\.pixellab|POST\s+\//i.test(proc)) ok = false;
+    }
+    return result('AS-CHMAP-001', ok ? 'pass' : 'violate', ok ? '18 bases, 90 armor states, 19 clips' : 'character map sprites');
 }
 
 function checkA9c(standard) {
@@ -1838,13 +2003,15 @@ function checkA9c(standard) {
     const retired = standard && standard.slotMap && standard.slotMap.retiredIds;
     const docOk = viewDocOk(JSON.stringify(standard)) && viewDocOk(standardDocText());
     const projOk = !!(proj && proj.view === 'rmmz-top-down-3-4' && proj.drawOrder === 'row-then-layer'
-        && sameSet(proj.directions, ['S', 'W', 'E', 'N']) && proj.sprites === '4-direction'
-        && proj.eightDirection === 'declined' && proj.movement === 'orthogonal-4-way'
+        && sameList(proj.characterDirections, DIR8_IDS) && proj.characterSprites === '8-direction'
+        && proj.eightDirection === 'characters' && proj.movement === '8-way-plugin'
+        && proj.diagonalStepPx === 3 && proj.terrainGrid === 'square' && proj.terrainCorners === 'rounded-ragged'
+        && sameSet(proj.directions, ['S', 'W', 'E', 'N']) && proj.nonCharacterSprites === '4-direction'
         && proj.cliffWall === 'rmmz-tile' && proj.quarterHeightFrontFaces === false
         && proj.sideWall === false && proj.sideRoof === false && proj.cornerJoint === false
         && proj.tallObjectSplit === false && droppedOk(proj, retired)
-        && noteOk(manual, '17') && noteOk(manual, '38') && docOk);
-    out.push(result('AS-PROJ-001', projOk ? 'pass' : 'violate', projOk ? 'RMMZ top-down 3/4, orthogonal 4-way' : 'projection'));
+        && noteOk(manual, '17') && noteOk(manual, '38') && noteOk(manual, '43') && docOk);
+    out.push(result('AS-PROJ-001', projOk ? 'pass' : 'violate', projOk ? 'RMMZ top-down 3/4, characters eight directions' : 'projection'));
 
     const furn = a && a.furniture;
     let furnOk = !!(furn && furn.facings === 4 && sameSet(furn.directions, ['S', 'W', 'E', 'N'])
@@ -1869,9 +2036,11 @@ function checkA9c(standard) {
         && terr.nativeScale === 1 && terr.scaled === false && noteOk(manual, '19') && noteOk(manual, '34')
         && categoryOk(standard, 'AS-TERR-001')
         && trial && trial.characterRequestPx === 42 && trial.characterTallPx[0] === 42 && trial.characterTallPx[1] === 43
-        && trial.animation === 'skeleton-v3-on-create-character-v3' && sameSet(trial.layerPropagation, ['armour', 'helmet', 'preset-head', 'class-kit'])
-        && trial.weaponsShields === 'anchored-sprites' && trial.southWalk && trial.southWalk.offsetPx[0] === 0 && trial.southWalk.offsetPx[1] === 2
-        && trial.weaponAngles === 'two-authored-plus-lossless-90' && trial.view === 'rmmz-top-down-3-4'
+        && trial.animation === 'pixellab-v3-whole-sprite' && trial.layerPropagation === 'retired-for-characters'
+        && trial.weaponsShields === 'weapon-inside-attack-clip' && trial.southWalk && trial.southWalk.offsetPx[0] === 0 && trial.southWalk.offsetPx[1] === 2
+        && trial.weaponAngles === 'retired-for-characters' && trial.canvasPx === 48
+        && trial.outline === 'selective' && trial.pixellabCamera === 'high-top-down'
+        && trial.view === 'rmmz-top-down-3-4'
         && trial.smallItemWorldSprites === 'open-test'
         && Array.isArray(terr.biomes) && sameSet(terr.biomes.map(row => row && row.id), ['VOLCANIC', 'WET', 'ARID', 'TEMPERATE', 'COLD', 'WILD']));
     let groundsOk = terrOk;
@@ -1950,7 +2119,8 @@ function checkA9c(standard) {
         && sameSet(feat.seasonHosts, ['terrain', 'vegetation', 'building', 'object'])
         && feat.damageStagesMin === 3 && feat.damageStages === 4
         && sameSet(feat.work, workIds) && feat.workFrames === 6 && feat.workDirections === 4
-        && feat.onLayeredSystem === true && noteOk(manual, 'F') && categoryOk(standard, 'AS-FEAT-001'));
+        && feat.onLayeredSystem === false && feat.characterWork === 'armor-state-clip'
+        && noteOk(manual, 'F') && categoryOk(standard, 'AS-FEAT-001'));
     out.push(result('AS-FEAT-001', featOk ? 'pass' : 'violate', featOk ? 'seasons, damage, work' : 'feature art'));
 
     const play = a && a.placement;
@@ -1990,8 +2160,8 @@ function checkA9c(standard) {
         && g.zLayers === 32 && g.zMin === -16 && g.zMax === 15 && (g.zMax - g.zMin + 1) === 32
         && g.tilePx === 48 && Array.isArray(g.tilePxNotAdopted) && g.tilePxNotAdopted.indexOf(64) !== -1
         && g.tilePx !== 64 && scale && scale.diagonals === '5-5-5'
-        && scale.diagonalScope === 'spell-areas-and-ranges' && scale.unitMovement === 'orthogonal'
-        && scale.diagonalPxPerAxis === undefined
+        && scale.diagonalScope === 'spell-areas-and-ranges' && scale.unitMovement === 'characters-8-way'
+        && scale.diagonalStepPx === 3 && scale.diagonalPxPerAxis === undefined
         && scale.torchBrightFt === 20 && scale.torchDimFt === 20
         && scale.torchBrightTiles === 4 && scale.torchDimTiles === 4 && scale.falling === '1d6 per 2 layers'
         && scale.carry === 'Str × 15 lb' && scale.walkPxPerFrame === 4 && scale.runPxPerFrame === 6
@@ -2092,6 +2262,12 @@ function checkA9c(standard) {
         && lock.extensionRows === 'rmmz-compatible' && lock.additiveGlow === 'max-brightness-only'
         && sameSet(lock.grading, ['dawn', 'day', 'dusk', 'night', 'underground'])
         && lock.iconPx === 32 && lock.markers && lock.markers.colourBlindSafe === true && lock.markers.colourOnly === false
+        && lock.characterClipFrames && lock.characterClipFrames.idle === 4 && lock.characterClipFrames.walk === 4
+        && lock.characterClipFrames.other === 6 && lock.characterWalk === 'four-frames'
+        && lock.reservedSheetWalk === 'rmmz-1-2-1-0'
+        && lock.characterClipPalette && lock.characterClipPalette.promptStatesCount === false
+        && lock.characterClipPalette.item33Cap === 32 && lock.characterClipPalette.afterSnapCap === 40
+        && lock.characterClipPalette.afterSnapStatus === 'tune-owner-open'
         && noteOk(manual, '33') && categoryOk(standard, 'AS-LOCK-001'));
     let capsOk = lockOk && Array.isArray(lock.colourUse);
     if (capsOk) {
@@ -2134,31 +2310,22 @@ function checkA9c(standard) {
             if (!row || row.bodyDrawn === false) keptOk = false;
         }
     }
-    const meleeOk = !!(melee && melee.weapon === 'separate-sprite' && melee.pin === 'one-grip-anchor'
-        && melee.body === 'mostly-still' && melee.grip === 'fixed-upright-right-hand'
-        && melee.runtimeRotation === false && melee.authoredAngles === 2 && melee.bakedFrames === 8
-        && melee.lossless === '90-degree-turns-and-flips' && melee.uprightSprite === true
-        && sameList(melee.arc, ['up', '45-forward', 'level', 'back'])
-        && melee.frames === 6 && melee.bodyAttackRow === false
-        && sameSet(melee.frameNames, ['wind-up', 'raise', '45-forward', 'level', 'strike', 'recovery'])
-        && melee.strikeFrame === 4 && melee.strikeHeldLonger === true
-        && melee.swingTypes && melee.swingTypes['overhead-chop'] && melee.swingTypes['side-slash']
-        && melee.swingTypes.thrust && melee.swingTypes['two-hand'] && melee.swingTypes['two-hand'].pace === 'heavier-slower'
-        && melee.swingTypes['overhead-chop'].bodyFrames === false
-        && melee.hitSpark === 'strike-frame' && melee.knockbackPx[0] === 1 && melee.knockbackPx[1] === 2
-        && melee.strikeHoldFrames === 12 && melee.otherHoldFrames === 6 && melee.strikeHoldFrames > melee.otherHoldFrames
-        && melee.oversizeMin === 1.1 && melee.oversizeMax === 1.2 && melee.scaled === false
-        && melee.sample && melee.sample.scaled === false
-        && melee.sample.drawnPx >= Math.round(melee.sample.basePx * 1.1) && melee.sample.drawnPx <= Math.round(melee.sample.basePx * 1.2)
+    const meleeOk = !!(melee && melee.status === 'retired-for-characters'
+        && melee.characterAttack === 'weapon-group-clip' && melee.fixedGrip === 'retired'
+        && melee.rotatingWeapon === 'retired' && melee.sharedSwing === 'retired'
+        && melee.shieldsAnimated === false && melee.bodyAttackRow === false && melee.scaled === false
+        && melee.sample && melee.sample.scaled === false && melee.sample.lengthPx === 18 && melee.sample.tolerancePx === 1
+        && melee.hitSpark === 'separate-fx' && melee.knockbackPx && melee.knockbackPx[0] === 1 && melee.knockbackPx[1] === 2
         && swingRow && thrustRow && swingRow.bodyDrawn === false && thrustRow.bodyDrawn === false
         && swingRow.frames === 6 && thrustRow.frames === 6 && keptOk
         && manual && manual['39'] && manual['39'].indexOf('PixelLab') !== -1 && manual['39'].indexOf('Retro Diffusion') !== -1
+        && manual['39'].indexOf('retired') !== -1
         && noteOk(manual, '35') && noteOk(manual, '39') && categoryOk(standard, 'AS-MELEE-001'));
-    out.push(result('AS-MELEE-001', meleeOk ? 'pass' : 'violate', meleeOk ? 'weapon rotation, body still' : 'melee'));
+    out.push(result('AS-MELEE-001', meleeOk ? 'pass' : 'violate', meleeOk ? 'weapon-group clips, grip retired' : 'melee'));
 
     const pm = a && a.pmDefaults;
     const heights = {
-        human: 42, elf: 42, 'half-elf': 42, tiefling: 42, dwarf: 36,
+        human: 42, elf: 43, 'half-elf': 42, tiefling: 42, dwarf: 36,
         halfling: 33, gnome: 33, 'half-orc': 44, dragonborn: 44
     };
     let pmOk = !!(pm && pm.ownerMayOverride === true && pm.tinyPx === 24 && pm.smallPx === 36 && pm.mediumPx === 42
@@ -2171,9 +2338,9 @@ function checkA9c(standard) {
         && pm.footprints.Gargantuan.squares[0] === 4
         && pm.doors && pm.doors.widthTiles === 1 && pm.doors.minHeightLayers === 1.5 && pm.doors.minHeightPx === 72
         && pm.walls === 'whole-layers' && pm.floors === '1-layer'
-        && pm.mirror && pm.mirror.westFromEast === true
-        && sameSet(pm.mirror.subjects, ['bodies', 'gear-layers', 'creatures'])
-        && pm.mirror.weapons === 'hand-anchor' && pm.mirror.shields === 'hand-anchor'
+        && pm.mirror && pm.mirror.westFromEast === true && pm.mirror.characterMirror === false
+        && sameSet(pm.mirror.subjects, ['creatures', 'props'])
+        && pm.mirror.weapons === 'hand-anchor' && pm.mirror.shields === 'item-not-character-clip'
         && pm.mirror.runtimeFlip === false && pm.mirror.asymmetric === 'own-west-view'
         && pm.fortress && pm.fortress.scale === 1 && pm.fortress.minimap === 'colour-coded-tiles' && pm.fortress.downscaleBlur === false
         && pm.rangeMarkers === 'whole-squares' && pm.font && pm.font.count === 1 && pm.font.native === true
@@ -2194,10 +2361,12 @@ function checkA9c(standard) {
         for (let i = 0; i < ids.length; i++) if (!seenRace[ids[i]]) pmOk = false;
         if (!pm.mirror.samples) pmOk = false;
         else {
-            const body = pm.mirror.samples.body;
+            const creature = pm.mirror.samples.creature;
+            const character = pm.mirror.samples.character;
             const weapon = pm.mirror.samples.weapon;
             const asymmetric = pm.mirror.samples.asymmetricGear;
-            if (!body || body.westView !== 'mirror-from-east') pmOk = false;
+            if (!creature || creature.westView !== 'mirror-from-east') pmOk = false;
+            if (!character || character.authoredDirections !== 8 || character.mirrored !== false) pmOk = false;
             if (!weapon || weapon.westView !== 'hand-anchor' || weapon.mirroredOntoHand === true) pmOk = false;
             if (!asymmetric || asymmetric.asymmetric !== true || asymmetric.westView !== 'own') pmOk = false;
         }
@@ -2207,92 +2376,37 @@ function checkA9c(standard) {
     const vis = a && a.visibleGear;
     const sizing = a && a.sizing;
     const kits = a && a.classKits;
-    const allowedDrawn = CHARSET_ORDER.concat(KIT_LAYERS, ['weapon', 'shield', 'race-garb']);
+    const allowedDrawn = ['whole-sprite'];
+    const retiredDraw = ['paper-doll', 'race-garb', 'class-kit', 'generic-cloak', 'boots', 'gloves', 'belts', 'rings', 'amulets', 'collar', 'class-outfit'];
     let visOk = !!(vis && sizing && kits && vis.classOutfits === 'none'
-        && vis.raceGarbs === 18 && sameList(vis.charsetOrder, CHARSET_ORDER)
-        && sameSet(vis.anchored, ['weapon', 'shield', 'held-class-item'])
+        && vis.mapSprite === 'whole-sprite-v3' && vis.paperDollMapSprite === false
+        && vis.raceGarbIsMapSource === false && vis.classKitsOnMap === false
+        && vis.perClassMapSprites === false && vis.commonerSpriteSets === false && vis.fixedWeaponPerLook === false
+        && sameSet(vis.gearThatChangesMap, ['armor-category', 'weapon-group'])
+        && sameSet(vis.classShownIn, ['portrait', 'selected-unit-panel'])
         && Array.isArray(vis.faceGear) && vis.faceGear.length === 0
-        && vis.facesetGear === 'none'
-        && sameSet(vis.notDrawn, ['generic-cloak', 'boots', 'gloves', 'belts', 'rings', 'amulets', 'collar', 'class-outfit'])
-        && vis.otherGear === 'item-icon-portrait-world-sprite' && vis.childClass === false && vis.childGarb === 'in-child-body'
-        && vis.outfitIdsRemain === 'icon-only' && sameSet(vis.armourLayers, ['light', 'medium', 'heavy'])
-        && sameSet(vis.deformingKept, ['large-shield', 'bow-draw']) && sameSet(vis.deformingDropped, ['generic-cape'])
-        && vis.elderOffsetsApplyTo && sameSet(vis.elderOffsetsApplyTo, ['armour', 'helmet', 'preset-head'])
-        && vis.elderBaseBodies === 'race-and-sex' && typeof vis.elderFlag === 'string' && vis.elderFlag.indexOf('18') !== -1
-        && noteOk(manual, '37') && noteOk(manual, '40') && noteOk(manual, '41') && noteOk(manual, '42')
+        && vis.facesetGear === 'none' && sameSet(vis.notDrawn, retiredDraw)
+        && kits.status === 'retired-not-map-sprite' && kits.mapSprite === false && !kits.layers
+        && noteOk(manual, '37') && noteOk(manual, '40') && noteOk(manual, '41') && noteOk(manual, '42') && noteOk(manual, '43')
         && manual['42'].indexOf('864') !== -1 && manual['42'].indexOf('OWNER_PORTRAIT_STYLE_REF_01') !== -1
-        && sizing.adultBaseSheets === 18 && sizing.elderBaseSheets === 18 && sizing.childBaseSheets === 9
-        && sizing.baseBodySheets === 45 && sizing.raceGarbDesigns === 18
-        && sizing.kitLayers === 14 && sizing.kitBodyTemplates === 18 && sizing.kitSheets === 252
-        && sizing.elderKitSheets === 0 && sizing.childKitSheets === 0
-        && sizing.heldClassItems === 6 && sizing.heldAuthoredAngles === 2 && sizing.heldBakedFrames === 8
-        && sizing.monkIdleFrames === 4 && sizing.monkIdleDirections === 4 && sizing.monkIdleCells === 288
-        && sizing.armourSheets === 81 && sizing.helmetSheets === 81
-        && sizing.elderArmourExtraSheets === 0 && sizing.retiredClassGarbDesigns === 108 && sizing.retiredClassGarbSheets === 324
+        && manual['43'].indexOf('15,200') !== -1
         && sizing.presetLooks === 216 && sizing.presetPaletteSwapSheets === 0
-        && sizing.presetCharsetHeads === 216 && sizing.presetFacesetBaseSheets === 216
+        && sizing.presetCharsetHeads === 0 && sizing.presetFacesetBaseSheets === 216
         && sizing.faceLayerSheets === 0 && sizing.portraitSeparateGenerationPresets === 216
         && sizing.portraitPaletteSwapPresets === 0 && sizing.portraitVariantSheets === 648
         && sizing.presetFacesetSheets === 864 && sizing.expressionCells === 6912
         && sizing.portraitSourceImages === 864 && sizing.portraitExpressionPasses === 6048
         && sizing.portraitGenerationCalls === 6912
-        && sizing.droppedMeleeBodyCells === 48 && sizing.cellsPerFullSheet === 660
-        && sizing.cellsPerFullSheet === (layout && layout.cellsPerFullSheet)
+        && sizing.mapKitSheets === 0 && sizing.mapRaceGarbSheets === 0
+        && sizing.characterBases === 18 && sizing.characterArmorStates === 72 && sizing.characterArmorTotal === 90
+        && sizing.retiredPaperDoll && sizing.retiredPaperDoll.item33Cells === 708
+        && sizing.retiredPaperDoll.cellsPerFullSheet === 660
+        && sizing.retiredPaperDoll.raceGarbDesigns === 18 && sizing.retiredPaperDoll.kitSheets === 252
+        && sizing.retiredPaperDoll.cellsPerFullSheet === (layout && layout.cellsPerFullSheet)
         && Array.isArray(a.sizingManifest) && a.sizingManifest.length >= 18
         && Array.isArray(vis.layerSamples) && Array.isArray(standard.outfitMatrix)
-        && categoryOk(standard, 'AS-VIS-001') && categoryOk(standard, 'AS-GENE-001'));
+        && categoryOk(standard, 'AS-GENE-001'));
     if (visOk) {
-        const layers = kits.layers || [];
-        visOk = layers.length === 14 && sameSet(layers.map(row => row && row.id), KIT_LAYERS);
-        const kitClass = {};
-        for (let i = 0; i < layers.length; i++) {
-            const row = layers[i];
-            if (!row || !row.classId || !row.group) visOk = false;
-            else kitClass[row.classId] = true;
-            if (row && MARTIAL_CLASSES.indexOf(row.classId) !== -1) visOk = false;
-        }
-        if (MARTIAL_CLASSES.some(id => kitClass[id])) visOk = false;
-        if (!kits.monk || kits.monk.heldItem !== false || kits.monk.idleFrames !== 4 || kits.monk.topknot !== 'head-overlay') visOk = false;
-        if (!kits.headwear || kits.headwear.oneSlot !== true || kits.headwear.sorcerer !== 'bare') visOk = false;
-        const held = kits.held || [];
-        visOk = visOk && held.length === 6 && sameSet(held.map(row => row && row.id), HELD_ITEMS);
-        for (let i = 0; i < held.length; i++) {
-            const row = held[i];
-            if (!row || row.authoredAngles !== 2 || row.bakedFrames !== 8 || row.runtimeRotation !== false) visOk = false;
-        }
-        const lute = held.filter(row => row && row.id === 'bard-lute')[0];
-        const orb = held.filter(row => row && row.id === 'warlock-orb')[0];
-        if (!lute || lute.mount !== 'back-slung' || !orb || orb.anchor !== 'offset') visOk = false;
-        const accents = kits.accents || [];
-        const ground = colourValue('#333B45');
-        const usedClass = {};
-        if (accents.length !== standard.classes.length) visOk = false;
-        for (let i = 0; i < accents.length; i++) {
-            const row = accents[i];
-            if (!row || standard.classes.indexOf(row.classId) === -1 || usedClass[row.classId]) visOk = false;
-            else usedClass[row.classId] = true;
-            if (!row || !set.has(row.hex) || row.colourOnly !== false || row.secondChannel !== 'silhouette') visOk = false;
-            const value = row && colourValue(row.hex);
-            if (value === null || value !== row.value || Math.abs(value - ground) < 3) visOk = false;
-        }
-        for (let i = 0; i < accents.length; i++) {
-            for (let j = i + 1; j < accents.length; j++) {
-                if (accents[i].hex === accents[j].hex) visOk = false;
-                else if (accents[i].value === accents[j].value && redGreenPair(accents[i].hex, accents[j].hex)) visOk = false;
-            }
-        }
-        const flags = standard.slotMap && standard.slotMap.asymmetricGear;
-        const needPiece = { 'kit-wizard-hat': 1, 'kit-bard-cap': 1, 'kit-warlock-cloak': 1 };
-        if (!Array.isArray(flags)) visOk = false;
-        else {
-            for (let i = 0; i < flags.length; i++) {
-                const flag = flags[i];
-                if (!flag || flag.asymmetric !== true || !needPiece[flag.piece]) visOk = false;
-                else if (!ID_GRAMMAR['charset-layer'] || !new RegExp(ID_GRAMMAR['charset-layer']).test(flag.id)) visOk = false;
-                else delete needPiece[flag.piece];
-            }
-            if (Object.keys(needPiece).length) visOk = false;
-        }
         for (let i = 0; i < vis.layerSamples.length; i++) {
             const row = vis.layerSamples[i];
             if (!row) visOk = false;
@@ -2325,7 +2439,8 @@ function checkA9c(standard) {
         const presetRow = (a.sizingManifest || []).filter(row => row && row.id === 'PRESET')[0];
         if (!presetRow || presetRow.builtFromLayers !== false || presetRow.faceLayerSheets !== 0 || presetRow.facesetSheets !== 864) visOk = false;
     }
-    out.push(result('AS-VIS-001', visOk ? 'pass' : 'violate', visOk ? 'race garb and class kits' : 'visible gear'));
+    out.push(result('AS-VIS-001', visOk ? 'pass' : 'violate', visOk ? 'whole-sprite map, faceset unchanged' : 'visible gear'));
+    out.push(checkCharacterMap(standard));
     return out;
 }
 
