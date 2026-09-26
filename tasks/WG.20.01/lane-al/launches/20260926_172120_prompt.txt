@@ -1,0 +1,19 @@
+RESUME / FOLLOW-UP PASS — Lane AL A9c item 42 ONLY
+
+You are the Grok writer on lane-al (task/lane-al), worktree C:\Users\snewt\.deus_worktrees\lane-al.
+Writer tip already on origin (items 39-41 FINAL): 8100064ae903ab6b8a89717089cbdb0e86cbdc3a
+Flash review commit on branch (do not reopen): fa7268ec216e55dfb18beef4c528d1dae9036381
+PM brief commit (item 42 text + portrait style ref; LOCAL, ahead of origin — push it with your work): 0f73ae6cee6dafcbeb7b72f0459e1ab169e92aa1
+
+Read and apply ONLY the section "## QUEUED FOLLOW-UP - item 42" in tasks/WG.20.01/lane-al/BRIEF_AL_A9C.md. Do not reopen items 1-41 except where item 42 explicitly amends them. Do NOT start item 43.
+
+Scope (MUST all land):
+42. Portraits/facesets are NOT paper-dolled (Owner 16:05 CT): each preset is ONE complete 144x144 image; 8 RMMZ expressions generated from it keeping identity; race background is part of the portrait composition. Drop the faceset layer stack from items 37/40/41 and the A1 face-stack rule/validator (check one complete faceset sheet per preset with 8 expressions instead). Facesets never change with gear (already in 69e5ca6c). Portrait style bar: tasks/WG.20.01/lane-al/refs/OWNER_PORTRAIT_STYLE_REF_01.png (painterly pixel portrait, soft detailed shading, warm light, plain dark background; black contour ALLOWED per 16:39 CT correction). Portraits are their own item-33 class: up to 64 colours from master + portrait skin/hair ramp extension; painterly soft shading; no 1 px self-tinted outline requirement on portraits (map sprites keep theirs). Portrait skin/hair variants = palette swaps when ramps map cleanly, else separate generations, recorded per preset. Retire face-layer slot IDs (reserved). Re-run sizing/cost estimate. NO ART GENERATION.
+
+Allowed paths (lane.json): docs/art/DEUS_ASSET_STANDARD.md, game/data/UF_AssetStandard.json, game/data/UF_SpellVisualTable.schema.json, tools/art/validate_asset_standard.js, tools/art/test_validate_asset_standard.js, tools/art/fixtures/asset_standard/**, tasks/WG.20.01/**
+
+Gates before FINAL SHA:
+- node tools/art/test_validate_asset_standard.js
+- node tools/check_deus_syntax.js
+
+Push to origin task/lane-al (include the PM brief commit 0f73ae6cee6dafcbeb7b72f0459e1ab169e92aa1). Print FINAL SHA: <fullhash> when done. Gemini (not Grok) will review later after item 43; do not self-certify merge.
