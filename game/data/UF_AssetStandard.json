@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "deus-asset-standard/1.2.0",
+  "schemaVersion": "deus-asset-standard/1.3.0",
   "documentId": "DEUS-ASSET-STANDARD-01",
-  "authority": "Owner rulings DEC-007, DEC-011, DEC-013, DEC-016, DEC-027, DEC-030, and 2026-09-26 12:38 through 14:10 CT, including addenda A1-A9 and A9b. PM decisions are marked on the rule. Lane brief WG.20.01.",
+  "authority": "Owner rulings DEC-007, DEC-011, DEC-013, DEC-016, DEC-027, DEC-030, and 2026-09-26 12:38 through 15:12 CT, including addenda A1-A9, A9b and A9c. PM decisions are marked on the rule. Lane brief WG.20.01.",
   "artGeneration": "forbidden",
   "rules": {
     "AS-GLOBAL-001": {
@@ -9,15 +9,15 @@
       "check": "grid"
     },
     "AS-GLOBAL-002": {
-      "norm": "DEC-011: every layer renders at 1 source pixel = 1 screen pixel. No blur, bloom, glow shader, ColorMatrix, parallax, or alpha fade.",
+      "norm": "DEC-011 flat 1:1. No blur, bloom, glow shader, ColorMatrix, parallax filter or alpha fade. Integer presentation scale is AS-RENDER-001. A whole-pixel depth-demo offset is AS-DEPTH-001.",
       "check": null
     },
     "AS-GLOBAL-003": {
-      "norm": "Alpha is binary: 0 or 255. Brightness comes from drawn frames and palette ramps.",
+      "norm": "Alpha is binary. Brightness comes from drawn frames and ramps. Pre-drawn glow frames may composite on the additive layer in AS-GLOW-001. That is not a bloom shader.",
       "check": null
     },
     "AS-GLOBAL-004": {
-      "norm": "Ramp ids are the colour vocabulary. uf.hex is the runtime canonical palette now (ADR-002). deus_master_world_palette_v1.hex is the approved target. Assets name ramps. They do not invent hex.",
+      "norm": "The canonical master is the 226 active S/T colours in masterPalette, plus 30 reserved slots (256 slots). uf.hex is not a second master. No shrink. Ramp ids stay the vocabulary.",
       "check": null
     },
     "AS-GLOBAL-005": {
@@ -25,7 +25,7 @@
       "check": null
     },
     "AS-GLOBAL-006": {
-      "norm": "Selout is a 1 px outline on the outer silhouette only, using the darkest step of the local ramp, darker on the bottom and right. No universal black. Ground fills have no outline.",
+      "norm": "Selout is 1 px on the outer silhouette, local ramp, darker on the bottom and right. AS-LOCK-001 locks it on characters and items. Terrain tiles have none. Depth overlays may keep one.",
       "check": null
     },
     "AS-GLOBAL-007": {
@@ -33,7 +33,7 @@
       "check": null
     },
     "AS-GLOBAL-008": {
-      "norm": "Draw order back to front: ground, strata faces and ramps, objects, unit body, equipment, effects, UI.",
+      "norm": "Inside a layer the order is ground, strata, objects, body, equipment, effects, UI. Map order is row, then Z layer (AS-PROJ-001).",
       "check": null
     },
     "AS-GLOBAL-009": {
@@ -53,7 +53,7 @@
       "check": null
     },
     "AS-GLOBAL-013": {
-      "norm": "An RMMZ charset block is 3 columns by 4 rows. Walk playback is stand, left, stand, right. The walk block is never given a fifth facing row.",
+      "norm": "An RMMZ charset block is 3 columns by 4 rows. Walk playback is stand, left, stand, right. The walk block is never given another facing row.",
       "check": null
     },
     "AS-GLOBAL-014": {
@@ -69,11 +69,11 @@
       "check": null
     },
     "AS-GLOBAL-017": {
-      "norm": "Runtime scale, rotation, flip-as-a-substitute, and tint are not a substitute for a drawn frame. Weapon angles are chosen from pre-drawn cels.",
+      "norm": "Runtime scale, rotation or tint is not a substitute for a drawn frame. AS-RENDER-001 is integer scale of the finished frame. AS-PM-001 allows an offline east-to-west mirror for bodies, gear layers and creatures. Weapons and shields are not mirrored onto the wrong hand.",
       "check": null
     },
     "AS-GLOBAL-018": {
-      "norm": "DEC-013 geometry: 32 layers, 1 cell = 5 ft, 1 layer = 10 ft, 5 strata of 2 ft, nine races. Home-layer assignment stays open.",
+      "norm": "32 Z layers and nine races stay. A9c replaces the layer height: 1 layer = 5 ft = 48 px, four quarters of 12 px. The 10 ft layer and five 2 ft strata are not used.",
       "check": null
     },
     "AS-GLOBAL-019": {
@@ -145,7 +145,7 @@
       "check": "paperdoll-z"
     },
     "AS-HUM-005": {
-      "norm": "The face shows the same worn armour and helmet as the charset.",
+      "norm": "The face shows the same armour and helmet as the charset, and no cloak or collar. Gear on a face is armour and helmet only.",
       "check": null
     },
     "AS-HUM-006": {
@@ -185,7 +185,7 @@
       "check": null
     },
     "AS-HUM-015": {
-      "norm": "Nine races times 15 outfit ids is 135 art variants. The outfit id is race-neutral. Pixels are custom per race (Owner 13:14 CT). The silhouette name is the slot pattern, not a shared drawing. Weapons, tools and accessories are AS-GEAR-001.",
+      "norm": "The 135 outfit ids stay as item and icon ids. Class garb is drawn in the race and class base body. Light, medium and heavy stay armour layers. Pixels stay custom per race.",
       "check": "outfit-matrix"
     },
     "AS-HUM-016": {
@@ -193,7 +193,7 @@
       "check": "pose-grid"
     },
     "AS-HUM-017": {
-      "norm": "Capes, long robes, large shields and bows mid-draw have their own frames for every pose. They are not a single angled cel.",
+      "norm": "Large shields and bows mid-draw keep per-pose frames. Capes are not drawn. Long robes are part of the class base body.",
       "check": "deforming"
     },
     "AS-HUM-018": {
@@ -209,7 +209,7 @@
       "check": "face-background"
     },
     "AS-FACE-002": {
-      "norm": "Face layers bottom to top: background, optional faction trim, body base, face, hair, worn gear, overlays.",
+      "norm": "Face layers stay in order. Layer 6, worn gear, is armour and helmet only. Collar and cloak are not drawn on the face.",
       "check": "face-layers"
     },
     "AS-FACE-003": {
@@ -225,7 +225,7 @@
       "check": null
     },
     "AS-BIOME-002": {
-      "norm": "Each biome-depth set has ground autotiles, cliffs, ramps (one 10 ft layer over 5 squares), water, vegetation, props, season frames and a ramp id.",
+      "norm": "Each biome-depth set has ground, cliffs, ramps in 12 px quarters, water, vegetation, props, four seasons and a ramp id. A half-step slope is 2 quarters (24 px).",
       "check": null
     },
     "AS-BIOME-003": {
@@ -429,7 +429,7 @@
       "check": "head"
     },
     "AS-ELDER-001": {
-      "norm": "Only the stooped elder body is redrawn. Garb, gear and hair use the adult sheets plus a per-frame torso and head offset.",
+      "norm": "Offsets place adult armour, helmet and hair on the elder. Elder base bodies vary by race and class (216 sheets). That count is flagged for the Owner.",
       "check": "elder"
     },
     "AS-GEAR-001": {
@@ -437,7 +437,7 @@
       "check": "gear"
     },
     "AS-MIRROR-001": {
-      "norm": "Mirroring is an offline W-to-E bake of a layer flagged symmetric with light-neutral shading. Asymmetric gear is never mirrored. No runtime flip.",
+      "norm": "The offline symmetric bake remains. AS-PM-001 separately allows west-from-east for bodies, gear layers and creatures, with weapons and shields on hand anchors.",
       "check": "mirror"
     },
     "AS-POSE-001": {
@@ -481,7 +481,7 @@
       "check": "generators"
     },
     "AS-SRC-001": {
-      "norm": "A paper-doll layer is one sheet per design, 16 by 30 squares, 768 by 1440. RMMZ-native sheets keep RMMZ sizes. No source side is over 2048 px. Large and larger creature rows stay strips.",
+      "norm": "The committed paper-doll example stays 768 by 1440, under the 2048 cap. A9c sheet counts and the 708-cell frame budget are AS-VIS-001 and AS-LOCK-001. They do not resize this example.",
       "check": "source-sheet"
     },
     "AS-REPO-001": {
@@ -497,7 +497,7 @@
       "check": "generator-cap"
     },
     "AS-SEX-001": {
-      "norm": "Each race has male and female adult bodies, male and female elder bodies, and its own child body. Hair, beards and face bases are per sex. Garb and armour are drawn on each adult sex and on the child. Elder garb reuses the adult sheet of the same sex.",
+      "norm": "Male and female adult and elder bodies, and a child body, stay. Class garb is in the base body. Armour and helmet are drawn on adult male, adult female and the child. Elder armour and helmet reuse the adult sheet.",
       "check": "sexed-bodies"
     },
     "AS-SEX-002": {
@@ -515,6 +515,94 @@
     "AS-EQUIP-001": {
       "norm": "Every body frame stores main-hand and off-hand anchors, a grip angle and a draw-order flag. Down is in front. Up is behind. Weapons and shields are drawn once per grip pose and pinned by the compositor.",
       "check": "equipment-anchors"
+    },
+    "AS-LOOK-001": {
+      "norm": "Readable high-contrast fantasy. Ultima VII oblique reference. Head about 1/5 of body height. The checker tests the ratio.",
+      "check": "a9c"
+    },
+    "AS-PROJ-001": {
+      "norm": "Oblique top and front. Draw order is row, then layer. Four directions. Eight directions stay declined. Diagonal movement is free.",
+      "check": "a9c"
+    },
+    "AS-FURN-001": {
+      "norm": "Furniture and placeables have four facings. Symmetric reuse is by flag only.",
+      "check": "a9c"
+    },
+    "AS-TERR-001": {
+      "norm": "48 px tiles-pro Wang tiles on a dual-grid renderer. 24 px detail decals. Trial findings are recorded. 64 px tiles are not adopted.",
+      "check": "a9c"
+    },
+    "AS-TRACK-001": {
+      "norm": "Ground marks: boot, bare, paw, hoof, on snow, mud, sand, blood and wet, four directions, three fade steps. A path may become a road.",
+      "check": "a9c"
+    },
+    "AS-GLOW-001": {
+      "norm": "Every light-source id has a glow id with a master-palette colour and a radius, on the additive light layer.",
+      "check": "a9c"
+    },
+    "AS-DEPTH-001": {
+      "norm": "Depth ramps, cliff faces, dithered shadows, ledge rims, ramps and half-steps. Depth-demo toggles are listed. Renderer code is not this lane.",
+      "check": "a9c"
+    },
+    "AS-WITEM-001": {
+      "norm": "Every item has an oblique world sprite, an icon and a 144 portrait, with anchor, footprint and sim-hook fields.",
+      "check": "a9c"
+    },
+    "AS-FEAT-001": {
+      "norm": "Seasonal variants, damage stages, and sim work animations on the layered humanoid system.",
+      "check": "a9c"
+    },
+    "AS-PLAY-001": {
+      "norm": "Placement fields: 12/24/48 px true size, 6 px cells, quarter heights, weight, passability, and the 100,000 item benchmark.",
+      "check": "a9c"
+    },
+    "AS-CONT-001": {
+      "norm": "Container art and fields: open and closed four-facing sprites, open animation, window background, SRD capacity.",
+      "check": "a9c"
+    },
+    "AS-SCALE-001": {
+      "norm": "1 Z layer = 5 ft = 48 px. Movement, light, falling, carry and the 6 second tick. 64 px tiles are not adopted.",
+      "check": "a9c"
+    },
+    "AS-RENDER-001": {
+      "norm": "Integer scale only, 2x default, nearest-neighbour. Letterbox or more map. Depth demo toggles 1x, 2x and 3x.",
+      "check": "a9c"
+    },
+    "AS-XLAYER-001": {
+      "norm": "Cross-layer ground collapse, 4-stage wall breaches and cave-ins, through the mass ledger.",
+      "check": "a9c"
+    },
+    "AS-QTR-001": {
+      "norm": "Four quarters of 12 px replace the old strata split. The head ratio is not a quarter split.",
+      "check": "a9c"
+    },
+    "AS-SITE-001": {
+      "norm": "Construction category: palette-swap ghost, blueprint, foundation, scaffolding, partial build, site props, build animation.",
+      "check": "a9c"
+    },
+    "AS-READ-001": {
+      "norm": "Grayscale value step before approval. 12 px items use the stricter step. The table-with-items reference is reviewed at true 2x.",
+      "check": "a9c"
+    },
+    "AS-PAL-001": {
+      "norm": "Saturated controlled palette, value first, brightest colours reserved, mood from lighting, grayscale before approval.",
+      "check": "a9c"
+    },
+    "AS-LOCK-001": {
+      "norm": "LOCKED style defaults, including the 15:05 CT revision. One master, colour caps, frame budgets, additive glow, grading, 32 px icons, shape markers.",
+      "check": "a9c"
+    },
+    "AS-MELEE-001": {
+      "norm": "U7 melee: separate weapon sprite, six-frame attack, swing types, hit spark, knockback, drawn 10 to 20 percent larger, not scaled.",
+      "check": "a9c"
+    },
+    "AS-PM-001": {
+      "norm": "PM defaults the Owner may override: size classes, footprints, the nine race heights, doors, mirroring, fortress view, range markers, pixel font.",
+      "check": "a9c"
+    },
+    "AS-VIS-001": {
+      "norm": "Visible gear is limited. Class garb is in the base body. Sheet counts are recomputed. The elder race-and-class count is flagged.",
+      "check": "a9c"
     }
   },
   "directions": [
@@ -811,8 +899,6 @@
   ],
   "poseGridStatus": "PM-proposed, Owner may amend",
   "deformingPieces": [
-    "cape",
-    "long-robe",
     "large-shield",
     "bow-draw"
   ],
@@ -1263,7 +1349,9 @@
       "motifId": "MOTIF_CLASS_BARBARIAN",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_barbarian",
@@ -1285,7 +1373,9 @@
       "motifId": "MOTIF_CLASS_BARBARIAN",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_barbarian",
@@ -1307,7 +1397,9 @@
       "motifId": "MOTIF_CLASS_BARBARIAN",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_barbarian",
@@ -1329,7 +1421,9 @@
       "motifId": "MOTIF_CLASS_BARBARIAN",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_barbarian",
@@ -1351,7 +1445,9 @@
       "motifId": "MOTIF_CLASS_BARBARIAN",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_barbarian",
@@ -1373,7 +1469,9 @@
       "motifId": "MOTIF_CLASS_BARBARIAN",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_barbarian",
@@ -1395,7 +1493,9 @@
       "motifId": "MOTIF_CLASS_BARBARIAN",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_barbarian",
@@ -1417,7 +1517,9 @@
       "motifId": "MOTIF_CLASS_BARBARIAN",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_barbarian",
@@ -1439,7 +1541,9 @@
       "motifId": "MOTIF_CLASS_BARBARIAN",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_bard",
@@ -1463,7 +1567,9 @@
       "motifId": "MOTIF_CLASS_BARD",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_bard",
@@ -1487,7 +1593,9 @@
       "motifId": "MOTIF_CLASS_BARD",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_bard",
@@ -1511,7 +1619,9 @@
       "motifId": "MOTIF_CLASS_BARD",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_bard",
@@ -1535,7 +1645,9 @@
       "motifId": "MOTIF_CLASS_BARD",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_bard",
@@ -1559,7 +1671,9 @@
       "motifId": "MOTIF_CLASS_BARD",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_bard",
@@ -1583,7 +1697,9 @@
       "motifId": "MOTIF_CLASS_BARD",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_bard",
@@ -1607,7 +1723,9 @@
       "motifId": "MOTIF_CLASS_BARD",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_bard",
@@ -1631,7 +1749,9 @@
       "motifId": "MOTIF_CLASS_BARD",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_bard",
@@ -1655,7 +1775,9 @@
       "motifId": "MOTIF_CLASS_BARD",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_cleric",
@@ -1680,7 +1802,9 @@
       "motifId": "MOTIF_CLASS_CLERIC",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_cleric",
@@ -1705,7 +1829,9 @@
       "motifId": "MOTIF_CLASS_CLERIC",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_cleric",
@@ -1730,7 +1856,9 @@
       "motifId": "MOTIF_CLASS_CLERIC",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_cleric",
@@ -1755,7 +1883,9 @@
       "motifId": "MOTIF_CLASS_CLERIC",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_cleric",
@@ -1780,7 +1910,9 @@
       "motifId": "MOTIF_CLASS_CLERIC",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_cleric",
@@ -1805,7 +1937,9 @@
       "motifId": "MOTIF_CLASS_CLERIC",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_cleric",
@@ -1830,7 +1964,9 @@
       "motifId": "MOTIF_CLASS_CLERIC",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_cleric",
@@ -1855,7 +1991,9 @@
       "motifId": "MOTIF_CLASS_CLERIC",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_cleric",
@@ -1880,7 +2018,9 @@
       "motifId": "MOTIF_CLASS_CLERIC",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_druid",
@@ -1902,7 +2042,9 @@
       "motifId": "MOTIF_CLASS_DRUID",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_druid",
@@ -1924,7 +2066,9 @@
       "motifId": "MOTIF_CLASS_DRUID",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_druid",
@@ -1946,7 +2090,9 @@
       "motifId": "MOTIF_CLASS_DRUID",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_druid",
@@ -1968,7 +2114,9 @@
       "motifId": "MOTIF_CLASS_DRUID",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_druid",
@@ -1990,7 +2138,9 @@
       "motifId": "MOTIF_CLASS_DRUID",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_druid",
@@ -2012,7 +2162,9 @@
       "motifId": "MOTIF_CLASS_DRUID",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_druid",
@@ -2034,7 +2186,9 @@
       "motifId": "MOTIF_CLASS_DRUID",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_druid",
@@ -2056,7 +2210,9 @@
       "motifId": "MOTIF_CLASS_DRUID",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_druid",
@@ -2078,7 +2234,9 @@
       "motifId": "MOTIF_CLASS_DRUID",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_fighter",
@@ -2101,7 +2259,9 @@
       "motifId": "MOTIF_CLASS_FIGHTER",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_fighter",
@@ -2124,7 +2284,9 @@
       "motifId": "MOTIF_CLASS_FIGHTER",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_fighter",
@@ -2147,7 +2309,9 @@
       "motifId": "MOTIF_CLASS_FIGHTER",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_fighter",
@@ -2170,7 +2334,9 @@
       "motifId": "MOTIF_CLASS_FIGHTER",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_fighter",
@@ -2193,7 +2359,9 @@
       "motifId": "MOTIF_CLASS_FIGHTER",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_fighter",
@@ -2216,7 +2384,9 @@
       "motifId": "MOTIF_CLASS_FIGHTER",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_fighter",
@@ -2239,7 +2409,9 @@
       "motifId": "MOTIF_CLASS_FIGHTER",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_fighter",
@@ -2262,7 +2434,9 @@
       "motifId": "MOTIF_CLASS_FIGHTER",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_fighter",
@@ -2285,7 +2459,9 @@
       "motifId": "MOTIF_CLASS_FIGHTER",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_monk",
@@ -2307,7 +2483,9 @@
       "motifId": "MOTIF_CLASS_MONK",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_monk",
@@ -2329,7 +2507,9 @@
       "motifId": "MOTIF_CLASS_MONK",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_monk",
@@ -2351,7 +2531,9 @@
       "motifId": "MOTIF_CLASS_MONK",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_monk",
@@ -2373,7 +2555,9 @@
       "motifId": "MOTIF_CLASS_MONK",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_monk",
@@ -2395,7 +2579,9 @@
       "motifId": "MOTIF_CLASS_MONK",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_monk",
@@ -2417,7 +2603,9 @@
       "motifId": "MOTIF_CLASS_MONK",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_monk",
@@ -2439,7 +2627,9 @@
       "motifId": "MOTIF_CLASS_MONK",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_monk",
@@ -2461,7 +2651,9 @@
       "motifId": "MOTIF_CLASS_MONK",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_monk",
@@ -2483,7 +2675,9 @@
       "motifId": "MOTIF_CLASS_MONK",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_paladin",
@@ -2506,7 +2700,9 @@
       "motifId": "MOTIF_CLASS_PALADIN",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_paladin",
@@ -2529,7 +2725,9 @@
       "motifId": "MOTIF_CLASS_PALADIN",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_paladin",
@@ -2552,7 +2750,9 @@
       "motifId": "MOTIF_CLASS_PALADIN",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_paladin",
@@ -2575,7 +2775,9 @@
       "motifId": "MOTIF_CLASS_PALADIN",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_paladin",
@@ -2598,7 +2800,9 @@
       "motifId": "MOTIF_CLASS_PALADIN",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_paladin",
@@ -2621,7 +2825,9 @@
       "motifId": "MOTIF_CLASS_PALADIN",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_paladin",
@@ -2644,7 +2850,9 @@
       "motifId": "MOTIF_CLASS_PALADIN",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_paladin",
@@ -2667,7 +2875,9 @@
       "motifId": "MOTIF_CLASS_PALADIN",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_paladin",
@@ -2690,7 +2900,9 @@
       "motifId": "MOTIF_CLASS_PALADIN",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_ranger",
@@ -2712,7 +2924,9 @@
       "motifId": "MOTIF_CLASS_RANGER",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_ranger",
@@ -2734,7 +2948,9 @@
       "motifId": "MOTIF_CLASS_RANGER",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_ranger",
@@ -2756,7 +2972,9 @@
       "motifId": "MOTIF_CLASS_RANGER",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_ranger",
@@ -2778,7 +2996,9 @@
       "motifId": "MOTIF_CLASS_RANGER",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_ranger",
@@ -2800,7 +3020,9 @@
       "motifId": "MOTIF_CLASS_RANGER",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_ranger",
@@ -2822,7 +3044,9 @@
       "motifId": "MOTIF_CLASS_RANGER",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_ranger",
@@ -2844,7 +3068,9 @@
       "motifId": "MOTIF_CLASS_RANGER",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_ranger",
@@ -2866,7 +3092,9 @@
       "motifId": "MOTIF_CLASS_RANGER",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_ranger",
@@ -2888,7 +3116,9 @@
       "motifId": "MOTIF_CLASS_RANGER",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_rogue",
@@ -2910,7 +3140,9 @@
       "motifId": "MOTIF_CLASS_ROGUE",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_rogue",
@@ -2932,7 +3164,9 @@
       "motifId": "MOTIF_CLASS_ROGUE",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_rogue",
@@ -2954,7 +3188,9 @@
       "motifId": "MOTIF_CLASS_ROGUE",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_rogue",
@@ -2976,7 +3212,9 @@
       "motifId": "MOTIF_CLASS_ROGUE",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_rogue",
@@ -2998,7 +3236,9 @@
       "motifId": "MOTIF_CLASS_ROGUE",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_rogue",
@@ -3020,7 +3260,9 @@
       "motifId": "MOTIF_CLASS_ROGUE",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_rogue",
@@ -3042,7 +3284,9 @@
       "motifId": "MOTIF_CLASS_ROGUE",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_rogue",
@@ -3064,7 +3308,9 @@
       "motifId": "MOTIF_CLASS_ROGUE",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_rogue",
@@ -3086,7 +3332,9 @@
       "motifId": "MOTIF_CLASS_ROGUE",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_sorcerer",
@@ -3110,7 +3358,9 @@
       "motifId": "MOTIF_CLASS_SORCERER",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_sorcerer",
@@ -3134,7 +3384,9 @@
       "motifId": "MOTIF_CLASS_SORCERER",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_sorcerer",
@@ -3158,7 +3410,9 @@
       "motifId": "MOTIF_CLASS_SORCERER",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_sorcerer",
@@ -3182,7 +3436,9 @@
       "motifId": "MOTIF_CLASS_SORCERER",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_sorcerer",
@@ -3206,7 +3462,9 @@
       "motifId": "MOTIF_CLASS_SORCERER",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_sorcerer",
@@ -3230,7 +3488,9 @@
       "motifId": "MOTIF_CLASS_SORCERER",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_sorcerer",
@@ -3254,7 +3514,9 @@
       "motifId": "MOTIF_CLASS_SORCERER",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_sorcerer",
@@ -3278,7 +3540,9 @@
       "motifId": "MOTIF_CLASS_SORCERER",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_sorcerer",
@@ -3302,7 +3566,9 @@
       "motifId": "MOTIF_CLASS_SORCERER",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_warlock",
@@ -3326,7 +3592,9 @@
       "motifId": "MOTIF_CLASS_WARLOCK",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_warlock",
@@ -3350,7 +3618,9 @@
       "motifId": "MOTIF_CLASS_WARLOCK",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_warlock",
@@ -3374,7 +3644,9 @@
       "motifId": "MOTIF_CLASS_WARLOCK",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_warlock",
@@ -3398,7 +3670,9 @@
       "motifId": "MOTIF_CLASS_WARLOCK",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_warlock",
@@ -3422,7 +3696,9 @@
       "motifId": "MOTIF_CLASS_WARLOCK",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_warlock",
@@ -3446,7 +3722,9 @@
       "motifId": "MOTIF_CLASS_WARLOCK",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_warlock",
@@ -3470,7 +3748,9 @@
       "motifId": "MOTIF_CLASS_WARLOCK",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_warlock",
@@ -3494,7 +3774,9 @@
       "motifId": "MOTIF_CLASS_WARLOCK",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_warlock",
@@ -3518,7 +3800,9 @@
       "motifId": "MOTIF_CLASS_WARLOCK",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_wizard",
@@ -3542,7 +3826,9 @@
       "motifId": "MOTIF_CLASS_WIZARD",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_wizard",
@@ -3566,7 +3852,9 @@
       "motifId": "MOTIF_CLASS_WIZARD",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_wizard",
@@ -3590,7 +3878,9 @@
       "motifId": "MOTIF_CLASS_WIZARD",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_wizard",
@@ -3614,7 +3904,9 @@
       "motifId": "MOTIF_CLASS_WIZARD",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_wizard",
@@ -3638,7 +3930,9 @@
       "motifId": "MOTIF_CLASS_WIZARD",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_wizard",
@@ -3662,7 +3956,9 @@
       "motifId": "MOTIF_CLASS_WIZARD",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_wizard",
@@ -3686,7 +3982,9 @@
       "motifId": "MOTIF_CLASS_WIZARD",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_wizard",
@@ -3710,7 +4008,9 @@
       "motifId": "MOTIF_CLASS_WIZARD",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_class_wizard",
@@ -3734,7 +4034,9 @@
       "motifId": "MOTIF_CLASS_WIZARD",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "base-body",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_light",
@@ -3756,7 +4058,9 @@
       "motifId": "MOTIF_ARMOR_LIGHT",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_light",
@@ -3778,7 +4082,9 @@
       "motifId": "MOTIF_ARMOR_LIGHT",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_light",
@@ -3800,7 +4106,9 @@
       "motifId": "MOTIF_ARMOR_LIGHT",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_light",
@@ -3822,7 +4130,9 @@
       "motifId": "MOTIF_ARMOR_LIGHT",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_light",
@@ -3844,7 +4154,9 @@
       "motifId": "MOTIF_ARMOR_LIGHT",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_light",
@@ -3866,7 +4178,9 @@
       "motifId": "MOTIF_ARMOR_LIGHT",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_light",
@@ -3888,7 +4202,9 @@
       "motifId": "MOTIF_ARMOR_LIGHT",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_light",
@@ -3910,7 +4226,9 @@
       "motifId": "MOTIF_ARMOR_LIGHT",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_light",
@@ -3932,7 +4250,9 @@
       "motifId": "MOTIF_ARMOR_LIGHT",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_medium",
@@ -3955,7 +4275,9 @@
       "motifId": "MOTIF_ARMOR_MEDIUM",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_medium",
@@ -3978,7 +4300,9 @@
       "motifId": "MOTIF_ARMOR_MEDIUM",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_medium",
@@ -4001,7 +4325,9 @@
       "motifId": "MOTIF_ARMOR_MEDIUM",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_medium",
@@ -4024,7 +4350,9 @@
       "motifId": "MOTIF_ARMOR_MEDIUM",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_medium",
@@ -4047,7 +4375,9 @@
       "motifId": "MOTIF_ARMOR_MEDIUM",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_medium",
@@ -4070,7 +4400,9 @@
       "motifId": "MOTIF_ARMOR_MEDIUM",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_medium",
@@ -4093,7 +4425,9 @@
       "motifId": "MOTIF_ARMOR_MEDIUM",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_medium",
@@ -4116,7 +4450,9 @@
       "motifId": "MOTIF_ARMOR_MEDIUM",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_medium",
@@ -4139,7 +4475,9 @@
       "motifId": "MOTIF_ARMOR_MEDIUM",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_heavy",
@@ -4166,7 +4504,9 @@
       "motifId": "MOTIF_ARMOR_HEAVY",
       "rampId": "RAMP_RACE_HUMAN",
       "raceMotifId": "MOTIF_RACE_HUMAN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_heavy",
@@ -4193,7 +4533,9 @@
       "motifId": "MOTIF_ARMOR_HEAVY",
       "rampId": "RAMP_RACE_ELF",
       "raceMotifId": "MOTIF_RACE_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_heavy",
@@ -4220,7 +4562,9 @@
       "motifId": "MOTIF_ARMOR_HEAVY",
       "rampId": "RAMP_RACE_HALFLING",
       "raceMotifId": "MOTIF_RACE_HALFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_heavy",
@@ -4247,7 +4591,9 @@
       "motifId": "MOTIF_ARMOR_HEAVY",
       "rampId": "RAMP_RACE_DWARF",
       "raceMotifId": "MOTIF_RACE_DWARF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_heavy",
@@ -4274,7 +4620,9 @@
       "motifId": "MOTIF_ARMOR_HEAVY",
       "rampId": "RAMP_RACE_GNOME",
       "raceMotifId": "MOTIF_RACE_GNOME",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_heavy",
@@ -4301,7 +4649,9 @@
       "motifId": "MOTIF_ARMOR_HEAVY",
       "rampId": "RAMP_RACE_DRAGONBORN",
       "raceMotifId": "MOTIF_RACE_DRAGONBORN",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_heavy",
@@ -4328,7 +4678,9 @@
       "motifId": "MOTIF_ARMOR_HEAVY",
       "rampId": "RAMP_RACE_HALF_ELF",
       "raceMotifId": "MOTIF_RACE_HALF_ELF",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_heavy",
@@ -4355,7 +4707,9 @@
       "motifId": "MOTIF_ARMOR_HEAVY",
       "rampId": "RAMP_RACE_HALF_ORC",
       "raceMotifId": "MOTIF_RACE_HALF_ORC",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     },
     {
       "outfitId": "outfit_armor_heavy",
@@ -4382,7 +4736,9 @@
       "motifId": "MOTIF_ARMOR_HEAVY",
       "rampId": "RAMP_RACE_TIEFLING",
       "raceMotifId": "MOTIF_RACE_TIEFLING",
-      "pixels": "custom-per-race"
+      "pixels": "custom-per-race",
+      "spriteDraw": "armour-layer",
+      "drawnDeforming": []
     }
   ],
   "artKeyFallback": "__human",
@@ -15429,6 +15785,96 @@
     },
     "pipeline": {
       "scaling": false
+    },
+    "groundmark": {
+      "catalogueCategory": "GROUNDMARK",
+      "ruleId": "AS-TRACK-001",
+      "slotGrammar": "ground-mark"
+    },
+    "glow": {
+      "catalogueCategory": "GLOW",
+      "ruleId": "AS-GLOW-001",
+      "slotGrammar": "glow"
+    },
+    "decal": {
+      "catalogueCategory": "DECAL",
+      "ruleId": "AS-TERR-001",
+      "slotGrammar": "decal"
+    },
+    "wang": {
+      "catalogueCategory": "WANG",
+      "ruleId": "AS-TERR-001",
+      "slotGrammar": "wang-tile"
+    },
+    "worldsprite": {
+      "catalogueCategory": "WORLDSPRITE",
+      "ruleId": "AS-WITEM-001",
+      "slotGrammar": "world-sprite"
+    },
+    "placement": {
+      "catalogueCategory": "PLACEMENT",
+      "ruleId": "AS-PLAY-001",
+      "slotGrammar": "world-sprite"
+    },
+    "container": {
+      "catalogueCategory": "CONTAINER",
+      "ruleId": "AS-CONT-001",
+      "slotGrammar": "container"
+    },
+    "damage": {
+      "catalogueCategory": "DAMAGE",
+      "ruleId": "AS-FEAT-001",
+      "slotGrammar": "damage"
+    },
+    "season": {
+      "catalogueCategory": "SEASON",
+      "ruleId": "AS-FEAT-001",
+      "slotGrammar": "season"
+    },
+    "workanim": {
+      "catalogueCategory": "WORKANIM",
+      "ruleId": "AS-FEAT-001",
+      "slotGrammar": "work-anim"
+    },
+    "construction": {
+      "catalogueCategory": "CONSTRUCTION",
+      "ruleId": "AS-SITE-001",
+      "slotGrammar": "construction"
+    },
+    "xlayer": {
+      "catalogueCategory": "XLAYER",
+      "ruleId": "AS-XLAYER-001",
+      "slotGrammar": "cross-layer"
+    },
+    "depth": {
+      "catalogueCategory": "DEPTH",
+      "ruleId": "AS-DEPTH-001",
+      "slotGrammar": "depth"
+    },
+    "placeable": {
+      "catalogueCategory": "PLACEABLE",
+      "ruleId": "AS-FURN-001",
+      "slotGrammar": "placeable"
+    },
+    "marker": {
+      "catalogueCategory": "MARKER",
+      "ruleId": "AS-LOCK-001",
+      "slotGrammar": "marker"
+    },
+    "font": {
+      "catalogueCategory": "FONT",
+      "ruleId": "AS-PM-001",
+      "slotGrammar": "font"
+    },
+    "range": {
+      "catalogueCategory": "RANGE",
+      "ruleId": "AS-PM-001",
+      "slotGrammar": "range-marker"
+    },
+    "spark": {
+      "catalogueCategory": "SPARK",
+      "ruleId": "AS-MELEE-001",
+      "slotGrammar": "hit-spark"
     }
   },
   "sourceSheets": {
@@ -16141,7 +16587,14 @@
         "face-male": "face:tiefling:male",
         "face-female": "face:tiefling:female"
       }
-    }
+    },
+    "classGarb": "in-base-body",
+    "elderBaseBodies": "race-and-class",
+    "elderOffsetsApplyTo": [
+      "armour",
+      "helmet",
+      "hair"
+    ]
   },
   "slotMap": {
     "resolveBy": "slot-id-only",
@@ -16173,7 +16626,24 @@
       "tile": "^TL\\.(VOLCANIC|WET|ARID|TEMPERATE|COLD|WILD)\\.(DEEP|CAVERN|LOWLAND|UPLAND|HIGHLAND|AIR)\\.[A-Z][A-Z0-9-]*\\.[0-9]{2}\\.(SPRING|SUMMER|AUTUMN|WINTER)$",
       "building": "^BD\\.(HUMAN-FRONTIER|DWARF-STONEHOLD|ELF-GLADE|HALFLING-HOMESTEAD|DRAGONBORN-CITADEL|GOBLIN-SALVAGE)\\.(FOUNDATION|WALL-TOP|WALL|ROOF-EDGE|ROOF-FILL|DOOR|WINDOW|FLOOR|PILLAR|CONNECTOR|FURNITURE|WORKSTATION)\\.(INTACT|RUINED|CHARRED)\\.[0-9]{2}$",
       "effect": "^FX\\.(CAST|DELIVERY|IMPACT|AURA)\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*\\.F[0-9]{1,2}$",
-      "ui": "^UI\\.(DEUS-DARK|DEUS|RACE-HALF-ELF|RACE-HALF-ORC|RACE-DRAGONBORN|RACE-HALFLING|RACE-HUMAN|RACE-DWARF|RACE-GNOME|RACE-TIEFLING|RACE-ELF)\\.(WINDOW|BUTTON|CURSOR|TITLE|LOADING|FONT|PAUSE|TEXT)\\.(NORMAL|HOVER|PRESSED|DEFAULT|DISABLED)$"
+      "ui": "^UI\\.(DEUS-DARK|DEUS|RACE-HALF-ELF|RACE-HALF-ORC|RACE-DRAGONBORN|RACE-HALFLING|RACE-HUMAN|RACE-DWARF|RACE-GNOME|RACE-TIEFLING|RACE-ELF)\\.(WINDOW|BUTTON|CURSOR|TITLE|LOADING|FONT|PAUSE|TEXT)\\.(NORMAL|HOVER|PRESSED|DEFAULT|DISABLED)$",
+      "ground-mark": "^GM\\.(SNOW|MUD|SAND|BLOOD|WET)\\.(BOOT|BARE|PAW|HOOF|PATH)\\.(D|L|R|U)\\.F[0-2]$",
+      "glow": "^GL\\.[A-Z][A-Z0-9-]*\\.F[0-9]{2}$",
+      "decal": "^DC\\.(VOLCANIC|WET|ARID|TEMPERATE|COLD|WILD)\\.(PEBBLE|TUFT|CRACK|LEAF)\\.[0-9]{2}$",
+      "wang-tile": "^WG\\.(VOLCANIC|WET|ARID|TEMPERATE|COLD|WILD)\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*\\.[0-9]{2}$",
+      "world-sprite": "^WS\\.[A-Z][A-Z0-9-]*\\.(12|24|48)\\.(D|L|R|U)$",
+      "container": "^CN\\.[A-Z][A-Z0-9-]*\\.(OPEN|CLOSED|WINDOW)\\.(D|L|R|U)$",
+      "damage": "^DM\\.[A-Z][A-Z0-9-]*\\.(GROUND|WALL|OBJECT)\\.S[1-4]$",
+      "construction": "^CS\\.(HUMAN-FRONTIER|DWARF-STONEHOLD|ELF-GLADE|HALFLING-HOMESTEAD|DRAGONBORN-CITADEL|GOBLIN-SALVAGE)\\.(GHOST|BLUEPRINT|FOUNDATION|SCAFFOLD|PARTIAL|PROP|ANIM)\\.[0-9]{2}$",
+      "cross-layer": "^XL\\.(COLLAPSE|BREACH|CAVEIN)\\.S[1-4]\\.[0-9]{2}$",
+      "season": "^SE\\.(TERRAIN|VEGETATION|BUILDING|OBJECT)\\.(VOLCANIC|WET|ARID|TEMPERATE|COLD|WILD)\\.(SPRING|SUMMER|AUTUMN|WINTER)\\.[0-9]{2}$",
+      "work-anim": "^WK\\.(FARM|MINE|CHOP|BUILD|CRAFT|CARRY|FISH|COOK)\\.(D|L|R|U)\\.F[0-5]$",
+      "depth": "^DP\\.(CLIFF|SHADOW|RIM|RAMP|SLOPE|OVERLAY)\\.(VOLCANIC|WET|ARID|TEMPERATE|COLD|WILD)\\.[A-Z0-9-]+$",
+      "placeable": "^PL\\.[A-Z][A-Z0-9-]*\\.(D|L|R|U)$",
+      "marker": "^CB\\.(SELECT|FACTION|SUMMON|LOWHP)\\.[A-Z][A-Z0-9-]*$",
+      "font": "^FN\\.[A-Z0-9]+\\.(DAMAGE|STATUS)$",
+      "range-marker": "^RG\\.(SQUARE|LINE|CONE|SPHERE|CYLINDER)\\.[0-9]{2}$",
+      "hit-spark": "^SP\\.(SLASH|PIERCE|BLUDGEON)\\.F[0-2]$"
     },
     "retiredIds": [
       "CH.HAIR.ELF.F.06.WALK.D.F0"
@@ -27562,8 +28032,588 @@
             "owner": null
           }
         }
+      },
+      {
+        "category": "ground-mark",
+        "id": "GM.SNOW.BOOT.D.F0",
+        "catalogueId": "ALL_SHARED_GROUNDMARK_BOOT_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/GM_SNOW_BOOT_D_F0.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "glow",
+        "id": "GL.TORCH.F00",
+        "catalogueId": "ALL_SHARED_GLOW_TORCH_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/GL_TORCH_F00.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "decal",
+        "id": "DC.TEMPERATE.LEAF.01",
+        "catalogueId": "ALL_SHARED_DECAL_LEAF_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/DC_TEMPERATE_LEAF_01.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "wang-tile",
+        "id": "WG.TEMPERATE.GRASS.DIRT.01",
+        "catalogueId": "ALL_SHARED_WANG_GRASS_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/WG_TEMPERATE_GRASS_DIRT_01.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "world-sprite",
+        "id": "WS.LONGSWORD.24.D",
+        "catalogueId": "ALL_SHARED_WORLDSPRITE_LONGSWORD_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/WS_LONGSWORD_24_D.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "container",
+        "id": "CN.BACKPACK.CLOSED.D",
+        "catalogueId": "ALL_SHARED_CONTAINER_BACKPACK_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/CN_BACKPACK_CLOSED_D.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "damage",
+        "id": "DM.WALL.WALL.S1",
+        "catalogueId": "ALL_SHARED_DAMAGE_WALL_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/DM_WALL_WALL_S1.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "season",
+        "id": "SE.TERRAIN.TEMPERATE.SUMMER.01",
+        "catalogueId": "ALL_SHARED_SEASON_TERRAIN_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/SE_TERRAIN_TEMPERATE_SUMMER_01.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "work-anim",
+        "id": "WK.FARM.D.F0",
+        "catalogueId": "ALL_SHARED_WORKANIM_FARM_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/WK_FARM_D_F0.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "construction",
+        "id": "CS.HUMAN-FRONTIER.SCAFFOLD.01",
+        "catalogueId": "ALL_SHARED_CONSTRUCTION_SCAFFOLD_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/CS_HUMAN-FRONTIER_SCAFFOLD_01.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "cross-layer",
+        "id": "XL.BREACH.S1.01",
+        "catalogueId": "ALL_SHARED_XLAYER_BREACH_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/XL_BREACH_S1_01.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "depth",
+        "id": "DP.CLIFF.TEMPERATE.FACE",
+        "catalogueId": "ALL_SHARED_DEPTH_CLIFF_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/DP_CLIFF_TEMPERATE_FACE.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "placeable",
+        "id": "PL.TABLE.D",
+        "catalogueId": "ALL_SHARED_PLACEABLE_TABLE_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/PL_TABLE_D.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "marker",
+        "id": "CB.SELECT.DIAMOND",
+        "catalogueId": "ALL_SHARED_MARKER_SELECT_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/CB_SELECT_DIAMOND.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "font",
+        "id": "FN.PIXEL.DAMAGE",
+        "catalogueId": "ALL_SHARED_FONT_PIXEL_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/FN_PIXEL_DAMAGE.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "range-marker",
+        "id": "RG.SQUARE.01",
+        "catalogueId": "ALL_SHARED_RANGE_SQUARE_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/RG_SQUARE_01.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
+      },
+      {
+        "category": "hit-spark",
+        "id": "SP.SLASH.F0",
+        "catalogueId": "ALL_SHARED_SPARK_SLASH_V1_DEFAULT",
+        "sheetFile": "art/approved/a9c/SP_SLASH_F0.png",
+        "anchor": [
+          24,
+          24
+        ],
+        "detectedAnchors": null,
+        "provenance": {
+          "status": "blank",
+          "attempts": [],
+          "reviewerModel": null,
+          "ownerApproval": "pending",
+          "timestamps": {
+            "generated": null,
+            "reviewed": null,
+            "owner": null
+          }
+        }
       }
-    ]
+    ],
+    "frameLayout": {
+      "replacesAverage": 3.5,
+      "oldCells": 420,
+      "playbackWalk": [
+        1,
+        2,
+        1,
+        0
+      ],
+      "directions": 4,
+      "rows": [
+        {
+          "id": "idle",
+          "class": "idle",
+          "frames": 4
+        },
+        {
+          "id": "walk",
+          "class": "walk",
+          "frames": 3
+        },
+        {
+          "id": "melee-swing",
+          "class": "attack",
+          "frames": 6
+        },
+        {
+          "id": "thrust",
+          "class": "attack",
+          "frames": 6
+        },
+        {
+          "id": "bow-draw",
+          "class": "kept",
+          "frames": 4
+        },
+        {
+          "id": "bow-loose",
+          "class": "kept",
+          "frames": 3
+        },
+        {
+          "id": "xbow-aim",
+          "class": "kept",
+          "frames": 4
+        },
+        {
+          "id": "xbow-fire",
+          "class": "kept",
+          "frames": 4
+        },
+        {
+          "id": "xbow-reload",
+          "class": "kept",
+          "frames": 4
+        },
+        {
+          "id": "thrown",
+          "class": "kept",
+          "frames": 4
+        },
+        {
+          "id": "cast-one-hand",
+          "class": "cast",
+          "frames": 6
+        },
+        {
+          "id": "cast-two-hand",
+          "class": "cast",
+          "frames": 6
+        },
+        {
+          "id": "cast-focus",
+          "class": "cast",
+          "frames": 6
+        },
+        {
+          "id": "hammer",
+          "class": "work",
+          "frames": 6
+        },
+        {
+          "id": "saw",
+          "class": "work",
+          "frames": 6
+        },
+        {
+          "id": "chop",
+          "class": "work",
+          "frames": 6
+        },
+        {
+          "id": "dig",
+          "class": "work",
+          "frames": 6
+        },
+        {
+          "id": "stir",
+          "class": "work",
+          "frames": 6
+        },
+        {
+          "id": "carry",
+          "class": "work",
+          "frames": 6
+        },
+        {
+          "id": "kneel",
+          "class": "work",
+          "frames": 6
+        },
+        {
+          "id": "hurt",
+          "class": "kept",
+          "frames": 3
+        },
+        {
+          "id": "dodge",
+          "class": "kept",
+          "frames": 3
+        },
+        {
+          "id": "parry",
+          "class": "kept",
+          "frames": 3
+        },
+        {
+          "id": "death",
+          "class": "death",
+          "frames": 6
+        },
+        {
+          "id": "sneak",
+          "class": "kept",
+          "frames": 4
+        },
+        {
+          "id": "climb",
+          "class": "kept",
+          "frames": 4
+        },
+        {
+          "id": "prone",
+          "class": "kept",
+          "frames": 4
+        },
+        {
+          "id": "unconscious",
+          "class": "kept",
+          "frames": 4
+        },
+        {
+          "id": "sleep",
+          "class": "kept",
+          "frames": 4
+        },
+        {
+          "id": "sit",
+          "class": "kept",
+          "frames": 4
+        }
+      ],
+      "featureRows": [
+        {
+          "id": "farm",
+          "class": "work",
+          "frames": 6
+        },
+        {
+          "id": "mine",
+          "class": "work",
+          "frames": 6
+        },
+        {
+          "id": "build",
+          "class": "work",
+          "frames": 6
+        },
+        {
+          "id": "craft",
+          "class": "work",
+          "frames": 6
+        },
+        {
+          "id": "fish",
+          "class": "work",
+          "frames": 6
+        },
+        {
+          "id": "cook",
+          "class": "work",
+          "frames": 6
+        }
+      ],
+      "cellsPerDirection": 141,
+      "cells30": 564,
+      "featureCells": 144,
+      "cellsPerFullSheet": 708,
+      "maxFrames": 6,
+      "boundingPx": [
+        1152,
+        1728
+      ],
+      "exampleSheetUnchanged": "768x1440",
+      "note": "Item 33 replaces the 3.5 frames-per-row average (30 x 3.5 x 4 = 420). The 30 rows at the locked budgets, with rows the budgets do not name left at their A9 counts, are 564 cells. Section F adds six work rows, 144 cells. A full layer design is 708 cells. The committed hair example stays 768 by 1440."
+    }
   },
   "anchorTool": {
     "shift": "whole-pixels",
@@ -27679,5 +28729,1917 @@
         30
       ]
     }
+  },
+  "geometry": {
+    "cellFt": 5,
+    "cellPx": 48,
+    "layerFt": 5,
+    "layerPx": 48,
+    "strataPerLayer": 4,
+    "stratumFt": 1.25,
+    "stratumPx": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "quarterFt": 1.25,
+    "quarterPx": 12,
+    "heightUnit": "quarter",
+    "zLayers": 32,
+    "zMin": -16,
+    "zMax": 15,
+    "tilePx": 48,
+    "tilePxNotAdopted": [
+      64
+    ]
+  },
+  "masterPalette": {
+    "locked": true,
+    "canonical": true,
+    "pmMayRevise": "trial-or-style-bible-with-owner-notice",
+    "sourceFile": "art/palette/deus_master_world_palette_v1.hex",
+    "activeCount": 226,
+    "reservedSlots": 30,
+    "slotCount": 256,
+    "shrinkTo64": false,
+    "legacyRuntimeFile": "art/palette/uf.hex",
+    "legacyLineCount": 256,
+    "legacyUniqueCount": 250,
+    "legacyOverlap": 0,
+    "reconciliation": "The Lanes S/T master is the single master. Its 226 colours are the active set. Thirty reserved slots bring the slot count to 256. uf.hex is a different 256-line file, 250 unique colours, six repeated lines, and zero colours in common. It is not a second master and it is not the reserved slots. The active list is not shrunk.",
+    "colours": [
+      "#060709",
+      "#0C0D12",
+      "#14161C",
+      "#1C2126",
+      "#333B45",
+      "#525D6B",
+      "#798797",
+      "#A7B4C2",
+      "#23211D",
+      "#3D3833",
+      "#5F5851",
+      "#867E75",
+      "#B4ABA1",
+      "#6D6961",
+      "#9B968C",
+      "#C8C3B7",
+      "#EDE9DE",
+      "#142216",
+      "#26421C",
+      "#3E6328",
+      "#628C38",
+      "#91B851",
+      "#1D2315",
+      "#353C20",
+      "#565E31",
+      "#82884A",
+      "#B1B26C",
+      "#1F1610",
+      "#38291C",
+      "#55432D",
+      "#7C6142",
+      "#A3845F",
+      "#1B1714",
+      "#312820",
+      "#4D3F2C",
+      "#6B5A3E",
+      "#8A7653",
+      "#4E3E33",
+      "#6F5948",
+      "#8F7663",
+      "#28231E",
+      "#564F45",
+      "#8A8376",
+      "#C2BBB0",
+      "#1F3D20",
+      "#325C2C",
+      "#4F823F",
+      "#78AD5B",
+      "#59594F",
+      "#7C7C6E",
+      "#A1A190",
+      "#423E32",
+      "#66604E",
+      "#8F8770",
+      "#BAB095",
+      "#111F1B",
+      "#203320",
+      "#314D2E",
+      "#4A6E42",
+      "#6C935D",
+      "#181E11",
+      "#2B361A",
+      "#445427",
+      "#667A3A",
+      "#8EA353",
+      "#171210",
+      "#261D18",
+      "#3B2E25",
+      "#544234",
+      "#735B49",
+      "#212325",
+      "#3E3E44",
+      "#606568",
+      "#171813",
+      "#2A2722",
+      "#3F4030",
+      "#5A5B45",
+      "#797A5F",
+      "#161B20",
+      "#252F36",
+      "#37464F",
+      "#4E626E",
+      "#6B8291",
+      "#766B5B",
+      "#293B22",
+      "#415C32",
+      "#618247",
+      "#8AA864",
+      "#262316",
+      "#473E24",
+      "#6F5F34",
+      "#9C8449",
+      "#CBB06A",
+      "#2F271C",
+      "#77634A",
+      "#A28968",
+      "#CFB38D",
+      "#2C1B16",
+      "#4E2E23",
+      "#764432",
+      "#A16147",
+      "#CF8667",
+      "#7D6642",
+      "#A88C5D",
+      "#D3B680",
+      "#331F18",
+      "#583224",
+      "#834A34",
+      "#B06A4B",
+      "#DC906B",
+      "#1D221A",
+      "#343C2D",
+      "#505B44",
+      "#738162",
+      "#9AA986",
+      "#4A443A",
+      "#706A5B",
+      "#9C9282",
+      "#CAC0AF",
+      "#36332C",
+      "#6A6354",
+      "#A39984",
+      "#273827",
+      "#3D523A",
+      "#5B7353",
+      "#809C73",
+      "#1D1B18",
+      "#322F29",
+      "#4D463D",
+      "#938E7C",
+      "#3A3E42",
+      "#5A5D63",
+      "#7C8389",
+      "#A4ABB1",
+      "#30383E",
+      "#4B555D",
+      "#6E7A85",
+      "#97A3AF",
+      "#3C474F",
+      "#55636F",
+      "#758593",
+      "#1B332D",
+      "#2A4E43",
+      "#3E6E5D",
+      "#5A927C",
+      "#947762",
+      "#161618",
+      "#27272B",
+      "#7D7D88",
+      "#412A23",
+      "#5E3C32",
+      "#805345",
+      "#2F303A",
+      "#464754",
+      "#636474",
+      "#2B1B1E",
+      "#44292E",
+      "#623C43",
+      "#85545D",
+      "#605C56",
+      "#090A0D",
+      "#1F2430",
+      "#353E52",
+      "#5E6A88",
+      "#272810",
+      "#4E501C",
+      "#82852B",
+      "#DEDF5E",
+      "#362D2A",
+      "#635753",
+      "#300705",
+      "#6D1109",
+      "#B5280D",
+      "#F26018",
+      "#FFB833",
+      "#162A36",
+      "#23445A",
+      "#356782",
+      "#4F8FB2",
+      "#7BC0E3",
+      "#0F1B26",
+      "#172C3D",
+      "#356182",
+      "#5289B0",
+      "#141B18",
+      "#202B24",
+      "#2F4035",
+      "#435A4B",
+      "#5D7C68",
+      "#304859",
+      "#597C93",
+      "#91B3CD",
+      "#E2EFF8",
+      "#281D13",
+      "#49331E",
+      "#734F2D",
+      "#A2713F",
+      "#D0995C",
+      "#6E6457",
+      "#938676",
+      "#252B30",
+      "#606D78",
+      "#8C9DA9",
+      "#423023",
+      "#674A35",
+      "#91694A",
+      "#BA8C66",
+      "#3B2905",
+      "#78540D",
+      "#BE891B",
+      "#F7C03D",
+      "#FFF2A3",
+      "#062B33",
+      "#0F5969",
+      "#1C95AD",
+      "#3DD4F2",
+      "#A8F3FF",
+      "#220C30",
+      "#4A1E69",
+      "#8239B5",
+      "#BE65FA",
+      "#E6BAFF",
+      "#092617",
+      "#1A5736",
+      "#2EA065",
+      "#57E095"
+    ]
+  },
+  "deformingRetired": [
+    "cape",
+    "long-robe"
+  ],
+  "a9c": {
+    "artManual": {
+      "16": "Draw readable high-contrast fantasy at the 48 px scale. Keep the Ultima VII oblique reference. A head is about 1/5 of the body height. That ratio is a proportion, not a height split.",
+      "17": "Tiles and objects show a top face and a front face. Draw the map by row, then by Z layer. Sprites stay four-direction. Diagonal movement stays free.",
+      "18": "Furniture and placeables have four facings. A symmetric object may reuse a view only when its symmetric flag is set.",
+      "19": "Terrain is 48 px tiles-pro Wang on a dual-grid renderer. Each biome has 3 to 5 ground types in a transition chain, with 2 or 3 plain variants. Detail decals stay 24 px.",
+      "20": "Ground marks cover boot, bare, paw and hoof on snow, mud, sand, blood and wet ground, in four directions, with three fade steps. A worn path may become a road.",
+      "21": "Every light source has a glow id. The glow is pixel-stepped art on the additive light layer, and it stores colour and radius with that id.",
+      "22": "Depth uses per-layer ramps, cliff faces, hard dithered shadows, a 1 px ledge rim, ramps and a 24 px half-step. The depth demo toggles are recorded here. The renderer is another lane.",
+      "23": "Every item has an oblique world sprite beside its icon and its 144 px portrait. Placement stores an anchor, a footprint and the sim hook.",
+      "24": "Near the player, items are drawn in full. Far away, the sim keeps counts and replaces them from a fixed seed. Legal drawn sizes are 12, 24 and 48 px, with no scaling.",
+      "25": "A container opens a movable window of free-placed sprites. Backpack capacity in the worked example is 1 cu ft and 30 lb. Art is open and closed, four facings, plus a window background.",
+      "26": "One Z layer is 5 ft and 48 px. A quarter is 1.25 ft and 12 px. Movement, light, falling, carry and the 6 second tick use that scale. A 64 px tile is not adopted.",
+      "27": "The finished frame scales by an integer only. The default is 2x, nearest-neighbour. Extra space letterboxes or shows more map.",
+      "28": "Cross-layer destruction covers ground collapse, wall breaches of 4 stages, and cave-ins, through the mass ledger.",
+      "29": "Partial heights are quarters of 12 px. The old five-strata split is not used. The head ratio of about 1/5 stays a proportion rule.",
+      "30": "Construction art is a palette-swap ghost, a blueprint, foundation, scaffolding, partial stages, site props and build animation. The ghost is not an alpha fade.",
+      "31": "Characters and items must clear their ground by the grayscale value step before approval. The table-with-items trial is the reference, reviewed at true 2x. No image is generated here.",
+      "32": "The palette is saturated and controlled, with no gray mush. Value carries the read. The brightest colours are reserved. Mood comes from light and grading. Every asset passes grayscale before approval.",
+      "33": "Style defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision keeps one master, caps colours, and sets the frame budgets. Re-run the cost on 708 cells, not on the 3.5 average.",
+      "34": "Trial findings: request characters at size 42, animate with skeleton-v3 on create-character-v3 bodies, then propagate armour, helmet and hair. The south walk row sits 2 px low. Force a straight-on Ultima VII view. Small item world sprites remain an open test.",
+      "35": "A melee weapon is a separate sprite on the hand anchors. The attack is six frames. Draw the weapon 10 to 20 percent larger in native pixels. Do not scale it.",
+      "36": "These size, footprint, door, mirror, fortress, marker and font defaults are the PM defaults. The Owner may override them. West may be mirrored from east. Weapons and shields stay on the hand anchors.",
+      "37": "PM assumption, Owner may amend: class garb is part of the race and class base body. Faces show armour and helmet only. Charsets show armour, helmet, weapon and shield. Other gear is an item, an icon, a portrait or a world sprite. Elder base bodies by race and class are 216 sheets.",
+      "F": "Seasonal variants, building and object damage stages, and the sim work rows sit on the layered humanoid system. New work rows are farm, mine, build, craft, fish and cook, at 6 frames. Chop and carry are already rows."
+    },
+    "proportion": {
+      "tone": "readable-high-contrast-fantasy",
+      "obliqueReference": "ultima-vii",
+      "chibi": false,
+      "target": "1/5",
+      "min": 0.18,
+      "max": 0.22,
+      "samples": [
+        {
+          "id": "human",
+          "bodyPx": 42,
+          "headPx": 8
+        },
+        {
+          "id": "elf",
+          "bodyPx": 42,
+          "headPx": 8
+        },
+        {
+          "id": "half-elf",
+          "bodyPx": 42,
+          "headPx": 8
+        },
+        {
+          "id": "tiefling",
+          "bodyPx": 42,
+          "headPx": 8
+        },
+        {
+          "id": "dwarf",
+          "bodyPx": 36,
+          "headPx": 7
+        },
+        {
+          "id": "halfling",
+          "bodyPx": 33,
+          "headPx": 7
+        },
+        {
+          "id": "gnome",
+          "bodyPx": 33,
+          "headPx": 7
+        },
+        {
+          "id": "half-orc",
+          "bodyPx": 44,
+          "headPx": 9
+        },
+        {
+          "id": "dragonborn",
+          "bodyPx": 44,
+          "headPx": 9
+        }
+      ]
+    },
+    "projection": {
+      "faces": "top-and-front",
+      "drawOrder": "row-then-layer",
+      "directions": [
+        "S",
+        "W",
+        "E",
+        "N"
+      ],
+      "eightDirection": "declined",
+      "diagonalMovement": "free"
+    },
+    "furniture": {
+      "facings": 4,
+      "directions": [
+        "S",
+        "W",
+        "E",
+        "N"
+      ],
+      "reuse": "symmetric-flag-only",
+      "samples": [
+        {
+          "id": "table",
+          "facings": [
+            "S",
+            "W",
+            "E",
+            "N"
+          ],
+          "symmetric": true,
+          "reuse": "flagged"
+        },
+        {
+          "id": "chair",
+          "facings": [
+            "S",
+            "W",
+            "E",
+            "N"
+          ],
+          "symmetric": false,
+          "reuse": "none",
+          "uniqueViews": 4
+        }
+      ]
+    },
+    "terrain": {
+      "tilePx": 48,
+      "family": "pixellab-tiles-pro-wang",
+      "renderer": "dual-grid",
+      "a2Autotile": false,
+      "decalsPx": 24,
+      "decals": [
+        "pebbles",
+        "tufts",
+        "cracks",
+        "leaves"
+      ],
+      "groundTypesMin": 3,
+      "groundTypesMax": 5,
+      "plainVariantsMin": 2,
+      "plainVariantsMax": 3,
+      "nativeScale": 1,
+      "scaled": false,
+      "biomes": [
+        {
+          "id": "VOLCANIC",
+          "groundTypes": [
+            "ground-a",
+            "ground-b",
+            "ground-c"
+          ],
+          "plainVariants": {
+            "ground-a": 2,
+            "ground-b": 2,
+            "ground-c": 3
+          },
+          "transitionPairs": [
+            "ground-a-ground-b",
+            "ground-b-ground-c"
+          ]
+        },
+        {
+          "id": "WET",
+          "groundTypes": [
+            "ground-a",
+            "ground-b",
+            "ground-c"
+          ],
+          "plainVariants": {
+            "ground-a": 2,
+            "ground-b": 2,
+            "ground-c": 3
+          },
+          "transitionPairs": [
+            "ground-a-ground-b",
+            "ground-b-ground-c"
+          ]
+        },
+        {
+          "id": "ARID",
+          "groundTypes": [
+            "ground-a",
+            "ground-b",
+            "ground-c"
+          ],
+          "plainVariants": {
+            "ground-a": 2,
+            "ground-b": 2,
+            "ground-c": 3
+          },
+          "transitionPairs": [
+            "ground-a-ground-b",
+            "ground-b-ground-c"
+          ]
+        },
+        {
+          "id": "TEMPERATE",
+          "groundTypes": [
+            "ground-a",
+            "ground-b",
+            "ground-c"
+          ],
+          "plainVariants": {
+            "ground-a": 2,
+            "ground-b": 2,
+            "ground-c": 3
+          },
+          "transitionPairs": [
+            "ground-a-ground-b",
+            "ground-b-ground-c"
+          ]
+        },
+        {
+          "id": "COLD",
+          "groundTypes": [
+            "ground-a",
+            "ground-b",
+            "ground-c"
+          ],
+          "plainVariants": {
+            "ground-a": 2,
+            "ground-b": 2,
+            "ground-c": 3
+          },
+          "transitionPairs": [
+            "ground-a-ground-b",
+            "ground-b-ground-c"
+          ]
+        },
+        {
+          "id": "WILD",
+          "groundTypes": [
+            "ground-a",
+            "ground-b",
+            "ground-c"
+          ],
+          "plainVariants": {
+            "ground-a": 2,
+            "ground-b": 2,
+            "ground-c": 3
+          },
+          "transitionPairs": [
+            "ground-a-ground-b",
+            "ground-b-ground-c"
+          ]
+        }
+      ],
+      "trial": {
+        "characterRequestPx": 42,
+        "characterTallPx": [
+          42,
+          43
+        ],
+        "animation": "skeleton-v3-on-create-character-v3",
+        "layerPropagation": [
+          "armour",
+          "helmet",
+          "hair"
+        ],
+        "weaponsShields": "anchored-sprites",
+        "southWalk": {
+          "row": "walk",
+          "facing": "S",
+          "offsetPx": [
+            0,
+            2
+          ],
+          "correctedBy": "AS-ANCHOR-001"
+        },
+        "weaponAngles": "rotate-tool-one-generation-per-angle",
+        "view": "ultima-vii-oblique-straight-on",
+        "forbiddenView": "three-quarter-isometric",
+        "smallItemWorldSprites": "open-test"
+      }
+    },
+    "groundMarks": {
+      "kinds": [
+        "boot",
+        "bare",
+        "paw",
+        "hoof"
+      ],
+      "surfaces": [
+        "snow",
+        "mud",
+        "sand",
+        "blood",
+        "wet"
+      ],
+      "directions": 4,
+      "fadeStepsMin": 2,
+      "fadeStepsMax": 3,
+      "fadeSteps": 3,
+      "nativeScale": 1,
+      "path": {
+        "kind": "path",
+        "mayBecomeRoad": true
+      }
+    },
+    "lights": {
+      "layer": "additive",
+      "pixelStepped": true,
+      "blur": false,
+      "sources": [
+        {
+          "id": "torch",
+          "glowId": "GL.TORCH.F00",
+          "colour": "#060709",
+          "radiusPx": 192
+        },
+        {
+          "id": "window",
+          "glowId": "GL.WINDOW.F00",
+          "colour": "#5F5851",
+          "radiusPx": 96
+        }
+      ]
+    },
+    "depth": {
+      "palettePerLayer": true,
+      "cliffFaces": "per-biome-and-material",
+      "dropShadow": "hard-dithered",
+      "ledgeRimPx": 1,
+      "halfStepQuarters": 2,
+      "halfStepPx": 24,
+      "overlayOutline": true,
+      "terrainOutline": false,
+      "toggles": [
+        "whole-pixel-parallax",
+        "unit-height-shift",
+        "camera-layer-easing",
+        "dithered-cutaways",
+        "cross-layer-effects",
+        "glows-light-lower-layers",
+        "weather-by-exposed-layer"
+      ],
+      "rendererInLane": false
+    },
+    "worldItems": {
+      "oblique": true,
+      "alongside": [
+        "icon",
+        "portrait-144"
+      ],
+      "placement": "pixel-offset",
+      "hosts": [
+        "tile",
+        "surface",
+        "container"
+      ],
+      "fields": [
+        "anchor",
+        "footprint",
+        "simHook"
+      ],
+      "nativeScale": 1,
+      "scaled": false,
+      "samples": [
+        {
+          "id": "longsword",
+          "sizePx": 24,
+          "scaled": false,
+          "anchor": [
+            12,
+            20
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "simHook": "item-token"
+        }
+      ]
+    },
+    "features": {
+      "seasons": [
+        "spring",
+        "summer",
+        "autumn",
+        "winter"
+      ],
+      "seasonHosts": [
+        "terrain",
+        "vegetation",
+        "building",
+        "object"
+      ],
+      "damageStagesMin": 3,
+      "damageStages": 4,
+      "work": [
+        "farm",
+        "mine",
+        "chop",
+        "build",
+        "craft",
+        "carry",
+        "fish",
+        "cook"
+      ],
+      "workFrames": 6,
+      "workDirections": 4,
+      "onLayeredSystem": true
+    },
+    "placement": {
+      "near": "full-detail",
+      "far": "summarized-counts",
+      "seed": "fixed",
+      "storage": "chunk-and-layer",
+      "clutterCleanup": true,
+      "saves": "change-only",
+      "stressItems": 100000,
+      "cellPx": 6,
+      "cellsPerTileSide": 8,
+      "sizePx": [
+        12,
+        24,
+        48
+      ],
+      "scaled": false,
+      "tableTopQuarters": 1,
+      "shelfQuarters": [
+        2,
+        3
+      ],
+      "itemDrawOrder": "footprint-bottom-then-height",
+      "insideOrder": "row-then-layer",
+      "weight": "srd-pounds",
+      "massLedger": true,
+      "smallShadowPx": [
+        1,
+        2
+      ],
+      "receivesGlow": true,
+      "movement": "tile-to-tile",
+      "passablePx": [
+        12,
+        24
+      ],
+      "blockingPx": [
+        48
+      ]
+    },
+    "containers": {
+      "window": "movable",
+      "interior": "free-placed",
+      "grid": false,
+      "drag": [
+        "container",
+        "map",
+        "paper-doll"
+      ],
+      "nesting": "one-window-each",
+      "multipleWindows": true,
+      "example": {
+        "id": "backpack",
+        "volumeCuFt": 1,
+        "weightLb": 30
+      },
+      "locks": "srd",
+      "spill": "mass-ledger",
+      "shopStock": true,
+      "countsAs": "one-object",
+      "openClosed": true,
+      "facings": 4,
+      "openAnimation": true,
+      "windowBackground": true,
+      "raceVariants": "where-sensible",
+      "types": [
+        {
+          "id": "backpack",
+          "facings": [
+            "S",
+            "W",
+            "E",
+            "N"
+          ],
+          "openAnimation": true,
+          "windowBackground": true,
+          "openSlot": "CN.BACKPACK.OPEN.D",
+          "closedSlot": "CN.BACKPACK.CLOSED.D"
+        },
+        {
+          "id": "chest",
+          "facings": [
+            "S",
+            "W",
+            "E",
+            "N"
+          ],
+          "openAnimation": true,
+          "windowBackground": true,
+          "openSlot": "CN.CHEST.OPEN.D",
+          "closedSlot": "CN.CHEST.CLOSED.D"
+        },
+        {
+          "id": "barrel",
+          "facings": [
+            "S",
+            "W",
+            "E",
+            "N"
+          ],
+          "openAnimation": true,
+          "windowBackground": true,
+          "openSlot": "CN.BARREL.OPEN.D",
+          "closedSlot": "CN.BARREL.CLOSED.D"
+        },
+        {
+          "id": "crate",
+          "facings": [
+            "S",
+            "W",
+            "E",
+            "N"
+          ],
+          "openAnimation": true,
+          "windowBackground": true,
+          "openSlot": "CN.CRATE.OPEN.D",
+          "closedSlot": "CN.CRATE.CLOSED.D"
+        },
+        {
+          "id": "sack",
+          "facings": [
+            "S",
+            "W",
+            "E",
+            "N"
+          ],
+          "openAnimation": true,
+          "windowBackground": true,
+          "openSlot": "CN.SACK.OPEN.D",
+          "closedSlot": "CN.SACK.CLOSED.D"
+        }
+      ]
+    },
+    "scale": {
+      "diagonals": "5-5-5",
+      "torchBrightFt": 20,
+      "torchDimFt": 20,
+      "torchBrightTiles": 4,
+      "torchDimTiles": 4,
+      "falling": "1d6 per 2 layers",
+      "carry": "Str × 15 lb",
+      "walkPxPerFrame": 4,
+      "runPxPerFrame": 6,
+      "diagonalPxPerAxis": 3,
+      "fps": 60,
+      "tickSeconds": 6,
+      "ticksPerGameMinute": 10,
+      "dayLengthRealMinutes": [
+        24,
+        48
+      ],
+      "brightLight": "solid-glow",
+      "dimLight": "dither-2-3",
+      "gradients": false,
+      "positions": "whole-pixels",
+      "historicalDomain": "unchanged"
+    },
+    "render": {
+      "integerOnly": true,
+      "defaultScale": 2,
+      "smoothing": false,
+      "nearestNeighbour": true,
+      "minTilesAcross": 20,
+      "auto": {
+        "1080p": 2,
+        "1440p": 3,
+        "4k": 3
+      },
+      "playerOverride": true,
+      "camera": "whole-art-pixels",
+      "uiScale": "same-factor",
+      "extraSpace": [
+        "letterbox",
+        "more-map"
+      ],
+      "stretch": false,
+      "depthDemoScales": [
+        1,
+        2,
+        3
+      ]
+    },
+    "crossLayer": {
+      "kinds": [
+        "ground-collapse",
+        "wall-breach",
+        "cave-in"
+      ],
+      "wallBreachStagesMin": 3,
+      "wallBreachStagesMax": 4,
+      "wallBreachStages": 4,
+      "massLedger": true
+    },
+    "quarters": {
+      "halfStepPx": 24,
+      "headRule": "proportion-not-a-split"
+    },
+    "construction": {
+      "ghost": "palette-swap",
+      "alphaGhost": false,
+      "pieces": [
+        "blueprint",
+        "foundation",
+        "scaffolding",
+        "partial",
+        "prop",
+        "anim"
+      ]
+    },
+    "readability": {
+      "minValueStep": 3,
+      "smallItemMinValueStep": 4,
+      "valueLevels": 16,
+      "backgrounds": "calmer",
+      "mood": "lighting-glow-grading",
+      "silhouette": true,
+      "ui": {
+        "hoverOutlinePx": 1,
+        "tooltip": true,
+        "dragSnapPx": 6,
+        "picking": "topmost-first",
+        "stackCycle": "modifier",
+        "holdZoom": [
+          3,
+          4
+        ]
+      },
+      "reference": {
+        "name": "pixellab-table-with-items",
+        "reviewScale": "2x-integer",
+        "imageGenerated": false
+      },
+      "records": [
+        {
+          "id": "character-on-ground",
+          "sizePx": 48,
+          "subjectHex": "#060709",
+          "groundHex": "#333B45"
+        },
+        {
+          "id": "small-item",
+          "sizePx": 12,
+          "subjectHex": "#060709",
+          "groundHex": "#525D6B"
+        }
+      ]
+    },
+    "paletteRules": [
+      "saturated-controlled",
+      "value-first",
+      "brightest-reserved",
+      "mood-from-lighting",
+      "grayscale-before-approval"
+    ],
+    "palette": {
+      "grayMush": false,
+      "backgroundsCalmer": true,
+      "brightestReserved": [
+        "interactables",
+        "characters",
+        "spell-effects",
+        "loot",
+        "danger"
+      ]
+    },
+    "styleLock": {
+      "status": "LOCKED",
+      "pmMayRevise": true,
+      "pmRevision": "2026-09-26 15:05 CT",
+      "ownerNotice": true,
+      "light": "top-left",
+      "outlinePx": 1,
+      "outline": "self-tinted-dark",
+      "terrainOutline": false,
+      "shrinkTo64": false,
+      "caps": {
+        "itemOrIcon": 16,
+        "characterOrCreatureSheet": 32,
+        "tileset": 48
+      },
+      "extensionRows": "rmmz-compatible",
+      "additiveGlow": "max-brightness-only",
+      "grading": [
+        "dawn",
+        "day",
+        "dusk",
+        "night",
+        "underground"
+      ],
+      "iconPx": 32,
+      "markers": {
+        "colourBlindSafe": true,
+        "colourOnly": false,
+        "shapes": [
+          {
+            "role": "selection",
+            "shape": "diamond"
+          },
+          {
+            "role": "faction",
+            "shape": "square"
+          },
+          {
+            "role": "summon-controller",
+            "shape": "triangle"
+          },
+          {
+            "role": "low-hp",
+            "shape": "circle"
+          }
+        ]
+      },
+      "colourUse": [
+        {
+          "kind": "item",
+          "colours": [
+            "#060709",
+            "#0C0D12",
+            "#14161C",
+            "#1C2126",
+            "#333B45",
+            "#525D6B",
+            "#798797",
+            "#A7B4C2"
+          ]
+        },
+        {
+          "kind": "character",
+          "colours": [
+            "#060709",
+            "#0C0D12",
+            "#14161C",
+            "#1C2126",
+            "#333B45",
+            "#525D6B",
+            "#798797",
+            "#A7B4C2",
+            "#23211D",
+            "#3D3833",
+            "#5F5851",
+            "#867E75",
+            "#B4ABA1",
+            "#6D6961",
+            "#9B968C",
+            "#C8C3B7"
+          ]
+        },
+        {
+          "kind": "tileset",
+          "colours": [
+            "#060709",
+            "#0C0D12",
+            "#14161C",
+            "#1C2126",
+            "#333B45",
+            "#525D6B",
+            "#798797",
+            "#A7B4C2",
+            "#23211D",
+            "#3D3833",
+            "#5F5851",
+            "#867E75",
+            "#B4ABA1",
+            "#6D6961",
+            "#9B968C",
+            "#C8C3B7",
+            "#EDE9DE",
+            "#142216",
+            "#26421C",
+            "#3E6328",
+            "#628C38",
+            "#91B851",
+            "#1D2315",
+            "#353C20"
+          ]
+        }
+      ]
+    },
+    "melee": {
+      "weapon": "separate-sprite",
+      "pin": "hand-anchor",
+      "angles": "rotate-tool-one-generation-per-angle",
+      "frames": 6,
+      "frameNames": [
+        "wind-up",
+        "raise",
+        "arc-1",
+        "arc-2",
+        "arc-3",
+        "recovery"
+      ],
+      "strikeFrame": 4,
+      "strikeHeldLonger": true,
+      "strikeHoldFrames": 12,
+      "otherHoldFrames": 6,
+      "swingTypes": {
+        "overhead-chop": {
+          "weapons": [
+            "axe",
+            "hammer"
+          ],
+          "angles": [
+            "A0",
+            "A45",
+            "A90",
+            "A135"
+          ]
+        },
+        "side-slash": {
+          "weapons": [
+            "sword"
+          ],
+          "angles": [
+            "A0",
+            "A315",
+            "A270",
+            "A225"
+          ]
+        },
+        "thrust": {
+          "weapons": [
+            "spear",
+            "dagger"
+          ],
+          "angles": [
+            "A0",
+            "A90"
+          ]
+        },
+        "two-hand": {
+          "weapons": [
+            "greatsword",
+            "greataxe"
+          ],
+          "pace": "heavier-slower",
+          "angles": [
+            "A0",
+            "A45",
+            "A90",
+            "A135"
+          ]
+        }
+      },
+      "hitSpark": "strike-frame",
+      "knockbackPx": [
+        1,
+        2
+      ],
+      "oversizeMin": 1.1,
+      "oversizeMax": 1.2,
+      "scaled": false,
+      "sample": {
+        "id": "longsword",
+        "basePx": 20,
+        "drawnPx": 24,
+        "scaled": false
+      }
+    },
+    "pmDefaults": {
+      "ownerMayOverride": true,
+      "tinyPx": 24,
+      "smallPx": 36,
+      "mediumPx": 42,
+      "largeTall": [
+        48,
+        96
+      ],
+      "largeLong": [
+        96,
+        48
+      ],
+      "hugePx": 144,
+      "gargantuanPx": 192,
+      "footprints": {
+        "Tiny": {
+          "sharesSquare": true,
+          "squares": 1
+        },
+        "Small": {
+          "squares": 1
+        },
+        "Medium": {
+          "squares": 1
+        },
+        "Large": {
+          "squares": [
+            2,
+            2
+          ]
+        },
+        "Huge": {
+          "squares": [
+            3,
+            3
+          ]
+        },
+        "Gargantuan": {
+          "squares": [
+            4,
+            4
+          ]
+        }
+      },
+      "races": [
+        {
+          "id": "human",
+          "px": 42
+        },
+        {
+          "id": "elf",
+          "px": 42
+        },
+        {
+          "id": "half-elf",
+          "px": 42
+        },
+        {
+          "id": "tiefling",
+          "px": 42
+        },
+        {
+          "id": "dwarf",
+          "px": 36
+        },
+        {
+          "id": "halfling",
+          "px": 33,
+          "min": 32,
+          "max": 34
+        },
+        {
+          "id": "gnome",
+          "px": 33,
+          "min": 32,
+          "max": 34
+        },
+        {
+          "id": "half-orc",
+          "px": 44
+        },
+        {
+          "id": "dragonborn",
+          "px": 44
+        }
+      ],
+      "raceHeightNote": "Halfling and gnome use 33 inside 32-34. Half-elf and tiefling use 42, the human and elf height. The Owner may override.",
+      "doors": {
+        "widthTiles": 1,
+        "minHeightLayers": 1.5,
+        "minHeightPx": 72
+      },
+      "walls": "whole-layers",
+      "floors": "1-layer",
+      "mirror": {
+        "westFromEast": true,
+        "subjects": [
+          "bodies",
+          "gear-layers",
+          "creatures"
+        ],
+        "weapons": "hand-anchor",
+        "shields": "hand-anchor",
+        "runtimeFlip": false,
+        "asymmetric": "own-west-view",
+        "samples": {
+          "body": {
+            "id": "body",
+            "westView": "mirror-from-east"
+          },
+          "weapon": {
+            "id": "longsword",
+            "westView": "hand-anchor",
+            "mirroredOntoHand": false
+          },
+          "asymmetricGear": {
+            "id": "crested-helm",
+            "asymmetric": true,
+            "westView": "own"
+          }
+        }
+      },
+      "fortress": {
+        "scale": 1,
+        "minimap": "colour-coded-tiles",
+        "downscaleBlur": false
+      },
+      "rangeMarkers": "whole-squares",
+      "font": {
+        "count": 1,
+        "native": true,
+        "scale": "whole-pixel",
+        "colour": "damage-type"
+      }
+    },
+    "visibleGear": {
+      "assumption": "class-garb-in-race-class-base-body",
+      "assumptionFlag": "PM assumption, Owner may amend",
+      "charsetDrawn": [
+        "base-body",
+        "race-features",
+        "hair",
+        "beard",
+        "armour",
+        "helmet",
+        "weapon",
+        "shield"
+      ],
+      "charsetOrder": [
+        "base-body",
+        "race-features",
+        "hair-beard",
+        "armour",
+        "helmet"
+      ],
+      "anchored": [
+        "weapon",
+        "shield"
+      ],
+      "faceGear": [
+        "armour",
+        "helmet"
+      ],
+      "faceDropped": [
+        "collar",
+        "cloak"
+      ],
+      "notDrawn": [
+        "cloak",
+        "cape",
+        "boots",
+        "gloves",
+        "belts",
+        "rings",
+        "amulets",
+        "collar"
+      ],
+      "otherGear": "item-icon-portrait-world-sprite",
+      "childClass": false,
+      "childGarb": "child-base-body",
+      "outfitIdsRemain": "item-and-icon",
+      "armourLayers": [
+        "light",
+        "medium",
+        "heavy"
+      ],
+      "deformingKept": [
+        "large-shield",
+        "bow-draw"
+      ],
+      "deformingDropped": [
+        "cape",
+        "long-robe"
+      ],
+      "elderOffsetsApplyTo": [
+        "armour",
+        "helmet",
+        "hair"
+      ],
+      "elderBaseBodies": "race-and-class",
+      "elderFlag": "Elder base bodies vary by race and class: 9 races x 2 sexes x 12 classes = 216 sheets. Owner may amend.",
+      "layerSamples": [
+        {
+          "layer": "base-body",
+          "drawn": true
+        },
+        {
+          "layer": "race-features",
+          "drawn": true
+        },
+        {
+          "layer": "hair",
+          "drawn": true
+        },
+        {
+          "layer": "beard",
+          "drawn": true
+        },
+        {
+          "layer": "armour",
+          "drawn": true
+        },
+        {
+          "layer": "helmet",
+          "drawn": true
+        },
+        {
+          "layer": "weapon",
+          "drawn": true
+        },
+        {
+          "layer": "shield",
+          "drawn": true
+        },
+        {
+          "layer": "cloak",
+          "drawn": false
+        },
+        {
+          "layer": "cape",
+          "drawn": false
+        },
+        {
+          "layer": "boots",
+          "drawn": false
+        },
+        {
+          "layer": "gloves",
+          "drawn": false
+        },
+        {
+          "layer": "belts",
+          "drawn": false
+        },
+        {
+          "layer": "rings",
+          "drawn": false
+        },
+        {
+          "layer": "amulets",
+          "drawn": false
+        }
+      ],
+      "faceSample": {
+        "layers": [
+          "background",
+          "faction-trim",
+          "body-base",
+          "face",
+          "hair",
+          "gear",
+          "overlay"
+        ],
+        "gearKinds": [
+          "armour",
+          "helmet"
+        ]
+      }
+    },
+    "sizing": {
+      "races": 9,
+      "classes": 12,
+      "adultBaseSheets": 216,
+      "elderBaseSheets": 216,
+      "childBaseSheets": 9,
+      "baseBodySheets": 441,
+      "armourSheets": 81,
+      "helmetSheets": 81,
+      "elderArmourExtraSheets": 0,
+      "removedClassGarbSheets": 324,
+      "cellsPerFullSheet": 708,
+      "hairAndBeard": "unchanged from AS-GENE-001"
+    },
+    "catalogueCategories": [
+      {
+        "id": "GROUNDMARK",
+        "ruleId": "AS-TRACK-001",
+        "slotGrammar": "ground-mark",
+        "sampleSlotId": "GM.SNOW.BOOT.D.F0",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 3,
+          "facings": 4,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "GLOW",
+        "ruleId": "AS-GLOW-001",
+        "slotGrammar": "glow",
+        "sampleSlotId": "GL.TORCH.F00",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 4,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "DECAL",
+        "ruleId": "AS-TERR-001",
+        "slotGrammar": "decal",
+        "sampleSlotId": "DC.TEMPERATE.LEAF.01",
+        "sizing": {
+          "px": [
+            24,
+            24
+          ],
+          "frames": 1,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "WANG",
+        "ruleId": "AS-TERR-001",
+        "slotGrammar": "wang-tile",
+        "sampleSlotId": "WG.TEMPERATE.GRASS.DIRT.01",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 1,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "WORLDSPRITE",
+        "ruleId": "AS-WITEM-001",
+        "slotGrammar": "world-sprite",
+        "sampleSlotId": "WS.LONGSWORD.24.D",
+        "sizing": {
+          "px": [
+            24,
+            24
+          ],
+          "frames": 1,
+          "facings": 4,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "PLACEMENT",
+        "ruleId": "AS-PLAY-001",
+        "slotGrammar": "world-sprite",
+        "sampleSlotId": "WS.LONGSWORD.24.D",
+        "sizing": {
+          "px": [
+            24,
+            24
+          ],
+          "frames": 1,
+          "facings": 4,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "CONTAINER",
+        "ruleId": "AS-CONT-001",
+        "slotGrammar": "container",
+        "sampleSlotId": "CN.BACKPACK.CLOSED.D",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 4,
+          "facings": 4,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "DAMAGE",
+        "ruleId": "AS-FEAT-001",
+        "slotGrammar": "damage",
+        "sampleSlotId": "DM.WALL.WALL.S1",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 4,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "SEASON",
+        "ruleId": "AS-FEAT-001",
+        "slotGrammar": "season",
+        "sampleSlotId": "SE.TERRAIN.TEMPERATE.SUMMER.01",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 1,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "WORKANIM",
+        "ruleId": "AS-FEAT-001",
+        "slotGrammar": "work-anim",
+        "sampleSlotId": "WK.FARM.D.F0",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 6,
+          "facings": 4,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "CONSTRUCTION",
+        "ruleId": "AS-SITE-001",
+        "slotGrammar": "construction",
+        "sampleSlotId": "CS.HUMAN-FRONTIER.SCAFFOLD.01",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 4,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "XLAYER",
+        "ruleId": "AS-XLAYER-001",
+        "slotGrammar": "cross-layer",
+        "sampleSlotId": "XL.BREACH.S1.01",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 4,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "DEPTH",
+        "ruleId": "AS-DEPTH-001",
+        "slotGrammar": "depth",
+        "sampleSlotId": "DP.CLIFF.TEMPERATE.FACE",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 1,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "PLACEABLE",
+        "ruleId": "AS-FURN-001",
+        "slotGrammar": "placeable",
+        "sampleSlotId": "PL.TABLE.D",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 1,
+          "facings": 4,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "MARKER",
+        "ruleId": "AS-LOCK-001",
+        "slotGrammar": "marker",
+        "sampleSlotId": "CB.SELECT.DIAMOND",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 1,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "FONT",
+        "ruleId": "AS-PM-001",
+        "slotGrammar": "font",
+        "sampleSlotId": "FN.PIXEL.DAMAGE",
+        "sizing": {
+          "px": [
+            8,
+            8
+          ],
+          "frames": 1,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "RANGE",
+        "ruleId": "AS-PM-001",
+        "slotGrammar": "range-marker",
+        "sampleSlotId": "RG.SQUARE.01",
+        "sizing": {
+          "px": [
+            48,
+            48
+          ],
+          "frames": 1,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      },
+      {
+        "id": "SPARK",
+        "ruleId": "AS-MELEE-001",
+        "slotGrammar": "hit-spark",
+        "sampleSlotId": "SP.SLASH.F0",
+        "sizing": {
+          "px": [
+            16,
+            16
+          ],
+          "frames": 3,
+          "facings": 1,
+          "nativeScale": 1,
+          "scaled": false
+        }
+      }
+    ],
+    "sizingManifest": [
+      {
+        "id": "GROUNDMARK",
+        "ruleId": "AS-TRACK-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 3,
+        "facings": 4
+      },
+      {
+        "id": "GLOW",
+        "ruleId": "AS-GLOW-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 4,
+        "facings": 1
+      },
+      {
+        "id": "DECAL",
+        "ruleId": "AS-TERR-001",
+        "px": [
+          24,
+          24
+        ],
+        "frames": 1,
+        "facings": 1
+      },
+      {
+        "id": "WANG",
+        "ruleId": "AS-TERR-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 1,
+        "facings": 1
+      },
+      {
+        "id": "WORLDSPRITE",
+        "ruleId": "AS-WITEM-001",
+        "px": [
+          24,
+          24
+        ],
+        "frames": 1,
+        "facings": 4
+      },
+      {
+        "id": "PLACEMENT",
+        "ruleId": "AS-PLAY-001",
+        "px": [
+          24,
+          24
+        ],
+        "frames": 1,
+        "facings": 4
+      },
+      {
+        "id": "CONTAINER",
+        "ruleId": "AS-CONT-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 4,
+        "facings": 4
+      },
+      {
+        "id": "DAMAGE",
+        "ruleId": "AS-FEAT-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 4,
+        "facings": 1
+      },
+      {
+        "id": "SEASON",
+        "ruleId": "AS-FEAT-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 1,
+        "facings": 1
+      },
+      {
+        "id": "WORKANIM",
+        "ruleId": "AS-FEAT-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 6,
+        "facings": 4
+      },
+      {
+        "id": "CONSTRUCTION",
+        "ruleId": "AS-SITE-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 4,
+        "facings": 1
+      },
+      {
+        "id": "XLAYER",
+        "ruleId": "AS-XLAYER-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 4,
+        "facings": 1
+      },
+      {
+        "id": "DEPTH",
+        "ruleId": "AS-DEPTH-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 1,
+        "facings": 1
+      },
+      {
+        "id": "PLACEABLE",
+        "ruleId": "AS-FURN-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 1,
+        "facings": 4
+      },
+      {
+        "id": "MARKER",
+        "ruleId": "AS-LOCK-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 1,
+        "facings": 1
+      },
+      {
+        "id": "FONT",
+        "ruleId": "AS-PM-001",
+        "px": [
+          8,
+          8
+        ],
+        "frames": 1,
+        "facings": 1
+      },
+      {
+        "id": "RANGE",
+        "ruleId": "AS-PM-001",
+        "px": [
+          48,
+          48
+        ],
+        "frames": 1,
+        "facings": 1
+      },
+      {
+        "id": "SPARK",
+        "ruleId": "AS-MELEE-001",
+        "px": [
+          16,
+          16
+        ],
+        "frames": 3,
+        "facings": 1
+      },
+      {
+        "id": "HUMANOID-LAYER",
+        "ruleId": "AS-VIS-001",
+        "sheets": 603,
+        "cells": 708,
+        "px": [
+          1152,
+          1728
+        ],
+        "note": "441 base bodies + 81 armour + 81 helmets. Hair and beard are not in the 603."
+      }
+    ]
   }
 }

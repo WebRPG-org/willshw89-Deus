@@ -393,6 +393,37 @@ const drawFrames = V.clone(standard.elderReuse.frames);
 drawFrames[0].drawOrder = 'behind';
 kills('equip-draw', 'AS-EQUIP-001', V.checkEquipmentAnchors(standard), V.checkEquipmentAnchors(equipView(drawFrames)));
 
+const a9cGood = V.checkA9c(standard);
+function a9cBad(mutate) {
+    const copy = V.clone(standard);
+    mutate(copy);
+    return V.checkA9c(copy);
+}
+kills('look', 'AS-LOOK-001', a9cGood, a9cBad(s => { s.a9c.proportion.samples[0].headPx = 20; }));
+kills('proj', 'AS-PROJ-001', a9cGood, a9cBad(s => { s.a9c.projection.eightDirection = 'allowed'; }));
+kills('furn', 'AS-FURN-001', a9cGood, a9cBad(s => { s.a9c.furniture.samples[1].reuse = 'flagged'; }));
+kills('terr', 'AS-TERR-001', a9cGood, a9cBad(s => { s.a9c.terrain.a2Autotile = true; }));
+kills('track', 'AS-TRACK-001', a9cGood, a9cBad(s => { s.a9c.groundMarks.fadeSteps = 1; }));
+kills('glow', 'AS-GLOW-001', a9cGood, a9cBad(s => { delete s.a9c.lights.sources[0].radiusPx; }));
+kills('depth', 'AS-DEPTH-001', a9cGood, a9cBad(s => { s.a9c.depth.toggles.pop(); }));
+kills('world-sprite', 'AS-WITEM-001', a9cGood, a9cBad(s => { s.a9c.worldItems.samples[0].scaled = true; }));
+kills('feature', 'AS-FEAT-001', a9cGood, a9cBad(s => { s.a9c.features.work = s.a9c.features.work.filter(id => id !== 'fish'); }));
+kills('placement', 'AS-PLAY-001', a9cGood, a9cBad(s => { s.a9c.placement.sizePx = [16, 24, 48]; }));
+kills('container', 'AS-CONT-001', a9cGood, a9cBad(s => { s.a9c.containers.types[0].facings = ['S']; }));
+kills('scale', 'AS-SCALE-001', a9cGood, a9cBad(s => { s.geometry.layerFt = 10; }));
+kills('render', 'AS-RENDER-001', a9cGood, a9cBad(s => { s.a9c.render.defaultScale = 1.5; }));
+kills('cross-layer', 'AS-XLAYER-001', a9cGood, a9cBad(s => { s.a9c.crossLayer.wallBreachStages = 2; }));
+kills('quarters', 'AS-QTR-001', a9cGood, a9cBad(s => { s.geometry.stratumPx = [19, 19, 19, 19, 20]; }));
+kills('construction', 'AS-SITE-001', a9cGood, a9cBad(s => { s.a9c.construction.pieces = s.a9c.construction.pieces.filter(id => id !== 'scaffolding'); }));
+kills('readability', 'AS-READ-001', a9cGood, a9cBad(s => { s.a9c.readability.records[0].subjectHex = s.a9c.readability.records[0].groundHex; }));
+kills('palette', 'AS-PAL-001', a9cGood, a9cBad(s => { s.a9c.palette.grayMush = true; }));
+kills('lock-cycle', 'AS-LOCK-001', a9cGood, a9cBad(s => { s.slotMap.frameLayout.playbackWalk = [0, 1, 2, 1]; }));
+kills('lock-cap', 'AS-LOCK-001', a9cGood, a9cBad(s => { s.a9c.styleLock.colourUse[0].colours = s.masterPalette.colours.slice(0, 17); }));
+kills('melee', 'AS-MELEE-001', a9cGood, a9cBad(s => { s.a9c.melee.sample.scaled = true; }));
+kills('pm-mirror', 'AS-PM-001', a9cGood, a9cBad(s => { s.a9c.pmDefaults.mirror.samples.weapon.mirroredOntoHand = true; }));
+kills('visible-gear', 'AS-VIS-001', a9cGood, a9cBad(s => { s.a9c.visibleGear.layerSamples.push({ layer: 'cloak', drawn: true }); }));
+kills('tile-64', 'AS-SCALE-001', a9cGood, a9cBad(s => { s.geometry.tilePxNotAdopted = []; }));
+
 function idsMatch(mdText, rules) {
     const mdIds = new Set(mdText.match(/AS-[A-Z]+-\d{3}/g) || []);
     const jsonIds = Object.keys(rules);
@@ -401,6 +432,30 @@ function idsMatch(mdText, rules) {
 const md = fs.readFileSync(path.join(ROOT, 'docs', 'art', 'DEUS_ASSET_STANDARD.md'), 'utf8');
 const jsonIds = Object.keys(standard.rules);
 check('rule-ids', idsMatch(md, standard.rules), 'set mismatch');
+check('no-grimdark', !/grimdark/i.test(md) && !/grimdark/i.test(JSON.stringify(standard)));
+check('no-fifth-geometry', !/fifth/i.test(JSON.stringify(standard.geometry)) && !/fifth/i.test(md));
+function hexLines(file) {
+    return fs.readFileSync(path.join(ROOT, file), 'utf8').split(/\r?\n/).map(s => s.trim()).filter(s => /^#?[0-9A-Fa-f]{6}$/.test(s)).map(s => (s[0] === '#' ? s : '#' + s).toUpperCase());
+}
+const masterFile = hexLines('art/palette/deus_master_world_palette_v1.hex');
+const legacyFile = hexLines('art/palette/uf.hex');
+check('master-file', masterFile.join('|') === standard.masterPalette.colours.join('|'), 'canonical list');
+check('legacy-file', legacyFile.length === 256 && new Set(legacyFile).size === 250 && masterFile.every(c => legacyFile.indexOf(c) === -1));
+const phrases = [
+    'readable high-contrast fantasy', 'about 1/5', 'top face and a front face', 'by row, then by Z layer',
+    'Eight-direction sheets stay declined', 'Diagonal movement stays free', 'symmetric flag', 'tiles-pro',
+    'dual-grid', 'pebbles, tufts, cracks and leaves', 'skeleton-v3', 'create-character-v3', 'size 42',
+    '2 px low', 'three-quarter isometric', 'open test', 'boot, bare, paw and hoof',
+    'snow, mud, sand, blood and wet', 'additive light layer', 'whole-pixel parallax', 'camera layer easing',
+    'dithered cutaways', '100,000', '6 px cells', '12, 24 and 48', '1 cu ft', '30 lb', '1.25 ft', '5-5-5',
+    'Str × 15', '4 px per frame', '6 px per frame', 'nearest-neighbour', 'letterbox', 'wall breaches',
+    'palette swap', 'scaffolding', 'grayscale', 'gray mush', 'LOCKED', '15:05 CT', 'about 16', 'about 32',
+    'about 48', '1, 2, 1, 0', 'dawn, day, dusk, night and underground', 'colour-blind-safe',
+    '10 to 20 percent', 'knockback', 'Owner may override', 'shares a square', '1.5 layers',
+    'Mirroring is allowed', 'fortress', 'pixel font', 'class garb is part of the race and class base body',
+    'PM assumption', 'not adopted', 'four quarters', 'table-with-items', 'true 2×', '708', '441', '216'
+];
+phrases.forEach(phrase => check('phrase-' + phrase, md.indexOf(phrase) !== -1, 'missing'));
 const dropped = V.clone(standard);
 delete dropped.rules[jsonIds[0]];
 check('rule-ids-mutant', idsMatch(md, dropped.rules) === false);
@@ -434,7 +489,7 @@ check('cli-strict-clean', strictOk === 0, 'exit ' + strictOk);
 const strictBad = quiet(() => V.main(['--catalogue', path.join(FIX, 'eight_catalogue.json'), '--strict'], { noExit: true }));
 check('cli-strict-eight', strictBad === 1, 'exit ' + strictBad);
 
-const checked = ['AS-GLOBAL-010', 'AS-GLOBAL-014', 'AS-GLOBAL-019', 'AS-GLOBAL-022', 'AS-GLOBAL-023', 'AS-CRIT-001', 'AS-CRIT-004', 'AS-BEAST-001', 'AS-HUM-004', 'AS-HUM-009', 'AS-HUM-015', 'AS-HUM-016', 'AS-HUM-017', 'AS-HUM-019', 'AS-FACE-001', 'AS-FACE-002', 'AS-FACE-003', 'AS-FACE-004', 'AS-ICON-001', 'AS-ICON-003', 'AS-ITEM-001', 'AS-ITEM-002', 'AS-NODE-001', 'AS-ANIM-001', 'AS-FX-003', 'AS-FX-005', 'AS-UI-003', 'AS-UI-004', 'AS-SUMMON-001', 'AS-SUMMON-002', 'AS-REMAIN-001', 'AS-HAUL-001', 'AS-VEH-001', 'AS-LIGHT-001', 'AS-MAP-001', 'AS-PROP-001', 'AS-STYLE-001', 'AS-REL-001', 'AS-FARM-001', 'AS-FOOD-001', 'AS-DUNG-001', 'AS-TRAP-001', 'AS-LORE-001', 'AS-SCENE-001', 'AS-ZONE-001', 'AS-MKTG-001', 'AS-TAME-001', 'AS-TAME-002', 'AS-VAR-001', 'AS-VAR-002', 'AS-GENE-001', 'AS-PORT-001', 'AS-HEAD-001', 'AS-ELDER-001', 'AS-GEAR-001', 'AS-MIRROR-001', 'AS-POSE-001', 'AS-BIOME-005', 'AS-SIZE-001', 'AS-SLOT-001', 'AS-PIPE-001', 'AS-PROMPT-001', 'AS-GEN-001', 'AS-GEN-002', 'AS-GEN-003', 'AS-GEN-004', 'AS-SRC-001', 'AS-REPO-001', 'AS-PREVIEW-001', 'AS-GEN-005', 'AS-SEX-001', 'AS-SEX-002', 'AS-ID-001', 'AS-ANCHOR-001', 'AS-EQUIP-001'];
+const checked = ['AS-GLOBAL-010', 'AS-GLOBAL-014', 'AS-GLOBAL-019', 'AS-GLOBAL-022', 'AS-GLOBAL-023', 'AS-CRIT-001', 'AS-CRIT-004', 'AS-BEAST-001', 'AS-HUM-004', 'AS-HUM-009', 'AS-HUM-015', 'AS-HUM-016', 'AS-HUM-017', 'AS-HUM-019', 'AS-FACE-001', 'AS-FACE-002', 'AS-FACE-003', 'AS-FACE-004', 'AS-ICON-001', 'AS-ICON-003', 'AS-ITEM-001', 'AS-ITEM-002', 'AS-NODE-001', 'AS-ANIM-001', 'AS-FX-003', 'AS-FX-005', 'AS-UI-003', 'AS-UI-004', 'AS-SUMMON-001', 'AS-SUMMON-002', 'AS-REMAIN-001', 'AS-HAUL-001', 'AS-VEH-001', 'AS-LIGHT-001', 'AS-MAP-001', 'AS-PROP-001', 'AS-STYLE-001', 'AS-REL-001', 'AS-FARM-001', 'AS-FOOD-001', 'AS-DUNG-001', 'AS-TRAP-001', 'AS-LORE-001', 'AS-SCENE-001', 'AS-ZONE-001', 'AS-MKTG-001', 'AS-TAME-001', 'AS-TAME-002', 'AS-VAR-001', 'AS-VAR-002', 'AS-GENE-001', 'AS-PORT-001', 'AS-HEAD-001', 'AS-ELDER-001', 'AS-GEAR-001', 'AS-MIRROR-001', 'AS-POSE-001', 'AS-BIOME-005', 'AS-SIZE-001', 'AS-SLOT-001', 'AS-PIPE-001', 'AS-PROMPT-001', 'AS-GEN-001', 'AS-GEN-002', 'AS-GEN-003', 'AS-GEN-004', 'AS-SRC-001', 'AS-REPO-001', 'AS-PREVIEW-001', 'AS-GEN-005', 'AS-SEX-001', 'AS-SEX-002', 'AS-ID-001', 'AS-ANCHOR-001', 'AS-EQUIP-001', 'AS-LOOK-001', 'AS-PROJ-001', 'AS-FURN-001', 'AS-TERR-001', 'AS-TRACK-001', 'AS-GLOW-001', 'AS-DEPTH-001', 'AS-WITEM-001', 'AS-FEAT-001', 'AS-PLAY-001', 'AS-CONT-001', 'AS-SCALE-001', 'AS-RENDER-001', 'AS-XLAYER-001', 'AS-QTR-001', 'AS-SITE-001', 'AS-READ-001', 'AS-PAL-001', 'AS-LOCK-001', 'AS-MELEE-001', 'AS-PM-001', 'AS-VIS-001'];
 const srcHas = checked.filter(id => src.indexOf(id) === -1);
 check('checks-present', srcHas.length === 0, srcHas.join(','));
 

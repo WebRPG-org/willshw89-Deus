@@ -71,7 +71,24 @@ const ID_GRAMMAR = {
     tile: '^TL\\.(VOLCANIC|WET|ARID|TEMPERATE|COLD|WILD)\\.(DEEP|CAVERN|LOWLAND|UPLAND|HIGHLAND|AIR)\\.[A-Z][A-Z0-9-]*\\.[0-9]{2}\\.(SPRING|SUMMER|AUTUMN|WINTER)$',
     building: '^BD\\.(HUMAN-FRONTIER|DWARF-STONEHOLD|ELF-GLADE|HALFLING-HOMESTEAD|DRAGONBORN-CITADEL|GOBLIN-SALVAGE)\\.(FOUNDATION|WALL-TOP|WALL|ROOF-EDGE|ROOF-FILL|DOOR|WINDOW|FLOOR|PILLAR|CONNECTOR|FURNITURE|WORKSTATION)\\.(INTACT|RUINED|CHARRED)\\.[0-9]{2}$',
     effect: '^FX\\.(CAST|DELIVERY|IMPACT|AURA)\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*\\.F[0-9]{1,2}$',
-    ui: '^UI\\.(DEUS-DARK|DEUS|RACE-HALF-ELF|RACE-HALF-ORC|RACE-DRAGONBORN|RACE-HALFLING|RACE-HUMAN|RACE-DWARF|RACE-GNOME|RACE-TIEFLING|RACE-ELF)\\.(WINDOW|BUTTON|CURSOR|TITLE|LOADING|FONT|PAUSE|TEXT)\\.(NORMAL|HOVER|PRESSED|DEFAULT|DISABLED)$'
+    ui: '^UI\\.(DEUS-DARK|DEUS|RACE-HALF-ELF|RACE-HALF-ORC|RACE-DRAGONBORN|RACE-HALFLING|RACE-HUMAN|RACE-DWARF|RACE-GNOME|RACE-TIEFLING|RACE-ELF)\\.(WINDOW|BUTTON|CURSOR|TITLE|LOADING|FONT|PAUSE|TEXT)\\.(NORMAL|HOVER|PRESSED|DEFAULT|DISABLED)$',
+    'ground-mark': '^GM\\.(SNOW|MUD|SAND|BLOOD|WET)\\.(BOOT|BARE|PAW|HOOF|PATH)\\.(D|L|R|U)\\.F[0-2]$',
+    glow: '^GL\\.[A-Z][A-Z0-9-]*\\.F[0-9]{2}$',
+    decal: '^DC\\.(VOLCANIC|WET|ARID|TEMPERATE|COLD|WILD)\\.(PEBBLE|TUFT|CRACK|LEAF)\\.[0-9]{2}$',
+    'wang-tile': '^WG\\.(VOLCANIC|WET|ARID|TEMPERATE|COLD|WILD)\\.[A-Z][A-Z0-9-]*\\.[A-Z][A-Z0-9-]*\\.[0-9]{2}$',
+    'world-sprite': '^WS\\.[A-Z][A-Z0-9-]*\\.(12|24|48)\\.(D|L|R|U)$',
+    container: '^CN\\.[A-Z][A-Z0-9-]*\\.(OPEN|CLOSED|WINDOW)\\.(D|L|R|U)$',
+    damage: '^DM\\.[A-Z][A-Z0-9-]*\\.(GROUND|WALL|OBJECT)\\.S[1-4]$',
+    construction: '^CS\\.(HUMAN-FRONTIER|DWARF-STONEHOLD|ELF-GLADE|HALFLING-HOMESTEAD|DRAGONBORN-CITADEL|GOBLIN-SALVAGE)\\.(GHOST|BLUEPRINT|FOUNDATION|SCAFFOLD|PARTIAL|PROP|ANIM)\\.[0-9]{2}$',
+    'cross-layer': '^XL\\.(COLLAPSE|BREACH|CAVEIN)\\.S[1-4]\\.[0-9]{2}$',
+    season: '^SE\\.(TERRAIN|VEGETATION|BUILDING|OBJECT)\\.(VOLCANIC|WET|ARID|TEMPERATE|COLD|WILD)\\.(SPRING|SUMMER|AUTUMN|WINTER)\\.[0-9]{2}$',
+    'work-anim': '^WK\\.(FARM|MINE|CHOP|BUILD|CRAFT|CARRY|FISH|COOK)\\.(D|L|R|U)\\.F[0-5]$',
+    depth: '^DP\\.(CLIFF|SHADOW|RIM|RAMP|SLOPE|OVERLAY)\\.(VOLCANIC|WET|ARID|TEMPERATE|COLD|WILD)\\.[A-Z0-9-]+$',
+    placeable: '^PL\\.[A-Z][A-Z0-9-]*\\.(D|L|R|U)$',
+    marker: '^CB\\.(SELECT|FACTION|SUMMON|LOWHP)\\.[A-Z][A-Z0-9-]*$',
+    font: '^FN\\.[A-Z0-9]+\\.(DAMAGE|STATUS)$',
+    'range-marker': '^RG\\.(SQUARE|LINE|CONE|SPHERE|CYLINDER)\\.[0-9]{2}$',
+    'hit-spark': '^SP\\.(SLASH|PIERCE|BLUDGEON)\\.F[0-2]$'
 };
 
 function readJson(file) {
@@ -1507,6 +1524,467 @@ function checkEquipmentAnchors(standard) {
     return [result('AS-EQUIP-001', 'pass', expect + ' body frames')];
 }
 
+function colourValue(hex) {
+    const text = String(hex || '').toUpperCase();
+    if (!/^#[0-9A-F]{6}$/.test(text)) return null;
+    const n = parseInt(text.slice(1), 16);
+    const r = (n >> 16) & 255;
+    const g = (n >> 8) & 255;
+    const b = n & 255;
+    return Math.round((0.299 * r + 0.587 * g + 0.114 * b) / 255 * 15);
+}
+
+function paletteSet(standard) {
+    const colours = standard && standard.masterPalette && standard.masterPalette.colours;
+    return new Set(Array.isArray(colours) ? colours : []);
+}
+
+function sumFrames(rows) {
+    if (!Array.isArray(rows)) return null;
+    let n = 0;
+    for (let i = 0; i < rows.length; i++) {
+        if (!rows[i] || !Number.isInteger(rows[i].frames)) return null;
+        n += rows[i].frames;
+    }
+    return n;
+}
+
+function rowFrames(rows, id) {
+    if (!Array.isArray(rows)) return null;
+    for (let i = 0; i < rows.length; i++) {
+        if (rows[i] && rows[i].id === id) return rows[i].frames;
+    }
+    return null;
+}
+
+function classFrames(rows, name) {
+    if (!Array.isArray(rows)) return false;
+    const found = rows.filter(row => row && row.class === name);
+    if (!found.length) return false;
+    return found.every(row => row.frames === { idle: 4, walk: 3, attack: 6, cast: 6, work: 6, death: 6 }[name]);
+}
+
+function noteOk(manual, key) {
+    return !!(manual && typeof manual[key] === 'string' && manual[key].length > 20);
+}
+
+function categoryOk(standard, ruleId) {
+    const rows = standard && standard.a9c && standard.a9c.catalogueCategories;
+    const samples = standard && standard.slotMap && standard.slotMap.grammarSamples;
+    if (!Array.isArray(rows) || !Array.isArray(samples)) return false;
+    const mine = rows.filter(row => row && row.ruleId === ruleId);
+    if (!mine.length) return false;
+    const seen = new Set(samples.map(sample => sample && sample.id));
+    for (let i = 0; i < mine.length; i++) {
+        const row = mine[i];
+        if (!row.id || !row.slotGrammar || !ID_GRAMMAR[row.slotGrammar]) return false;
+        if (!row.sizing || row.sizing.nativeScale !== 1 || row.sizing.scaled === true) return false;
+        if (!seen.has(row.sampleSlotId)) return false;
+        if (!new RegExp(ID_GRAMMAR[row.slotGrammar]).test(row.sampleSlotId)) return false;
+    }
+    return true;
+}
+
+function checkA9c(standard) {
+    const out = [];
+    const a = standard && standard.a9c;
+    const g = standard && standard.geometry;
+    const pal = standard && standard.masterPalette;
+    const manual = a && a.artManual;
+    const layout = standard && standard.slotMap && standard.slotMap.frameLayout;
+
+    const proportion = a && a.proportion;
+    let proportionOk = !!(proportion && proportion.target === '1/5' && proportion.min === 0.18 && proportion.max === 0.22
+        && proportion.chibi === false && proportion.tone === 'readable-high-contrast-fantasy'
+        && proportion.obliqueReference === 'ultima-vii' && noteOk(manual, '16')
+        && Array.isArray(proportion.samples) && proportion.samples.length >= 9);
+    if (proportionOk) {
+        for (let i = 0; i < proportion.samples.length; i++) {
+            const row = proportion.samples[i];
+            if (!row || !Number.isInteger(row.bodyPx) || !Number.isInteger(row.headPx) || row.bodyPx < 1) {
+                proportionOk = false;
+                break;
+            }
+            const ratio = row.headPx / row.bodyPx;
+            if (ratio < proportion.min || ratio > proportion.max) {
+                proportionOk = false;
+                break;
+            }
+        }
+    }
+    out.push(result('AS-LOOK-001', proportionOk ? 'pass' : 'violate', proportionOk ? 'head about 1/5' : 'proportion or art direction'));
+
+    const proj = a && a.projection;
+    const projOk = !!(proj && proj.faces === 'top-and-front' && proj.drawOrder === 'row-then-layer'
+        && sameSet(proj.directions, ['S', 'W', 'E', 'N']) && proj.eightDirection === 'declined'
+        && proj.diagonalMovement === 'free' && noteOk(manual, '17'));
+    out.push(result('AS-PROJ-001', projOk ? 'pass' : 'violate', projOk ? 'oblique, row then layer, 4 directions' : 'projection'));
+
+    const furn = a && a.furniture;
+    let furnOk = !!(furn && furn.facings === 4 && sameSet(furn.directions, ['S', 'W', 'E', 'N'])
+        && furn.reuse === 'symmetric-flag-only' && noteOk(manual, '18') && categoryOk(standard, 'AS-FURN-001')
+        && Array.isArray(furn.samples) && furn.samples.length >= 2);
+    if (furnOk) {
+        for (let i = 0; i < furn.samples.length; i++) {
+            const row = furn.samples[i];
+            if (!row || !sameSet(row.facings, ['S', 'W', 'E', 'N'])) furnOk = false;
+            else if (row.symmetric === true && row.reuse !== 'flagged') furnOk = false;
+            else if (row.symmetric !== true && row.uniqueViews !== 4) furnOk = false;
+            else if (row.symmetric !== true && row.reuse === 'flagged') furnOk = false;
+        }
+    }
+    out.push(result('AS-FURN-001', furnOk ? 'pass' : 'violate', furnOk ? '4 facings, reuse by flag' : 'furniture facings'));
+
+    const terr = a && a.terrain;
+    const trial = terr && terr.trial;
+    const terrOk = !!(terr && terr.tilePx === 48 && terr.family === 'pixellab-tiles-pro-wang' && terr.renderer === 'dual-grid'
+        && terr.a2Autotile === false && terr.decalsPx === 24 && sameSet(terr.decals, ['pebbles', 'tufts', 'cracks', 'leaves'])
+        && terr.groundTypesMin === 3 && terr.groundTypesMax === 5 && terr.plainVariantsMin === 2 && terr.plainVariantsMax === 3
+        && terr.nativeScale === 1 && terr.scaled === false && noteOk(manual, '19') && noteOk(manual, '34')
+        && categoryOk(standard, 'AS-TERR-001')
+        && trial && trial.characterRequestPx === 42 && trial.characterTallPx[0] === 42 && trial.characterTallPx[1] === 43
+        && trial.animation === 'skeleton-v3-on-create-character-v3' && sameSet(trial.layerPropagation, ['armour', 'helmet', 'hair'])
+        && trial.weaponsShields === 'anchored-sprites' && trial.southWalk && trial.southWalk.offsetPx[0] === 0 && trial.southWalk.offsetPx[1] === 2
+        && trial.weaponAngles === 'rotate-tool-one-generation-per-angle' && trial.view === 'ultima-vii-oblique-straight-on'
+        && trial.forbiddenView === 'three-quarter-isometric' && trial.smallItemWorldSprites === 'open-test'
+        && Array.isArray(terr.biomes) && sameSet(terr.biomes.map(row => row && row.id), ['VOLCANIC', 'WET', 'ARID', 'TEMPERATE', 'COLD', 'WILD']));
+    let groundsOk = terrOk;
+    if (groundsOk) {
+        for (let i = 0; i < terr.biomes.length; i++) {
+            const biome = terr.biomes[i];
+            const types = biome && biome.groundTypes;
+            if (!types || types.length < 3 || types.length > 5) groundsOk = false;
+            else {
+                for (let t = 0; t < types.length; t++) {
+                    const n = biome.plainVariants && biome.plainVariants[types[t]];
+                    if (n < 2 || n > 3) groundsOk = false;
+                }
+                if (!Array.isArray(biome.transitionPairs) || biome.transitionPairs.length < types.length - 1) groundsOk = false;
+            }
+        }
+    }
+    out.push(result('AS-TERR-001', groundsOk ? 'pass' : 'violate', groundsOk ? '48 px Wang dual-grid, trial recorded' : 'terrain'));
+
+    const marks = a && a.groundMarks;
+    const marksOk = !!(marks && sameSet(marks.kinds, ['boot', 'bare', 'paw', 'hoof']) && sameSet(marks.surfaces, ['snow', 'mud', 'sand', 'blood', 'wet'])
+        && marks.directions === 4 && marks.fadeStepsMin === 2 && marks.fadeStepsMax === 3 && marks.fadeSteps === 3
+        && marks.path && marks.path.mayBecomeRoad === true && marks.nativeScale === 1 && noteOk(manual, '20')
+        && categoryOk(standard, 'AS-TRACK-001'));
+    out.push(result('AS-TRACK-001', marksOk ? 'pass' : 'violate', marksOk ? 'ground marks' : 'ground marks'));
+
+    const lights = a && a.lights;
+    const set = paletteSet(standard);
+    let glowOk = !!(lights && Array.isArray(lights.sources) && lights.sources.length >= 1 && lights.layer === 'additive'
+        && lights.pixelStepped === true && lights.blur === false && noteOk(manual, '21') && categoryOk(standard, 'AS-GLOW-001'));
+    if (glowOk) {
+        const ids = new Set();
+        for (let i = 0; i < lights.sources.length; i++) {
+            const src = lights.sources[i];
+            if (!src || !src.id || ids.has(src.id) || !src.glowId || src.glowId === src.id) glowOk = false;
+            else if (!set.has(src.colour) || !Number.isInteger(src.radiusPx) || src.radiusPx < 1) glowOk = false;
+            else ids.add(src.id);
+        }
+    }
+    out.push(result('AS-GLOW-001', glowOk ? 'pass' : 'violate', glowOk ? 'glow id, colour, radius' : 'glow'));
+
+    const depth = a && a.depth;
+    const toggles = ['whole-pixel-parallax', 'unit-height-shift', 'camera-layer-easing', 'dithered-cutaways', 'cross-layer-effects', 'glows-light-lower-layers', 'weather-by-exposed-layer'];
+    const depthOk = !!(depth && depth.palettePerLayer === true && depth.cliffFaces === 'per-biome-and-material'
+        && depth.dropShadow === 'hard-dithered' && depth.ledgeRimPx === 1 && depth.halfStepQuarters === 2 && depth.halfStepPx === 24
+        && depth.overlayOutline === true && depth.terrainOutline === false && sameSet(depth.toggles, toggles)
+        && depth.rendererInLane === false && noteOk(manual, '22') && categoryOk(standard, 'AS-DEPTH-001'));
+    out.push(result('AS-DEPTH-001', depthOk ? 'pass' : 'violate', depthOk ? 'depth look and demo toggles' : 'depth'));
+
+    const world = a && a.worldItems;
+    let worldOk = !!(world && world.oblique === true && sameSet(world.alongside, ['icon', 'portrait-144'])
+        && world.placement === 'pixel-offset' && sameSet(world.hosts, ['tile', 'surface', 'container'])
+        && sameSet(world.fields, ['anchor', 'footprint', 'simHook']) && world.nativeScale === 1 && world.scaled === false
+        && noteOk(manual, '23') && categoryOk(standard, 'AS-WITEM-001')
+        && Array.isArray(world.samples) && world.samples.length >= 1);
+    if (worldOk) {
+        for (let i = 0; i < world.samples.length; i++) {
+            const row = world.samples[i];
+            if (!row || [12, 24, 48].indexOf(row.sizePx) === -1 || row.scaled === true) worldOk = false;
+            else if (!row.anchor || !row.footprint || !row.simHook) worldOk = false;
+        }
+    }
+    out.push(result('AS-WITEM-001', worldOk ? 'pass' : 'violate', worldOk ? 'world sprite slot' : 'world sprite'));
+
+    const feat = a && a.features;
+    const workIds = ['farm', 'mine', 'chop', 'build', 'craft', 'carry', 'fish', 'cook'];
+    let featOk = !!(feat && sameSet(feat.seasons, ['spring', 'summer', 'autumn', 'winter'])
+        && sameSet(feat.seasonHosts, ['terrain', 'vegetation', 'building', 'object'])
+        && feat.damageStagesMin === 3 && feat.damageStages === 4
+        && sameSet(feat.work, workIds) && feat.workFrames === 6 && feat.workDirections === 4
+        && feat.onLayeredSystem === true && noteOk(manual, 'F') && categoryOk(standard, 'AS-FEAT-001'));
+    out.push(result('AS-FEAT-001', featOk ? 'pass' : 'violate', featOk ? 'seasons, damage, work' : 'feature art'));
+
+    const play = a && a.placement;
+    const playOk = !!(play && play.near === 'full-detail' && play.far === 'summarized-counts' && play.seed === 'fixed'
+        && play.storage === 'chunk-and-layer' && play.clutterCleanup === true && play.saves === 'change-only'
+        && play.stressItems === 100000 && play.cellPx === 6 && play.cellsPerTileSide === 8
+        && sameSet(play.sizePx, [12, 24, 48]) && play.scaled === false
+        && play.tableTopQuarters === 1 && play.shelfQuarters[0] === 2 && play.shelfQuarters[1] === 3
+        && play.itemDrawOrder === 'footprint-bottom-then-height' && play.insideOrder === 'row-then-layer'
+        && play.weight === 'srd-pounds' && play.massLedger === true && play.smallShadowPx[0] === 1 && play.smallShadowPx[1] === 2
+        && play.receivesGlow === true && play.movement === 'tile-to-tile'
+        && play.passablePx.indexOf(12) !== -1 && play.passablePx.indexOf(24) !== -1 && play.blockingPx.indexOf(48) !== -1
+        && noteOk(manual, '24') && categoryOk(standard, 'AS-PLAY-001'));
+    out.push(result('AS-PLAY-001', playOk ? 'pass' : 'violate', playOk ? 'placement fields' : 'placement'));
+
+    const cont = a && a.containers;
+    let contOk = !!(cont && cont.window === 'movable' && cont.interior === 'free-placed' && cont.grid === false
+        && sameSet(cont.drag, ['container', 'map', 'paper-doll']) && cont.nesting === 'one-window-each'
+        && cont.multipleWindows === true && cont.example && cont.example.id === 'backpack'
+        && cont.example.volumeCuFt === 1 && cont.example.weightLb === 30 && cont.locks === 'srd'
+        && cont.spill === 'mass-ledger' && cont.shopStock === true && cont.countsAs === 'one-object'
+        && cont.openClosed === true && cont.facings === 4 && cont.openAnimation === true && cont.windowBackground === true
+        && cont.raceVariants === 'where-sensible' && noteOk(manual, '25') && categoryOk(standard, 'AS-CONT-001')
+        && Array.isArray(cont.types) && cont.types.length >= 1);
+    if (contOk) {
+        for (let i = 0; i < cont.types.length; i++) {
+            const row = cont.types[i];
+            if (!row || !row.openSlot || !row.closedSlot || !sameSet(row.facings, ['S', 'W', 'E', 'N']) || !row.openAnimation || !row.windowBackground) {
+                contOk = false;
+            }
+        }
+    }
+    out.push(result('AS-CONT-001', contOk ? 'pass' : 'violate', contOk ? 'containers' : 'containers'));
+
+    const scale = a && a.scale;
+    const scaleOk = !!(g && g.cellFt === 5 && g.cellPx === 48 && g.layerFt === 5 && g.layerPx === 48
+        && g.zLayers === 32 && g.zMin === -16 && g.zMax === 15 && (g.zMax - g.zMin + 1) === 32
+        && g.tilePx === 48 && Array.isArray(g.tilePxNotAdopted) && g.tilePxNotAdopted.indexOf(64) !== -1
+        && g.tilePx !== 64 && scale && scale.diagonals === '5-5-5' && scale.torchBrightFt === 20 && scale.torchDimFt === 20
+        && scale.torchBrightTiles === 4 && scale.torchDimTiles === 4 && scale.falling === '1d6 per 2 layers'
+        && scale.carry === 'Str × 15 lb' && scale.walkPxPerFrame === 4 && scale.runPxPerFrame === 6
+        && scale.diagonalPxPerAxis === 3 && scale.fps === 60 && scale.tickSeconds === 6 && scale.ticksPerGameMinute === 10
+        && scale.dayLengthRealMinutes && scale.dayLengthRealMinutes[0] === 24 && scale.dayLengthRealMinutes[1] === 48
+        && scale.brightLight === 'solid-glow' && scale.dimLight === 'dither-2-3' && scale.gradients === false
+        && scale.positions === 'whole-pixels' && scale.historicalDomain === 'unchanged'
+        && noteOk(manual, '26'));
+    out.push(result('AS-SCALE-001', scaleOk ? 'pass' : 'violate', scaleOk ? '5 ft layer, 48 px' : 'world scale'));
+
+    const render = a && a.render;
+    const renderOk = !!(render && render.integerOnly === true && render.defaultScale === 2 && render.smoothing === false
+        && render.nearestNeighbour === true && render.minTilesAcross === 20
+        && render.auto && render.auto['1080p'] === 2 && render.auto['1440p'] === 3 && render.auto['4k'] === 3
+        && render.playerOverride === true && render.camera === 'whole-art-pixels' && render.uiScale === 'same-factor'
+        && sameSet(render.extraSpace, ['letterbox', 'more-map']) && render.stretch === false
+        && sameSet(render.depthDemoScales, [1, 2, 3]) && noteOk(manual, '27'));
+    out.push(result('AS-RENDER-001', renderOk ? 'pass' : 'violate', renderOk ? 'integer scale, 2x default' : 'render scale'));
+
+    const cross = a && a.crossLayer;
+    const crossOk = !!(cross && sameSet(cross.kinds, ['ground-collapse', 'wall-breach', 'cave-in'])
+        && cross.wallBreachStagesMin === 3 && cross.wallBreachStagesMax === 4 && cross.wallBreachStages === 4
+        && cross.massLedger === true && noteOk(manual, '28') && categoryOk(standard, 'AS-XLAYER-001'));
+    out.push(result('AS-XLAYER-001', crossOk ? 'pass' : 'violate', crossOk ? 'cross-layer damage' : 'cross-layer'));
+
+    const quarterOk = !!(g && g.strataPerLayer === 4 && g.stratumFt === 1.25 && g.quarterFt === 1.25 && g.quarterPx === 12
+        && Array.isArray(g.stratumPx) && g.stratumPx.length === 4 && g.stratumPx.every(n => n === 12)
+        && g.quarterPx * 4 === g.layerPx && g.heightUnit === 'quarter'
+        && JSON.stringify(g).toLowerCase().indexOf('fifth') === -1
+        && a && a.quarters && a.quarters.halfStepPx === 24 && a.quarters.headRule === 'proportion-not-a-split'
+        && noteOk(manual, '29'));
+    out.push(result('AS-QTR-001', quarterOk ? 'pass' : 'violate', quarterOk ? 'four quarters of 12 px' : 'quarters'));
+
+    const site = a && a.construction;
+    const siteOk = !!(site && site.ghost === 'palette-swap' && site.alphaGhost === false
+        && sameSet(site.pieces, ['blueprint', 'foundation', 'scaffolding', 'partial', 'prop', 'anim'])
+        && noteOk(manual, '30') && categoryOk(standard, 'AS-SITE-001'));
+    out.push(result('AS-SITE-001', siteOk ? 'pass' : 'violate', siteOk ? 'construction category' : 'construction'));
+
+    const read = a && a.readability;
+    let readOk = !!(read && pal && read.minValueStep === 3 && read.smallItemMinValueStep === 4 && read.valueLevels === 16
+        && read.backgrounds === 'calmer' && read.mood === 'lighting-glow-grading' && read.silhouette === true
+        && read.ui && read.ui.hoverOutlinePx === 1 && read.ui.tooltip === true && read.ui.dragSnapPx === 6
+        && read.ui.picking === 'topmost-first' && read.ui.stackCycle === 'modifier' && sameSet(read.ui.holdZoom, [3, 4])
+        && read.reference && read.reference.name === 'pixellab-table-with-items' && read.reference.reviewScale === '2x-integer'
+        && read.reference.imageGenerated === false && noteOk(manual, '31')
+        && Array.isArray(read.records) && read.records.length >= 2);
+    if (readOk) {
+        for (let i = 0; i < read.records.length; i++) {
+            const row = read.records[i];
+            const step = row && row.sizePx === 12 ? read.smallItemMinValueStep : read.minValueStep;
+            const subject = colourValue(row && row.subjectHex);
+            const ground = colourValue(row && row.groundHex);
+            if (subject === null || ground === null || !set.has(row.subjectHex) || !set.has(row.groundHex)) readOk = false;
+            else if (Math.abs(subject - ground) < step) readOk = false;
+        }
+    }
+    out.push(result('AS-READ-001', readOk ? 'pass' : 'violate', readOk ? 'grayscale step' : 'readability'));
+
+    const rules = a && a.paletteRules;
+    const palOk = !!(rules && rules.length === 5 && rules[0] === 'saturated-controlled'
+        && rules[1] === 'value-first' && rules[2] === 'brightest-reserved' && rules[3] === 'mood-from-lighting'
+        && rules[4] === 'grayscale-before-approval' && a.palette && a.palette.grayMush === false
+        && sameSet(a.palette.brightestReserved, ['interactables', 'characters', 'spell-effects', 'loot', 'danger'])
+        && a.palette.backgroundsCalmer === true && noteOk(manual, '32'));
+    out.push(result('AS-PAL-001', palOk ? 'pass' : 'violate', palOk ? 'palette rules' : 'palette rules'));
+
+    const lock = a && a.styleLock;
+    const perDir = layout && sumFrames(layout.rows);
+    const featureSum = layout && sumFrames(layout.featureRows);
+    const lockOk = !!(lock && pal && lock.status === 'LOCKED' && lock.pmMayRevise === true
+        && lock.pmRevision === '2026-09-26 15:05 CT' && lock.ownerNotice === true
+        && lock.light === 'top-left' && lock.outlinePx === 1 && lock.outline === 'self-tinted-dark'
+        && lock.terrainOutline === false && lock.shrinkTo64 === false
+        && pal.activeCount === 226 && pal.reservedSlots === 30 && pal.slotCount === 256 && pal.shrinkTo64 === false
+        && pal.canonical === true && Array.isArray(pal.colours) && pal.colours.length === 226
+        && new Set(pal.colours).size === 226 && pal.legacyLineCount === 256 && pal.legacyUniqueCount === 250
+        && pal.legacyOverlap === 0
+        && lock.caps && lock.caps.itemOrIcon === 16 && lock.caps.characterOrCreatureSheet === 32 && lock.caps.tileset === 48
+        && layout && layout.replacesAverage === 3.5 && layout.oldCells === 420 && layout.playbackWalk
+        && layout.playbackWalk.length === 4 && layout.playbackWalk[0] === 1 && layout.playbackWalk[1] === 2
+        && layout.playbackWalk[2] === 1 && layout.playbackWalk[3] === 0
+        && rowFrames(layout.rows, 'walk') === 3 && rowFrames(layout.rows, 'idle') === 4
+        && rowFrames(layout.rows, 'melee-swing') === 6 && rowFrames(layout.rows, 'thrust') === 6
+        && rowFrames(layout.rows, 'death') === 6 && classFrames(layout.rows, 'cast') && classFrames(layout.rows, 'work')
+        && Array.isArray(layout.featureRows) && layout.featureRows.length === 6
+        && layout.featureRows.every(row => row && row.frames === 6 && row.class === 'work'
+            && ['farm', 'mine', 'build', 'craft', 'fish', 'cook'].indexOf(row.id) !== -1)
+        && perDir * 4 === layout.cells30 && featureSum * 4 === layout.featureCells
+        && layout.cells30 + layout.featureCells === layout.cellsPerFullSheet
+        && layout.boundingPx && layout.boundingPx[0] === 1152 && layout.boundingPx[1] === 1728
+        && layout.boundingPx[0] <= 2048 && layout.boundingPx[1] <= 2048
+        && lock.extensionRows === 'rmmz-compatible' && lock.additiveGlow === 'max-brightness-only'
+        && sameSet(lock.grading, ['dawn', 'day', 'dusk', 'night', 'underground'])
+        && lock.iconPx === 32 && lock.markers && lock.markers.colourBlindSafe === true && lock.markers.colourOnly === false
+        && noteOk(manual, '33') && categoryOk(standard, 'AS-LOCK-001'));
+    let capsOk = lockOk && Array.isArray(lock.colourUse);
+    if (capsOk) {
+        const needKind = { item: 16, character: 32, tileset: 48 };
+        const seenKind = {};
+        for (let i = 0; i < lock.colourUse.length; i++) {
+            const row = lock.colourUse[i];
+            const cap = row && needKind[row.kind];
+            if (!cap || !Array.isArray(row.colours) || row.colours.length < 1 || row.colours.length > cap) capsOk = false;
+            else {
+                seenKind[row.kind] = true;
+                for (let c = 0; c < row.colours.length; c++) {
+                    if (!set.has(row.colours[c])) capsOk = false;
+                }
+            }
+        }
+        if (!seenKind.item || !seenKind.character || !seenKind.tileset) capsOk = false;
+    }
+    let markerOk = capsOk && lock.markers && Array.isArray(lock.markers.shapes);
+    if (markerOk) {
+        const roles = lock.markers.shapes.map(row => row && row.role);
+        const shapes = lock.markers.shapes.map(row => row && row.shape);
+        markerOk = sameSet(roles, ['selection', 'faction', 'summon-controller', 'low-hp'])
+            && new Set(shapes).size === 4 && shapes.every(shape => typeof shape === 'string' && shape.length > 0);
+    }
+    out.push(result('AS-LOCK-001', markerOk ? 'pass' : 'violate', markerOk ? 'locked style defaults' : 'style lock'));
+
+    const melee = a && a.melee;
+    const meleeOk = !!(melee && melee.weapon === 'separate-sprite' && melee.pin === 'hand-anchor'
+        && melee.angles === 'rotate-tool-one-generation-per-angle' && melee.frames === 6
+        && sameSet(melee.frameNames, ['wind-up', 'raise', 'arc-1', 'arc-2', 'arc-3', 'recovery'])
+        && melee.strikeFrame === 4 && melee.strikeHeldLonger === true
+        && melee.swingTypes && melee.swingTypes['overhead-chop'] && melee.swingTypes['side-slash']
+        && melee.swingTypes.thrust && melee.swingTypes['two-hand'] && melee.swingTypes['two-hand'].pace === 'heavier-slower'
+        && melee.hitSpark === 'strike-frame' && melee.knockbackPx[0] === 1 && melee.knockbackPx[1] === 2
+        && melee.strikeHoldFrames === 12 && melee.otherHoldFrames === 6 && melee.strikeHoldFrames > melee.otherHoldFrames
+        && melee.oversizeMin === 1.1 && melee.oversizeMax === 1.2 && melee.scaled === false
+        && melee.sample && melee.sample.scaled === false
+        && melee.sample.drawnPx >= Math.round(melee.sample.basePx * 1.1) && melee.sample.drawnPx <= Math.round(melee.sample.basePx * 1.2)
+        && noteOk(manual, '35') && categoryOk(standard, 'AS-MELEE-001'));
+    out.push(result('AS-MELEE-001', meleeOk ? 'pass' : 'violate', meleeOk ? 'melee swings' : 'melee'));
+
+    const pm = a && a.pmDefaults;
+    const heights = {
+        human: 42, elf: 42, 'half-elf': 42, tiefling: 42, dwarf: 36,
+        halfling: 33, gnome: 33, 'half-orc': 44, dragonborn: 44
+    };
+    let pmOk = !!(pm && pm.ownerMayOverride === true && pm.tinyPx === 24 && pm.smallPx === 36 && pm.mediumPx === 42
+        && pm.largeTall && pm.largeTall[0] === 48 && pm.largeTall[1] === 96
+        && pm.largeLong && pm.largeLong[0] === 96 && pm.largeLong[1] === 48
+        && pm.hugePx === 144 && pm.gargantuanPx === 192
+        && pm.footprints && pm.footprints.Tiny && pm.footprints.Tiny.sharesSquare === true
+        && pm.footprints.Small.squares === 1 && pm.footprints.Medium.squares === 1
+        && pm.footprints.Large.squares[0] === 2 && pm.footprints.Huge.squares[0] === 3
+        && pm.footprints.Gargantuan.squares[0] === 4
+        && pm.doors && pm.doors.widthTiles === 1 && pm.doors.minHeightLayers === 1.5 && pm.doors.minHeightPx === 72
+        && pm.walls === 'whole-layers' && pm.floors === '1-layer'
+        && pm.mirror && pm.mirror.westFromEast === true
+        && sameSet(pm.mirror.subjects, ['bodies', 'gear-layers', 'creatures'])
+        && pm.mirror.weapons === 'hand-anchor' && pm.mirror.shields === 'hand-anchor'
+        && pm.mirror.runtimeFlip === false && pm.mirror.asymmetric === 'own-west-view'
+        && pm.fortress && pm.fortress.scale === 1 && pm.fortress.minimap === 'colour-coded-tiles' && pm.fortress.downscaleBlur === false
+        && pm.rangeMarkers === 'whole-squares' && pm.font && pm.font.count === 1 && pm.font.native === true
+        && pm.font.scale === 'whole-pixel' && pm.font.colour === 'damage-type'
+        && noteOk(manual, '36') && categoryOk(standard, 'AS-PM-001')
+        && Array.isArray(pm.races) && pm.races.length === 9);
+    if (pmOk) {
+        const seenRace = {};
+        for (let i = 0; i < pm.races.length; i++) {
+            const row = pm.races[i];
+            if (!row || heights[row.id] !== row.px) pmOk = false;
+            else if (row.id === 'halfling' || row.id === 'gnome') {
+                if (row.min !== 32 || row.max !== 34) pmOk = false;
+            }
+            seenRace[row.id] = true;
+        }
+        const ids = Object.keys(heights);
+        for (let i = 0; i < ids.length; i++) if (!seenRace[ids[i]]) pmOk = false;
+        if (!pm.mirror.samples) pmOk = false;
+        else {
+            const body = pm.mirror.samples.body;
+            const weapon = pm.mirror.samples.weapon;
+            const asymmetric = pm.mirror.samples.asymmetricGear;
+            if (!body || body.westView !== 'mirror-from-east') pmOk = false;
+            if (!weapon || weapon.westView !== 'hand-anchor' || weapon.mirroredOntoHand === true) pmOk = false;
+            if (!asymmetric || asymmetric.asymmetric !== true || asymmetric.westView !== 'own') pmOk = false;
+        }
+    }
+    out.push(result('AS-PM-001', pmOk ? 'pass' : 'violate', pmOk ? 'PM defaults, Owner may override' : 'PM defaults'));
+
+    const vis = a && a.visibleGear;
+    const sizing = a && a.sizing;
+    const allowedDrawn = ['base-body', 'race-features', 'hair', 'beard', 'armour', 'helmet', 'weapon', 'shield'];
+    let visOk = !!(vis && sizing && vis.assumption === 'class-garb-in-race-class-base-body' && vis.assumptionFlag === 'PM assumption, Owner may amend'
+        && sameSet(vis.charsetDrawn, allowedDrawn)
+        && sameSet(vis.charsetOrder, ['base-body', 'race-features', 'hair-beard', 'armour', 'helmet'])
+        && sameSet(vis.anchored, ['weapon', 'shield'])
+        && sameSet(vis.faceGear, ['armour', 'helmet'])
+        && sameSet(vis.faceDropped, ['collar', 'cloak'])
+        && sameSet(vis.notDrawn, ['cloak', 'cape', 'boots', 'gloves', 'belts', 'rings', 'amulets', 'collar'])
+        && vis.otherGear === 'item-icon-portrait-world-sprite' && vis.childClass === false && vis.childGarb === 'child-base-body'
+        && vis.outfitIdsRemain === 'item-and-icon' && sameSet(vis.armourLayers, ['light', 'medium', 'heavy'])
+        && sameSet(vis.deformingKept, ['large-shield', 'bow-draw']) && sameSet(vis.deformingDropped, ['cape', 'long-robe'])
+        && vis.elderOffsetsApplyTo && sameSet(vis.elderOffsetsApplyTo, ['armour', 'helmet', 'hair'])
+        && vis.elderBaseBodies === 'race-and-class' && typeof vis.elderFlag === 'string' && vis.elderFlag.indexOf('216') !== -1
+        && noteOk(manual, '37')
+        && sizing.adultBaseSheets === 216 && sizing.elderBaseSheets === 216 && sizing.childBaseSheets === 9
+        && sizing.baseBodySheets === 441 && sizing.armourSheets === 81 && sizing.helmetSheets === 81
+        && sizing.elderArmourExtraSheets === 0 && sizing.removedClassGarbSheets === 324
+        && sizing.cellsPerFullSheet === (layout && layout.cellsPerFullSheet)
+        && Array.isArray(a.sizingManifest) && a.sizingManifest.length >= 18
+        && Array.isArray(vis.layerSamples) && Array.isArray(standard.outfitMatrix));
+    if (visOk) {
+        for (let i = 0; i < vis.layerSamples.length; i++) {
+            const row = vis.layerSamples[i];
+            if (!row) visOk = false;
+            else if (row.drawn === true && allowedDrawn.indexOf(row.layer) === -1) visOk = false;
+            else if (vis.notDrawn.indexOf(row.layer) !== -1 && row.drawn !== false) visOk = false;
+        }
+        for (let i = 0; i < standard.outfitMatrix.length; i++) {
+            const row = standard.outfitMatrix[i];
+            if (!row || !Array.isArray(row.drawnDeforming)) visOk = false;
+            else if (row.drawnDeforming.some(piece => piece === 'cape' || piece === 'long-robe')) visOk = false;
+            else if (String(row.outfitId || '').indexOf('outfit_class_') === 0 && row.spriteDraw !== 'base-body') visOk = false;
+            else if (String(row.outfitId || '').indexOf('outfit_armor_') === 0 && row.spriteDraw !== 'armour-layer') visOk = false;
+        }
+        const face = vis.faceSample;
+        if (!face || !Array.isArray(face.layers) || !Array.isArray(face.gearKinds)) visOk = false;
+        else if (face.gearKinds.some(kind => kind !== 'armour' && kind !== 'helmet')) visOk = false;
+        else if (face.layers.some(layer => ['background', 'faction-trim', 'body-base', 'face', 'hair', 'gear', 'overlay'].indexOf(layer) === -1)) visOk = false;
+    }
+    out.push(result('AS-VIS-001', visOk ? 'pass' : 'violate', visOk ? 'visible gear limit' : 'visible gear'));
+    return out;
+}
+
 function collectGlobals(standard, spells, schema, creatures) {
     const out = [];
     out.push.apply(out, checkMatrix(standard.outfitMatrix, standard));
@@ -1557,6 +2035,7 @@ function collectGlobals(standard, spells, schema, creatures) {
     out.push.apply(out, checkSlotIds(standard.slotMap, standard));
     out.push.apply(out, checkAnchorAlignment(standard.anchorTool));
     out.push.apply(out, checkEquipmentAnchors(standard));
+    out.push.apply(out, checkA9c(standard));
     return out;
 }
 
@@ -1671,6 +2150,7 @@ module.exports = {
     checkPromptVersion, checkGenerators, sizeResult,
     checkSourceSheet, checkSourcePolicy, checkRepoPolicy, checkOwnerPreview, checkGeneratorCap,
     checkSexedBodies, checkCreatureSex, checkSlotIds, checkAnchorAlignment, checkEquipmentAnchors,
+    checkA9c, colourValue,
     ID_GRAMMAR, DIR_TOKENS, RMMZ_NATIVE, PAPER_DOLL, SOURCE_CAP, DIMORPHIC_SRD, DIMORPHIC_LIVESTOCK,
     GEN_CATEGORIES, EXAMPLE_SLOT_ID, EXAMPLE_SHEET_ID, EXAMPLE_SHEET_FILE, ANCHOR_REJECT,
     ANCHOR_LANDMARKS, ANCHOR_DETECTION
