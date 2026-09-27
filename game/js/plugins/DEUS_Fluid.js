@@ -40,6 +40,12 @@
  *    - Sparse memory (WG.00.17): a level's grid and flood cache are made on
  *      the first write of fluid to it; the dirty flags are the set of queued
  *      cells. A level without fluid costs nothing.
+ *
+ * 5. Cross-layer water (SIM.50.02), when game/js/sim/hydro loaded:
+ *    seepage by material permeability, springs fed from a stored aquifer,
+ *    lake inflow / evaporation / infiltration, and flood spill. The other
+ *    stores are counted. A require() that throws leaves this path off, so
+ *    the 0..7 solver is unchanged. Docs: docs/systems/DEUS_WaterDynamics.md.
  */
 
 var Imported = Imported || {};
@@ -421,7 +427,12 @@ var UF;
 
             decodeCellId(data, cellId);
             const x = coordX, y = coordY, z = coordZ;
-            const gridZ = data.grids.get(z);
+            const sessionNow = hydroSession();
+            let gridZ = data.grids.get(z);
+            const depthStart = gridZ ? getDepth(gridZ[y * size + x]) : 0;
+            // A dry spring has no grid yet. Feed before the empty-grid skip.
+            if (sessionNow) sessionNow.feedOutlet(ax, ay, x, y, z);
+            gridZ = data.grids.get(z);
             if (!gridZ) continue;
 
             const idx = y * size + x;
@@ -530,6 +541,12 @@ var UF;
                 data.revision++;
                 wakeCellAndNeighbors(ax, ay, x, y, z);
             }
+
+            // Porous plugs and column aquifers. Open shafts already fell above.
+            if (sessionNow) sessionNow.seepFrom(ax, ay, x, y, z);
+            const gridEnd = data.grids.get(z);
+            const depthEnd = gridEnd ? getDepth(gridEnd[idx]) : 0;
+            if (sessionNow && depthEnd < depthStart) sessionNow.notifyOpened(ax, ay, x, y, z);
         }
 
         // Compact queue if head progressed significantly
@@ -768,7 +785,12 @@ var UF;
 
         step(area, budget) {
             const ax = area ? (area.x | 0) : 0, ay = area ? (area.y | 0) : 0;
-            return stepArea(ax, ay, budget);
+            const maxBudget = budget !== undefined ? budget : config.budget;
+            const sessionNow = hydroSession();
+            if (sessionNow) sessionNow.beginTick({ ax: ax, ay: ay, budget: maxBudget });
+            const n = stepArea(ax, ay, maxBudget);
+            if (sessionNow) sessionNow.noteProcessed(n);
+            return n;
         },
 
         tick(budget) {
@@ -776,16 +798,27 @@ var UF;
             const t0 = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
 
             let totalProcessed = 0;
+            const maxBudget = budget !== undefined ? budget : config.budget;
             const W = window.UF && UF.World;
             const view = W && typeof W.viewLevel === "function" ? W.viewLevel() : null;
+            const sessionNow = hydroSession();
+            // One hydro tick per frame: lakes in the viewed area, or every lake when no view is set.
+            if (sessionNow) {
+                sessionNow.beginTick({
+                    ax: view ? view.x : null,
+                    ay: view ? view.y : null,
+                    budget: maxBudget
+                });
+            }
 
             if (view) {
-                totalProcessed += stepArea(view.x, view.y, budget);
+                totalProcessed += stepArea(view.x, view.y, maxBudget);
             } else {
                 for (const [key, data] of areas.entries()) {
-                    totalProcessed += stepArea(data.ax, data.ay, budget);
+                    totalProcessed += stepArea(data.ax, data.ay, maxBudget);
                 }
             }
+            if (sessionNow) sessionNow.noteProcessed(totalProcessed);
 
             const elapsed = ((typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now()) - t0;
             diag.ticks++;
@@ -851,8 +884,15 @@ var UF;
                 cellsProcessedLastTick: diag.cellsProcessedLastTick,
                 lastTickMs: diag.lastTickMs,
                 totalWaterVolume: totalWater,
-                totalLavaVolume: totalLava
+                totalLavaVolume: totalLava,
+                totalWaterMass: totalWater + (session ? session.stored() : 0)
             };
+        },
+
+        // Cross-layer water API (null when sim/hydro did not load).
+        hydro() {
+            const sessionNow = hydroSession();
+            return sessionNow ? sessionNow.api : null;
         },
 
         reset() {
@@ -861,6 +901,7 @@ var UF;
             diag.cellsProcessedTotal = 0;
             diag.cellsProcessedLastTick = 0;
             diag.lastTickMs = 0;
+            if (session) session.reset();
         },
 
         makeSaveContents() {
@@ -882,10 +923,16 @@ var UF;
                     }
                 }
             }
-            return {
+            const saved = {
                 fluidSchemaVersion: 1,
                 records
             };
+            // Optional. Absent on a save written before SIM.50.02. Old readers keep using records.
+            if (session) {
+                const hydroState = session.exportState();
+                if (hydroState) saved.hydro = hydroState;
+            }
+            return saved;
         },
 
         extractSaveContents(saved) {
@@ -908,6 +955,10 @@ var UF;
                     }
                 }
             }
+            if (saved && typeof saved === "object" && saved.hydro) {
+                const sessionNow = hydroSession();
+                if (sessionNow) sessionNow.importState(saved.hydro);
+            }
         },
 
         _configure(opts = {}) {
@@ -919,6 +970,115 @@ var UF;
             return attachFluid();
         }
     };
+
+    // sim/hydro is optional. A require() that throws (the attach regression's sandbox)
+    // must leave the 0..7 solver running with no extra stores.
+    let hydroMod;
+    let session = null;
+
+    function loadHydroModule() {
+        if (hydroMod !== undefined) return hydroMod;
+        hydroMod = null;
+        if (typeof require !== "function") return null;
+        try {
+            const mod = require("../sim/hydro/index.js");
+            if (mod && typeof mod.createSession === "function") hydroMod = mod;
+        } catch (e) {
+            hydroMod = null;
+        }
+        return hydroMod;
+    }
+
+    function sumWaterGrid() {
+        let total = 0;
+        for (const data of areas.values()) {
+            for (const g of data.grids.values()) {
+                for (let i = 0; i < g.length; i++) {
+                    const val = g[i];
+                    if (getType(val) === TYPE_WATER) total += getDepth(val);
+                }
+            }
+        }
+        return total;
+    }
+
+    function writeWaterCell(ax, ay, x, y, z, depth, allowSolid) {
+        if (!inRange(z)) return 0;
+        const data = getAreaData(ax, ay);
+        const size = data.size;
+        const xi = x | 0, yi = y | 0, zi = z | 0;
+        if (xi < 0 || yi < 0 || xi >= size || yi >= size) return 0;
+        const cap = Fluid.fluidCapacityAt(ax, ay, xi, yi, zi) | 0;
+        if (cap <= 0 && !allowSolid) return 0;
+        let d = depth | 0;
+        if (d < 0) d = 0;
+        const limit = (cap > 0 && !allowSolid) ? cap : DEPTH_MAX;
+        if (d > limit) d = limit;
+        const idx = yi * size + xi;
+        if (d <= 0) {
+            const gridZ = data.grids.get(zi);
+            if (!gridZ) return 0;
+            gridZ[idx] = 0;
+            const flood = data.floodGrids.get(zi);
+            if (flood) flood[idx] = 0;
+            data.revision++;
+            return 0;
+        }
+        const gridZ = gridFor(data, zi);
+        const prev = gridZ[idx];
+        if (getDepth(prev) > 0 && getType(prev) !== TYPE_WATER) return getDepth(prev);
+        gridZ[idx] = packVal(TYPE_WATER, d);
+        data.floodGrids.get(zi)[idx] = TYPE_WATER;
+        data.revision++;
+        return d;
+    }
+
+    function levelsApi() {
+        const U = (typeof window !== "undefined" && window.UF) ? window.UF : UF;
+        return U && U.Levels ? U.Levels : null;
+    }
+
+    function makeHydroIO() {
+        return {
+            depthAt: function (ax, ay, x, y, z) { return Fluid.depthAt(ax, ay, x, y, z); },
+            typeAt: function (ax, ay, x, y, z) { return Fluid.typeAt(ax, ay, x, y, z); },
+            capacityAt: function (ax, ay, x, y, z) { return Fluid.fluidCapacityAt(ax, ay, x, y, z); },
+            writeWater: writeWaterCell,
+            wake: function (ax, ay, x, y, z) { wakeCellAndNeighbors(ax, ay, x, y, z); },
+            zRange: zRange,
+            inRange: inRange,
+            size: function () { return getMapSize(); },
+            inBounds: function (ax, ay, x, y) {
+                const data = getAreaData(ax, ay);
+                return (x | 0) >= 0 && (y | 0) >= 0 && (x | 0) < data.size && (y | 0) < data.size;
+            },
+            upOpen: function (ax, ay, x, y, z) {
+                const L = levelsApi();
+                if (!L || typeof L.getStrataFluidPassage !== "function") return false;
+                const bits = L.getStrataFluidPassage(ax, ay, x, y, z);
+                return typeof bits === "number" && (bits & 16) !== 0;
+            },
+            materialAt: function (ax, ay, x, y, z) {
+                const L = levelsApi();
+                if (!L || typeof L.dominantMaterial !== "function") return null;
+                try {
+                    const key = L.dominantMaterial(ax, ay, x, y, z);
+                    return key ? key : null;
+                } catch (e) {
+                    return null;
+                }
+            },
+            gridWater: sumWaterGrid
+        };
+    }
+
+    function hydroSession() {
+        if (session) return session;
+        const mod = loadHydroModule();
+        if (!mod) return null;
+        session = mod.createSession(makeHydroIO());
+        return session;
+    }
 
     function reconcileCellWithStrata(ax, ay, x, y, z) {
         if (!inRange(z)) return;
@@ -969,6 +1129,10 @@ var UF;
                             }
                         }
                     }
+                }
+                if (excess > 0) {
+                    const sessionNow = hydroSession();
+                    if (sessionNow) sessionNow.receiveDisplaced(excess);
                 }
             }
         }
