@@ -1,0 +1,20 @@
+{
+  "id": "requirements-not-cumulative",
+  "kills": "requirementsCumulative",
+  "expect": "requirements-not-cumulative",
+  "patch": [
+    {
+      "op": "remove",
+      "where": [
+        "stages",
+        {
+          "id": "hamlet"
+        },
+        "buildings",
+        {
+          "id": "shelter"
+        }
+      ]
+    }
+  ]
+}

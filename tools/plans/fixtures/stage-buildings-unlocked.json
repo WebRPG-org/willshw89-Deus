@@ -1,0 +1,22 @@
+{
+  "id": "stage-buildings-unlocked",
+  "kills": "stageBuildingsUnlocked",
+  "expect": "stage-buildings-unlocked",
+  "patch": [
+    {
+      "op": "add",
+      "where": [
+        "stages",
+        {
+          "id": "capital"
+        },
+        "buildings",
+        "-"
+      ],
+      "value": {
+        "id": "sky_pier",
+        "minCount": 1
+      }
+    }
+  ]
+}

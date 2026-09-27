@@ -1,0 +1,23 @@
+{
+  "id": "role-office",
+  "kills": "roleOfficeInstituted",
+  "expect": "role-office",
+  "patch": [
+    {
+      "op": "add",
+      "where": [
+        "stages",
+        {
+          "id": "camp"
+        },
+        "roles",
+        "-"
+      ],
+      "value": {
+        "axis": "civicOffice",
+        "id": "CLERK",
+        "minCount": 1
+      }
+    }
+  ]
+}

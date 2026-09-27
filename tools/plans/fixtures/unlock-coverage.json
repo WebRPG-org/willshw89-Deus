@@ -1,0 +1,22 @@
+{
+  "id": "unlock-coverage",
+  "kills": "unlockCoverage",
+  "expect": "unlock-coverage",
+  "patch": [
+    {
+      "op": "add",
+      "where": [
+        "knowledge",
+        {
+          "id": "craft.field"
+        },
+        "unlocks",
+        "-"
+      ],
+      "value": {
+        "kind": "craft",
+        "id": "HUNTER"
+      }
+    }
+  ]
+}

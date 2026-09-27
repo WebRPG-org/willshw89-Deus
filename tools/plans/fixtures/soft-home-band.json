@@ -1,0 +1,15 @@
+{
+  "id": "soft-home-band",
+  "kills": "softHomeBand",
+  "expect": "soft-home-band",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "expansion",
+        "hardBandLock"
+      ],
+      "value": true
+    }
+  ]
+}

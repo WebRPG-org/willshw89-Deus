@@ -1,0 +1,14 @@
+{
+  "id": "schema-closed",
+  "kills": "schema",
+  "expect": "schema",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "reviewNote"
+      ],
+      "value": true
+    }
+  ]
+}

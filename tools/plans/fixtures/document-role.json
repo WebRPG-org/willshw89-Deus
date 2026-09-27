@@ -1,0 +1,14 @@
+{
+  "id": "document-role",
+  "kills": "documentRole",
+  "expect": "document-role",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "planId"
+      ],
+      "value": "baseline"
+    }
+  ]
+}

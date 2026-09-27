@@ -1,0 +1,31 @@
+{
+  "id": "build-order-not-adapted",
+  "kills": "posturesDiffer",
+  "expect": "build-order-not-adapted",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "stages",
+        {
+          "id": "camp"
+        },
+        "buildOrder",
+        "threat"
+      ],
+      "value": [
+        "shelter",
+        "water",
+        "food",
+        "storage",
+        "workshop",
+        "healing",
+        "defense",
+        "government",
+        "road",
+        "temple",
+        "market"
+      ]
+    }
+  ]
+}

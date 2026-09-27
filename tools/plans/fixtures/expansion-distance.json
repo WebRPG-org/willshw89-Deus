@@ -1,0 +1,19 @@
+{
+  "id": "expansion-distance",
+  "kills": "expansionDistance",
+  "expect": "expansion-distance",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "expansion",
+        "stages",
+        {
+          "stage": "town"
+        },
+        "maxNewSettlementDistanceCells"
+      ],
+      "value": 10
+    }
+  ]
+}

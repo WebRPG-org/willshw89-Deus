@@ -1,0 +1,14 @@
+{
+  "id": "template-cultural-filled",
+  "kills": "templateCultural",
+  "expect": "template-cultural-filled",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "lore"
+      ],
+      "value": "Stone-singers wake the mountain with a hammer song."
+    }
+  ]
+}

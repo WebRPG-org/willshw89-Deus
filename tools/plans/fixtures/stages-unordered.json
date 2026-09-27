@@ -1,0 +1,15 @@
+{
+  "id": "stages-unordered",
+  "kills": "stagesOrdered",
+  "expect": "stages-unordered",
+  "patch": [
+    {
+      "op": "swap",
+      "where": [
+        "stages"
+      ],
+      "left": "village",
+      "right": "town"
+    }
+  ]
+}
