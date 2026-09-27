@@ -4,7 +4,9 @@
 //   node tools/taming_party/test_tamed_party_combat.js --provoke=<name>
 //   node tools/taming_party/test_tamed_party_combat.js --provoke-all
 //
-// Names: membership, srd, gear_bonus, death, orders.
+// Names: membership, srd, gear_bonus, death, orders, natural, saves,
+// target_id, legacy_lookup, order_sync, world_sync, slams, pack, regen,
+// death_rule, legacy_gear, legacy_follow, runtime.
 // A plain run must pass every check. It also loads each provocation and requires
 // that check to fail. --provoke and --provoke-all exit 0 only when every named
 // provocation makes its own check fail.
@@ -21,7 +23,12 @@ const ROOT = path.join(__dirname, "..", "..");
 const PARTY = path.join(ROOT, "game", "js", "sim", "taming", "party.js");
 const COMBAT = path.join(ROOT, "game", "js", "plugins", "DEUS_Combat.js");
 
-const NAMES = ["membership", "srd", "gear_bonus", "death", "orders"];
+const NAMES = [
+    "membership", "srd", "gear_bonus", "death", "orders",
+    "natural", "saves", "target_id", "legacy_lookup", "order_sync", "world_sync",
+    "slams", "pack", "regen", "death_rule", "legacy_gear", "legacy_follow", "runtime"
+];
+const ENGINE = path.join(ROOT, "game", "js", "sim", "combat_rt", "engine.js");
 const PROVOCATIONS = {
     membership: [[
         'if (!(rec && rec.status === "domesticated")) return refuse(unit, "NOT_TAMED"); // BG_MEMBERSHIP',
@@ -58,7 +65,59 @@ const PROVOCATIONS = {
     orders: [[
         '    return { type: "follow", targetId: anchor == null ? null : String(anchor) }; // BG_ORDER_FOLLOW',
         '    return { type: "hold", targetId: null }; // BG_ORDER_FOLLOW'
-    ]]
+    ]],
+    natural: { party: [[
+        "    const actions = naturalActions(block && block.actions, rules); // BG_NATURAL_ONLY",
+        "    const actions = copyActions(block && block.actions); // BG_NATURAL_ONLY"
+    ]] },
+    saves: { engine: [[
+        "        const saveSubject = rulesCombatant(target); // BG_SPELL_SAVE",
+        "        const saveSubject = target; // BG_SPELL_SAVE"
+    ]] },
+    target_id: { party: [[
+        "    return id; // BG_TARGET_ID",
+        "    return String(id); // BG_TARGET_ID"
+    ]] },
+    legacy_lookup: { combat: [[
+        "            const t = byId.get(c.targetId); // BG_LEGACY_LOOKUP",
+        "            const t = byId.get(String(c.targetId)); // BG_LEGACY_LOOKUP"
+    ]] },
+    order_sync: { party: [[
+        "        return { type: rec.order.type, targetId: keptTarget(rec.order.type, rec.order.targetId) }; // BG_ORDER_RECORD",
+        "        rec.order.type; // BG_ORDER_RECORD"
+    ]] },
+    world_sync: { engine: [[
+        "        syncWorldUnit(unit); // BG_WORLD_SYNC",
+        "        /* BG_WORLD_SYNC */"
+    ]] },
+    slams: { party: [[
+        "    const namedAttacks = /makes\\s+(one|two|three|four|five|six|seven|eight|\\d+)\\s+([a-z]+)\\s+attacks?\\b/gi; // BG_SLAM_COUNT",
+        "    const namedAttacks = /makes\\s+no-such\\s+([a-z]+)\\s+attacks?\\b/gi; // BG_SLAM_COUNT"
+    ]] },
+    pack: { engine: [[
+        "            const pack = Party.packAdvantage(rules, actor, target, units); // BG_PACK",
+        "            const pack = false; // BG_PACK"
+    ]] },
+    regen: { party: [[
+        "    const amount = regen.hp; // BG_REGEN",
+        "    const amount = 0; // BG_REGEN"
+    ]] },
+    death_rule: { engine: [[
+        "        const deferDeath = !!(target.tamed && Party.defersDeath(target, rules)); // BG_DEATH_EXCEPTION",
+        "        const deferDeath = false; // BG_DEATH_EXCEPTION"
+    ]] },
+    legacy_gear: { combat: [[
+        "        if (tamedFriendly(unit)) { // BG_LEGACY_GEAR",
+        "        if (false && tamedFriendly(unit)) { // BG_LEGACY_GEAR"
+    ]] },
+    legacy_follow: { combat: [[
+        "            if (followTamed(u, byId, occ, size, area)) continue; // BG_LEGACY_FOLLOW",
+        "            if (false && followTamed(u, byId, occ, size, area)) continue; // BG_LEGACY_FOLLOW"
+    ]] },
+    runtime: { combat: [[
+        "            if (sceneActive !== false) driveTamedFrame(1000 / 60); // BG_RUNTIME_DELIVER",
+        "            if (false && sceneActive !== false) driveTamedFrame(1000 / 60); // BG_RUNTIME_DELIVER"
+    ]] }
 };
 
 const args = process.argv.slice(2);
@@ -138,13 +197,70 @@ function domesticate(animal, role) {
     return last;
 }
 
-function engineOf(partyMod, rng) {
-    return sim.createEngine({
+function engineOf(partyMod, rng, ctx) {
+    const create = ctx && ctx.createEngine ? ctx.createEngine : sim.createEngine;
+    return create({
         rules: rules,
         seed: 3,
         rng: rng || constantRng(0.5),
         party: partyMod
     });
+}
+
+function markTamed(unit, role, ownerId) {
+    unit.data.taming = {
+        status: "domesticated",
+        role: role || "pet",
+        ownerId: ownerId == null ? 1 : ownerId,
+        dead: false
+    };
+    return unit;
+}
+
+function specOf(name) {
+    if (!name) return {};
+    const spec = PROVOCATIONS[name];
+    if (!spec) return null;
+    if (Array.isArray(spec)) return { party: spec };
+    return spec;
+}
+
+function readSwapped(file, swaps) {
+    let src = fs.readFileSync(file, "utf8").replace(/\r\n/g, "\n");
+    const list = swaps || [];
+    for (let i = 0; i < list.length; i++) {
+        const count = src.split(list[i][0]).length - 1;
+        if (count !== 1) return { error: path.basename(file) + " anchor " + i + " count " + count };
+        src = src.replace(list[i][0], list[i][1]);
+    }
+    return { source: src };
+}
+
+function compileModule(file, swaps) {
+    const read = readSwapped(file, swaps);
+    if (read.error) return read;
+    if (!swaps || !swaps.length) return { exports: null, source: read.source };
+    const m = new Module(file);
+    m.filename = file;
+    m.paths = Module._nodeModulePaths(path.dirname(file));
+    m._compile(read.source, file);
+    return { exports: m.exports, source: read.source };
+}
+
+function loadContext(name) {
+    const spec = specOf(name);
+    if (spec === null) return { error: "unknown provocation " + name };
+    const partyLoaded = compileModule(PARTY, spec.party || []);
+    if (partyLoaded.error) return partyLoaded;
+    const engineLoaded = compileModule(ENGINE, spec.engine || []);
+    if (engineLoaded.error) return engineLoaded;
+    const combatLoaded = readSwapped(COMBAT, spec.combat || []);
+    if (combatLoaded.error) return combatLoaded;
+    return {
+        party: partyLoaded.exports || party,
+        createEngine: engineLoaded.exports ? engineLoaded.exports.createEngine : sim.createEngine,
+        combatSource: spec.combat && spec.combat.length ? combatLoaded.source : null
+    };
 }
 
 function fighter(id, x, y, extra) {
@@ -164,20 +280,7 @@ function foe(id, x, y, extra) {
 }
 
 function loadParty(name) {
-    if (!name) return { exports: party };
-    const swaps = PROVOCATIONS[name];
-    if (!swaps) return { error: "unknown provocation " + name };
-    let src = fs.readFileSync(PARTY, "utf8").replace(/\r\n/g, "\n");
-    for (let i = 0; i < swaps.length; i++) {
-        const count = src.split(swaps[i][0]).length - 1;
-        if (count !== 1) return { error: name + " anchor " + i + " count " + count };
-        src = src.replace(swaps[i][0], swaps[i][1]);
-    }
-    const m = new Module(PARTY);
-    m.filename = PARTY;
-    m.paths = Module._nodeModulePaths(path.dirname(PARTY));
-    m._compile(src, PARTY);
-    return { exports: m.exports };
+    return loadContext(name);
 }
 
 function wolfBite(block) {
@@ -446,34 +549,376 @@ function runOrders(mod) {
     return { ok: problems.length === 0, detail: problems.join("; ") };
 }
 
+function bootCombat(source) {
+    const vm = require("vm");
+    const context = {
+        console: console,
+        require: require,
+        process: process,
+        Buffer: Buffer,
+        setTimeout: setTimeout,
+        clearTimeout: clearTimeout,
+        performance: { now: function () { return Date.now(); } },
+        __dirname: path.join(ROOT, "game", "js", "plugins"),
+        __filename: COMBAT
+    };
+    context.global = context;
+    context.window = context;
+    context.globalThis = context;
+    context.UF = {};
+    context.DEUS = context.UF;
+    context.Graphics = { frameCount: 1 };
+    context.Sprite = function () { this.anchor = { set: function () {} }; this.scale = { x: 1, y: 1 }; this.children = []; };
+    context.Sprite.prototype = { addChild: function (child) { this.children.push(child); }, update: function () {} };
+    context.Bitmap = function () { this._url = null; };
+    context.PluginManager = { parameters: function () { return {}; } };
+    context.Game_Map = function () {};
+    context.Game_Map.prototype = { update: function () {} };
+    context.Spriteset_Map = function () {};
+    context.Spriteset_Map.prototype = { createCharacters: function () {} };
+    context.Scene_Boot = function () {};
+    context.Scene_Boot.prototype = { start: function () {} };
+    context.Scene_Map = function () {};
+    context.Scene_Map.prototype = { update: function () {}, isActive: function () { return false; } };
+    context.Input = { keyMapper: {}, isTriggered: function () { return false; } };
+    context.$ufWorldCatalog = {
+        combat: {
+            tickFrames: 1,
+            levelOffset: 8,
+            styles: { accurate: { accuracy: 3 }, aggressive: { strength: 3 }, defensive: { defence: 3 }, controlled: {}, rapid: { speed: -1 }, longrange: { range: 2 } },
+            creatureStyle: "controlled",
+            unarmed: { speed: 4, types: ["crush"], styles: ["accurate", "aggressive", "defensive"], reach: 1 },
+            people: { attack: 1, strength: 1, defence: 1, ranged: 1, magic: 1, hitpoints: 10 },
+            defaultModes: { hostile: "nearest", fleeing: "flee", other: "defend" },
+            aggroRadius: 8,
+            leash: 16,
+            fleeRadius: 5,
+            aidRadius: 10,
+            regen: { hp: 0, everyTicks: 100 },
+            display: { splatMs: 1000, maxSplats: 4, barHideMs: 6000, barWidth: 30 },
+            aliases: { tool: "weapon", clothes: "torso" },
+            quality: { bonus: [1, 1, 1, 1, 1, 1] }
+        },
+        items: {
+            types: {
+                sword_long: { id: "sword_long", name: "Long sword", weapon: { speed: 5, types: ["slash"], styles: ["accurate", "aggressive"], reach: 1 } }
+            }
+        },
+        wildlife: { species: [] }
+    };
+    context.UF.Space = {
+        sameArea: function (a, b) {
+            return !!a && !!b && !!a.area && !!b.area && a.area.x === b.area.x && a.area.y === b.area.y;
+        },
+        sameZ: function (a, b) {
+            const za = a && a.z !== undefined ? a.z : 0;
+            const zb = b && b.z !== undefined ? b.z : 0;
+            return za === zb;
+        },
+        zOf: function (o) { return o && o.z !== undefined ? o.z : 0; },
+        chebyshev: function (a, b) { return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)); },
+        manhattan: function (a, b) { return Math.abs(a.x - b.x) + Math.abs(a.y - b.y); }
+    };
+    context.UF.Events = { on: function () {}, emit: function () {} };
+    context.UF.Items = {
+        inventoryOf: function () { return []; },
+        count: function () { return 0; },
+        type: function (id) {
+            const types = context.$ufWorldCatalog && context.$ufWorldCatalog.items && context.$ufWorldCatalog.items.types;
+            return types && types[id] ? types[id] : null;
+        }
+    };
+    const units = new Map();
+    context.UF.World = {
+        state: { seed: 3, size: 32 },
+        unit: function (id) {
+            if (units.has(id)) return units.get(id);
+            const n = Number(id);
+            if (typeof id === "string" && Number.isFinite(n) && units.has(n)) return units.get(n);
+            if (typeof id === "number" && units.has(String(id))) return units.get(String(id));
+            return null;
+        },
+        units: function () { return Array.from(units.values()); },
+        addUnit: function (u) { units.set(u.id, u); return u; },
+        removeUnit: function (id) { units.delete(id); const n = Number(id); if (Number.isFinite(n)) units.delete(n); },
+        inWorld: function () { return true; },
+        stopUnit: function () {},
+        sendUnit: function (id, goal) {
+            const u = context.UF.World.unit(id);
+            if (!u || !goal) return;
+            u.x = goal.x;
+            u.y = goal.y;
+            if (goal.z != null) u.z = goal.z;
+        },
+        isDisplayed: function () { return false; },
+        eventOf: function () { return null; },
+        hash32: function () { return 1; },
+        mulberry32: function () { return function () { return 0.5; }; },
+        cellFree: function () { return true; }
+    };
+    vm.createContext(context);
+    vm.runInContext(source || fs.readFileSync(COMBAT, "utf8"), context, { filename: COMBAT });
+    return context;
+}
+
+function runNatural(mod) {
+    const giant = beast(null, 6, { srdId: "srd:creature:hill-giant", hp: 105 });
+    markTamed(giant, "pet", 1);
+    const profile = mod.combatProfile(rules, giant);
+    const keys = (profile.attacks || []).map(function (a) { return a.key; });
+    const problems = [];
+    if (!profile.ok) problems.push("profile " + profile.reason);
+    if (keys.indexOf("greatclub") >= 0 || keys.indexOf("rock") >= 0) problems.push("manufactured " + keys.join(","));
+    if (profile.sequence && (profile.sequence.indexOf("greatclub") >= 0 || profile.sequence.indexOf("rock") >= 0)) {
+        problems.push("sequence " + profile.sequence.join(","));
+    }
+    if (profile.weaponKey === "greatclub" || profile.weaponKey === "rock") problems.push("key " + profile.weaponKey);
+    giant.data.equipment = { mainHand: "sword_long", armor: "plate" };
+    const again = mod.combatProfile(rules, giant);
+    if (!again.ok || again.ac !== profile.ac || again.weaponKey !== profile.weaponKey || again.speedFt !== profile.speedFt) {
+        problems.push("equipment changed " + again.weaponKey + " ac " + again.ac);
+    }
+    return { ok: problems.length === 0, detail: problems.join("; ") };
+}
+
+function runSaves(mod, ctx) {
+    const wolf = beast("wolf", 2, { hp: 11 });
+    markTamed(wolf, "pet", 1);
+    const enc = engineOf(mod, constantRng(0.5), ctx);
+    enc.addUnit(foe("caster", 6, 0, { hp: 30, maxHp: 30 }));
+    mod.enlist(enc, rules, [wolf]);
+    enc.setOrder(2, { type: "hold" });
+    enc.queueOrder("caster", { type: "spell", targetId: 2, ability: "wis", dc: 11, dice: "1d8", damageType: "fire" });
+    rules._setTestRoll(10);
+    enc.advanceReal(6000);
+    clearRoll();
+    const spell = enc.transcript().filter(function (row) { return row.type === "spell"; })[0];
+    const ok = !!(spell && spell.saveOk === true && spell.damage === 0);
+    return { ok: ok, detail: JSON.stringify(spell && { saveOk: spell.saveOk, damage: spell.damage }) };
+}
+
+function runTarget(mod, ctx) {
+    const context = bootCombat(ctx && ctx.combatSource);
+    const wolf = { id: 2, x: 0, y: 0, z: 0, area: { x: 0, y: 0, z: 0 }, data: { kind: "creature", species: "wolf", hp: 11, taming: { status: "domesticated", role: "pet", ownerId: 1, dead: false } } };
+    const hostile = { id: 9, x: 1, y: 0, z: 0, area: { x: 0, y: 0, z: 0 }, data: { kind: "person", hp: 40, maxHp: 40, tags: ["hostile"], stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 } } };
+    context.UF.World.addUnit(wolf);
+    context.UF.World.addUnit(hostile);
+    context.UF.Combat.tamedEncounter = false;
+    const issued = mod.issueOrder(wolf, { type: "attack", targetId: 9 });
+    if (context.UF.Rules && context.UF.Rules._setTestRoll) context.UF.Rules._setTestRoll(15);
+    new context.Game_Map().update(true);
+    if (context.UF.Rules && context.UF.Rules._clearTestRoll) context.UF.Rules._clearTestRoll();
+    const problems = [];
+    if (!issued.ok || issued.order.targetId !== 9) problems.push("stored " + JSON.stringify(issued && issued.order));
+    if (!wolf.data.combat || wolf.data.combat.targetId !== 9) problems.push("target " + JSON.stringify(wolf.data.combat && wolf.data.combat.targetId));
+    if (!(hostile.data.hp < 40)) problems.push("hp " + hostile.data.hp);
+    return { ok: problems.length === 0, detail: problems.join("; ") };
+}
+
+function runOrderSync(mod, ctx) {
+    const wolf = beast("wolf", 2, { hp: 11 });
+    markTamed(wolf, "pet", 1);
+    const enc = engineOf(mod, null, ctx);
+    enc.addUnit(fighter(1, 6, 0));
+    mod.enlist(enc, rules, [wolf]);
+    mod.issueOrder(wolf, { type: "hold" });
+    const peek = enc.peekAction("2");
+    return { ok: !!(peek && peek.type === "hold"), detail: JSON.stringify({ record: wolf.data.taming.order, peek: peek }) };
+}
+
+function runWorldSync(mod, ctx) {
+    const wolf = beast("wolf", 2, { hp: 11, x: 0, y: 0 });
+    markTamed(wolf, "pet", 1);
+    const enc = engineOf(mod, null, ctx);
+    enc.addUnit(fighter(1, 6, 0));
+    mod.enlist(enc, rules, [wolf]);
+    enc.setOrder(2, { type: "follow" });
+    enc.advanceReal(6000);
+    const view = enc.unit("2");
+    const moved = wolf.x !== 0 || wolf.y !== 0;
+    const matched = !!(view && wolf.x === view.x && wolf.y === view.y);
+    const apart = view ? Math.max(Math.abs(view.x - 6), Math.abs(view.y - 0)) : 99;
+    return { ok: moved && matched && apart === 1, detail: "world " + wolf.x + "," + wolf.y + " enc " + (view && (view.x + "," + view.y)) };
+}
+
+function runSlams(mod, ctx) {
+    const mound = beast("bog_horror", 2, { hp: 136 });
+    markTamed(mound, "pet", 1);
+    const profile = mod.combatProfile(rules, mound);
+    const seq = profile.sequence ? profile.sequence.join(",") : "";
+    const enc = engineOf(mod, constantRng(0.5), ctx);
+    enc.addUnit(foe("bag", 1, 0, { hp: 200, maxHp: 200 }));
+    enc.queueOrder("bag", { type: "hold" });
+    mod.enlist(enc, rules, [mound]);
+    enc.setOrder(2, { type: "attack", targetId: "bag" });
+    rules._setTestRoll(15);
+    enc.advanceReal(6000);
+    clearRoll();
+    const ev = enc.transcript().filter(function (row) { return row.actorId === "2" && row.swings && row.swings.length; })[0];
+    const keys = ev ? ev.swings.map(function (swing) { return swing.weaponKey; }).join(",") : "";
+    return { ok: seq === "slam,slam" && profile.multiattackParsed === true && keys === "slam,slam", detail: "seq " + seq + " parsed " + profile.multiattackParsed + " swings " + keys };
+}
+
+function runPack(mod, ctx) {
+    const attacker = beast("wolf", 2, { hp: 11, x: 1, y: 0 });
+    const ally = beast("wolf", 3, { hp: 11, x: 2, y: 1 });
+    markTamed(attacker, "pet", 1);
+    markTamed(ally, "pet", 1);
+    const enc = engineOf(mod, constantRng(0.5), ctx);
+    enc.addUnit(foe("orc", 2, 0, { hp: 40, maxHp: 40 }));
+    enc.queueOrder("orc", { type: "hold" });
+    mod.enlist(enc, rules, [attacker, ally]);
+    enc.setOrder(2, { type: "attack", targetId: "orc" });
+    enc.setOrder(3, { type: "hold" });
+    rules._setTestRoll(15);
+    enc.advanceReal(6000);
+    clearRoll();
+    const ev = enc.transcript().filter(function (row) { return row.actorId === "2" && row.swings && row.swings.length; })[0];
+    const advantage = !!(ev && ev.swings[0] && ev.swings[0].advantage === true);
+    return { ok: advantage, detail: JSON.stringify(ev && ev.swings && ev.swings[0]) };
+}
+
+function runRegen(mod, ctx) {
+    const troll = beast("troll", 4, { hp: 74 });
+    markTamed(troll, "mount", 1);
+    const enc = engineOf(mod, constantRng(0.25), ctx);
+    mod.enlist(enc, rules, [troll]);
+    enc.setOrder(4, { type: "hold" });
+    enc.advanceReal(6000);
+    const view = enc.unit("4");
+    return { ok: !!(view && view.hp === 84 && view.dead === false), detail: "hp " + (view && view.hp) + " dead " + (view && view.dead) };
+}
+
+function runDeathRule(mod, ctx) {
+    const problems = [];
+    function fight(type) {
+        const troll = beast("troll", 4, { hp: 84 });
+        markTamed(troll, "pet", 1);
+        const enc = engineOf(mod, constantRng(0.99), ctx);
+        enc.addUnit(foe("mage", 8, 0, { hp: 40, maxHp: 40, stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 } }));
+        mod.enlist(enc, rules, [troll]);
+        enc.setOrder(4, { type: "hold" });
+        enc.queueOrder("mage", { type: "spell", targetId: 4, ability: "wis", dc: 30, dice: "100d1", damageType: type });
+        rules._setTestRoll(10);
+        enc.advanceReal(6000);
+        const first = { hp: enc.unit("4").hp, dead: enc.unit("4").dead, status: troll.data.taming.status };
+        enc.advanceReal(6000);
+        const second = {
+            hp: enc.unit("4").hp,
+            dead: enc.unit("4").dead,
+            status: troll.data.taming.status,
+            knock: troll.data.taming.death && troll.data.taming.death.knockout
+        };
+        clearRoll();
+        return { first: first, second: second };
+    }
+    const slash = fight("slashing");
+    if (slash.first.dead !== false || slash.first.hp !== 0 || slash.first.status !== "domesticated") problems.push("slash r1 " + JSON.stringify(slash.first));
+    if (slash.second.dead !== false || slash.second.hp !== 10 || slash.second.status !== "domesticated") problems.push("slash r2 " + JSON.stringify(slash.second));
+    const fire = fight("fire");
+    if (fire.first.dead !== false || fire.first.hp !== 0 || fire.first.status !== "domesticated") problems.push("fire r1 " + JSON.stringify(fire.first));
+    if (fire.second.dead !== true || fire.second.status !== "dead" || fire.second.knock !== false) problems.push("fire r2 " + JSON.stringify(fire.second));
+    return { ok: problems.length === 0, detail: problems.join("; ") };
+}
+
+function runLegacyGear(mod, ctx) {
+    const context = bootCombat(ctx && ctx.combatSource);
+    const giant = { id: 4, x: 0, y: 0, z: 0, area: { x: 0, y: 0, z: 0 }, data: { kind: "creature", srdId: "srd:creature:hill-giant", hp: 105, taming: { status: "domesticated", role: "pet", ownerId: 1, dead: false } } };
+    const hostile = { id: 9, x: 1, y: 0, z: 0, area: { x: 0, y: 0, z: 0 }, data: { kind: "person", hp: 40, stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 } } };
+    const bare = context.UF.Combat.describeAttack(giant, hostile);
+    giant.data.equipment = { mainHand: "sword_long" };
+    const geared = context.UF.Combat.describeAttack(giant, hostile);
+    const ok = JSON.stringify(bare) === JSON.stringify(geared) && bare.weapon !== "Long sword" && bare.speed === 4;
+    return { ok: ok, detail: JSON.stringify({ bare: bare, geared: geared }) };
+}
+
+function runLegacyFollow(mod, ctx) {
+    const context = bootCombat(ctx && ctx.combatSource);
+    const owner = { id: 1, x: 6, y: 0, z: 0, area: { x: 0, y: 0, z: 0 }, data: { kind: "colonist", hp: 20, maxHp: 20, stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 } } };
+    const wolf = { id: 2, x: 0, y: 0, z: 0, area: { x: 0, y: 0, z: 0 }, data: { kind: "creature", species: "wolf", hp: 11, taming: { status: "domesticated", role: "pet", ownerId: 1, dead: false } } };
+    context.UF.World.addUnit(owner);
+    context.UF.World.addUnit(wolf);
+    context.UF.Combat.tamedEncounter = false;
+    mod.issueOrder(wolf, { type: "follow" });
+    new context.Game_Map().update(true);
+    const apart = Math.max(Math.abs(wolf.x - owner.x), Math.abs(wolf.y - owner.y));
+    const moved = wolf.x !== 0 || wolf.y !== 0;
+    return { ok: moved && apart <= 1, detail: wolf.x + "," + wolf.y + " apart " + apart };
+}
+
+function runRuntime(mod, ctx) {
+    const context = bootCombat(ctx && ctx.combatSource);
+    const owner = { id: 1, x: 6, y: 0, z: 0, area: { x: 0, y: 0, z: 0 }, data: { kind: "colonist", hp: 20, maxHp: 20, faction: "player", stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 } } };
+    const wolf = { id: 2, x: 0, y: 0, z: 0, area: { x: 0, y: 0, z: 0 }, data: { kind: "creature", species: "wolf", hp: 11, taming: { status: "domesticated", role: "pet", ownerId: 1, dead: false } } };
+    context.UF.World.addUnit(owner);
+    context.UF.World.addUnit(wolf);
+    mod.issueOrder(wolf, { type: "follow" });
+    const map = new context.Game_Map();
+    for (let i = 0; i < 420; i++) map.update(true);
+    const engine = context.UF.Combat.tamedEngine && context.UF.Combat.tamedEngine();
+    const snap = engine && engine.unit(wolf.id);
+    const apart = snap ? Math.max(Math.abs(snap.x - 6), Math.abs(snap.y - 0)) : 99;
+    const matched = !!(snap && wolf.x === snap.x && wolf.y === snap.y);
+    const moved = wolf.x !== 0 || wolf.y !== 0;
+    const mound = { id: 7, x: 0, y: 2, z: 0, area: { x: 0, y: 0, z: 0 }, data: { kind: "creature", species: "bog_horror", hp: 136, taming: { status: "domesticated", role: "pet", ownerId: 1, dead: false } } };
+    const bag = { id: 8, x: 1, y: 2, z: 0, area: { x: 0, y: 0, z: 0 }, data: { kind: "person", hp: 80, maxHp: 80, stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 } } };
+    if (context.UF.Rules && context.UF.Rules._setTestRoll) context.UF.Rules._setTestRoll(15);
+    const swung = context.UF.Combat.resolveAttack(mound, bag, { rng: function () { return 0.5; }, bypassGcd: true });
+    if (context.UF.Rules && context.UF.Rules._clearTestRoll) context.UF.Rules._clearTestRoll();
+    const two = !!(swung && swung.swings && swung.swings.length === 2 && swung.swings[0].weaponKey === "slam" && swung.swings[1].weaponKey === "slam");
+    return {
+        ok: !!(engine && snap && moved && matched && apart <= 1 && two),
+        detail: "world " + wolf.x + "," + wolf.y + " snap " + (snap && (snap.x + "," + snap.y)) + " apart " + apart + " swings " + (swung && swung.swings && swung.swings.length)
+    };
+}
+
 const RUNNERS = {
     membership: runMembership,
     srd: runSrd,
     gear_bonus: runGear,
     death: runDeath,
-    orders: runOrders
+    orders: runOrders,
+    natural: runNatural,
+    saves: runSaves,
+    target_id: runTarget,
+    legacy_lookup: runTarget,
+    order_sync: runOrderSync,
+    world_sync: runWorldSync,
+    slams: runSlams,
+    pack: runPack,
+    regen: runRegen,
+    death_rule: runDeathRule,
+    legacy_gear: runLegacyGear,
+    legacy_follow: runLegacyFollow,
+    runtime: runRuntime
 };
 
-function runOne(name, mod) {
+function runOne(name, ctx) {
     try {
-        return RUNNERS[name](mod);
+        return RUNNERS[name](ctx.party, ctx);
     } catch (err) {
-        return { ok: false, detail: err && err.stack ? err.stack.split("\n")[0] : String(err) };
+        const message = err && err.message ? err.message : String(err);
+        const at = err && err.stack ? err.stack.split("\n")[1] : "";
+        return { ok: false, detail: message + (at ? " " + at.trim() : "") };
     }
 }
 
 function anchorsOk() {
-    const src = fs.readFileSync(PARTY, "utf8").replace(/\r\n/g, "\n");
-    const needles = [];
+    const files = { party: PARTY, engine: ENGINE, combat: COMBAT };
+    const problems = [];
     const names = Object.keys(PROVOCATIONS);
     for (let i = 0; i < names.length; i++) {
-        const swaps = PROVOCATIONS[names[i]];
-        for (let s = 0; s < swaps.length; s++) needles.push(swaps[s][0]);
-    }
-    const problems = [];
-    for (let i = 0; i < needles.length; i++) {
-        const count = src.split(needles[i]).length - 1;
-        if (count !== 1) problems.push("count " + count + " for " + needles[i].slice(0, 48));
+        const spec = specOf(names[i]);
+        const kinds = ["party", "engine", "combat"];
+        for (let k = 0; k < kinds.length; k++) {
+            const swaps = spec[kinds[k]] || [];
+            if (!swaps.length) continue;
+            const src = fs.readFileSync(files[kinds[k]], "utf8").replace(/\r\n/g, "\n");
+            for (let s = 0; s < swaps.length; s++) {
+                const count = src.split(swaps[s][0]).length - 1;
+                if (count !== 1) problems.push(names[i] + " " + kinds[k] + " count " + count + " for " + swaps[s][0].slice(0, 60));
+            }
+        }
     }
     return { ok: problems.length === 0, detail: problems.join("; ") };
 }
@@ -495,13 +940,13 @@ function main() {
         let missed = 0;
         for (let i = 0; i < selected.length; i++) {
             const name = selected[i];
-            const loaded = loadParty(name);
+            const loaded = loadContext(name);
             if (loaded.error) {
                 missed += 1;
                 console.log("MISSED " + name + " — " + loaded.error);
                 continue;
             }
-            const result = runOne(name, loaded.exports);
+            const result = runOne(name, loaded);
             if (result.ok) {
                 missed += 1;
                 console.log("MISSED " + name + " — check still passed");
@@ -514,17 +959,18 @@ function main() {
         process.exit(missed ? 1 : 0);
     }
 
+    const live = { party: party, createEngine: sim.createEngine, combatSource: null };
     for (let i = 0; i < NAMES.length; i++) {
-        const result = runOne(NAMES[i], party);
+        const result = runOne(NAMES[i], live);
         say(result.ok, NAMES[i], result.detail);
     }
     for (let i = 0; i < NAMES.length; i++) {
-        const loaded = loadParty(NAMES[i]);
+        const loaded = loadContext(NAMES[i]);
         if (loaded.error) {
             say(false, "provocation " + NAMES[i] + " is caught", loaded.error);
             continue;
         }
-        const result = runOne(NAMES[i], loaded.exports);
+        const result = runOne(NAMES[i], loaded);
         say(result.ok === false, "provocation " + NAMES[i] + " is caught", result.ok ? "check still passed" : result.detail);
     }
     const questions = party.QUESTIONS || [];

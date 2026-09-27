@@ -1,60 +1,89 @@
 # WG.00.39 lane-bg report
 
-Tamed creatures fight on the player's side using the SRD 5.1 stat block and natural attacks. There are no creature equipment slots, and a riding saddle does not change a combat number. This lane does not certify itself. The PM runs the gate tests on this tip, then Gemini reviews.
+Tamed creatures fight on the player's side from their SRD 5.1 stat block. Natural attacks are the only attacks. Manufactured weapons named on a stat block, including a hill giant's greatclub and rock, are not used, and worn equipment does not change a combat number or the legacy swing's speed. This lane does not certify itself. The PM runs the gate tests on this tip, then Gemini reviews.
 
-## What landed
+Codex review `fb6e4e34cb3d8f5c3ce7a9141d52794c809dcb8f` returned BG-C01 through BG-C08. This tip answers those findings.
 
-- `game/js/sim/taming/party.js` decides membership, builds the combat profile, strips gear, parses Multiattack, stores follow / attack / hold, and records death.
-- `game/js/sim/combat_rt` enlists those creatures into the six-second round. They take initiative, can be targeted, and act. A troll's action is bite, claw, claw.
-- `DEUS_Combat` treats the same record as friendly on the legacy tick, uses the primary natural attack, strips gear, and calls `noteDeath` at 0 HP.
-- `DEUS_Taming` and `DEUS_CombatRT` expose enlist and orders. `game/js/plugins.js` was not edited. No registration request.
-- Tests: `tools/taming_party/test_tamed_party_combat.js`. Each of the five checks has a `--provoke=<name>` mutant, and the plain run requires every mutant to fail its check. `--provoke=gear_bonus` copies worn gear onto the rules body and adds saddle bonuses.
-- `docs/systems/DEUS_TamedPartyCombat.md` has the rules, the API, the tests, the open questions, and the follow-ups.
+## What changed
+
+- **BG-C01.** `party.js` keeps a stat-block action only when it is not an SRD weapon, not a spell attack, and not a thrown object such as Rock. `DEUS_Combat.computeWeapon` does not read `mainHand` for a tamed creature. A hill giant with a long sword still describes fists at speed 4.
+- **BG-C02.** Encounter spells call `savingThrow` with `rulesBody`, so a wolf's unprinted Wisdom save uses Wisdom 12. Roll 10 against DC 11 succeeds.
+- **BG-C03.** Attack orders keep a numeric `targetId`. The legacy tick looks that id up with `byId.get` and the hostile loses hit points.
+- **BG-C04.** The taming record is the order the encounter reads, so `issueOrder(worldUnit, hold)` changes `peekAction`. Follow writes the encounter square back onto the world unit. The legacy tick, when the encounter driver is off, moves the creature toward its owner.
+- **BG-C05.** `makes two slam attacks` is slam, slam. A bog horror swings twice in the encounter and in `DEUS_Combat.resolveAttack`.
+- **BG-C06.** Pack Tactics, regeneration, and a stat block's "dies only if it does not regenerate" sentence are applied from the trait text. A troll at 0 HP after slashing damage lives and regains 10 on its next turn. Fire or acid suppresses that regeneration and the troll dies then. `knockout` stays false. OQ-BG-02 is still open.
+- **BG-C07.** The registered plugin `DEUS_Combat` drives the real-time encounter on each active map update, enlists domesticated creatures, and copies position and hit points back to the world unit. The check `runtime` loads that plugin and runs `Game_Map.update`. It is not a search of the source. `game/js/plugins.js` is outside allowedPaths, so `DEUS_Taming` and `DEUS_CombatRT` are requested in `tasks/WG.00.39/lane-bg/escalation.md`. This run did not open the RMMZ editor, did not press F5 or F8, and did not take a screenshot.
+- **BG-C08.** Each new check has its own provocation. The gear, save, numeric-id, record-order, world-sync, slam, pack, regeneration, death-exception, legacy weapon, legacy follow, and encounter-driver guards fail independently.
 
 ## Roles
 
-`ROLE_FIGHTS` is PM_DEFAULT, not an Owner answer. Every domesticated role joins: pet, mount, livestock, and work. A captive does not, even after a role is chosen. A wild creature does not. A dead creature does not. Humanoids do not.
+`ROLE_FIGHTS` is PM_DEFAULT, not an Owner answer. Every domesticated role joins: pet, mount, livestock, and work. A captive does not. A wild creature does not. A dead creature does not. Humanoids do not.
 
 ## Open questions (not answered)
 
 - **OQ-BG-01.** Should any domesticated role stay out of party combat? DEC-033 item 3 names no excluded role.
 - **OQ-BG-02.** Care does not heal, so a captured creature is still stored at 0 HP when it is domesticated. A living tamed creature whose stored hp is 0, missing, or above the SRD average enters at that average. A stored hp from 1 through the average is kept. Should the stored 0 stay 0 until something heals it?
-- **OQ-AX-01 through OQ-AX-08** stay open. This lane does not answer them. OQ-AX-04 (one role or two) and OQ-AX-06 (saddle marker only on mounts) are the ones that touch this fight.
+- **OQ-AX-01 through OQ-AX-08** stay open. This lane does not answer them.
 
 ## Not implemented
 
-- **PROPOSED-AX-01.** No combat choice to knock a creature out at 0 HP. A tamed creature dies at 0 HP. `death.knockout` is false. The census moves it from domestic to dead.
-
-## Follow-ups
-
-- **PROPOSED-BG-01.** Only walk speed steps the creature. Fly, swim, climb, and hover are not movement here.
-- **PROPOSED-BG-02.** Pack Tactics, troll regeneration, and "dies only if it does not regenerate" are not applied.
-- **PROPOSED-BG-03.** A Multiattack sentence with "or" uses the text before the first "or". An unnamed choice among several attacks does not invent a sequence.
-- **PROPOSED-BG-04.** The legacy tick swings once. The real-time action runs the full multiattack.
+- **PROPOSED-AX-01.** No combat choice to knock a creature out at 0 HP.
+- **PROPOSED-BG-01.** Only walk speed steps the creature.
+- **PROPOSED-BG-02.** Lightning Absorption, Magic Resistance, and Keen Smell are not applied. Pack Tactics, regeneration, and the regeneration death exception are applied.
+- **PROPOSED-BG-03.** An "or" sentence uses the text before the first "or". A dice count such as `1d4` attacks, or "as many bites as it has heads", is not turned into a sequence.
 - **PROPOSED-BG-05.** Prone, grapple, and poison riders on a natural attack stay the rules-module gap.
+
+## Registration request
+
+`game/js/plugins.js` was not edited. The exact objects to insert after `DEUS_Combat` and before `DEUS_Anim` are in `tasks/WG.00.39/lane-bg/escalation.md`.
 
 ## Gate tests
 
-Run on this tree before the commit that adds this report. The report file is not imported by the tests.
+Run in the foreground from this worktree before the commit that adds this report. The report file is not imported by the tests. `$LASTEXITCODE` was printed after each command.
 
-```
-===== node tools/taming_party/test_tamed_party_combat.js =====
+```text
+COMMAND: node tools/taming_party/test_tamed_party_combat.js
 PASS provocation anchors
 PASS membership
 PASS srd
 PASS gear_bonus
 PASS death
 PASS orders
+PASS natural
+PASS saves — {"saveOk":true,"damage":0}
+PASS target_id
+PASS legacy_lookup
+PASS order_sync — {"record":{"type":"hold","targetId":null},"peek":{"type":"hold"}}
+PASS world_sync — world 5,-1 enc 5,-1
+PASS slams — seq slam,slam parsed true swings slam,slam
+PASS pack — {"weaponKey":"bite","hit":true,"damage":8,"attackMod":4,"fromStatBlock":true,"natural":15,"advantage":true}
+PASS regen — hp 84 dead false
+PASS death_rule
+PASS legacy_gear — {"bare":{"speed":4,"range":1,"style":"accurate","attackType":"crush","weapon":"fists","weaponType":null,"ranged":false,"ammo":null,"outOfAmmo":null},"geared":{"speed":4,"range":1,"style":"accurate","attackType":"crush","weapon":"fists","weaponType":null,"ranged":false,"ammo":null,"outOfAmmo":null}}
+PASS legacy_follow — 5,0 apart 1
+PASS runtime — world 5,-1 snap 5,-1 apart 1 swings 2
 PASS provocation membership is caught — captive joined JOIN
 PASS provocation srd is caught — hp 99/99 want 11; wound 4/99; troll numbers {"ac":15,"hp":99,"speed":30}
 PASS provocation gear_bonus is caught — ac 30 block 13 dirty 18; attack 7 2d4+2; equip changed numbers
 PASS provocation death is caught — record {"status":"domesticated","dead":false}; census {"wild":0,"domestic":2,"captive":0,"dead":0,"byRole":{"pet":1,"mount":0,"livestock":1,"work":0},"total":2}; dead enlist left domesticated
 PASS provocation orders is caught — peek {"type":"hold","targetId":null}; follow position 0,0; no follow event
+PASS provocation natural is caught — manufactured greatclub,rock; sequence greatclub,greatclub; key greatclub
+PASS provocation saves is caught — {"saveOk":false,"damage":5}
+PASS provocation target_id is caught — stored {"type":"attack","targetId":"9"}; hp 40
+PASS provocation legacy_lookup is caught — target null; hp 40
+PASS provocation order_sync is caught — {"record":{"type":"hold","targetId":null},"peek":{"type":"follow","targetId":"1"}}
+PASS provocation world_sync is caught — world 0,0 enc 5,-1
+PASS provocation slams is caught — seq slam parsed false swings slam
+PASS provocation pack is caught — {"weaponKey":"bite","hit":true,"damage":8,"attackMod":4,"fromStatBlock":true,"natural":15,"advantage":false}
+PASS provocation regen is caught — hp 74 dead false
+PASS provocation death_rule is caught — slash r1 {"hp":0,"dead":true,"status":"dead"}; slash r2 {"hp":0,"dead":true,"status":"dead","knock":false}; fire r1 {"hp":0,"dead":true,"status":"dead"}
+PASS provocation legacy_gear is caught — {"bare":{"speed":4,"range":1,"style":"accurate","attackType":"crush","weapon":"fists","weaponType":null,"ranged":false,"ammo":null,"outOfAmmo":null},"geared":{"speed":5,"range":1,"style":"accurate","attackType":"slash","weapon":"Long sword","weaponType":"sword_long","ranged":false,"ammo":null,"outOfAmmo":null}}
+PASS provocation legacy_follow is caught — 0,0 apart 6
+PASS provocation runtime is caught — world 5,0 snap null apart 99 swings 2
 PASS open role questions stay listed — OQ-BG-01,OQ-BG-02
-RESULT: 12 passed, 0 failed
-EXIT:0
-
-===== node tools/taming/test_taming.js =====
+RESULT: 38 passed, 0 failed
+EXIT=0
+COMMAND: node tools/taming/test_taming.js
 PASS SRD ladder — easy 10 medium 15
 PASS PM capture names use that ladder
 PASS owner questions are listed and not answered
@@ -122,9 +151,8 @@ PASS plugin publishes UF.Taming.attemptCapture — CAPTURED / HUMANOID / HUMANOI
 PASS Jobs.create refuses the owner's hunt and passes every other job — calls 3 refused null
 PASS Ecology.population moves held animals and keeps an empty adjustment identical — {"prey":1,"monsters":0,"predators":0,"creatures":1,"bySpecies":{"deer":0,"hare":1},"domestic":1,"captive":0,"dead":0}
 OK 0 failed
-EXIT:0
-
-===== node tools/combat_rt/test_combat_rt.js =====
+EXIT=0
+COMMAND: node tools/combat_rt/test_combat_rt.js
 PASS clock_6s_speed_pause
 PASS clock_6s_speed_pause_mutant_killed
 PASS seeded_rng_matches_rules_dice
@@ -190,9 +218,8 @@ PASS combat_hook_present_mutant_killed
 PASS sources_have_no_generator_or_live_shield_clip
 PASS sources_have_no_generator_or_live_shield_clip_mutant_killed
 RESULT: 64 passed, 0 failed
-EXIT:0
-
-===== node tools/test_srd_combat_proof.js =====
+EXIT=0
+COMMAND: node tools/test_srd_combat_proof.js
 --- Running SRD 5.1 Combat Proof Suite (Mutant: false) ---
 
 [Proof 1] Weapon Key Mapping & Armor Class Integration
@@ -256,9 +283,8 @@ PASS: A species with no SRD creature fails loudly (NO_SRD_MAPPING)
 
 Results: 43 passed, 0 failed
 SRD Combat Proof Suite PASSED (100%).
-EXIT:0
-
-===== node tools/sim/test_wildlife_rules_damage.js =====
+EXIT=0
+COMMAND: node tools/sim/test_wildlife_rules_damage.js
 PASS fixture species — wolf -> hare
 PASS source routes the strike through UF.Rules
 PASS mutant anchor is unique — count 1
@@ -281,9 +307,48 @@ PASS rules absent still kills, drops, emits and feeds — state feed until 93 dr
 PASS mutant catalog_subtraction is caught — hp 14 rules hp 25 err null
 PASS mutant double_apply is caught — hp 9 rules hp 25 err null
 OK 0 failed
-EXIT:0
-
-===== node tools/check_deus_syntax.js =====
+EXIT=0
+COMMAND: node tools/check_deus_syntax.js
 Checked 60 DEUS plugin files. Errors: 0
-EXIT:0
+EXIT=0
+COMMAND: node tools/taming_party/test_tamed_party_combat.js --provoke-all
+PASS provocation anchors
+FAIL membership — captive joined JOIN
+CAUGHT membership
+FAIL srd — hp 99/99 want 11; wound 4/99; troll numbers {"ac":15,"hp":99,"speed":30}
+CAUGHT srd
+FAIL gear_bonus — ac 30 block 13 dirty 18; attack 7 2d4+2; equip changed numbers
+CAUGHT gear_bonus
+FAIL death — record {"status":"domesticated","dead":false}; census {"wild":0,"domestic":2,"captive":0,"dead":0,"byRole":{"pet":1,"mount":0,"livestock":1,"work":0},"total":2}; dead enlist left domesticated
+CAUGHT death
+FAIL orders — peek {"type":"hold","targetId":null}; follow position 0,0; no follow event
+CAUGHT orders
+FAIL natural — manufactured greatclub,rock; sequence greatclub,greatclub; key greatclub
+CAUGHT natural
+FAIL saves — {"saveOk":false,"damage":5}
+CAUGHT saves
+FAIL target_id — stored {"type":"attack","targetId":"9"}; hp 40
+CAUGHT target_id
+FAIL legacy_lookup — target null; hp 40
+CAUGHT legacy_lookup
+FAIL order_sync — {"record":{"type":"hold","targetId":null},"peek":{"type":"follow","targetId":"1"}}
+CAUGHT order_sync
+FAIL world_sync — world 0,0 enc 5,-1
+CAUGHT world_sync
+FAIL slams — seq slam parsed false swings slam
+CAUGHT slams
+FAIL pack — {"weaponKey":"bite","hit":true,"damage":8,"attackMod":4,"fromStatBlock":true,"natural":15,"advantage":false}
+CAUGHT pack
+FAIL regen — hp 74 dead false
+CAUGHT regen
+FAIL death_rule — slash r1 {"hp":0,"dead":true,"status":"dead"}; slash r2 {"hp":0,"dead":true,"status":"dead","knock":false}; fire r1 {"hp":0,"dead":true,"status":"dead"}
+CAUGHT death_rule
+FAIL legacy_gear — {"bare":{"speed":4,"range":1,"style":"accurate","attackType":"crush","weapon":"fists","weaponType":null,"ranged":false,"ammo":null,"outOfAmmo":null},"geared":{"speed":5,"range":1,"style":"accurate","attackType":"slash","weapon":"Long sword","weaponType":"sword_long","ranged":false,"ammo":null,"outOfAmmo":null}}
+CAUGHT legacy_gear
+FAIL legacy_follow — 0,0 apart 6
+CAUGHT legacy_follow
+FAIL runtime — world 5,0 snap null apart 99 swings 2
+CAUGHT runtime
+RESULT: 18 provocations caught, 0 missed
+PROVOKE_EXIT=0
 ```

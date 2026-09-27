@@ -119,13 +119,15 @@ function createEngine(opts) {
                 deathSaves: { successes: 0, failures: 0 }
             }
         };
+        if (s.worldUnit) unit.worldUnit = s.worldUnit;
+        if (s.anchorHold) unit.anchorHold = true;
         if (s.tamed) {
             unit.tamed = true;
             unit.pc = false;
             unit.className = "";
             unit.shield = false;
             unit.order = Party.orderOf(s);
-            unit.worldUnit = s.worldUnit || null;
+            unit.worldUnit = s.worldUnit || unit.worldUnit || null;
             unit.attacks = Array.isArray(s.attacks) ? s.attacks : [];
             unit.multiattack = Array.isArray(s.multiattack) ? s.multiattack.slice() : [];
             unit.equipmentSlots = [];
@@ -302,6 +304,7 @@ function createEngine(opts) {
     function decide(unit) {
         if (unit.dead) return { type: "none" };
         if (unit.dying && unit.pc) return { type: "death-save" };
+        if (unit.anchorHold) return { type: "hold" };
         const q = orders.get(unit.id);
         if (unit.tamed) {
             if (q && q.length) {
@@ -333,6 +336,7 @@ function createEngine(opts) {
         unit.y = ny;
         unit.facing = dir.id;
         unit.pose = "WALK";
+        syncWorldUnit(unit); // BG_WORLD_SYNC
         return true;
     }
 
@@ -399,12 +403,27 @@ function createEngine(opts) {
             target.x = nx;
             target.y = ny;
             moved++;
+            syncWorldUnit(target);
         }
         return moved;
     }
 
-    function applyDamage(target, amount, critical) {
+    function syncWorldUnit(unit) {
+        const world = unit && unit.worldUnit;
+        if (!world || world === unit) return;
+        world.x = unit.x;
+        world.y = unit.y;
+        if (unit.z != null) world.z = unit.z;
+        if (world.area && unit.z != null) world.area.z = unit.z;
+        if (world.data && unit.data) {
+            world.data.hp = unit.data.hp;
+            world.data.maxHp = unit.data.maxHp;
+        }
+    }
+
+    function applyDamage(target, amount, critical, damageType) {
         const dmg = Math.max(0, amount | 0);
+        if (dmg > 0 && target && target.tamed) Party.noteDamageType(target, rules, damageType);
         if (target.dying && target.pc && dmg > 0) {
             target.data.deathSaves.failures += critical ? 2 : 1;
             if (target.data.deathSaves.failures >= 3) {
@@ -416,7 +435,8 @@ function createEngine(opts) {
         }
         const next = Math.max(0, target.data.hp - dmg);
         target.data.hp = next;
-        if (next <= 0) {
+        const deferDeath = !!(target.tamed && Party.defersDeath(target, rules)); // BG_DEATH_EXCEPTION
+        if (next <= 0 && !deferDeath) {
             target.data.hp = 0;
             if (target.pc) {
                 target.dying = true;
@@ -428,13 +448,15 @@ function createEngine(opts) {
                 target.pose = "DEAD";
                 if (target.tamed) Party.noteDeath(target, { cause: "hp0" });
             }
+        } else if (next <= 0) {
+            target.data.hp = 0;
+            target.dead = false;
+            target.dying = false;
+            target.pose = "HURT";
         } else {
             target.pose = "HURT";
         }
-        if (target.tamed && target.worldUnit && target.worldUnit.data) {
-            target.worldUnit.data.hp = target.data.hp;
-            target.worldUnit.data.maxHp = target.data.maxHp;
-        }
+        syncWorldUnit(target);
         return dmg;
     }
 
@@ -447,6 +469,7 @@ function createEngine(opts) {
             target.data.deathSaves = { successes: 0, failures: 0 };
             target.pose = "IDLE";
         }
+        syncWorldUnit(target);
         return gained;
     }
 
@@ -570,27 +593,28 @@ function createEngine(opts) {
         event.targetZ = target.z;
         event.effectZ = target.z;
         faceToward(actor, target);
-        const save = rules.savingThrow(target, action.ability || "dex", action.dc === undefined ? 10 : action.dc, { rng: rngFn });
+        const saveSubject = rulesCombatant(target); // BG_SPELL_SAVE
+        const save = rules.savingThrow(saveSubject, action.ability || "dex", action.dc === undefined ? 10 : action.dc, { rng: rngFn });
         event.natural = save.roll;
         event.saveOk = !!save.ok;
         let damage = 0;
+        event.damageType = action.damageType || "fire";
         if (!save.ok || action.halfOnSave) {
-            const rolled = rules.damage(actor, target, {
+            const rolled = rules.damage(rulesCombatant(actor), rulesCombatant(target), {
                 hit: true,
                 critical: false,
                 damageExpr: action.dice || "1d8",
-                damageType: action.damageType || "fire",
+                damageType: event.damageType,
                 fromStatBlock: false,
                 abilityMod: 0,
                 riders: []
             }, { rng: rngFn, spell: true });
             damage = rolled.damage;
             if (save.ok && action.halfOnSave) damage = Math.floor(damage / 2);
-            damage = applyDamage(target, damage, false);
+            damage = applyDamage(target, damage, false, event.damageType);
         }
         event.hit = damage > 0;
         event.damage = damage;
-        event.damageType = action.damageType || "fire";
         event.number = P.damageNumber(damage, event.damageType, damage > 0);
         event.flash = damage > 0;
         event.flashFrame = damage > 0 ? 3 : null;
@@ -712,11 +736,12 @@ function createEngine(opts) {
         for (let i = 0; i < keys.length; i++) {
             if (target.dead) break;
             if (G.squaresApart(actor, target) > bands.normal) break;
-            const att = rules.attack(actorBody, targetBody, keys[i], { rng: rngFn });
+            const pack = Party.packAdvantage(rules, actor, target, units); // BG_PACK
+            const att = rules.attack(actorBody, targetBody, keys[i], { rng: rngFn, advantage: pack });
             let dealt = 0;
             if (att.hit && !att.sameZViolation) {
                 const dmg = rules.damage(actorBody, targetBody, att, { rng: rngFn });
-                dealt = applyDamage(target, dmg.damage, !!att.critical);
+                dealt = applyDamage(target, dmg.damage, !!att.critical, att.damageType);
                 damage += dealt;
                 anyHit = true;
             }
@@ -727,7 +752,8 @@ function createEngine(opts) {
                 damage: dealt,
                 attackMod: att.attackMod,
                 fromStatBlock: !!att.fromStatBlock,
-                natural: att.natural
+                natural: att.natural,
+                advantage: pack
             });
         }
         event.natural = last ? last.natural : null;
@@ -819,6 +845,24 @@ function createEngine(opts) {
             pushEvent(baseEvent({ id: slot.id, z: 0 }, slot, "none"));
             return;
         }
+        if (unit.tamed) {
+            const turn = Party.beginTurn(unit, rules); // BG_TURN_REGEN
+            syncWorldUnit(unit);
+            if (turn && turn.died) {
+                unit.dead = true;
+                unit.dying = false;
+                unit.pose = "DEAD";
+                if (unit.data) unit.data.hp = 0;
+                syncWorldUnit(unit);
+                pushEvent(baseEvent(unit, slot, "death"));
+                return;
+            }
+            if (turn && turn.healed > 0 && unit.data && unit.data.hp > 0) {
+                unit.dead = false;
+                unit.dying = false;
+                if (unit.pose === "DEAD" || unit.pose === "HURT") unit.pose = "IDLE";
+            }
+        }
         resolve(unit, decide(unit), slot);
     }
 
@@ -871,7 +915,7 @@ function createEngine(opts) {
             weaponKey: u.weaponKey,
             shield: u.shield,
             tamed: !!u.tamed,
-            order: u.tamed ? { type: (u.order && u.order.type) || "follow", targetId: u.order && u.order.targetId ? u.order.targetId : null } : null,
+            order: u.tamed ? Party.orderOf(u) : null,
             equipmentSlots: u.tamed ? [] : null,
             speedFt: u.speedFt,
             summonedBy: u.summonedBy,
@@ -1004,6 +1048,14 @@ function createEngine(opts) {
             const u = get(id);
             if (!u || !u.tamed) return { ok: false, reason: "NOT_TAMED", order: null };
             return Party.issueOrder(u, order);
+        },
+        relocate: function (id, x, y, z) {
+            const u = get(id);
+            if (!u) return false;
+            u.x = x | 0;
+            u.y = y | 0;
+            if (z !== undefined && z !== null) u.z = z | 0;
+            return true;
         },
         enlistTamed: function (list) {
             return Party.enlist(api, rules, list);

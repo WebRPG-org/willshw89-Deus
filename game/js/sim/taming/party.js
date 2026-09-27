@@ -112,6 +112,79 @@ function copyActions(actions) {
     return out;
 }
 
+let weaponNameSet = null;
+
+function weaponNames() {
+    if (weaponNameSet) return weaponNameSet;
+    const fs = require("fs");
+    const path = require("path");
+    const candidates = [
+        path.join(__dirname, "..", "..", "..", "data", "srd51", "equipment.json")
+    ];
+    if (typeof process !== "undefined" && typeof process.cwd === "function") {
+        candidates.push(path.join(process.cwd(), "game", "data", "srd51", "equipment.json"));
+    }
+    weaponNameSet = new Set();
+    let file = null;
+    for (let i = 0; i < candidates.length; i++) {
+        if (fs.existsSync(candidates[i])) { file = candidates[i]; break; }
+    }
+    if (!file) return weaponNameSet;
+    const parsed = JSON.parse(fs.readFileSync(file, "utf8"));
+    const entries = Array.isArray(parsed) ? parsed : (parsed && parsed.entries) || [];
+    for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i];
+        if (!entry || entry.kind !== "weapon" || !entry.name) continue;
+        weaponNameSet.add(compactName(entry.name));
+    }
+    return weaponNameSet;
+}
+
+function actionNameKeys(action) {
+    const head = String((action && (action.name || action.key)) || "").split("(")[0];
+    const words = head.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim().split(/\s+/).filter(Boolean);
+    const keys = [];
+    if (!words.length) return keys;
+    keys.push(words.join(""));
+    keys.push(words[words.length - 1]);
+    if (words.length >= 2) keys.push(words.slice(-2).join(""));
+    return keys;
+}
+
+// A stat-block action is manufactured when it names an SRD weapon, is a spell
+// attack, or is a ranged weapon attack that is not a body or produced attack
+// (a thrown rock). Empty equipment does not make a greatclub natural.
+function isManufacturedAction(action, rules) {
+    if (!action || action.toHit == null) return true;
+    if (action.attackKind === "spell") return true;
+    const names = weaponNames();
+    const keys = actionNameKeys(action);
+    for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        if (names.has(key)) return true;
+        if (key.length > 1 && names.has(key.replace(/s$/, ""))) return true;
+        if (rules && rules.index && typeof rules.index.weapon === "function") {
+            const found = rules.index.weapon(key);
+            if (found) {
+                const id = String(found.id || found.name || "").toLowerCase();
+                if (id.indexOf("unarmed") < 0) return true;
+            }
+        }
+    }
+    const blob = keys.join("");
+    if (action.range && !/spike|spit|web|poison|quill|thorn|spine|breath|spray/.test(blob)) return true;
+    return false;
+}
+
+function naturalActions(actions, rules) {
+    const copied = copyActions(actions);
+    const kept = [];
+    for (let i = 0; i < copied.length; i++) {
+        if (!isManufacturedAction(copied[i], rules)) kept.push(copied[i]);
+    }
+    return kept;
+}
+
 function matchKey(name, actions) {
     const raw = compactName(name);
     const forms = [raw];
@@ -136,27 +209,47 @@ function matchKey(name, actions) {
     return null;
 }
 
-// The first alternative in an "or" sentence. Named counts win.
-// "makes two melee attacks" repeats the only weapon action. Otherwise null.
-function parseMultiattack(text, actions) {
+function countWord(word) {
+    const text = String(word || "").toLowerCase();
+    if (Object.prototype.hasOwnProperty.call(COUNT_WORD, text)) return COUNT_WORD[text];
+    const n = parseInt(text, 10);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+// The first alternative in an "or" sentence. "two with its claws" and
+// "makes two slam attacks" both name the count. A manufactured name that is
+// not in the natural list is skipped. "makes two melee attacks" repeats the
+// only remaining natural action when nothing was filtered out.
+function parseMultiattack(text, actions, droppedManufactured) {
     if (!text) return null;
     const first = String(text).split(/\s+or\s+/i)[0];
     const named = /(\b(?:one|two|three|four|five|six|seven|eight|a|an|\d+)\b)\s+with\s+(?:its\s+|a\s+|an\s+|their\s+)?([a-z]+)/gi;
     const seq = [];
     let match;
     while ((match = named.exec(first))) {
-        const word = String(match[1]).toLowerCase();
-        const n = Object.prototype.hasOwnProperty.call(COUNT_WORD, word) ? COUNT_WORD[word] : parseInt(word, 10);
+        const n = countWord(match[1]);
         if (!n) return null;
         const key = matchKey(match[2], actions);
-        if (!key) return null;
+        if (!key) continue;
         for (let i = 0; i < n; i++) seq.push(key);
     }
     if (seq.length) return seq;
+    const namedAttacks = /makes\s+(one|two|three|four|five|six|seven|eight|\d+)\s+([a-z]+)\s+attacks?\b/gi; // BG_SLAM_COUNT
+    let namedHit = false;
+    while ((match = namedAttacks.exec(first))) {
+        const label = String(match[2] || "").toLowerCase();
+        if (label === "melee" || label === "ranged") continue;
+        const n = countWord(match[1]);
+        if (!n) return null;
+        const key = matchKey(label, actions);
+        if (!key) continue;
+        for (let i = 0; i < n; i++) seq.push(key);
+        namedHit = true;
+    }
+    if (namedHit && seq.length) return seq;
     const count = first.match(/makes\s+(one|two|three|four|five|six|seven|eight|\d+)\s+(?:melee\s+|ranged\s+)?attacks?\b/i);
-    if (!count || actions.length !== 1) return null;
-    const word = String(count[1]).toLowerCase();
-    const n = Object.prototype.hasOwnProperty.call(COUNT_WORD, word) ? COUNT_WORD[word] : parseInt(word, 10);
+    if (!count || actions.length !== 1 || droppedManufactured) return null;
+    const n = countWord(count[1]);
     if (!n) return null;
     const only = actions[0].key;
     const out = [];
@@ -185,10 +278,11 @@ function primaryAction(actions) {
     return first;
 }
 
-function attackSequence(block) {
-    const actions = copyActions(block && block.actions);
+function attackSequence(block, rules) {
+    const all = copyActions(block && block.actions);
+    const actions = naturalActions(block && block.actions, rules); // BG_NATURAL_ONLY
     const text = multiattackText(block);
-    const parsed = text ? parseMultiattack(text, actions) : null;
+    const parsed = text ? parseMultiattack(text, actions, actions.length !== all.length) : null;
     if (parsed && parsed.length) {
         return { attacks: actions, sequence: parsed, multiattack: true, parsed: true, text: text };
     }
@@ -359,7 +453,7 @@ function combatProfile(rules, unit, opts) {
     const block = found.block;
     const hp = hitPointsFor(rules, unit, block);
     if (hp.dead) return refuse(unit, "DEAD");
-    const seq = attackSequence(block);
+    const seq = attackSequence(block, rules);
     const speed = walkSpeed(block);
     const size = sizeName(block);
     if (speed == null || !size) return refuse(unit, speed == null ? "NO_SPEED" : "NO_SIZE");
@@ -392,6 +486,7 @@ function combatProfile(rules, unit, opts) {
         fromStatBlock: swung ? swung.fromStatBlock : false,
         equipmentSlots: [],
         saddle: saddleView(rec),
+        defenses: defensesOf(block),
         order: orderOf(unit)
     };
 }
@@ -459,17 +554,25 @@ function enlist(engine, rules, units, opts) {
     return { added: added, refused: refused };
 }
 
+// Keep a numeric world id numeric. String(9) is a different key from 9.
+function keptTarget(type, id) {
+    if (type !== "attack") return null;
+    if (id == null || id === "") return null;
+    return id; // BG_TARGET_ID
+}
+
+function sharedRecord(unit) {
+    return record.recordOf(unit) || (unit && unit.worldUnit && record.recordOf(unit.worldUnit)) || null;
+}
+
 function orderOf(unit) {
+    const rec = sharedRecord(unit);
+    if (rec && rec.order && ORDER_SET[rec.order.type]) {
+        return { type: rec.order.type, targetId: keptTarget(rec.order.type, rec.order.targetId) }; // BG_ORDER_RECORD
+    }
     const local = unit && unit.order;
     if (local && ORDER_SET[local.type]) {
-        return { type: local.type, targetId: local.type === "attack" ? (local.targetId == null ? null : String(local.targetId)) : null };
-    }
-    const rec = record.recordOf(unit) || (unit && unit.worldUnit && record.recordOf(unit.worldUnit));
-    if (rec && rec.order && ORDER_SET[rec.order.type]) {
-        return {
-            type: rec.order.type,
-            targetId: rec.order.type === "attack" ? (rec.order.targetId == null ? null : String(rec.order.targetId)) : null
-        };
+        return { type: local.type, targetId: keptTarget(local.type, local.targetId) };
     }
     return { type: "follow", targetId: null };
 }
@@ -480,9 +583,9 @@ function issueOrder(unit, order) {
     if (type === "attack" && (order.targetId == null || order.targetId === "")) {
         return { ok: false, reason: "NO_TARGET", order: null };
     }
-    const next = { type: type, targetId: type === "attack" ? String(order.targetId) : null };
+    const next = { type: type, targetId: keptTarget(type, order && order.targetId) };
     if (unit) unit.order = { type: next.type, targetId: next.targetId };
-    const rec = record.recordOf(unit) || (unit && unit.worldUnit && record.recordOf(unit.worldUnit));
+    const rec = sharedRecord(unit);
     if (rec) rec.order = { type: next.type, targetId: next.targetId };
     return { ok: true, reason: "ORDER", order: { type: next.type, targetId: next.targetId } };
 }
@@ -495,11 +598,11 @@ function nextAction(unit, look) {
         const id = order.targetId;
         if (!id) return { type: "hold" };
         if (typeof seen.living === "function" && !seen.living(id)) return { type: "hold" };
-        return { type: "attack", targetId: String(id), natural: true };
+        return { type: "attack", targetId: id, natural: true };
     }
     if (typeof seen.enemyInReach === "function") {
         const enemy = seen.enemyInReach();
-        if (enemy && enemy.id != null) return { type: "attack", targetId: String(enemy.id), natural: true };
+        if (enemy && enemy.id != null) return { type: "attack", targetId: enemy.id, natural: true };
     }
     const anchor = typeof seen.anchorId === "function" ? seen.anchorId() : seen.anchorId;
     return { type: "follow", targetId: anchor == null ? null : String(anchor) }; // BG_ORDER_FOLLOW
@@ -509,11 +612,147 @@ function primaryAttackKey(unit, rules) {
     if (!rules || typeof rules.creatureOf !== "function") return null;
     const found = lookupBlock(rules, unit);
     if (!found.block) return null;
-    const seq = attackSequence(found.block);
+    const seq = attackSequence(found.block, rules);
     return seq.sequence.length ? seq.sequence[0] : null;
 }
 
-// Existing creature path: 0 HP is death. PROPOSED-AX-01 (knock out instead) is not implemented.
+function traitList(block) {
+    const entry = entryOf(block);
+    const traits = entry && entry.data && entry.data.traits;
+    return Array.isArray(traits) ? traits : [];
+}
+
+function defensesOf(block) {
+    const traits = traitList(block);
+    let pack = null;
+    let regeneration = null;
+    const damageTypes = ["acid", "bludgeoning", "cold", "fire", "force", "lightning", "necrotic", "piercing", "poison", "psychic", "radiant", "slashing", "thunder"];
+    for (let i = 0; i < traits.length; i++) {
+        const trait = traits[i];
+        if (!trait) continue;
+        const name = String(trait.name || "");
+        const text = String(trait.text || "").replace(/[’]/g, "'");
+        if (/^pack tactics$/i.test(name) || /advantage on attack rolls against a creature if at least one of/i.test(text)) {
+            const feet = text.match(/within\s+(\d+)\s+feet/i);
+            pack = { feet: feet ? parseInt(feet[1], 10) : 5 };
+        }
+        if (/^regeneration$/i.test(name) || /regains\s+\d+\s+hit points at the start of its turn/i.test(text)) {
+            const hpMatch = text.match(/regains\s+(\d+)\s+hit points at the start of its turn/i);
+            const hp = hpMatch ? parseInt(hpMatch[1], 10) : 0;
+            const suppress = [];
+            const sup = text.match(/takes\s+([^.]+?)\s+damage,\s+this trait does(?:n't| not) function/i);
+            if (sup) {
+                const blob = sup[1].toLowerCase();
+                for (let t = 0; t < damageTypes.length; t++) {
+                    if (blob.indexOf(damageTypes[t]) >= 0) suppress.push(damageTypes[t]);
+                }
+            }
+            const deathException = /dies only if it starts its turn with 0 hit points and does(?:n't| not) regenerate/i.test(text);
+            if (hp > 0) regeneration = { hp: hp, suppress: suppress, deathException: deathException };
+        }
+    }
+    return { pack: pack, regeneration: regeneration };
+}
+
+function packFeet(rules, unit) {
+    const found = lookupBlock(rules, unit);
+    if (!found.block) return 0;
+    const pack = defensesOf(found.block).pack;
+    return pack && pack.feet ? pack.feet : 0;
+}
+
+function incapacitated(unit) {
+    if (!unit || unit.dead || unit.dying) return true;
+    if (unit.data && (unit.data.dead === true || unit.data._isDying === true)) return true;
+    if (unit.data && typeof unit.data.hp === "number" && unit.data.hp <= 0) return true;
+    const list = unit.data && unit.data.conditions;
+    if (!Array.isArray(list)) return false;
+    for (let i = 0; i < list.length; i++) {
+        const name = String((list[i] && list[i].name) || list[i] || "").toLowerCase();
+        if (name === "incapacitated" || name === "paralyzed" || name === "stunned" || name === "unconscious" || name === "petrified") return true;
+    }
+    return false;
+}
+
+function hostileUnit(unit) {
+    if (!unit) return false;
+    if (unit.side === "enemy" || unit.side === "hostile") return true;
+    const tags = unit.data && unit.data.tags;
+    return Array.isArray(tags) && tags.indexOf("hostile") >= 0;
+}
+
+function squaresBetween(a, b) {
+    if (!a || !b) return Infinity;
+    return Math.max(Math.abs((a.x | 0) - (b.x | 0)), Math.abs((a.y | 0) - (b.y | 0)));
+}
+
+// Pack Tactics: advantage when an ally is within the trait's feet of the target.
+function packAdvantage(rules, actor, target, units) {
+    const feet = packFeet(rules, actor);
+    if (!feet || !actor || !target) return false;
+    const limit = Math.floor(feet / 5);
+    const list = units || [];
+    for (let i = 0; i < list.length; i++) {
+        const ally = list[i];
+        if (!ally || ally === actor || ally === target) continue;
+        if (ally.id != null && (ally.id === actor.id || ally.id === target.id)) continue;
+        if (incapacitated(ally) || hostileUnit(ally)) continue;
+        if (ally.side && actor.side && ally.side !== actor.side) continue;
+        if (squaresBetween(ally, target) <= limit) return true;
+    }
+    return false;
+}
+
+function defersDeath(unit, rules) {
+    const found = lookupBlock(rules, unit);
+    if (!found.block) return false;
+    const regen = defensesOf(found.block).regeneration;
+    return !!(regen && regen.deathException);
+}
+
+function noteDamageType(unit, rules, damageType) {
+    if (!unit) return;
+    const found = lookupBlock(rules, unit);
+    if (!found.block) return;
+    const regen = defensesOf(found.block).regeneration;
+    if (!regen) return;
+    const type = String(damageType || "").toLowerCase();
+    if (regen.suppress.indexOf(type) < 0) return;
+    unit.regenBlocked = true;
+    if (unit.worldUnit && unit.worldUnit !== unit) unit.worldUnit.regenBlocked = true;
+}
+
+// Start of the creature's turn. Regeneration and the "dies only if it does not
+// regenerate" sentence come from the stat block. The heal amount is that number.
+function beginTurn(unit, rules) {
+    if (!unit || !rules || unit.dead) return { healed: 0, died: false };
+    if (unit.data && unit.data.dead === true) return { healed: 0, died: false };
+    const found = lookupBlock(rules, unit);
+    if (!found.block) return { healed: 0, died: false };
+    const regen = defensesOf(found.block).regeneration;
+    if (!regen) return { healed: 0, died: false };
+    const blocked = !!(unit.regenBlocked || (unit.worldUnit && unit.worldUnit.regenBlocked));
+    unit.regenBlocked = false;
+    if (unit.worldUnit && unit.worldUnit !== unit) unit.worldUnit.regenBlocked = false;
+    const hp = unit.data && typeof unit.data.hp === "number" ? unit.data.hp : 0;
+    if (blocked) {
+        if (hp <= 0 && regen.deathException) {
+            noteDeath(unit, { cause: "no-regeneration" });
+            return { healed: 0, died: true, suppressed: true };
+        }
+        return { healed: 0, died: false, suppressed: true };
+    }
+    const max = unit.data && typeof unit.data.maxHp === "number" ? unit.data.maxHp : hp;
+    const amount = regen.hp; // BG_REGEN
+    const gain = Math.max(0, Math.min(amount, max - hp));
+    if (unit.data) unit.data.hp = hp + gain;
+    if (unit.worldUnit && unit.worldUnit !== unit && unit.worldUnit.data) unit.worldUnit.data.hp = unit.data.hp;
+    return { healed: gain, died: false };
+}
+
+// Existing creature path: 0 HP is death, except a stat block that says the
+// creature dies only when it starts a turn at 0 and does not regenerate.
+// PROPOSED-AX-01 (knock out instead) is not implemented.
 function noteDeath(unit, info) {
     const bodies = [];
     if (unit) bodies.push(unit);
@@ -561,5 +800,12 @@ module.exports = {
     primaryAttackKey: primaryAttackKey,
     noteDeath: noteDeath,
     attackSequence: attackSequence,
-    walkSpeed: walkSpeed
+    walkSpeed: walkSpeed,
+    defensesOf: defensesOf,
+    packFeet: packFeet,
+    packAdvantage: packAdvantage,
+    defersDeath: defersDeath,
+    noteDamageType: noteDamageType,
+    beginTurn: beginTurn,
+    naturalActions: naturalActions
 };
