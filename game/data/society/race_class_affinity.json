@@ -1,0 +1,1236 @@
+{
+  "schemaVersion": "deus-race-class-affinity/1.0.0",
+  "authority": "DEC-036",
+  "legalPolicy": "every-combination-legal",
+  "roleDistribution": {
+    "rule": "one-tank-one-healer-one-damage",
+    "roles": [
+      "tank",
+      "healer",
+      "damage"
+    ],
+    "rangerCountsAs": "tank"
+  },
+  "unset": {
+    "bonus": "OWNER_TODO",
+    "jobPickWeight": "OWNER_TODO",
+    "playtestSuggestions": {
+      "status": "unapproved",
+      "applied": false,
+      "pendingOwnerRuling": true,
+      "statements": [
+        "+1 on class main rolls",
+        "~10% faster class XP",
+        "~1.5x job-pick weight"
+      ]
+    }
+  },
+  "sources": {
+    "decision": "docs/OWNER_DECISIONS.md#DEC-036",
+    "characterOptions": "game/data/srd51/character_options.json",
+    "speciesReference": "game/data/srd5_1/species_reference.json",
+    "classesReference": "game/data/srd5_1/classes_reference.json",
+    "personIdentity": "game/data/society/person_identity.schema.json",
+    "planClassTokens": "game/data/plans/faction_plan.schema.json",
+    "factionSpeciesMap": "game/js/plugins/DEUS_Factions.js"
+  },
+  "races": [
+    {
+      "raceId": "srd:race:human",
+      "dec036Name": "Human",
+      "catalogueName": "Human",
+      "shortId": "human",
+      "speciesReferenceId": "human"
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "dec036Name": "Dwarf",
+      "catalogueName": "Dwarf",
+      "shortId": "dwarf",
+      "speciesReferenceId": "dwarf"
+    },
+    {
+      "raceId": "srd:race:elf",
+      "dec036Name": "Elf",
+      "catalogueName": "Elf",
+      "shortId": "elf",
+      "speciesReferenceId": "elf"
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "dec036Name": "Half-elf",
+      "catalogueName": "Half-Elf",
+      "shortId": "half-elf",
+      "speciesReferenceId": "half_elf"
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "dec036Name": "Halfling",
+      "catalogueName": "Halfling",
+      "shortId": "halfling",
+      "speciesReferenceId": "halfling"
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "dec036Name": "Gnome",
+      "catalogueName": "Gnome",
+      "shortId": "gnome",
+      "speciesReferenceId": "gnome"
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "dec036Name": "Half-orc",
+      "catalogueName": "Half-Orc",
+      "shortId": "half-orc",
+      "speciesReferenceId": "half_orc"
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "dec036Name": "Tiefling",
+      "catalogueName": "Tiefling",
+      "shortId": "tiefling",
+      "speciesReferenceId": "tiefling"
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "dec036Name": "Dragonborn",
+      "catalogueName": "Dragonborn",
+      "shortId": "dragonborn",
+      "speciesReferenceId": "dragonborn"
+    }
+  ],
+  "classes": [
+    {
+      "classId": "srd:class:barbarian",
+      "dec036Name": "Barbarian",
+      "catalogueName": "Barbarian",
+      "shortId": "barbarian",
+      "planToken": "BARBARIAN"
+    },
+    {
+      "classId": "srd:class:bard",
+      "dec036Name": "Bard",
+      "catalogueName": "Bard",
+      "shortId": "bard",
+      "planToken": "BARD"
+    },
+    {
+      "classId": "srd:class:cleric",
+      "dec036Name": "Cleric",
+      "catalogueName": "Cleric",
+      "shortId": "cleric",
+      "planToken": "CLERIC"
+    },
+    {
+      "classId": "srd:class:druid",
+      "dec036Name": "Druid",
+      "catalogueName": "Druid",
+      "shortId": "druid",
+      "planToken": "DRUID"
+    },
+    {
+      "classId": "srd:class:fighter",
+      "dec036Name": "Fighter",
+      "catalogueName": "Fighter",
+      "shortId": "fighter",
+      "planToken": "FIGHTER"
+    },
+    {
+      "classId": "srd:class:monk",
+      "dec036Name": "Monk",
+      "catalogueName": "Monk",
+      "shortId": "monk",
+      "planToken": "MONK"
+    },
+    {
+      "classId": "srd:class:paladin",
+      "dec036Name": "Paladin",
+      "catalogueName": "Paladin",
+      "shortId": "paladin",
+      "planToken": "PALADIN"
+    },
+    {
+      "classId": "srd:class:ranger",
+      "dec036Name": "Ranger",
+      "catalogueName": "Ranger",
+      "shortId": "ranger",
+      "planToken": "RANGER"
+    },
+    {
+      "classId": "srd:class:rogue",
+      "dec036Name": "Rogue",
+      "catalogueName": "Rogue",
+      "shortId": "rogue",
+      "planToken": "ROGUE"
+    },
+    {
+      "classId": "srd:class:sorcerer",
+      "dec036Name": "Sorcerer",
+      "catalogueName": "Sorcerer",
+      "shortId": "sorcerer",
+      "planToken": "SORCERER"
+    },
+    {
+      "classId": "srd:class:warlock",
+      "dec036Name": "Warlock",
+      "catalogueName": "Warlock",
+      "shortId": "warlock",
+      "planToken": "WARLOCK"
+    },
+    {
+      "classId": "srd:class:wizard",
+      "dec036Name": "Wizard",
+      "catalogueName": "Wizard",
+      "shortId": "wizard",
+      "planToken": "WIZARD"
+    }
+  ],
+  "affinityRows": [
+    {
+      "raceId": "srd:race:human",
+      "classIds": [
+        "srd:class:fighter",
+        "srd:class:wizard",
+        "srd:class:cleric"
+      ]
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "classIds": [
+        "srd:class:paladin",
+        "srd:class:cleric",
+        "srd:class:rogue"
+      ]
+    },
+    {
+      "raceId": "srd:race:elf",
+      "classIds": [
+        "srd:class:ranger",
+        "srd:class:druid",
+        "srd:class:sorcerer"
+      ]
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "classIds": [
+        "srd:class:fighter",
+        "srd:class:druid",
+        "srd:class:bard"
+      ]
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "classIds": [
+        "srd:class:fighter",
+        "srd:class:druid",
+        "srd:class:rogue"
+      ]
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "classIds": [
+        "srd:class:fighter",
+        "srd:class:cleric",
+        "srd:class:wizard"
+      ]
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "classIds": [
+        "srd:class:barbarian",
+        "srd:class:druid",
+        "srd:class:fighter"
+      ]
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "classIds": [
+        "srd:class:fighter",
+        "srd:class:warlock",
+        "srd:class:cleric"
+      ]
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "classIds": [
+        "srd:class:fighter",
+        "srd:class:monk",
+        "srd:class:cleric"
+      ]
+    }
+  ],
+  "cells": [
+    {
+      "raceId": "srd:race:human",
+      "classId": "srd:class:barbarian",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:human",
+      "classId": "srd:class:bard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:human",
+      "classId": "srd:class:cleric",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:human",
+      "classId": "srd:class:druid",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:human",
+      "classId": "srd:class:fighter",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:human",
+      "classId": "srd:class:monk",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:human",
+      "classId": "srd:class:paladin",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:human",
+      "classId": "srd:class:ranger",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:human",
+      "classId": "srd:class:rogue",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:human",
+      "classId": "srd:class:sorcerer",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:human",
+      "classId": "srd:class:warlock",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:human",
+      "classId": "srd:class:wizard",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "classId": "srd:class:barbarian",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "classId": "srd:class:bard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "classId": "srd:class:cleric",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "classId": "srd:class:druid",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "classId": "srd:class:fighter",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "classId": "srd:class:monk",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "classId": "srd:class:paladin",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "classId": "srd:class:ranger",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "classId": "srd:class:rogue",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "classId": "srd:class:sorcerer",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "classId": "srd:class:warlock",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dwarf",
+      "classId": "srd:class:wizard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:elf",
+      "classId": "srd:class:barbarian",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:elf",
+      "classId": "srd:class:bard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:elf",
+      "classId": "srd:class:cleric",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:elf",
+      "classId": "srd:class:druid",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:elf",
+      "classId": "srd:class:fighter",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:elf",
+      "classId": "srd:class:monk",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:elf",
+      "classId": "srd:class:paladin",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:elf",
+      "classId": "srd:class:ranger",
+      "legal": true,
+      "affinity": true,
+      "role": "tank",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:elf",
+      "classId": "srd:class:rogue",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:elf",
+      "classId": "srd:class:sorcerer",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:elf",
+      "classId": "srd:class:warlock",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:elf",
+      "classId": "srd:class:wizard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "classId": "srd:class:barbarian",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "classId": "srd:class:bard",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "classId": "srd:class:cleric",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "classId": "srd:class:druid",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "classId": "srd:class:fighter",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "classId": "srd:class:monk",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "classId": "srd:class:paladin",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "classId": "srd:class:ranger",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "classId": "srd:class:rogue",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "classId": "srd:class:sorcerer",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "classId": "srd:class:warlock",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-elf",
+      "classId": "srd:class:wizard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "classId": "srd:class:barbarian",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "classId": "srd:class:bard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "classId": "srd:class:cleric",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "classId": "srd:class:druid",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "classId": "srd:class:fighter",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "classId": "srd:class:monk",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "classId": "srd:class:paladin",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "classId": "srd:class:ranger",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "classId": "srd:class:rogue",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "classId": "srd:class:sorcerer",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "classId": "srd:class:warlock",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:halfling",
+      "classId": "srd:class:wizard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "classId": "srd:class:barbarian",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "classId": "srd:class:bard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "classId": "srd:class:cleric",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "classId": "srd:class:druid",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "classId": "srd:class:fighter",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "classId": "srd:class:monk",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "classId": "srd:class:paladin",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "classId": "srd:class:ranger",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "classId": "srd:class:rogue",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "classId": "srd:class:sorcerer",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "classId": "srd:class:warlock",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:gnome",
+      "classId": "srd:class:wizard",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "classId": "srd:class:barbarian",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "classId": "srd:class:bard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "classId": "srd:class:cleric",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "classId": "srd:class:druid",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "classId": "srd:class:fighter",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "classId": "srd:class:monk",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "classId": "srd:class:paladin",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "classId": "srd:class:ranger",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "classId": "srd:class:rogue",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "classId": "srd:class:sorcerer",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "classId": "srd:class:warlock",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:half-orc",
+      "classId": "srd:class:wizard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "classId": "srd:class:barbarian",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "classId": "srd:class:bard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "classId": "srd:class:cleric",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "classId": "srd:class:druid",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "classId": "srd:class:fighter",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "classId": "srd:class:monk",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "classId": "srd:class:paladin",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "classId": "srd:class:ranger",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "classId": "srd:class:rogue",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "classId": "srd:class:sorcerer",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "classId": "srd:class:warlock",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:tiefling",
+      "classId": "srd:class:wizard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "classId": "srd:class:barbarian",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "classId": "srd:class:bard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "classId": "srd:class:cleric",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "classId": "srd:class:druid",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "classId": "srd:class:fighter",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "classId": "srd:class:monk",
+      "legal": true,
+      "affinity": true,
+      "role": "OWNER_TODO",
+      "bonus": "OWNER_TODO",
+      "jobPickWeight": "OWNER_TODO"
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "classId": "srd:class:paladin",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "classId": "srd:class:ranger",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "classId": "srd:class:rogue",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "classId": "srd:class:sorcerer",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "classId": "srd:class:warlock",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    },
+    {
+      "raceId": "srd:race:dragonborn",
+      "classId": "srd:class:wizard",
+      "legal": true,
+      "affinity": false,
+      "role": null,
+      "bonus": null,
+      "jobPickWeight": null
+    }
+  ]
+}

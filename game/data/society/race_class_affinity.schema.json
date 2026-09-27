@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "deus-race-class-affinity/1.0.0",
+  "title": "DEUS race-class affinity",
+  "description": "DEC-036 affinity table for the nine SRD races and twelve SRD classes. Every combination is legal. Numeric bonus, job-pick weight, and undecided role tags are the sentinel OWNER_TODO in the canonical document. The shape allows a future Owner number; tools/society/test_race_class_affinity.js rejects numbers and guessed roles until that decision lands. Normative prose is docs/systems/DEUS_RaceClassAffinity.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "authority",
+    "legalPolicy",
+    "roleDistribution",
+    "unset",
+    "sources",
+    "races",
+    "classes",
+    "affinityRows",
+    "cells"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "deus-race-class-affinity/1.0.0" },
+    "authority": { "const": "DEC-036" },
+    "legalPolicy": { "const": "every-combination-legal" },
+    "roleDistribution": { "$ref": "#/$defs/roleDistribution" },
+    "unset": { "$ref": "#/$defs/unset" },
+    "sources": { "$ref": "#/$defs/sources" },
+    "races": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": { "$ref": "#/$defs/raceRow" }
+    },
+    "classes": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": { "$ref": "#/$defs/classRow" }
+    },
+    "affinityRows": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": { "$ref": "#/$defs/affinityRow" }
+    },
+    "cells": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/cell" }
+    }
+  },
+  "$defs": {
+    "sentinel": { "const": "OWNER_TODO" },
+    "roleTag": { "enum": ["tank", "healer", "damage"] },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "pattern": "^[A-Za-z]+(?:-[A-Za-z]+)?$"
+    },
+    "raceId": {
+      "type": "string",
+      "pattern": "^srd:race:[a-z0-9-]+$"
+    },
+    "classId": {
+      "type": "string",
+      "pattern": "^srd:class:[a-z0-9-]+$"
+    },
+    "shortId": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "speciesReferenceId": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]+$"
+    },
+    "planToken": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+    },
+    "roleDistribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule", "roles", "rangerCountsAs"],
+      "properties": {
+        "rule": { "type": "string", "minLength": 1 },
+        "roles": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/roleTag" }
+        },
+        "rangerCountsAs": { "$ref": "#/$defs/roleTag" }
+      }
+    },
+    "unset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bonus", "jobPickWeight", "playtestSuggestions"],
+      "properties": {
+        "bonus": { "$ref": "#/$defs/sentinel" },
+        "jobPickWeight": { "$ref": "#/$defs/sentinel" },
+        "playtestSuggestions": { "$ref": "#/$defs/playtestSuggestions" }
+      }
+    },
+    "playtestSuggestions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "applied", "pendingOwnerRuling", "statements"],
+      "properties": {
+        "status": { "type": "string", "minLength": 1 },
+        "applied": { "type": "boolean" },
+        "pendingOwnerRuling": { "type": "boolean" },
+        "statements": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "characterOptions",
+        "speciesReference",
+        "classesReference",
+        "personIdentity",
+        "planClassTokens",
+        "factionSpeciesMap"
+      ],
+      "properties": {
+        "decision": { "const": "docs/OWNER_DECISIONS.md#DEC-036" },
+        "characterOptions": { "const": "game/data/srd51/character_options.json" },
+        "speciesReference": { "const": "game/data/srd5_1/species_reference.json" },
+        "classesReference": { "const": "game/data/srd5_1/classes_reference.json" },
+        "personIdentity": { "const": "game/data/society/person_identity.schema.json" },
+        "planClassTokens": { "const": "game/data/plans/faction_plan.schema.json" },
+        "factionSpeciesMap": { "const": "game/js/plugins/DEUS_Factions.js" }
+      }
+    },
+    "raceRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raceId", "dec036Name", "catalogueName", "shortId", "speciesReferenceId"],
+      "properties": {
+        "raceId": { "$ref": "#/$defs/raceId" },
+        "dec036Name": { "$ref": "#/$defs/displayName" },
+        "catalogueName": { "$ref": "#/$defs/displayName" },
+        "shortId": { "$ref": "#/$defs/shortId" },
+        "speciesReferenceId": { "$ref": "#/$defs/speciesReferenceId" }
+      }
+    },
+    "classRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classId", "dec036Name", "catalogueName", "shortId", "planToken"],
+      "properties": {
+        "classId": { "$ref": "#/$defs/classId" },
+        "dec036Name": { "$ref": "#/$defs/displayName" },
+        "catalogueName": { "$ref": "#/$defs/displayName" },
+        "shortId": { "$ref": "#/$defs/shortId" },
+        "planToken": { "$ref": "#/$defs/planToken" }
+      }
+    },
+    "affinityRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raceId", "classIds"],
+      "properties": {
+        "raceId": { "$ref": "#/$defs/raceId" },
+        "classIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/classId" }
+        }
+      }
+    },
+    "cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raceId", "classId", "legal", "affinity", "role", "bonus", "jobPickWeight"],
+      "properties": {
+        "raceId": { "$ref": "#/$defs/raceId" },
+        "classId": { "$ref": "#/$defs/classId" },
+        "legal": { "type": "boolean" },
+        "affinity": { "type": "boolean" },
+        "role": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/sentinel" },
+            { "$ref": "#/$defs/roleTag" }
+          ]
+        },
+        "bonus": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/sentinel" },
+            { "type": "number" }
+          ]
+        },
+        "jobPickWeight": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/sentinel" },
+            { "type": "number" }
+          ]
+        }
+      }
+    }
+  }
+}
