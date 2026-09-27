@@ -1,0 +1,12 @@
+# SOC.30.01 authority gaps
+
+Date: 2026-09-27
+
+This file records missing or contradictory authority encountered while implementing the bounded mint/remelt core. It does not answer an Owner question, alter a registry, create a WBS item, or set policy.
+
+1. **Metal-unit contradiction.** The frozen `docs/systems/DEUS_RESOURCE_ECONOMY_STANDARD.md` §8 says 100 pure-metal coins contain 100 metal units, and `game/data/DEUS_ResourceRegistry.json` records `metalUnits: 1` per pure coin. `docs/handoffs/HANDOFF_DEUS_TSK_FABLE_20_ECONOMY.md` §6 instead says 100 gp consumes one physical Gold unit. No ingot-to-metal-unit conversion reconciles those statements. SOC.30.01 follows the frozen standard and authoritative machine registry. The contradictory handoff sentence is not applied.
+2. **No assay process or tolerance.** No read authority defines assay skill, equipment, purity tolerance, uncertainty, counterfeit handling, or a way to convert an unassayed item into an assayed lot. The core therefore requires an explicit assay that exactly matches the registered composition; it does not perform or price an assay.
+3. **Four denomination item types are absent.** `game/data/UF_WorldCatalog.json` registers only `gold_coin` (0.02 pound) and no `copper_coin`, `silver_coin`, `electrum_coin`, or `platinum_coin` item types. The economy standard separately authorizes compact currency-stack metadata. The core returns those stacks and does not invent item registry entries or `UF.Items` aliases.
+4. **No live treasury/stores provider contract exists for this leaf.** SOC.31.01 (Treasury) and SOC.32.01 (Quartermaster stores) are separate planned leaves. The core keeps `treasury.coinStacks` and `stores.monetaryMetalLots` structurally separate, preserves unrelated sibling fields, and never treats abstract wealth or goods as metal. It does not choose ownership, access, storage-location, or authorization policy.
+5. **No authority for fees, losses, values beyond the registry, or office permission.** The brief explicitly forbids inventing taxes, fees, seigniorage, loss/yield, office authorization, alloy/parting policy, and composition. The core applies none. Remelting is the standard's exact 100% reverse transformation.
+6. **Runtime registration is outside the lane.** `game/js/plugins.js` is forbidden by `BRIEF.md`/`lane.json`. `DEUS_Mint.js` exposes `UF.Mint` when loaded, but this commit cannot claim that RMMZ loads it. Native F5/F8 and global save integration remain untested and unimplemented here.
