@@ -201,7 +201,10 @@ function judgeF01(World, Levels, range) {
         problems.push("zRange " + JSON.stringify(live));
     }
     if (typeof World.isLevel === "function") {
-        for (let z = range.zMin; z <= range.zMax; z++) if (!World.isLevel(z)) problems.push("isLevel " + z + " false");
+        let missing = 0;
+        let firstMissing = null;
+        for (let z = range.zMin; z <= range.zMax; z++) if (!World.isLevel(z)) { missing++; if (firstMissing === null) firstMissing = z; }
+        if (missing) problems.push("isLevel false for " + missing + " levels in range, first " + firstMissing);
         if (World.isLevel(range.zMin - 1) || World.isLevel(range.zMax + 1)) problems.push("isLevel outside the range");
     } else problems.push("no isLevel");
     const space = World.Space || {};
@@ -222,7 +225,7 @@ function judgeF01(World, Levels, range) {
             const expect = (z - range.zMin) * 5 + 4;
             if (z === range.zMin || expect > 24) elevBits.push(z + "=" + elev);
             if (elev !== expect) problems.push("elevation z " + z + " " + elev + " want " + expect);
-            if (expect > 24 && elev <= 24) problems.push("elevation capped at 24");
+            if (expect > 24 && elev === 24) problems.push("elevation capped at 24");
         }
     }
     const elevNote = elevBits.length ? " elevation " + elevBits.join(",") : "";
@@ -231,6 +234,10 @@ function judgeF01(World, Levels, range) {
 
 function f01(eng, range) {
     const World = eng.World;
+    if (typeof World.zRange !== "function") {
+        const judged = judgeF01(World, eng.Levels, range);
+        return { ok: false, detail: "no zRange(); " + judged.detail };
+    }
     const saved = process.env.DEUS_Z_RANGE;
     let envRange = null;
     try {
