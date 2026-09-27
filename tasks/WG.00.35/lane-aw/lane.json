@@ -1,0 +1,56 @@
+{
+    "lane": "lane-aw",
+    "taskId": "WG.00.35",
+    "branch": "task/lane-aw",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "allowedPaths": [
+        "game/js/plugins/DEUS_Depth.js",
+        "game/js/plugins/DEUS_DepthCues.js",
+        "game/js/plugins/DEUS_CombatUI.js",
+        "game/js/plugins/DEUS_LayerOverlays.js",
+        "tools/layer_overlays/**",
+        "docs/systems/DEUS_LayerOverlays.md",
+        "tasks/WG.00.35/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": [
+                "tools/layer_overlays/test_layer_overlays.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/test_layer_render_flat.js",
+                "--suite",
+                "depth"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/depth_demo/test_depth_demo.js"
+            ],
+            "timeoutSec": 1800
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/combat_rt/test_combat_rt.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/check_deus_syntax.js"
+            ],
+            "timeoutSec": 900
+        }
+    ]
+}

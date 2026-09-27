@@ -56,6 +56,10 @@
  *   node tools/test_snapshot.js --name depth --plugins DEUS_Depth --suite depth
  *   node tools/test_layer_render_flat.js
  * Provocations: UF_TEST_PROVOKE=depth.<check>.
+ *
+ * DEUS_LayerOverlays, when it is loaded, draws the lower-layer HP bars and combat overlays
+ * on these planes. The depth suite does not load that plugin. The calls below are a null
+ * check until it is registered.
  */
 
 (() => {
@@ -66,6 +70,11 @@
     const PAD = 0; // DEC-011: nothing is projected inward, so a plane's window is the map tilemap's own (the viewport plus its 20 px margin)
     const World = () => (window.UF && UF.World) || null;
     const Levels = () => (window.UF && UF.Levels) || null;
+    // WG.00.35. Absent unless DEUS_LayerOverlays is loaded (the depth suite does not load it).
+    const layerOverlays = () => {
+        const bus = window.UF && UF.LayerOverlays;
+        return bus && typeof bus.syncPlane === "function" ? bus : null;
+    };
 
     //-------------------------------------------------------------------------
     // Test provocations: UF_TEST_PROVOKE=depth.<check>, read only in harness runs (the DEUS_Levels pattern).
@@ -533,6 +542,8 @@
     };
     /** The spriteset is going away: its canvases go back to the pool now (before the next spriteset is made). */
     Sprite_DepthPlane.prototype.releaseCanvases = function() {
+        const LO = layerOverlays();
+        if (LO) LO.clearPlane(this);
         this.clearEntities();
         this._lower.bitmap = null;
         this._upper.bitmap = null;
@@ -982,7 +993,15 @@
         const z = v ? v.z : null;
         if (z !== this.viewZ || this.openStamp !== openStamp || this.maxDepth !== config.maxDepth || this.enabledState !== config.enabled) this.rebuild();
         this._void.visible = this.seeThrough && !provoked("void_beyond");
-        if (!this.seeThrough || !window.$gameMap) { for (const p of this.planes) p.visible = false; this._camSet = false; return; }
+        if (!this.seeThrough || !window.$gameMap) {
+            const LO = layerOverlays();
+            for (const p of this.planes) {
+                p.visible = false;
+                if (LO) LO.clearPlane(p);
+            }
+            this._camSet = false;
+            return;
+        }
         this._cam = this._cam || { x: 0, y: 0 };
         this._cam.x = $gameMap.displayX();
         this._cam.y = $gameMap.displayY();
@@ -1015,10 +1034,15 @@
     };
     Sprite_DepthRoot.prototype.updateUnits = function(W, win, simNow) {
         this.scanUnits(W, win, simNow);
+        const LO = layerOverlays();
         for (const p of this.planes) {
-            if (!p.level || provoked("entities_drawn")) continue;
+            if (!p.level || provoked("entities_drawn")) {
+                if (LO) LO.clearPlane(p);
+                continue;
+            }
             p.placeUnits(simNow, this._cam);
             p.sortEntities();
+            if (LO) LO.syncPlane(p, this);
         }
     };
     /** The exposure mask: one rectangle per horizontal run of open cells of the viewed level in the tilemap's window, placed
