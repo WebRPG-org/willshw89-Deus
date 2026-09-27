@@ -1,0 +1,9 @@
+Correct only the independent Grok re-review failures recorded in tasks/SOC.20.01/lane-bl/review_grok_a7ba49a5.md at review commit 10debc5ddc8caf35c04546cd88a401380f37ec16. Preserve all behavior already accepted by the reviewer.
+
+Required fixes:
+1. Reject an office state that retains a deceased holder at full operational capability. Ground the representation in existing holder/vacancy fields; do not invent an owner decision.
+2. Require complete canonical ancestry-title coverage even when the ancestry title map is omitted; omission must not bypass validation.
+3. Reject reciprocal multi-office cycles, not only self-parent/self-subordinate cycles.
+4. Add a targeted failing fixture for every production validator rule identified by the review as uncovered. Each fixture must fail because of the intended rule and pass when only that rule is disabled.
+
+Stay strictly within lane.json allowedPaths. Do not alter open cardinality, succession, aliases, hours, titles already accepted, WBS/status, art, or audio. Run both gates and every provocation in the foreground. Commit with subject [gemini] SOC.20.01 close re-review findings 10debc5d. End with FINAL SHA: <full sha>.
