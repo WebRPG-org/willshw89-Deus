@@ -1,0 +1,36 @@
+﻿{
+    "lane":  "lane-af",
+    "taskId":  "SIM.50.12",
+    "branch":  "task/lane-af",
+    "writer":  "grok",
+    "reviewer":  "gemini",
+    "push":  true,
+    "blocked":  false,
+    "allowedPaths":  [
+                         "tools/sim/test_living_world_rules.js",
+                         "tools/sim/fixtures/living_world/**",
+                         "tasks/SIM.50.12/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/sim/test_living_world_rules.js"
+                                   ],
+                          "timeoutSec":  1800
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  600
+                      }
+                  ],
+    "launchGateMet":  [
+                          "AA merged 1c2fcc28",
+                          "AE merged 2f97fae4",
+                          "AD merged 72c69b2f",
+                          "Gemini WBS Rev28 + SIM.50.12 DoD records post-merge regression re-scope (0068-BQ/0082-CE)"
+                      ]
+}
