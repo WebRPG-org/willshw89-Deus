@@ -1,0 +1,41 @@
+{
+    "lane":  "lane-ap",
+    "taskId":  "DEUS-TSK-DEPTH-DEMO",
+    "branch":  "task/lane-ap",
+    "writer":  "grok",
+    "reviewer":  "gemini",
+    "push":  true,
+    "allowedPaths":  [
+                         "game/js/plugins/DEUS_DepthDemo.js",
+                         "game/js/plugins/DEUS_DepthCues.js",
+                         "game/data/DEUS_DepthDemo.json",
+                         "tools/depth_demo/**",
+                         "docs/systems/DEUS_DepthDemo.md",
+                         "tasks/DEUS-TSK-DEPTH-DEMO/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/depth_demo/test_depth_demo.js"
+                                   ],
+                          "timeoutSec":  1800
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/test_layer_render_flat.js",
+                                       "--suite",
+                                       "depth"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  600
+                      }
+                  ]
+}
