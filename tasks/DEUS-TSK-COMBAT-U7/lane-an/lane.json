@@ -1,0 +1,41 @@
+{
+    "lane":  "lane-an",
+    "taskId":  "DEUS-TSK-COMBAT-U7",
+    "branch":  "task/lane-an",
+    "writer":  "grok",
+    "reviewer":  "gemini",
+    "push":  true,
+    "allowedPaths":  [
+                         "game/js/plugins/DEUS_CombatRT.js",
+                         "game/js/plugins/DEUS_CombatUI.js",
+                         "game/js/plugins/DEUS_Move8.js",
+                         "game/js/plugins/DEUS_Combat.js",
+                         "game/js/sim/combat_rt/**",
+                         "tools/combat_rt/**",
+                         "docs/systems/DEUS_CombatU7.md",
+                         "tasks/DEUS-TSK-COMBAT-U7/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/combat_rt/test_combat_rt.js"
+                                   ],
+                          "timeoutSec":  1800
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/test_srd_combat_proof.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  600
+                      }
+                  ]
+}
