@@ -1,0 +1,63 @@
+{
+    "lane":  "lane-ad",
+    "taskId":  "SIM.40.11",
+    "branch":  "task/lane-ad",
+    "writer":  "grok",
+    "reviewer":  "gemini",
+    "push":  true,
+    "launchGate":  [
+                       "SIM.40.00 (Lane AC) merged to main with its independent review PASS (this lane consumes game/data/sim/** and game/js/sim/materials.js).",
+                       "Lane AA (WG.00.17) merged to main and its claim retired: DEUS_Jobs/Walls/Floors/Objects/Items.js are in Lane AA\u0027s live write set.",
+                       "PM re-checks allowedPaths below against the live STATUS claims table and trims them to the files actually needed before opening."
+                   ],
+    "allowedPaths":  [
+                         "game/js/sim/reclaim.js",
+                         "game/js/plugins/DEUS_Jobs.js",
+                         "game/js/plugins/DEUS_Walls.js",
+                         "game/js/plugins/DEUS_Floors.js",
+                         "game/js/plugins/DEUS_Objects.js",
+                         "game/js/plugins/DEUS_Items.js",
+                         "tools/sim/test_reclaim.js",
+                         "tools/sim/test_reclaim_longrun.js",
+                         "tools/sim/fixtures/reclaim/**",
+                         "docs/systems/DEUS_Reclamation.md",
+                         "tasks/SIM.40.11/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/sim/test_reclaim.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/sim/test_reclaim_longrun.js"
+                                   ],
+                          "timeoutSec":  1800
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/sim/test_ledger.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/sim/test_materials.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  600
+                      }
+                  ]
+}
