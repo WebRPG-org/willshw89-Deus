@@ -8,17 +8,29 @@
 #   | gemini   | gemini-3.1-pro-preview thinking HIGH -> gemini-3.8-flash thinking HIGH (both tiers) |
 #   | grok     | grok-4.7 xhigh (both tiers; grok-4.7 is the strongest model Grok Build lists)      |
 # EFFORT FLOOR (Owner 11:24 CT): effort never falls below the tier standard. An -Effort below the floor is raised to it,
-#   so Grok never launches below xhigh, Claude never below high, Codex never below xhigh. The same floor applies on fallback models.
+#   so Claude never launches below high, Codex never below xhigh, and Grok never below xhigh except Owner rule (b).
+#   The same floor applies on fallback models.
+# RULE (b) (Owner 2026-09-27 11:26 CT; narrows DEC-032 item 5 for mechanical lanes only):
+#   An explicit Grok -Effort high is honoured only when ALL of these hold: provider grok, tier standard (never big),
+#   the lane.json "effortClass" is mechanical (exact match after trim and lowercase), and the lane.json "writer" is grok
+#   (exact match after trim and lowercase). That writer check keeps the exception on the writer's launch; reviewers are another family.
+#   Mechanical lanes are data files, schemas, templates, catalog entries, formatting and simple specs.
+#   The PM marks a lane mechanical by writing "effortClass": "mechanical" in its lane.json at lane opening.
+#   medium and low are still raised to xhigh. A missing, unreadable or malformed lane.json, a missing effortClass,
+#   or any other value is not mechanical, so the xhigh floor applies. Claude, Codex, Fable and Gemini are unchanged.
+#   Repo copy of the live pm_ops library. Callers still dot-source the live file; the PM installs this copy over it after merge.
 # FALLBACK (Owner 11:09 CT): when a model runs out, step down its tier chain (registry\model_limits.json), then return after the reset.
 # MULTI-AGENT (Owner 09:20 and 11:23 CT): on by default for every provider and role:
 #   Claude subagents (forced onto the session model), Codex multi_agent_v2 (~/.codex/config.toml),
 #   Grok GROK_SUBAGENTS/GROK_WORKFLOWS, Gemini experimental.enableAgents with subagents pinned to the run's model.
-#   The only opt-out: -TaskType routine (tiny routine or record-only jobs) turns Grok subagents/workflows off. Effort stays at the floor.
+#   The only opt-out: -TaskType routine (tiny routine or record-only jobs) turns Grok subagents/workflows off. Effort stays at the floor, except rule (b).
 # Never review your own provider's code: claude+fable are one family, gemini+antigravity another (launch_worker/merge_gate enforce this).
 # Get-PmTopModelSpec <provider> [-Effort e] [-TaskType big|standard|routine (legacy: hard=big, ordinary=standard)] [-Model m] [-Lane l]
 #   With no -TaskType, the tier comes from -Lane's lane.json taskId (the big task list below), else standard.
 # Backups: top_models.ps1.bak_20260926_effort, .bak_20260926_fallback, .bak_20260926_standard
 $PmBigTasks = @('WG.00.17', 'SIM.60.05', 'SIM.60.06', 'SIM.40.00', 'SIM.40.11', 'SIM.00.01')
+# Lane.json discovery root. Launchers keep this default. Tests assign $PmWorktreeRoot after dot-sourcing.
+$PmWorktreeRoot = 'C:\Users\snewt\.deus_worktrees'
 $PmModelChains = [ordered]@{
     'claude:standard' = @('claude-opus-5-5[1m]', 'sonnet', 'haiku')
     'claude:big'      = @('claude-fable-5-1', 'claude-opus-5-5[1m]', 'sonnet')
@@ -59,15 +71,39 @@ function Set-PmModelLimit([string]$Model, [datetime]$Until, [string]$Reason) {
     Move-Item -Force $tmp $PmModelLimitsFile
 }
 
+function Get-PmLaneConfig([string]$Lane) {
+    # Same lane.json search Resolve-PmTier has always used. $null if the file is missing, unreadable or malformed.
+    if (-not $Lane) { return $null }
+    $root = $PmWorktreeRoot
+    if (-not $root) { $root = 'C:\Users\snewt\.deus_worktrees' }
+    $wt = Join-Path $root $Lane
+    $lj = Get-ChildItem -Path (Join-Path $wt 'tasks') -Recurse -Filter lane.json -ErrorAction SilentlyContinue | Where-Object { $_.Directory.Name -eq $Lane } | Select-Object -First 1
+    if (-not $lj) { return $null }
+    try { return (Get-Content -LiteralPath $lj.FullName -Raw | ConvertFrom-Json) } catch { return $null }
+}
+function Test-PmHonourGrokHigh([string]$Tier, [string]$Lane) {
+    # Owner rule (b). Fail safe: uncertain lane.json does not honour high.
+    try {
+        if ($Tier -ne 'standard') { return $false }
+        $cfg = Get-PmLaneConfig $Lane
+        if (-not $cfg) { return $false }
+        $cls = "$($cfg.effortClass)".Trim().ToLowerInvariant()
+        $writer = "$($cfg.writer)".Trim().ToLowerInvariant()
+        if ($cls -ne 'mechanical') { return $false }
+        if ($writer -ne 'grok') { return $false }
+        return $true
+    } catch { return $false }
+}
 function Resolve-PmTier([string]$TaskType = '', [string]$Lane = '') {
     switch ("$TaskType".Trim().ToLowerInvariant()) {
         { $_ -in 'big','hard' }                  { return 'big' }
         { $_ -in 'standard','ordinary','routine' } { return 'standard' }
         '' {
             if ($Lane) {
-                $wt = "C:\Users\snewt\.deus_worktrees\$Lane"
-                $lj = Get-ChildItem -Path (Join-Path $wt 'tasks') -Recurse -Filter lane.json -ErrorAction SilentlyContinue | Where-Object { $_.Directory.Name -eq $Lane } | Select-Object -First 1
-                if ($lj) { try { $t = (Get-Content $lj.FullName -Raw | ConvertFrom-Json).taskId; if ($PmBigTasks -contains $t) { return 'big' } } catch { } }
+                try {
+                    $cfg = Get-PmLaneConfig $Lane
+                    if ($cfg -and ($PmBigTasks -contains $cfg.taskId)) { return 'big' }
+                } catch { }
             }
             return 'standard'
         }
@@ -83,15 +119,19 @@ function Get-PmActiveModel([string]$Provider, [string]$Tier = '') {
     return $null
 }
 function Test-PmIsTopModel([string]$Provider, [string]$Model, [string]$Tier = '') { return ((Get-PmModelChain $Provider $Tier)[0] -eq $Model) }
-function Resolve-PmEffort([string]$Provider, [string]$Effort = '', [string]$Tier = 'standard', [string]$Model = '') {
+function Resolve-PmEffort([string]$Provider, [string]$Effort = '', [string]$Tier = 'standard', [string]$Model = '', [string]$Lane = '') {
     # Tier effort is the FLOOR. A higher explicit -Effort is honoured if the provider supports it. Anything lower is raised to the floor.
+    # Rule (b): an explicit grok 'high' stays when Test-PmHonourGrokHigh is true. medium and low still rise to the floor.
     $floor = $PmTierEffort["${Provider}:$Tier"]
     if ($Provider -eq 'gemini') { return 'HIGH' }
     $order = $PmEffortOrder[$Provider]
     $e = "$Effort".Trim().ToLowerInvariant(); if ($e -eq 'top') { $e = $order[-1] }
     if ($e -eq 'ultracode' -and $Provider -in 'claude','fable') { return 'ultracode' }
     if (-not $e -or ($order -notcontains $e)) { $e = $floor }
-    if ($order.IndexOf($e) -lt $order.IndexOf($floor)) { $e = $floor }
+    $explicit = "$Effort".Trim().ToLowerInvariant()
+    $raiseTo = $floor
+    if ($Provider -eq 'grok' -and $explicit -eq 'high' -and (Test-PmHonourGrokHigh $Tier $Lane)) { $raiseTo = $explicit }
+    if ($order.IndexOf($e) -lt $order.IndexOf($raiseTo)) { $e = $raiseTo }
     # codex: luna/5.5 tiers list no 'ultra'; cap at max for them
     if ($Provider -eq 'codex' -and $e -eq 'ultra' -and $Model -match 'luna|5\.5|reserve') { $e = 'max' }
     return $e
@@ -141,6 +181,7 @@ function Set-PmGeminiSubagentModel([string]$Model) {
 }
 function Get-PmTopModelSpec([string]$Provider, [string]$Effort = '', [string]$TaskType = '', [string]$Model = '', [string]$Lane = '') {
     # Returns the launch spec for the tier standard: the first unlimited model in the tier chain, at an effort no lower than the floor.
+    # Rule (b) is the one exception: explicit grok high on a standard mechanical grok-writer lane.
     # Every model limited: the top model comes back with .AllLimited = $true, so callers HOLD the job.
     $npm = Join-Path $env:APPDATA 'npm'
     $tier = Resolve-PmTier $TaskType $Lane
@@ -148,7 +189,7 @@ function Get-PmTopModelSpec([string]$Provider, [string]$Effort = '', [string]$Ta
     $allLimited = $false
     if (-not $Model) { $Model = Get-PmActiveModel $Provider $tier; if (-not $Model) { $Model = (Get-PmModelChain $Provider $tier)[0]; $allLimited = $true } }
     $isTop = Test-PmIsTopModel $Provider $Model $tier
-    $eff = Resolve-PmEffort $Provider $Effort $tier $Model
+    $eff = Resolve-PmEffort $Provider $Effort $tier $Model $Lane
     $routine = ("$TaskType".Trim().ToLowerInvariant() -eq 'routine')
     $spec = Get-PmTopModelSpecInner $Provider $eff $Model $npm $routine
     $spec.IsFallback = -not $isTop; $spec.AllLimited = $allLimited; $spec.Tier = $tier; $spec.MultiAgent = -not ($routine -and $Provider -eq 'grok')
