@@ -44,6 +44,8 @@
  * UF.Combat.engage only marks the target; it does not add a second hit.
  * When UF.Rules is absent, the catalog combat.attack is subtracted once
  * so the kill, the yields, wildlife:kill and the feeding state still happen.
+ * A creature with data.taming.status "captive" or "domesticated" is not wild
+ * prey: nearestPrey skips it, and populationSummary counts it as held.
  *
  * All randomness is seeded (hash32 of seed, unit id and frame). Nothing is
  * kept outside UF.World.state / unit.data except caches.
@@ -627,6 +629,42 @@
 
     const cheb = (a, b) => Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
     const speciesOf = u => (u && u.data && u.data.kind === "creature" ? speciesById(u.data.species) : null);
+
+    // Held animals stay kind "creature". The status string is the wild/domestic split.
+    function withdrawnFromWild(u) {
+        const rec = u && u.data && u.data.taming;
+        return !!rec && (rec.status === "captive" || rec.status === "domesticated");
+    }
+    function sameTamingOwner(hunter, prey) {
+        const rec = prey && prey.data && prey.data.taming;
+        if (!hunter || !rec) return false;
+        if (hunter.id != null && rec.ownerId != null && hunter.id === rec.ownerId) return true;
+        const data = hunter.data || {};
+        const fac = data.factionId != null ? data.factionId : data.faction;
+        return fac != null && rec.factionId != null && fac === rec.factionId;
+    }
+    function tamingMod() {
+        if (tamingMod.cached !== undefined) return tamingMod.cached;
+        tamingMod.cached = null;
+        try {
+            if (typeof require !== "function") return null;
+            const path = require("path");
+            const fs = require("fs");
+            const candidates = [];
+            if (typeof __dirname === "string") candidates.push(path.join(__dirname, "..", "sim", "taming"));
+            if (typeof process !== "undefined" && process.cwd) candidates.push(path.join(process.cwd(), "game", "js", "sim", "taming"));
+            for (let i = 0; i < candidates.length; i++) {
+                const file = path.join(candidates[i], "index.js");
+                if (file && fs.existsSync(file)) {
+                    tamingMod.cached = require(candidates[i]);
+                    return tamingMod.cached;
+                }
+            }
+        } catch (e) {
+            tamingMod.cached = null;
+        }
+        return tamingMod.cached;
+    }
 
     const ACTIVITY_CYCLES = Object.freeze({
         deer: "diurnal",
@@ -1353,11 +1391,18 @@
         species: () => speciesList().slice(),
         speciesById,
         /** The species entry of a creature unit (record, id or Game_Event), else null. */
-        speciesOf: x => speciesOf(resolveUnit(x)),
+        speciesOf: x => {
+            const u = resolveUnit(x);
+            const sp = speciesOf(u);
+            if (!sp || !withdrawnFromWild(u) || !sp.prey) return sp;
+            return Object.assign({}, sp, { prey: false });
+        },
         /** All creature units in the world (kind "creature"). */
         creatures: () => (World() ? World().units().filter(u => u.data && u.data.kind === "creature") : []),
         isPrey(x) {
-            const sp = speciesOf(resolveUnit(x));
+            const u = resolveUnit(x);
+            if (withdrawnFromWild(u)) return false;
+            const sp = speciesOf(u);
             return !!sp && sp.prey;
         },
         /** Nearest prey (grazer/vermin/flier; predators too when allowPredators) within radius cells of (x, y) in the area on screen (or `area`). */
@@ -1368,6 +1413,7 @@
             let best = null, bestD = Infinity;
             for (const u of W.units()) {
                 if (!u.data || u.data.kind !== "creature" || !sameArea(u.area, a)) continue;
+                if (withdrawnFromWild(u)) continue;
                 const sp = speciesOf(u);
                 if (!sp || !(sp.prey || (allowPredators && sp.kind === "predator"))) continue;
                 const d = Math.hypot(u.x - x, u.y - y);
@@ -1378,10 +1424,15 @@
             }
             return best;
         },
-        /** The unit hunting this creature (a live "hunt" job assigned to someone), else null. */
+        /** The unit hunting this creature (a live "hunt" job assigned to someone), else null.
+         * A held animal with no outside hunter reports a hold so owner colonists do not pick it as wild prey. */
         hunterOf(x) {
             const W = World(), u = resolveUnit(x);
-            return W && u ? huntersByPrey(W).get(u.id) || null : null;
+            if (!W || !u) return null;
+            const live = huntersByPrey(W).get(u.id) || null;
+            if (live && !sameTamingOwner(live, u)) return live;
+            if (withdrawnFromWild(u)) return { id: 0, tamingHold: true };
+            return live;
         },
         /** { name, species, kind, prey, flees, herd, state, text } for the look label, or null for non-creatures. */
         describe(x) {
@@ -1389,7 +1440,41 @@
             if (!sp) return null;
             const flees = !!(sp.hunt && sp.hunt.flees);
             const state = (u.data && u.data.state) || "idle";
-            return { name: u.name, species: sp.id, kind: sp.kind, prey: sp.prey, flees, herd: u.data.herd, state, text: `${sp.name} · ${sp.kind}${sp.prey ? " · prey" : ""}` };
+            const held = withdrawnFromWild(u);
+            const rec = held ? u.data.taming : null;
+            const prey = !!sp.prey && !held;
+            const text = held
+                ? `${sp.name} · ${rec.status}${rec.role ? " · " + rec.role : ""}`
+                : `${sp.name} · ${sp.kind}${sp.prey ? " · prey" : ""}`;
+            return { name: u.name, species: sp.id, kind: sp.kind, prey, flees, herd: u.data.herd, state, text };
+        },
+        /** Wild, captive, and domestic counts. Domesticated animals are not in wild. */
+        populationSummary() {
+            const W = World();
+            const units = W && typeof W.units === "function" ? W.units() : [];
+            const mod = tamingMod();
+            if (mod && typeof mod.census === "function") return mod.census(units);
+            let wild = 0;
+            let domestic = 0;
+            let captive = 0;
+            for (let i = 0; i < units.length; i++) {
+                const u = units[i];
+                if (!u.data || u.data.kind !== "creature") continue;
+                const rec = u.data.taming;
+                if (rec && rec.status === "domesticated") domestic += 1;
+                else if (rec && rec.status === "captive") captive += 1;
+                else wild += 1;
+            }
+            return { wild: wild, domestic: domestic, captive: captive, total: wild + domestic + captive };
+        },
+        /** False when hunter's faction or id owns a captive or domesticated prey. */
+        mayHunt(hunter, prey) {
+            const h = resolveUnit(hunter) || hunter;
+            const p = resolveUnit(prey) || prey;
+            const mod = tamingMod();
+            if (mod && typeof mod.mayHunt === "function") return mod.mayHunt(h, p);
+            if (!withdrawnFromWild(p)) return true;
+            return !sameTamingOwner(h, p);
         },
         /** May this species stand at world cell (gx, gy)? Biome weight > 0, walkable, and its region rule (monsters only where wild/cursed). */
         allowedAt(speciesId, gx, gy) {
