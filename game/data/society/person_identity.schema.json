@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://deus.local/person_identity.schema.json",
+  "title": "DEUS person identity",
+  "description": "Three independent identity axes. Current duty is operational state and is not a field. NONE is valid on every axis. A class id is a 2014 SRD 5.1 id (srd:class:*) or NONE. NONE has level null. Any other class has an integer level 1..20.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "craft", "civicOffice", "class"],
+  "properties": {
+    "schema": { "const": 1 },
+    "craft": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "FARMER", "MINER", "LOGGER", "QUARRYMAN", "HUNTER", "FISHER", "FORAGER",
+        "SMELTER", "BLACKSMITH", "ARMORER", "WEAPONSMITH",
+        "CARPENTER", "MASON", "WOODCARVER", "THATCHER",
+        "LEATHERWORKER", "TANNER", "TAILOR", "WEAVER", "SPINNER",
+        "COOK", "BREWER", "MILLER", "BUTCHER", "BAKER",
+        "POTTER", "GLASSWORKER", "JEWELER", "FLETCHER", "BOWYER", "HERBALIST", "ALCHEMIST", "SCRIBE", "MERCHANT"
+      ]
+    },
+    "civicOffice": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "EXECUTIVE", "LEADER", "STEWARD", "ADMIN", "TREASURER", "MINT_MASTER",
+        "MARSHAL", "QUARTERMASTER", "MASTER_OF_WORKS", "PROVISIONER", "RECORDER",
+        "MAGISTRATE", "HEALER_DIRECTOR", "ENVOY", "TRADE_MASTER"
+      ]
+    },
+    "class": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "level"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "srd:class:barbarian",
+            "srd:class:bard",
+            "srd:class:cleric",
+            "srd:class:druid",
+            "srd:class:fighter",
+            "srd:class:monk",
+            "srd:class:paladin",
+            "srd:class:ranger",
+            "srd:class:rogue",
+            "srd:class:sorcerer",
+            "srd:class:warlock",
+            "srd:class:wizard"
+          ]
+        },
+        "level": { "type": ["integer", "null"], "minimum": 1, "maximum": 20 }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "type": "object",
+        "required": ["class"],
+        "properties": {
+          "class": {
+            "type": "object",
+            "required": ["id"],
+            "properties": { "id": { "const": "NONE" } }
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "required": ["class"],
+        "properties": {
+          "class": {
+            "type": "object",
+            "required": ["level"],
+            "properties": { "level": { "type": "null" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "required": ["class"],
+        "properties": {
+          "class": {
+            "type": "object",
+            "required": ["id"],
+            "properties": { "id": { "type": "string", "not": { "const": "NONE" } } }
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "required": ["class"],
+        "properties": {
+          "class": {
+            "type": "object",
+            "required": ["level"],
+            "properties": { "level": { "type": "integer", "minimum": 1, "maximum": 20 } }
+          }
+        }
+      }
+    }
+  ]
+}
