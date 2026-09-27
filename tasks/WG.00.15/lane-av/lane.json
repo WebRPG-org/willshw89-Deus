@@ -1,0 +1,47 @@
+{
+    "lane": "lane-av",
+    "taskId": "WG.00.15",
+    "branch": "task/lane-av",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "allowedPaths": [
+        "game/js/plugins/DEUS_Levels.js",
+        "game/js/plugins/DEUS_NaturalConnections.js",
+        "game/js/plugins/DEUS_WorldGen.js",
+        "tools/test_natural_connections.js",
+        "tools/worldgen/**",
+        "docs/systems/DEUS_VerticalBiomes.md",
+        "tasks/WG.00.15/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": [
+                "tools/worldgen/test_vertical_biome_coupling.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/test_new_game_year0.js"
+            ],
+            "timeoutSec": 1800
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/sim/test_underground_year0.js"
+            ],
+            "timeoutSec": 1800
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/check_deus_syntax.js"
+            ],
+            "timeoutSec": 900
+        }
+    ]
+}
