@@ -1,0 +1,16 @@
+{
+    "lane": "lane-bc",
+    "taskId": "DEUS-TSK-EFFORT-POLICY",
+    "branch": "task/lane-bc",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "allowedPaths": [
+        "tools/ops/pm_launch/**",
+        "tasks/DEUS-TSK-EFFORT-POLICY/**"
+    ],
+    "gateTests": [
+        { "cmd": "powershell", "args": [ "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "tools/ops/pm_launch/test_top_models_effort.ps1" ], "timeoutSec": 600 },
+        { "cmd": "node", "args": [ "tools/check_deus_syntax.js" ], "timeoutSec": 900 }
+    ]
+}

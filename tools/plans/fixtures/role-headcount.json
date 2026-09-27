@@ -1,0 +1,22 @@
+{
+  "id": "role-headcount",
+  "kills": "roleHeadcount",
+  "expect": "role-headcount",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "stages",
+        {
+          "id": "camp"
+        },
+        "roles",
+        {
+          "id": "FORAGER"
+        },
+        "minCount"
+      ],
+      "value": 8
+    }
+  ]
+}

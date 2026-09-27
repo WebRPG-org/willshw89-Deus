@@ -1,0 +1,17 @@
+{
+  "id": "collapse-coverage",
+  "kills": "collapseCoverage",
+  "expect": "collapse-coverage",
+  "patch": [
+    {
+      "op": "remove",
+      "where": [
+        "failure",
+        "collapse",
+        {
+          "id": "collapse.population"
+        }
+      ]
+    }
+  ]
+}

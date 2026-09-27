@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://deus.invalid/schemas/sim/decay_params.schema.json",
+  "title": "DEUS decay parameters (SIM.40.05)",
+  "description": "Decay classes, exposure, lives in milli-years, modifiers, stage thresholds and residue fractions. Infinity is null. DPY is null (D-1). The executable checks live in game/js/sim/decay/validate.js.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "R", "ytPerSy", "dpy", "exposures", "roles", "tags", "classes", "lifeMilli",
+    "stages", "maintainYears", "abandonYears", "siteAbandonYears", "upkeepShareMilli",
+    "residue", "structureTemplates", "transforms", "remains", "scheduler", "lithify"
+  ],
+  "properties": {
+    "schema": { "const": 1 },
+    "R": { "const": 1000000 },
+    "ytPerSy": { "const": 2400 },
+    "dpy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "ownerOpen"],
+      "properties": {
+        "value": { "type": "null" },
+        "ownerOpen": { "const": "D-1" },
+        "note": { "type": "string" }
+      }
+    },
+    "exposures": {
+      "type": "array",
+      "const": ["SEALED", "SHELTERED", "SKY", "WET", "BURIED-AER", "BURIED-ANOX", "CAVE"]
+    },
+    "roles": {
+      "type": "array",
+      "const": ["ROOF", "WALL-UPPER", "WALL-BASE", "FLOOR", "FOUNDATION", "PROP", "FITTING"]
+    },
+    "tags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["OQ-R-01", "OQ-R-04", "OQ-R-05", "OQ-R-09"],
+      "properties": {
+        "OQ-R-01": { "$ref": "#/$defs/tag" },
+        "OQ-R-04": { "$ref": "#/$defs/tag" },
+        "OQ-R-05": { "$ref": "#/$defs/tag" },
+        "OQ-R-09": { "$ref": "#/$defs/tag" }
+      }
+    },
+    "classes": { "type": "object" },
+    "lifeMilli": { "type": "object" },
+    "stages": {
+      "type": "object",
+      "required": ["s1Rem", "foundationFloorRem", "steps", "siteMassMilli"],
+      "properties": {
+        "s1Rem": { "const": 850000 },
+        "foundationFloorRem": { "const": 250000 },
+        "steps": { "const": 4 },
+        "siteMassMilli": { "const": 500 },
+        "names": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "maintainYears": { "type": "object" },
+    "abandonYears": { "type": "object" },
+    "siteAbandonYears": { "type": "integer", "minimum": 1 },
+    "upkeepShareMilli": { "const": 50 },
+    "residue": { "type": "object" },
+    "structureTemplates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "roof", "wall"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "roof": { "type": "string" },
+          "wall": { "type": "string" }
+        }
+      }
+    },
+    "transforms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "from", "to"],
+        "properties": {
+          "id": { "type": "string" },
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "cause": { "type": "string" },
+          "sink": { "type": "boolean" },
+          "owner": { "type": "string" },
+          "enabled": { "type": "boolean" },
+          "ownerOpen": { "type": "string" },
+          "output": { "type": "string" }
+        }
+      }
+    },
+    "remains": { "type": "object" },
+    "scheduler": {
+      "type": "object",
+      "required": ["ticksPerDay", "bShort", "memberCap"],
+      "properties": {
+        "ticksPerDay": { "const": 2400 },
+        "bShort": { "const": 16 },
+        "memberCap": { "const": 64 }
+      }
+    },
+    "lithify": {
+      "type": "object",
+      "required": ["enabled", "ownerOpen", "output"],
+      "properties": {
+        "enabled": { "const": false },
+        "ownerOpen": { "const": "OQ-R-03" },
+        "output": { "const": "ROCK-SED" }
+      }
+    }
+  },
+  "$defs": {
+    "tag": {
+      "type": "object",
+      "required": ["ownerOpen", "default"],
+      "properties": {
+        "ownerOpen": { "const": true },
+        "default": { "type": "string", "minLength": 1 },
+        "binds": { "type": "array", "items": { "type": "string" } },
+        "note": { "type": "string" },
+        "itemWeathering": { "type": "boolean" },
+        "attendedDecays": { "type": "boolean" },
+        "specialDecays": { "type": "boolean" },
+        "decayIgnoresDamageThreshold": { "type": "boolean" }
+      }
+    }
+  }
+}

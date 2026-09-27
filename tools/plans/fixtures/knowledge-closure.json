@@ -1,0 +1,20 @@
+{
+  "id": "knowledge-closure",
+  "kills": "knowledgeClosure",
+  "expect": "knowledge-closure",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "knowledge",
+        {
+          "id": "construct.temple"
+        },
+        "prerequisites"
+      ],
+      "value": [
+        "construct.mint"
+      ]
+    }
+  ]
+}

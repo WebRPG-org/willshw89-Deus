@@ -1,0 +1,39 @@
+{
+  "id": "mix-craft-locked",
+  "kills": "mixCraftUnlocked",
+  "expect": "mix-craft-locked",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "stages",
+        {
+          "id": "camp"
+        },
+        "occupationMix",
+        "craft",
+        {
+          "id": "FORAGER"
+        },
+        "perMyriad"
+      ],
+      "value": 1900
+    },
+    {
+      "op": "add",
+      "where": [
+        "stages",
+        {
+          "id": "camp"
+        },
+        "occupationMix",
+        "craft",
+        "-"
+      ],
+      "value": {
+        "id": "JEWELER",
+        "perMyriad": 100
+      }
+    }
+  ]
+}

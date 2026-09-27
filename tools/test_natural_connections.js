@@ -3,8 +3,8 @@
 // This is not a real-generator seed survey, rendering test or editor acceptance.
 const fs = require("fs"), path = require("path"), vm = require("vm"), assert = require("assert/strict");
 const root = path.resolve(__dirname, "..");
-let source = fs.readFileSync(path.join(root, "game/js/plugins/UF_NaturalConnections.js"), "utf8");
-const jobsSource = fs.readFileSync(path.join(root, "game/js/plugins/UF_Jobs.js"), "utf8");
+let source = fs.readFileSync(path.join(root, "game/js/plugins/DEUS_NaturalConnections.js"), "utf8");
+const jobsSource = fs.readFileSync(path.join(root, "game/js/plugins/DEUS_Jobs.js"), "utf8");
 const mutant = (process.argv.find(a => a.startsWith("--mutant=")) || "").slice(9);
 const mutations = {
     arrival: ["requireArrival && !sameCell(unit, route.from)", "false"],
@@ -83,9 +83,10 @@ function fixture(opts = {}) {
                 standableShape: r => (shapes.get(key(r.x, r.y, r.z)) || baselines[r.z].shape[r.y * size + r.x]) === 2,
                 waterAt: r => wet.has(key(r.x, r.y, r.z)) || !!(baselines[r.z].water && baselines[r.z].water[r.y * size + r.x]) } } };
     if (opts.structures) context.UF.Households = { structures: opts.structures };
+    context.DEUS = context.UF;
     context.window = context; vm.createContext(context);
-    vm.runInContext(jobsSource, context, { filename: "UF_Jobs.js" });
-    vm.runInContext(source, context, { filename: "UF_NaturalConnections.js" });
+    vm.runInContext(jobsSource, context, { filename: "DEUS_Jobs.js" });
+    vm.runInContext(source, context, { filename: "DEUS_NaturalConnections.js" });
     new context.Scene_Boot().start(); W.newWorld();
     function unit(x, y, z, data = {}) { const u = { id: nextId++, name: "TEST_Worker", area: { x: 0, y: 0 }, x, y, z, data: { kind: "colonist", faction: "test", inventory: [], equipment: {}, ...data } }; W.state.units[u.id] = u; return u; }
     function tick(n = 1) {

@@ -1,0 +1,22 @@
+{
+  "id": "stage-prerequisite-chain",
+  "kills": "stagePrerequisiteChain",
+  "expect": "stage-prerequisite-chain",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "stages",
+        {
+          "id": "village"
+        },
+        "prerequisites",
+        {
+          "kind": "stage"
+        },
+        "id"
+      ],
+      "value": "camp"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "template-band-assigned",
+  "kills": "templateBand",
+  "expect": "template-band-assigned",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "architecture",
+        "homeLayerBand"
+      ],
+      "value": "surface"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "collapse-food",
+  "kills": "collapseFood",
+  "expect": "collapse-food",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "failure",
+        "collapse",
+        {
+          "id": "collapse.food"
+        },
+        "treasurySatisfies"
+      ],
+      "value": true
+    }
+  ]
+}

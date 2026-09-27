@@ -1,0 +1,29 @@
+{
+  "id": "bad-band",
+  "kills": "bandId",
+  "expect": "bad-band",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "documentRole"
+      ],
+      "value": "racePlan"
+    },
+    {
+      "op": "set",
+      "where": [
+        "planId"
+      ],
+      "value": "race.unassigned"
+    },
+    {
+      "op": "set",
+      "where": [
+        "architecture",
+        "homeLayerBand"
+      ],
+      "value": "core"
+    }
+  ]
+}

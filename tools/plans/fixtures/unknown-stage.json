@@ -1,0 +1,22 @@
+{
+  "id": "unknown-stage",
+  "kills": "prerequisitesResolve",
+  "expect": "unknown-prerequisite",
+  "patch": [
+    {
+      "op": "add",
+      "where": [
+        "stages",
+        {
+          "id": "capital"
+        },
+        "prerequisites",
+        "-"
+      ],
+      "value": {
+        "kind": "stage",
+        "id": "metropolis"
+      }
+    }
+  ]
+}

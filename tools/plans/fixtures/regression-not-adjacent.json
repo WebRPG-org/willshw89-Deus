@@ -1,0 +1,19 @@
+{
+  "id": "regression-not-adjacent",
+  "kills": "regressionAdjacent",
+  "expect": "regression-not-adjacent",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "failure",
+        "regression",
+        {
+          "fromStage": "capital"
+        },
+        "toStage"
+      ],
+      "value": "camp"
+    }
+  ]
+}
