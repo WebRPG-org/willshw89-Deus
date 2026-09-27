@@ -1,0 +1,22 @@
+{
+    "lane": "lane-ag",
+    "taskId": "SIM.10.05",
+    "branch": "task/lane-ag",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "allowedPaths": [
+        "game/js/plugins/DEUS_Factions.js",
+        "game/js/plugins/DEUS_Colonists.js",
+        "game/js/plugins/DEUS_Ecology.js",
+        "game/js/plugins/DEUS_WorldGen.js",
+        "tools/sim/test_underground_year0.js",
+        "tools/sim/fixtures/underground_year0/**",
+        "tasks/SIM.10.05/**"
+    ],
+    "gateTests": [
+        { "cmd": "node", "args": ["tools/sim/test_underground_year0.js"], "timeoutSec": 1800 },
+        { "cmd": "node", "args": ["tools/test_new_game_year0.js"], "timeoutSec": 900 },
+        { "cmd": "node", "args": ["tools/check_deus_syntax.js"], "timeoutSec": 600 }
+    ]
+}
