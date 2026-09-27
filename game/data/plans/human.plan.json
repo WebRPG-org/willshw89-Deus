@@ -1,0 +1,3332 @@
+{
+  "schemaVersion": "deus-faction-plan/1.0.0",
+  "documentRole": "racePlan",
+  "planId": "human",
+  "raceId": "OWNER_TODO",
+  "displayName": "OWNER_TODO",
+  "lore": "OWNER_TODO",
+  "values": "OWNER_TODO",
+  "architecture": {
+    "bibleTemplate": "docs/art/DEUS_RACIAL_BUILDING_BIBLE_TEMPLATE.md",
+    "bibleDocumentId": "DEUS-ARCH-RACE-01",
+    "homeLayerBand": "OWNER_TODO",
+    "cultural": {
+      "guidingMetaphor": "OWNER_TODO",
+      "exteriorSilhouette": "OWNER_TODO",
+      "proportionRatio": "OWNER_TODO",
+      "colorKey": "OWNER_TODO",
+      "tierMaterials": {
+        "tier1": "OWNER_TODO",
+        "tier2": "OWNER_TODO",
+        "tier3": "OWNER_TODO"
+      },
+      "foundations": "OWNER_TODO",
+      "walls": "OWNER_TODO",
+      "openings": "OWNER_TODO",
+      "roofForm": "OWNER_TODO",
+      "supports": "OWNER_TODO",
+      "hearthPlacement": "OWNER_TODO",
+      "bedding": "OWNER_TODO",
+      "storagePhilosophy": "OWNER_TODO"
+    },
+    "universalWeathering": [
+      "chipped",
+      "burned",
+      "ruined"
+    ]
+  },
+  "buildings": [
+    {
+      "id": "campfire",
+      "priorityTarget": "shelter"
+    },
+    {
+      "id": "shelter",
+      "priorityTarget": "shelter"
+    },
+    {
+      "id": "stockpile",
+      "priorityTarget": "storage"
+    },
+    {
+      "id": "palisade",
+      "priorityTarget": "defense"
+    },
+    {
+      "id": "water_point",
+      "priorityTarget": "water"
+    },
+    {
+      "id": "hearth",
+      "priorityTarget": "shelter"
+    },
+    {
+      "id": "food_plot",
+      "priorityTarget": "food"
+    },
+    {
+      "id": "workshop",
+      "priorityTarget": "workshop"
+    },
+    {
+      "id": "great_hall",
+      "priorityTarget": "government"
+    },
+    {
+      "id": "granary",
+      "priorityTarget": "storage"
+    },
+    {
+      "id": "infirmary",
+      "priorityTarget": "healing"
+    },
+    {
+      "id": "government_seat",
+      "priorityTarget": "government"
+    },
+    {
+      "id": "temple",
+      "priorityTarget": "temple"
+    },
+    {
+      "id": "road_link",
+      "priorityTarget": "road"
+    },
+    {
+      "id": "forge",
+      "priorityTarget": "workshop"
+    },
+    {
+      "id": "market",
+      "priorityTarget": "market"
+    },
+    {
+      "id": "wall",
+      "priorityTarget": "defense"
+    },
+    {
+      "id": "gatehouse",
+      "priorityTarget": "defense"
+    },
+    {
+      "id": "archive",
+      "priorityTarget": "government"
+    },
+    {
+      "id": "mint",
+      "priorityTarget": "government"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "construct.camp",
+      "kind": "construction",
+      "prerequisites": [],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "campfire"
+        },
+        {
+          "kind": "building",
+          "id": "shelter"
+        },
+        {
+          "kind": "building",
+          "id": "stockpile"
+        },
+        {
+          "kind": "building",
+          "id": "hearth"
+        }
+      ]
+    },
+    {
+      "id": "construct.defense",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.camp"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "palisade"
+        }
+      ]
+    },
+    {
+      "id": "construct.water",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.camp"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "water_point"
+        }
+      ]
+    },
+    {
+      "id": "craft.survival",
+      "kind": "craft",
+      "prerequisites": [],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "FORAGER"
+        },
+        {
+          "kind": "craft",
+          "id": "HUNTER"
+        },
+        {
+          "kind": "craft",
+          "id": "COOK"
+        }
+      ]
+    },
+    {
+      "id": "construct.food",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.camp"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "food_plot"
+        }
+      ]
+    },
+    {
+      "id": "construct.workshop",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.camp"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "workshop"
+        }
+      ]
+    },
+    {
+      "id": "construct.hall",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.camp"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "great_hall"
+        }
+      ]
+    },
+    {
+      "id": "craft.field",
+      "kind": "craft",
+      "prerequisites": [
+        "craft.survival"
+      ],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "FARMER"
+        },
+        {
+          "kind": "craft",
+          "id": "MILLER"
+        }
+      ]
+    },
+    {
+      "id": "construct.storage",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.food"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "granary"
+        }
+      ]
+    },
+    {
+      "id": "construct.healing",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.camp"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "infirmary"
+        }
+      ]
+    },
+    {
+      "id": "craft.wood",
+      "kind": "craft",
+      "prerequisites": [
+        "craft.survival"
+      ],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "LOGGER"
+        },
+        {
+          "kind": "craft",
+          "id": "CARPENTER"
+        },
+        {
+          "kind": "craft",
+          "id": "WOODCARVER"
+        },
+        {
+          "kind": "craft",
+          "id": "THATCHER"
+        }
+      ]
+    },
+    {
+      "id": "construct.civic",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.hall"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "government_seat"
+        }
+      ]
+    },
+    {
+      "id": "construct.temple",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.civic"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "temple"
+        }
+      ]
+    },
+    {
+      "id": "construct.road",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.camp"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "road_link"
+        }
+      ]
+    },
+    {
+      "id": "construct.metalworks",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.workshop"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "forge"
+        }
+      ]
+    },
+    {
+      "id": "craft.stone",
+      "kind": "craft",
+      "prerequisites": [
+        "craft.wood"
+      ],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "QUARRYMAN"
+        },
+        {
+          "kind": "craft",
+          "id": "MASON"
+        }
+      ]
+    },
+    {
+      "id": "craft.ore",
+      "kind": "craft",
+      "prerequisites": [
+        "craft.stone"
+      ],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "MINER"
+        },
+        {
+          "kind": "craft",
+          "id": "SMELTER"
+        }
+      ]
+    },
+    {
+      "id": "craft.smith",
+      "kind": "craft",
+      "prerequisites": [
+        "craft.ore"
+      ],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "BLACKSMITH"
+        },
+        {
+          "kind": "craft",
+          "id": "ARMORER"
+        },
+        {
+          "kind": "craft",
+          "id": "WEAPONSMITH"
+        }
+      ]
+    },
+    {
+      "id": "craft.hide",
+      "kind": "craft",
+      "prerequisites": [
+        "craft.survival"
+      ],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "TANNER"
+        },
+        {
+          "kind": "craft",
+          "id": "LEATHERWORKER"
+        }
+      ]
+    },
+    {
+      "id": "craft.fiber",
+      "kind": "craft",
+      "prerequisites": [
+        "craft.survival"
+      ],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "WEAVER"
+        },
+        {
+          "kind": "craft",
+          "id": "SPINNER"
+        },
+        {
+          "kind": "craft",
+          "id": "TAILOR"
+        }
+      ]
+    },
+    {
+      "id": "construct.market",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.road",
+        "construct.civic"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "market"
+        }
+      ]
+    },
+    {
+      "id": "construct.fort",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.defense"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "wall"
+        },
+        {
+          "kind": "building",
+          "id": "gatehouse"
+        }
+      ]
+    },
+    {
+      "id": "construct.records",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.civic"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "archive"
+        }
+      ]
+    },
+    {
+      "id": "craft.sustenance",
+      "kind": "craft",
+      "prerequisites": [
+        "craft.field"
+      ],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "BUTCHER"
+        },
+        {
+          "kind": "craft",
+          "id": "BAKER"
+        },
+        {
+          "kind": "craft",
+          "id": "BREWER"
+        },
+        {
+          "kind": "craft",
+          "id": "FISHER"
+        }
+      ]
+    },
+    {
+      "id": "craft.learning",
+      "kind": "craft",
+      "prerequisites": [
+        "craft.survival"
+      ],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "SCRIBE"
+        },
+        {
+          "kind": "craft",
+          "id": "HERBALIST"
+        }
+      ]
+    },
+    {
+      "id": "craft.bow",
+      "kind": "craft",
+      "prerequisites": [
+        "craft.wood"
+      ],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "BOWYER"
+        },
+        {
+          "kind": "craft",
+          "id": "FLETCHER"
+        }
+      ]
+    },
+    {
+      "id": "craft.kiln",
+      "kind": "craft",
+      "prerequisites": [
+        "craft.stone"
+      ],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "POTTER"
+        }
+      ]
+    },
+    {
+      "id": "craft.trade",
+      "kind": "craft",
+      "prerequisites": [
+        "craft.field"
+      ],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "MERCHANT"
+        }
+      ]
+    },
+    {
+      "id": "construct.mint",
+      "kind": "construction",
+      "prerequisites": [
+        "construct.metalworks",
+        "construct.records"
+      ],
+      "unlocks": [
+        {
+          "kind": "building",
+          "id": "mint"
+        }
+      ]
+    },
+    {
+      "id": "craft.fine",
+      "kind": "craft",
+      "prerequisites": [
+        "craft.smith",
+        "craft.kiln"
+      ],
+      "unlocks": [
+        {
+          "kind": "craft",
+          "id": "JEWELER"
+        },
+        {
+          "kind": "craft",
+          "id": "GLASSWORKER"
+        },
+        {
+          "kind": "craft",
+          "id": "ALCHEMIST"
+        }
+      ]
+    }
+  ],
+  "stages": [
+    {
+      "id": "camp",
+      "populationMin": 8,
+      "buildings": [
+        {
+          "id": "campfire",
+          "minCount": 1
+        },
+        {
+          "id": "shelter",
+          "minCount": 1
+        },
+        {
+          "id": "stockpile",
+          "minCount": 1
+        },
+        {
+          "id": "palisade",
+          "minCount": 1
+        },
+        {
+          "id": "water_point",
+          "minCount": 1
+        }
+      ],
+      "roles": [
+        {
+          "axis": "craft",
+          "id": "FORAGER",
+          "minCount": 1
+        },
+        {
+          "axis": "craft",
+          "id": "HUNTER",
+          "minCount": 1
+        },
+        {
+          "axis": "craft",
+          "id": "COOK",
+          "minCount": 1
+        },
+        {
+          "axis": "civicOffice",
+          "id": "LEADER",
+          "minCount": 1
+        }
+      ],
+      "institutions": [
+        "LEADER",
+        "TREASURER",
+        "MINT_MASTER",
+        "MARSHAL",
+        "QUARTERMASTER",
+        "MASTER_OF_WORKS",
+        "PROVISIONER",
+        "RECORDER"
+      ],
+      "prerequisites": [
+        {
+          "kind": "knowledge",
+          "id": "construct.camp"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.defense"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.water"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.survival"
+        }
+      ],
+      "buildOrder": {
+        "peace": [
+          "shelter",
+          "water",
+          "food",
+          "storage",
+          "workshop",
+          "healing",
+          "defense",
+          "government",
+          "road",
+          "temple",
+          "market"
+        ],
+        "threat": [
+          "defense",
+          "shelter",
+          "water",
+          "food",
+          "healing",
+          "storage",
+          "government",
+          "workshop",
+          "road",
+          "temple",
+          "market"
+        ],
+        "famine": [
+          "food",
+          "water",
+          "storage",
+          "shelter",
+          "healing",
+          "workshop",
+          "defense",
+          "government",
+          "road",
+          "temple",
+          "market"
+        ],
+        "abundance": [
+          "workshop",
+          "storage",
+          "shelter",
+          "road",
+          "government",
+          "market",
+          "temple",
+          "healing",
+          "water",
+          "food",
+          "defense"
+        ]
+      },
+      "occupationMix": {
+        "craft": [
+          {
+            "id": "NONE",
+            "perMyriad": 5500
+          },
+          {
+            "id": "FORAGER",
+            "perMyriad": 2000
+          },
+          {
+            "id": "HUNTER",
+            "perMyriad": 1500
+          },
+          {
+            "id": "COOK",
+            "perMyriad": 1000
+          }
+        ],
+        "civicOffice": [
+          {
+            "id": "LEADER",
+            "perMyriad": 1250
+          },
+          {
+            "id": "TREASURER",
+            "perMyriad": 1250
+          },
+          {
+            "id": "MINT_MASTER",
+            "perMyriad": 1250
+          },
+          {
+            "id": "MARSHAL",
+            "perMyriad": 1250
+          },
+          {
+            "id": "QUARTERMASTER",
+            "perMyriad": 1250
+          },
+          {
+            "id": "MASTER_OF_WORKS",
+            "perMyriad": 1250
+          },
+          {
+            "id": "PROVISIONER",
+            "perMyriad": 1250
+          },
+          {
+            "id": "RECORDER",
+            "perMyriad": 1250
+          }
+        ],
+        "class": [
+          {
+            "id": "NONE",
+            "perMyriad": 5000
+          },
+          {
+            "id": "FIGHTER",
+            "perMyriad": 2000
+          },
+          {
+            "id": "RANGER",
+            "perMyriad": 1000
+          },
+          {
+            "id": "ROGUE",
+            "perMyriad": 800
+          },
+          {
+            "id": "CLERIC",
+            "perMyriad": 700
+          },
+          {
+            "id": "WIZARD",
+            "perMyriad": 500
+          }
+        ],
+        "obligation": [
+          {
+            "id": "NONE",
+            "perMyriad": 6000
+          },
+          {
+            "id": "RESERVE",
+            "perMyriad": 2200
+          },
+          {
+            "id": "MILITIA",
+            "perMyriad": 1200
+          },
+          {
+            "id": "GUARD",
+            "perMyriad": 400
+          },
+          {
+            "id": "PROFESSIONAL",
+            "perMyriad": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "hamlet",
+      "populationMin": 16,
+      "buildings": [
+        {
+          "id": "campfire",
+          "minCount": 1
+        },
+        {
+          "id": "shelter",
+          "minCount": 1
+        },
+        {
+          "id": "stockpile",
+          "minCount": 1
+        },
+        {
+          "id": "palisade",
+          "minCount": 1
+        },
+        {
+          "id": "water_point",
+          "minCount": 1
+        },
+        {
+          "id": "hearth",
+          "minCount": 1
+        },
+        {
+          "id": "food_plot",
+          "minCount": 1
+        },
+        {
+          "id": "workshop",
+          "minCount": 1
+        },
+        {
+          "id": "great_hall",
+          "minCount": 1
+        }
+      ],
+      "roles": [
+        {
+          "axis": "craft",
+          "id": "FARMER",
+          "minCount": 1
+        },
+        {
+          "axis": "craft",
+          "id": "FORAGER",
+          "minCount": 1
+        },
+        {
+          "axis": "craft",
+          "id": "HUNTER",
+          "minCount": 1
+        },
+        {
+          "axis": "craft",
+          "id": "COOK",
+          "minCount": 1
+        },
+        {
+          "axis": "civicOffice",
+          "id": "LEADER",
+          "minCount": 1
+        }
+      ],
+      "institutions": [
+        "LEADER",
+        "TREASURER",
+        "MINT_MASTER",
+        "MARSHAL",
+        "QUARTERMASTER",
+        "MASTER_OF_WORKS",
+        "PROVISIONER",
+        "RECORDER"
+      ],
+      "prerequisites": [
+        {
+          "kind": "stage",
+          "id": "camp"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.camp"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.defense"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.water"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.survival"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.food"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.workshop"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.hall"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.field"
+        }
+      ],
+      "buildOrder": {
+        "peace": [
+          "food",
+          "shelter",
+          "water",
+          "storage",
+          "workshop",
+          "healing",
+          "defense",
+          "road",
+          "government",
+          "temple",
+          "market"
+        ],
+        "threat": [
+          "defense",
+          "food",
+          "shelter",
+          "water",
+          "healing",
+          "storage",
+          "workshop",
+          "government",
+          "road",
+          "temple",
+          "market"
+        ],
+        "famine": [
+          "food",
+          "water",
+          "shelter",
+          "storage",
+          "healing",
+          "defense",
+          "workshop",
+          "road",
+          "government",
+          "temple",
+          "market"
+        ],
+        "abundance": [
+          "workshop",
+          "food",
+          "storage",
+          "shelter",
+          "road",
+          "government",
+          "market",
+          "healing",
+          "temple",
+          "water",
+          "defense"
+        ]
+      },
+      "occupationMix": {
+        "craft": [
+          {
+            "id": "NONE",
+            "perMyriad": 3500
+          },
+          {
+            "id": "FARMER",
+            "perMyriad": 2000
+          },
+          {
+            "id": "FORAGER",
+            "perMyriad": 1800
+          },
+          {
+            "id": "HUNTER",
+            "perMyriad": 1500
+          },
+          {
+            "id": "COOK",
+            "perMyriad": 1200
+          }
+        ],
+        "civicOffice": [
+          {
+            "id": "NONE",
+            "perMyriad": 5000
+          },
+          {
+            "id": "LEADER",
+            "perMyriad": 625
+          },
+          {
+            "id": "TREASURER",
+            "perMyriad": 625
+          },
+          {
+            "id": "MINT_MASTER",
+            "perMyriad": 625
+          },
+          {
+            "id": "MARSHAL",
+            "perMyriad": 625
+          },
+          {
+            "id": "QUARTERMASTER",
+            "perMyriad": 625
+          },
+          {
+            "id": "MASTER_OF_WORKS",
+            "perMyriad": 625
+          },
+          {
+            "id": "PROVISIONER",
+            "perMyriad": 625
+          },
+          {
+            "id": "RECORDER",
+            "perMyriad": 625
+          }
+        ],
+        "class": [
+          {
+            "id": "NONE",
+            "perMyriad": 4200
+          },
+          {
+            "id": "FIGHTER",
+            "perMyriad": 1800
+          },
+          {
+            "id": "RANGER",
+            "perMyriad": 1000
+          },
+          {
+            "id": "ROGUE",
+            "perMyriad": 800
+          },
+          {
+            "id": "CLERIC",
+            "perMyriad": 700
+          },
+          {
+            "id": "WIZARD",
+            "perMyriad": 500
+          },
+          {
+            "id": "BARBARIAN",
+            "perMyriad": 500
+          },
+          {
+            "id": "BARD",
+            "perMyriad": 500
+          }
+        ],
+        "obligation": [
+          {
+            "id": "NONE",
+            "perMyriad": 5200
+          },
+          {
+            "id": "RESERVE",
+            "perMyriad": 2200
+          },
+          {
+            "id": "MILITIA",
+            "perMyriad": 1500
+          },
+          {
+            "id": "GUARD",
+            "perMyriad": 600
+          },
+          {
+            "id": "PROFESSIONAL",
+            "perMyriad": 300
+          },
+          {
+            "id": "ELITE_RETINUE",
+            "perMyriad": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "village",
+      "populationMin": 40,
+      "buildings": [
+        {
+          "id": "campfire",
+          "minCount": 1
+        },
+        {
+          "id": "shelter",
+          "minCount": 1
+        },
+        {
+          "id": "stockpile",
+          "minCount": 1
+        },
+        {
+          "id": "palisade",
+          "minCount": 1
+        },
+        {
+          "id": "water_point",
+          "minCount": 1
+        },
+        {
+          "id": "hearth",
+          "minCount": 1
+        },
+        {
+          "id": "food_plot",
+          "minCount": 1
+        },
+        {
+          "id": "workshop",
+          "minCount": 1
+        },
+        {
+          "id": "great_hall",
+          "minCount": 1
+        },
+        {
+          "id": "granary",
+          "minCount": 1
+        },
+        {
+          "id": "infirmary",
+          "minCount": 1
+        }
+      ],
+      "roles": [
+        {
+          "axis": "craft",
+          "id": "FARMER",
+          "minCount": 3
+        },
+        {
+          "axis": "craft",
+          "id": "CARPENTER",
+          "minCount": 1
+        },
+        {
+          "axis": "craft",
+          "id": "COOK",
+          "minCount": 1
+        },
+        {
+          "axis": "civicOffice",
+          "id": "LEADER",
+          "minCount": 1
+        },
+        {
+          "axis": "civicOffice",
+          "id": "STEWARD",
+          "minCount": 1
+        }
+      ],
+      "institutions": [
+        "LEADER",
+        "STEWARD",
+        "TREASURER",
+        "MINT_MASTER",
+        "MARSHAL",
+        "QUARTERMASTER",
+        "MASTER_OF_WORKS",
+        "PROVISIONER",
+        "RECORDER",
+        "HEALER_DIRECTOR"
+      ],
+      "prerequisites": [
+        {
+          "kind": "stage",
+          "id": "hamlet"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.camp"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.defense"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.water"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.survival"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.food"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.workshop"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.hall"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.field"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.storage"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.healing"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.wood"
+        }
+      ],
+      "buildOrder": {
+        "peace": [
+          "food",
+          "water",
+          "storage",
+          "shelter",
+          "workshop",
+          "defense",
+          "healing",
+          "government",
+          "road",
+          "temple",
+          "market"
+        ],
+        "threat": [
+          "defense",
+          "food",
+          "water",
+          "shelter",
+          "storage",
+          "healing",
+          "government",
+          "workshop",
+          "road",
+          "temple",
+          "market"
+        ],
+        "famine": [
+          "food",
+          "storage",
+          "water",
+          "shelter",
+          "healing",
+          "workshop",
+          "defense",
+          "government",
+          "road",
+          "market",
+          "temple"
+        ],
+        "abundance": [
+          "workshop",
+          "food",
+          "storage",
+          "government",
+          "road",
+          "market",
+          "shelter",
+          "temple",
+          "healing",
+          "water",
+          "defense"
+        ]
+      },
+      "occupationMix": {
+        "craft": [
+          {
+            "id": "NONE",
+            "perMyriad": 2000
+          },
+          {
+            "id": "FARMER",
+            "perMyriad": 2200
+          },
+          {
+            "id": "CARPENTER",
+            "perMyriad": 1000
+          },
+          {
+            "id": "LOGGER",
+            "perMyriad": 800
+          },
+          {
+            "id": "FORAGER",
+            "perMyriad": 800
+          },
+          {
+            "id": "HUNTER",
+            "perMyriad": 700
+          },
+          {
+            "id": "COOK",
+            "perMyriad": 700
+          },
+          {
+            "id": "MILLER",
+            "perMyriad": 600
+          },
+          {
+            "id": "THATCHER",
+            "perMyriad": 600
+          },
+          {
+            "id": "WOODCARVER",
+            "perMyriad": 600
+          }
+        ],
+        "civicOffice": [
+          {
+            "id": "NONE",
+            "perMyriad": 7500
+          },
+          {
+            "id": "LEADER",
+            "perMyriad": 250
+          },
+          {
+            "id": "STEWARD",
+            "perMyriad": 250
+          },
+          {
+            "id": "TREASURER",
+            "perMyriad": 250
+          },
+          {
+            "id": "MINT_MASTER",
+            "perMyriad": 250
+          },
+          {
+            "id": "MARSHAL",
+            "perMyriad": 250
+          },
+          {
+            "id": "QUARTERMASTER",
+            "perMyriad": 250
+          },
+          {
+            "id": "MASTER_OF_WORKS",
+            "perMyriad": 250
+          },
+          {
+            "id": "PROVISIONER",
+            "perMyriad": 250
+          },
+          {
+            "id": "RECORDER",
+            "perMyriad": 250
+          },
+          {
+            "id": "HEALER_DIRECTOR",
+            "perMyriad": 250
+          }
+        ],
+        "class": [
+          {
+            "id": "NONE",
+            "perMyriad": 3500
+          },
+          {
+            "id": "FIGHTER",
+            "perMyriad": 1600
+          },
+          {
+            "id": "RANGER",
+            "perMyriad": 900
+          },
+          {
+            "id": "ROGUE",
+            "perMyriad": 700
+          },
+          {
+            "id": "CLERIC",
+            "perMyriad": 700
+          },
+          {
+            "id": "WIZARD",
+            "perMyriad": 600
+          },
+          {
+            "id": "DRUID",
+            "perMyriad": 500
+          },
+          {
+            "id": "BARBARIAN",
+            "perMyriad": 500
+          },
+          {
+            "id": "BARD",
+            "perMyriad": 500
+          },
+          {
+            "id": "PALADIN",
+            "perMyriad": 500
+          }
+        ],
+        "obligation": [
+          {
+            "id": "NONE",
+            "perMyriad": 4500
+          },
+          {
+            "id": "RESERVE",
+            "perMyriad": 2300
+          },
+          {
+            "id": "MILITIA",
+            "perMyriad": 1700
+          },
+          {
+            "id": "GUARD",
+            "perMyriad": 800
+          },
+          {
+            "id": "PROFESSIONAL",
+            "perMyriad": 400
+          },
+          {
+            "id": "ELITE_RETINUE",
+            "perMyriad": 300
+          }
+        ]
+      }
+    },
+    {
+      "id": "town",
+      "populationMin": 120,
+      "buildings": [
+        {
+          "id": "campfire",
+          "minCount": 1
+        },
+        {
+          "id": "shelter",
+          "minCount": 1
+        },
+        {
+          "id": "stockpile",
+          "minCount": 1
+        },
+        {
+          "id": "palisade",
+          "minCount": 1
+        },
+        {
+          "id": "water_point",
+          "minCount": 1
+        },
+        {
+          "id": "hearth",
+          "minCount": 1
+        },
+        {
+          "id": "food_plot",
+          "minCount": 1
+        },
+        {
+          "id": "workshop",
+          "minCount": 1
+        },
+        {
+          "id": "great_hall",
+          "minCount": 1
+        },
+        {
+          "id": "granary",
+          "minCount": 1
+        },
+        {
+          "id": "infirmary",
+          "minCount": 1
+        },
+        {
+          "id": "government_seat",
+          "minCount": 1
+        },
+        {
+          "id": "temple",
+          "minCount": 1
+        },
+        {
+          "id": "road_link",
+          "minCount": 1
+        },
+        {
+          "id": "forge",
+          "minCount": 1
+        }
+      ],
+      "roles": [
+        {
+          "axis": "craft",
+          "id": "FARMER",
+          "minCount": 6
+        },
+        {
+          "axis": "craft",
+          "id": "MASON",
+          "minCount": 2
+        },
+        {
+          "axis": "craft",
+          "id": "BLACKSMITH",
+          "minCount": 1
+        },
+        {
+          "axis": "craft",
+          "id": "MINER",
+          "minCount": 1
+        },
+        {
+          "axis": "craft",
+          "id": "WEAVER",
+          "minCount": 1
+        },
+        {
+          "axis": "civicOffice",
+          "id": "LEADER",
+          "minCount": 1
+        },
+        {
+          "axis": "civicOffice",
+          "id": "MAGISTRATE",
+          "minCount": 1
+        }
+      ],
+      "institutions": [
+        "LEADER",
+        "STEWARD",
+        "TREASURER",
+        "MINT_MASTER",
+        "MARSHAL",
+        "QUARTERMASTER",
+        "MASTER_OF_WORKS",
+        "PROVISIONER",
+        "RECORDER",
+        "MAGISTRATE",
+        "HEALER_DIRECTOR",
+        "ENVOY"
+      ],
+      "prerequisites": [
+        {
+          "kind": "stage",
+          "id": "village"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.camp"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.defense"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.water"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.survival"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.food"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.workshop"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.hall"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.field"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.storage"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.healing"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.wood"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.civic"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.temple"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.road"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.metalworks"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.stone"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.ore"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.smith"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.hide"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.fiber"
+        }
+      ],
+      "buildOrder": {
+        "peace": [
+          "government",
+          "shelter",
+          "water",
+          "food",
+          "storage",
+          "defense",
+          "workshop",
+          "road",
+          "healing",
+          "temple",
+          "market"
+        ],
+        "threat": [
+          "defense",
+          "government",
+          "shelter",
+          "water",
+          "food",
+          "healing",
+          "storage",
+          "workshop",
+          "road",
+          "temple",
+          "market"
+        ],
+        "famine": [
+          "food",
+          "storage",
+          "water",
+          "shelter",
+          "workshop",
+          "healing",
+          "defense",
+          "government",
+          "road",
+          "market",
+          "temple"
+        ],
+        "abundance": [
+          "workshop",
+          "government",
+          "market",
+          "road",
+          "storage",
+          "temple",
+          "shelter",
+          "healing",
+          "food",
+          "water",
+          "defense"
+        ]
+      },
+      "occupationMix": {
+        "craft": [
+          {
+            "id": "NONE",
+            "perMyriad": 1400
+          },
+          {
+            "id": "FARMER",
+            "perMyriad": 1400
+          },
+          {
+            "id": "CARPENTER",
+            "perMyriad": 700
+          },
+          {
+            "id": "MASON",
+            "perMyriad": 600
+          },
+          {
+            "id": "MINER",
+            "perMyriad": 600
+          },
+          {
+            "id": "LOGGER",
+            "perMyriad": 500
+          },
+          {
+            "id": "BLACKSMITH",
+            "perMyriad": 500
+          },
+          {
+            "id": "WEAVER",
+            "perMyriad": 400
+          },
+          {
+            "id": "COOK",
+            "perMyriad": 400
+          },
+          {
+            "id": "FORAGER",
+            "perMyriad": 300
+          },
+          {
+            "id": "HUNTER",
+            "perMyriad": 300
+          },
+          {
+            "id": "TANNER",
+            "perMyriad": 300
+          },
+          {
+            "id": "LEATHERWORKER",
+            "perMyriad": 300
+          },
+          {
+            "id": "TAILOR",
+            "perMyriad": 300
+          },
+          {
+            "id": "SPINNER",
+            "perMyriad": 300
+          },
+          {
+            "id": "MILLER",
+            "perMyriad": 300
+          },
+          {
+            "id": "SMELTER",
+            "perMyriad": 300
+          },
+          {
+            "id": "QUARRYMAN",
+            "perMyriad": 300
+          },
+          {
+            "id": "THATCHER",
+            "perMyriad": 200
+          },
+          {
+            "id": "WOODCARVER",
+            "perMyriad": 200
+          },
+          {
+            "id": "ARMORER",
+            "perMyriad": 200
+          },
+          {
+            "id": "WEAPONSMITH",
+            "perMyriad": 200
+          }
+        ],
+        "civicOffice": [
+          {
+            "id": "NONE",
+            "perMyriad": 7600
+          },
+          {
+            "id": "LEADER",
+            "perMyriad": 200
+          },
+          {
+            "id": "STEWARD",
+            "perMyriad": 200
+          },
+          {
+            "id": "TREASURER",
+            "perMyriad": 200
+          },
+          {
+            "id": "MINT_MASTER",
+            "perMyriad": 200
+          },
+          {
+            "id": "MARSHAL",
+            "perMyriad": 200
+          },
+          {
+            "id": "QUARTERMASTER",
+            "perMyriad": 200
+          },
+          {
+            "id": "MASTER_OF_WORKS",
+            "perMyriad": 200
+          },
+          {
+            "id": "PROVISIONER",
+            "perMyriad": 200
+          },
+          {
+            "id": "RECORDER",
+            "perMyriad": 200
+          },
+          {
+            "id": "MAGISTRATE",
+            "perMyriad": 200
+          },
+          {
+            "id": "HEALER_DIRECTOR",
+            "perMyriad": 200
+          },
+          {
+            "id": "ENVOY",
+            "perMyriad": 200
+          }
+        ],
+        "class": [
+          {
+            "id": "NONE",
+            "perMyriad": 2800
+          },
+          {
+            "id": "FIGHTER",
+            "perMyriad": 1500
+          },
+          {
+            "id": "RANGER",
+            "perMyriad": 800
+          },
+          {
+            "id": "ROGUE",
+            "perMyriad": 700
+          },
+          {
+            "id": "CLERIC",
+            "perMyriad": 700
+          },
+          {
+            "id": "WIZARD",
+            "perMyriad": 600
+          },
+          {
+            "id": "DRUID",
+            "perMyriad": 500
+          },
+          {
+            "id": "BARBARIAN",
+            "perMyriad": 500
+          },
+          {
+            "id": "BARD",
+            "perMyriad": 400
+          },
+          {
+            "id": "PALADIN",
+            "perMyriad": 400
+          },
+          {
+            "id": "SORCERER",
+            "perMyriad": 400
+          },
+          {
+            "id": "WARLOCK",
+            "perMyriad": 400
+          },
+          {
+            "id": "MONK",
+            "perMyriad": 300
+          }
+        ],
+        "obligation": [
+          {
+            "id": "NONE",
+            "perMyriad": 3800
+          },
+          {
+            "id": "RESERVE",
+            "perMyriad": 2400
+          },
+          {
+            "id": "MILITIA",
+            "perMyriad": 1900
+          },
+          {
+            "id": "GUARD",
+            "perMyriad": 1000
+          },
+          {
+            "id": "PROFESSIONAL",
+            "perMyriad": 500
+          },
+          {
+            "id": "ELITE_RETINUE",
+            "perMyriad": 400
+          }
+        ]
+      }
+    },
+    {
+      "id": "city",
+      "populationMin": 400,
+      "buildings": [
+        {
+          "id": "campfire",
+          "minCount": 1
+        },
+        {
+          "id": "shelter",
+          "minCount": 1
+        },
+        {
+          "id": "stockpile",
+          "minCount": 1
+        },
+        {
+          "id": "palisade",
+          "minCount": 1
+        },
+        {
+          "id": "water_point",
+          "minCount": 1
+        },
+        {
+          "id": "hearth",
+          "minCount": 1
+        },
+        {
+          "id": "food_plot",
+          "minCount": 1
+        },
+        {
+          "id": "workshop",
+          "minCount": 1
+        },
+        {
+          "id": "great_hall",
+          "minCount": 1
+        },
+        {
+          "id": "granary",
+          "minCount": 1
+        },
+        {
+          "id": "infirmary",
+          "minCount": 1
+        },
+        {
+          "id": "government_seat",
+          "minCount": 1
+        },
+        {
+          "id": "temple",
+          "minCount": 1
+        },
+        {
+          "id": "road_link",
+          "minCount": 1
+        },
+        {
+          "id": "forge",
+          "minCount": 1
+        },
+        {
+          "id": "market",
+          "minCount": 1
+        },
+        {
+          "id": "wall",
+          "minCount": 1
+        },
+        {
+          "id": "gatehouse",
+          "minCount": 1
+        },
+        {
+          "id": "archive",
+          "minCount": 1
+        }
+      ],
+      "roles": [
+        {
+          "axis": "craft",
+          "id": "FARMER",
+          "minCount": 8
+        },
+        {
+          "axis": "craft",
+          "id": "MERCHANT",
+          "minCount": 2
+        },
+        {
+          "axis": "craft",
+          "id": "MASON",
+          "minCount": 2
+        },
+        {
+          "axis": "craft",
+          "id": "SCRIBE",
+          "minCount": 1
+        },
+        {
+          "axis": "craft",
+          "id": "BAKER",
+          "minCount": 1
+        },
+        {
+          "axis": "civicOffice",
+          "id": "LEADER",
+          "minCount": 1
+        },
+        {
+          "axis": "civicOffice",
+          "id": "TRADE_MASTER",
+          "minCount": 1
+        }
+      ],
+      "institutions": [
+        "LEADER",
+        "STEWARD",
+        "TREASURER",
+        "MINT_MASTER",
+        "MARSHAL",
+        "QUARTERMASTER",
+        "MASTER_OF_WORKS",
+        "PROVISIONER",
+        "RECORDER",
+        "MAGISTRATE",
+        "HEALER_DIRECTOR",
+        "ENVOY",
+        "TRADE_MASTER",
+        "TAX_COLLECTOR",
+        "PAYMASTER"
+      ],
+      "prerequisites": [
+        {
+          "kind": "stage",
+          "id": "town"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.camp"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.defense"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.water"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.survival"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.food"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.workshop"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.hall"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.field"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.storage"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.healing"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.wood"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.civic"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.temple"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.road"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.metalworks"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.stone"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.ore"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.smith"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.hide"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.fiber"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.market"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.fort"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.records"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.sustenance"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.learning"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.bow"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.kiln"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.trade"
+        }
+      ],
+      "buildOrder": {
+        "peace": [
+          "market",
+          "road",
+          "government",
+          "storage",
+          "shelter",
+          "workshop",
+          "food",
+          "water",
+          "defense",
+          "healing",
+          "temple"
+        ],
+        "threat": [
+          "defense",
+          "market",
+          "government",
+          "shelter",
+          "storage",
+          "healing",
+          "road",
+          "food",
+          "water",
+          "workshop",
+          "temple"
+        ],
+        "famine": [
+          "food",
+          "storage",
+          "market",
+          "water",
+          "shelter",
+          "workshop",
+          "healing",
+          "road",
+          "government",
+          "defense",
+          "temple"
+        ],
+        "abundance": [
+          "workshop",
+          "market",
+          "road",
+          "government",
+          "storage",
+          "temple",
+          "shelter",
+          "healing",
+          "food",
+          "water",
+          "defense"
+        ]
+      },
+      "occupationMix": {
+        "craft": [
+          {
+            "id": "NONE",
+            "perMyriad": 900
+          },
+          {
+            "id": "FARMER",
+            "perMyriad": 650
+          },
+          {
+            "id": "CARPENTER",
+            "perMyriad": 500
+          },
+          {
+            "id": "MASON",
+            "perMyriad": 450
+          },
+          {
+            "id": "MINER",
+            "perMyriad": 450
+          },
+          {
+            "id": "LOGGER",
+            "perMyriad": 400
+          },
+          {
+            "id": "BLACKSMITH",
+            "perMyriad": 400
+          },
+          {
+            "id": "MERCHANT",
+            "perMyriad": 400
+          },
+          {
+            "id": "WEAVER",
+            "perMyriad": 350
+          },
+          {
+            "id": "COOK",
+            "perMyriad": 350
+          },
+          {
+            "id": "BAKER",
+            "perMyriad": 350
+          },
+          {
+            "id": "SCRIBE",
+            "perMyriad": 300
+          },
+          {
+            "id": "MILLER",
+            "perMyriad": 300
+          },
+          {
+            "id": "SMELTER",
+            "perMyriad": 300
+          },
+          {
+            "id": "QUARRYMAN",
+            "perMyriad": 250
+          },
+          {
+            "id": "TANNER",
+            "perMyriad": 250
+          },
+          {
+            "id": "LEATHERWORKER",
+            "perMyriad": 250
+          },
+          {
+            "id": "TAILOR",
+            "perMyriad": 250
+          },
+          {
+            "id": "SPINNER",
+            "perMyriad": 250
+          },
+          {
+            "id": "FORAGER",
+            "perMyriad": 250
+          },
+          {
+            "id": "HUNTER",
+            "perMyriad": 250
+          },
+          {
+            "id": "BREWER",
+            "perMyriad": 250
+          },
+          {
+            "id": "BUTCHER",
+            "perMyriad": 250
+          },
+          {
+            "id": "FISHER",
+            "perMyriad": 250
+          },
+          {
+            "id": "HERBALIST",
+            "perMyriad": 200
+          },
+          {
+            "id": "BOWYER",
+            "perMyriad": 200
+          },
+          {
+            "id": "FLETCHER",
+            "perMyriad": 200
+          },
+          {
+            "id": "POTTER",
+            "perMyriad": 200
+          },
+          {
+            "id": "THATCHER",
+            "perMyriad": 150
+          },
+          {
+            "id": "WOODCARVER",
+            "perMyriad": 150
+          },
+          {
+            "id": "ARMORER",
+            "perMyriad": 150
+          },
+          {
+            "id": "WEAPONSMITH",
+            "perMyriad": 150
+          }
+        ],
+        "civicOffice": [
+          {
+            "id": "NONE",
+            "perMyriad": 7000
+          },
+          {
+            "id": "LEADER",
+            "perMyriad": 200
+          },
+          {
+            "id": "STEWARD",
+            "perMyriad": 200
+          },
+          {
+            "id": "TREASURER",
+            "perMyriad": 200
+          },
+          {
+            "id": "MINT_MASTER",
+            "perMyriad": 200
+          },
+          {
+            "id": "MARSHAL",
+            "perMyriad": 200
+          },
+          {
+            "id": "QUARTERMASTER",
+            "perMyriad": 200
+          },
+          {
+            "id": "MASTER_OF_WORKS",
+            "perMyriad": 200
+          },
+          {
+            "id": "PROVISIONER",
+            "perMyriad": 200
+          },
+          {
+            "id": "RECORDER",
+            "perMyriad": 200
+          },
+          {
+            "id": "MAGISTRATE",
+            "perMyriad": 200
+          },
+          {
+            "id": "HEALER_DIRECTOR",
+            "perMyriad": 200
+          },
+          {
+            "id": "ENVOY",
+            "perMyriad": 200
+          },
+          {
+            "id": "TRADE_MASTER",
+            "perMyriad": 200
+          },
+          {
+            "id": "TAX_COLLECTOR",
+            "perMyriad": 200
+          },
+          {
+            "id": "PAYMASTER",
+            "perMyriad": 200
+          }
+        ],
+        "class": [
+          {
+            "id": "NONE",
+            "perMyriad": 2650
+          },
+          {
+            "id": "FIGHTER",
+            "perMyriad": 1300
+          },
+          {
+            "id": "RANGER",
+            "perMyriad": 800
+          },
+          {
+            "id": "ROGUE",
+            "perMyriad": 700
+          },
+          {
+            "id": "CLERIC",
+            "perMyriad": 700
+          },
+          {
+            "id": "WIZARD",
+            "perMyriad": 650
+          },
+          {
+            "id": "DRUID",
+            "perMyriad": 550
+          },
+          {
+            "id": "BARBARIAN",
+            "perMyriad": 500
+          },
+          {
+            "id": "BARD",
+            "perMyriad": 450
+          },
+          {
+            "id": "PALADIN",
+            "perMyriad": 450
+          },
+          {
+            "id": "SORCERER",
+            "perMyriad": 450
+          },
+          {
+            "id": "MONK",
+            "perMyriad": 400
+          },
+          {
+            "id": "WARLOCK",
+            "perMyriad": 400
+          }
+        ],
+        "obligation": [
+          {
+            "id": "NONE",
+            "perMyriad": 3200
+          },
+          {
+            "id": "RESERVE",
+            "perMyriad": 2500
+          },
+          {
+            "id": "MILITIA",
+            "perMyriad": 2000
+          },
+          {
+            "id": "GUARD",
+            "perMyriad": 1200
+          },
+          {
+            "id": "PROFESSIONAL",
+            "perMyriad": 700
+          },
+          {
+            "id": "ELITE_RETINUE",
+            "perMyriad": 400
+          }
+        ]
+      }
+    },
+    {
+      "id": "capital",
+      "populationMin": 1200,
+      "buildings": [
+        {
+          "id": "campfire",
+          "minCount": 1
+        },
+        {
+          "id": "shelter",
+          "minCount": 1
+        },
+        {
+          "id": "stockpile",
+          "minCount": 1
+        },
+        {
+          "id": "palisade",
+          "minCount": 1
+        },
+        {
+          "id": "water_point",
+          "minCount": 1
+        },
+        {
+          "id": "hearth",
+          "minCount": 1
+        },
+        {
+          "id": "food_plot",
+          "minCount": 1
+        },
+        {
+          "id": "workshop",
+          "minCount": 1
+        },
+        {
+          "id": "great_hall",
+          "minCount": 1
+        },
+        {
+          "id": "granary",
+          "minCount": 1
+        },
+        {
+          "id": "infirmary",
+          "minCount": 1
+        },
+        {
+          "id": "government_seat",
+          "minCount": 1
+        },
+        {
+          "id": "temple",
+          "minCount": 1
+        },
+        {
+          "id": "road_link",
+          "minCount": 1
+        },
+        {
+          "id": "forge",
+          "minCount": 1
+        },
+        {
+          "id": "market",
+          "minCount": 1
+        },
+        {
+          "id": "wall",
+          "minCount": 1
+        },
+        {
+          "id": "gatehouse",
+          "minCount": 1
+        },
+        {
+          "id": "archive",
+          "minCount": 1
+        },
+        {
+          "id": "mint",
+          "minCount": 1
+        }
+      ],
+      "roles": [
+        {
+          "axis": "craft",
+          "id": "FARMER",
+          "minCount": 10
+        },
+        {
+          "axis": "craft",
+          "id": "MERCHANT",
+          "minCount": 3
+        },
+        {
+          "axis": "craft",
+          "id": "MASON",
+          "minCount": 2
+        },
+        {
+          "axis": "craft",
+          "id": "JEWELER",
+          "minCount": 1
+        },
+        {
+          "axis": "craft",
+          "id": "SCRIBE",
+          "minCount": 1
+        },
+        {
+          "axis": "civicOffice",
+          "id": "LEADER",
+          "minCount": 1
+        },
+        {
+          "axis": "civicOffice",
+          "id": "CLERK",
+          "minCount": 1
+        }
+      ],
+      "institutions": [
+        "LEADER",
+        "STEWARD",
+        "TREASURER",
+        "MINT_MASTER",
+        "MARSHAL",
+        "QUARTERMASTER",
+        "MASTER_OF_WORKS",
+        "PROVISIONER",
+        "RECORDER",
+        "MAGISTRATE",
+        "HEALER_DIRECTOR",
+        "ENVOY",
+        "TRADE_MASTER",
+        "TAX_COLLECTOR",
+        "PAYMASTER",
+        "CLERK"
+      ],
+      "prerequisites": [
+        {
+          "kind": "stage",
+          "id": "city"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.camp"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.defense"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.water"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.survival"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.food"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.workshop"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.hall"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.field"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.storage"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.healing"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.wood"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.civic"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.temple"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.road"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.metalworks"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.stone"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.ore"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.smith"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.hide"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.fiber"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.market"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.fort"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.records"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.sustenance"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.learning"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.bow"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.kiln"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.trade"
+        },
+        {
+          "kind": "knowledge",
+          "id": "construct.mint"
+        },
+        {
+          "kind": "knowledge",
+          "id": "craft.fine"
+        }
+      ],
+      "buildOrder": {
+        "peace": [
+          "temple",
+          "government",
+          "market",
+          "road",
+          "shelter",
+          "workshop",
+          "storage",
+          "defense",
+          "healing",
+          "food",
+          "water"
+        ],
+        "threat": [
+          "defense",
+          "temple",
+          "government",
+          "shelter",
+          "healing",
+          "market",
+          "storage",
+          "road",
+          "food",
+          "water",
+          "workshop"
+        ],
+        "famine": [
+          "food",
+          "storage",
+          "market",
+          "water",
+          "shelter",
+          "healing",
+          "workshop",
+          "government",
+          "road",
+          "defense",
+          "temple"
+        ],
+        "abundance": [
+          "workshop",
+          "temple",
+          "market",
+          "government",
+          "road",
+          "storage",
+          "shelter",
+          "healing",
+          "food",
+          "water",
+          "defense"
+        ]
+      },
+      "occupationMix": {
+        "craft": [
+          {
+            "id": "NONE",
+            "perMyriad": 900
+          },
+          {
+            "id": "FARMER",
+            "perMyriad": 650
+          },
+          {
+            "id": "CARPENTER",
+            "perMyriad": 450
+          },
+          {
+            "id": "MASON",
+            "perMyriad": 400
+          },
+          {
+            "id": "MINER",
+            "perMyriad": 400
+          },
+          {
+            "id": "LOGGER",
+            "perMyriad": 350
+          },
+          {
+            "id": "BLACKSMITH",
+            "perMyriad": 350
+          },
+          {
+            "id": "MERCHANT",
+            "perMyriad": 350
+          },
+          {
+            "id": "WEAVER",
+            "perMyriad": 300
+          },
+          {
+            "id": "COOK",
+            "perMyriad": 300
+          },
+          {
+            "id": "BAKER",
+            "perMyriad": 300
+          },
+          {
+            "id": "SCRIBE",
+            "perMyriad": 250
+          },
+          {
+            "id": "MILLER",
+            "perMyriad": 250
+          },
+          {
+            "id": "SMELTER",
+            "perMyriad": 250
+          },
+          {
+            "id": "QUARRYMAN",
+            "perMyriad": 250
+          },
+          {
+            "id": "TANNER",
+            "perMyriad": 250
+          },
+          {
+            "id": "LEATHERWORKER",
+            "perMyriad": 250
+          },
+          {
+            "id": "TAILOR",
+            "perMyriad": 250
+          },
+          {
+            "id": "SPINNER",
+            "perMyriad": 250
+          },
+          {
+            "id": "FORAGER",
+            "perMyriad": 250
+          },
+          {
+            "id": "HUNTER",
+            "perMyriad": 250
+          },
+          {
+            "id": "BREWER",
+            "perMyriad": 250
+          },
+          {
+            "id": "BUTCHER",
+            "perMyriad": 250
+          },
+          {
+            "id": "FISHER",
+            "perMyriad": 250
+          },
+          {
+            "id": "HERBALIST",
+            "perMyriad": 200
+          },
+          {
+            "id": "BOWYER",
+            "perMyriad": 200
+          },
+          {
+            "id": "FLETCHER",
+            "perMyriad": 200
+          },
+          {
+            "id": "POTTER",
+            "perMyriad": 200
+          },
+          {
+            "id": "THATCHER",
+            "perMyriad": 150
+          },
+          {
+            "id": "WOODCARVER",
+            "perMyriad": 150
+          },
+          {
+            "id": "ARMORER",
+            "perMyriad": 150
+          },
+          {
+            "id": "WEAPONSMITH",
+            "perMyriad": 150
+          },
+          {
+            "id": "JEWELER",
+            "perMyriad": 200
+          },
+          {
+            "id": "GLASSWORKER",
+            "perMyriad": 200
+          },
+          {
+            "id": "ALCHEMIST",
+            "perMyriad": 200
+          }
+        ],
+        "civicOffice": [
+          {
+            "id": "NONE",
+            "perMyriad": 6800
+          },
+          {
+            "id": "LEADER",
+            "perMyriad": 200
+          },
+          {
+            "id": "STEWARD",
+            "perMyriad": 200
+          },
+          {
+            "id": "TREASURER",
+            "perMyriad": 200
+          },
+          {
+            "id": "MINT_MASTER",
+            "perMyriad": 200
+          },
+          {
+            "id": "MARSHAL",
+            "perMyriad": 200
+          },
+          {
+            "id": "QUARTERMASTER",
+            "perMyriad": 200
+          },
+          {
+            "id": "MASTER_OF_WORKS",
+            "perMyriad": 200
+          },
+          {
+            "id": "PROVISIONER",
+            "perMyriad": 200
+          },
+          {
+            "id": "RECORDER",
+            "perMyriad": 200
+          },
+          {
+            "id": "MAGISTRATE",
+            "perMyriad": 200
+          },
+          {
+            "id": "HEALER_DIRECTOR",
+            "perMyriad": 200
+          },
+          {
+            "id": "ENVOY",
+            "perMyriad": 200
+          },
+          {
+            "id": "TRADE_MASTER",
+            "perMyriad": 200
+          },
+          {
+            "id": "TAX_COLLECTOR",
+            "perMyriad": 200
+          },
+          {
+            "id": "PAYMASTER",
+            "perMyriad": 200
+          },
+          {
+            "id": "CLERK",
+            "perMyriad": 200
+          }
+        ],
+        "class": [
+          {
+            "id": "NONE",
+            "perMyriad": 1800
+          },
+          {
+            "id": "FIGHTER",
+            "perMyriad": 1200
+          },
+          {
+            "id": "CLERIC",
+            "perMyriad": 800
+          },
+          {
+            "id": "WIZARD",
+            "perMyriad": 800
+          },
+          {
+            "id": "WARLOCK",
+            "perMyriad": 800
+          },
+          {
+            "id": "RANGER",
+            "perMyriad": 700
+          },
+          {
+            "id": "ROGUE",
+            "perMyriad": 700
+          },
+          {
+            "id": "DRUID",
+            "perMyriad": 600
+          },
+          {
+            "id": "PALADIN",
+            "perMyriad": 600
+          },
+          {
+            "id": "BARBARIAN",
+            "perMyriad": 500
+          },
+          {
+            "id": "BARD",
+            "perMyriad": 500
+          },
+          {
+            "id": "SORCERER",
+            "perMyriad": 500
+          },
+          {
+            "id": "MONK",
+            "perMyriad": 500
+          }
+        ],
+        "obligation": [
+          {
+            "id": "NONE",
+            "perMyriad": 2600
+          },
+          {
+            "id": "RESERVE",
+            "perMyriad": 2600
+          },
+          {
+            "id": "MILITIA",
+            "perMyriad": 2200
+          },
+          {
+            "id": "GUARD",
+            "perMyriad": 1400
+          },
+          {
+            "id": "PROFESSIONAL",
+            "perMyriad": 800
+          },
+          {
+            "id": "ELITE_RETINUE",
+            "perMyriad": 400
+          }
+        ]
+      }
+    }
+  ],
+  "expansion": {
+    "hardBandLock": false,
+    "preferHomeBand": true,
+    "distanceUnit": "cell",
+    "cellFeet": 5,
+    "preferFreshWaterWithinCells": 25,
+    "stages": [
+      {
+        "stage": "camp",
+        "maxNewSettlementDistanceCells": 0,
+        "minSeparationCells": 0,
+        "allowedTerrain": [
+          "firm-ground",
+          "soft-ground",
+          "timber-stand",
+          "stone-exposure",
+          "cavern-floor",
+          "open-air"
+        ]
+      },
+      {
+        "stage": "hamlet",
+        "maxNewSettlementDistanceCells": 0,
+        "minSeparationCells": 0,
+        "allowedTerrain": [
+          "firm-ground",
+          "soft-ground",
+          "timber-stand",
+          "stone-exposure",
+          "cavern-floor",
+          "open-air"
+        ]
+      },
+      {
+        "stage": "village",
+        "maxNewSettlementDistanceCells": 48,
+        "minSeparationCells": 16,
+        "allowedTerrain": [
+          "firm-ground",
+          "soft-ground",
+          "timber-stand",
+          "stone-exposure",
+          "cavern-floor",
+          "open-air"
+        ]
+      },
+      {
+        "stage": "town",
+        "maxNewSettlementDistanceCells": 192,
+        "minSeparationCells": 32,
+        "allowedTerrain": [
+          "firm-ground",
+          "soft-ground",
+          "timber-stand",
+          "stone-exposure",
+          "cavern-floor",
+          "open-air"
+        ]
+      },
+      {
+        "stage": "city",
+        "maxNewSettlementDistanceCells": 768,
+        "minSeparationCells": 64,
+        "allowedTerrain": [
+          "firm-ground",
+          "soft-ground",
+          "timber-stand",
+          "stone-exposure",
+          "cavern-floor",
+          "open-air"
+        ]
+      },
+      {
+        "stage": "capital",
+        "maxNewSettlementDistanceCells": 3072,
+        "minSeparationCells": 128,
+        "allowedTerrain": [
+          "firm-ground",
+          "soft-ground",
+          "timber-stand",
+          "stone-exposure",
+          "cavern-floor",
+          "open-air"
+        ]
+      }
+    ]
+  },
+  "failure": {
+    "regression": [
+      {
+        "id": "regress.hamlet",
+        "fromStage": "hamlet",
+        "toStage": "camp",
+        "when": {
+          "populationBelow": 16,
+          "forDays": 30
+        }
+      },
+      {
+        "id": "regress.village",
+        "fromStage": "village",
+        "toStage": "hamlet",
+        "when": {
+          "populationBelow": 40,
+          "forDays": 30
+        }
+      },
+      {
+        "id": "regress.town",
+        "fromStage": "town",
+        "toStage": "village",
+        "when": {
+          "populationBelow": 120,
+          "forDays": 30
+        }
+      },
+      {
+        "id": "regress.city",
+        "fromStage": "city",
+        "toStage": "town",
+        "when": {
+          "populationBelow": 400,
+          "forDays": 30
+        }
+      },
+      {
+        "id": "regress.capital",
+        "fromStage": "capital",
+        "toStage": "city",
+        "when": {
+          "populationBelow": 1200,
+          "forDays": 30
+        }
+      }
+    ],
+    "collapse": [
+      {
+        "id": "collapse.food",
+        "kind": "food-stores",
+        "when": {
+          "daysOfFoodBelow": 1,
+          "forDays": 14
+        },
+        "treasurySatisfies": false
+      },
+      {
+        "id": "collapse.population",
+        "kind": "population",
+        "when": {
+          "populationBelow": 2,
+          "forDays": 10
+        }
+      },
+      {
+        "id": "collapse.offices",
+        "kind": "vacant-institutions",
+        "when": {
+          "vacant": "all-required",
+          "forDays": 60
+        }
+      }
+    ]
+  }
+}
