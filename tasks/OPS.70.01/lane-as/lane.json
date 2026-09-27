@@ -1,0 +1,37 @@
+{
+    "lane":  "lane-as",
+    "taskId":  "OPS.70.01",
+    "branch":  "task/lane-as",
+    "writer":  "grok",
+    "reviewer":  "gemini",
+    "push":  true,
+    "allowedPaths":  [
+                         "tools/governance/check_invariants.js",
+                         "tools/governance/test_check_invariants.js",
+                         "tools/governance/fixtures/invariants/**",
+                         "tasks/OPS.70.01/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/governance/test_check_invariants.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/governance/check_invariants.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  900
+                      }
+                  ]
+}
