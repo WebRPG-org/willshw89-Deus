@@ -454,3 +454,14 @@ Every decision item recorded in this log must provide:
   1. **Recruitable Non-Core Humanoids:** Non-core humanoids (11 extra face cultures beyond the 9 SRD races: goblin, orc, kobold, etc.) can be persuaded or recruited into the player's party. They receive full paper-doll bodies on shared body templates (same layer and anchor rules as the 9 SRD races). Monstrous types (undead, elementals, etc.) remain fixed-sprite (no paper-doll).
   2. **Capture and Domestication:** Enemies and wildlife can be captured and tamed into pets, mounts, livestock, and work animals. Captured humanoids become prisoners or recruits.
   3. **Tamed Creatures in the Party:** Tamed creatures fight in the party using only their basic SRD 5.1 stat blocks and natural attacks and defenses. There are NO creature armor or equipment slots, no barding, and no crafted creature gear (Owner 13:01 CT ruling supersedes equipment exploration). A riding saddle is a visual marker only (no equipment slot, no mechanical stats).
+
+---
+
+### Decision `DEC-034`: Gemini Flash Final Merge Gate During Pro Quota Block
+- **Date Logged:** 2026-09-26
+- **Status:** `DECIDED` (Owner ruling 20:45 CT, Directive 0122-DR)
+- **Decider:** Owner
+- **Summary:**
+  1. **Final Merge Gate Authorization:** `gemini-3.8-flash` (thinking `HIGH`) is authorized as the authoritative final merge gate while `gemini-3.1-pro` is quota-blocked (until the reset window ~2026-09-27 19:04 CT / 7:04 PM CT).
+  2. **Supersession of Prior Pro-Required Holds:** Prior holds requiring a secondary or combined `gemini-3.1-pro` review pass before merge (e.g. Lane AA WG.00.17 second pass, Lane AL WG.20.01 combined pass) are superseded by an Owner-authorized Flash thinking `HIGH` review verdict.
+  3. **Unblocking Downstream Writers:** With Flash final gate reviews completed (Lane AL CLEAN PASS at `c17da05f`, Lane AA PASS WITH NOTES at `d2c6614f`), Lane AA and Lane AL merges to `main` are executed (`1c2fcc28` and `c1bb4469`), unblocking dependent downstream writer lanes (SIM.40.11, SIM.50.13, COMBAT-U7, WORLD-ITEMS, DEPTH-DEMO).
