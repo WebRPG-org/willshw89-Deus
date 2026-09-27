@@ -1,0 +1,53 @@
+{
+    "lane": "lane-bh",
+    "taskId": "SOC.10.03",
+    "branch": "task/lane-bh",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "effortClass": "mechanical",
+    "allowedPaths": [
+        "game/data/plans/human.plan.json",
+        "game/data/plans/elf.plan.json",
+        "game/data/plans/halfling.plan.json",
+        "game/data/plans/dwarf.plan.json",
+        "game/data/plans/gnome.plan.json",
+        "game/data/plans/dragonborn.plan.json",
+        "game/data/plans/half-elf.plan.json",
+        "game/data/plans/half-orc.plan.json",
+        "game/data/plans/tiefling.plan.json",
+        "tools/plans/test_race_plans.js",
+        "tasks/SOC.10.03/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": [
+                "tools/plans/test_race_plans.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/plans/test_faction_plan_schema.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/plans/validate_faction_plan.js",
+                "game/data/plans/TEMPLATE.plan.json"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/check_deus_syntax.js"
+            ],
+            "timeoutSec": 900
+        }
+    ]
+}
