@@ -1,0 +1,31 @@
+{
+  "id": "priority-not-permutation",
+  "kills": "buildOrderPermutation",
+  "expect": "priority-not-permutation",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "stages",
+        {
+          "id": "camp"
+        },
+        "buildOrder",
+        "peace"
+      ],
+      "value": [
+        "shelter",
+        "shelter",
+        "food",
+        "storage",
+        "workshop",
+        "healing",
+        "defense",
+        "government",
+        "road",
+        "temple",
+        "market"
+      ]
+    }
+  ]
+}

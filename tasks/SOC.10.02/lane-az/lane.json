@@ -1,0 +1,39 @@
+{
+    "lane": "lane-az",
+    "taskId": "SOC.10.02",
+    "branch": "task/lane-az",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "allowedPaths": [
+        "game/data/plans/faction_plan.schema.json",
+        "game/data/plans/TEMPLATE.plan.json",
+        "tools/plans/**",
+        "docs/systems/DEUS_FactionPlans.md",
+        "tasks/SOC.10.02/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": [
+                "tools/plans/test_faction_plan_schema.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/plans/validate_faction_plan.js",
+                "game/data/plans/TEMPLATE.plan.json"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/check_deus_syntax.js"
+            ],
+            "timeoutSec": 900
+        }
+    ]
+}

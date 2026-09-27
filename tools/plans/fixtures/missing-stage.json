@@ -1,0 +1,16 @@
+{
+  "id": "missing-stage",
+  "kills": "stagesPresent",
+  "expect": "missing-stage",
+  "patch": [
+    {
+      "op": "remove",
+      "where": [
+        "stages",
+        {
+          "id": "hamlet"
+        }
+      ]
+    }
+  ]
+}

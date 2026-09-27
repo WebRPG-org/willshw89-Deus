@@ -1,0 +1,37 @@
+{
+  "id": "office-mix",
+  "kills": "officeMixMatches",
+  "expect": "office-mix",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "stages",
+        {
+          "id": "camp"
+        },
+        "occupationMix",
+        "civicOffice",
+        {
+          "id": "TREASURER"
+        },
+        "perMyriad"
+      ],
+      "value": 2500
+    },
+    {
+      "op": "remove",
+      "where": [
+        "stages",
+        {
+          "id": "camp"
+        },
+        "occupationMix",
+        "civicOffice",
+        {
+          "id": "LEADER"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "deus-faction-plan/1.0.0",
+  "title": "DEUS Faction Development Plan",
+  "description": "Structural plan for one race's settlement growth. Normative prose is docs/systems/DEUS_FactionPlans.md. Cultural strings on the template are the sentinel OWNER_TODO.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "documentRole",
+    "planId",
+    "raceId",
+    "displayName",
+    "lore",
+    "values",
+    "architecture",
+    "buildings",
+    "knowledge",
+    "stages",
+    "expansion",
+    "failure"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "deus-faction-plan/1.0.0"
+    },
+    "documentRole": {
+      "$ref": "#/$defs/documentRole"
+    },
+    "planId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z][A-Za-z0-9._-]*$"
+    },
+    "raceId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "lore": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "values": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "architecture": {
+      "$ref": "#/$defs/architecture"
+    },
+    "buildings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/buildingRow"
+      },
+      "minItems": 1
+    },
+    "knowledge": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/knowledgeNode"
+      },
+      "minItems": 1
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/stage"
+      },
+      "minItems": 1,
+      "maxItems": 6
+    },
+    "expansion": {
+      "$ref": "#/$defs/expansion"
+    },
+    "failure": {
+      "$ref": "#/$defs/failure"
+    }
+  },
+  "$defs": {
+    "positiveInt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "perMyriad": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10000
+    },
+    "documentRole": {
+      "type": "string",
+      "enum": [
+        "template",
+        "racePlan"
+      ]
+    },
+    "stageId": {
+      "type": "string",
+      "enum": [
+        "camp",
+        "hamlet",
+        "village",
+        "town",
+        "city",
+        "capital"
+      ]
+    },
+    "postureId": {
+      "type": "string",
+      "enum": [
+        "peace",
+        "threat",
+        "famine",
+        "abundance"
+      ]
+    },
+    "priorityTarget": {
+      "type": "string",
+      "enum": [
+        "shelter",
+        "water",
+        "food",
+        "storage",
+        "defense",
+        "workshop",
+        "temple",
+        "government",
+        "road",
+        "healing",
+        "market"
+      ]
+    },
+    "bandId": {
+      "type": "string",
+      "enum": [
+        "lower-2",
+        "lower-1",
+        "surface",
+        "upper-1",
+        "upper-2"
+      ]
+    },
+    "terrainClass": {
+      "type": "string",
+      "enum": [
+        "firm-ground",
+        "soft-ground",
+        "timber-stand",
+        "stone-exposure",
+        "fresh-water",
+        "cavern-floor",
+        "open-air",
+        "steep"
+      ]
+    },
+    "obligationId": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "RESERVE",
+        "MILITIA",
+        "GUARD",
+        "PROFESSIONAL",
+        "ELITE_RETINUE"
+      ]
+    },
+    "classId": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "BARBARIAN",
+        "BARD",
+        "CLERIC",
+        "DRUID",
+        "FIGHTER",
+        "MONK",
+        "PALADIN",
+        "RANGER",
+        "ROGUE",
+        "SORCERER",
+        "WARLOCK",
+        "WIZARD"
+      ]
+    },
+    "craftId": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "FARMER",
+        "MINER",
+        "LOGGER",
+        "QUARRYMAN",
+        "HUNTER",
+        "FISHER",
+        "FORAGER",
+        "SMELTER",
+        "BLACKSMITH",
+        "ARMORER",
+        "WEAPONSMITH",
+        "CARPENTER",
+        "MASON",
+        "WOODCARVER",
+        "THATCHER",
+        "LEATHERWORKER",
+        "TANNER",
+        "TAILOR",
+        "WEAVER",
+        "SPINNER",
+        "COOK",
+        "BREWER",
+        "MILLER",
+        "BUTCHER",
+        "BAKER",
+        "POTTER",
+        "GLASSWORKER",
+        "JEWELER",
+        "FLETCHER",
+        "BOWYER",
+        "HERBALIST",
+        "ALCHEMIST",
+        "SCRIBE",
+        "MERCHANT"
+      ]
+    },
+    "craftRoleId": {
+      "type": "string",
+      "enum": [
+        "FARMER",
+        "MINER",
+        "LOGGER",
+        "QUARRYMAN",
+        "HUNTER",
+        "FISHER",
+        "FORAGER",
+        "SMELTER",
+        "BLACKSMITH",
+        "ARMORER",
+        "WEAPONSMITH",
+        "CARPENTER",
+        "MASON",
+        "WOODCARVER",
+        "THATCHER",
+        "LEATHERWORKER",
+        "TANNER",
+        "TAILOR",
+        "WEAVER",
+        "SPINNER",
+        "COOK",
+        "BREWER",
+        "MILLER",
+        "BUTCHER",
+        "BAKER",
+        "POTTER",
+        "GLASSWORKER",
+        "JEWELER",
+        "FLETCHER",
+        "BOWYER",
+        "HERBALIST",
+        "ALCHEMIST",
+        "SCRIBE",
+        "MERCHANT"
+      ]
+    },
+    "civicOfficeId": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "LEADER",
+        "STEWARD",
+        "TREASURER",
+        "MINT_MASTER",
+        "MARSHAL",
+        "QUARTERMASTER",
+        "MASTER_OF_WORKS",
+        "PROVISIONER",
+        "RECORDER",
+        "MAGISTRATE",
+        "HEALER_DIRECTOR",
+        "ENVOY",
+        "TRADE_MASTER",
+        "TAX_COLLECTOR",
+        "PAYMASTER",
+        "CLERK"
+      ]
+    },
+    "institutionId": {
+      "type": "string",
+      "enum": [
+        "LEADER",
+        "STEWARD",
+        "TREASURER",
+        "MINT_MASTER",
+        "MARSHAL",
+        "QUARTERMASTER",
+        "MASTER_OF_WORKS",
+        "PROVISIONER",
+        "RECORDER",
+        "MAGISTRATE",
+        "HEALER_DIRECTOR",
+        "ENVOY",
+        "TRADE_MASTER",
+        "TAX_COLLECTOR",
+        "PAYMASTER",
+        "CLERK"
+      ]
+    },
+    "buildingId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "knowledgeId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+$"
+    },
+    "buildingRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "priorityTarget"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/buildingId"
+        },
+        "priorityTarget": {
+          "$ref": "#/$defs/priorityTarget"
+        }
+      }
+    },
+    "buildingNeed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "minCount"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/buildingId"
+        },
+        "minCount": {
+          "$ref": "#/$defs/positiveInt"
+        }
+      }
+    },
+    "prerequisite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "stage",
+            "knowledge",
+            "building",
+            "institution"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      }
+    },
+    "unlock": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "building"
+            },
+            "id": {
+              "$ref": "#/$defs/buildingId"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "craft"
+            },
+            "id": {
+              "$ref": "#/$defs/craftRoleId"
+            }
+          }
+        }
+      ]
+    },
+    "knowledgeNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "prerequisites",
+        "unlocks"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/knowledgeId"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "construction",
+            "craft"
+          ]
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/knowledgeId"
+          },
+          "minItems": 0
+        },
+        "unlocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/unlock"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "shareCraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "perMyriad"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/craftId"
+        },
+        "perMyriad": {
+          "$ref": "#/$defs/perMyriad"
+        }
+      }
+    },
+    "shareOffice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "perMyriad"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/civicOfficeId"
+        },
+        "perMyriad": {
+          "$ref": "#/$defs/perMyriad"
+        }
+      }
+    },
+    "shareClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "perMyriad"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/classId"
+        },
+        "perMyriad": {
+          "$ref": "#/$defs/perMyriad"
+        }
+      }
+    },
+    "shareObligation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "perMyriad"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/obligationId"
+        },
+        "perMyriad": {
+          "$ref": "#/$defs/perMyriad"
+        }
+      }
+    },
+    "occupationMix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "craft",
+        "civicOffice",
+        "class",
+        "obligation"
+      ],
+      "properties": {
+        "craft": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/shareCraft"
+          },
+          "minItems": 1
+        },
+        "civicOffice": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/shareOffice"
+          },
+          "minItems": 1
+        },
+        "class": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/shareClass"
+          },
+          "minItems": 1
+        },
+        "obligation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/shareObligation"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "priorityOrder": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/priorityTarget"
+      },
+      "minItems": 11,
+      "maxItems": 11
+    },
+    "buildOrder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "peace",
+        "threat",
+        "famine",
+        "abundance"
+      ],
+      "properties": {
+        "peace": {
+          "$ref": "#/$defs/priorityOrder"
+        },
+        "threat": {
+          "$ref": "#/$defs/priorityOrder"
+        },
+        "famine": {
+          "$ref": "#/$defs/priorityOrder"
+        },
+        "abundance": {
+          "$ref": "#/$defs/priorityOrder"
+        }
+      }
+    },
+    "role": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "axis",
+            "id",
+            "minCount"
+          ],
+          "properties": {
+            "axis": {
+              "const": "craft"
+            },
+            "id": {
+              "$ref": "#/$defs/craftRoleId"
+            },
+            "minCount": {
+              "$ref": "#/$defs/positiveInt"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "axis",
+            "id",
+            "minCount"
+          ],
+          "properties": {
+            "axis": {
+              "const": "civicOffice"
+            },
+            "id": {
+              "$ref": "#/$defs/institutionId"
+            },
+            "minCount": {
+              "$ref": "#/$defs/positiveInt"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "axis",
+            "id",
+            "minCount"
+          ],
+          "properties": {
+            "axis": {
+              "const": "class"
+            },
+            "id": {
+              "$ref": "#/$defs/classId"
+            },
+            "minCount": {
+              "$ref": "#/$defs/positiveInt"
+            }
+          }
+        }
+      ]
+    },
+    "tierMaterials": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tier1",
+        "tier2",
+        "tier3"
+      ],
+      "properties": {
+        "tier1": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "tier2": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "tier3": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        }
+      }
+    },
+    "culturalStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "guidingMetaphor",
+        "exteriorSilhouette",
+        "proportionRatio",
+        "colorKey",
+        "tierMaterials",
+        "foundations",
+        "walls",
+        "openings",
+        "roofForm",
+        "supports",
+        "hearthPlacement",
+        "bedding",
+        "storagePhilosophy"
+      ],
+      "properties": {
+        "guidingMetaphor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "exteriorSilhouette": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "proportionRatio": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "colorKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "tierMaterials": {
+          "$ref": "#/$defs/tierMaterials"
+        },
+        "foundations": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "walls": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "openings": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "roofForm": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "supports": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "hearthPlacement": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "bedding": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "storagePhilosophy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        }
+      }
+    },
+    "architecture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bibleTemplate",
+        "bibleDocumentId",
+        "homeLayerBand",
+        "cultural",
+        "universalWeathering"
+      ],
+      "properties": {
+        "bibleTemplate": {
+          "const": "docs/art/DEUS_RACIAL_BUILDING_BIBLE_TEMPLATE.md"
+        },
+        "bibleDocumentId": {
+          "const": "DEUS-ARCH-RACE-01"
+        },
+        "homeLayerBand": {
+          "description": "OWNER_TODO until the Owner assigns a DEC-013 band. A race plan may use OWNER_TODO or one of $defs.bandId. The field is not an enum: template-band-assigned, bad-band, and a real band are different outcomes.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "cultural": {
+          "$ref": "#/$defs/culturalStyle"
+        },
+        "universalWeathering": {
+          "const": [
+            "chipped",
+            "burned",
+            "ruined"
+          ]
+        }
+      }
+    },
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "populationMin",
+        "buildings",
+        "roles",
+        "institutions",
+        "prerequisites",
+        "buildOrder",
+        "occupationMix"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stageId"
+        },
+        "populationMin": {
+          "$ref": "#/$defs/positiveInt"
+        },
+        "buildings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/buildingNeed"
+          },
+          "minItems": 1
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/role"
+          },
+          "minItems": 1
+        },
+        "institutions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/institutionId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prerequisite"
+          },
+          "minItems": 0
+        },
+        "buildOrder": {
+          "$ref": "#/$defs/buildOrder"
+        },
+        "occupationMix": {
+          "$ref": "#/$defs/occupationMix"
+        }
+      }
+    },
+    "expansionStage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stage",
+        "maxNewSettlementDistanceCells",
+        "minSeparationCells",
+        "allowedTerrain"
+      ],
+      "properties": {
+        "stage": {
+          "$ref": "#/$defs/stageId"
+        },
+        "maxNewSettlementDistanceCells": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "minSeparationCells": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "allowedTerrain": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/terrainClass"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "expansion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hardBandLock",
+        "preferHomeBand",
+        "distanceUnit",
+        "cellFeet",
+        "preferFreshWaterWithinCells",
+        "stages"
+      ],
+      "properties": {
+        "hardBandLock": {
+          "type": "boolean"
+        },
+        "preferHomeBand": {
+          "type": "boolean"
+        },
+        "distanceUnit": {
+          "const": "cell"
+        },
+        "cellFeet": {
+          "const": 5
+        },
+        "preferFreshWaterWithinCells": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/expansionStage"
+          },
+          "minItems": 6,
+          "maxItems": 6
+        }
+      }
+    },
+    "regression": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "fromStage",
+        "toStage",
+        "when"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^regress\\.[a-z]+$"
+        },
+        "fromStage": {
+          "$ref": "#/$defs/stageId"
+        },
+        "toStage": {
+          "$ref": "#/$defs/stageId"
+        },
+        "when": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "populationBelow",
+            "forDays"
+          ],
+          "properties": {
+            "populationBelow": {
+              "$ref": "#/$defs/positiveInt"
+            },
+            "forDays": {
+              "$ref": "#/$defs/positiveInt"
+            }
+          }
+        }
+      }
+    },
+    "collapse": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "when",
+            "treasurySatisfies"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^collapse\\.[a-z]+$"
+            },
+            "kind": {
+              "const": "food-stores"
+            },
+            "when": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "forDays",
+                "daysOfFoodBelow"
+              ],
+              "properties": {
+                "forDays": {
+                  "$ref": "#/$defs/positiveInt"
+                },
+                "daysOfFoodBelow": {
+                  "$ref": "#/$defs/positiveInt"
+                }
+              }
+            },
+            "treasurySatisfies": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "when"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^collapse\\.[a-z]+$"
+            },
+            "kind": {
+              "const": "population"
+            },
+            "when": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "forDays",
+                "populationBelow"
+              ],
+              "properties": {
+                "forDays": {
+                  "$ref": "#/$defs/positiveInt"
+                },
+                "populationBelow": {
+                  "$ref": "#/$defs/positiveInt"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "when"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^collapse\\.[a-z]+$"
+            },
+            "kind": {
+              "const": "vacant-institutions"
+            },
+            "when": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "forDays",
+                "vacant"
+              ],
+              "properties": {
+                "forDays": {
+                  "$ref": "#/$defs/positiveInt"
+                },
+                "vacant": {
+                  "const": "all-required"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "regression",
+        "collapse"
+      ],
+      "properties": {
+        "regression": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/regression"
+          },
+          "minItems": 1
+        },
+        "collapse": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/collapse"
+          },
+          "minItems": 1,
+          "maxItems": 8
+        }
+      }
+    }
+  }
+}

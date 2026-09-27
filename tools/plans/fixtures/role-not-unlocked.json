@@ -1,0 +1,23 @@
+{
+  "id": "role-not-unlocked",
+  "kills": "roleCraftUnlocked",
+  "expect": "role-not-unlocked",
+  "patch": [
+    {
+      "op": "add",
+      "where": [
+        "stages",
+        {
+          "id": "camp"
+        },
+        "roles",
+        "-"
+      ],
+      "value": {
+        "axis": "craft",
+        "id": "JEWELER",
+        "minCount": 1
+      }
+    }
+  ]
+}

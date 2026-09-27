@@ -1,0 +1,18 @@
+{
+  "id": "priority-unbuilt",
+  "kills": "priorityHasBuilding",
+  "expect": "priority-unbuilt",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "buildings",
+        {
+          "id": "market"
+        },
+        "priorityTarget"
+      ],
+      "value": "storage"
+    }
+  ]
+}

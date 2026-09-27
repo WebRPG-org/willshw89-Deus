@@ -1,0 +1,33 @@
+{
+  "id": "knowledge-cycle",
+  "kills": "knowledgeAcyclic",
+  "expect": "knowledge-cycle",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "knowledge",
+        {
+          "id": "construct.food"
+        },
+        "prerequisites"
+      ],
+      "value": [
+        "construct.workshop"
+      ]
+    },
+    {
+      "op": "set",
+      "where": [
+        "knowledge",
+        {
+          "id": "construct.workshop"
+        },
+        "prerequisites"
+      ],
+      "value": [
+        "construct.food"
+      ]
+    }
+  ]
+}

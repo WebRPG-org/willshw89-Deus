@@ -1,0 +1,31 @@
+{
+  "id": "population-not-monotone",
+  "kills": "populationMonotone",
+  "expect": "population-not-monotone",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "stages",
+        {
+          "id": "hamlet"
+        },
+        "populationMin"
+      ],
+      "value": 8
+    },
+    {
+      "op": "set",
+      "where": [
+        "failure",
+        "regression",
+        {
+          "fromStage": "hamlet"
+        },
+        "when",
+        "populationBelow"
+      ],
+      "value": 8
+    }
+  ]
+}

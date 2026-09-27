@@ -1,0 +1,23 @@
+{
+  "id": "occupation-mix-sum",
+  "kills": "occupationMixSum",
+  "expect": "occupation-mix-sum",
+  "patch": [
+    {
+      "op": "set",
+      "where": [
+        "stages",
+        {
+          "id": "camp"
+        },
+        "occupationMix",
+        "craft",
+        {
+          "id": "FORAGER"
+        },
+        "perMyriad"
+      ],
+      "value": 1999
+    }
+  ]
+}

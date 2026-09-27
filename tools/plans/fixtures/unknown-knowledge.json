@@ -1,0 +1,22 @@
+{
+  "id": "unknown-knowledge",
+  "kills": "prerequisitesResolve",
+  "expect": "unknown-prerequisite",
+  "patch": [
+    {
+      "op": "add",
+      "where": [
+        "stages",
+        {
+          "id": "camp"
+        },
+        "prerequisites",
+        "-"
+      ],
+      "value": {
+        "kind": "knowledge",
+        "id": "no.such"
+      }
+    }
+  ]
+}
