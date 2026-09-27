@@ -1,0 +1,38 @@
+{
+    "lane":  "lane-ar",
+    "taskId":  "SIM.10.02",
+    "branch":  "task/lane-ar",
+    "writer":  "grok",
+    "reviewer":  "gemini",
+    "push":  true,
+    "allowedPaths":  [
+                         "tools/dev/sim_forward.js",
+                         "tools/sim/test_sim_forward_guard.js",
+                         "tools/sim/fixtures/sim_forward/**",
+                         "docs/systems/DEUS_SimForward.md",
+                         "tasks/SIM.10.02/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/sim/test_sim_forward_guard.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/test_new_game_year0.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  900
+                      }
+                  ]
+}
