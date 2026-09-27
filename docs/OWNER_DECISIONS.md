@@ -465,3 +465,42 @@ Every decision item recorded in this log must provide:
   1. **Final Merge Gate Authorization:** `gemini-3.8-flash` (thinking `HIGH`) is authorized as the authoritative final merge gate while `gemini-3.1-pro` is quota-blocked (until the reset window ~2026-09-27 19:04 CT / 7:04 PM CT).
   2. **Supersession of Prior Pro-Required Holds:** Prior holds requiring a secondary or combined `gemini-3.1-pro` review pass before merge (e.g. Lane AA WG.00.17 second pass, Lane AL WG.20.01 combined pass) are superseded by an Owner-authorized Flash thinking `HIGH` review verdict.
   3. **Unblocking Downstream Writers:** With Flash final gate reviews completed (Lane AL CLEAN PASS at `c17da05f`, Lane AA PASS WITH NOTES at `d2c6614f`), Lane AA and Lane AL merges to `main` are executed (`1c2fcc28` and `c1bb4469`), unblocking dependent downstream writer lanes (SIM.40.11, SIM.50.13, COMBAT-U7, WORLD-ITEMS, DEPTH-DEMO).
+
+---
+
+### Decision `DEC-035`: Gate Tests Before Review, Mechanical Writer Effort, and Model Routing Rules
+- **Date Logged:** 2026-09-27
+- **Status:** `DECIDED` (Owner rulings 11:26 CT and 11:49 CT, Directives 0141-EK, 0142-EL)
+- **Decider:** Owner
+- **Summary:**
+  1. **Gate Tests Before Review:** The PM runs every `lane.json` gate test on the writer tip, in a fresh clone, before launching any Gemini review. Any lane with a failing gate test goes back to a fix pass instead of review.
+  2. **Writer Effort by Lane Type:** Grok writers stay at `xhigh` for simulation, worldgen, rendering, combat, AI, and tricky logic. `high` is permitted ONLY for purely mechanical lanes (data files, schemas, templates, catalog entries, formatting, simple specs). This supersedes DEC-032 item 5 ("xhigh is the Grok floor; nothing launches Grok below it") and the item 6 effort floor for mechanical Grok writer lanes only; big-tier lanes, reviews, and all other cases keep the floor. Implemented in Lane BC (`pm_ops/top_models.ps1` honoring explicit Grok `high` when `effortClass` is mechanical).
+  3. **Model Routing Rule:** Quality first: the strongest available model at `xhigh` for hard logic (sim, worldgen, rendering, combat, AI, tooling logic); `high` effort or cheaper models only for purely mechanical work. When Claude/Codex return (Tue Sep 29) or Gemini 3.1 Pro resets (~7:04 PM CT today), re-route each task to whichever available model is strongest for it. Gemini 3.1 Pro becomes the merge-gate reviewer again once back (gemini-3.8-flash thinking HIGH remains the DEC-034 gate only while Pro is unavailable).
+
+---
+
+### Decision `DEC-036`: Race-Class Affinities, No Race-Class Locks, and Role Distribution Rule
+- **Date Logged:** 2026-09-27
+- **Status:** `DECIDED` (Owner rulings 11:59 CT, 12:30 CT, 12:31 CT, 12:33 CT, Directives 0143-EM, 0144-EN)
+- **Decider:** Owner
+- **Summary:**
+  1. **No Race-Class Locks:** Every race can take every class without exception. No class is ever locked to any race. The three-axis person identity model (SOC.10.01) allows any combination.
+  2. **Race-Class Affinity Table:** Each race receives small thematic affinities (a small bonus and town AI weighting). The authoritative table (Owner 12:30 CT, corrections at 12:31 CT and 12:33 CT):
+     | Race | Affinity classes |
+     |---|---|
+     | Human | Fighter, Wizard, Cleric |
+     | Dwarf | Paladin, Cleric, Rogue |
+     | Elf | Ranger, Druid, Sorcerer |
+     | Half-elf | Fighter, Druid, Bard |
+     | Halfling | Fighter, Druid, Rogue |
+     | Gnome | Fighter, Cleric, Wizard |
+     | Half-orc | Barbarian, Druid, Fighter |
+     | Tiefling | Fighter, Warlock, Cleric |
+     | Dragonborn | Fighter, Monk, Cleric |
+  3. **Role Distribution Rule:** Each race favours one tank, one healer, and one damage class. The Owner counts Ranger as a tank.
+  4. **Unset Authoring Values (OWNER_TODO):**
+     - Bonus size: `OWNER_TODO`
+     - Job-pick weight: `OWNER_TODO`
+     - Role tags for non-obvious rows (e.g. Half-elf Fighter/Druid/Bard, Half-orc Barbarian/Druid/Fighter): `OWNER_TODO`
+     - Playtest starting suggestions (unapproved, pending Owner ruling): +1 on class main rolls, ~10% faster class XP, ~1.5x job-pick weight.
+  5. **Cross-References:** DEC-013 item 5 (nine races), SOC.10.01 (person identity class axis allows any class for any race; merged at `099be7b9`), SOC.11.01 (2014 SRD class integration), SOC.13.01 (central duty scheduler). Planning task tracked in SOC.11.02.

@@ -1,8 +1,8 @@
 # DEUS Society & Institutions Work Breakdown Structure
 
 **Namespace:** SOC  
-**Rev:** 4  
-**IDs:** Stable. Next free in SOC.70 is SOC.70.02. Next free band is SOC.80  
+**Rev:** 5  
+**IDs:** Stable. Next free in SOC.10 is SOC.10.05. Next free in SOC.11 is SOC.11.03. Next free in SOC.70 is SOC.70.02. Next free band is SOC.80  
 **Canonical Authority:** Gemini / Antigravity  
 **Status:** CANONICAL ON MAIN  
 **Permanent Project-Control Anchor:** WBS IDs are immutable. Never silently renumber, merge, or reuse them. Once committed, a leaf changes only by status (`PLANNED` → `DONE`) or retirement via `SUPERSEDED`.  
@@ -59,6 +59,7 @@ SOC.70 — Society & Economy Verification Test Suites
 | **SOC.10.02** | Faction Development Plan Spec & JSON Schema | Fable / Gemini | Design-first JSON schema defining 6 settlement stages (camp to capital), unlock prerequisites, dynamic build orders (peace/threat/famine), occupation mix, tech path, architectural style per DEC-013 band, expansion & collapse rules (DEC-015, V141). | `PLANNED` |
 | **SOC.10.03** | Nine Race Development Plan Data Slots | Fable / Gemini | Author 9 baseline JSON plan files in `game/data/plans/` for the 9 races with structural schema populated; race-specific cultural lore, names, and values marked Owner TODO (DEC-015). | `PLANNED` |
 | **SOC.11.01** | 2014 SRD Class Integration | Fable | Integrate canonical 2014 SRD classes, hit dice, proficiencies, spellcasting, and level 1..20 progression rules. | `PLANNED` |
+| **SOC.11.02** | Race-Class Affinity Table and Job-Picking Weight | Gemini / Fable | Author data schema and affinity tables for 9 races across classes with tank/healer/damage distribution; integration with SOC.13 duty scheduler candidate weighting without hard locks; prove no race-class combinations are locked; DEC-036; Directives 0143-EM, 0144-EN. | `PLANNED` |
 | **SOC.12.01** | Master Craft Catalogue | Gemini | Define economic professions linked to DEUS production chains, 2014 SRD item crafting, and apprentice-to-master progression. | `PLANNED` |
 | **SOC.13.01** | Central Duty Scheduler | Fable | Arbitrate competing operational priorities (vital needs, combat defense, mobilization, office duty, craft labor, rest). | `PLANNED` |
 | **SOC.10.04** | Recruitment & Persuasion of Non-Core Humanoids | Fable / Gemini | Non-core humanoids (11 extra face cultures beyond 9 SRD races: goblin, orc, kobold, etc.) can be persuaded or recruited into the faction/party; full paper-doll bodies on shared body templates; monstrous types remain fixed-sprite (no paper-doll); Owner 2026-09-26 12:59 CT; DEC-033. | `PLANNED` |
@@ -127,6 +128,7 @@ SOC.70 — Society & Economy Verification Test Suites
 
 | Rev | Date | Change |
 |:---:|:---:|:---|
+| 5 | 2026-09-27 | Directives 0143-EM, 0144-EN: Minted SOC.11.02 (Race-class affinity table and job-picking weight; DEC-036). |
 | 4 | 2026-09-26 | Directive 0096-CS: Minted SOC.10.04 (Recruitment & persuasion of non-core humanoids; shared paper-doll templates) and SOC.40.03 (Capture, prisoners & hostile humanoid subjugation). Recorded DEC-033. |
 | 3 | 2026-09-26 | Directive 0021-V Addendum §10 / Directive 0023-X: Added SOC.10.02 (Faction Development Plan Specification & JSON Schema) and SOC.10.03 (Nine Race Development Plan Data Slots), DEC-015, Vision V141. |
 | 2 | 2026-09-25 | Adopt integer rev header and immutable ID governance. SOC.70.01 confirmed as society verification suite. Next free in SOC.70 is SOC.70.02; next free band is SOC.80. |

@@ -181,7 +181,8 @@
     "launchTimeCT": "2026-09-26 02:22:02 CT",
     "briefPath": "C:\\Users\\snewt\\.deus_worktrees\\lane-s\\tasks\\WG.20.02\\lane-s\\BRIEF.md",
     "launchPromptPath": "C:\\Users\\snewt\\.deus_worktrees\\run_lane_s.ps1",
-    "state": "running",
+    "state": "exited",
+    "endedAtCT": "2026-09-26 03:50:00 CT",
     "tip": "5961d003"
   },
   {
@@ -195,7 +196,8 @@
     "launchTimeCT": "2026-09-26 02:24:04 CT",
     "briefPath": "C:\\Users\\snewt\\.deus_worktrees\\lane-t\\tasks\\WG.32.02\\lane-t\\BRIEF.md",
     "launchPromptPath": "C:\\Users\\snewt\\.deus_worktrees\\run_lane_t.ps1",
-    "state": "running",
+    "state": "exited",
+    "endedAtCT": "2026-09-26 03:50:00 CT",
     "tip": "b910fb20"
   },
   {
@@ -209,7 +211,8 @@
     "launchTimeCT": "2026-09-26 02:24:24 CT",
     "briefPath": "C:\\Users\\snewt\\.deus_worktrees\\lane-u\\tasks\\WG.41.01\\lane-u\\BRIEF.md",
     "launchPromptPath": "C:\\Users\\snewt\\.deus_worktrees\\run_lane_u.ps1",
-    "state": "running",
+    "state": "exited",
+    "endedAtCT": "2026-09-26 03:50:00 CT",
     "tip": "3ed8c4b0"
   },
   {
@@ -223,7 +226,8 @@
     "launchTimeCT": "2026-09-26 02:24:45 CT",
     "briefPath": "C:\\Users\\snewt\\.deus_worktrees\\lane-p\\tasks\\SIM.60.01\\lane-p\\BRIEF.md",
     "launchPromptPath": "C:\\Users\\snewt\\.deus_worktrees\\run_lane_p.ps1",
-    "state": "running",
+    "state": "exited",
+    "endedAtCT": "2026-09-26 03:50:00 CT",
     "tip": "d63425f1"
   },
   {
@@ -237,7 +241,8 @@
     "launchTimeCT": "2026-09-26 02:25:05 CT",
     "briefPath": "C:\\Users\\snewt\\.deus_worktrees\\lane-m\\tasks\\SIM.00.01\\lane-m\\BRIEF.md",
     "launchPromptPath": "C:\\Users\\snewt\\.deus_worktrees\\run_lane_m.ps1",
-    "state": "running",
+    "state": "exited",
+    "endedAtCT": "2026-09-26 03:50:00 CT",
     "tip": "84d0404d"
   }
 ]
