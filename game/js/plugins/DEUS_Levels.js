@@ -25,7 +25,10 @@
  * WG.00.17, docs/systems/DEUS_ZRange.md): new worlds -16..+15, a save made
  * before WG.00.17 -2..+2. -2, -1, Ground, +1, +2 are generated as before;
  * the layers below -2 are solid rock and the layers above +2 open air (and
- * the mountain rock that rises above +2). Vertical slice 1
+ * the mountain rock that rises above +2). A new world with vertical biome
+ * coupling on (the default) labels every underground layer from the surface
+ * climate column and its DEC-013 depth band; the rock below -2 stays solid.
+ * Vertical slice 1
  * (docs/design/VERTICAL_BUILD_PLAN.md section 5) is here:
  *
  * - Cells: every cell of every level has a shape (solid, floor, open, ramp,
@@ -97,6 +100,132 @@
         { id: "fossil_bed", name: "Fossil bed", material: STONE, floorLook: "mined_soil", depthBand: "deep" },
         { id: "deep_salt_cavern", name: "Deep salt cavern", material: STONE, floorLook: "cave_floor", depthBand: "deep" }
     ].map(b => b && Object.freeze(b)));
+    const BIOME_CODE_BY_ID = new Map();
+    for (let bi = 1; bi < BIOMES.length; bi++) if (BIOMES[bi]) BIOME_CODE_BY_ID.set(BIOMES[bi].id, bi);
+
+    // DEC-013 item 7, the two underground bands (not the old Z-1 / Z-2 pair). Lower-1 is -8..-1, Lower-2 is -16..-9.
+    // DEC-030's later edges are a different table; this lane follows the brief's DEC-013 bands.
+    const DEPTH_BANDS = Object.freeze([
+        Object.freeze({ id: "deep_caverns", zMin: -16, zMax: -9, role: "deep" }),
+        Object.freeze({ id: "shallow_underground", zMin: -8, zMax: -1, role: "shallow" })
+    ]);
+    // M-GEN-01 / packet 04: one substrate per surface-column kind and band. First matching kind wins.
+    // Volcanic deep is deep_mine_belt: the substrate list has no deep_magma id (the z=-2 lava pool stays a fluid).
+    const COLUMN_RULES = Object.freeze([
+        Object.freeze({ kind: "volcanic", shallow: "shallow_cave", deep: "deep_mine_belt" }),
+        Object.freeze({ kind: "wet_water", shallow: "clay_bed", deep: "deep_salt_cavern" }),
+        Object.freeze({ kind: "wet_land", shallow: "clay_bed", deep: "fossil_bed" }),
+        Object.freeze({ kind: "mountain", shallow: "chalk_karst", deep: "deep_mine_belt" }),
+        Object.freeze({ kind: "cold", shallow: "chalk_karst", deep: "crystal_cavern" }),
+        Object.freeze({ kind: "arid", shallow: "shallow_cave", deep: "deep_salt_cavern" }),
+        Object.freeze({ kind: "forest", shallow: "rooted_loam", deep: "crystal_cavern" }),
+        Object.freeze({ kind: "temperate", shallow: "rooted_loam", deep: "deep_mine_belt" })
+    ]);
+    function depthBandOf(z) {
+        for (let i = 0; i < DEPTH_BANDS.length; i++) if (z >= DEPTH_BANDS[i].zMin && z <= DEPTH_BANDS[i].zMax) return DEPTH_BANDS[i];
+        return null;
+    }
+    function mountainLevel() {
+        const cat = catalog();
+        const cl = cat && cat.climate;
+        return (cl && cl.mountainLevel) || 0.74;
+    }
+    function couplingActive() {
+        const st = World() && World().state;
+        return !!(st && st.verticalBiomeCoupling);
+    }
+    // mutant anchor: nondeterminism
+    function kindIndexFromFields(e, r, t, d, v, water, mtn) {
+        const kindJitter = 0;
+        let kind;
+        if (v > 0.62) kind = 0;
+        else if (water) kind = 1;
+        else if (r > 0.6 && d < 0.35) kind = 2;
+        else if (e >= mtn) kind = 3;
+        else if (t < 0.25) kind = 4;
+        else if (r < 0.28) kind = 5;
+        else if (r > 0.45) kind = 6;
+        else kind = 7;
+        return Math.min(COLUMN_RULES.length - 1, kind + kindJitter);
+    }
+    function kindIndexFromColumn(col) {
+        return kindIndexFromFields(col.e, col.r, col.t, col.d, col.v, col.water ? 1 : 0, mountainLevel());
+    }
+    const kindGrids = new Map();
+    function kindGrid(ax, ay, size) {
+        const W = World(), st = W && W.state;
+        const G = window.UF && UF.WorldGen;
+        if (!st || !G || typeof G.columnFieldGrid !== "function") return null;
+        const key = `${st.seed}:${ax},${ay}:${size}:${st.areasX}x${st.areasY}`;
+        const hit = kindGrids.get(key);
+        if (hit) return hit;
+        const pack = G.columnFieldGrid(ax, ay, size);
+        const grid = new Uint8Array(size * size);
+        if (pack) {
+            const mtn = mountainLevel();
+            for (let i = 0; i < grid.length; i++) grid[i] = kindIndexFromFields(pack.e[i], pack.r[i], pack.t[i], pack.d[i], pack.v[i], pack.water[i], mtn);
+        } else grid.fill(7);
+        kindGrids.set(key, grid);
+        while (kindGrids.size > 4) kindGrids.delete(kindGrids.keys().next().value);
+        return grid;
+    }
+    function discardBaselineCache() {
+        baselines.clear();
+        volumes.clear();
+        kindGrids.clear();
+    }
+    function columnBiomeId(gx, gy, z) {
+        const band = depthBandOf(z);
+        if (!band) return null;
+        const size = (World() && World().state && World().state.size) || 256;
+        const ax = Math.floor(gx / size), ay = Math.floor(gy / size);
+        const grid = kindGrid(ax, ay, size);
+        if (!grid) return null;
+        const lx = gx - ax * size, ly = gy - ay * size;
+        return COLUMN_RULES[grid[ly * size + lx]][band.role];
+    }
+    // The pre-WG.00.15 4x4 roll. Salts stay on the generator version so an uncoupled world matches its old bytes.
+    function paintProvinceBiomes(seed, gen, z, ax, ay, size, biome, material) {
+        const salt = hashString(gen === 2 ? `uf.levels.v2.${z}` : `uf.levels.v3.${z}`);
+        const offset = hash32(seed, salt, 99) % 4;
+        const rand = (...p) => hash32(seed, salt, ax, ay, ...p) / 4294967296;
+        const provinces = [];
+        for (let py = 0; py < 4; py++) for (let px = 0; px < 4; px++) {
+            const i = py * 4 + px;
+            provinces.push({
+                x: (px + 0.25 + rand(i, 1) * 0.5) * size / 4,
+                y: (py + 0.25 + rand(i, 2) * 0.5) * size / 4,
+                code: (z === -1 ? 1 : 5) + ((px + py + offset) % 4)
+            });
+        }
+        for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+            let nearest = null, distance = Infinity;
+            for (const p of provinces) {
+                const d = (x - p.x) ** 2 + (y - p.y) ** 2;
+                if (d < distance) { nearest = p; distance = d; }
+            }
+            const i = y * size + x;
+            biome[i] = nearest.code;
+            material[i] = BIOMES[nearest.code].material;
+        }
+    }
+    function paintColumnBiomes(z, ax, ay, size, biome, material) {
+        const band = depthBandOf(z);
+        const grid = kindGrid(ax, ay, size);
+        for (let i = 0; i < biome.length; i++) {
+            const kind = grid ? grid[i] : 7;
+            const id = COLUMN_RULES[kind][band && band.role === "deep" ? "deep" : "shallow"];
+            const code = BIOME_CODE_BY_ID.get(id) || 1;
+            biome[i] = code;
+            material[i] = BIOMES[code].material;
+        }
+    }
+    // mutant anchor: independent roll
+    function paintSubstrate(seed, gen, z, ax, ay, size, biome, material) {
+        const useColumn = couplingActive();
+        if (useColumn) paintColumnBiomes(z, ax, ay, size, biome, material);
+        else paintProvinceBiomes(seed, gen, z, ax, ay, size, biome, material);
+    }
 
     // Where each look sits in the runtime sheets: the slots of docs/handoffs/HANDOFF_vertical.md section 3, so the
     // delivered UF_Levels_* sheets drop in through the catalog alone.
@@ -470,26 +599,10 @@
     function generateUnderground(seed, gen, z, ax, ay, size, shape, material) {
         const biome = new Uint8Array(size * size), water = new Uint8Array(size * size), pockets = [];
         if (gen === 2) {
-            const salt = hashString(`uf.levels.v2.${z}`), offset = hash32(seed, salt, 99) % 4;
+            const salt = hashString(`uf.levels.v2.${z}`);
             const rand = (...p) => hash32(seed, salt, ax, ay, ...p) / 4294967296;
-            const provinces = [];
-            for (let py = 0; py < 4; py++) for (let px = 0; px < 4; px++) {
-                const i = py * 4 + px;
-                provinces.push({ x: (px + 0.25 + rand(i, 1) * 0.5) * size / 4,
-                    y: (py + 0.25 + rand(i, 2) * 0.5) * size / 4,
-                    code: (z === -1 ? 1 : 5) + ((px + py + offset) % 4) });
-            }
             shape.fill(SOLID);
-            for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
-                let nearest = null, distance = Infinity;
-                for (const p of provinces) {
-                    const d = (x - p.x) ** 2 + (y - p.y) ** 2;
-                    if (d < distance) { nearest = p; distance = d; }
-                }
-                const i = y * size + x;
-                biome[i] = nearest.code;
-                material[i] = BIOMES[nearest.code].material;
-            }
+            paintSubstrate(seed, gen, z, ax, ay, size, biome, material);
             const divisions = z === -1 ? 6 : 4, span = size / divisions;
             for (let py = 0; py < divisions; py++) for (let px = 0; px < divisions; px++) {
                 const id = py * divisions + px + 1;
@@ -518,28 +631,9 @@
         }
 
         // GEN >= 3: Continuous rolling cavern network with interconnected halls, corridors, and natural pillars
-        const salt = hashString(`uf.levels.v3.${z}`), offset = hash32(seed, salt, 99) % 4;
-        const rand = (...p) => hash32(seed, salt, ax, ay, ...p) / 4294967296;
-        const provinces = [];
-        for (let py = 0; py < 4; py++) for (let px = 0; px < 4; px++) {
-            const i = py * 4 + px;
-            provinces.push({
-                x: (px + 0.25 + rand(i, 1) * 0.5) * size / 4,
-                y: (py + 0.25 + rand(i, 2) * 0.5) * size / 4,
-                code: (z === -1 ? 1 : 5) + ((px + py + offset) % 4)
-            });
-        }
+        const salt = hashString(`uf.levels.v3.${z}`);
         shape.fill(SOLID);
-        for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
-            let nearest = null, distance = Infinity;
-            for (const p of provinces) {
-                const d = (x - p.x) ** 2 + (y - p.y) ** 2;
-                if (d < distance) { nearest = p; distance = d; }
-            }
-            const i = y * size + x;
-            biome[i] = nearest.code;
-            material[i] = BIOMES[nearest.code].material;
-        }
+        paintSubstrate(seed, gen, z, ax, ay, size, biome, material);
 
         for (let y = BORDER; y < size - BORDER; y++) {
             for (let x = BORDER; x < size - BORDER; x++) {
@@ -939,7 +1033,7 @@
         const st = W && W.state;
         if (!st || !isLevel(z)) return null;
         const s = seed === undefined ? st.seed : seed, g = gen === undefined ? levelGen(st, z) : gen;
-        const r = zrSync(), key = `${s}:${g}:${z}:${ax},${ay}:${st.size}:${st.areasX},${st.areasY}:${r.zMin}..${r.zMax}`;
+        const r = zrSync(), key = `${s}:${g}:${z}:${ax},${ay}:${st.size}:${st.areasX},${st.areasY}:${r.zMin}..${r.zMax}:${st.verticalBiomeCoupling ? 1 : 0}`;
         let b = baselines.get(key);
         if (!b) {
             b = generateBaseline(s, g, z, ax, ay, st.size);
@@ -1597,7 +1691,14 @@
         const W = World();
         if (!W || !W.state || z >= 0 || !isLevel(z) || !W.inWorld(ax, ay, z) || x < 0 || y < 0 || x >= W.state.size || y >= W.state.size) return 0;
         const b = baseline(z, ax, ay);
-        return b && b.biome ? b.biome[y * W.state.size + x] : 0;
+        if (b && b.biome) return b.biome[y * W.state.size + x];
+        if (!couplingActive()) return 0;
+        const band = depthBandOf(z);
+        if (!band) return 0;
+        const grid = kindGrid(ax, ay, W.state.size);
+        if (!grid) return 0;
+        const id = COLUMN_RULES[grid[y * W.state.size + x]][band.role];
+        return BIOME_CODE_BY_ID.get(id) || 0;
     }
     function biomeAt(ref) {
         const r = refOf(ref), b = BIOMES[biomeCodeAt(r.ax, r.ay, r.x, r.y, r.z)];
@@ -2366,7 +2467,7 @@
     // dropped one regenerates identically.
     function volumeOf(seed, gen, ax, ay, size) {
         const W = World(), st = W && W.state, r = zrSync();
-        const key = `${seed}:${gen}:${ax},${ay}:${size}:${st && st.areasX ? `${st.areasX}x${st.areasY}` : "1x1"}:${r.zMin}..${r.zMax}`;
+        const key = `${seed}:${gen}:${ax},${ay}:${size}:${st && st.areasX ? `${st.areasX}x${st.areasY}` : "1x1"}:${r.zMin}..${r.zMax}:${st && st.verticalBiomeCoupling ? 1 : 0}`;
         let v = volumes.get(key);
         if (v) return v;
         const t0 = performance.now();
@@ -4769,6 +4870,15 @@
         /** The generated core (the legacy range -2..+2): the levels with generator content, entries and checksums. */
         CORE_LEVELS,
         SHAPES, MATERIALS, TILESET_ID, GEN, BIOMES, PRE_CUT_GEN, FEATURE_GEN, FEATURE_PARAMS, FAMILIES,
+        /** New worlds copy this onto state.verticalBiomeCoupling when the save has no opinion yet. Default on. */
+        VERTICAL_BIOME_COUPLING: true,
+        DEPTH_BANDS, COLUMN_RULES,
+        depthBand: depthBandOf,
+        verticalCouplingOn: () => couplingActive(),
+        /** Drop generated baselines so the next read builds them again. Regeneration is the same pure function. */
+        discardBaselineCache,
+        /** Substrate id for a world cell from the surface column and the DEC-013 band, or null above ground. */
+        columnBiomeId,
         isLevel,
         label: z => (isLevel(z) && z !== zrSync().zMax + 1 ? labelOf(z) : ""),
         levelKey: (ax, ay, z = 0) => isLevel(z) ? (z ? `${ax},${ay},${z}` : `${ax},${ay}`) : null,
@@ -5046,6 +5156,8 @@
         if (provoked("offscreen_state") && W.pathConfig) W.pathConfig.offscreenPaths = false;
         if (window.UF.Events && UF.Events.on) {
             UF.Events.on("world:initializing", st => {
+                // Absent on a save made before WG.00.15: those worlds keep the independent roll and their checksums.
+                if (st && st.verticalBiomeCoupling === undefined) st.verticalBiomeCoupling = Levels.VERTICAL_BIOME_COUPLING !== false;
                 if (!provoked("complete_at_start")) {
                     ensureWorldLevels(st);
                     stats.initializedBeforeCreated = st.seed;

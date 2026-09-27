@@ -499,6 +499,109 @@
     /** { rivers, pond, isWater(gx, gy) } for the world. */
     WorldGen.waterModel = state => waterModels(state || UF.World.state);
 
+    /**
+     * Surface climate column at (gx, gy): elevation, rainfall, temperature, drainage, volcanism,
+     * salinity, and whether the cell is river, pond, lake or sea. One fields sample. No Levels call.
+     */
+    WorldGen.columnClimate = function(gx, gy) {
+        const cat = catalog();
+        const cl = cat && cat.climate;
+        const st = window.UF && UF.World && UF.World.state;
+        if (!cl || !st) return null;
+        const d = dims(st);
+        const f = fieldsFor(d.seed, d, cl, gx, gy);
+        const wm = waterModels(st);
+        const water = wm.isRiverOrPond(gx, gy) || f.e < cl.seaLevel || isLake(d.seed, cl, f, gx, gy, d.width, d.height);
+        return { e: f.e, r: f.r, t: f.t, d: f.d, v: f.v, sal: f.sal, water: !!water };
+    };
+
+    // The same column as columnClimate, for every cell of one area, without a call or an object per cell.
+    function noiseLattice(seed, salt, scale, wrapW, wrapH) {
+        const modW = Math.max(1, Math.round(wrapW / scale));
+        const modH = Math.max(1, Math.round(wrapH / scale));
+        const c = new Float64Array(modW * modH);
+        for (let iy = 0; iy < modH; iy++) for (let ix = 0; ix < modW; ix++) c[iy * modW + ix] = unit4(seed, salt, ix, iy);
+        return { modW, modH, effX: wrapW / modW, effY: wrapH / modH, c };
+    }
+    function rowOf(lat, gy) {
+        const fy = gy / lat.effY, iy = Math.floor(fy), ty = smooth(fy - iy);
+        const y0 = ((iy % lat.modH) + lat.modH) % lat.modH;
+        const y1 = (y0 + 1) % lat.modH;
+        return { lat, ty, r0: y0 * lat.modW, r1: y1 * lat.modW };
+    }
+    function along(row, gx) {
+        const lat = row.lat, fx = gx / lat.effX, ix = Math.floor(fx), tx = smooth(fx - ix);
+        const x0 = ((ix % lat.modW) + lat.modW) % lat.modW, x1 = (x0 + 1) % lat.modW;
+        const a = lat.c[row.r0 + x0], b = lat.c[row.r0 + x1];
+        const c0 = lat.c[row.r1 + x0], d0 = lat.c[row.r1 + x1];
+        const top = a + (b - a) * tx;
+        return top + (c0 + (d0 - c0) * tx - top) * row.ty;
+    }
+    WorldGen.columnFieldGrid = function(ax, ay, size) {
+        const cat = catalog();
+        const cl = cat && cat.climate;
+        const st = window.UF && UF.World && UF.World.state;
+        if (!cl || !st || !cl.scale) return null;
+        const d = dims(st);
+        const sc = cl.scale, ww = d.width, wh = d.height, n = size * size;
+        const field = (salt, scale) => noiseLattice(d.seed, salt, scale, ww, wh);
+        const detail = SALT.detail;
+        const lat = {
+            e: field(SALT.elevation, sc.elevation), ed: field(SALT.elevation ^ detail, sc.detail),
+            r: field(SALT.rainfall, sc.rainfall), rd: field(SALT.rainfall ^ detail, sc.detail),
+            t: field(SALT.temperature, sc.temperature), td: field(SALT.temperature ^ detail, sc.detail),
+            d: field(SALT.drainage, sc.drainage), dd: field(SALT.drainage ^ detail, sc.detail),
+            v: field(SALT.volcanism, sc.volcanism), vd: field(SALT.volcanism ^ detail, sc.detail),
+            lake: field(SALT.lake, (cl.lakes && cl.lakes.scale) || 70)
+        };
+        const blend = (base, target, w) => base + (target - base) * w;
+        const eOut = new Float64Array(n), rOut = new Float64Array(n), tOut = new Float64Array(n);
+        const dOut = new Float64Array(n), vOut = new Float64Array(n), water = new Uint8Array(n);
+        const wm = waterModels(st);
+        const flow = new Uint8Array(n);
+        for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (wm.isRiverOrPond(ax * size + x, ay * size + y)) flow[y * size + x] = 1;
+        const radius = cl.startHabitableRadius || [28, 110];
+        const start = cl.startClimate;
+        const L = cl.lakes;
+        const sea = cl.seaLevel, mtn = cl.mountainLevel;
+        for (let y = 0; y < size; y++) {
+            const gy = ay * size + y;
+            const distFromEq = Math.abs(gy - wh / 2) / (wh / 2);
+            const baseTemp = 0.85 - 0.7 * distFromEq;
+            const rowE = rowOf(lat.e, gy), rowEd = rowOf(lat.ed, gy);
+            const rowR = rowOf(lat.r, gy), rowRd = rowOf(lat.rd, gy);
+            const rowT = rowOf(lat.t, gy), rowTd = rowOf(lat.td, gy);
+            const rowD = rowOf(lat.d, gy), rowDd = rowOf(lat.dd, gy);
+            const rowV = rowOf(lat.v, gy), rowVd = rowOf(lat.vd, gy);
+            const rowLake = rowOf(lat.lake, gy);
+            let dy = Math.abs(gy - d.startY);
+            if (dy > wh / 2) dy = wh - dy;
+            for (let x = 0; x < size; x++) {
+                const gx = ax * size + x, i = y * size + x;
+                let e = along(rowE, gx) * 0.75 + along(rowEd, gx) * 0.25;
+                let r = along(rowR, gx) * 0.75 + along(rowRd, gx) * 0.25;
+                let tNoise = along(rowT, gx) * 0.75 + along(rowTd, gx) * 0.25;
+                let t = clamp01(baseTemp + (tNoise - 0.5) * 0.4 - Math.max(0, e - 0.5) * 0.6);
+                let dr = along(rowD, gx) * 0.75 + along(rowDd, gx) * 0.25;
+                let v = along(rowV, gx) * 0.75 + along(rowVd, gx) * 0.25;
+                let dx = Math.abs(gx - d.startX);
+                if (dx > ww / 2) dx = ww - dx;
+                const w = smoothstep(radius[1], radius[0], Math.hypot(dx, dy));
+                if (w > 0 && start) {
+                    e = blend(e, start.elevation, w);
+                    r = blend(r, start.rainfall, w);
+                    t = blend(t, start.temperature, w);
+                    dr = blend(dr, start.drainage, w);
+                    v = blend(v, start.volcanism, w);
+                }
+                const lake = !!L && e >= sea && e < mtn && dr < L.maxDrainage && r > L.minRainfall && along(rowLake, gx) > L.threshold;
+                eOut[i] = e; rOut[i] = r; tOut[i] = t; dOut[i] = dr; vOut[i] = v;
+                water[i] = (flow[i] || e < sea || lake) ? 1 : 0;
+            }
+        }
+        return { e: eOut, r: rOut, t: tOut, d: dOut, v: vOut, water };
+    };
+
     //-------------------------------------------------------------------------
     // One cell, fully resolved (biome, ground, water kind, peak, region). Pure.
 
@@ -635,7 +738,6 @@
         let depthBand = "surface";
 
         if (z < 0) {
-            depthBand = z === -1 ? "upper_earth" : "deep";
             const L = window.UF.Levels;
             const size = d.size;
             const ax = Math.floor(gx / size), ay = Math.floor(gy / size);
@@ -643,20 +745,36 @@
             const biome = L && typeof L.biomeAt === "function" ? L.biomeAt({ area: { x: ax, y: ay }, x: lx, y: ly, z }) : null;
             const bId = (biome && biome.id) || (typeof biome === "string" ? biome : "");
             const localNoise = unit4(seed, SALT.geology, gx, gy);
-
-            if (z === -1) {
-                // Upper Earth (z === -1)
+            const coupled = L && typeof L.verticalCouplingOn === "function" && L.verticalCouplingOn();
+            if (!coupled) {
+                depthBand = z === -1 ? "upper_earth" : "deep";
+                if (z === -1) {
+                    // Upper Earth (z === -1)
+                    if (bId === "chalk_karst") stoneId = "limestone";
+                    else if (bId === "rooted_loam") stoneId = localNoise > 0.5 ? "sandstone" : "slate";
+                    else if (bId === "clay_bed") stoneId = "slate";
+                    else if (bId === "shallow_cave") stoneId = localNoise > 0.6 ? "limestone" : "sandstone";
+                    else stoneId = localNoise > 0.6 ? "limestone" : (localNoise > 0.3 ? "sandstone" : "slate");
+                } else {
+                    // Deep Earth (z === -2), and any deeper layer while coupling is off (no substrate biome).
+                    if (bId === "deep_mine_belt") stoneId = "granite";
+                    else if (bId === "crystal_cavern") stoneId = "marble";
+                    else if (bId === "fossil_bed") stoneId = localNoise > 0.5 ? "limestone" : "slate";
+                    else if (bId === "deep_salt_cavern") stoneId = "basalt";
+                    else stoneId = localNoise > 0.5 ? "granite" : (localNoise > 0.25 ? "basalt" : "marble");
+                }
+            } else {
+                const band = typeof L.depthBand === "function" ? L.depthBand(z) : null;
+                depthBand = band && band.role === "shallow" ? "upper_earth" : "deep";
                 if (bId === "chalk_karst") stoneId = "limestone";
                 else if (bId === "rooted_loam") stoneId = localNoise > 0.5 ? "sandstone" : "slate";
                 else if (bId === "clay_bed") stoneId = "slate";
                 else if (bId === "shallow_cave") stoneId = localNoise > 0.6 ? "limestone" : "sandstone";
-                else stoneId = localNoise > 0.6 ? "limestone" : (localNoise > 0.3 ? "sandstone" : "slate");
-            } else {
-                // Deep Earth (z === -2)
-                if (bId === "deep_mine_belt") stoneId = "granite";
+                else if (bId === "deep_mine_belt") stoneId = "granite";
                 else if (bId === "crystal_cavern") stoneId = "marble";
                 else if (bId === "fossil_bed") stoneId = localNoise > 0.5 ? "limestone" : "slate";
                 else if (bId === "deep_salt_cavern") stoneId = "basalt";
+                else if (depthBand === "upper_earth") stoneId = localNoise > 0.6 ? "limestone" : (localNoise > 0.3 ? "sandstone" : "slate");
                 else stoneId = localNoise > 0.5 ? "granite" : (localNoise > 0.25 ? "basalt" : "marble");
             }
         } else {
