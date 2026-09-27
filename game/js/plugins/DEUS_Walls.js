@@ -52,6 +52,27 @@
         if (type.tags.includes("stone")) return "stone";
         return null;
     }
+    // SIM.40.11. UF.Matter is absent until a host attaches it. Unattached calls do not change the world write.
+    function matterNote(kind, detail) {
+        const M = window.UF && UF.Matter;
+        if (!M || typeof M.note !== "function") return { ok: true, unbound: true };
+        try {
+            const v = M.note(kind, detail) || { ok: true };
+            if (v.ok === false && v.refuse && M.strict) {
+                const err = new Error(v.code || "E_MATTER");
+                err.code = v.code;
+                throw err;
+            }
+            return v;
+        } catch (err) {
+            if (M.strict) throw err;
+            if (typeof M.fail === "function") M.fail(kind, err);
+            return { ok: false, code: err && err.code };
+        }
+    }
+    function collapse(typeId, count, cause) {
+        return matterNote("collapse", { elementId: typeId, count: count || 1, cause: cause || "walls:collapse" });
+    }
 
     function isWallCell(grid, w, h, x, y, sourceMat = null) {
         if (!grid || !inBounds(w, h, x, y)) return false;
@@ -234,6 +255,7 @@
         frameIndexAt,
         visualCells,
         baseAt,
+        collapse,
         patchObjectLayer,
         clearCache() { cache.clear(); const O = Objects(); if (O && O.refresh) O.refresh(); },
         footprint: [1, 2]

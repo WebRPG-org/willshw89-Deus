@@ -72,6 +72,29 @@
     const emit = (name, ...args) => {
         if (window.UF && UF.Events && UF.Events.emit) UF.Events.emit(name, ...args);
     };
+    // SIM.40.11. UF.Matter is absent until a host attaches it. Unattached calls do not change the world write.
+    function matterNote(kind, detail) {
+        const M = window.UF && UF.Matter;
+        if (!M || typeof M.note !== "function") return { ok: true, unbound: true };
+        try {
+            const v = M.note(kind, detail) || { ok: true };
+            if (v.ok === false && v.refuse && M.strict) {
+                const err = new Error(v.code || "E_MATTER");
+                err.code = v.code;
+                throw err;
+            }
+            return v;
+        } catch (err) {
+            if (M.strict) throw err;
+            if (typeof M.fail === "function") M.fail(kind, err);
+            return { ok: false, code: err && err.code };
+        }
+    }
+    function matterCover(fn) {
+        const M = window.UF && UF.Matter;
+        if (M && typeof M.cover === "function") return M.cover(fn);
+        return fn();
+    }
     const sameArea = (a, b) => !!a && !!b && a.x === b.x && a.y === b.y;
     const copyArea = a => ({ x: a.x, y: a.y });
     // Levels (VISION V80). A record ({ area, x, y, z }: a target, a stand, a unit, an item) carries z beside its area; an
@@ -457,13 +480,15 @@
                 const mat = c && c.material === "soil" ? "soil" : "stone";
                 L.setShape(job.target, "floor", { material: mat });
                 const yields = mat === "soil" ? { stone: 1 } : { stone: 2 };
+                // Solid is five strata and a floor keeps S0, so four slices leave (DEUS_Levels recordFromPacked).
+                let stoneMat = "limestone";
                 if (I && typeof I.drop === "function") {
                     const W = World(), st = W && W.state;
                     const size = st ? st.size : 256;
                     const gx = job.target.area.x * size + job.target.x, gy = job.target.area.y * size + job.target.y;
                     const G = window.UF && UF.WorldGen;
                     const geo = G && typeof G.geologyAt === "function" ? G.geologyAt(gx, gy, zOf(job.target)) : null;
-                    const stoneMat = geo ? geo.stone : "limestone";
+                    stoneMat = geo ? geo.stone : "limestone";
                     const S = window.UF && UF.Skills;
                     let q = (S && typeof S.qualityRoll === "function" && unit) ? S.qualityRoll(unit, "mining") : 0;
                     const matDef = (stoneMat && I && typeof I.materialOf === "function") ? I.materialOf(`stones:${stoneMat}`) : null;
@@ -474,9 +499,26 @@
                         const isMetalPick = toolType && (toolType.id.includes("iron") || toolType.id.includes("steel") || toolType.id.includes("bronze") || (toolItem.mat && ["iron", "steel", "bronze"].includes(toolItem.mat)));
                         if (!isMetalPick) q = 0;
                     }
-                    for (const id of Object.keys(yields)) {
-                        I.drop(lv(job.target), job.target.x, job.target.y, id, yields[id], unit.id, { mat: stoneMat, q: q > 0 ? q : undefined });
-                    }
+                    matterNote("mine", {
+                        material: mat === "soil" ? "soil" : stoneMat,
+                        slices: 4,
+                        legacyYields: yields,
+                        cause: "jobs:" + type,
+                        at: { x: job.target.x, y: job.target.y, z: zOf(job.target) }
+                    });
+                    matterCover(() => {
+                        for (const id of Object.keys(yields)) {
+                            I.drop(lv(job.target), job.target.x, job.target.y, id, yields[id], unit.id, { mat: stoneMat, q: q > 0 ? q : undefined });
+                        }
+                    });
+                } else {
+                    matterNote("mine", {
+                        material: mat === "soil" ? "soil" : stoneMat,
+                        slices: 4,
+                        legacyYields: yields,
+                        cause: "jobs:" + type,
+                        at: { x: job.target.x, y: job.target.y, z: zOf(job.target) }
+                    });
                 }
                 job.result = { from: "solid", to: "floor", yields };
                 emit("levels:mined", job.target, mat);
@@ -718,13 +760,19 @@
             for (const id of Object.keys(needs)) {
                 if (here.filter(it => buildMatches(it, id)).reduce((n, it) => n + it.count, 0) < (needs[id] | 0)) { job.reason = "needs items"; return false; }
             }
-            const placed = O.setIn(area, x, y, t.id);
+            const placed = matterCover(() => O.setIn(area, x, y, t.id));
             if (!placed) {
                 const r = W && W.lastObjectRefusal;
                 job.reason = r && r.unitName ? `${r.unitName} is standing there` : "the square is taken";
                 return false;
             }
-            consumeBuildItems(I, area, x, y, needs);
+            matterCover(() => consumeBuildItems(I, area, x, y, needs));
+            matterNote("build", {
+                elementId: t.id,
+                count: 1,
+                cause: "jobs:build",
+                at: { x: x, y: y, z: zOf(job.target) }
+            });
         },
         describe(job) {
             const O = Objects();
@@ -1714,6 +1762,7 @@
 
     function update() {
         localTicks++;
+        matterNote("tick", { n: 1, cause: "jobs:update" });
         const st = jobState();
         if (!st || !st.list.length) return;
         const W = World();

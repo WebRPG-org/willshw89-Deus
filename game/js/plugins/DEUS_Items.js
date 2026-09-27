@@ -54,6 +54,24 @@
     const emit = (name, ...args) => {
         if (window.UF && UF.Events && UF.Events.emit) UF.Events.emit(name, ...args);
     };
+    // SIM.40.11. UF.Matter is absent until a host attaches it. Unattached calls do not change the world write.
+    function matterNote(kind, detail) {
+        const M = window.UF && UF.Matter;
+        if (!M || typeof M.note !== "function") return { ok: true, unbound: true };
+        try {
+            const v = M.note(kind, detail) || { ok: true };
+            if (v.ok === false && v.refuse && M.strict) {
+                const err = new Error(v.code || "E_MATTER");
+                err.code = v.code;
+                throw err;
+            }
+            return v;
+        } catch (err) {
+            if (M.strict) throw err;
+            if (typeof M.fail === "function") M.fail(kind, err);
+            return { ok: false, code: err && err.code };
+        }
+    }
     const listen = (name, fn) => {
         if (window.UF && UF.Events && UF.Events.on) UF.Events.on(name, fn);
     };
@@ -318,6 +336,14 @@
         }
         st.byId[item.id] = item;
         changed(item, "created");
+        matterNote("item", {
+            op: "appear",
+            type: item.type,
+            count: item.count,
+            exempt: !!(item.holder || item.container),
+            cause: "items:create",
+            at: { x: item.x, y: item.y, z: item.z }
+        });
         return item;
     };
 
@@ -685,6 +711,14 @@
         detach(it);
         delete st.byId[it.id];
         changed(it, "removed");
+        matterNote("item", {
+            op: "remove",
+            type: it.type,
+            count: it.count,
+            exempt: !!(it.holder || it.container),
+            cause: "items:remove",
+            at: { x: it.x, y: it.y, z: it.z }
+        });
         return true;
     };
 
