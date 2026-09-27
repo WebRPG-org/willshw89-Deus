@@ -1347,6 +1347,274 @@
         WorldGen.lastBuild = { area: { x: ctx.areaX, y: ctx.areaY }, ms: now() - started, objects: total, biomes: biomeCells, sites: sites.length };
     }
 
+    // Races with darkvision (SRD 5.1, the same list as DEUS_Sheet.darkvisionOf) see in a cave.
+    // Dragonborn do not: their camp needs a glow-cap, which is already a fungal food object.
+    const CAVE_DARKVISION = new Set(["dwarf", "elf", "gnome", "tiefling", "half_orc", "drow", "orc", "goblin", "kobold"]);
+    function needsCaveLight(speciesId) {
+        const id = String(speciesId || "").toLowerCase().replace(/-/g, "_");
+        const Sheet = window.UF && UF.Sheet;
+        if (Sheet && typeof Sheet.darkvisionOf === "function") {
+            const seen = String(Sheet.darkvisionOf(id) || "");
+            return !seen || /^none/i.test(seen);
+        }
+        return !CAVE_DARKVISION.has(id);
+    }
+    // Floor a fungal forage can stand on. A natural pool has fluid in its strata; lava is not a floor.
+    // Flood water is the cave's drinking water spread across ordinary floor from those pools and from
+    // surface water. That floor stays dry in the strata, and it is where the camp's fungus has to be:
+    // treating the flood as a pool left the founders with nothing they could walk to and eat.
+    function year0PlantFloor(L, areaX, areaY, ref, cell) {
+        if (!cell || !L.standableShape(ref)) return false;
+        if (typeof L.isLavaAt === "function" && L.isLavaAt(areaX, areaY, ref.z, ref.x, ref.y)) return false;
+        const fluid = cell.fluidState || "";
+        return !fluid || fluid === "FLUID_0_OF_5";
+    }
+    function fungalFoodTypeIds(cat, m) {
+        const foodItems = new Set((((cat.items || {}).types) || []).filter(t => t && t.food).map(t => t.id));
+        const ids = new Set();
+        for (const o of cat.objects || []) {
+            if (!o || !(o.tags || []).includes("fungus")) continue;
+            const yieldsFood = Object.values(o.actions || {}).some(a => Object.keys(a.yields || {}).some(id => foodItems.has(id)));
+            if (!yieldsFood) continue;
+            const rec = m.objectById.get(o.id);
+            if (rec) ids.add(rec.typeId);
+        }
+        return ids;
+    }
+    // The camp's 3x3 is cleared when the chest is written. A forage has to stand outside that square,
+    // on floor the founders can already walk, and it has to be a fungus the level already grew.
+    function settleUndergroundYear0(ctx, forage, centres, m, cat) {
+        const W = window.UF.World, L = window.UF.Levels;
+        if (!W || !W.state || !L || !forage || !centres.length) return;
+        const size = ctx.width, cells = size * size;
+        const foodTypes = fungalFoodTypeIds(cat, m);
+        const glowRec = m.objectById.get("glow_caps");
+        const glowId = glowRec ? glowRec.typeId : 0;
+        const passable = typeId => {
+            if (!typeId) return true;
+            const entry = (cat.objects || [])[typeId - 1];
+            return !!(entry && entry.passable === true);
+        };
+        const walk = new Uint8Array(cells);
+        for (let i = 0; i < cells; i++) if (forage[i] && passable(ctx.objects[i])) walk[i] = 1;
+        const cheb = (i, c) => {
+            const x = i % size, y = (i - x) / size;
+            return Math.max(Math.abs(x - c.x), Math.abs(y - c.y));
+        };
+        const speciesOf = id => {
+            const list = W.state.factions && W.state.factions.list;
+            const f = list && list.find(f => f.id === id);
+            return f ? f.species : "";
+        };
+        const component = c => {
+            const seen = new Uint8Array(cells), out = [];
+            let start = c.y * size + c.x;
+            if (!walk[start]) {
+                start = -1;
+                for (let dy = -3; dy <= 3 && start < 0; dy++) for (let dx = -3; dx <= 3; dx++) {
+                    const x = c.x + dx, y = c.y + dy;
+                    if (x < 0 || y < 0 || x >= size || y >= size) continue;
+                    const i = y * size + x;
+                    if (walk[i]) { start = i; break; }
+                }
+            }
+            if (start < 0) return { seen, out };
+            const q = [start];
+            seen[start] = 1; out.push(start);
+            for (let h = 0; h < q.length; h++) {
+                const i = q[h], x = i % size, y = (i - x) / size;
+                for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                    const nx = x + dx, ny = y + dy;
+                    if (nx < 0 || ny < 0 || nx >= size || ny >= size) continue;
+                    const ni = ny * size + nx;
+                    if (seen[ni] || !walk[ni]) continue;
+                    seen[ni] = 1; out.push(ni); q.push(ni);
+                }
+            }
+            return { seen, out };
+        };
+        const kept = new Uint8Array(cells);
+        const camps = centres.map(c => {
+            const comp = component(c);
+            const food = [], glow = [];
+            for (const i of comp.out) {
+                if (cheb(i, c) < 2) continue;
+                if (foodTypes.has(ctx.objects[i])) food.push(i);
+                if (glowId && ctx.objects[i] === glowId) glow.push(i);
+            }
+            return { c, comp, food, glow, light: needsCaveLight(speciesOf(c.faction)) };
+        });
+        const moveNearest = (camp, want) => {
+            let src = -1, srcD = Infinity;
+            for (let i = 0; i < cells; i++) {
+                if (kept[i] || camp.comp.seen[i] || !want(ctx.objects[i])) continue;
+                const d = cheb(i, camp.c);
+                if (d < srcD || (d === srcD && (src < 0 || i < src))) { src = i; srcD = d; }
+            }
+            if (src < 0) return false;
+            let dest = -1, destD = Infinity;
+            for (const i of camp.comp.out) {
+                if (ctx.objects[i] || cheb(i, camp.c) < 2) continue;
+                const d = cheb(i, camp.c);
+                if (d < destD || (d === destD && (dest < 0 || i < dest))) { dest = i; destD = d; }
+            }
+            if (dest < 0) return false;
+            ctx.objects[dest] = ctx.objects[src];
+            ctx.objects[src] = 0;
+            kept[dest] = 1;
+            if (foodTypes.has(ctx.objects[dest])) camp.food.push(dest);
+            if (glowId && ctx.objects[dest] === glowId) camp.glow.push(dest);
+            return true;
+        };
+        for (const camp of camps) {
+            if (camp.light && glowId && !camp.glow.length) moveNearest(camp, id => id === glowId);
+            if (!camp.food.length) moveNearest(camp, id => foodTypes.has(id));
+        }
+    }
+    // A founder square sitting in lava flood cannot take a step. The lava is the deep pool's flood.
+    // Move water strata from a shallow pool that no camp stands beside onto that deep pool, one stratum
+    // for one stratum, and leave the shallow cell dry. The camp's square then lies in water flood.
+    function quietCampLava(ctx) {
+        const L = window.UF && UF.Levels, W = window.UF && UF.World;
+        if (!L || !W || !W.state || ctx.z !== -2 || typeof L.setStrata !== "function" || typeof L.floodTypeAt !== "function") return;
+        const centres = WorldGen.kitCentres(ctx.areaX, ctx.areaY, ctx.z);
+        if (!centres.length) return;
+        const size = ctx.width, area = { x: ctx.areaX, y: ctx.areaY };
+        const FLOOD_LAVA = 2;
+        const camps = centres.filter(c => {
+            for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+                const x = c.x + dx, y = c.y + dy;
+                if (x < 0 || y < 0 || x >= size || y >= size) continue;
+                if (L.floodTypeAt(ctx.areaX, ctx.areaY, ctx.z, x, y) === FLOOD_LAVA) return true;
+            }
+            return false;
+        });
+        if (!camps.length) return;
+        const sources = [];
+        const seen = new Set();
+        for (const c of camps) {
+            for (let dy = -8; dy <= 8; dy++) for (let dx = -8; dx <= 8; dx++) {
+                const x = c.x + dx, y = c.y + dy;
+                if (x < 0 || y < 0 || x >= size || y >= size) continue;
+                const key = `${x},${y}`;
+                if (seen.has(key)) continue;
+                const fluid = L.fluidStateAt(ctx.areaX, ctx.areaY, x, y, ctx.z);
+                if (!fluid || fluid === "FLUID_0_OF_5") continue;
+                const st = L.strataAt({ area, x, y, z: ctx.z });
+                if (!st || !st.materials.some(m => m === "lava")) continue;
+                seen.add(key);
+                sources.push({ x, y, materials: st.materials.slice() });
+            }
+        }
+        if (!sources.length) return;
+        // setStrata writes the save record. A New Game normally creates it on world:initializing;
+        // if that has not run yet, create it the same way before moving the water.
+        if (!W.state.levels && typeof L.ensureWorldLevels === "function") L.ensureWorldLevels(W.state);
+        if (!W.state.levels) W.state.levels = {};
+        const homes = (W.state.factions.list || []).filter(f => f.home && f.home.z === -1 && f.home.area && f.home.area.x === ctx.areaX && f.home.area.y === ctx.areaY);
+        const donors = [];
+        for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+            const fluid = L.fluidStateAt(ctx.areaX, ctx.areaY, x, y, -1);
+            if (!fluid || fluid === "FLUID_0_OF_5" || L.isLavaAt(ctx.areaX, ctx.areaY, -1, x, y)) continue;
+            const dist = homes.length ? Math.min(...homes.map(h => Math.max(Math.abs(x - h.home.x), Math.abs(y - h.home.y)))) : 99;
+            if (dist <= 8) continue;
+            const st = L.strataAt({ area, x, y, z: -1 });
+            if (!st || !st.materials.some(m => m === "water")) continue;
+            donors.push({ x, y, materials: st.materials.slice(), dist, i: y * size + x, used: false });
+        }
+        donors.sort((a, b) => b.dist - a.dist || a.i - b.i);
+        let di = 0;
+        const takeWater = () => {
+            while (di < donors.length) {
+                const d = donors[di];
+                const k = d.materials.findIndex(m => m === "water");
+                if (k < 0) { di++; continue; }
+                d.materials[k] = "air";
+                d.used = true;
+                return true;
+            }
+            return false;
+        };
+        let moved = false;
+        for (const src of sources) {
+            let changed = false;
+            for (let k = 0; k < src.materials.length; k++) {
+                if (src.materials[k] !== "lava") continue;
+                if (!takeWater()) break;
+                src.materials[k] = "water";
+                changed = true;
+            }
+            if (changed && L.setStrata({ area, x: src.x, y: src.y, z: ctx.z }, { m: src.materials })) moved = true;
+        }
+        for (const d of donors) if (d.used) L.setStrata({ area, x: d.x, y: d.y, z: -1 }, { m: d.materials });
+        if (moved && typeof L.invalidateFloods === "function") L.invalidateFloods();
+    }
+    // The underground kit's fungal minimums, on floor under the drinking flood when the unflooded
+    // floor had no free cell. Minerals and blocking props stay on the unflooded floor only.
+    function placeForageKit(ctx, forage, centres, m, cat, kit, r1, seed) {
+        if (!forage || !centres.length) return;
+        const foodTypes = fungalFoodTypeIds(cat, m);
+        const size = ctx.width;
+        const cheb = (i, c) => {
+            const x = i % size, y = (i - x) / size;
+            return Math.max(Math.abs(x - c.x), Math.abs(y - c.y));
+        };
+        centres.forEach((c, ci) => {
+            const seen = new Uint8Array(size * size), reached = [];
+            let start = c.y * size + c.x;
+            if (!forage[start]) {
+                start = -1;
+                for (let dy = -3; dy <= 3 && start < 0; dy++) for (let dx = -3; dx <= 3; dx++) {
+                    const x = c.x + dx, y = c.y + dy, i = y * size + x;
+                    if (x >= 0 && y >= 0 && x < size && y < size && forage[i]) start = i;
+                }
+            }
+            if (start < 0) return;
+            const q = [start];
+            seen[start] = 1;
+            for (let h = 0; h < q.length; h++) {
+                const i = q[h], x = i % size, y = (i - x) / size;
+                if (Math.hypot(x - c.x, y - c.y) > r1) continue;
+                reached.push(i);
+                for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                    const nx = x + dx, ny = y + dy;
+                    if (nx < 0 || ny < 0 || nx >= size || ny >= size) continue;
+                    const ni = ny * size + nx;
+                    if (seen[ni] || !forage[ni]) continue;
+                    seen[ni] = 1;
+                    q.push(ni);
+                }
+            }
+            const entries = kitEntries(kit, seed ^ hash32(ctx.z), ctx.areaX, ctx.areaY, ci);
+            entries.forEach((e, ei) => {
+                const o = m.objectById.get(e.place);
+                if (!o || !foodTypes.has(o.typeId)) return;
+                const far = [], near = [];
+                let have = 0;
+                for (const i of reached) {
+                    if (ctx.objects[i] === o.typeId) have++;
+                    else if (!ctx.objects[i]) {
+                        const d = cheb(i, c);
+                        if (d > 3) far.push(i);
+                        else if (d >= 2) near.push(i);
+                    }
+                }
+                const candidates = far.length ? far : near;
+                const rng = mulberry32(hash32(seed, SALT.kit ^ 0x79307230, ctx.z, ci, ei));
+                for (let n = have; n < e.minimum && candidates.length; n++) {
+                    const j = Math.floor(rng() * candidates.length), i = candidates[j];
+                    candidates[j] = candidates[candidates.length - 1];
+                    candidates.pop();
+                    ctx.objects[i] = o.typeId;
+                }
+            });
+        });
+    }
+    WorldGen.undergroundYear0 = {
+        plantFloor: year0PlantFloor, settle: settleUndergroundYear0, needsCaveLight,
+        quietLava: quietCampLava, placeKit: placeForageKit
+    };
+
     // Underground content uses the underground shape grid, never surface climate, clearing or water.
     // Cave flora has its own depth tables; stock cave art remains a placeholder until original assets are approved.
     function generateUnderground(ctx) {
@@ -1355,12 +1623,17 @@
         const size = ctx.width, cells = size * size, seed = W.state.seed;
         const area = { x: ctx.areaX, y: ctx.areaY, z: ctx.z };
         const dry = new Uint8Array(cells), water = new Uint8Array(cells), biomes = new Array(cells), counts = {}, kitLog = [];
+        // Null disables the Year-0 work (the viability test's mutation).
+        const year0 = WorldGen.undergroundYear0;
+        if (year0 && year0.quietLava) year0.quietLava(ctx);
+        const forage = year0 ? new Uint8Array(cells) : null;
         const kit = WorldGen.undergroundKitConfig(ctx.z), r1 = kit.radius[1] || 20;
         const ref = { area, x: 0, y: 0, z: ctx.z };
         for (let i = 0; i < cells; i++) {
             ref.x = i % size; ref.y = Math.floor(i / size);
             const c = L.cellAt(ref);
             dry[i] = c && !c.water && L.standableShape(ref) ? 1 : 0;
+            if (forage) forage[i] = year0.plantFloor(L, ctx.areaX, ctx.areaY, ref, c) ? 1 : 0;
             water[i] = c && c.water ? 1 : 0;
             biomes[i] = c && c.biome ? c.biome.id : null;
         }
@@ -1434,6 +1707,8 @@
                 }
             }
         });
+        if (year0 && year0.placeKit) year0.placeKit(ctx, forage, centres, m, cat, kit, r1, seed);
+        if (year0) year0.settle(ctx, forage, centres, m, cat);
         const key = W.levelKey(ctx.areaX, ctx.areaY, ctx.z);
         WorldGen.kitLog[key] = kitLog;
         WorldGen.stats[key] = counts;

@@ -1178,6 +1178,8 @@
                             if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
                             const x = u.x + dx, y = u.y + dy;
                             if (!J.isWaterAt(area, x, y)) continue;
+                            // A lava pool is fluid, and isWaterAt counts it. It is not a drink.
+                            if (window.UF && UF.Levels && typeof UF.Levels.isLavaAt === "function" && UF.Levels.isLavaAt(area.x, area.y, zOf(area), x, y)) continue;
                             const hasFreeBank = NEIGHBORS.some(([nx, ny]) => {
                                 const bx = x + nx, by = y + ny;
                                 if (!J.standable(area, bx, by, u.id)) {
