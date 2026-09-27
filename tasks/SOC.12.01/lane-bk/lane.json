@@ -1,0 +1,32 @@
+{
+    "lane":  "lane-bk",
+    "taskId":  "SOC.12.01",
+    "branch":  "task/lane-bk",
+    "writer":  "gemini",
+    "reviewer":  "grok",
+    "push":  false,
+    "effortClass":  "mechanical",
+    "allowedPaths":  [
+                         "game/data/society/craft_catalogue.json",
+                         "game/data/society/craft_catalogue.schema.json",
+                         "docs/systems/DEUS_CraftProfessions.md",
+                         "tools/society/test_craft_catalogue.js",
+                         "tasks/SOC.12.01/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/society/test_craft_catalogue.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  900
+                      }
+                  ]
+}
