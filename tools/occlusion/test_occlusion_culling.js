@@ -16,6 +16,7 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const live = require("./live_occlusion");
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const DEPTH = path.join(ROOT, "game", "js", "plugins", "DEUS_Depth.js");
@@ -297,8 +298,17 @@ function main() {
         if (result.ok) console.log("PASS " + name);
         else { failed++; console.log("FAIL " + name + ": " + result.detail); }
     }
-    console.log("RESULT: " + (CHECKS.length - failed) + " passed, " + failed + " failed");
-    return failed ? 1 : 0;
+    console.log("PLANNER: " + (CHECKS.length - failed) + " passed, " + failed + " failed");
+    if (failed) {
+        console.log("RESULT: " + (CHECKS.length - failed) + " passed, " + failed + " failed");
+        return 1;
+    }
+    const liveRun = live.run();
+    process.stdout.write(liveRun.text || "");
+    if (liveRun.error) console.error(liveRun.error);
+    if (liveRun.status !== 0) return liveRun.status == null ? 2 : liveRun.status;
+    console.log("RESULT: " + CHECKS.length + " passed, 0 failed");
+    return 0;
 }
 
 process.exit(main());

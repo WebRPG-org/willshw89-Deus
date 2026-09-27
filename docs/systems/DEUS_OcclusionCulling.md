@@ -21,15 +21,13 @@ Open means the shape code `open`. Anything else is a surface. A ramp on an expos
 
 What is exposed is drawn 1:1. No blur, scale, parallax, alpha or tint is applied for depth (DEC-011). A unit's own `data.tint` and an item's material tint stay. They are the entity's colours.
 
-## 2. What the planes still paint
+## 2. What the planes paint
 
-Lane K's `mask_order` check reads the depth-2 canvas under a +1 floor and requires that texel to be opaque, so a plane that has any exposed cell in the camera bounds still paints its whole window. The composite is unchanged: the upper plane and the exposure mask hide the covered texels, and the sampled exposed texels are the same ones as before.
+A plane paints a cell only when the walk reached it and the cell is not itself open. An open cell stays unpainted so the next plane shows through. A covered cell is cleared and not redrawn. The composite of an exposed cell is that cell's own texel. `mask_order` reads the depth-2 canvas under a +1 floor and requires that texel to be absent; the composite there is still the +1 floor.
 
-A plane with no exposed cell does that full paint once, on the bind, so `switch_same_frame` still sees it painted since it was bound. Every later frame, including a camera move across solid ground, skips the tilemap repaint and does not build sprites. Covered cells on that plane cost nothing per frame.
+A plane with no exposed cell paints once, on the bind, so `switch_same_frame` still sees it painted since it was bound. Every later frame, including a camera move across solid ground, skips the tilemap repaint and does not build sprites.
 
-Sprites are stricter than the canvas. On a plane that does paint, a unit, object, item, ramp or effect whose own cell was not reached is not created. An object rebuild walks the same window as `UF.Objects` and skips a covered cell before it takes a sprite. `DEUS_LayerOverlays` only paints units that have a sprite on the plane, and it already drops a spell whose column is not open.
-
-A natural cliff face is 96 px, and Lane K's seam check reads the sprite for every face in the entity window, including a face whose own column is covered. Those faces are still built with the window query. A viewport with no exposed cell never runs that query. Ramp sprites are one cell and are kept only on an exposed cell.
+A unit, object, item, cliff, ramp or effect is created only for a cell the walk reached, or for one column in the entity-window margin whose levels above it are open. A covered column in that margin is not given a sprite. Cliff faces sit on solid cells. The level above a solid derives to a floor, so those faces are covered and are not built. Item and wall queries ask for exposed runs, not the covered part of the window. `DEUS_LayerOverlays` paints bars only for units that have a sprite, and a spell only when the column is open.
 
 ## 3. When the work runs
 
@@ -37,7 +35,7 @@ The column walk runs when the camera's tile rectangle changes, the viewed level 
 
 It does not scan the level (256×256) and it does not scan every level in the range. A solid 32-layer world and a solid 5-layer world visit the same cells: the camera bounds, once, at the viewed level, then stop.
 
-The per-frame unit candidate list from Lane K is unchanged (`scan_candidates_only` still counts every unit on the bound planes' levels). A candidate whose column the camera walk covered, and did not mark exposed, returns before a sprite is created or walked. The entity window is a few cells larger than the camera bounds (tall sprites, and the loop seam). A column the walk did not include keeps that window's previous sprite rule, so a unit stepping in at the window's edge still gets a sprite. The membership test is not a grid scan.
+Closing or opening one column, while another column stays exposed and the camera does not move, rebuilds the lower plane's items, objects, ramps and tiles on the next frame. The per-frame unit candidate list from Lane K is unchanged (`scan_candidates_only` still counts every unit on the bound planes' levels). A candidate on a covered cell returns before a sprite is created or walked. A column outside the camera walk is classified on its own when a unit in the entity window stands there. That is one column, not a grid scan.
 
 ## 4. Counters
 
@@ -55,6 +53,9 @@ The per-frame unit candidate list from Lane K is unchanged (`scan_candidates_onl
 | `spriteTouches` | Unit, item, wall and object sprites placed. Covered sprites are not placed. |
 | `skippedPaints` | Frames a bound plane skipped its tile repaint because it had no exposed cell. |
 | `steadyFrames` | Frames that did not rebuild the mask. |
+| `paintCells` | Cells whose spots were drawn. Covered cells are not in this count. |
+| `paintWindows` | Cells the tile window visited while painting. |
+| `allocs` | New entity sprites allocated. A covered entity does not allocate one. |
 | `maxDepth` | The live cap (2). |
 
 `UF.Depth.occlusion` is the planner: `plan(input)`, `step(world)`, `boundsOf(bounds)`, `DEFAULT_MAX_DEPTH` (2). `require("game/js/plugins/DEUS_Depth.js")` returns that object under Node, where Tilemap and PIXI are absent. The same `plan` runs in the game.
@@ -69,35 +70,36 @@ The per-frame unit candidate list from Lane K is unchanged (`scan_candidates_onl
 
 The scene: the camera rectangle, plus five tiles, is set to solid stone on the viewed level, so caves elsewhere still exist but the viewport is covered. Eight steady frames, then a three-tile pan, still on solid stone. Then one column is opened through the viewed level and the level below, with a floor on the level under that, and units are placed on the exposed floor, on the covered neighbour, and (on the 32-level world) three levels down.
 
-Acceptance is the WBS line: a solid 32-level scene costs about the same as a solid 5-level scene. The counts are the bound (they do not grow with the level count). Milliseconds are one run on this machine. The tolerance used by the script is a gap of 2 ms, or a gap no larger than the smaller of the two medians, because the two launches do not share a quiet machine and the depth update is a small part of the frame. Counts must match exactly for steady visits, steady level visits, steady paint, steady sprite touches, pan level visits and pan paint, and the open shaft's exposed-cell count must match. `maxDepth` must stay 2.
+Acceptance is the WBS line: a solid 32-level scene costs about the same as a solid 5-level scene. Both launches use seed 20260927. The solid measurement is 30 seconds of frame intervals (about 1900 frames) after the viewport is covered. The open shaft is then measured for 8 seconds. Counts must match. `maxDepth` must stay 2.
 
-Measured 2026-09-27 on this machine, one pair of launches (`DEUS_TEST_YEAR=0`). The throwaway folder was deleted at the end of the script. Reprint the script to measure again.
+The acceptance for time is the frame interval, which includes the engine tick and the wait until the next frame. A gap of 3 ms, or 20 percent of the smaller median or average, is the room for two separate launches on a shared machine. Worst frames may differ by 20 ms or half the smaller worst, because one scheduling hitch is not a level-count cost. `lastUpdateMs` is still printed. It is only the depth update, and it is not the acceptance.
+
+Measured 2026-09-27 on this machine, one pair of launches (`DEUS_TEST_YEAR=0`, seed 20260927). The throwaway folder was deleted at the end of the script.
 
 | | legacy (5) | default (32) |
 |---|---:|---:|
-| steady frame visits | 0 | 0 |
-| steady level visits | 0 | 0 |
-| steady paint delta | 0 | 0 |
-| steady sprite touches | 0 | 0 |
-| steady median ms | 0.100 | 0.050 |
-| pan frame visits | 396 | 396 |
-| pan level visits | 0 | 0 |
-| pan paint delta | 0 | 0 |
-| pan median ms | 0.100 | 0.050 |
+| solid frames | 1903 | 1903 |
+| solid visits / level visits / paint / touches | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 |
+| solid visible sprites | 0 | 0 |
+| solid frame median / average / worst | 15.810 / 15.767 / 31.485 ms | 15.810 / 15.767 / 32.645 ms |
+| solid engine-tick median | 1.705 ms | 1.715 ms |
+| pan camera cells / level visits / paint | 396 / 0 / 0 | 396 / 0 / 0 |
 | open exposed cells | 2 | 2 |
-| open median ms | 0.200 | 0.190 |
+| open paint spots / window cells | 1 / 570 | 1 / 570 |
+| open visible sprites | 1 | 1 |
+| open frame median | 15.845 ms | 15.850 ms |
 | exposed sprite / covered sprite | yes / no | yes / no |
 | deep unit exposed | n/a (no z −3) | no, and no sprite |
 
-The three-tile pan walked 396 camera cells and no lower cell, the same count at 5 levels and at 32. The script allows the two pan counts to differ by one camera row (40 cells, or 15 percent), because the display's fraction changes which tile the bounds floor lands on. This run did not need that room. Steady frames walked nothing. The open shaft exposed 2 cells (the open level below the view, and the floor under that) and placed only the unit on the exposed cell. The unit three levels down, which exists only in the 32-level world, was not exposed and had no sprite.
-
-Milliseconds are the median of `lastUpdateMs` over the sampled frames. The steady gap was 0.050 ms and the pan gap was 0.050 ms; the 32-level launch was the faster one. The script's tolerance is a gap of 2 ms, or a gap no larger than the smaller median. 2 ms is several times the noisiest solid sample in this run (0.370 ms) and is the room given to two separate launches that do not share a quiet machine. The counts are the bound. They do not grow with the level count.
+The medians are the same to the recorded 15.810 ms. The open shaft painted 1 cell of a 570-cell window and kept 1 sprite. The unit three levels down, which exists only in the 32-level world, was not exposed and had no sprite.
 
 ## 6. Checks
 
 `node tools/occlusion/test_occlusion_culling.js`
 
-Five checks. `--provoke=<name>` turns that check's bug on and must fail it (exit 0, line `CAUGHT`). `--provoke-all` runs each of those. A normal run exits 0 with `RESULT: 5 passed, 0 failed`.
+The planner checks below run in Node. The same command then launches the real planes in NW.js (`occlusion_live`): tile alpha, sprite maps, overlay bars and spells, paint-spot counts, a column close/reopen with the camera still, and a pan and view change. Each live guard is provoked inside that launch and must fail its check.
+
+Five planner checks. `--provoke=<name>` turns that check's bug on and must fail it (exit 0, line `CAUGHT`). `--provoke-all` runs each of those. A normal run exits 0.
 
 | Check | What it holds | Provocation |
 |---|---|---|
@@ -116,6 +118,4 @@ Five checks. `--provoke=<name>` turns that check's bug on and must fail it (exit
 
 ## 8. Follow-ups
 
-- `PROPOSED-BE-01`: paint only the exposed spots of a plane that has a mixed window. Lane K `mask_order` currently requires the covered depth-2 texel to remain on the canvas, so this lane still paints the whole window whenever any cell of that plane is exposed.
 - `PROPOSED-BE-02`: a third pooled plane, if the Owner raises `MaxDepth` above 2. The walk already stops at the first opaque cell, so solid cover would not start costing the extra levels. The parameter clamp and the two-plane pool are unchanged.
-- `PROPOSED-BE-03`: ask `naturalWallCells` and `UF.Items.find` for exposed runs only. On a mixed window they still read the whole entity window; sprites are then kept only for exposed cells. A solid window skips that read.

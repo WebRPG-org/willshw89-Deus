@@ -6,7 +6,8 @@
 // scene at 5 layers (legacy). Open shaft: one dug column. The copy is deleted
 // before this process exits.
 //
-// Counts are the acceptance. Milliseconds are one run on this machine.
+// Counts are the acceptance. Frame time is a 30 s solid stress plus an 8 s open
+// stress, fixed seed 20260927. lastUpdateMs is recorded and is not the acceptance.
 
 const fs = require("fs");
 const os = require("os");
@@ -66,11 +67,17 @@ function stageGame(root) {
     plugins.push({ name: "TEST_OcclusionBench", status: true, description: "WG.00.21 disposable bench", parameters: {} });
     fs.writeFileSync(pluginsPath, "var $plugins = " + JSON.stringify(plugins, null, 2) + ";\n");
     fs.writeFileSync(path.join(dest, "js", "plugins", "TEST_OcclusionBench.js"),
-        "// Disposable. Not part of the game.\n(" + runtimeBench.toString() + ")();\n");
+        "// Disposable. Not part of the game.\n(" + installBench.toString() + ")();\n");
     return dest;
 }
 
-function runtimeBench() {
+function installBench() {
+    const prevBoot = Scene_Boot.prototype.startNormalGame;
+    Scene_Boot.prototype.startNormalGame = function() {
+        window.UF = window.UF || {};
+        window.UF.NewGameSetup = Object.assign({}, window.UF.NewGameSetup, { seed: 20260927 });
+        return prevBoot.apply(this, arguments);
+    };
     UF.Test.suite("occlusion_bench", async t => {
         const STONE = ["stone", "stone", "stone", "stone", "stone"];
         const AIR = ["air", "air", "air", "air", "air"];
@@ -102,27 +109,82 @@ function runtimeBench() {
             const s = D.stats(), o = s.occlusion;
             return { paints: s.paints, touches: o.spriteTouches, visits: o.frameVisits, levels: o.frameLevelVisits, exposed: o.exposedCells, ms: s.lastUpdateMs, full: o.fullScans, skipped: o.skippedPaints };
         };
+        const visibleNow = () => {
+            const r = D.root();
+            let n = 0;
+            if (!r) return 0;
+            for (let i = 0; i < r.planes.length; i++) {
+                const p = r.planes[i];
+                if (!p.level) continue;
+                n += p._units.size + p._items.size + p._walls.size;
+                if (p._objectLayer && p._objectLayer.count) n += p._objectLayer.count();
+            }
+            return n;
+        };
+        function pack(frames) {
+            const gaps = [], ticks = [], updates = [];
+            let visits = 0, levels = 0, paint = 0, touch = 0, full = 0;
+            for (let i = 0; i < frames.length; i++) {
+                const f = frames[i];
+                if (Number.isFinite(f.gap)) gaps.push(f.gap);
+                if (Number.isFinite(f.tick)) ticks.push(f.tick);
+                if (Number.isFinite(f.ms)) updates.push(f.ms);
+                visits += f.visits || 0; levels += f.levels || 0; paint += f.paintDelta || 0; touch += f.touchDelta || 0;
+                if (f.full) full = f.full;
+            }
+            const asc = a => a.slice().sort((x, y) => x - y);
+            const mid = a => { const s = asc(a); return s.length ? s[Math.floor(s.length / 2)] : null; };
+            const avg = a => a.length ? a.reduce((n, v) => n + v, 0) / a.length : null;
+            const worst = a => a.length ? Math.max.apply(null, a) : null;
+            return {
+                n: frames.length, gapAvg: avg(gaps), gapMedian: mid(gaps), gapWorst: worst(gaps),
+                tickAvg: avg(ticks), tickMedian: mid(ticks), tickWorst: worst(ticks),
+                updateMsMedian: mid(updates), visits: visits, levels: levels, paint: paint, touch: touch, full: full,
+                visible: visibleNow(), exposed: D.stats().occlusion.exposedCells
+            };
+        }
         const sample = async n => {
             const frames = [];
             let prev = snap();
+            let prevT = performance.now();
             for (let i = 0; i < n; i++) {
                 await t.waitFrames(1);
+                const nowT = performance.now();
                 const now = snap();
                 frames.push({
-                    visits: now.visits, levels: now.levels, exposed: now.exposed, ms: now.ms,
-                    paintDelta: now.paints - prev.paints, touchDelta: now.touches - prev.touches,
-                    skippedDelta: now.skipped - prev.skipped, full: now.full
+                    visits: now.visits, levels: now.levels, exposed: now.exposed, ms: now.ms, gap: nowT - prevT,
+                    tick: Graphics._fpsCounter && Number.isFinite(Graphics._fpsCounter.duration) ? Graphics._fpsCounter.duration : null,
+                    paintDelta: now.paints - prev.paints, touchDelta: now.touches - prev.touches, full: now.full
                 });
-                prev = now;
+                prev = now; prevT = nowT;
             }
             return frames;
         };
-        const steady = await sample(8);
+        const stressFor = async ms => {
+            const frames = [];
+            const end = performance.now() + ms;
+            let prev = snap();
+            let prevT = performance.now();
+            while (performance.now() < end) {
+                await t.waitFrames(1);
+                const nowT = performance.now();
+                const now = snap();
+                frames.push({
+                    visits: now.visits, levels: now.levels, ms: now.ms, gap: nowT - prevT,
+                    tick: Graphics._fpsCounter && Number.isFinite(Graphics._fpsCounter.duration) ? Graphics._fpsCounter.duration : null,
+                    paintDelta: now.paints - prev.paints, touchDelta: now.touches - prev.touches, full: now.full
+                });
+                prev = now; prevT = nowT;
+            }
+            return pack(frames);
+        };
+        const solidStress = await stressFor(30000);
         const dx0 = $gameMap.displayX();
         $gameMap.scrollRight(3);
         const pan = await sample(8);
         const moved = ($gameMap.displayX() - dx0 + $gameMap.width()) % $gameMap.width();
         t.check("camera_panned", moved >= 2, "display moved " + moved);
+        const panHit = pan.reduce((a, f) => (f.visits > a.visits ? f : a), pan[0]);
         const cx = wrap(Math.floor($gameMap.displayX() + $gameMap.screenTileX() / 2));
         const cy = wrap(Math.floor($gameMap.displayY() + $gameMap.screenTileY() / 2));
         const nx = wrap(cx + 1);
@@ -133,6 +195,12 @@ function runtimeBench() {
         if (W.isLevel(view - 1)) hole.push(paint(nx, cy, view - 1, FLOOR));
         await t.waitFrames(4);
         const root = D.root();
+        if (window.UF.Objects && UF.Objects.setIn) {
+            for (let z = view; z >= view - 2; z--) if (W.isLevel(z)) {
+                UF.Objects.setIn({ x: area.x, y: area.y, z: z }, cx, cy, null);
+                UF.Objects.setIn({ x: area.x, y: area.y, z: z }, nx, cy, null);
+            }
+        }
         const img = { characterName: "People1", characterIndex: 0 };
         const place = (name, x, z) => W.addUnit({ name: name, image: img, area: { x: area.x, y: area.y }, x: x, y: cy, z: z, dir: 2, exact: true, data: { kind: "test", through: true } });
         const eu = W.isLevel(view - 1) ? place("OCC_EX", cx, view - 1) : null;
@@ -140,11 +208,20 @@ function runtimeBench() {
         let du = null;
         if (W.isLevel(view - 3)) du = place("OCC_DEEP", cx, view - 3);
         await t.waitFrames(3);
+        for (const p of root.planes) if (p.level && p._tilemap) p._tilemap.refresh();
+        await t.waitFrames(2);
         const plane = root.planes.find(p => p.level && p.level.z === view - 1) || null;
         const has = (p, u) => !!(p && u && p._units && p._units.has(u.id));
         let deepSprite = false;
         if (du) for (let i = 0; i < root.planes.length; i++) if (has(root.planes[i], du)) deepSprite = true;
-        const openSteady = await sample(6);
+        let spots = 0, windowCells = 0;
+        for (let i = 0; i < root.planes.length; i++) {
+            const tm = root.planes[i].level && root.planes[i]._tilemap;
+            if (!tm) continue;
+            spots += tm.lastPainted || 0;
+            windowCells += tm.lastWindow || 0;
+        }
+        const openStress = await stressFor(8000);
         const openReport = {
             holeOk: hole.every(Boolean),
             exposedCell: W.isLevel(view - 1) ? root.cellExposed(view - 1, cx, cy) : null,
@@ -155,18 +232,19 @@ function runtimeBench() {
             deepExposed: du ? root.cellExposed(view - 3, cx, cy) : null,
             deepSprite: deepSprite,
             exposedCells: D.stats().occlusion.exposedCells,
-            frames: openSteady
+            spots: spots, windowCells: windowCells, visible: visibleNow(),
+            stress: openStress
         };
         t.check("open_exposed", openReport.exposedCell === true && openReport.exposedSprite === true, JSON.stringify({ cell: openReport.exposedCell, sprite: openReport.exposedSprite }));
         t.check("open_covered", openReport.coveredCell === false && openReport.coveredSprite === false, JSON.stringify({ cell: openReport.coveredCell, sprite: openReport.coveredSprite }));
         t.check("open_deep", !du || (openReport.deepExposed === false && deepSprite === false), JSON.stringify({ exposed: openReport.deepExposed, sprite: deepSprite }));
-        t.check("no_full_scan", steady.every(f => f.full === 0) && pan.every(f => f.full === 0), "fullScans " + D.stats().occlusion.fullScans);
-        const zero = (frames, key) => frames.every(f => f[key] === 0);
-        t.check("solid_steady", zero(steady, "visits") && zero(steady, "levels") && zero(steady, "paintDelta") && zero(steady, "touchDelta"), "steady " + JSON.stringify(steady));
-        t.check("solid_pan", zero(pan, "levels") && zero(pan, "paintDelta"), "pan " + JSON.stringify(pan));
+        t.check("open_paint", spots > 0 && spots < windowCells, "spots " + spots + " window " + windowCells + " visible " + openReport.visible);
+        t.check("no_full_scan", solidStress.full === 0 && solidStress.visits === 0 && pan.every(f => f.full === 0), "fullScans " + D.stats().occlusion.fullScans + " solid visits " + solidStress.visits);
+        t.check("solid_steady", solidStress.visits === 0 && solidStress.levels === 0 && solidStress.paint === 0 && solidStress.touch === 0 && solidStress.visible === 0 && solidStress.n >= 100, "solid " + JSON.stringify(solidStress));
+        t.check("solid_pan", pan.every(f => f.levels === 0 && f.paintDelta === 0) && panHit.visits > 0, "pan hit visits " + panHit.visits + " levels " + panHit.levels);
         const report = {
-            zRange: W.zRange(), levelCount: W.levelCount(), maxDepth: D.config.maxDepth, view: view,
-            solid: { wrote: wrote, steady: steady, pan: pan, moved: moved },
+            seed: W.state.seed, zRange: W.zRange(), levelCount: W.levelCount(), maxDepth: D.config.maxDepth, view: view,
+            solid: { wrote: wrote, stress: solidStress, panVisits: panHit.visits, panLevels: panHit.levels, panPaint: panHit.paintDelta, moved: moved },
             open: openReport
         };
         UF.Test.write("BENCH " + JSON.stringify(report));
@@ -195,32 +273,20 @@ function runRange(range, root) {
 }
 
 function summarise(run) {
-    if (!run.bench) return { range: run.range, status: run.status, bench: false };
-    const b = run.bench;
-    const steadyMs = median(b.solid.steady.map(f => f.ms));
-    const panMs = median(b.solid.pan.map(f => f.ms));
-    const openMs = median(b.open.frames.map(f => f.ms));
-    const sum = (frames, key) => frames.reduce((n, f) => n + (f[key] || 0), 0);
+    if (!run.bench || !run.bench.solid || !run.bench.solid.stress) return { range: run.range, status: run.status, bench: false };
+    const b = run.bench, s = b.solid.stress, o = b.open.stress || {};
     return {
-        range: run.range,
-        levels: b.levelCount,
-        z: b.zRange,
-        maxDepth: b.maxDepth,
-        steadyVisits: sum(b.solid.steady, "visits"),
-        steadyLevels: sum(b.solid.steady, "levels"),
-        steadyPaint: sum(b.solid.steady, "paintDelta"),
-        steadyTouch: sum(b.solid.steady, "touchDelta"),
-        steadyMs,
-        panLevels: sum(b.solid.pan, "levels"),
-        panPaint: sum(b.solid.pan, "paintDelta"),
-        panVisits: sum(b.solid.pan, "visits"),
-        panMs,
-        openExposed: b.open.exposedCells,
-        openMs,
-        exposedSprite: b.open.exposedSprite,
-        coveredSprite: b.open.coveredSprite,
-        deepExposed: b.open.deepExposed,
-        deepSprite: b.open.deepSprite
+        range: run.range, seed: b.seed, levels: b.levelCount, z: b.zRange, maxDepth: b.maxDepth,
+        steadyVisits: s.visits, steadyLevels: s.levels, steadyPaint: s.paint, steadyTouch: s.touch,
+        steadyN: s.n, steadyVisible: s.visible,
+        gapMedian: s.gapMedian, gapAvg: s.gapAvg, gapWorst: s.gapWorst,
+        tickMedian: s.tickMedian, tickAvg: s.tickAvg, tickWorst: s.tickWorst,
+        updateMsMedian: s.updateMsMedian,
+        panLevels: b.solid.panLevels, panPaint: b.solid.panPaint, panVisits: b.solid.panVisits,
+        openExposed: b.open.exposedCells, openSpots: b.open.spots, openWindow: b.open.windowCells,
+        openVisible: b.open.visible, openGapMedian: o.gapMedian, openGapAvg: o.gapAvg, openGapWorst: o.gapWorst,
+        exposedSprite: b.open.exposedSprite, coveredSprite: b.open.coveredSprite,
+        deepExposed: b.open.deepExposed, deepSprite: b.open.deepSprite
     };
 }
 
@@ -243,10 +309,13 @@ function main() {
         console.log("SUMMARY legacy " + JSON.stringify(a));
         console.log("SUMMARY default " + JSON.stringify(b));
         const countsOk = legacy.status === 0 && def.status === 0 && a.bench !== false && b.bench !== false
+            && a.seed === 20260927 && b.seed === 20260927
             && a.steadyVisits === 0 && b.steadyVisits === 0
             && a.steadyLevels === 0 && b.steadyLevels === 0
             && a.steadyPaint === 0 && b.steadyPaint === 0
             && a.steadyTouch === 0 && b.steadyTouch === 0
+            && a.steadyVisible === 0 && b.steadyVisible === 0
+            && a.steadyN >= 100 && b.steadyN >= 100
             && a.panLevels === 0 && b.panLevels === 0
             && a.panPaint === 0 && b.panPaint === 0
             && a.panVisits > 0 && b.panVisits > 0
@@ -256,22 +325,34 @@ function main() {
             && a.exposedSprite === true && a.coveredSprite === false
             && b.exposedSprite === true && b.coveredSprite === false
             && a.openExposed === b.openExposed
+            && a.openSpots === b.openSpots && a.openSpots > 0 && a.openSpots < a.openWindow
+            && a.openVisible === b.openVisible
             && b.deepExposed === false && b.deepSprite === false;
-        const ms = (x, y) => (x == null || y == null) ? null : Math.abs(x - y);
-        const steadyGap = ms(a.steadyMs, b.steadyMs);
-        const panGap = ms(a.panMs, b.panMs);
-        // One run, shared machine. Identical counts are the bound. Milliseconds
-        // are accepted within 2 ms or 100% of the smaller, whichever is larger.
-        const msOk = (gap, x, y) => {
-            if (gap == null) return false;
-            const base = Math.max(0.001, Math.min(x, y));
-            return gap <= 2 || gap <= base;
+        const gapOf = (x, y) => (x == null || y == null) ? null : Math.abs(x - y);
+        // Frame intervals are about 16 ms. Two launches on a shared machine may differ by a few
+        // milliseconds. 20% of the smaller median, or 3 ms, is the room for that noise. It does
+        // not accept a large relative change of a sub-millisecond depth-update sample. lastUpdateMs
+        // is recorded and is not the acceptance.
+        const frameOk = (x, y) => {
+            const gap = gapOf(x, y);
+            if (gap == null || !(x > 0) || !(y > 0)) return false;
+            return gap <= Math.max(3, 0.20 * Math.min(x, y));
         };
-        const timeOk = msOk(steadyGap, a.steadyMs, b.steadyMs) && msOk(panGap, a.panMs, b.panMs);
-        console.log("COMPARE steadyMs " + a.steadyMs + " vs " + b.steadyMs + " gap " + steadyGap
-            + "; panMs " + a.panMs + " vs " + b.panMs + " gap " + panGap
-            + "; openExposed " + a.openExposed + " vs " + b.openExposed
-            + "; counts " + (countsOk ? "equal" : "DIFFER") + "; time " + (timeOk ? "within tolerance" : "OUTSIDE"));
+        const worstOk = (x, y) => {
+            const gap = gapOf(x, y);
+            if (gap == null) return false;
+            return gap <= Math.max(20, 0.50 * Math.min(x, y));
+        };
+        const timeOk = frameOk(a.gapMedian, b.gapMedian) && frameOk(a.gapAvg, b.gapAvg)
+            && frameOk(a.openGapMedian, b.openGapMedian) && worstOk(a.gapWorst, b.gapWorst);
+        console.log("COMPARE gapMedian " + a.gapMedian + " vs " + b.gapMedian
+            + " avg " + a.gapAvg + " vs " + b.gapAvg
+            + " worst " + a.gapWorst + " vs " + b.gapWorst
+            + "; openGap " + a.openGapMedian + " vs " + b.openGapMedian
+            + "; spots " + a.openSpots + " vs " + b.openSpots
+            + " visible " + a.openVisible + " vs " + b.openVisible
+            + "; updateMs " + a.updateMsMedian + " vs " + b.updateMsMedian + " (not the acceptance)"
+            + "; counts " + (countsOk ? "equal" : "DIFFER") + "; frame time " + (timeOk ? "within tolerance" : "OUTSIDE"));
         if (!countsOk || !timeOk) return 1;
         return 0;
     } finally {
