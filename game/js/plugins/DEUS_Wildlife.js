@@ -39,7 +39,11 @@
  * prey whose species flees steps away from a hunter (a "hunt" job in
  * UF.World.state.jobs targeting it) within 6 cells; Sprite_Character
  * applies unit.data.tint; unit events with data.through pass through
- * everything (fliers).
+ * everything (fliers). An adjacent predator resolves one UF.Rules attack
+ * (seeded rng from the rules engine) and writes that damage once.
+ * UF.Combat.engage only marks the target; it does not add a second hit.
+ * When UF.Rules is absent, the catalog combat.attack is subtracted once
+ * so the kill, the yields, wildlife:kill and the feeding state still happen.
  *
  * All randomness is seeded (hash32 of seed, unit id and frame). Nothing is
  * kept outside UF.World.state / unit.data except caches.
@@ -1049,6 +1053,103 @@
         }
     }
 
+    // Catalog combat.attack. Used only when UF.Rules is not loaded.
+    function catalogAttack(sp) {
+        const n = sp && sp.combat && sp.combat.attack;
+        return (typeof n === "number" && Number.isFinite(n)) ? n : 6;
+    }
+
+    function readPreyHp(prey, psp) {
+        if (prey && prey.data && typeof prey.data.hp === "number" && Number.isFinite(prey.data.hp)) return prey.data.hp;
+        const cat = psp && psp.combat && psp.combat.hitpoints;
+        return (typeof cat === "number" && Number.isFinite(cat)) ? cat : 2;
+    }
+
+    // Same mapping Combat.resolveWeaponKey uses for a natural attack.
+    function huntWeaponKey(sp) {
+        const C = window.UF && UF.Combat;
+        const type = (sp && sp.combat && sp.combat.attackType) || "crush";
+        if (C && typeof C.resolveWeaponKey === "function") {
+            return C.resolveWeaponKey({ natural: true, types: [type] });
+        }
+        if (type === "stab") return "bite";
+        if (type === "slash") return "claws";
+        return "unarmed";
+    }
+
+    // dice.js createSeededRng. The copy below is that function, for a host
+    // whose require cannot see game/js/sim/rules/dice.js.
+    function rulesRng(seed) {
+        const dice = rulesDice();
+        if (dice && typeof dice.createSeededRng === "function") return dice.createSeededRng(seed >>> 0);
+        let a = seed >>> 0;
+        return function rng() {
+            a = (a + 0x6D2B79F5) >>> 0;
+            let t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+    }
+    function rulesDice() {
+        if (rulesDice.mod !== undefined) return rulesDice.mod;
+        rulesDice.mod = null;
+        try {
+            if (typeof require !== "function") return null;
+            const path = require("path");
+            const fs = require("fs");
+            const candidates = [];
+            if (typeof __dirname === "string") candidates.push(path.join(__dirname, "..", "sim", "rules", "dice.js"));
+            if (typeof process !== "undefined" && process.cwd) candidates.push(path.join(process.cwd(), "game", "js", "sim", "rules", "dice.js"));
+            for (let i = 0; i < candidates.length; i++) {
+                if (candidates[i] && fs.existsSync(candidates[i])) {
+                    rulesDice.mod = require(candidates[i]);
+                    return rulesDice.mod;
+                }
+            }
+        } catch (e) {
+            rulesDice.mod = null;
+        }
+        return rulesDice.mod;
+    }
+
+    function huntSeed(W, predator, prey, frame) {
+        const worldSeed = W && W.state && W.state.seed ? (W.state.seed >>> 0) : 0;
+        return hash32(worldSeed, SALT.predator, predator.id >>> 0, prey.id >>> 0, frame >>> 0);
+    }
+
+    // One SRD attack, then its damage. A rules error whiffs this swing
+    // (it does not fall back onto the catalog, which would be a second law).
+    function strikeDamage(W, predator, prey, sp, frame) {
+        const Rules = window.UF && UF.Rules;
+        if (!Rules || typeof Rules.attack !== "function" || typeof Rules.damage !== "function") {
+            return { hit: true, damage: catalogAttack(sp), law: "catalog" };
+        }
+        const rng = rulesRng(huntSeed(W, predator, prey, frame));
+        try {
+            const att = Rules.attack(predator, prey, huntWeaponKey(sp), { rng: rng });
+            if (!att || !att.hit) return { hit: false, damage: 0, law: "rules" };
+            const dmg = Rules.damage(predator, prey, att, { rng: rng });
+            const amount = dmg && typeof dmg.damage === "number" && Number.isFinite(dmg.damage) ? dmg.damage : 0;
+            return { hit: true, damage: amount, law: "rules" };
+        } catch (e) {
+            if (!e || e.name !== "RulesError") throw e;
+            return { hit: false, damage: 0, law: "rules", error: e.code };
+        }
+    }
+
+    // Combat.engage does not roll. The loop would, on the same tick, because
+    // engage leaves nextAttackTick at 0. Hold that swing for one weapon
+    // interval so this decision is a single hit.
+    function holdPredatorSwing(predator, sp) {
+        const C = window.UF && UF.Combat;
+        if (!C || !C.enabled || !predator || !predator.data || !predator.data.combat) return;
+        const tick = typeof C.tick === "function" ? (Number(C.tick()) || 0) : 0;
+        const speed = (sp && sp.combat && sp.combat.attackSpeed > 0) ? (sp.combat.attackSpeed | 0) : 4;
+        const c = predator.data.combat;
+        const next = tick + Math.max(1, speed);
+        if (!Number.isFinite(c.nextAttackTick) || c.nextAttackTick < next) c.nextAttackTick = next;
+    }
+
     function predatorTick(W, frame) {
         const cur = W.currentArea();
         if (!cur) return;
@@ -1115,23 +1216,38 @@
 
             if (bestDist <= 1) {
                 const C = window.UF && UF.Combat;
-                if (C && typeof C.engage === "function" && C.enabled) C.engage(u, bestPrey);
+                const combatReady = !!(C && C.enabled && typeof C.engage === "function");
                 const psp = speciesOf(bestPrey);
-                const preyHp = (bestPrey.data && typeof bestPrey.data.hp === "number") ? bestPrey.data.hp : ((psp && psp.combat && psp.combat.hitpoints) || 2);
-                const atkDmg = (sp.combat && sp.combat.attack) || 6;
-                const remainingHp = preyHp - atkDmg;
-                if (bestPrey.data) bestPrey.data.hp = remainingHp;
+                const attacksBefore = combatReady && C.stats ? (C.stats.attacks | 0) : 0;
+                if (combatReady) C.engage(u, bestPrey);
+                const engageRolled = !!(combatReady && C.stats && (C.stats.attacks | 0) !== attacksBefore);
+                const hpNow = readPreyHp(bestPrey, psp);
+                let dealt = 0;
+                let remainingHp;
+                if (engageRolled) {
+                    // Combat.resolveAttack already wrote this swing.
+                    remainingHp = hpNow;
+                } else {
+                    const rolled = strikeDamage(W, u, bestPrey, sp, frame);
+                    dealt = rolled.damage;
+                    remainingHp = hpNow - dealt;
+                    if (bestPrey.data && (dealt !== 0 || typeof bestPrey.data.hp === "number")) bestPrey.data.hp = remainingHp;
+                }
+                holdPredatorSwing(u, sp);
 
                 if (remainingHp <= 0) {
-                    const I = window.UF && UF.Items;
-                    const yields = (psp && psp.yields) || {};
-                    if (I && typeof I.drop === "function") {
-                        for (const it of Object.keys(yields)) {
-                            I.drop(bestPrey.area, bestPrey.x, bestPrey.y, it, yields[it] | 0);
+                    const alreadyDead = !!(bestPrey.data && (bestPrey.data.dead || bestPrey.data._isDying));
+                    if (!alreadyDead) {
+                        const I = window.UF && UF.Items;
+                        const yields = (psp && psp.yields) || {};
+                        if (I && typeof I.drop === "function") {
+                            for (const it of Object.keys(yields)) {
+                                I.drop(bestPrey.area, bestPrey.x, bestPrey.y, it, yields[it] | 0);
+                            }
                         }
+                        W.removeUnit(bestPrey.id);
                     }
                     emit("wildlife:kill", { predator: u, prey: bestPrey });
-                    W.removeUnit(bestPrey.id);
                     d.state = "feed";
                     d.feedUntil = frame + 90;
                     d.targetPreyId = null;
@@ -1301,6 +1417,13 @@
         perf: () => ({ ticks: perf.ticks, avgMs: perf.ticks ? perf.ms / perf.ticks : 0, sleepMs: perf.sleepMs, fleeMs: perf.fleeMs, predMs: perf.predMs, grazeMs: perf.grazeMs, wanderMs: perf.wanderMs }),
         resetPerf() {
             perf.ticks = 0; perf.ms = 0; perf.sleepMs = 0; perf.fleeMs = 0; perf.predMs = 0; perf.grazeMs = 0; perf.wanderMs = 0;
+        },
+        /** One predator decision at `frame`. The map hook stays unwired (Objective 2). */
+        stepPredator(frame) {
+            const W = World();
+            if (!W) return false;
+            predatorTick(W, frame >>> 0);
+            return true;
         },
     };
     window.DEUS = window.DEUS || {};
@@ -1661,11 +1784,20 @@
                 `deerA fled: ${deerAFled}, herdmate deerB woke: ${deerBWoke}, herdmate deerB fled: ${deerBFled} (state ${deerB.data.state}, alarmedAt ${deerB.data.alarmedAt})`);
             rem(deerA); rem(deerB); rem(alarmThreat);
 
-            // DF 5. Autonomous predator hunting & feeding: wolf attacks adjacent low-HP prey, drops yields, feeds
+            // DF 5. Autonomous predator hunting & feeding: wolf attacks adjacent low-HP prey, drops yields, feeds.
+            // One decision. The d20 is pinned to a hit so a natural 1 cannot flake this kill check;
+            // miss, armor class and the seeded roll are covered by tools/sim/test_wildlife_rules_damage.js.
             const huntWolf = add("wolf", px, py, { ai: "wander", state: "idle" });
             const huntHare = add("hare", px + 1, py, { ai: "none", hp: 1 });
             const preyId = huntHare.id;
-            predatorTick(W, 240);
+            const Rules = window.UF && UF.Rules;
+            const pinRoll = Rules && typeof Rules._setTestRoll === "function" && typeof Rules._clearTestRoll === "function";
+            if (pinRoll) Rules._setTestRoll(18);
+            try {
+                predatorTick(W, 240);
+            } finally {
+                if (pinRoll) Rules._clearTestRoll();
+            }
             const wolfFeeding = huntWolf.data.state === "feed" && huntWolf.data.feedUntil > 0;
             const hareSlain = W.unit(preyId) === null;
             t.check("predator_hunt", wolfFeeding && hareSlain,

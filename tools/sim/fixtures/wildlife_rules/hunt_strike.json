@@ -1,0 +1,13 @@
+{
+  "task": "SIM.60.07",
+  "predatorSpecies": "wolf",
+  "preySpecies": "hare",
+  "plateArmor": "plate",
+  "hitRoll": 10,
+  "missRoll": 1,
+  "partialHp": 30,
+  "killHp": 1,
+  "worldSeed": 1397702471,
+  "frame": 240,
+  "notes": "Wolf Bite is +4 to hit, 2d4+2. A d20 of 10 hits Armor Class 13 and misses plate (18). A d20 of 1 misses. Catalog combat.attack is not the damage."
+}
