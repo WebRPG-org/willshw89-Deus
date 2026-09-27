@@ -1,0 +1,168 @@
+{
+  "schema": 1,
+  "R": 1000000,
+  "ytPerSy": 2400,
+  "dpy": {
+    "value": null,
+    "ownerOpen": "D-1",
+    "note": "Game days per simulated year is not chosen. Callers pass it when an instant is drained."
+  },
+  "exposures": ["SEALED", "SHELTERED", "SKY", "WET", "BURIED-AER", "BURIED-ANOX", "CAVE"],
+  "roles": ["ROOF", "WALL-UPPER", "WALL-BASE", "FLOOR", "FOUNDATION", "PROP", "FITTING"],
+  "tags": {
+    "OQ-R-01": {
+      "ownerOpen": true,
+      "default": "a",
+      "binds": ["lifeMilli"],
+      "note": "Design default is the life table below. No speed factor is applied."
+    },
+    "OQ-R-04": {
+      "ownerOpen": true,
+      "default": "a",
+      "itemWeathering": true,
+      "attendedDecays": false,
+      "note": "Unattended items weather. Tools in use and carried items do not."
+    },
+    "OQ-R-05": {
+      "ownerOpen": true,
+      "default": "a",
+      "specialDecays": false,
+      "note": "SPECIAL stays infinite in lifeMilli."
+    },
+    "OQ-R-09": {
+      "ownerOpen": true,
+      "default": "a",
+      "decayIgnoresDamageThreshold": true,
+      "note": "Decay still lowers HP when an SRD damage threshold is set."
+    }
+  },
+  "classes": {
+    "ASHLAR": { "group": "structure", "scale": { "field": "weatherResistance", "den": 90, "max": 100 }, "fShedMilli": 10, "ashlarFt": true },
+    "RUBBLESTONE": { "group": "structure", "scale": { "field": "weatherResistance", "den": 90, "max": 100 }, "fShedMilli": 50, "porous": true },
+    "BRICK": { "group": "structure", "scale": null, "fShedMilli": 30, "porous": true },
+    "MUDBRICK": { "group": "structure", "scale": null, "fShedMilli": 300, "porous": true },
+    "TIMBER": { "group": "structure", "scale": { "field": "rotResistance", "den": 50, "max": 100 }, "fShedMilli": 0, "humusMilli": 200 },
+    "LIGHTWOOD": { "group": "structure", "scale": { "field": "rotResistance", "den": 50, "max": 100 }, "fShedMilli": 0, "humusMilli": 200 },
+    "THATCH": { "group": "structure", "scale": null, "fShedMilli": 0, "humusMilli": 150 },
+    "TEXTILE": { "group": "item", "scale": null, "fShedMilli": 0, "humusMilli": 100 },
+    "FLESH": { "group": "item", "scale": null, "fShedMilli": 0, "humusMilli": 50, "note": "R-01.3 groups flesh with food. Corpse stages are remains, tagged OQ-R-06." },
+    "BONE": { "group": "item", "scale": null, "fShedMilli": 0, "note": "Skeletal row. SEALED and WET are gaps: R-03.5 does not state them." },
+    "FERROUS": { "group": "item", "scale": { "field": "corrosionResistance", "den": 30, "max": 100 }, "fShedMilli": 0, "corrosionSteps": 4 },
+    "CUPROUS": { "group": "item", "scale": null, "fShedMilli": 0, "corrosionSteps": 4, "note": "Reference cR for this row is not numeric in the design. Pass fieldNum and fieldDen to scale." },
+    "LEADTIN": { "group": "item", "scale": null, "fShedMilli": 0, "corrosionSteps": 4 },
+    "SILVER": { "group": "item", "scale": null, "fShedMilli": 0, "corrosionSteps": 4 },
+    "NOBLE": { "group": "item", "scale": null, "never": true },
+    "SPECIAL": { "group": "item", "scale": null, "never": true },
+    "GLASS": { "group": "item", "scale": null, "never": true },
+    "CERAMIC": { "group": "item", "scale": null, "never": true },
+    "STONEITEM": { "group": "item", "scale": null, "never": true },
+    "FOOD": { "group": "item", "scale": null, "fShedMilli": 0, "humusMilli": 50, "heap": "short" }
+  },
+  "lifeMilli": {
+    "ASHLAR": { "SEALED": null, "SHELTERED": 20000000, "SKY": 3000000, "WET": 1500000, "BURIED-AER": null, "BURIED-ANOX": null, "CAVE": 20000000 },
+    "RUBBLESTONE": { "SEALED": 3000000, "SHELTERED": 1500000, "SKY": 400000, "WET": 200000, "BURIED-AER": null, "BURIED-ANOX": null, "CAVE": 3000000 },
+    "BRICK": { "SEALED": 5000000, "SHELTERED": 2500000, "SKY": 800000, "WET": 300000, "BURIED-AER": null, "BURIED-ANOX": null, "CAVE": 5000000 },
+    "MUDBRICK": { "SEALED": 1000000, "SHELTERED": 400000, "SKY": 60000, "WET": 15000, "BURIED-AER": null, "BURIED-ANOX": null, "CAVE": 800000 },
+    "TIMBER": { "SEALED": 400000, "SHELTERED": 150000, "SKY": 60000, "WET": 25000, "BURIED-AER": 40000, "BURIED-ANOX": 2000000, "CAVE": 50000 },
+    "LIGHTWOOD": { "SEALED": 150000, "SHELTERED": 60000, "SKY": 25000, "WET": 10000, "BURIED-AER": 15000, "BURIED-ANOX": 500000, "CAVE": 20000 },
+    "THATCH": { "SEALED": 60000, "SHELTERED": 30000, "SKY": 12000, "WET": 5000, "BURIED-AER": 8000, "BURIED-ANOX": 200000, "CAVE": 10000 },
+    "TEXTILE": { "SEALED": 200000, "SHELTERED": 30000, "SKY": 3000, "WET": 1000, "BURIED-AER": 10000, "BURIED-ANOX": 1000000, "CAVE": 5000 },
+    "FLESH": { "SEALED": 1000, "SHELTERED": 500, "SKY": 100, "WET": 50, "BURIED-AER": 500, "BURIED-ANOX": 50000, "CAVE": 200 },
+    "BONE": { "SEALED": { "gap": true }, "SHELTERED": 500000, "SKY": 50000, "WET": { "gap": true }, "BURIED-AER": 2000000, "BURIED-ANOX": 10000000, "CAVE": 20000000 },
+    "FERROUS": { "SEALED": 2000000, "SHELTERED": 300000, "SKY": 60000, "WET": 25000, "BURIED-AER": 150000, "BURIED-ANOX": 3000000, "CAVE": 400000 },
+    "CUPROUS": { "SEALED": null, "SHELTERED": 20000000, "SKY": 5000000, "WET": 1500000, "BURIED-AER": 8000000, "BURIED-ANOX": 30000000, "CAVE": 20000000 },
+    "LEADTIN": { "SEALED": null, "SHELTERED": 10000000, "SKY": 3000000, "WET": 800000, "BURIED-AER": 5000000, "BURIED-ANOX": 20000000, "CAVE": 10000000 },
+    "SILVER": { "SEALED": null, "SHELTERED": null, "SKY": 30000000, "WET": 10000000, "BURIED-AER": 20000000, "BURIED-ANOX": null, "CAVE": null },
+    "NOBLE": { "SEALED": null, "SHELTERED": null, "SKY": null, "WET": null, "BURIED-AER": null, "BURIED-ANOX": null, "CAVE": null },
+    "SPECIAL": { "SEALED": null, "SHELTERED": null, "SKY": null, "WET": null, "BURIED-AER": null, "BURIED-ANOX": null, "CAVE": null },
+    "GLASS": { "SEALED": null, "SHELTERED": null, "SKY": null, "WET": null, "BURIED-AER": null, "BURIED-ANOX": null, "CAVE": null },
+    "CERAMIC": { "SEALED": null, "SHELTERED": null, "SKY": null, "WET": null, "BURIED-ANOX": null, "BURIED-AER": null, "CAVE": null },
+    "STONEITEM": { "SEALED": null, "SHELTERED": null, "SKY": null, "WET": null, "BURIED-AER": null, "BURIED-ANOX": null, "CAVE": null },
+    "FOOD": { "SEALED": 1000, "SHELTERED": 500, "SKY": 100, "WET": 50, "BURIED-AER": 500, "BURIED-ANOX": 50000, "CAVE": 200 }
+  },
+  "stages": {
+    "s1Rem": 850000,
+    "foundationFloorRem": 250000,
+    "steps": 4,
+    "siteMassMilli": 500,
+    "names": ["S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7"]
+  },
+  "maintainYears": {
+    "THATCH": 2,
+    "LIGHTWOOD": 5,
+    "TIMBER": 10,
+    "MUDBRICK": 2,
+    "ASHLAR": 25,
+    "RUBBLESTONE": 25,
+    "BRICK": 25
+  },
+  "abandonYears": {
+    "THATCH": 1,
+    "LIGHTWOOD": 1,
+    "DEFAULT": 2
+  },
+  "siteAbandonYears": 1,
+  "upkeepShareMilli": 50,
+  "residue": {
+    "ownerOpenAsh": "OQ-R-07",
+    "ashDefault": "a",
+    "fractions": {
+      "TIMBER": { "ashMilli": 10, "charMilli": 300 },
+      "LIGHTWOOD": { "ashMilli": 10, "charMilli": 250 },
+      "THATCH": { "ashMilli": 50, "charMilli": 100 },
+      "TEXTILE": { "ashMilli": 20, "charMilli": 150 },
+      "FLESH": { "ashMilli": 10, "charMilli": 50 },
+      "FOOD": { "ashMilli": 20, "charMilli": 100 }
+    },
+    "weatherMilli": {
+      "ASH": { "SKY": 5000, "SHELTERED": 50000, "BURIED": null },
+      "CHARCOAL": { "SKY": 20000, "SHELTERED": 200000, "BURIED": null, "oxidiseMilli": 5000000 }
+    },
+    "finesToSoilMilli": 200000,
+    "pedoMilli": { "BURIED-AER": 5000000, "BURIED-ANOX": null }
+  },
+  "structureTemplates": [
+    { "id": "H1", "roof": "TIMBER", "wall": "ASHLAR" },
+    { "id": "H2", "roof": "THATCH", "wall": "MUDBRICK" },
+    { "id": "H3", "roof": "TIMBER", "wall": "TIMBER" },
+    { "id": "H4", "roof": "LIGHTWOOD", "wall": "BRICK" },
+    { "id": "thatch-timber", "roof": "THATCH", "wall": "TIMBER" },
+    { "id": "lightwood-timber", "roof": "LIGHTWOOD", "wall": "TIMBER" }
+  ],
+  "transforms": [
+    { "id": "decay.shed", "from": "BUILT", "to": "FINES", "cause": "decay.shed" },
+    { "id": "decay.rot", "from": "RUBBLE", "to": "SOIL-ORG", "cause": "decay.rot" },
+    { "id": "decay.rot.item", "from": "ITEM", "to": "SOIL-ORG", "cause": "decay.rot" },
+    { "id": "decay.rot.outgas", "from": "ORGANIC", "to": "AIR", "sink": true, "cause": "decay.rot.outgas" },
+    { "id": "collapse.decay", "from": "BUILT", "to": "RUBBLE", "cause": "collapse.decay", "owner": "laneQ" },
+    { "id": "decay.release", "from": "BUILT", "to": "SCRAP", "cause": "decay.release" },
+    { "id": "decay.pedogenesis", "from": "RUBBLE", "to": "SOIL-MIN", "cause": "decay.pedogenesis" },
+    { "id": "decay.fines.soil", "from": "FINES", "to": "SOIL-MIN", "cause": "decay.pedogenesis" },
+    { "id": "decay.corrode", "from": "ITEM", "to": "OXIDE", "cause": "decay.corrode" },
+    { "id": "decay.bury", "from": "ITEM", "to": "ITEM-BURIED", "cause": "decay.bury" },
+    { "id": "decay.excavate", "from": "ITEM-BURIED", "to": "ITEM", "cause": "decay.excavate" },
+    { "id": "decay.ash_to_soil", "from": "ASH", "to": "SOIL-MIN", "cause": "decay.ash_to_soil" },
+    { "id": "decay.char", "from": "CHARCOAL", "to": "SOIL-CARBON", "cause": "decay.char_to_soil" },
+    { "id": "decay.repair", "from": "ITEM", "to": "BUILT", "cause": "decay.repair" },
+    { "id": "residue.ash", "from": "ORGANIC", "to": "ASH", "cause": "fire" },
+    { "id": "residue.char", "from": "ORGANIC", "to": "CHARCOAL", "cause": "fire" },
+    { "id": "fire.outgas", "from": "ORGANIC", "to": "AIR", "sink": true, "cause": "fire.outgas" },
+    { "id": "death.soft", "from": "BODY", "to": "REMAINS", "cause": "death" },
+    { "id": "death.bone", "from": "BODY", "to": "REMAINS", "cause": "death" },
+    { "id": "decay.bone", "from": "REMAINS", "to": "SOIL-MIN", "cause": "decay.bone" },
+    { "id": "geology.lithify", "from": "SEDIMENT", "to": "ROCK-SED", "cause": "geology.lithify", "enabled": false, "ownerOpen": "OQ-R-03" }
+  ],
+  "remains": {
+    "ownerOpen": "OQ-R-06",
+    "default": "a",
+    "anchorYears": 200,
+    "mergeYears": 50,
+    "boneFractionMilli": 150,
+    "softHumusMilli": 50,
+    "freshToSkeletalMilli": { "SKY": 250, "SHELTERED": 500, "BURIED-AER": 5000, "BURIED-ANOX": 1000000, "CAVE": 1000 },
+    "skeletalToSoilMilli": { "SKY": 50000, "SHELTERED": 500000, "BURIED-AER": 2000000, "BURIED-ANOX": 10000000, "CAVE": 20000 },
+    "frozen": "paused"
+  },
+  "scheduler": { "ticksPerDay": 2400, "bShort": 16, "memberCap": 64 },
+  "lithify": { "enabled": false, "ownerOpen": "OQ-R-03", "output": "ROCK-SED" }
+}

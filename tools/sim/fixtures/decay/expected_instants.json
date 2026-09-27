@@ -1,0 +1,40 @@
+{
+  "note": "Pinned instants from SIM.40.05 R-01.6 and R-09.3. Year-ticks, not calendar days.",
+  "R": 1000000,
+  "ashlarShelteredWr90NoModifierFailYt": 48000000,
+  "r016": {
+    "t0": 0,
+    "roofFail": 144000,
+    "s1": 21600,
+    "shelteredLifeYt": 42666667,
+    "skyLifeYt": 6400000,
+    "bands": [
+      { "band": 1, "rebase": 144000, "rem0": 996626, "fail": 6522407 },
+      { "band": 2, "rebase": 6522407, "rem0": 847132, "fail": 11944052 },
+      { "band": 3, "rebase": 11944052, "rem0": 720062, "fail": 16552449 },
+      { "band": 4, "rebase": 16552449, "rem0": 612052, "fail": 20469582 }
+    ]
+  },
+  "h1": {
+    "wallT0": 31200,
+    "roofFail": 175200,
+    "s1": 52800,
+    "shelteredLifeYt": 21333334,
+    "skyLifeYt": 3200000,
+    "bands": [3353604, 6055246, 8351640, 10303576],
+    "rem0": [993251, 844263, 717623, 609980],
+    "mr15Dpy1": [1407, 2530, 3475, 4275],
+    "mr15Dpy20": [1263, 2213, 2973, 3583],
+    "mr16Dpy1Band2": 6056602,
+    "mr16Dpy20Band2": 6055276,
+    "dayDpy1": 1398,
+    "dayDpy20": 27947
+  },
+  "h2": {
+    "wallT0": 31200,
+    "roofFail": 57600,
+    "s1": 33120,
+    "bands": [149640, 227875],
+    "rem0": [958750, 814938]
+  }
+}
