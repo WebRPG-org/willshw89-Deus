@@ -6,15 +6,15 @@
   "titles": {
     "defaultTitle": "Quartermaster",
     "culturalTitles": {
-      "human": "Castellan",
-      "dwarf": "Storewarden",
-      "elf": "Keeper of Supplies",
-      "halfling": "Pantrymaster",
-      "orc": "Gear Hoarder",
-      "goblin": "Loot Keeper",
-      "dragonborn": "Arsenal Warden",
-      "gnome": "Component Archivist",
-      "tiefling": "Depot Overseer"
+      "human": "Quartermaster",
+      "dwarf": "Quartermaster",
+      "elf": "Quartermaster",
+      "halfling": "Quartermaster",
+      "dragonborn": "Quartermaster",
+      "gnome": "Quartermaster",
+      "half-elf": "Quartermaster",
+      "half-orc": "Quartermaster",
+      "tiefling": "Quartermaster"
     }
   },
   "jurisdiction": {
@@ -22,7 +22,6 @@
     "factionId": null,
     "settlementId": null,
     "domains": [
-      "TREASURY_CHEST",
       "WORKSHOPS"
     ],
     "geographicBounds": null
@@ -45,22 +44,22 @@
     ]
   },
   "holder": {
-    "cardinality": "SINGLE",
+    "cardinality": "UNDECIDED",
     "primaryHolderId": null,
     "actingHolderId": null,
     "coHolderIds": [],
     "deputyIds": [],
-    "maxHolders": 1,
-    "allowConcurrentOffices": true
+    "maxHolders": null,
+    "allowConcurrentOffices": null
   },
   "successionPolicy": {
-    "method": "APPOINTMENT",
-    "appointmentAuthority": "OFFICE_LEADER",
+    "method": "OPEN_POLICY",
+    "appointmentAuthority": null,
     "orderOfPrecedence": [
       "DEPUTY"
     ],
     "eligibilityCriteria": {
-      "minAge": 18,
+      "minAge": null,
       "requiredCrafts": [],
       "requiredClasses": [],
       "minLevel": null,
@@ -73,7 +72,7 @@
   "subordinateOffices": [],
   "parentOfficeId": "OFFICE_LEADER",
   "workloadProfile": {
-    "baselineHoursPerWeek": 14.0,
+    "baselineHoursPerWeek": null,
     "criticalityTier": "CORE_FOUNDER"
   }
 }

@@ -7,7 +7,7 @@
     {
       "officeId": "OFFICE_LEADER",
       "canonicalFunction": "LEADER",
-      "aliases": ["EXECUTIVE"],
+      "aliases": [],
       "department": "GOVERNANCE",
       "tier": "CORE_FOUNDER",
       "file": "leader.json"
@@ -71,7 +71,7 @@
     {
       "officeId": "OFFICE_STEWARD",
       "canonicalFunction": "STEWARD",
-      "aliases": ["ADMIN"],
+      "aliases": [],
       "department": "ADMINISTRATION",
       "tier": "PRIMARY_GOVERNANCE",
       "file": "steward.json"
@@ -79,7 +79,7 @@
     {
       "officeId": "OFFICE_HEALER_DIRECTOR",
       "canonicalFunction": "HEALER_DIRECTOR",
-      "aliases": ["HEALER"],
+      "aliases": [],
       "department": "HEALTH",
       "tier": "SPECIALIZED_DEPARTMENT",
       "file": "healer_director.json"

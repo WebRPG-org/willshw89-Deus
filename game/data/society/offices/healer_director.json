@@ -6,15 +6,15 @@
   "titles": {
     "defaultTitle": "Director of Healing",
     "culturalTitles": {
-      "human": "Chirurgeon-General",
-      "dwarf": "Master Apothecary",
-      "elf": "High Healer",
-      "halfling": "Village Herbalist",
-      "orc": "Bone Setter",
-      "goblin": "Leech Master",
-      "dragonborn": "Grand Cleanser",
-      "gnome": "Chief Tincturist",
-      "tiefling": "Venom & Remedy Warden"
+      "human": "Director of Healing",
+      "dwarf": "Director of Healing",
+      "elf": "Director of Healing",
+      "halfling": "Director of Healing",
+      "dragonborn": "Director of Healing",
+      "gnome": "Director of Healing",
+      "half-elf": "Director of Healing",
+      "half-orc": "Director of Healing",
+      "tiefling": "Director of Healing"
     }
   },
   "jurisdiction": {
@@ -44,33 +44,25 @@
     ]
   },
   "holder": {
-    "cardinality": "SINGLE",
+    "cardinality": "UNDECIDED",
     "primaryHolderId": null,
     "actingHolderId": null,
     "coHolderIds": [],
     "deputyIds": [],
-    "maxHolders": 1,
-    "allowConcurrentOffices": true
+    "maxHolders": null,
+    "allowConcurrentOffices": null
   },
   "successionPolicy": {
-    "method": "APPOINTMENT",
-    "appointmentAuthority": "OFFICE_LEADER",
+    "method": "OPEN_POLICY",
+    "appointmentAuthority": null,
     "orderOfPrecedence": [
       "DEPUTY"
     ],
     "eligibilityCriteria": {
-      "minAge": 18,
-      "requiredCrafts": [
-        "HERBALIST",
-        "ALCHEMIST"
-      ],
-      "requiredClasses": [
-        "srd:class:cleric",
-        "srd:class:druid",
-        "srd:class:paladin",
-        "srd:class:bard"
-      ],
-      "minLevel": 1,
+      "minAge": null,
+      "requiredCrafts": [],
+      "requiredClasses": [],
+      "minLevel": null,
       "requireFactionMember": true,
       "additionalCriteria": null
     },
@@ -80,7 +72,7 @@
   "subordinateOffices": [],
   "parentOfficeId": "OFFICE_LEADER",
   "workloadProfile": {
-    "baselineHoursPerWeek": 16.0,
+    "baselineHoursPerWeek": null,
     "criticalityTier": "SPECIALIZED_DEPARTMENT"
   }
 }

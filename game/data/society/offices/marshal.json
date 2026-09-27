@@ -6,15 +6,15 @@
   "titles": {
     "defaultTitle": "Marshal",
     "culturalTitles": {
-      "human": "High Marshal",
-      "dwarf": "Warmaster",
-      "elf": "Captain of the Green",
-      "halfling": "Constable",
-      "orc": "War Chief",
-      "goblin": "Raid Boss",
-      "dragonborn": "Grand Warmarshal",
-      "gnome": "Defense Engineer",
-      "tiefling": "Legate"
+      "human": "Marshal",
+      "dwarf": "Marshal",
+      "elf": "Marshal",
+      "halfling": "Marshal",
+      "dragonborn": "Marshal",
+      "gnome": "Marshal",
+      "half-elf": "Marshal",
+      "half-orc": "Marshal",
+      "tiefling": "Marshal"
     }
   },
   "jurisdiction": {
@@ -42,34 +42,29 @@
     "degradationEffects": [
       "DEFENSE_MOBILIZATION_DELAYED",
       "PATROL_ROUTING_UNCOORDINATED",
-      "GARRISON_MORALE_PENALTY"
+      "GARRISON_COORDINATION_HALTED"
     ]
   },
   "holder": {
-    "cardinality": "SINGLE",
+    "cardinality": "UNDECIDED",
     "primaryHolderId": null,
     "actingHolderId": null,
     "coHolderIds": [],
     "deputyIds": [],
-    "maxHolders": 1,
-    "allowConcurrentOffices": true
+    "maxHolders": null,
+    "allowConcurrentOffices": null
   },
   "successionPolicy": {
-    "method": "APPOINTMENT",
-    "appointmentAuthority": "OFFICE_LEADER",
+    "method": "OPEN_POLICY",
+    "appointmentAuthority": null,
     "orderOfPrecedence": [
       "DEPUTY"
     ],
     "eligibilityCriteria": {
-      "minAge": 18,
+      "minAge": null,
       "requiredCrafts": [],
-      "requiredClasses": [
-        "srd:class:fighter",
-        "srd:class:paladin",
-        "srd:class:ranger",
-        "srd:class:barbarian"
-      ],
-      "minLevel": 1,
+      "requiredClasses": [],
+      "minLevel": null,
       "requireFactionMember": true,
       "additionalCriteria": null
     },
@@ -79,7 +74,7 @@
   "subordinateOffices": [],
   "parentOfficeId": "OFFICE_LEADER",
   "workloadProfile": {
-    "baselineHoursPerWeek": 14.0,
+    "baselineHoursPerWeek": null,
     "criticalityTier": "CORE_FOUNDER"
   }
 }

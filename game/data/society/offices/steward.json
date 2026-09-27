@@ -6,15 +6,15 @@
   "titles": {
     "defaultTitle": "Steward",
     "culturalTitles": {
-      "human": "High Steward",
-      "dwarf": "Seneschal",
-      "elf": "Factotum",
-      "halfling": "Bailiff",
-      "orc": "Taskmaster",
-      "goblin": "Whip Overseer",
-      "dragonborn": "Grand Seneschal",
-      "gnome": "Operations Coordinator",
-      "tiefling": "Chancellor"
+      "human": "Steward",
+      "dwarf": "Steward",
+      "elf": "Steward",
+      "halfling": "Steward",
+      "dragonborn": "Steward",
+      "gnome": "Steward",
+      "half-elf": "Steward",
+      "half-orc": "Steward",
+      "tiefling": "Steward"
     }
   },
   "jurisdiction": {
@@ -46,23 +46,22 @@
     ]
   },
   "holder": {
-    "cardinality": "SINGLE",
+    "cardinality": "UNDECIDED",
     "primaryHolderId": null,
     "actingHolderId": null,
     "coHolderIds": [],
     "deputyIds": [],
-    "maxHolders": 1,
-    "allowConcurrentOffices": true
+    "maxHolders": null,
+    "allowConcurrentOffices": null
   },
   "successionPolicy": {
-    "method": "APPOINTMENT",
-    "appointmentAuthority": "OFFICE_LEADER",
+    "method": "OPEN_POLICY",
+    "appointmentAuthority": null,
     "orderOfPrecedence": [
-      "DEPUTY",
-      "OFFICE_CLERK"
+      "DEPUTY"
     ],
     "eligibilityCriteria": {
-      "minAge": 18,
+      "minAge": null,
       "requiredCrafts": [],
       "requiredClasses": [],
       "minLevel": null,
@@ -72,12 +71,10 @@
     "interregnumPolicy": "ACTING_DEPUTY",
     "cultureOutcomeOpen": true
   },
-  "subordinateOffices": [
-    "OFFICE_CLERK"
-  ],
+  "subordinateOffices": [],
   "parentOfficeId": "OFFICE_LEADER",
   "workloadProfile": {
-    "baselineHoursPerWeek": 20.0,
+    "baselineHoursPerWeek": null,
     "criticalityTier": "PRIMARY_GOVERNANCE"
   }
 }

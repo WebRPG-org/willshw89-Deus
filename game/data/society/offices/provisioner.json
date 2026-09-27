@@ -6,14 +6,14 @@
   "titles": {
     "defaultTitle": "Provisioner",
     "culturalTitles": {
-      "human": "Foodwarden",
-      "dwarf": "Master of Granaries",
-      "elf": "Keeper of the Harvest",
-      "halfling": "High Pantrywarden",
-      "orc": "Meat Master",
-      "goblin": "Grub Boss",
-      "dragonborn": "Warden of Rations",
-      "gnome": "Preservationist",
+      "human": "Provisioner",
+      "dwarf": "Provisioner",
+      "elf": "Provisioner",
+      "halfling": "Provisioner",
+      "dragonborn": "Provisioner",
+      "gnome": "Provisioner",
+      "half-elf": "Provisioner",
+      "half-orc": "Provisioner",
       "tiefling": "Provisioner"
     }
   },
@@ -44,28 +44,23 @@
     ]
   },
   "holder": {
-    "cardinality": "SINGLE",
+    "cardinality": "UNDECIDED",
     "primaryHolderId": null,
     "actingHolderId": null,
     "coHolderIds": [],
     "deputyIds": [],
-    "maxHolders": 1,
-    "allowConcurrentOffices": true
+    "maxHolders": null,
+    "allowConcurrentOffices": null
   },
   "successionPolicy": {
-    "method": "APPOINTMENT",
-    "appointmentAuthority": "OFFICE_LEADER",
+    "method": "OPEN_POLICY",
+    "appointmentAuthority": null,
     "orderOfPrecedence": [
       "DEPUTY"
     ],
     "eligibilityCriteria": {
-      "minAge": 18,
-      "requiredCrafts": [
-        "FARMER",
-        "HUNTER",
-        "COOK",
-        "MILLER"
-      ],
+      "minAge": null,
+      "requiredCrafts": [],
       "requiredClasses": [],
       "minLevel": null,
       "requireFactionMember": true,
@@ -77,7 +72,7 @@
   "subordinateOffices": [],
   "parentOfficeId": "OFFICE_LEADER",
   "workloadProfile": {
-    "baselineHoursPerWeek": 14.0,
+    "baselineHoursPerWeek": null,
     "criticalityTier": "CORE_FOUNDER"
   }
 }

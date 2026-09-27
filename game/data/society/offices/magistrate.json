@@ -6,14 +6,14 @@
   "titles": {
     "defaultTitle": "Magistrate",
     "culturalTitles": {
-      "human": "Justiciar",
-      "dwarf": "Lawspeaker",
-      "elf": "Arbiter of Harmony",
-      "halfling": "Judge of Disputes",
-      "orc": "Blood Arbiter",
-      "goblin": "Cheater Catcher",
-      "dragonborn": "Grand Inquisitor",
-      "gnome": "Code Jurist",
+      "human": "Magistrate",
+      "dwarf": "Magistrate",
+      "elf": "Magistrate",
+      "halfling": "Magistrate",
+      "dragonborn": "Magistrate",
+      "gnome": "Magistrate",
+      "half-elf": "Magistrate",
+      "half-orc": "Magistrate",
       "tiefling": "Magistrate"
     }
   },
@@ -45,25 +45,23 @@
     ]
   },
   "holder": {
-    "cardinality": "SINGLE",
+    "cardinality": "UNDECIDED",
     "primaryHolderId": null,
     "actingHolderId": null,
     "coHolderIds": [],
     "deputyIds": [],
-    "maxHolders": 1,
-    "allowConcurrentOffices": true
+    "maxHolders": null,
+    "allowConcurrentOffices": null
   },
   "successionPolicy": {
-    "method": "APPOINTMENT",
-    "appointmentAuthority": "OFFICE_LEADER",
+    "method": "OPEN_POLICY",
+    "appointmentAuthority": null,
     "orderOfPrecedence": [
       "DEPUTY"
     ],
     "eligibilityCriteria": {
-      "minAge": 18,
-      "requiredCrafts": [
-        "SCRIBE"
-      ],
+      "minAge": null,
+      "requiredCrafts": [],
       "requiredClasses": [],
       "minLevel": null,
       "requireFactionMember": true,
@@ -75,7 +73,7 @@
   "subordinateOffices": [],
   "parentOfficeId": "OFFICE_LEADER",
   "workloadProfile": {
-    "baselineHoursPerWeek": 16.0,
+    "baselineHoursPerWeek": null,
     "criticalityTier": "SPECIALIZED_DEPARTMENT"
   }
 }

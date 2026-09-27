@@ -6,15 +6,15 @@
   "titles": {
     "defaultTitle": "Trade Master",
     "culturalTitles": {
-      "human": "Master of the Guild",
-      "dwarf": "Factor of the Deep Road",
-      "elf": "Harbor Master",
-      "halfling": "Market Alderman",
-      "orc": "Barter Boss",
-      "goblin": "Swindle Factor",
-      "dragonborn": "Grand Merchant Warden",
-      "gnome": "Exchange Administrator",
-      "tiefling": "Trade Syndic"
+      "human": "Trade Master",
+      "dwarf": "Trade Master",
+      "elf": "Trade Master",
+      "halfling": "Trade Master",
+      "dragonborn": "Trade Master",
+      "gnome": "Trade Master",
+      "half-elf": "Trade Master",
+      "half-orc": "Trade Master",
+      "tiefling": "Trade Master"
     }
   },
   "jurisdiction": {
@@ -45,25 +45,23 @@
     ]
   },
   "holder": {
-    "cardinality": "SINGLE",
+    "cardinality": "UNDECIDED",
     "primaryHolderId": null,
     "actingHolderId": null,
     "coHolderIds": [],
     "deputyIds": [],
-    "maxHolders": 1,
-    "allowConcurrentOffices": true
+    "maxHolders": null,
+    "allowConcurrentOffices": null
   },
   "successionPolicy": {
-    "method": "APPOINTMENT",
-    "appointmentAuthority": "OFFICE_LEADER",
+    "method": "OPEN_POLICY",
+    "appointmentAuthority": null,
     "orderOfPrecedence": [
       "DEPUTY"
     ],
     "eligibilityCriteria": {
-      "minAge": 18,
-      "requiredCrafts": [
-        "MERCHANT"
-      ],
+      "minAge": null,
+      "requiredCrafts": [],
       "requiredClasses": [],
       "minLevel": null,
       "requireFactionMember": true,
@@ -75,7 +73,7 @@
   "subordinateOffices": [],
   "parentOfficeId": "OFFICE_LEADER",
   "workloadProfile": {
-    "baselineHoursPerWeek": 18.0,
+    "baselineHoursPerWeek": null,
     "criticalityTier": "SPECIALIZED_DEPARTMENT"
   }
 }

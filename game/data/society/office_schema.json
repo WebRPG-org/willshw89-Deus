@@ -134,7 +134,8 @@
         "degradationEffects": {
           "type": ["array", "null"],
           "items": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[A-Z0-9_]+$"
           }
         }
       }
@@ -271,10 +272,10 @@
     "workloadProfile": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["baselineHoursPerWeek", "criticalityTier"],
+      "required": ["criticalityTier"],
       "properties": {
         "baselineHoursPerWeek": {
-          "type": "number",
+          "type": ["number", "null"],
           "minimum": 0.0
         },
         "criticalityTier": {
@@ -300,6 +301,7 @@
         "RECORDER",
         "MAGISTRATE",
         "HEALER_DIRECTOR",
+        "HEALER",
         "ENVOY",
         "TRADE_MASTER",
         "TAX_COLLECTOR",

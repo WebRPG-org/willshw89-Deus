@@ -6,15 +6,15 @@
   "titles": {
     "defaultTitle": "Treasurer",
     "culturalTitles": {
-      "human": "Royal Treasurer",
-      "dwarf": "Keeper of the Vault",
-      "elf": "Purser of the Grove",
-      "halfling": "Bursar",
-      "orc": "Hoard Master",
-      "goblin": "Coin Snatcher",
-      "dragonborn": "Grand Assayer",
-      "gnome": "Chief Accountant",
-      "tiefling": "Exchequer"
+      "human": "Treasurer",
+      "dwarf": "Treasurer",
+      "elf": "Treasurer",
+      "halfling": "Treasurer",
+      "dragonborn": "Treasurer",
+      "gnome": "Treasurer",
+      "half-elf": "Treasurer",
+      "half-orc": "Treasurer",
+      "tiefling": "Treasurer"
     }
   },
   "jurisdiction": {
@@ -48,24 +48,23 @@
     ]
   },
   "holder": {
-    "cardinality": "SINGLE",
+    "cardinality": "UNDECIDED",
     "primaryHolderId": null,
     "actingHolderId": null,
     "coHolderIds": [],
     "deputyIds": [],
-    "maxHolders": 1,
-    "allowConcurrentOffices": true
+    "maxHolders": null,
+    "allowConcurrentOffices": null
   },
   "successionPolicy": {
-    "method": "APPOINTMENT",
-    "appointmentAuthority": "OFFICE_LEADER",
+    "method": "OPEN_POLICY",
+    "appointmentAuthority": null,
     "orderOfPrecedence": [
       "DEPUTY",
-      "OFFICE_PAYMASTER",
-      "OFFICE_MINT_MASTER"
+      "OFFICE_PAYMASTER"
     ],
     "eligibilityCriteria": {
-      "minAge": 18,
+      "minAge": null,
       "requiredCrafts": [],
       "requiredClasses": [],
       "minLevel": null,
@@ -76,13 +75,12 @@
     "cultureOutcomeOpen": true
   },
   "subordinateOffices": [
-    "OFFICE_MINT_MASTER",
     "OFFICE_TAX_COLLECTOR",
     "OFFICE_PAYMASTER"
   ],
   "parentOfficeId": "OFFICE_LEADER",
   "workloadProfile": {
-    "baselineHoursPerWeek": 14.0,
+    "baselineHoursPerWeek": null,
     "criticalityTier": "CORE_FOUNDER"
   }
 }

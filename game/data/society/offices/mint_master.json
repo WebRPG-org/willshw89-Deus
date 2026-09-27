@@ -6,15 +6,15 @@
   "titles": {
     "defaultTitle": "Mint Master",
     "culturalTitles": {
-      "human": "Moneyer of the Realm",
-      "dwarf": "Master Assayer",
-      "elf": "Silversmith Warden",
-      "halfling": "Coin Stamper",
-      "orc": "Slag Master",
-      "goblin": "Nugget Puncher",
-      "dragonborn": "Keeper of the Crucible",
-      "gnome": "Precision Die-Cutter",
-      "tiefling": "Mint Warden"
+      "human": "Mint Master",
+      "dwarf": "Mint Master",
+      "elf": "Mint Master",
+      "halfling": "Mint Master",
+      "dragonborn": "Mint Master",
+      "gnome": "Mint Master",
+      "half-elf": "Mint Master",
+      "half-orc": "Mint Master",
+      "tiefling": "Mint Master"
     }
   },
   "jurisdiction": {
@@ -22,8 +22,7 @@
     "factionId": null,
     "settlementId": null,
     "domains": [
-      "FOUNDRY_MINT",
-      "TREASURY_CHEST"
+      "FOUNDRY_MINT"
     ],
     "geographicBounds": null
   },
@@ -44,27 +43,23 @@
     ]
   },
   "holder": {
-    "cardinality": "SINGLE",
+    "cardinality": "UNDECIDED",
     "primaryHolderId": null,
     "actingHolderId": null,
     "coHolderIds": [],
     "deputyIds": [],
-    "maxHolders": 1,
-    "allowConcurrentOffices": true
+    "maxHolders": null,
+    "allowConcurrentOffices": null
   },
   "successionPolicy": {
-    "method": "APPOINTMENT",
-    "appointmentAuthority": "OFFICE_TREASURER",
+    "method": "OPEN_POLICY",
+    "appointmentAuthority": null,
     "orderOfPrecedence": [
       "DEPUTY"
     ],
     "eligibilityCriteria": {
-      "minAge": 18,
-      "requiredCrafts": [
-        "BLACKSMITH",
-        "SMELTER",
-        "JEWELER"
-      ],
+      "minAge": null,
+      "requiredCrafts": [],
       "requiredClasses": [],
       "minLevel": null,
       "requireFactionMember": true,
@@ -74,9 +69,9 @@
     "cultureOutcomeOpen": true
   },
   "subordinateOffices": [],
-  "parentOfficeId": "OFFICE_TREASURER",
+  "parentOfficeId": "OFFICE_LEADER",
   "workloadProfile": {
-    "baselineHoursPerWeek": 10.0,
+    "baselineHoursPerWeek": null,
     "criticalityTier": "CORE_FOUNDER"
   }
 }

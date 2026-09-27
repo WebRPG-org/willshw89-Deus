@@ -6,15 +6,15 @@
   "titles": {
     "defaultTitle": "Leader",
     "culturalTitles": {
-      "human": "High King",
-      "dwarf": "Jarl",
-      "elf": "Elder Speaker",
-      "halfling": "Mayor",
-      "orc": "Warlord",
-      "goblin": "Chief",
-      "dragonborn": "Grand Clan-Lord",
-      "gnome": "High Councilor",
-      "tiefling": "Princeps"
+      "human": "Leader",
+      "dwarf": "Leader",
+      "elf": "Leader",
+      "halfling": "Leader",
+      "dragonborn": "Leader",
+      "gnome": "Leader",
+      "half-elf": "Leader",
+      "half-orc": "Leader",
+      "tiefling": "Leader"
     }
   },
   "jurisdiction": {
@@ -55,7 +55,7 @@
     "coHolderIds": [],
     "deputyIds": [],
     "maxHolders": null,
-    "allowConcurrentOffices": true
+    "allowConcurrentOffices": null
   },
   "successionPolicy": {
     "method": "OPEN_POLICY",
@@ -66,7 +66,7 @@
       "OFFICE_MARSHAL"
     ],
     "eligibilityCriteria": {
-      "minAge": 18,
+      "minAge": null,
       "requiredCrafts": [],
       "requiredClasses": [],
       "minLevel": null,
@@ -78,17 +78,21 @@
   },
   "subordinateOffices": [
     "OFFICE_STEWARD",
-    "OFFICE_MARSHAL",
     "OFFICE_TREASURER",
+    "OFFICE_MINT_MASTER",
+    "OFFICE_MARSHAL",
+    "OFFICE_QUARTERMASTER",
     "OFFICE_MASTER_OF_WORKS",
     "OFFICE_PROVISIONER",
     "OFFICE_RECORDER",
+    "OFFICE_HEALER_DIRECTOR",
+    "OFFICE_MAGISTRATE",
     "OFFICE_ENVOY",
-    "OFFICE_MAGISTRATE"
+    "OFFICE_TRADE_MASTER"
   ],
   "parentOfficeId": null,
   "workloadProfile": {
-    "baselineHoursPerWeek": 14.0,
+    "baselineHoursPerWeek": null,
     "criticalityTier": "CORE_FOUNDER"
   }
 }
