@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "deus-office-schema/1.0.0",
+  "officeId": "OFFICE_MARSHAL",
+  "canonicalFunction": "MARSHAL",
+  "department": "DEFENSE",
+  "titles": {
+    "defaultTitle": "Marshal",
+    "culturalTitles": {
+      "human": "High Marshal",
+      "dwarf": "Warmaster",
+      "elf": "Captain of the Green",
+      "halfling": "Constable",
+      "orc": "War Chief",
+      "goblin": "Raid Boss",
+      "dragonborn": "Grand Warmarshal",
+      "gnome": "Defense Engineer",
+      "tiefling": "Legate"
+    }
+  },
+  "jurisdiction": {
+    "scope": "FACTION",
+    "factionId": null,
+    "settlementId": null,
+    "domains": [
+      "DEFENSE_PERIMETER",
+      "MILITIA_GARRISON"
+    ],
+    "geographicBounds": null
+  },
+  "authorityScopes": [
+    "MILITARY_MOBILIZATION",
+    "DEFENSE_PATROL",
+    "GARRISON_COMMAND"
+  ],
+  "vacancyState": {
+    "status": "VACANT",
+    "isVacant": true,
+    "sinceYear": 0,
+    "sinceTick": 0,
+    "vacancyReason": "UNASSIGNED",
+    "operationalCapability": 0.0,
+    "degradationEffects": [
+      "DEFENSE_MOBILIZATION_DELAYED",
+      "PATROL_ROUTING_UNCOORDINATED",
+      "GARRISON_MORALE_PENALTY"
+    ]
+  },
+  "holder": {
+    "cardinality": "SINGLE",
+    "primaryHolderId": null,
+    "actingHolderId": null,
+    "coHolderIds": [],
+    "deputyIds": [],
+    "maxHolders": 1,
+    "allowConcurrentOffices": true
+  },
+  "successionPolicy": {
+    "method": "APPOINTMENT",
+    "appointmentAuthority": "OFFICE_LEADER",
+    "orderOfPrecedence": [
+      "DEPUTY"
+    ],
+    "eligibilityCriteria": {
+      "minAge": 18,
+      "requiredCrafts": [],
+      "requiredClasses": [
+        "srd:class:fighter",
+        "srd:class:paladin",
+        "srd:class:ranger",
+        "srd:class:barbarian"
+      ],
+      "minLevel": 1,
+      "requireFactionMember": true,
+      "additionalCriteria": null
+    },
+    "interregnumPolicy": "ACTING_DEPUTY",
+    "cultureOutcomeOpen": true
+  },
+  "subordinateOffices": [],
+  "parentOfficeId": "OFFICE_LEADER",
+  "workloadProfile": {
+    "baselineHoursPerWeek": 14.0,
+    "criticalityTier": "CORE_FOUNDER"
+  }
+}

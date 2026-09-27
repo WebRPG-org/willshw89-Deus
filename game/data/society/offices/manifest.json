@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "deus-office-schema/1.0.0",
+  "totalOffices": 16,
+  "founderCoreCount": 8,
+  "specializedCount": 8,
+  "offices": [
+    {
+      "officeId": "OFFICE_LEADER",
+      "canonicalFunction": "LEADER",
+      "aliases": ["EXECUTIVE"],
+      "department": "GOVERNANCE",
+      "tier": "CORE_FOUNDER",
+      "file": "leader.json"
+    },
+    {
+      "officeId": "OFFICE_TREASURER",
+      "canonicalFunction": "TREASURER",
+      "aliases": [],
+      "department": "FINANCE",
+      "tier": "CORE_FOUNDER",
+      "file": "treasurer.json"
+    },
+    {
+      "officeId": "OFFICE_MINT_MASTER",
+      "canonicalFunction": "MINT_MASTER",
+      "aliases": [],
+      "department": "FINANCE",
+      "tier": "CORE_FOUNDER",
+      "file": "mint_master.json"
+    },
+    {
+      "officeId": "OFFICE_MARSHAL",
+      "canonicalFunction": "MARSHAL",
+      "aliases": [],
+      "department": "DEFENSE",
+      "tier": "CORE_FOUNDER",
+      "file": "marshal.json"
+    },
+    {
+      "officeId": "OFFICE_QUARTERMASTER",
+      "canonicalFunction": "QUARTERMASTER",
+      "aliases": [],
+      "department": "LOGISTICS",
+      "tier": "CORE_FOUNDER",
+      "file": "quartermaster.json"
+    },
+    {
+      "officeId": "OFFICE_MASTER_OF_WORKS",
+      "canonicalFunction": "MASTER_OF_WORKS",
+      "aliases": [],
+      "department": "INFRASTRUCTURE",
+      "tier": "CORE_FOUNDER",
+      "file": "master_of_works.json"
+    },
+    {
+      "officeId": "OFFICE_PROVISIONER",
+      "canonicalFunction": "PROVISIONER",
+      "aliases": [],
+      "department": "SUSTENANCE",
+      "tier": "CORE_FOUNDER",
+      "file": "provisioner.json"
+    },
+    {
+      "officeId": "OFFICE_RECORDER",
+      "canonicalFunction": "RECORDER",
+      "aliases": [],
+      "department": "RECORDS",
+      "tier": "CORE_FOUNDER",
+      "file": "recorder.json"
+    },
+    {
+      "officeId": "OFFICE_STEWARD",
+      "canonicalFunction": "STEWARD",
+      "aliases": ["ADMIN"],
+      "department": "ADMINISTRATION",
+      "tier": "PRIMARY_GOVERNANCE",
+      "file": "steward.json"
+    },
+    {
+      "officeId": "OFFICE_HEALER_DIRECTOR",
+      "canonicalFunction": "HEALER_DIRECTOR",
+      "aliases": ["HEALER"],
+      "department": "HEALTH",
+      "tier": "SPECIALIZED_DEPARTMENT",
+      "file": "healer_director.json"
+    },
+    {
+      "officeId": "OFFICE_MAGISTRATE",
+      "canonicalFunction": "MAGISTRATE",
+      "aliases": [],
+      "department": "JUSTICE",
+      "tier": "SPECIALIZED_DEPARTMENT",
+      "file": "magistrate.json"
+    },
+    {
+      "officeId": "OFFICE_ENVOY",
+      "canonicalFunction": "ENVOY",
+      "aliases": [],
+      "department": "DIPLOMACY",
+      "tier": "SPECIALIZED_DEPARTMENT",
+      "file": "envoy.json"
+    },
+    {
+      "officeId": "OFFICE_TRADE_MASTER",
+      "canonicalFunction": "TRADE_MASTER",
+      "aliases": [],
+      "department": "COMMERCE",
+      "tier": "SPECIALIZED_DEPARTMENT",
+      "file": "trade_master.json"
+    },
+    {
+      "officeId": "OFFICE_TAX_COLLECTOR",
+      "canonicalFunction": "TAX_COLLECTOR",
+      "aliases": [],
+      "department": "FINANCE",
+      "tier": "SUBORDINATE_EXPANSION",
+      "file": "tax_collector.json"
+    },
+    {
+      "officeId": "OFFICE_PAYMASTER",
+      "canonicalFunction": "PAYMASTER",
+      "aliases": [],
+      "department": "FINANCE",
+      "tier": "SUBORDINATE_EXPANSION",
+      "file": "paymaster.json"
+    },
+    {
+      "officeId": "OFFICE_CLERK",
+      "canonicalFunction": "CLERK",
+      "aliases": [],
+      "department": "RECORDS",
+      "tier": "SUBORDINATE_EXPANSION",
+      "file": "clerk.json"
+    }
+  ]
+}

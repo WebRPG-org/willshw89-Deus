@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "deus-office-schema/1.0.0",
+  "officeId": "OFFICE_TRADE_MASTER",
+  "canonicalFunction": "TRADE_MASTER",
+  "department": "COMMERCE",
+  "titles": {
+    "defaultTitle": "Trade Master",
+    "culturalTitles": {
+      "human": "Master of the Guild",
+      "dwarf": "Factor of the Deep Road",
+      "elf": "Harbor Master",
+      "halfling": "Market Alderman",
+      "orc": "Barter Boss",
+      "goblin": "Swindle Factor",
+      "dragonborn": "Grand Merchant Warden",
+      "gnome": "Exchange Administrator",
+      "tiefling": "Trade Syndic"
+    }
+  },
+  "jurisdiction": {
+    "scope": "SETTLEMENT",
+    "factionId": null,
+    "settlementId": null,
+    "domains": [
+      "MARKETPLACE_DISTRICT"
+    ],
+    "geographicBounds": null
+  },
+  "authorityScopes": [
+    "TRADE_LICENSE",
+    "TARIFF_LEVY",
+    "MARKET_REGULATE"
+  ],
+  "vacancyState": {
+    "status": "VACANT",
+    "isVacant": true,
+    "sinceYear": 0,
+    "sinceTick": 0,
+    "vacancyReason": "UNASSIGNED",
+    "operationalCapability": 0.0,
+    "degradationEffects": [
+      "MERCHANT_STALL_LICENSING_HALTED",
+      "MARKET_TARIFF_LEAKAGE",
+      "CARAVAN_DISPUTES_UNREGULATED"
+    ]
+  },
+  "holder": {
+    "cardinality": "SINGLE",
+    "primaryHolderId": null,
+    "actingHolderId": null,
+    "coHolderIds": [],
+    "deputyIds": [],
+    "maxHolders": 1,
+    "allowConcurrentOffices": true
+  },
+  "successionPolicy": {
+    "method": "APPOINTMENT",
+    "appointmentAuthority": "OFFICE_LEADER",
+    "orderOfPrecedence": [
+      "DEPUTY"
+    ],
+    "eligibilityCriteria": {
+      "minAge": 18,
+      "requiredCrafts": [
+        "MERCHANT"
+      ],
+      "requiredClasses": [],
+      "minLevel": null,
+      "requireFactionMember": true,
+      "additionalCriteria": null
+    },
+    "interregnumPolicy": "ACTING_DEPUTY",
+    "cultureOutcomeOpen": true
+  },
+  "subordinateOffices": [],
+  "parentOfficeId": "OFFICE_LEADER",
+  "workloadProfile": {
+    "baselineHoursPerWeek": 18.0,
+    "criticalityTier": "SPECIALIZED_DEPARTMENT"
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "deus-office-schema/1.0.0",
+  "officeId": "OFFICE_MAGISTRATE",
+  "canonicalFunction": "MAGISTRATE",
+  "department": "JUSTICE",
+  "titles": {
+    "defaultTitle": "Magistrate",
+    "culturalTitles": {
+      "human": "Justiciar",
+      "dwarf": "Lawspeaker",
+      "elf": "Arbiter of Harmony",
+      "halfling": "Judge of Disputes",
+      "orc": "Blood Arbiter",
+      "goblin": "Cheater Catcher",
+      "dragonborn": "Grand Inquisitor",
+      "gnome": "Code Jurist",
+      "tiefling": "Magistrate"
+    }
+  },
+  "jurisdiction": {
+    "scope": "SETTLEMENT",
+    "factionId": null,
+    "settlementId": null,
+    "domains": [
+      "CIVIL_RECORDS"
+    ],
+    "geographicBounds": null
+  },
+  "authorityScopes": [
+    "DISPUTE_ARBITRATION",
+    "LAW_ENFORCEMENT",
+    "PUNISHMENT_SENTENCE"
+  ],
+  "vacancyState": {
+    "status": "VACANT",
+    "isVacant": true,
+    "sinceYear": 0,
+    "sinceTick": 0,
+    "vacancyReason": "UNASSIGNED",
+    "operationalCapability": 0.0,
+    "degradationEffects": [
+      "CIVIL_DISPUTES_UNRESOLVED",
+      "CRIME_PUNISHMENT_SUSPENDED",
+      "SETTLEMENT_UNREST_GROWTH"
+    ]
+  },
+  "holder": {
+    "cardinality": "SINGLE",
+    "primaryHolderId": null,
+    "actingHolderId": null,
+    "coHolderIds": [],
+    "deputyIds": [],
+    "maxHolders": 1,
+    "allowConcurrentOffices": true
+  },
+  "successionPolicy": {
+    "method": "APPOINTMENT",
+    "appointmentAuthority": "OFFICE_LEADER",
+    "orderOfPrecedence": [
+      "DEPUTY"
+    ],
+    "eligibilityCriteria": {
+      "minAge": 18,
+      "requiredCrafts": [
+        "SCRIBE"
+      ],
+      "requiredClasses": [],
+      "minLevel": null,
+      "requireFactionMember": true,
+      "additionalCriteria": null
+    },
+    "interregnumPolicy": "ACTING_DEPUTY",
+    "cultureOutcomeOpen": true
+  },
+  "subordinateOffices": [],
+  "parentOfficeId": "OFFICE_LEADER",
+  "workloadProfile": {
+    "baselineHoursPerWeek": 16.0,
+    "criticalityTier": "SPECIALIZED_DEPARTMENT"
+  }
+}

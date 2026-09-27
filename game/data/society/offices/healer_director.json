@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "deus-office-schema/1.0.0",
+  "officeId": "OFFICE_HEALER_DIRECTOR",
+  "canonicalFunction": "HEALER_DIRECTOR",
+  "department": "HEALTH",
+  "titles": {
+    "defaultTitle": "Director of Healing",
+    "culturalTitles": {
+      "human": "Chirurgeon-General",
+      "dwarf": "Master Apothecary",
+      "elf": "High Healer",
+      "halfling": "Village Herbalist",
+      "orc": "Bone Setter",
+      "goblin": "Leech Master",
+      "dragonborn": "Grand Cleanser",
+      "gnome": "Chief Tincturist",
+      "tiefling": "Venom & Remedy Warden"
+    }
+  },
+  "jurisdiction": {
+    "scope": "SETTLEMENT",
+    "factionId": null,
+    "settlementId": null,
+    "domains": [
+      "INFIRMARY"
+    ],
+    "geographicBounds": null
+  },
+  "authorityScopes": [
+    "QUARANTINE_ORDER",
+    "INFIRMARY_DIRECT"
+  ],
+  "vacancyState": {
+    "status": "VACANT",
+    "isVacant": true,
+    "sinceYear": 0,
+    "sinceTick": 0,
+    "vacancyReason": "UNASSIGNED",
+    "operationalCapability": 0.0,
+    "degradationEffects": [
+      "CONTAGION_SPREAD_RISK_INCREASED",
+      "INFIRMARY_BED_TRIAGE_HALTED",
+      "MEDICINE_STOCKS_UNREGULATED"
+    ]
+  },
+  "holder": {
+    "cardinality": "SINGLE",
+    "primaryHolderId": null,
+    "actingHolderId": null,
+    "coHolderIds": [],
+    "deputyIds": [],
+    "maxHolders": 1,
+    "allowConcurrentOffices": true
+  },
+  "successionPolicy": {
+    "method": "APPOINTMENT",
+    "appointmentAuthority": "OFFICE_LEADER",
+    "orderOfPrecedence": [
+      "DEPUTY"
+    ],
+    "eligibilityCriteria": {
+      "minAge": 18,
+      "requiredCrafts": [
+        "HERBALIST",
+        "ALCHEMIST"
+      ],
+      "requiredClasses": [
+        "srd:class:cleric",
+        "srd:class:druid",
+        "srd:class:paladin",
+        "srd:class:bard"
+      ],
+      "minLevel": 1,
+      "requireFactionMember": true,
+      "additionalCriteria": null
+    },
+    "interregnumPolicy": "ACTING_DEPUTY",
+    "cultureOutcomeOpen": true
+  },
+  "subordinateOffices": [],
+  "parentOfficeId": "OFFICE_LEADER",
+  "workloadProfile": {
+    "baselineHoursPerWeek": 16.0,
+    "criticalityTier": "SPECIALIZED_DEPARTMENT"
+  }
+}

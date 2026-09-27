@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "deus-office-schema/1.0.0",
+  "officeId": "OFFICE_QUARTERMASTER",
+  "canonicalFunction": "QUARTERMASTER",
+  "department": "LOGISTICS",
+  "titles": {
+    "defaultTitle": "Quartermaster",
+    "culturalTitles": {
+      "human": "Castellan",
+      "dwarf": "Storewarden",
+      "elf": "Keeper of Supplies",
+      "halfling": "Pantrymaster",
+      "orc": "Gear Hoarder",
+      "goblin": "Loot Keeper",
+      "dragonborn": "Arsenal Warden",
+      "gnome": "Component Archivist",
+      "tiefling": "Depot Overseer"
+    }
+  },
+  "jurisdiction": {
+    "scope": "SETTLEMENT",
+    "factionId": null,
+    "settlementId": null,
+    "domains": [
+      "TREASURY_CHEST",
+      "WORKSHOPS"
+    ],
+    "geographicBounds": null
+  },
+  "authorityScopes": [
+    "STOCKPILE_ALLOCATION",
+    "TOOL_DISTRIBUTION"
+  ],
+  "vacancyState": {
+    "status": "VACANT",
+    "isVacant": true,
+    "sinceYear": 0,
+    "sinceTick": 0,
+    "vacancyReason": "UNASSIGNED",
+    "operationalCapability": 0.0,
+    "degradationEffects": [
+      "TOOL_DISTRIBUTION_INEFFICIENT",
+      "STOCKPILE_PILFERAGE_RISK",
+      "WORKSHOP_SUPPLY_DELAYS"
+    ]
+  },
+  "holder": {
+    "cardinality": "SINGLE",
+    "primaryHolderId": null,
+    "actingHolderId": null,
+    "coHolderIds": [],
+    "deputyIds": [],
+    "maxHolders": 1,
+    "allowConcurrentOffices": true
+  },
+  "successionPolicy": {
+    "method": "APPOINTMENT",
+    "appointmentAuthority": "OFFICE_LEADER",
+    "orderOfPrecedence": [
+      "DEPUTY"
+    ],
+    "eligibilityCriteria": {
+      "minAge": 18,
+      "requiredCrafts": [],
+      "requiredClasses": [],
+      "minLevel": null,
+      "requireFactionMember": true,
+      "additionalCriteria": null
+    },
+    "interregnumPolicy": "ACTING_DEPUTY",
+    "cultureOutcomeOpen": true
+  },
+  "subordinateOffices": [],
+  "parentOfficeId": "OFFICE_LEADER",
+  "workloadProfile": {
+    "baselineHoursPerWeek": 14.0,
+    "criticalityTier": "CORE_FOUNDER"
+  }
+}

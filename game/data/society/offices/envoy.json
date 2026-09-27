@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "deus-office-schema/1.0.0",
+  "officeId": "OFFICE_ENVOY",
+  "canonicalFunction": "ENVOY",
+  "department": "DIPLOMACY",
+  "titles": {
+    "defaultTitle": "Envoy",
+    "culturalTitles": {
+      "human": "Ambassador",
+      "dwarf": "High Herald",
+      "elf": "Emissary of Stars",
+      "halfling": "Goodwill Delegate",
+      "orc": "Tribute Demander",
+      "goblin": "Sneaky Messenger",
+      "dragonborn": "Grand Legate",
+      "gnome": "Parley Envoy",
+      "tiefling": "Diplomatic Emissary"
+    }
+  },
+  "jurisdiction": {
+    "scope": "FACTION",
+    "factionId": null,
+    "settlementId": null,
+    "domains": [
+      "FOREIGN_ENVOYS"
+    ],
+    "geographicBounds": null
+  },
+  "authorityScopes": [
+    "DIPLOMATIC_TREATY"
+  ],
+  "vacancyState": {
+    "status": "VACANT",
+    "isVacant": true,
+    "sinceYear": 0,
+    "sinceTick": 0,
+    "vacancyReason": "UNASSIGNED",
+    "operationalCapability": 0.0,
+    "degradationEffects": [
+      "INTER_FACTION_TREATY_STALL",
+      "DIPLOMATIC_RELATION_DECAY",
+      "CARAVAN_PACT_FREEZE"
+    ]
+  },
+  "holder": {
+    "cardinality": "SINGLE",
+    "primaryHolderId": null,
+    "actingHolderId": null,
+    "coHolderIds": [],
+    "deputyIds": [],
+    "maxHolders": 1,
+    "allowConcurrentOffices": true
+  },
+  "successionPolicy": {
+    "method": "APPOINTMENT",
+    "appointmentAuthority": "OFFICE_LEADER",
+    "orderOfPrecedence": [
+      "DEPUTY"
+    ],
+    "eligibilityCriteria": {
+      "minAge": 18,
+      "requiredCrafts": [],
+      "requiredClasses": [
+        "srd:class:bard",
+        "srd:class:paladin",
+        "srd:class:rogue"
+      ],
+      "minLevel": 1,
+      "requireFactionMember": true,
+      "additionalCriteria": null
+    },
+    "interregnumPolicy": "ACTING_DEPUTY",
+    "cultureOutcomeOpen": true
+  },
+  "subordinateOffices": [],
+  "parentOfficeId": "OFFICE_LEADER",
+  "workloadProfile": {
+    "baselineHoursPerWeek": 14.0,
+    "criticalityTier": "SPECIALIZED_DEPARTMENT"
+  }
+}

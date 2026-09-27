@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "deus-office-schema/1.0.0",
+  "officeId": "OFFICE_TAX_COLLECTOR",
+  "canonicalFunction": "TAX_COLLECTOR",
+  "department": "FINANCE",
+  "titles": {
+    "defaultTitle": "Tax Collector",
+    "culturalTitles": {
+      "human": "Reeve of the Taxes",
+      "dwarf": "Tollwarden",
+      "elf": "Tribute Gatherer",
+      "halfling": "Tithe Collector",
+      "orc": "Tribute Squeezer",
+      "goblin": "Coin Extractor",
+      "dragonborn": "Grand Assessor",
+      "gnome": "Levy Registrar",
+      "tiefling": "Tax Intendant"
+    }
+  },
+  "jurisdiction": {
+    "scope": "SETTLEMENT",
+    "factionId": null,
+    "settlementId": null,
+    "domains": [
+      "TAX_DISTRICTS",
+      "TREASURY_CHEST"
+    ],
+    "geographicBounds": null
+  },
+  "authorityScopes": [
+    "TAX_COLLECT",
+    "TAX_ASSESS"
+  ],
+  "vacancyState": {
+    "status": "VACANT",
+    "isVacant": true,
+    "sinceYear": 0,
+    "sinceTick": 0,
+    "vacancyReason": "UNASSIGNED",
+    "operationalCapability": 0.0,
+    "degradationEffects": [
+      "UNCOLLECTED_TAX_ARREARS_GROWTH",
+      "CIVIC_REVENUE_DEFICIT",
+      "TAX_EVASION_INCREASED"
+    ]
+  },
+  "holder": {
+    "cardinality": "SINGLE",
+    "primaryHolderId": null,
+    "actingHolderId": null,
+    "coHolderIds": [],
+    "deputyIds": [],
+    "maxHolders": 1,
+    "allowConcurrentOffices": true
+  },
+  "successionPolicy": {
+    "method": "APPOINTMENT",
+    "appointmentAuthority": "OFFICE_TREASURER",
+    "orderOfPrecedence": [
+      "DEPUTY"
+    ],
+    "eligibilityCriteria": {
+      "minAge": 18,
+      "requiredCrafts": [
+        "SCRIBE",
+        "MERCHANT"
+      ],
+      "requiredClasses": [],
+      "minLevel": null,
+      "requireFactionMember": true,
+      "additionalCriteria": null
+    },
+    "interregnumPolicy": "ACTING_DEPUTY",
+    "cultureOutcomeOpen": true
+  },
+  "subordinateOffices": [],
+  "parentOfficeId": "OFFICE_TREASURER",
+  "workloadProfile": {
+    "baselineHoursPerWeek": 20.0,
+    "criticalityTier": "SUBORDINATE_EXPANSION"
+  }
+}
