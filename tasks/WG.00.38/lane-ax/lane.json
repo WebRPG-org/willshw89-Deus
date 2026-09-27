@@ -1,0 +1,39 @@
+{
+    "lane": "lane-ax",
+    "taskId": "WG.00.38",
+    "branch": "task/lane-ax",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "allowedPaths": [
+        "game/js/plugins/DEUS_Wildlife.js",
+        "game/js/plugins/DEUS_Taming.js",
+        "game/js/sim/taming/**",
+        "tools/taming/**",
+        "docs/systems/DEUS_Taming.md",
+        "tasks/WG.00.38/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": [
+                "tools/taming/test_taming.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/sim/test_wildlife_rules_damage.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/check_deus_syntax.js"
+            ],
+            "timeoutSec": 900
+        }
+    ]
+}
