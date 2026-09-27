@@ -1,0 +1,12 @@
+{
+  "recordedPreFixCommit": "75cf2ff399e5fdbce1f69e7178e4cb4329374eee",
+  "recordedIn": "docs/audits/LIVING_WORLD_GAP_AUDIT.md — code audited at 75cf2ff3, where F-01 through F-05 are open",
+  "ranges": [
+    { "name": "default", "label": "-16..+15", "zMin": -16, "zMax": 15 },
+    { "name": "test", "label": "-4..+4", "zMin": -4, "zMax": 4 }
+  ],
+  "oreIds": ["ironstone", "copper_outcrop", "gold_outcrop"],
+  "feet": { "cell": 5, "stratum": 2, "strataPerLayer": 5, "layer": 10 },
+  "mapSize": 16,
+  "core": { "zMin": -2, "zMax": 2 }
+}

@@ -1,0 +1,16 @@
+PRE-FIX 75cf2ff399e5fdbce1f69e7178e4cb4329374eee
+PASS F-01 rejects the 5-level 1 ft model — rejected (levels -2,-1,0,1,2 want -16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15; zRange {"zMin":-2,"zMax":2}; isLevel false for 27 levels in range, first -16; feet cell 5 stratum 1 per 5 step 5; no worldStrataElevationAt)
+PASS F-03 rejects an ore sprout row — rejected (0:rocks_small->ironstone)
+FAIL F-05 mutant bind stays unset: bind lines missing window.DEUS = window.UF = {}; | window.UF = window.DEUS; | window.DEUS = window.UF;
+FAIL F-01 -16..+15: no zRange(); levels -2,-1,0,1,2 want -16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15; zRange null; isLevel false for 27 levels in range, first -16; feet cell 5 stratum undefined per undefined step 5; layer feet not strata x stratum; no mapIdSlot; elevation z -16 -1 want 4; elevation z -15 -1 want 9; elevation z -14 -1 want 14; elevation z -13 -1 want 19; elevation z -12 -1 want 24; elevation z -11 -1 want 29; elevation z -10 -1 want 34; elevation z -9 -1 want 39; elevation z -8 -1 want 44; elevation z -7 -1 want 49; elevation z -6 -1 want 54; elevation z -5 -1 want 59; elevation z -4 -1 want 64; elevation z -3 -1 want 69
+FAIL F-02 -16..+15: no chunk store (chunkInfo / strataMemory missing)
+FAIL F-03 -16..+15: tables 0:rocks_small->ironstone, 0:rocks_small->copper_outcrop, 0:rocks_small->gold_outcrop, -1:rocks_small->ironstone, -1:rocks_small->copper_outcrop, -1:rocks_small->gold_outcrop, -2:rocks_small->ironstone, -2:rocks_small->gold_outcrop; scheduled ore matured 12 writes 12; loose stone was replaced; long run ore hits 10522
+FAIL F-04 -16..+15: no ledger/reclaim; mining does not post mass
+FAIL F-05 -16..+15: require bind before false after false
+FAIL F-01 -4..+4: no zRange(); levels -2,-1,0,1,2 want -4,-3,-2,-1,0,1,2,3,4; zRange null; isLevel false for 4 levels in range, first -4; feet cell 5 stratum undefined per undefined step 5; layer feet not strata x stratum; no mapIdSlot; elevation z -4 -1 want 4; elevation z -3 -1 want 9
+FAIL F-02 -4..+4: no chunk store (chunkInfo / strataMemory missing)
+FAIL F-03 -4..+4: tables 0:rocks_small->ironstone, 0:rocks_small->copper_outcrop, 0:rocks_small->gold_outcrop, -1:rocks_small->ironstone, -1:rocks_small->copper_outcrop, -1:rocks_small->gold_outcrop, -2:rocks_small->ironstone, -2:rocks_small->gold_outcrop; scheduled ore matured 12 writes 12; loose stone was replaced; long run ore hits 10522
+FAIL F-04 -4..+4: no ledger/reclaim; mining does not post mass
+FAIL F-05 -4..+4: require bind before false after false
+RESULT: FAIL (11 failed)
+EXIT=1
