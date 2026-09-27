@@ -1,0 +1,2379 @@
+{
+  "schema": "deus-depth-demo/1",
+  "geometry": {
+    "tilePx": 48,
+    "layerFt": 5,
+    "layerPx": 48,
+    "quarterPx": 12,
+    "quarterFt": 1.25,
+    "quartersPerLayer": 4,
+    "stratumPx": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "zMin": -16,
+    "zMax": 15,
+    "layerCount": 32,
+    "cellFt": 5,
+    "halfStepPx": 24,
+    "torchBrightPx": 192,
+    "torchDimPx": 192
+  },
+  "defaults": {
+    "toggles": {
+      "paletteShift": false,
+      "cliffFaces": false,
+      "dropShadows": false,
+      "parallax": false,
+      "depthMarkers": false,
+      "unitHeightShift": false,
+      "cameraLayerEasing": false,
+      "ditheredCutaways": false,
+      "crossLayerEffects": false,
+      "glowsLightLower": false,
+      "weatherByLayer": false
+    },
+    "scale": 1,
+    "lightMode": "off",
+    "blur": false,
+    "dayLengthMinutes": null,
+    "dimSteps": 0,
+    "parallaxStepPx": 1,
+    "cameraX": 0,
+    "cameraY": 0
+  },
+  "ramps": [
+    {
+      "z": -16,
+      "stepsDown": 31,
+      "cool": 124,
+      "desat": 186,
+      "dark": 101
+    },
+    {
+      "z": -15,
+      "stepsDown": 30,
+      "cool": 120,
+      "desat": 180,
+      "dark": 106
+    },
+    {
+      "z": -14,
+      "stepsDown": 29,
+      "cool": 116,
+      "desat": 174,
+      "dark": 111
+    },
+    {
+      "z": -13,
+      "stepsDown": 28,
+      "cool": 112,
+      "desat": 168,
+      "dark": 116
+    },
+    {
+      "z": -12,
+      "stepsDown": 27,
+      "cool": 108,
+      "desat": 162,
+      "dark": 121
+    },
+    {
+      "z": -11,
+      "stepsDown": 26,
+      "cool": 104,
+      "desat": 156,
+      "dark": 126
+    },
+    {
+      "z": -10,
+      "stepsDown": 25,
+      "cool": 100,
+      "desat": 150,
+      "dark": 131
+    },
+    {
+      "z": -9,
+      "stepsDown": 24,
+      "cool": 96,
+      "desat": 144,
+      "dark": 136
+    },
+    {
+      "z": -8,
+      "stepsDown": 23,
+      "cool": 92,
+      "desat": 138,
+      "dark": 141
+    },
+    {
+      "z": -7,
+      "stepsDown": 22,
+      "cool": 88,
+      "desat": 132,
+      "dark": 146
+    },
+    {
+      "z": -6,
+      "stepsDown": 21,
+      "cool": 84,
+      "desat": 126,
+      "dark": 151
+    },
+    {
+      "z": -5,
+      "stepsDown": 20,
+      "cool": 80,
+      "desat": 120,
+      "dark": 156
+    },
+    {
+      "z": -4,
+      "stepsDown": 19,
+      "cool": 76,
+      "desat": 114,
+      "dark": 161
+    },
+    {
+      "z": -3,
+      "stepsDown": 18,
+      "cool": 72,
+      "desat": 108,
+      "dark": 166
+    },
+    {
+      "z": -2,
+      "stepsDown": 17,
+      "cool": 68,
+      "desat": 102,
+      "dark": 171
+    },
+    {
+      "z": -1,
+      "stepsDown": 16,
+      "cool": 64,
+      "desat": 96,
+      "dark": 176
+    },
+    {
+      "z": 0,
+      "stepsDown": 15,
+      "cool": 60,
+      "desat": 90,
+      "dark": 181
+    },
+    {
+      "z": 1,
+      "stepsDown": 14,
+      "cool": 56,
+      "desat": 84,
+      "dark": 186
+    },
+    {
+      "z": 2,
+      "stepsDown": 13,
+      "cool": 52,
+      "desat": 78,
+      "dark": 191
+    },
+    {
+      "z": 3,
+      "stepsDown": 12,
+      "cool": 48,
+      "desat": 72,
+      "dark": 196
+    },
+    {
+      "z": 4,
+      "stepsDown": 11,
+      "cool": 44,
+      "desat": 66,
+      "dark": 201
+    },
+    {
+      "z": 5,
+      "stepsDown": 10,
+      "cool": 40,
+      "desat": 60,
+      "dark": 206
+    },
+    {
+      "z": 6,
+      "stepsDown": 9,
+      "cool": 36,
+      "desat": 54,
+      "dark": 211
+    },
+    {
+      "z": 7,
+      "stepsDown": 8,
+      "cool": 32,
+      "desat": 48,
+      "dark": 216
+    },
+    {
+      "z": 8,
+      "stepsDown": 7,
+      "cool": 28,
+      "desat": 42,
+      "dark": 221
+    },
+    {
+      "z": 9,
+      "stepsDown": 6,
+      "cool": 24,
+      "desat": 36,
+      "dark": 226
+    },
+    {
+      "z": 10,
+      "stepsDown": 5,
+      "cool": 20,
+      "desat": 30,
+      "dark": 231
+    },
+    {
+      "z": 11,
+      "stepsDown": 4,
+      "cool": 16,
+      "desat": 24,
+      "dark": 236
+    },
+    {
+      "z": 12,
+      "stepsDown": 3,
+      "cool": 12,
+      "desat": 18,
+      "dark": 241
+    },
+    {
+      "z": 13,
+      "stepsDown": 2,
+      "cool": 8,
+      "desat": 12,
+      "dark": 246
+    },
+    {
+      "z": 14,
+      "stepsDown": 1,
+      "cool": 4,
+      "desat": 6,
+      "dark": 251
+    },
+    {
+      "z": 15,
+      "stepsDown": 0,
+      "cool": 0,
+      "desat": 0,
+      "dark": 256
+    }
+  ],
+  "night": {
+    "id": "RAMP_NIGHT",
+    "cool": 40,
+    "desat": 48,
+    "dark": 160,
+    "redCut": 12
+  },
+  "swatches": [
+    {
+      "name": "ground",
+      "rgb": [
+        96,
+        140,
+        72
+      ],
+      "layers": [
+        [
+          96,
+          140,
+          72
+        ],
+        [
+          95,
+          137,
+          72
+        ],
+        [
+          94,
+          134,
+          71
+        ],
+        [
+          93,
+          131,
+          71
+        ],
+        [
+          91,
+          126,
+          70
+        ],
+        [
+          90,
+          124,
+          70
+        ],
+        [
+          89,
+          120,
+          70
+        ],
+        [
+          88,
+          117,
+          69
+        ],
+        [
+          87,
+          114,
+          68
+        ],
+        [
+          85,
+          111,
+          68
+        ],
+        [
+          84,
+          108,
+          67
+        ],
+        [
+          82,
+          104,
+          66
+        ],
+        [
+          80,
+          102,
+          65
+        ],
+        [
+          79,
+          98,
+          64
+        ],
+        [
+          78,
+          96,
+          63
+        ],
+        [
+          76,
+          93,
+          63
+        ],
+        [
+          74,
+          89,
+          62
+        ],
+        [
+          73,
+          87,
+          61
+        ],
+        [
+          71,
+          84,
+          60
+        ],
+        [
+          69,
+          81,
+          58
+        ],
+        [
+          68,
+          79,
+          57
+        ],
+        [
+          66,
+          76,
+          57
+        ],
+        [
+          64,
+          72,
+          55
+        ],
+        [
+          62,
+          70,
+          53
+        ],
+        [
+          60,
+          67,
+          52
+        ],
+        [
+          58,
+          64,
+          51
+        ],
+        [
+          56,
+          62,
+          50
+        ],
+        [
+          54,
+          60,
+          48
+        ],
+        [
+          52,
+          57,
+          47
+        ],
+        [
+          50,
+          54,
+          45
+        ],
+        [
+          48,
+          51,
+          43
+        ],
+        [
+          46,
+          49,
+          42
+        ]
+      ]
+    },
+    {
+      "name": "stone",
+      "rgb": [
+        128,
+        124,
+        116
+      ],
+      "layers": [
+        [
+          128,
+          124,
+          116
+        ],
+        [
+          126,
+          122,
+          114
+        ],
+        [
+          123,
+          119,
+          111
+        ],
+        [
+          121,
+          117,
+          110
+        ],
+        [
+          118,
+          114,
+          108
+        ],
+        [
+          116,
+          112,
+          106
+        ],
+        [
+          112,
+          109,
+          103
+        ],
+        [
+          110,
+          107,
+          101
+        ],
+        [
+          107,
+          105,
+          100
+        ],
+        [
+          104,
+          102,
+          97
+        ],
+        [
+          101,
+          100,
+          95
+        ],
+        [
+          99,
+          97,
+          93
+        ],
+        [
+          96,
+          95,
+          90
+        ],
+        [
+          94,
+          93,
+          88
+        ],
+        [
+          92,
+          90,
+          86
+        ],
+        [
+          89,
+          88,
+          84
+        ],
+        [
+          87,
+          85,
+          82
+        ],
+        [
+          84,
+          83,
+          79
+        ],
+        [
+          82,
+          80,
+          77
+        ],
+        [
+          79,
+          78,
+          75
+        ],
+        [
+          77,
+          76,
+          73
+        ],
+        [
+          74,
+          73,
+          71
+        ],
+        [
+          71,
+          71,
+          68
+        ],
+        [
+          69,
+          68,
+          66
+        ],
+        [
+          66,
+          66,
+          64
+        ],
+        [
+          64,
+          63,
+          62
+        ],
+        [
+          62,
+          61,
+          60
+        ],
+        [
+          59,
+          59,
+          57
+        ],
+        [
+          57,
+          56,
+          55
+        ],
+        [
+          54,
+          54,
+          52
+        ],
+        [
+          52,
+          51,
+          51
+        ],
+        [
+          49,
+          49,
+          48
+        ]
+      ]
+    },
+    {
+      "name": "wood",
+      "rgb": [
+        148,
+        104,
+        64
+      ],
+      "layers": [
+        [
+          148,
+          104,
+          64
+        ],
+        [
+          143,
+          102,
+          64
+        ],
+        [
+          139,
+          100,
+          63
+        ],
+        [
+          136,
+          99,
+          63
+        ],
+        [
+          132,
+          97,
+          64
+        ],
+        [
+          127,
+          95,
+          63
+        ],
+        [
+          124,
+          93,
+          63
+        ],
+        [
+          120,
+          91,
+          62
+        ],
+        [
+          116,
+          89,
+          62
+        ],
+        [
+          112,
+          87,
+          61
+        ],
+        [
+          109,
+          86,
+          60
+        ],
+        [
+          105,
+          84,
+          60
+        ],
+        [
+          102,
+          82,
+          59
+        ],
+        [
+          98,
+          80,
+          58
+        ],
+        [
+          94,
+          78,
+          57
+        ],
+        [
+          92,
+          76,
+          57
+        ],
+        [
+          88,
+          74,
+          56
+        ],
+        [
+          85,
+          71,
+          55
+        ],
+        [
+          82,
+          69,
+          54
+        ],
+        [
+          79,
+          67,
+          53
+        ],
+        [
+          76,
+          65,
+          52
+        ],
+        [
+          73,
+          63,
+          51
+        ],
+        [
+          70,
+          62,
+          50
+        ],
+        [
+          67,
+          59,
+          49
+        ],
+        [
+          64,
+          57,
+          48
+        ],
+        [
+          61,
+          55,
+          47
+        ],
+        [
+          59,
+          53,
+          45
+        ],
+        [
+          56,
+          51,
+          43
+        ],
+        [
+          53,
+          49,
+          43
+        ],
+        [
+          50,
+          47,
+          41
+        ],
+        [
+          48,
+          45,
+          40
+        ],
+        [
+          45,
+          43,
+          38
+        ]
+      ]
+    },
+    {
+      "name": "ember",
+      "rgb": [
+        200,
+        80,
+        40
+      ],
+      "layers": [
+        [
+          200,
+          80,
+          40
+        ],
+        [
+          193,
+          79,
+          41
+        ],
+        [
+          185,
+          78,
+          41
+        ],
+        [
+          179,
+          78,
+          42
+        ],
+        [
+          171,
+          77,
+          43
+        ],
+        [
+          165,
+          76,
+          43
+        ],
+        [
+          159,
+          75,
+          44
+        ],
+        [
+          153,
+          74,
+          44
+        ],
+        [
+          147,
+          73,
+          45
+        ],
+        [
+          141,
+          73,
+          45
+        ],
+        [
+          135,
+          71,
+          45
+        ],
+        [
+          130,
+          71,
+          46
+        ],
+        [
+          124,
+          69,
+          45
+        ],
+        [
+          119,
+          68,
+          46
+        ],
+        [
+          114,
+          66,
+          45
+        ],
+        [
+          109,
+          65,
+          45
+        ],
+        [
+          104,
+          64,
+          45
+        ],
+        [
+          99,
+          62,
+          44
+        ],
+        [
+          95,
+          60,
+          44
+        ],
+        [
+          91,
+          59,
+          43
+        ],
+        [
+          86,
+          58,
+          43
+        ],
+        [
+          82,
+          56,
+          42
+        ],
+        [
+          78,
+          54,
+          42
+        ],
+        [
+          74,
+          53,
+          41
+        ],
+        [
+          70,
+          52,
+          41
+        ],
+        [
+          66,
+          50,
+          40
+        ],
+        [
+          63,
+          48,
+          39
+        ],
+        [
+          59,
+          46,
+          38
+        ],
+        [
+          56,
+          44,
+          37
+        ],
+        [
+          52,
+          42,
+          36
+        ],
+        [
+          49,
+          41,
+          35
+        ],
+        [
+          47,
+          39,
+          34
+        ]
+      ]
+    },
+    {
+      "name": "neutral",
+      "rgb": [
+        128,
+        128,
+        128
+      ],
+      "layers": [
+        [
+          128,
+          128,
+          128
+        ],
+        [
+          126,
+          126,
+          126
+        ],
+        [
+          123,
+          123,
+          123
+        ],
+        [
+          121,
+          121,
+          121
+        ],
+        [
+          118,
+          118,
+          118
+        ],
+        [
+          116,
+          116,
+          116
+        ],
+        [
+          113,
+          113,
+          113
+        ],
+        [
+          111,
+          111,
+          111
+        ],
+        [
+          108,
+          108,
+          108
+        ],
+        [
+          106,
+          106,
+          106
+        ],
+        [
+          103,
+          103,
+          103
+        ],
+        [
+          101,
+          101,
+          101
+        ],
+        [
+          98,
+          98,
+          98
+        ],
+        [
+          96,
+          96,
+          96
+        ],
+        [
+          93,
+          93,
+          93
+        ],
+        [
+          91,
+          91,
+          91
+        ],
+        [
+          88,
+          88,
+          88
+        ],
+        [
+          86,
+          86,
+          86
+        ],
+        [
+          83,
+          83,
+          83
+        ],
+        [
+          81,
+          81,
+          81
+        ],
+        [
+          78,
+          78,
+          78
+        ],
+        [
+          76,
+          76,
+          76
+        ],
+        [
+          73,
+          73,
+          73
+        ],
+        [
+          71,
+          71,
+          71
+        ],
+        [
+          68,
+          68,
+          68
+        ],
+        [
+          66,
+          66,
+          66
+        ],
+        [
+          63,
+          63,
+          63
+        ],
+        [
+          61,
+          61,
+          61
+        ],
+        [
+          58,
+          58,
+          58
+        ],
+        [
+          56,
+          56,
+          56
+        ],
+        [
+          53,
+          53,
+          53
+        ],
+        [
+          51,
+          51,
+          51
+        ]
+      ]
+    },
+    {
+      "name": "warmRed",
+      "rgb": [
+        220,
+        60,
+        50
+      ],
+      "layers": [
+        [
+          220,
+          60,
+          50
+        ],
+        [
+          211,
+          60,
+          50
+        ],
+        [
+          203,
+          61,
+          51
+        ],
+        [
+          195,
+          60,
+          51
+        ],
+        [
+          187,
+          60,
+          51
+        ],
+        [
+          180,
+          60,
+          51
+        ],
+        [
+          171,
+          60,
+          51
+        ],
+        [
+          165,
+          60,
+          51
+        ],
+        [
+          158,
+          60,
+          51
+        ],
+        [
+          151,
+          59,
+          50
+        ],
+        [
+          144,
+          59,
+          51
+        ],
+        [
+          138,
+          58,
+          50
+        ],
+        [
+          132,
+          57,
+          50
+        ],
+        [
+          125,
+          57,
+          49
+        ],
+        [
+          119,
+          56,
+          49
+        ],
+        [
+          115,
+          56,
+          48
+        ],
+        [
+          109,
+          55,
+          48
+        ],
+        [
+          104,
+          53,
+          47
+        ],
+        [
+          98,
+          53,
+          47
+        ],
+        [
+          93,
+          52,
+          46
+        ],
+        [
+          88,
+          50,
+          44
+        ],
+        [
+          84,
+          50,
+          44
+        ],
+        [
+          79,
+          48,
+          43
+        ],
+        [
+          75,
+          47,
+          42
+        ],
+        [
+          71,
+          46,
+          41
+        ],
+        [
+          67,
+          45,
+          40
+        ],
+        [
+          63,
+          43,
+          39
+        ],
+        [
+          59,
+          42,
+          38
+        ],
+        [
+          56,
+          40,
+          37
+        ],
+        [
+          52,
+          39,
+          36
+        ],
+        [
+          49,
+          37,
+          34
+        ],
+        [
+          46,
+          36,
+          33
+        ]
+      ]
+    },
+    {
+      "name": "leaf",
+      "rgb": [
+        70,
+        130,
+        60
+      ],
+      "layers": [
+        [
+          70,
+          130,
+          60
+        ],
+        [
+          70,
+          126,
+          60
+        ],
+        [
+          70,
+          124,
+          60
+        ],
+        [
+          69,
+          120,
+          59
+        ],
+        [
+          69,
+          117,
+          59
+        ],
+        [
+          69,
+          114,
+          59
+        ],
+        [
+          68,
+          110,
+          58
+        ],
+        [
+          68,
+          108,
+          58
+        ],
+        [
+          67,
+          105,
+          57
+        ],
+        [
+          67,
+          101,
+          57
+        ],
+        [
+          66,
+          98,
+          56
+        ],
+        [
+          65,
+          96,
+          57
+        ],
+        [
+          64,
+          93,
+          56
+        ],
+        [
+          62,
+          90,
+          54
+        ],
+        [
+          62,
+          86,
+          54
+        ],
+        [
+          62,
+          84,
+          54
+        ],
+        [
+          61,
+          82,
+          53
+        ],
+        [
+          59,
+          79,
+          52
+        ],
+        [
+          58,
+          76,
+          51
+        ],
+        [
+          57,
+          74,
+          50
+        ],
+        [
+          56,
+          71,
+          49
+        ],
+        [
+          55,
+          68,
+          48
+        ],
+        [
+          54,
+          66,
+          47
+        ],
+        [
+          52,
+          63,
+          46
+        ],
+        [
+          50,
+          61,
+          45
+        ],
+        [
+          49,
+          58,
+          44
+        ],
+        [
+          48,
+          56,
+          43
+        ],
+        [
+          46,
+          53,
+          42
+        ],
+        [
+          44,
+          51,
+          41
+        ],
+        [
+          42,
+          48,
+          39
+        ],
+        [
+          41,
+          46,
+          38
+        ],
+        [
+          39,
+          43,
+          37
+        ]
+      ]
+    },
+    {
+      "name": "coolBlue",
+      "rgb": [
+        80,
+        90,
+        160
+      ],
+      "layers": [
+        [
+          80,
+          90,
+          160
+        ],
+        [
+          78,
+          88,
+          155
+        ],
+        [
+          78,
+          86,
+          151
+        ],
+        [
+          77,
+          85,
+          146
+        ],
+        [
+          76,
+          83,
+          142
+        ],
+        [
+          75,
+          82,
+          137
+        ],
+        [
+          73,
+          80,
+          133
+        ],
+        [
+          73,
+          79,
+          129
+        ],
+        [
+          72,
+          77,
+          125
+        ],
+        [
+          70,
+          75,
+          121
+        ],
+        [
+          68,
+          73,
+          117
+        ],
+        [
+          68,
+          72,
+          113
+        ],
+        [
+          67,
+          70,
+          109
+        ],
+        [
+          65,
+          69,
+          105
+        ],
+        [
+          63,
+          68,
+          101
+        ],
+        [
+          63,
+          66,
+          98
+        ],
+        [
+          61,
+          64,
+          94
+        ],
+        [
+          59,
+          62,
+          90
+        ],
+        [
+          58,
+          61,
+          86
+        ],
+        [
+          57,
+          59,
+          83
+        ],
+        [
+          55,
+          57,
+          79
+        ],
+        [
+          54,
+          55,
+          76
+        ],
+        [
+          52,
+          54,
+          73
+        ],
+        [
+          50,
+          52,
+          69
+        ],
+        [
+          49,
+          50,
+          66
+        ],
+        [
+          47,
+          49,
+          63
+        ],
+        [
+          46,
+          47,
+          60
+        ],
+        [
+          44,
+          45,
+          57
+        ],
+        [
+          43,
+          44,
+          54
+        ],
+        [
+          41,
+          42,
+          51
+        ],
+        [
+          39,
+          40,
+          48
+        ],
+        [
+          37,
+          38,
+          45
+        ]
+      ]
+    }
+  ],
+  "demoScene": {
+    "id": "depth-demo",
+    "viewZ": 1,
+    "width": 8,
+    "height": 6,
+    "columns": [
+      {
+        "x": 0,
+        "y": 0,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 1,
+        "y": 0,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 2,
+        "y": 0,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 3,
+        "y": 0,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 4,
+        "y": 0,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 5,
+        "y": 0,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 6,
+        "y": 0,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 7,
+        "y": 0,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 0,
+        "y": 1,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 1,
+        "y": 1,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 2,
+        "y": 1,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 3,
+        "y": 1,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 4,
+        "y": 1,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 5,
+        "y": 1,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 6,
+        "y": 1,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 7,
+        "y": 1,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 0,
+        "y": 2,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 1,
+        "y": 2,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 2,
+        "y": 2,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 3,
+        "y": 2,
+        "surfaceZ": 0,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 4,
+        "y": 2,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 5,
+        "y": 2,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 6,
+        "y": 2,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 7,
+        "y": 2,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 0,
+        "y": 3,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 1,
+        "y": 3,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 2,
+        "y": 3,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 3,
+        "y": 3,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 4,
+        "y": 3,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 5,
+        "y": 3,
+        "surfaceZ": 1,
+        "quarter": 2,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 6,
+        "y": 3,
+        "surfaceZ": 2,
+        "quarter": 4,
+        "material": "wood",
+        "color": [
+          148,
+          104,
+          64
+        ]
+      },
+      {
+        "x": 7,
+        "y": 3,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 0,
+        "y": 4,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 1,
+        "y": 4,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 2,
+        "y": 4,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 3,
+        "y": 4,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 4,
+        "y": 4,
+        "surfaceZ": -1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 5,
+        "y": 4,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 6,
+        "y": 4,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 7,
+        "y": 4,
+        "surfaceZ": 1,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 0,
+        "y": 5,
+        "surfaceZ": 0,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 1,
+        "y": 5,
+        "surfaceZ": 0,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 2,
+        "y": 5,
+        "surfaceZ": 0,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 3,
+        "y": 5,
+        "surfaceZ": 0,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 4,
+        "y": 5,
+        "surfaceZ": 0,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 5,
+        "y": 5,
+        "surfaceZ": 0,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 6,
+        "y": 5,
+        "surfaceZ": 0,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      },
+      {
+        "x": 7,
+        "y": 5,
+        "surfaceZ": 0,
+        "quarter": 4,
+        "material": "stone",
+        "color": [
+          128,
+          124,
+          116
+        ]
+      }
+    ],
+    "units": [
+      {
+        "id": "u-high",
+        "x": 1,
+        "y": 1,
+        "z": 1,
+        "quarter": 4,
+        "hp": 4
+      },
+      {
+        "id": "u-low",
+        "x": 3,
+        "y": 5,
+        "z": 0,
+        "quarter": 4,
+        "hp": 2
+      },
+      {
+        "id": "u-pit",
+        "x": 3,
+        "y": 2,
+        "z": 0,
+        "quarter": 4,
+        "hp": 3
+      }
+    ],
+    "spells": [
+      {
+        "id": "spark",
+        "casterId": "u-high",
+        "casterZ": 1,
+        "x": 3,
+        "y": 2,
+        "z": 0,
+        "kind": "spark"
+      },
+      {
+        "id": "fall",
+        "casterId": "u-high",
+        "casterZ": 1,
+        "x": 4,
+        "y": 4,
+        "z": -1,
+        "kind": "spark"
+      }
+    ],
+    "selection": [
+      "u-high",
+      "u-low"
+    ],
+    "lights": [
+      {
+        "id": "torch",
+        "kind": "torch",
+        "x": 1,
+        "y": 1,
+        "z": 1,
+        "brightPx": 192,
+        "dimPx": 192
+      },
+      {
+        "id": "fire",
+        "kind": "fire",
+        "x": 6,
+        "y": 4,
+        "z": 1,
+        "brightPx": 192,
+        "dimPx": 192
+      }
+    ],
+    "phase": "day",
+    "weather": "rain",
+    "cutaway": [
+      {
+        "x": 2,
+        "y": 1
+      }
+    ]
+  },
+  "assetNeeds": [
+    {
+      "slot": "DP.CLIFF.TEMPERATE.TILE",
+      "need": "RMMZ cliff tile per biome. One tile, not quarter-height front strips.",
+      "when": "cliffFaces"
+    },
+    {
+      "slot": "DP.WALL.WOOD.TILE",
+      "need": "RMMZ wall tile per material. One tile for a full-layer drop.",
+      "when": "cliffFaces"
+    },
+    {
+      "slot": "DP.RAMP.TEMPERATE.TILE",
+      "need": "Half-step ramp, 2 quarters, 24 px, one tile.",
+      "when": "cliffFaces"
+    },
+    {
+      "slot": "DP.LEDGE.RIM",
+      "need": "1 px lip highlight on the top edge of a drop. Part of the cliff tile.",
+      "when": "cliffFaces"
+    },
+    {
+      "slot": "DP.SHADOW.CHECKER",
+      "need": "Hard 2 px dithered drop shadow. Binary coverage, no blur.",
+      "when": "dropShadows"
+    },
+    {
+      "slot": "RAMP_LAYER_-16_TO_+15",
+      "need": "32 baked palette variants. Darker, cooler, less saturated per layer down. No runtime colour matrix.",
+      "when": "paletteShift"
+    },
+    {
+      "slot": "GL.TORCH.F00",
+      "need": "Additive torch glow, pixel-stepped, radius 192 px, binary alpha, no blur.",
+      "when": "dynamicLight"
+    },
+    {
+      "slot": "GL.FIRE.F00",
+      "need": "Additive fire glow, same rules as the torch, stored with its glow id.",
+      "when": "dynamicLight"
+    },
+    {
+      "slot": "GL.WINDOW.F00",
+      "need": "Drawn window glow named by AS-LIGHT-001. Radius is a whole-pixel count on the glow id.",
+      "when": "dynamicLight"
+    },
+    {
+      "slot": "RAMP_NIGHT",
+      "need": "Precomputed night grade plus lit building variants. The hook stays off until dynamic light is on.",
+      "when": "dynamicLight"
+    },
+    {
+      "slot": "UI.LAYER.MARKER",
+      "need": "16 px layer marker glyphs, one label per Z from -16 to +15.",
+      "when": "depthMarkers"
+    },
+    {
+      "slot": "FX.WEATHER.LAYER",
+      "need": "Weather sprites drawn only on the exposed surface of a column.",
+      "when": "weatherByLayer"
+    }
+  ],
+  "retiredSlots": [
+    "DP.CLIFF.TEMPERATE.FACE"
+  ],
+  "scales": [
+    1,
+    2,
+    3
+  ],
+  "lightModes": [
+    "off",
+    "per-tile",
+    "per-pixel"
+  ]
+}
