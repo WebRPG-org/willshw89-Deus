@@ -1,0 +1,46 @@
+{
+    "lane": "lane-au",
+    "taskId": "SIM.50.02",
+    "branch": "task/lane-au",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "allowedPaths": [
+        "game/js/plugins/DEUS_Fluid.js",
+        "game/js/sim/hydro/**",
+        "tools/sim/test_water_dynamics.js",
+        "tools/sim/fixtures/water_dynamics/**",
+        "docs/systems/DEUS_WaterDynamics.md",
+        "tasks/SIM.50.02/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": [
+                "tools/sim/test_water_dynamics.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/sim/test_fluid_attach.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/sim/test_living_world_rules.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/check_deus_syntax.js"
+            ],
+            "timeoutSec": 900
+        }
+    ]
+}

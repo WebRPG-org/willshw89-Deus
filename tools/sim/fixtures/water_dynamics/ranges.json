@@ -1,0 +1,11 @@
+{
+  "ranges": [
+    { "label": "-16..+15", "zMin": -16, "zMax": 15, "layers": 32 },
+    { "label": "-4..+4", "zMin": -4, "zMax": 4, "layers": 9 }
+  ],
+  "behaviorSize": 8,
+  "costSize": 32,
+  "longTicks": 200,
+  "passage": { "capacity": 7, "down": 8, "up": 16, "side": 32 },
+  "seasonNote": "Precipitation in this suite is a function of the tick counter. It is not a calendar. DEC-026 stays open."
+}
