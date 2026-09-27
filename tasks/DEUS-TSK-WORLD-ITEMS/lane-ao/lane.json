@@ -1,0 +1,46 @@
+{
+    "lane":  "lane-ao",
+    "taskId":  "DEUS-TSK-WORLD-ITEMS",
+    "branch":  "task/lane-ao",
+    "writer":  "grok",
+    "reviewer":  "gemini",
+    "push":  true,
+    "allowedPaths":  [
+                         "game/js/plugins/DEUS_WorldItems.js",
+                         "game/js/plugins/DEUS_Containers.js",
+                         "game/js/sim/world_items/**",
+                         "tools/world_items/**",
+                         "docs/systems/DEUS_WorldItems.md",
+                         "tasks/DEUS-TSK-WORLD-ITEMS/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/world_items/test_world_items.js"
+                                   ],
+                          "timeoutSec":  1800
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/world_items/bench_world_items_100k.js"
+                                   ],
+                          "timeoutSec":  1800
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/sim/test_ledger.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  600
+                      }
+                  ]
+}

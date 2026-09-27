@@ -1345,3 +1345,41 @@
         module.exports = Containers;
     }
 })();
+
+// DEUS-TSK-WORLD-ITEMS U7 bridge. The slot and kilogram API above is unchanged.
+// Weight, locks, nested containers and ledger spills live in game/js/sim/world_items.
+(() => {
+    "use strict";
+    const root = typeof window !== "undefined" ? window : (typeof global !== "undefined" ? global : {});
+    const Containers = root.DEUS && root.DEUS.Containers;
+    if (!Containers) return;
+
+    const prevSpill = Containers.spill;
+    Containers.spill = function (containerId) {
+        const spilled = typeof prevSpill === "function" ? prevSpill.apply(this, arguments) : [];
+        const items = root.DEUS && root.DEUS.WorldItems;
+        // Legacy container ids are not sim ids. A miss must not break the old spill.
+        try {
+            if (items && typeof items.onLegacySpill === "function") items.onLegacySpill(containerId, spilled);
+        } catch (err) { /* the sim world is not tracking this container */ }
+        return spilled;
+    };
+
+    if (typeof Containers.useChest === "function") {
+        const prevUse = Containers.useChest;
+        Containers.useChest = function () {
+            const result = prevUse.apply(this, arguments);
+            const items = root.DEUS && root.DEUS.WorldItems;
+            try {
+                if (items && typeof items.onContainerOpen === "function") items.onContainerOpen(arguments[1]);
+            } catch (err) { /* the sim world is not tracking this container */ }
+            return result;
+        };
+    }
+
+    Containers.attachU7 = function (api) {
+        Containers.u7 = api || null;
+    };
+    Containers.u7 = null;
+    Containers.srdBackpack = { cuFt: 1, pounds: 30 };
+})();
