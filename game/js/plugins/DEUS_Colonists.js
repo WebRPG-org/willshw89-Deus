@@ -34,6 +34,9 @@
  * All colony state lives in UF.World.state.colony and in unit.data. All
  * randomness is seeded (hash32 of the seed, the unit id and the frame).
  *
+ * Person identity (INV-SOC-01, INV-SOC-02) is unit.data.identity: craft,
+ * civicOffice and class, each allowed to be NONE. Current duty stays the job.
+ *
  * API, state, events and checks: docs/systems/UF_Colonists.md
  * Contract: docs/design/WORLD_ARCHITECTURE.md sections 2.4, 2.6, 2.7, 5.6
  *
@@ -119,6 +122,51 @@
         }
     }
     const Generator = () => (window.UF && UF.Generator) || null;
+
+    // Headless suites eval this file in a vm that has no require. The host console
+    // function's realm still has Node (the same reach DEUS_Combat uses for the SRD).
+    function nodeRequire() {
+        if (typeof require === "function") {
+            const cwd = (typeof process !== "undefined" && typeof process.cwd === "function") ? process.cwd() : null;
+            return { req: require, cwd };
+        }
+        try {
+            const log = typeof console !== "undefined" && console.log;
+            const Outer = log && log.constructor && log.constructor.constructor;
+            if (typeof Outer !== "function") return null;
+            const proc = Outer("return typeof process==='undefined'?null:process")();
+            if (!proc || !proc.mainModule || typeof proc.mainModule.require !== "function") return null;
+            return { req: proc.mainModule.require.bind(proc.mainModule), cwd: typeof proc.cwd === "function" ? proc.cwd() : null };
+        } catch (e) {
+            return null;
+        }
+    }
+    function loadIdentity() {
+        const host = nodeRequire();
+        if (!host) return null;
+        try {
+            const path = host.req("path");
+            const fs = host.req("fs");
+            const roots = [];
+            if (typeof __dirname === "string") roots.push(__dirname);
+            if (host.cwd) roots.push(host.cwd);
+            const candidates = [];
+            for (let i = 0; i < roots.length; i++) {
+                candidates.push(path.join(roots[i], "..", "sim", "society", "identity.js"));
+                candidates.push(path.join(roots[i], "js", "sim", "society", "identity.js"));
+                candidates.push(path.join(roots[i], "game", "js", "sim", "society", "identity.js"));
+            }
+            for (let i = 0; i < candidates.length; i++) {
+                if (fs.existsSync(candidates[i])) return host.req(candidates[i]);
+            }
+        } catch (e) {
+            return null;
+        }
+        return null;
+    }
+    const Identity = loadIdentity();
+    if (!Identity) console.error("UF_Colonists: person identity module missing");
+
     const emit = (name, ...args) => {
         if (window.UF && UF.Events && UF.Events.emit) UF.Events.emit(name, ...args);
     };
@@ -815,6 +863,24 @@
         };
     }
 
+    function personRecord(u) {
+        return !!(u && u.data && (u.data.kind === "colonist" || u.data.kind === "person" || u.data.founder === true));
+    }
+    function ensurePersonIdentity(u) {
+        if (!Identity || !personRecord(u)) return null;
+        u.data.identity = Identity.loadUnitData(u.data);
+        return u.data.identity;
+    }
+    function migratePersonIdentities(state) {
+        if (!Identity) return 0;
+        const units = state && state.units;
+        if (!units) return 0;
+        const list = Array.isArray(units) ? units : Object.keys(units).map(id => units[id]);
+        let n = 0;
+        for (let i = 0; i < list.length; i++) if (ensurePersonIdentity(list[i])) n++;
+        return n;
+    }
+
     function convertPerson(u, state, site, taken) {
         const d = u.data;
         const player = site.faction === state.factions.playerId;
@@ -908,6 +974,7 @@
                 convertPerson(u, state, local, taken);
                 residents.push(u);
             }
+            for (let ri = 0; ri < residents.length; ri++) ensurePersonIdentity(residents[ri]);
             if (local.faction === playerId) people.push(...residents);
             const record = {
                 version: 2, factionId: local.faction, siteId: local.id,
@@ -981,6 +1048,7 @@
                 if (!u.data.site) u.data.site = site.id;
                 if (u.data.kind === "person" && u.data.ai !== "settlement") convertPerson(u, W.state, site, taken);
                 if (!u.data.home || !u.data.home.area) u.data.home = { area: copyArea(site.area), x: site.x, y: site.y, z: zOf(site) };
+                ensurePersonIdentity(u);
             }
         }
         primary.settlementsReady = true;
@@ -2763,6 +2831,8 @@
             Callings.assignCallings(childUnit, pop);
             if (twinUnit) Callings.assignCallings(twinUnit, pop);
         }
+        ensurePersonIdentity(childUnit);
+        if (twinUnit) ensurePersonIdentity(twinUnit);
 
         if (twinUnit) {
             addThought(mother, "Gave birth to healthy twins!", 25);
@@ -3088,6 +3158,7 @@
             if (!u) continue;
 
             convertPerson(u, st, s, taken);
+            ensurePersonIdentity(u);
             addThought(u, "Arrived as a hopeful immigrant to join the settlement.", 12);
 
             if (F && !u.data._popCounted) {
@@ -5680,6 +5751,8 @@
         decide,
         tickNeeds,
         setup: setupColony,
+        ensureIdentity: ensurePersonIdentity,
+        migrateIdentities: migratePersonIdentities,
         nameFor, facetsFor, skillsFor, genderFor,
         stockpiles: ref => (colonyState(ref) ? colonyState(ref).stockpiles.slice() : []),
         settlements: () => settlementStates().slice(),
@@ -5745,6 +5818,17 @@
     //-------------------------------------------------------------------------
     // Engine hooks
 
+    if (typeof DataManager !== "undefined" && DataManager && typeof DataManager.extractSaveContents === "function") {
+        const _DataManager_extractSaveContents_identity = DataManager.extractSaveContents;
+        DataManager.extractSaveContents = function(contents) {
+            _DataManager_extractSaveContents_identity.call(this, contents);
+            try {
+                const st = (contents && contents.ufWorld) || (World() && World().state);
+                migratePersonIdentities(st);
+            } catch (e) { console.error("UF_Colonists: identity load failed", e); }
+        };
+    }
+
     // The per-tick step, after UF_World moved the units and UF_Jobs worked (their aliases are below ours).
     localTicks = 0;
     const _Game_Map_update = Game_Map.prototype.update;
@@ -5776,6 +5860,7 @@
         UF.Events.on("world:unitAdded", markBedsDirty);
         UF.Events.on("world:created", state => {
             try { setupColony(state); } catch (e) { console.error("UF_Colonists: setup failed", e); }
+            try { migratePersonIdentities(state); } catch (e) { console.error("UF_Colonists: identity migration failed", e); }
         });
         UF.Events.on("jobs:done", (job, u) => {
             try { onDone(job, u); } catch (e) { console.error(e); }
