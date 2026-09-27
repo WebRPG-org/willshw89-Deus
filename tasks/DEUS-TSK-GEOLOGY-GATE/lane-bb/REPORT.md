@@ -2,6 +2,80 @@
 
 Writer: grok. Branch: `task/lane-bb`. Base: `188fee267f6c95bd477736f3dc7dfce2c6e75a12`.
 
+## FIX1 — strata foundation is already red on main
+
+PM pre-review of tip `217753520073caf5ace303874652944986c4de81` (full clone `prereview_bb_20260927_115745`) was RED on `node tools/test_strata_foundation.js`: 22 passed, 4 failed (`fills_0_to_5`, `floor_on_substrate`, `surface_elevation_matches`, `sphere_aoe`). Geology and syntax were green.
+
+Those four failures are on the merge base. This lane did not change `tools/test_strata_foundation.js` or any plugin. A fresh clone of the base fails the same four checks, with the same four FAIL lines. The geology harness is not an input to that test, so there is no edit inside `allowedPaths` that can turn it green. The assertions were not weakened. Stop, and escalate below.
+
+### What the geology diff changed
+
+`git diff 188fee267f6c95bd477736f3dc7dfce2c6e75a12 217753520073caf5ace303874652944986c4de81` changes one code file: `tools/test_geology_strata.js` (195 insertions, 74 deletions). The other files in that range are this lane's brief, `lane.json`, and the first report.
+
+On the merge base the harness built a hand-written `UF.World` (`state`, `inWorld`, `currentArea`, `viewLevel`, `registerGenerator`, `unregisterGenerator`) and ran only `DEUS_WorldGen.js` and `DEUS_Levels.js`. It never loaded `DEUS_World.js`. After `bdf45b4c` (2026-09-26), `DEUS_Levels.js` reads `window.UF.World.Z_RANGES.legacy` at load, so that stub threw before any check.
+
+The tip loads the real plugins in a Node `vm`, in order: `DEUS_World.js`, `DEUS_WorldGen.js`, `DEUS_Levels.js`. Engine stubs are only what those files touch at load, in the same shape as `setup()` in `tools/test_strata_foundation.js` (`PluginManager.parameters` from `game/js/plugins.js`, the Tilemap constants section of `rmmz_core.js`, and the constructors they alias). A plugin that throws is caught and the process exits 1 with one `HARNESS` line. The world under test is the one the nine checks were written against: seed `1074124084`, size 256, one area, no `zRange`, which `DEUS_World` reads as legacy -2..+2. The nine checks are unchanged. `--mutant` still requires fewer than 2 surface stone types. `--mutant=no_world` skips `DEUS_World.js` and must exit 1.
+
+`tools/test_strata_foundation.js` does not load that file. It never has.
+
+### Side-by-side
+
+Two fresh clones of `C:/Users/snewt/OneDrive/Desktop/UF` (`git clone --shared --sparse`), sparse paths `tools`, `game/js`, `game/data`, detached at the commit. `DEUS_Z_RANGE` was unset. SHA-256 identical on both clones: `tools/test_strata_foundation.js`, `tools/check_deus_syntax.js`, `game/js/plugins.js`, `DEUS_World.js`, `DEUS_WorldGen.js`, `DEUS_Tiles.js`, `DEUS_Objects.js`, `DEUS_Levels.js`, `DEUS_Floors.js`, `DEUS_Core.js`. Only `tools/test_geology_strata.js` differed.
+
+Both foundation runs: seed 20260923, the same fixtures (`valley (196,37)`, `deepRock (64,10)`, …), the same level checksums (`-2: 1898af90`, `-1: 3846830f`, `0: e51c7731`, `1: fa009862`, `2: c548f665`). The four FAIL lines are byte-identical, and they match the PM full-clone `lane-bb_gate2.out`. TIME and the allocation-check heap bytes differ; the checks do not.
+
+Merge-base `188fee267f6c95bd477736f3dc7dfce2c6e75a12`:
+
+```
+RESULT: 22 passed, 4 failed (exit 1) - fills_0_to_5, floor_on_substrate, surface_elevation_matches, sphere_aoe
+```
+
+Tip `217753520073caf5ace303874652944986c4de81`:
+
+```
+RESULT: 22 passed, 4 failed (exit 1) - fills_0_to_5, floor_on_substrate, surface_elevation_matches, sphere_aoe
+```
+
+The shared FAIL lines:
+
+```
+FAIL fills_0_to_5 - +1 over the valley cell (196,37) (ground below a floor, S4 air): 5/5 WRONG {"shape":"solid","top":4,"elev":89,"state":"HEIGHT_5_OF_5","solid":true,"frac":1} want {"shape":"solid","top":4,"elev":19,"state":"HEIGHT_5_OF_5","solid":true,"frac":1}, 4/5 WRONG {"shape":"floor","top":3,"elev":88,"state":"HEIGHT_4_OF_5","solid":false,"frac":0.8} want {"shape":"floor","top":3,"elev":18,"state":"HEIGHT_4_OF_5","solid":false,"frac":0.8}, 3/5 WRONG {"shape":"floor","top":2,"elev":87,"state":"HEIGHT_3_OF_5","solid":false,"frac":0.6} want {"shape":"floor","top":2,"elev":17,"state":"HEIGHT_3_OF_5","solid":false,"frac":0.6}, 2/5 WRONG {"shape":"floor","top":1,"elev":86,"state":"HEIGHT_2_OF_5","solid":false,"frac":0.4} want {"shape":"floor","top":1,"elev":16,"state":"HEIGHT_2_OF_5","solid":false,"frac":0.4}, 1/5 WRONG {"shape":"floor","top":0,"elev":85,"state":"HEIGHT_1_OF_5","solid":false,"frac":0.2} want {"shape":"floor","top":0,"elev":15,"state":"HEIGHT_1_OF_5","solid":false,"frac":0.2}, 0/5 ok
+FAIL floor_on_substrate - 0/5 over the ground's floor (S4 air): open; 0/5 over a solid ground cell: {"shape":"floor","top":-1,"elev":84,"mat":"stone"} (want floor, no stratum of its own, elevation 14 = ground S4, stone); 0/5 at -2 (nothing below: lava): floor, elevation 69
+FAIL surface_elevation_matches - 64975 columns whose surface level S holds a floor: the stood-on stratum is S0 of level S, elevation (S + 2) x 5; wrong 64975 ((0,0) S 1: 85/0; (1,0) S 1: 85/0; (2,0) S 1: 85/0; (3,0) S 1: 85/0)
+FAIL sphere_aoe - sphere r 3 ft at the ground's S0 over (64,10), 240 dig, linear: HP {"-1:4":0,"-1:3":255,"-1:2":255,"0:0":0,"0:1":85,"0:2":255,"0:3":255} want {"-1:4":0,"-1:3":0,"-1:2":255,"0:0":0,"0:1":0,"0:2":85,"0:3":255} (0 = destroyed); 3 strata hit (want 7: -1 S2..S4, ground S0..S3), 2 destroyed, cells written 2 (want 2: this column's -1 and ground; the next cell's middle is 5 ft away), levels [-1,0]
+```
+
+### Why the numbers differ from the assertions
+
+`tools/test_strata_foundation.js` was last changed in `116a3de9` (2026-09-25 11:39 -0500), before `bdf45b4c` (2026-09-26 07:59 -0500). Its `setup()` does not put `process` in the vm. `DEUS_World.newWorldZRange()` then does not see `DEUS_Z_RANGE` and a New Game gets `Z_RANGES.default` (-16..+15). `docs/systems/DEUS_ZRange.md` (the `default` row, and the New Game paragraph). `elevationOf` is `(z - zMin) * 5 + s` (`DEUS_Levels.js`). The test still hardcodes the legacy frame, zMin -2. The offset is `(-2 - (-16)) * 5 = 70`.
+
+- `fills_0_to_5`: +1, 5/5 wants elevation 19 and gets 89. 19 = `(1 - (-2)) * 5 + 4`. 89 = `(1 - (-16)) * 5 + 4`. Shape and `HEIGHT_k_OF_5` match.
+- `surface_elevation_matches`: wants `(S + 2) * 5`. Surface level 1 is 15 on that frame and 85 on -16..+15 (`(1 - (-16)) * 5 + 0`). Every one of the 64975 columns is wrong by that offset. The stood-on stratum top is still 0.
+- `floor_on_substrate`: 0/5 over solid ground wants elevation 14 (legacy ground S4) and gets 84. At z=-2 the test wants open and elevation -1, because -2 is the bottom of the legacy range and nothing is below it. On -16..+15 the level below is z=-3, and a level under the core is solid rock (`outerBaseline`, `z < CORE.zMin`). `worldStrataElevationAt` then returns `elevationOf(-2, 0) - 1 = 69`, and the shape is floor.
+- `sphere_aoe`: the test's distance table is the 1 ft stratum (`|e + 0.5 - 10.5|` ft, 7 strata inside a 3 ft radius). `docs/systems/DEUS_ZRange.md` records the change: a stratum is 2 ft, so the same radius reaches half as many strata, and the 2 ft table at 3 ft is 3 strata. The run hit 3. `DEUS_Levels.js` says the same thing on `applyVolumeDamage`. The +70 offset cancels out of the distances. This failure is the 2 ft stratum.
+
+Repairing that means editing `tools/test_strata_foundation.js` or the plugins. Both are outside `allowedPaths`. This lane does not do it.
+
+### Fresh-clone gate exits at the tip
+
+Clone HEAD `217753520073caf5ace303874652944986c4de81`. `DEUS_Z_RANGE` unset.
+
+```
+node tools/test_geology_strata.js
+EXIT=0
+RESULT: 9 passed, 0 failed (exit 0)
+
+node tools/check_deus_syntax.js
+EXIT=0
+Checked 59 DEUS plugin files. Errors: 0
+
+node tools/test_strata_foundation.js
+EXIT=1
+RESULT: 22 passed, 4 failed (exit 1) - fills_0_to_5, floor_on_substrate, surface_elevation_matches, sphere_aoe
+```
+
+The RESULT and Checked lines are from the side-by-side run in that clone. The `EXIT=` lines are `$LASTEXITCODE` from a later `node` run of the same three commands in the same clone: geology 0, syntax 0, foundation 1. The merge-base clone printed the same foundation RESULT.
+
 ## Root cause
 
 `node tools/test_geology_strata.js` died while loading plugins, before any of the nine checks. `DEUS_Levels.js` line 69 reads `window.UF.World.Z_RANGES.legacy` at load, and later reads `window.UF.Space.GRID_SIZE_FEET` and `STRATUM_FEET` (line 1038). The harness built a hand-written `UF.World` (`state`, `inWorld`, `currentArea`, `viewLevel`, `registerGenerator`, `unregisterGenerator`) and never loaded `DEUS_World.js`.
@@ -29,6 +103,7 @@ Listed only. This lane does not answer them.
 
 - `docs/systems/DEUS_ZRange.md`: the New Game split -16..+15 is the PM default and is still open for the Owner. The range stays data.
 - The same doc: ADR-003 Q16 (old saves) is open for the Owner. A state with no `zRange` is read as the legacy range -2..+2. The geology world state is that case.
+- FIX1 escalation: `node tools/test_strata_foundation.js` exits 1 on origin/main `188fee267f6c95bd477736f3dc7dfce2c6e75a12` and on this tip, same four checks, same FAIL lines (FIX1 section). The test still expects the pre-`bdf45b4c` frame (zMin -2, 1 ft strata). A New Game in its vm is `Z_RANGES.default` (-16..+15) with 2 ft strata. The repair is in `tools/test_strata_foundation.js` or the plugins. Both are outside this lane. This lane does not weaken those assertions and does not answer which side should move.
 
 ## Gate output
 
@@ -149,4 +224,4 @@ A read of `tools/**/*.js` for `DEUS_Levels.js` found the other loaders already l
 
 ## PROPOSED-BB-02
 
-`tools/test_strata_foundation.js` exits 1 on this base, as pasted above. `fills_0_to_5`, `floor_on_substrate`, and `surface_elevation_matches` want core-frame elevations (zMin -2). A New Game in that sandbox is `Z_RANGES.default` (-16..+15), and `worldStrataElevationAt` is `(z - zMin) * 5 + stratum`. `sphere_aoe` also fails (3 strata hit, the test wants 7); the test predates the 2 ft stratum / range-relative elevation in `bdf45b4c`. The fix is in that test or in the plugins, both outside this lane.
+`tools/test_strata_foundation.js` exits 1 on origin/main and on this tip. Fresh clones of `188fee26` and `21775352` printed the same four FAIL lines (FIX1 section). `fills_0_to_5`, `floor_on_substrate`, and `surface_elevation_matches` want the legacy frame (zMin -2). A New Game in that vm is `Z_RANGES.default` (-16..+15), and `worldStrataElevationAt` is `(z - zMin) * 5 + stratum` (70 elevation steps higher). `sphere_aoe` wants the 1 ft blast table (7 strata at radius 3 ft). The live 2 ft table hits 3, which is what `docs/systems/DEUS_ZRange.md` records for that radius. The test's last commit is `116a3de9` (2026-09-25), before `bdf45b4c` (2026-09-26). The fix is in that test or in the plugins, both outside this lane.
