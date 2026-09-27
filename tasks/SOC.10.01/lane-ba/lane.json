@@ -1,0 +1,39 @@
+{
+    "lane": "lane-ba",
+    "taskId": "SOC.10.01",
+    "branch": "task/lane-ba",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "allowedPaths": [
+        "game/js/sim/society/**",
+        "game/data/society/person_identity.schema.json",
+        "game/js/plugins/DEUS_Colonists.js",
+        "tools/society/**",
+        "docs/systems/DEUS_PersonIdentity.md",
+        "tasks/SOC.10.01/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": [
+                "tools/society/test_person_identity.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/test_new_game_year0.js"
+            ],
+            "timeoutSec": 1800
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/check_deus_syntax.js"
+            ],
+            "timeoutSec": 900
+        }
+    ]
+}
