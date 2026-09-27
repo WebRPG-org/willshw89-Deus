@@ -127,39 +127,41 @@ Measured in this worktree (Node), iterations 4 / 2:
 
 | case | scale | light | frame ms | buffer bytes |
 |---|---:|---|---:|---:|
-| all-off | 1 | off | 0.516 | 0 |
-| toggle-paletteShift | 1 | off | 1.139 | 855 |
-| toggle-cliffFaces | 1 | off | 0.587 | 0 |
-| toggle-dropShadows | 1 | off | 1.075 | 656640 |
-| toggle-parallax | 1 | off | 0.337 | 0 |
-| toggle-depthMarkers | 1 | off | 0.252 | 0 |
-| toggle-unitHeightShift | 1 | off | 0.318 | 0 |
-| toggle-cameraLayerEasing | 1 | off | 0.287 | 0 |
-| toggle-ditheredCutaways | 1 | off | 1.003 | 656640 |
-| toggle-crossLayerEffects | 1 | off | 0.265 | 0 |
-| toggle-glowsLightLower | 1 | off | 0.253 | 0 |
-| toggle-weatherByLayer | 1 | off | 0.29 | 0 |
-| light-per-tile | 1 | per-tile | 0.373 | 285 |
-| light-per-pixel | 1 | per-pixel | 4.649 | 656640 |
-| dim-2 | 1 | per-tile | 0.428 | 285 |
-| dim-3 | 1 | per-tile | 0.354 | 285 |
-| day-length-36 | 1 | off | 0.244 | 0 |
-| scale-2 | 2 | off | 6.627 | 2626560 |
-| scale-3 | 3 | off | 13.554 | 5909760 |
-| glows-lower-lit | 1 | per-tile | 0.36 | 285 |
-| look | 1 | off | 1.521 | 657495 |
-| look-parallax | 1 | off | 1.911 | 657495 |
-| look-light-tile | 1 | per-tile | 1.541 | 657780 |
-| look-light-pixel | 1 | per-pixel | 18.071 | 1314135 |
-| all-tile-1x | 1 | per-tile | 2.277 | 1314420 |
-| all-pixel-2x | 2 | per-pixel | 25.091 | 4597335 |
-| all-pixel-3x | 3 | per-pixel | 32.275 | 7880535 |
-| night-torch-fire-tile | 1 | per-tile | 0.225 | 285 |
-| night-torch-fire-pixel | 1 | per-pixel | 5.074 | 656640 |
+| all-off | 1 | off | 0.630 | 0 |
+| toggle-paletteShift | 1 | off | 1.174 | 855 |
+| toggle-cliffFaces | 1 | off | 0.610 | 0 |
+| toggle-dropShadows | 1 | off | 1.123 | 656640 |
+| toggle-parallax | 1 | off | 0.387 | 0 |
+| toggle-depthMarkers | 1 | off | 0.268 | 0 |
+| toggle-unitHeightShift | 1 | off | 0.323 | 0 |
+| toggle-cameraLayerEasing | 1 | off | 0.269 | 0 |
+| toggle-ditheredCutaways | 1 | off | 1.029 | 656640 |
+| toggle-crossLayerEffects | 1 | off | 0.269 | 0 |
+| toggle-glowsLightLower | 1 | off | 0.301 | 0 |
+| toggle-weatherByLayer | 1 | off | 0.308 | 0 |
+| light-per-tile | 1 | per-tile | 0.374 | 285 |
+| light-per-pixel | 1 | per-pixel | 4.816 | 656640 |
+| dim-2 | 1 | per-tile | 0.316 | 285 |
+| dim-3 | 1 | per-tile | 0.288 | 285 |
+| day-length-36 | 1 | off | 0.261 | 0 |
+| scale-2 | 2 | off | 6.554 | 2626560 |
+| scale-3 | 3 | off | 13.753 | 5909760 |
+| glows-lower-lit | 1 | per-tile | 0.905 | 4845 |
+| look | 1 | off | 1.707 | 657495 |
+| look-parallax | 1 | off | 1.785 | 657495 |
+| look-light-tile | 1 | per-tile | 1.869 | 662340 |
+| look-light-pixel | 1 | per-pixel | 807.642 | 11820375 |
+| all-tile-1x | 1 | per-tile | 2.521 | 1318980 |
+| all-pixel-2x | 2 | per-pixel | 790.832 | 15103575 |
+| all-pixel-3x | 3 | per-pixel | 818.216 | 18386775 |
+| night-torch-fire-tile | 1 | per-tile | 0.239 | 285 |
+| night-torch-fire-pixel | 1 | per-pixel | 4.665 | 656640 |
 
-`look` is palette, cliffs, shadows and markers. Per-pixel fills one 912×720 byte buffer (656640). Scale 2 and 3 are the nearest expand of that window, 4× and 9× the bytes. Palette is 285 tiles × 3 bytes. Per-tile light is one byte per tile.
+`look` is palette, cliffs, shadows and markers. Per-pixel on the viewed layer fills one 912×720 byte buffer (656640). Scale 2 and 3 are the nearest expand of that window, 4× and 9× the bytes. Palette is 285 tiles × 3 bytes. Per-tile light on the viewed layer is one byte per tile.
 
-Read of the times: the baked ramp, cliffs, markers, parallax, weather and the day-length toggle are well under 2 ms. A full-window hard shadow or cutaway mask is about 1 ms. Per-pixel light on the window is about 5 ms with 8 lights, and about 18 ms together with the look stack. Nearest 3× expand is about 14 ms on its own and about 32 ms with per-pixel light and every cue on. None of these rows turn a cue on by default.
+`glowsLightLower` rasters every layer from the viewed layer down to −16. In this scene the view is z = 0, so that is 17 layers. Per-tile that is 4845 bytes and under 1 ms (`glows-lower-lit`). Per-pixel it is 17 full windows: about 800 ms and 11.2 MB of light buffers before shadows and scale (`look-light-pixel`, `all-pixel-2x`, `all-pixel-3x`). The reach rule is unchanged: a solid cell still blocks the light. The time is the cost of visiting those layers at full resolution.
+
+Read of the other times: the baked ramp, cliffs, markers, parallax, weather and the day-length toggle stay under 2 ms. A full-window hard shadow or cutaway mask is about 1 ms. Per-pixel light on the viewed layer alone is about 5 ms with 8 lights. Nearest 3× expand of one window is about 14 ms. None of these rows turn a cue on by default.
 
 Reprint: `node tools/depth_demo/bench_depth_demo.js 4 2`
 

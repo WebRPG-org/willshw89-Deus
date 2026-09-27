@@ -898,16 +898,30 @@
         let bytes = 0;
         let checksum = 2166136261;
         framePlan(scene, state);
+        const lightZs = [];
+        if (state.lightMode !== "off") {
+            if (state.toggles.glowsLightLower) {
+                for (let z = scene.viewZ; z >= GEOMETRY.zMin; z--) lightZs.push(z);
+            } else {
+                lightZs.push(scene.viewZ);
+            }
+        }
         if (state.lightMode === "per-pixel") {
-            const buf = lightPixels(scene, state, { x: 0, y: 0, w: width, h: height, z: scene.viewZ });
-            bytes += buf.length;
-            checksum = fnvBytes(checksum, buf);
+            for (let i = 0; i < lightZs.length; i++) {
+                const buf = lightPixels(scene, state, { x: 0, y: 0, w: width, h: height, z: lightZs[i] });
+                bytes += buf.length;
+                checksum = fnvBytes(checksum, buf);
+            }
         } else if (state.lightMode === "per-tile") {
-            const buf = new Uint8Array(scene.width * scene.height);
-            for (let y = 0; y < scene.height; y++) {
-                for (let x = 0; x < scene.width; x++) {
-                    const cls = tileLightClass(scene, state, x, y, scene.viewZ);
-                    buf[y * scene.width + x] = cls === "bright" ? 255 : cls === "dim" ? 1 : 0;
+            const buf = new Uint8Array(scene.width * scene.height * lightZs.length);
+            for (let i = 0; i < lightZs.length; i++) {
+                const z = lightZs[i];
+                const base = i * scene.width * scene.height;
+                for (let y = 0; y < scene.height; y++) {
+                    for (let x = 0; x < scene.width; x++) {
+                        const cls = tileLightClass(scene, state, x, y, z);
+                        buf[base + y * scene.width + x] = cls === "bright" ? 255 : cls === "dim" ? 1 : 0;
+                    }
                 }
             }
             bytes += buf.length;
