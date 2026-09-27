@@ -305,7 +305,7 @@ function checkFld03(root) {
     ]);
     if (miss) return badResult("natural voids are missing " + miss);
     return okResult(
-        "Shafts, skylights, and natural cuts return before carving when FLUID_B is set on the column, and the carve writes M_AIR only into solid strata."
+        "fluidIn refuses a shaft or skylight whose column has FLUID_B set, and a natural cut does the same before it writes M_AIR. The carve itself writes M_AIR only into solid strata."
     );
 }
 
@@ -344,7 +344,7 @@ function checkSim03(root) {
     ]);
     if (miss) return badResult("mass ledger is missing " + miss);
     return okResult(
-        "game/js/sim/ledger.js: after seal(), register is refused; transforms move one amount inside one family and never mint ore; " +
+        "game/js/sim/ledger.js: after seal(), register is refused (E_SEALED); transforms move one amount inside one family and never mint ore; " +
         "recipes balance per family; a finite class accepts a source only when that source sets allowFinite; closure is sealed + sources - sinks."
     );
 }
