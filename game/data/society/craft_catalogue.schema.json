@@ -1,0 +1,358 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "deus-craft-catalogue/1.0.0",
+  "title": "DEUS Master Craft Catalogue",
+  "description": "Master craft catalogue defining the 34 economic professions linked to DEUS production chains, 2014 SRD crafting, and apprentice-to-master progression. Normative documentation is docs/systems/DEUS_CraftProfessions.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "documentRole",
+    "title",
+    "standardTask",
+    "authoritativePrinciples",
+    "noneSemantics",
+    "callingResolutionRules",
+    "crafts"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "deus-craft-catalogue/1.0.0"
+    },
+    "documentRole": {
+      "const": "craftCatalogue"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "standardTask": {
+      "const": "SOC.12.01"
+    },
+    "authoritativePrinciples": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 3
+    },
+    "noneSemantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "token",
+        "description",
+        "allowedDutyAssignments",
+        "independentAxes"
+      ],
+      "properties": {
+        "token": {
+          "const": "NONE"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "allowedDutyAssignments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "independentAxes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "civicOfficeIndependent",
+            "classIndependent",
+            "dutyDecoupled"
+          ],
+          "properties": {
+            "civicOfficeIndependent": { "const": true },
+            "classIndependent": { "const": true },
+            "dutyDecoupled": { "const": true }
+          }
+        }
+      }
+    },
+    "callingResolutionRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "precedenceOrder",
+        "dutyIsolationRule",
+        "unmappedCallingsStatus"
+      ],
+      "properties": {
+        "precedenceOrder": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 3
+        },
+        "dutyIsolationRule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unmappedCallingsStatus": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "crafts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/craftEntry"
+      },
+      "minItems": 34,
+      "maxItems": 34
+    }
+  },
+  "$defs": {
+    "craftId": {
+      "type": "string",
+      "enum": [
+        "FARMER", "MINER", "LOGGER", "QUARRYMAN", "HUNTER", "FISHER", "FORAGER",
+        "SMELTER", "BLACKSMITH", "ARMORER", "WEAPONSMITH",
+        "CARPENTER", "MASON", "WOODCARVER", "THATCHER",
+        "LEATHERWORKER", "TANNER", "TAILOR", "WEAVER", "SPINNER",
+        "COOK", "BREWER", "MILLER", "BUTCHER", "BAKER",
+        "POTTER", "GLASSWORKER", "JEWELER", "FLETCHER", "BOWYER", "HERBALIST", "ALCHEMIST", "SCRIBE", "MERCHANT"
+      ]
+    },
+    "craftFamily": {
+      "type": "string",
+      "enum": [
+        "extractive",
+        "pyrometallurgical_and_smiths",
+        "construction_and_woodcraft",
+        "organic_and_textiles",
+        "sustenance_and_processing",
+        "artisan_and_specialized"
+      ]
+    },
+    "progressionTierName": {
+      "type": "string",
+      "enum": [
+        "APPRENTICE",
+        "JOURNEYMAN",
+        "ARTISAN",
+        "MASTER"
+      ]
+    },
+    "qualityTier": {
+      "type": "string",
+      "enum": [
+        "STANDARD",
+        "SUPERIOR",
+        "EXCELLENT",
+        "MASTERWORK"
+      ]
+    },
+    "progressionTier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rank",
+        "tier",
+        "title",
+        "efficiencyMultiplier",
+        "qualityTierAccess",
+        "downtimeTrainingDays"
+      ],
+      "properties": {
+        "rank": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "tier": {
+          "$ref": "#/$defs/progressionTierName"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "efficiencyMultiplier": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 5.0
+        },
+        "qualityTierAccess": {
+          "$ref": "#/$defs/qualityTier"
+        },
+        "downtimeTrainingDays": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2000
+        }
+      }
+    },
+    "productionChain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputs",
+        "outputs",
+        "associatedRecipes",
+        "associatedLabors"
+      ],
+      "properties": {
+        "inputs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "outputs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "associatedRecipes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "associatedLabors": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "srd51Reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "toolProficiency",
+        "toolName",
+        "artisanToolCategory",
+        "craftingRate",
+        "downtimeActivity",
+        "sourceCitation"
+      ],
+      "properties": {
+        "toolProficiency": {
+          "type": ["string", "null"]
+        },
+        "toolName": {
+          "type": ["string", "null"]
+        },
+        "artisanToolCategory": {
+          "type": ["string", "null"],
+          "enum": [
+            "artisan_tools",
+            "kits",
+            "other",
+            null
+          ]
+        },
+        "craftingRate": {
+          "type": "string",
+          "minLength": 1
+        },
+        "downtimeActivity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceCitation": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "independentAxesPreservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "independentOfCivicOffice",
+        "independentOfClass",
+        "dutyDecoupled",
+        "notes"
+      ],
+      "properties": {
+        "independentOfCivicOffice": { "const": true },
+        "independentOfClass": { "const": true },
+        "dutyDecoupled": { "const": true },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "craftEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "family",
+        "displayName",
+        "description",
+        "primaryWorkstations",
+        "primaryResourceClasses",
+        "productionChain",
+        "srd51Reference",
+        "progression",
+        "callingMappings",
+        "knowledgeNode",
+        "independentAxesPreservation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/craftId"
+        },
+        "family": {
+          "$ref": "#/$defs/craftFamily"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "primaryWorkstations": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "primaryResourceClasses": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        },
+        "productionChain": {
+          "$ref": "#/$defs/productionChain"
+        },
+        "srd51Reference": {
+          "$ref": "#/$defs/srd51Reference"
+        },
+        "progression": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/progressionTier"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "callingMappings": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "knowledgeNode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "independentAxesPreservation": {
+          "$ref": "#/$defs/independentAxesPreservation"
+        }
+      }
+    }
+  }
+}
