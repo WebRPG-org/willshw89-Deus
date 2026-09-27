@@ -1,0 +1,21 @@
+{
+    "lane":  "lane-at",
+    "taskId":  "OPS.40.06",
+    "branch":  "task/lane-at",
+    "writer":  "grok",
+    "reviewer":  "gemini",
+    "push":  true,
+    "allowedPaths":  [
+                         "docs/LESSONS_AND_MISTAKES.md",
+                         "tasks/OPS.40.06/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  900
+                      }
+                  ]
+}
