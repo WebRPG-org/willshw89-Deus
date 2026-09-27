@@ -103,7 +103,7 @@ These are not answered here.
 
 ## Scope
 
-Against the lane base `c58df3bac659e0b0278a2767a991bc2d4b4e10aa`, the files this lane adds are:
+Against the lane base `c58df3bac659e0b0278a2767a991bc2d4b4e10aa`, the branch also contains the PM open commit's `tasks/SIM.50.12/lane-af/BRIEF.md` and `lane.json`. The files written for this run are:
 
 - `tools/sim/test_living_world_rules.js`
 - `tools/sim/fixtures/living_world/ranges.json`
