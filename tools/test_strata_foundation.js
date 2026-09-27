@@ -11,18 +11,20 @@
  *
  * Checks (each can print FAIL; the mutants below prove it):
  *   storage_budget                strata + connectors + cached shape grids of one area's five levels <= 3.5 MB (flat Uint8Arrays)
- *   generation_deterministic      every level's checksum equals the pre-strata code's (two seeds), repeats, and differs for seed + 1
- *   baseline_roundtrip            the legacy views (shape, material, water, biome) equal the pre-strata arrays byte for byte
+ *   generation_deterministic      old-generator (coupling off) checksums equal the pre-strata code's; the new game's own
+ *                                 checksums repeat and differ for seed + 1 (underground -2/-1 are the column rule)
+ *   baseline_roundtrip            old-generator legacy views equal the pre-strata arrays byte for byte; a new game's
+ *                                 -2 and -1 share the shallow-band substrate (docs/systems/DEUS_VerticalBiomes.md)
  *   solid_open_columns            every generated solid cell is 5 solid strata at full HP, open air 5 air, floor S0, ramp S0..S2
  *   fills_0_to_5                  fills 5/5 .. 0/5: shape, surfaceHeightAt, elevation, HEIGHT_k_OF_5, isSolid, solidFraction
- *   floor_on_substrate            0/5 over solid -> floor, over air -> open, 0/5 at -2 (nothing below) -> open
- *   legacy_shapes_match           shapeCodeAt of every cell of the five levels equals the pre-strata code's
- *   surface_elevation_matches     the stood-on stratum's elevation equals the surface height S of the column
+ *   floor_on_substrate            0/5 over solid -> floor on that S4; 0/5 at zMin (nothing below) -> open; below zMin a floor
+ *   legacy_shapes_match           shapeCodeAt of every cell equals the pre-strata code; materials match on the old generator
+ *   surface_elevation_matches     the stood-on stratum's elevation is (S - zMin) x STRATA_PER_LAYER (S0 of level S)
  *   headroom_walkability          a floor under less than 4 strata of headroom is refused (shape and World.walkable)
  *   damage_single_stratum         damage on S2 lowers its HP; destroying it leaves S1 and S3 intact at full HP
  *   destruction_changes_shape     destroying a floor's S0 changes the derived shape, emits levels:cellChanged
  *   damage_crosses_levels_box     a box from Z-1:S4 to Z0:S0 destroys exactly those two strata
- *   sphere_aoe                    a sphere hits several strata on two levels with linear falloff
+ *   sphere_aoe                    a sphere hits the strata its radius reaches at UF.Space.STRATUM_FEET, linear falloff
  *   resistance_and_hooks          resist by damage type, a material hook replaces the damage, "*" hooks, fluid hooks
  *   events_on_destruction         levels:strataDamaged / strataDestroyed / strataChanged / cellChanged payloads
  *   overburden                    hasOpaqueOverburden over the whole area matches the column; decks, gaps; Floors hook
@@ -31,14 +33,16 @@
  *   migration_profiles            solid -> 5/5, open -> 0/5, floor -> S0, ramp -> 3/5, stairs -> S0 + connector, pools kept
  *   unknown_format_diagnostics    unknown schema, junk legacy entries, a corrupt strata record: console.error, nothing guessed
  *   save_load_strata_hp           strata and HP survive DataManager save/load
- *   unchanged_terrain_regenerates only changed cells are saved; a fresh vm regenerates the same baselines; back = no record
+ *   unchanged_terrain_regenerates only changed cells are saved; a fresh new game regenerates the new game; a flag-absent
+ *                                 save regenerates the old roll; setting a cell back to its baseline drops the record
  *   fluid_adapter                 0..7 <-> 0..5 tables, passage bits, FLUID_k_OF_5, deterministic
  *   no_allocation_queries         2,000,000 adapter queries: no garbage collection, heap growth < 1 B per query
  *   query_cost                    ns per shapeCodeAt, pre-strata code vs strata (same cells; reported, bound 2000 ns)
  *   no_errors                     no console.error beyond the ones the diagnostic checks provoke on purpose
  *
  * Usage: node tools/test_strata_foundation.js [--seed=20260923] [--mutant=<name>] [--legacy=<file>] [--quiet]
- * Negative controls (Rule 4; each must exit 1): see MUTANTS.
+ * Negative controls (Rule 4; each must exit 1): MUTANTS patch DEUS_Levels.js. EXPECTATION_MUTANTS keep the plugins
+ * and restore a stale expectation (old zMin, 1 ft blast, coupled world judged as the pre-strata reference).
  * Exit: 0 all checks passed, 1 a check failed, 2 harness problem.
  */
 
@@ -69,16 +73,16 @@ const quiet = process.argv.includes("--quiet");
 
 // Mutants: exact source edits of DEUS_Levels.js, applied in memory. A missing target is a harness problem (exit 2).
 const MUTANTS = {
-    storage_fat: ["const n = size * size, m = new Uint8Array(n * STRATA), conn", "const n = size * size, m = new Uint8Array(n * STRATA * 3), conn"],
+    storage_fat: ["const n = b.size * b.size, m = new Uint8Array(n * STRATA), conn", "const n = b.size * b.size, m = new Uint8Array(n * STRATA * 3), conn"],
     lost_fluid: ["if (water && water[i] && fill < 2) { m[o + 1] = fluid; m[o + 2] = fluid; }", "/* MUTANT lost_fluid */"],
     no_headroom: ["return pack(head >= 4 ? FLOOR : SOLID,", "return pack(head >= 0 ? FLOOR : SOLID, /* MUTANT no_headroom */"],
     floor_needs_no_support: ["if (sup < 0) return pack(OPEN, false, STONE);", "if (sup < 0) return pack(FLOOR, false, STONE); /* MUTANT */"],
     damage_neighbour: ["            } else rec[REC_HP + s] = hp;", "            } else { rec[REC_HP + s] = hp; if (s < 4 && SOLID_B[rec[REC_M + s + 1]]) rec[REC_HP + s + 1] = hp; } /* MUTANT */"],
-    no_cross_z: ["const levelOfElevation = e => Math.floor(e / STRATA) - 2;", "const levelOfElevation = e => Math.ceil(e / STRATA) - 2; /* MUTANT */"],
+    no_cross_z: ["const levelOfElevation = e => Math.floor(e / STRATA) + ZR.zMin;", "const levelOfElevation = e => Math.ceil(e / STRATA) + ZR.zMin; /* MUTANT */"],
     resist_ignored: ["ctx.effective = damage * (mat.resist[damageType] !== undefined ? mat.resist[damageType] : 1);", "ctx.effective = damage; /* MUTANT */"],
     hooks_ignored: ["        runHooks(mat.key, ctx);\n        runHooks(\"*\", ctx);", "        /* MUTANT hooks_ignored */"],
     no_destroy_event: ["emit(\"levels:strataDestroyed\",", "(() => {})(\"levels:strataDestroyed\","],
-    overburden_one_level: ["for (let z = qZ + 1; z <= 2; z++) {", "for (let z = qZ + 1; z <= Math.min(2, qZ + 1); z++) {"],
+    overburden_one_level: ["for (let z = qZ + 1, top = Math.min(ZR.zMax, colTop); z <= top; z++) {", "for (let z = qZ + 1, top = Math.min(ZR.zMax, colTop, qZ + 1); z <= top; z++) {"],
     overburden_no_gap: ["if (f < STRATA && (solidMaskOf(rdM, rdO) >> f) !== 0) return true;", "/* MUTANT overburden_no_gap */"],
     hp_not_saved: ["for (let k = 0; k < REC; k++) s += HEX[r[k] >> 4] + HEX[r[k] & 15];", "for (let k = 0; k < REC; k++) { const v = k >= REC_HP && r[k] ? 255 : r[k]; s += HEX[v >> 4] + HEX[v & 15]; }"],
     migration_drops_constructed: ["const byte = (LEGACY_TO_M[p >> 4] || M_STONE) | ((p & 8) ? M_BUILT : 0);", "const byte = (LEGACY_TO_M[p >> 4] || M_STONE); /* MUTANT */"],
@@ -90,12 +94,21 @@ const MUTANTS = {
     alloc_in_query: ["        qX |= 0; qY |= 0;", "        qX |= 0; qY |= 0; qLeak = { a, b };"],
     slow_query: ["    const queriedPacked = () => { stats.shapeReads++;", "    const queriedPacked = () => { for (let spin = 0; spin < 50; spin++) Math.sqrt(spin); stats.shapeReads++;"],
     stale_grid: ["        (L.strata[key] = L.strata[key] || {})[i] = encodeRecord(r);\n        refreshPacked(st, z, ax, ay, i);", "        (L.strata[key] = L.strata[key] || {})[i] = encodeRecord(r); /* MUTANT stale_grid */"],
-    stale_neighbours: ["for (let zz = Math.max(-2, z - 1); zz <= Math.min(2, z + 1); zz++) {", "for (let zz = z; zz <= z; zz++) { /* MUTANT stale_neighbours */"],
+    stale_neighbours: ["for (let zz = Math.max(r.zMin, z - 1); zz <= Math.min(r.zMax, z + 1); zz++) {", "for (let zz = z; zz <= z; zz++) { /* MUTANT stale_neighbours */"],
     error_injected: ["    function migrateSaveToFiveStrata(st) {", "    function migrateSaveToFiveStrata(st) {\n        console.error(\"MUTANT error_injected\");"]
 };
 const EXTRA_DECL = { alloc_in_query: ["    let qSt = null,", "    let qLeak = null;\n    let qSt = null,"] };
-if (mutant && !MUTANTS[mutant]) {
-    console.log(`HARNESS unknown mutant "${mutant}"; known: ${Object.keys(MUTANTS).join(", ")}`);
+// Expectation mutants do not touch the plugins. Each one puts back a rule the docs retired, and the live world must fail it.
+const EXPECTATION_MUTANTS = {
+    old_zmin: "default-range elevations use Z_RANGES.legacy.zMin (the pre-WG.00.17 (S + 2) x 5 frame)",
+    legacy_as_default: "the legacy-range proof is judged with Z_RANGES.default.zMin",
+    blast_1ft: "the sphere is judged at a 1 ft stratum (the pre-WG.00.17 blast table)",
+    coupled_vs_pre_strata: "the coupling-on new game is required to match the pre-strata -2/-1 bytes",
+    old_save_as_new_game: "a flag-absent save is required to regenerate a coupling-on new game",
+    shallow_band_split: "a new game's Z-2 is required to differ from Z-1 (the old deep-set split)"
+};
+if (mutant && !MUTANTS[mutant] && !EXPECTATION_MUTANTS[mutant]) {
+    console.log(`HARNESS unknown mutant "${mutant}"; known: ${Object.keys(MUTANTS).join(", ")}; ${Object.keys(EXPECTATION_MUTANTS).join(", ")}`);
     console.log("RESULT: 0 passed, 0 failed (exit 2)");
     process.exit(2);
 }
@@ -124,7 +137,7 @@ const FILES = ["DEUS_World.js", "DEUS_WorldGen.js", "DEUS_Tiles.js", "DEUS_Objec
 function currentSources() {
     const s = {};
     for (const f of FILES) s[f] = fs.readFileSync(path.join(PLUGINS, f), "utf8");
-    if (mutant) {
+    if (MUTANTS[mutant]) {
         const [find, replace] = MUTANTS[mutant];
         if (!s["DEUS_Levels.js"].includes(find)) harnessProblem(`mutant ${mutant}: target not found in DEUS_Levels.js`);
         s["DEUS_Levels.js"] = s["DEUS_Levels.js"].replace(find, replace);
@@ -153,7 +166,7 @@ function legacySources() {
 //-----------------------------------------------------------------------------
 // The vm: RMMZ stubs only where the plugins touch the engine (as tools/test_volumetric_terrain_column.js).
 
-function setup(sources, tag) {
+function setup(sources, tag, zRange) {
     const list = {};
     vm.runInNewContext(fs.readFileSync(path.join(ROOT, "game/js/plugins.js"), "utf8"), list);
     const ns = {}, warnings = [], errors = [];
@@ -182,6 +195,8 @@ function setup(sources, tag) {
         $gameSystem: {}, $gameScreen: { weatherType: () => "none", weatherPower: () => 0, changeWeather() {} },
         $gameTimer: {}, $gameSwitches: {}, $gameVariables: {}, $gameSelfSwitches: {}, $gameActors: {}, $gameParty: {}
     };
+    // Only a requested range is visible. The host environment is not copied, so an ambient DEUS_Z_RANGE cannot move the default world.
+    if (zRange) env.process = { env: { DEUS_Z_RANGE: String(zRange) } };
     env.window = env;
     env.$deusWorldCatalog = env.$ufWorldCatalog;
     env.Tilemap.TILE_ID_A1 = 2048;
@@ -247,6 +262,14 @@ function newWorld(env, seed) {
     env.UF.World.newWorld(seed);
     return performance.now() - t0;
 }
+// A new game copies VERTICAL_BIOME_COUPLING onto the state (default true). False is the pre-WG.00.15 province roll.
+function newWorldUncoupled(env, seed) {
+    const Levels = env.UF.Levels;
+    const prev = Levels.VERTICAL_BIOME_COUPLING;
+    Levels.VERTICAL_BIOME_COUPLING = false;
+    try { return newWorld(env, seed); }
+    finally { Levels.VERTICAL_BIOME_COUPLING = prev; }
+}
 // A save through RMMZ's own DataManager (the functions the plugins alias), as a JSON string, and a load of one.
 function saveJson(env) {
     const c = env.DataManager.makeSaveContents();
@@ -277,8 +300,19 @@ const tNew = newWorld(env, SEED);
 const legacy = setup(legacySources(), "legacy");
 const LW = legacy.UF.World, LL = legacy.UF.Levels;
 const tOld = newWorld(legacy, SEED);
+// The pre-WG.00.15 roll (docs/systems/DEUS_VerticalBiomes.md: a world whose flag is off keeps the 4x4 province bytes).
+const uncoupled = setup(currentSources(), "uncoupled");
+const tUn = newWorldUncoupled(uncoupled, SEED);
+const UL = uncoupled.UF.Levels;
+const U = uncoupled.UF.World;
+// The legacy frame, requested by name. Elevations there are the pre-WG.00.17 numbers (zMin -2).
+const legacyRange = setup(currentSources(), "legacy-range", "legacy");
+const tLeg = newWorld(legacyRange, SEED);
+const LegL = legacyRange.UF.Levels, LegW = legacyRange.UF.World;
 const st = W.state, size = st.size, n = size * size, a = { x: st.startArea.x, y: st.startArea.y };
-console.log(`INFO newWorld ${tNew.toFixed(0)} ms with strata, ${tOld.toFixed(0)} ms pre-strata; area ${a.x},${a.y}, ${size}x${size}`);
+console.log(`INFO newWorld ${tNew.toFixed(0)} ms with strata, ${tOld.toFixed(0)} ms pre-strata, ${tUn.toFixed(0)} ms uncoupled, ${tLeg.toFixed(0)} ms legacy range; area ${a.x},${a.y}, ${size}x${size}`);
+console.log(`INFO zRange new game ${W.zRange().zMin}..${W.zRange().zMax} (Z_RANGES.default), legacy proof ${LegW.zRange().zMin}..${LegW.zRange().zMax} (Z_RANGES.legacy); stratum ${env.UF.Space.STRATUM_FEET} ft, ${env.UF.Space.STRATA_PER_LAYER} strata/layer, cell ${env.UF.Space.GRID_SIZE_FEET} ft`);
+console.log(`INFO coupling new game ${st.verticalBiomeCoupling}, old-generator world ${U.state.verticalBiomeCoupling}`);
 const LEVELS = [-2, -1, 0, 1, 2];
 const ref = (x, y, z) => ({ area: { x: a.x, y: a.y }, x, y, z });
 const bytes = s => s.bytes.join(",");
@@ -322,6 +356,40 @@ const snapshot = c => LEVELS.map(z => L.strataAt(ref(c.x, c.y, z)));
 const restore = (c, snap) => LEVELS.forEach((z, k) => { const b = snap[k]; L.setStrata(ref(c.x, c.y, z), { m: b.bytes, hp: b.hp, connector: b.connector || 0 }); });
 const matOf = key => L.STRATA_MATERIALS.find(m => m.key === key);
 
+// Elevation and blast geometry from the live scale (docs/systems/DEUS_ZRange.md section 7):
+// e = (z - zMin) x STRATA_PER_LAYER + s; a stratum's middle is (e + 0.5) x STRATUM_FEET.
+// Expectation mutants substitute a retired input; the worlds themselves are not changed.
+function liveSpace(worldEnv) {
+    const Wr = worldEnv.UF.World, Sp = worldEnv.UF.Space, r = Wr.zRange();
+    return { zMin: r.zMin, zMax: r.zMax, strata: Sp.STRATA_PER_LAYER, feet: Sp.STRATUM_FEET, cell: Sp.GRID_SIZE_FEET };
+}
+function expectSpace(worldEnv, role) {
+    const sp = liveSpace(worldEnv);
+    if (role === "default" && mutant === "old_zmin") sp.zMin = worldEnv.UF.World.Z_RANGES.legacy.zMin;
+    if (role === "legacy" && mutant === "legacy_as_default") sp.zMin = worldEnv.UF.World.Z_RANGES.default.zMin;
+    if (mutant === "blast_1ft") sp.feet = 1;
+    return sp;
+}
+const elevOf = (sp, z, s) => (z - sp.zMin) * sp.strata + s;
+const spNew = expectSpace(env, "default");
+const spOld = expectSpace(legacyRange, "legacy");
+function sameBytes(x, y) {
+    if (!x !== !y) return false;
+    if (!x) return true;
+    if (x.length !== y.length) return false;
+    for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return false;
+    return true;
+}
+function codesIn(arr, lo, hi) {
+    if (!arr || !arr.length) return false;
+    for (let i = 0; i < arr.length; i++) if (arr[i] < lo || arr[i] > hi) return false;
+    return true;
+}
+// The new game's strata bytes, copied before any edit. A later load replaces the state; the copy is the new-game baseline.
+const coupledM = {};
+for (const z of LEVELS) coupledM[z] = Buffer.from(L.baseline(z, a.x, a.y).strata.m);
+const provinceWorld = () => mutant === "coupled_vs_pre_strata" ? L : UL;
+
 //---------------------------------------------------------------- storage_budget
 guard("storage_budget", () => {
     const b0 = L.baseline(-1, a.x, a.y);
@@ -338,34 +406,73 @@ guard("storage_budget", () => {
 });
 
 //---------------------------------------------------------------- generation_deterministic, baseline_roundtrip, solid_open_columns
+// Checksums. z === 0 is the live world's WorldGen lattice (no seed argument): no seed+1 test there.
+function checksumOf(Lx, state, z) {
+    const gen = state.levels[String(z)].gen;
+    const own = Lx.checksum(z), rep = Lx.checksum(z, SEED, gen), other = Lx.checksum(z, SEED + 1, gen), own2 = Lx.checksum(z, SEED2, gen);
+    const stored = state.levels[String(z)].checksum;
+    const stable = own === rep && own === stored && own !== "n/a" && (z === 0 || own !== other);
+    return { gen, own, rep, other, own2, stored, stable };
+}
 guard("generation_deterministic", () => {
     const rows = [];
-    let ok = true;
+    let ok = st.verticalBiomeCoupling === true && U.state.verticalBiomeCoupling === false;
+    if (!ok) rows.push(`flags new ${st.verticalBiomeCoupling} / old-generator ${U.state.verticalBiomeCoupling} (want true / false)`);
+    const pre = {}, pre2 = {};
     for (const z of LEVELS) {
-        const gen = st.levels[String(z)].gen;   // the world's own generator (4, pinned above)
-        const own = L.checksum(z), old = LL.checksum(z), rep = L.checksum(z, SEED, gen), other = L.checksum(z, SEED + 1, gen);
-        const own2 = L.checksum(z, SEED2, gen), old2 = LL.checksum(z, SEED2, gen);
-        // The ground's checksum is a lattice of UF_WorldGen's cell info for the live world (it never took a seed argument): no seed+1 test there.
-        const good = own === old && own === rep && (z === 0 || (own !== other && own2 === old2)) && own !== "n/a" && st.levels[String(z)].checksum === own;
-        if (!good) ok = false;
-        rows.push(z === 0 ? `0: ${own}/${old}${own === old ? "" : " DIFFERENT"} (WorldGen lattice of the live world)` : `${z}: ${own}/${old}${own === old ? "" : " DIFFERENT"}, repeat ${rep === own ? "same" : "DIFFERENT"}, seed+1 ${other !== own ? "differs" : "SAME"}, seed ${SEED2} ${own2 === old2 ? "same" : `DIFFERENT ${own2}/${old2}`}`);
+        const gen = st.levels[String(z)].gen;
+        pre[z] = LL.checksum(z);
+        pre2[z] = LL.checksum(z, SEED2, gen);
     }
-    check("generation_deterministic", ok, `checksums strata/pre-strata: ${rows.join("; ")}`);
-});
-guard("baseline_roundtrip", () => {
-    const bad = [];
+    const provL = provinceWorld();
+    const provState = provL === L ? st : U.state;
     for (const z of LEVELS) {
-        const b = L.baseline(z, a.x, a.y), o = oldB[z];
-        for (const k of ["shape", "material", "water", "biome"]) {
+        const A = checksumOf(provL, provState, z);
+        const match = A.own === pre[z] && (z === 0 || A.own2 === pre2[z]);
+        if (!A.stable || !match) ok = false;
+        rows.push(z === 0
+            ? `old-generator 0: ${A.own}/${pre[z]}${match ? "" : " DIFFERENT"} (WorldGen lattice)`
+            : `old-generator ${z}: ${A.own}/${pre[z]}${match ? "" : " DIFFERENT"}, repeat ${A.rep === A.own ? "same" : "DIFFERENT"}, seed+1 ${A.own !== A.other ? "differs" : "SAME"}, seed ${SEED2} ${A.own2 === pre2[z] ? "same" : `DIFFERENT ${A.own2}/${pre2[z]}`}`);
+    }
+    for (const z of LEVELS) {
+        const A = checksumOf(L, st, z);
+        // Coupling names -2/-1 only. The ground, +1 and +2 stay the pre-strata checksum (DEUS_VerticalBiomes.md).
+        const surface = z < 0 || A.own === pre[z];
+        if (!A.stable || !surface) ok = false;
+        const underground = z < 0 ? `, new-generator ${A.own} (not required to equal pre-strata ${pre[z]})` : "";
+        rows.push(`new game ${z}: repeat ${A.rep === A.own ? "same" : "DIFFERENT"}, seed+1 ${z === 0 ? "n/a" : (A.own !== A.other ? "differs" : "SAME")}${z >= 0 ? `, pre-strata ${A.own === pre[z] ? "same" : "DIFFERENT"}` : ""}${underground}`);
+    }
+    check("generation_deterministic", ok, `checksums: ${rows.join("; ")}`);
+});
+function viewDiffs(Lx, levels, keys) {
+    const bad = [];
+    for (const z of levels) {
+        const b = Lx.baseline(z, a.x, a.y), o = oldB[z];
+        for (const k of keys) {
             const x = b[k], y = o[k];
             if (!x !== !y) { bad.push(`${z}.${k} present ${!!x}/${!!y}`); continue; }
             if (!x) continue;
             let diff = 0;
-            for (let i = 0; i < n; i++) if (x[i] !== y[i]) diff++;
+            for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) diff++;
             if (diff || x.length !== y.length) bad.push(`${z}.${k} ${diff} cells differ`);
         }
     }
-    check("baseline_roundtrip", !bad.length, bad.length ? bad.join("; ") : `shape, material, water (below the ground) and biome of all 5 levels equal the pre-strata arrays byte for byte (${n} cells each)`);
+    return bad;
+}
+guard("baseline_roundtrip", () => {
+    const provL = provinceWorld();
+    const bad = viewDiffs(provL, LEVELS, ["shape", "material", "water", "biome"]);
+    // The new game keeps the pre-strata shapes and water. Coupling does not carve. Surface levels keep their grids.
+    bad.push(...viewDiffs(L, LEVELS, ["shape", "water"]).map(s => `new game ${s}`));
+    bad.push(...viewDiffs(L, [0, 1, 2], ["material", "biome"]).map(s => `new game ${s}`));
+    const b2 = L.baseline(-2, a.x, a.y).biome, b1 = L.baseline(-1, a.x, a.y).biome;
+    const u2 = UL.baseline(-2, a.x, a.y).biome, u1 = UL.baseline(-1, a.x, a.y).biome;
+    // Z-1 and Z-2 are both shallow (-8..-1): one substrate id per column. The old Z-2 roll is the deep set, codes 5..8.
+    const coupledShallow = sameBytes(b2, b1) && codesIn(b2, 1, 4) && codesIn(b1, 1, 4);
+    const oldSplit = !sameBytes(u2, u1) && codesIn(u2, 5, 8) && codesIn(u1, 1, 4);
+    const bandOk = (mutant === "shallow_band_split" ? !coupledShallow : coupledShallow) && oldSplit;
+    if (!bandOk) bad.push(`bands coupled -2/-1 ${coupledShallow ? "one shallow grid" : "NOT one shallow grid"} (want ${mutant === "shallow_band_split" ? "the old Z-1/Z-2 split" : "one shallow grid"}), old-generator -2 deep / -1 shallow ${oldSplit}`);
+    check("baseline_roundtrip", !bad.length, bad.length ? bad.join("; ") : `old-generator shape, material, water and biome equal the pre-strata arrays byte for byte (${n} cells, 5 levels); new game shapes and water match, and -2/-1 are one shallow-band grid`);
 });
 guard("solid_open_columns", () => {
     const counts = { solid: 0, open: 0, floor: 0, ramp: 0, stairs: 0, pools: 0 }, bad = [];
@@ -391,35 +498,52 @@ guard("solid_open_columns", () => {
 });
 
 //---------------------------------------------------------------- fills and derived shapes
-guard("fills_0_to_5", () => {
-    const c = valley, r1 = ref(c.x, c.y, 1), rows = [];
+// k solid strata from S0 on +1. k = 0 is air over the valley floor (its S4 is air): nothing to stand on, elevation -1.
+function fillsProof(Lx, sp, c) {
+    const r1 = { area: a, x: c.x, y: c.y, z: 1 }, rows = [];
     let ok = true;
     for (let k = 5; k >= 0; k--) {
         const m = [0, 1, 2, 3, 4].map(s => s < k ? "stone" : "air");
-        const set = L.setStrata(r1, { m });
-        const want = { shape: k === 5 ? "solid" : k === 0 ? "open" : "floor", top: k - 1, elev: k ? 15 + k - 1 : -1, state: `HEIGHT_${k}_OF_5`, solid: k === 5, frac: k / 5 };
-        const got = { shape: L.shapeAt(r1), top: L.surfaceHeightAt(r1), elev: L.worldStrataElevationAt(r1), state: L.heightStateAt(r1), solid: L.isSolid(r1), frac: L.solidFraction(r1) };
-        const good = set && JSON.stringify(got) === JSON.stringify(want) && L.shapeAt(a, c.x, c.y, 1) === want.shape && L.shapeCodeAt(a.x, a.y, c.x, c.y, 1) === L.SHAPES[want.shape];
+        const set = Lx.setStrata(r1, { m });
+        const want = { shape: k === 5 ? "solid" : k === 0 ? "open" : "floor", top: k - 1, elev: k ? elevOf(sp, 1, k - 1) : -1, state: `HEIGHT_${k}_OF_5`, solid: k === 5, frac: k / 5 };
+        const got = { shape: Lx.shapeAt(r1), top: Lx.surfaceHeightAt(r1), elev: Lx.worldStrataElevationAt(r1), state: Lx.heightStateAt(r1), solid: Lx.isSolid(r1), frac: Lx.solidFraction(r1) };
+        const good = set && JSON.stringify(got) === JSON.stringify(want) && Lx.shapeAt(a, c.x, c.y, 1) === want.shape && Lx.shapeCodeAt(a.x, a.y, c.x, c.y, 1) === Lx.SHAPES[want.shape];
         if (!good) ok = false;
-        rows.push(`${k}/5 ${good ? "ok" : `WRONG ${JSON.stringify(got)} want ${JSON.stringify(want)}${set ? "" : ` (refused: ${L.lastRefusal().reason})`}`}`);
+        rows.push(`${k}/5 ${good ? "ok" : `WRONG ${JSON.stringify(got)} want ${JSON.stringify(want)}${set ? "" : ` (refused: ${Lx.lastRefusal().reason})`}`}`);
     }
-    check("fills_0_to_5", ok, `+1 over the valley cell (${c.x},${c.y}) (ground below a floor, S4 air): ${rows.join(", ")}`);
+    return { ok, rows };
+}
+guard("fills_0_to_5", () => {
+    const main = fillsProof(L, spNew, valley);
+    const old = fillsProof(LegL, spOld, valley);
+    const ranges = JSON.stringify(W.zRange()) === JSON.stringify(W.Z_RANGES.default) && JSON.stringify(LegW.zRange()) === JSON.stringify(LegW.Z_RANGES.legacy);
+    check("fills_0_to_5", main.ok && old.ok && ranges, `+1 over the valley cell (${valley.x},${valley.y}) (ground below a floor, S4 air): default zMin ${spNew.zMin} [${main.rows.join(", ")}]; legacy zMin ${spOld.zMin} [${old.rows.join(", ")}]; ranges ${ranges}`);
 });
+// 0/5 over solid ground stands on that cell's S4. At zMin there is nothing below (open, elevation -1). Below the core the outer level is solid stone.
+function floorProof(Lx, sp, c, deep) {
+    const r0 = { area: a, x: c.x, y: c.y, z: 0 }, r1 = { area: a, x: c.x, y: c.y, z: 1 };
+    const openOverAir = Lx.shapeAt(r1);
+    Lx.setStrata(r0, { m: ["stone", "stone", "stone", "stone", "stone"] });
+    const onSolid = { shape: Lx.shapeAt(r1), top: Lx.surfaceHeightAt(r1), elev: Lx.worldStrataElevationAt(r1), mat: Lx.cellAt(r1).material };
+    Lx.setStrata(r0, { m: ["soil", "air", "air", "air", "air"] });
+    const r2 = { area: a, x: deep.x, y: deep.y, z: -2 };
+    const before2 = Lx.strataAt(r2);
+    Lx.setStrata(r2, { m: ["air", "air", "air", "air", "air"] });
+    const deepest = Lx.shapeAt(r2), deepElev = Lx.worldStrataElevationAt(r2);
+    Lx.setStrata(r2, { m: before2.bytes, hp: before2.hp });
+    Lx.setStrata(r1, { m: ["air", "air", "air", "air", "air"] });
+    const wantSolid = elevOf(sp, 0, sp.strata - 1);
+    const atBottom = -2 === sp.zMin;
+    const wantDeep = { shape: atBottom ? "open" : "floor", elev: atBottom ? -1 : elevOf(sp, -2, 0) - 1 };
+    const ok = openOverAir === "open" && onSolid.shape === "floor" && onSolid.top === -1 && onSolid.elev === wantSolid && onSolid.mat === "stone" && deepest === wantDeep.shape && deepElev === wantDeep.elev;
+    return { ok, openOverAir, onSolid, deepest, deepElev, wantSolid, wantDeep };
+}
 guard("floor_on_substrate", () => {
-    const c = valley, r0 = ref(c.x, c.y, 0), r1 = ref(c.x, c.y, 1);
-    const openOverAir = L.shapeAt(r1);                                   // +1 fill 0 (last fills case) over the ground's floor
-    L.setStrata(r0, { m: ["stone", "stone", "stone", "stone", "stone"] });
-    const onSolid = { shape: L.shapeAt(r1), top: L.surfaceHeightAt(r1), elev: L.worldStrataElevationAt(r1), mat: L.cellAt(r1).material };
-    L.setStrata(r0, { m: ["soil", "air", "air", "air", "air"] });
-    const r2 = ref(deep2.x, deep2.y, -2);
-    const before2 = L.strataAt(r2);
-    L.setStrata(r2, { m: ["air", "air", "air", "air", "air"] });
-    const deepest = L.shapeAt(r2), deepElev = L.worldStrataElevationAt(r2);
-    L.setStrata(r2, { m: before2.bytes, hp: before2.hp });
-    L.setStrata(r1, { m: ["air", "air", "air", "air", "air"] });
-    const ok = openOverAir === "open" && onSolid.shape === "floor" && onSolid.top === -1 && onSolid.elev === 14 && onSolid.mat === "stone" && deepest === "open" && deepElev === -1;
-    check("floor_on_substrate", ok, `0/5 over the ground's floor (S4 air): ${openOverAir}; 0/5 over a solid ground cell: ${JSON.stringify(onSolid)} (want floor, no stratum of its own, elevation 14 = ground S4, stone); ` +
-        `0/5 at -2 (nothing below: lava): ${deepest}, elevation ${deepElev}`);
+    const main = floorProof(L, spNew, valley, deep2);
+    const old = floorProof(LegL, spOld, valley, deep2);
+    const ok = main.ok && old.ok;
+    check("floor_on_substrate", ok, `default zMin ${spNew.zMin}: 0/5 over air ${main.openOverAir}; over solid ground ${JSON.stringify(main.onSolid)} (want floor, top -1, elevation ${main.wantSolid} = ground S4, stone); 0/5 at -2 ${main.deepest}, elevation ${main.deepElev} (want ${main.wantDeep.shape}, ${main.wantDeep.elev}); ` +
+        `legacy zMin ${spOld.zMin}: over solid ${JSON.stringify(old.onSolid)} (want ${old.wantSolid}); at -2 ${old.deepest}, elevation ${old.deepElev} (want ${old.wantDeep.shape}, ${old.wantDeep.elev})`);
 });
 guard("legacy_shapes_match", () => {
     let diff = 0, cells = 0;
@@ -429,25 +553,38 @@ guard("legacy_shapes_match", () => {
         const s = L.shapeCodeAt(a.x, a.y, x, y, z), o = LL.shapeCodeAt(a.x, a.y, x, y, z);
         if (s !== o) { diff++; if (ex.length < 5) ex.push(`${z} (${x},${y}) ${s}/${o}`); }
     }
+    const matL = provinceWorld();
     const mats = [];
     for (const z of LEVELS) for (let i = 0; i < n; i += 97) {
-        const x = i % size, y = (i / size) | 0, p = L.cellAt(ref(x, y, z)), q = LL.cellAt(ref(x, y, z));
+        const x = i % size, y = (i / size) | 0, p = matL.cellAt(ref(x, y, z)), q = LL.cellAt(ref(x, y, z));
         if (p.shape !== "open" && (p.material !== q.material || p.constructed !== q.constructed || p.liquid !== q.liquid)) mats.push(`${z} (${x},${y}) ${p.material}/${q.material} ${p.liquid}/${q.liquid}`);
     }
-    check("legacy_shapes_match", diff === 0 && mats.length === 0, `shapeCodeAt strata/pre-strata over ${cells} cells (5 levels): ${diff} differ${ex.length ? ` (${ex.join("; ")})` : ""}; ` +
-        `cellAt material/constructed/liquid on every 97th cell: ${mats.length} differ${mats.length ? ` (${mats.slice(0, 4).join("; ")})` : ""}`);
+    const surfaceMats = [];
+    for (const z of [0, 1, 2]) for (let i = 0; i < n; i += 97) {
+        const x = i % size, y = (i / size) | 0, p = L.cellAt(ref(x, y, z)), q = LL.cellAt(ref(x, y, z));
+        if (p.shape !== "open" && (p.material !== q.material || p.constructed !== q.constructed || p.liquid !== q.liquid)) surfaceMats.push(`${z} (${x},${y}) ${p.material}/${q.material}`);
+    }
+    check("legacy_shapes_match", diff === 0 && mats.length === 0 && surfaceMats.length === 0, `shapeCodeAt new game/pre-strata over ${cells} cells (5 levels): ${diff} differ${ex.length ? ` (${ex.join("; ")})` : ""}; ` +
+        `cellAt material/constructed/liquid on every 97th cell of the ${matL === L ? "new game" : "old-generator world"}: ${mats.length} differ${mats.length ? ` (${mats.slice(0, 4).join("; ")})` : ""}; ` +
+        `new game surface levels: ${surfaceMats.length} differ`);
 });
-guard("surface_elevation_matches", () => {
+function surfaceProof(Lx, sp) {
     let checked = 0, bad = 0;
     const ex = [];
     for (let i = 0; i < n; i++) {
         const x = i % size, y = (i / size) | 0, s = S[i], code = shp(s, i);
         if (code !== FLOOR) continue;
         checked++;
-        const e = L.worldStrataElevationAt(a, x, y, s), top = L.surfaceHeightAt(a, x, y, s);
-        if (e !== (s + 2) * 5 || top !== 0) { bad++; if (ex.length < 4) ex.push(`(${x},${y}) S ${s}: ${e}/${top}`); }
+        const e = Lx.worldStrataElevationAt(a, x, y, s), top = Lx.surfaceHeightAt(a, x, y, s), want = elevOf(sp, s, 0);
+        if (e !== want || top !== 0) { bad++; if (ex.length < 4) ex.push(`(${x},${y}) S ${s}: ${e}/${top} want ${want}/0`); }
     }
-    check("surface_elevation_matches", checked > 1000 && bad === 0, `${checked} columns whose surface level S holds a floor: the stood-on stratum is S0 of level S, elevation (S + 2) x 5; wrong ${bad}${ex.length ? ` (${ex.join("; ")})` : ""}`);
+    return { checked, bad, ex, ok: checked > 1000 && bad === 0 };
+}
+guard("surface_elevation_matches", () => {
+    const main = surfaceProof(L, spNew), old = surfaceProof(LegL, spOld);
+    const legacyNumbers = spOld.zMin === LegW.Z_RANGES.legacy.zMin;
+    check("surface_elevation_matches", main.ok && old.ok && legacyNumbers, `${main.checked} columns whose surface level S holds a floor: stood-on stratum is S0, elevation (S - zMin) x ${spNew.strata}; ` +
+        `default zMin ${spNew.zMin} wrong ${main.bad}${main.ex.length ? ` (${main.ex.join("; ")})` : ""}; legacy zMin ${spOld.zMin} wrong ${old.bad}${old.ex.length ? ` (${old.ex.join("; ")})` : ""} (legacy zMin is Z_RANGES.legacy ${legacyNumbers})`);
 });
 guard("headroom_walkability", () => {
     const c = valley2, r0 = ref(c.x, c.y, 0), r1 = ref(c.x, c.y, 1), rows = [];
@@ -490,7 +627,9 @@ guard("destruction_changes_shape", () => {
     const hit = L.applyStrataDamage(r.area, r.x, r.y, -1, 0, 1000, "blast");
     const after = L.shapeAt(r), top = L.surfaceHeightAt(r), elev = L.worldStrataElevationAt(r), below = L.shapeAt(ref(cave.x, cave.y, -2));
     const cc = eventsSince(k, "levels:cellChanged").filter(e => e.args[0].z === -1 && e.args[0].x === r.x && e.args[0].y === r.y);
-    const ok = before === "floor" && hit.destroyed && top === -1 && (below === "solid" ? after === "floor" && elev === 4 : after === "open" && elev === -1) && cc.length >= 1;
+    // Standing on the cell below's S4 when that is solid: elevationOf(-1, 0) - 1. Nothing solid below: -1.
+    const elevWant = below === "solid" ? elevOf(liveSpace(env), -1, 0) - 1 : -1;
+    const ok = before === "floor" && hit.destroyed && top === -1 && after === (below === "solid" ? "floor" : "open") && elev === elevWant && cc.length >= 1;
     check("destruction_changes_shape", ok, `cave floor at -1 (${r.x},${r.y}), S0 ${mat}: ${before} -> S0 destroyed -> ${after} (the cell below is ${below}: standing on its top at elevation ${elev}); ` +
         `levels:cellChanged ${cc.length}`);
     L.setStrata(r, { m: [mat, "air", "air", "air", "air"] });
@@ -505,20 +644,44 @@ guard("damage_crosses_levels_box", () => {
     check("damage_crosses_levels_box", ok, `box (${c.x},${c.y}) from Z-1:S4 to Z0:S0, 500 blast: destroyed ${sum.strataDestroyed} on levels [${sum.levels}]; -1 [${lo.materials}] HP [${lo.hp}], ground [${hi.materials}] HP [${hi.hp}]`);
     restore(c, rockSnap);
 });
+// Vertical distance from ground S0, same column: |(z * STRATA_PER_LAYER + s) * STRATUM_FEET|. zMin cancels.
+// HP loss is ceil(damage x (1 - dist/radius) x dig resist x 255 / maxHP). The next cell's middle is one cell across.
+function sphereProof(Lx, sp, c) {
+    const radius = 3, damage = 240, snap = LEVELS.map(z => Lx.strataAt({ area: a, x: c.x, y: c.y, z }));
+    const exp = {}, got = {};
+    let geometric = 0, destroyed = 0;
+    for (const z of [-1, 0]) {
+        const before = snap[LEVELS.indexOf(z)];
+        for (let s = 0; s < sp.strata; s++) {
+            const dist = Math.abs((z * sp.strata + s) * sp.feet), key = `${z}:${s}`;
+            const M = Lx.STRATA_MATERIALS.find(m => m.key === before.materials[s]);
+            if (dist <= radius && M && M.solid && M.maxHP > 0) {
+                geometric++;
+                const resist = M.resist.dig !== undefined ? M.resist.dig : 1;
+                const dmg = damage * (1 - dist / radius) * resist;
+                exp[key] = dmg > 0 ? Math.max(0, 255 - Math.ceil(dmg * 255 / M.maxHP - 1e-9)) : 255;
+                if (exp[key] === 0) destroyed++;
+            } else exp[key] = before.hp[s];
+        }
+    }
+    const sum = Lx.applyVolumeDamage({ center: { area: a, x: c.x, y: c.y, z: 0, s: 0 }, radius, damage, damageType: "dig", falloff: "linear" });
+    for (const z of [-1, 0]) {
+        const now = Lx.strataAt({ area: a, x: c.x, y: c.y, z });
+        for (let s = 0; s < sp.strata; s++) got[`${z}:${s}`] = now.hp[s];
+    }
+    LEVELS.forEach((z, k) => { const b = snap[k]; Lx.setStrata({ area: a, x: c.x, y: c.y, z }, { m: b.bytes, hp: b.hp, connector: b.connector || 0 }); });
+    const neighborOut = sp.cell > radius;
+    const ok = sum.ok && JSON.stringify(got) === JSON.stringify(exp) && sum.levels.join() === "-1,0" && sum.strataHit === geometric && sum.strataDestroyed === destroyed && sum.cells === 2 && neighborOut;
+    return { ok, got, exp, sum, geometric, destroyed, neighborOut };
+}
 guard("sphere_aoe", () => {
     const c = deepRock;
-    const sum = L.applyVolumeDamage({ center: { area: a, x: c.x, y: c.y, z: 0, s: 0 }, radius: 3, damage: 240, damageType: "dig", falloff: "linear" });
-    const lo = L.strataAt(ref(c.x, c.y, -1)), hi = L.strataAt(ref(c.x, c.y, 0));
-    // Stratum middles on the column: distance |e + 0.5 - 10.5| ft; damage 240 x (1 - d / 3) x the material's dig resist, in steps
-    // ceil(dmg x 255 / maxHP) off 255 (0 = destroyed).
-    const want = (d, key) => { const M = matOf(key), dmg = 240 * (1 - d / 3) * (M.resist.dig !== undefined ? M.resist.dig : 1); return dmg > 0 ? Math.max(0, 255 - Math.ceil(dmg * 255 / M.maxHP - 1e-9)) : 255; };
-    const m1 = rockSnap[1].materials;
-    const exp = { "-1:4": want(1, m1[4]), "-1:3": want(2, m1[3]), "-1:2": 255, "0:0": want(0, "stone"), "0:1": want(1, "stone"), "0:2": want(2, "stone"), "0:3": 255 };
-    const got = { "-1:4": lo.hp[4], "-1:3": lo.hp[3], "-1:2": lo.hp[2], "0:0": hi.hp[0], "0:1": hi.hp[1], "0:2": hi.hp[2], "0:3": hi.hp[3] };
-    const ok = sum.ok && JSON.stringify(got) === JSON.stringify(exp) && sum.levels.join() === "-1,0" && sum.strataHit === 7 && sum.cells === 2;
-    check("sphere_aoe", ok, `sphere r 3 ft at the ground's S0 over (${c.x},${c.y}), 240 dig, linear: HP ${JSON.stringify(got)} want ${JSON.stringify(exp)} (0 = destroyed); ` +
-        `${sum.strataHit} strata hit (want 7: -1 S2..S4, ground S0..S3), ${sum.strataDestroyed} destroyed, cells written ${sum.cells} (want 2: this column's -1 and ground; the next cell's middle is 5 ft away), levels [${sum.levels}]`);
-    restore(c, rockSnap);
+    const main = sphereProof(L, spNew, c);
+    const old = sphereProof(LegL, spOld, c);
+    const ok = main.ok && old.ok;
+    check("sphere_aoe", ok, `sphere r 3 ft at the ground's S0 over (${c.x},${c.y}), 240 dig, linear, stratum ${spNew.feet} ft: ` +
+        `default HP ${JSON.stringify(main.got)} want ${JSON.stringify(main.exp)} (0 = destroyed); ${main.sum.strataHit} strata hit (want ${main.geometric}), ${main.sum.strataDestroyed} destroyed (want ${main.destroyed}), cells written ${main.sum.cells} (want 2: this column's -1 and ground; the next cell's middle is ${spNew.cell} ft, outside the radius ${main.neighborOut}), levels [${main.sum.levels}]; ` +
+        `legacy range ${old.sum.strataHit} hit (want ${old.geometric}), cells ${old.sum.cells}, HP match ${JSON.stringify(old.got) === JSON.stringify(old.exp)}`);
 });
 guard("resistance_and_hooks", () => {
     const r = ref(deepRock.x, deepRock.y, 0), w = ref(valley.x, valley.y, 1);
@@ -727,12 +890,22 @@ guard("unchanged_terrain_regenerates", () => {
     }
     const fresh = setup(currentSources(), "fresh");
     newWorld(fresh, SEED);
-    const sameBase = LEVELS.every(z => Buffer.compare(Buffer.from(fresh.UF.Levels.baseline(z, a.x, a.y).strata.m), Buffer.from(L.baseline(z, a.x, a.y).strata.m)) === 0);
+    const sameNew = LEVELS.every(z => Buffer.compare(Buffer.from(fresh.UF.Levels.baseline(z, a.x, a.y).strata.m), coupledM[z]) === 0);
+    // The loaded save was written by the pre-strata plugins: no verticalBiomeCoupling flag, so the old roll (DEUS_VerticalBiomes.md).
+    const loadedM = LEVELS.map(z => Buffer.from(L.baseline(z, a.x, a.y).strata.m));
+    const oldRollM = LEVELS.map(z => Buffer.from(UL.baseline(z, a.x, a.y).strata.m));
+    const flagAbsent = st3.verticalBiomeCoupling === undefined;
+    const sameOld = flagAbsent && loadedM.every((buf, i) => Buffer.compare(buf, oldRollM[i]) === 0);
+    const sameBase = mutant === "old_save_as_new_game"
+        ? flagAbsent && loadedM.every((buf, i) => Buffer.compare(buf, coupledM[LEVELS[i]]) === 0)
+        : sameNew && sameOld;
     const r = ref(valley.x, valley.y, 1);
     L.setStrata(r, { m: ["air", "air", "air", "air", "air"] });
     const dropped = st3.levels["1"].strata[`${a.x},${a.y}`] === undefined || st3.levels["1"].strata[`${a.x},${a.y}`][r.y * size + r.x] === undefined;
     check("unchanged_terrain_regenerates", records === changed && records > 0 && records < 20 && sameBase && dropped,
-        `saved strata records ${records} = cells differing from their baseline ${changed} (of ${5 * n}); a fresh vm's five baselines equal byte for byte ${sameBase}; ` +
+        `saved strata records ${records} = cells differing from their baseline ${changed} (of ${5 * n}); a fresh new game equals the new-game baselines ${sameNew}; ` +
+        `flag-absent save (flag ${st3.verticalBiomeCoupling === undefined ? "absent" : st3.verticalBiomeCoupling}) equals the old roll ${sameOld}` +
+        `${mutant === "old_save_as_new_game" ? "; mutant requires that save to equal the new game " + sameBase : ""}; ` +
         `+1 (${r.x},${r.y}) set back to its baseline (5 air): record dropped ${dropped}`);
 });
 guard("fluid_adapter", () => {
