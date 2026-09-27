@@ -29,6 +29,8 @@
 (() => {
     "use strict";
     const VERSION = 1, TYPE = "natural_travel", DEPTHS = [0, -1, -2];
+    // How many aligned columns a new world may test for a 0/-1/-2 chain. Was 12 (M-GEN-01).
+    const SURVEY = Object.freeze({ testedCap: 64 });
     const N4 = [[0, -1], [-1, 0], [1, 0], [0, 1]];
     const W = () => window.UF && UF.World;
     const L = () => window.UF && UF.Levels;
@@ -156,12 +158,14 @@
         }
         candidates.sort((a, b) => a.distance - b.distance || a.tie - b.tie || a.y - b.y || a.x - b.x);
         saved.survey.candidates = candidates.length;
-        const candidatePool = candidates.slice(0, 30);
-        for (const candidate of candidatePool) {
+        for (const candidate of candidates) {
             if (saved.chains.length && Math.max(Math.abs(candidate.x - saved.chains[0].x), Math.abs(candidate.y - saved.chains[0].y)) < 48) continue;
-            if (saved.survey.tested >= 12) break;
-            saved.survey.tested++;
+            if (saved.survey.tested >= SURVEY.testedCap) break;
             const cells = DEPTHS.map(z => ref(area, candidate.x, candidate.y, z));
+            // A flooded floor is not a dry passage. Baseline pools are already excluded; the drinking
+            // flood is the same shortcut and does not spend the clearance budget.
+            if (cells.some(c => zOf(c) < 0 && levels.waterAt(c))) continue;
+            saved.survey.tested++;
             if (cells.some(c => !free(c))) continue;
             const landings = cells.map(neighbor);
             if (landings.some(n => !n) || !exactPath(anchor, cells[0])) continue;
@@ -169,6 +173,7 @@
             saved.links.push({ id: `${id}_upper`, chain, kind: "natural_passage", a: cells[0], b: cells[1] });
             saved.links.push({ id: `${id}_lower`, chain, kind: "natural_passage", a: copy(cells[1]), b: cells[2] });
             saved.chains.push({ id, x: candidate.x, y: candidate.y, area: copy(area), landings });
+            if (saved.chains.length === 1) saved.survey.foundAt = saved.survey.tested;
             if (saved.chains.length >= 2) break;
         }
         const cliffMouths = levels.cliffCaveMouths ? levels.cliffCaveMouths(area) : [];
@@ -466,7 +471,7 @@
     }
     window.DEUS = window.DEUS || {};
     window.UF = window.DEUS;
-    const API = { VERSION, TYPE, generate, list, at, reserved, travel, orderSelected, state, lastRefusal: () => lastRefusal,
+    const API = { VERSION, TYPE, SURVEY, generate, list, at, reserved, travel, orderSelected, state, lastRefusal: () => lastRefusal,
         traverse, updateFluids, hasFluid, addFluid, clearFluids, isWater,
         markers: () => { const s = SceneManager._scene; const m = s && s._spriteset && s._spriteset._ufPassageMarkers; return m ? m.pool.filter(p => p.visible) : []; } };
     UF.NaturalConnections = API;
