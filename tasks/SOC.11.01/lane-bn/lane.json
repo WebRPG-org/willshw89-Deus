@@ -1,0 +1,32 @@
+{
+    "lane":  "lane-bn",
+    "taskId":  "SOC.11.01",
+    "branch":  "task/lane-bn",
+    "writer":  "fable",
+    "reviewer":  "grok",
+    "push":  false,
+    "effortClass":  "substantive",
+    "allowedPaths":  [
+                         "game/data/society/srd_classes.json",
+                         "game/data/society/srd_classes.schema.json",
+                         "docs/systems/DEUS_SRD_Classes.md",
+                         "tools/society/test_srd_classes.js",
+                         "tasks/SOC.11.01/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/society/test_srd_classes.js"
+                                   ],
+                          "timeoutSec":  1200
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  900
+                      }
+                  ]
+}
