@@ -158,6 +158,44 @@
     const emit = (name, payload) => {
         if (window.UF && UF.Events && typeof UF.Events.emit === "function") UF.Events.emit(name, payload);
     };
+    // Presentation hook for DEUS_CombatRT. No-op unless that plugin is loaded.
+    // The return value of resolveAttack is unchanged.
+    function notifyCombatRt(attacker, target, result) {
+        try {
+            const RT = window.UF && window.UF.CombatRT;
+            if (RT && typeof RT.noteResolved === "function") RT.noteResolved(attacker, target, result);
+        } catch (e) {
+            report("combat-rt", e);
+        }
+    }
+    function bootCombatRtPresentation() {
+        try {
+            const env = typeof process !== "undefined" && process.env && process.env.DEUS_COMBAT_RT_PRESENTATION;
+            if (env !== "1" || (window.UF && UF.CombatRT)) return;
+            const host = nodeRequire();
+            if (!host) return;
+            const path = host.req("path");
+            const fs = host.req("fs");
+            const candidates = [];
+            if (typeof __dirname === "string") {
+                candidates.push(path.join(__dirname, "..", "sim", "combat_rt"));
+                candidates.push(path.join(__dirname, "js", "sim", "combat_rt"));
+            }
+            if (host.cwd) {
+                candidates.push(path.join(host.cwd, "js", "sim", "combat_rt"));
+                candidates.push(path.join(host.cwd, "game", "js", "sim", "combat_rt"));
+            }
+            let dir = null;
+            for (let i = 0; i < candidates.length; i++) {
+                if (fs.existsSync(path.join(candidates[i], "index.js"))) { dir = candidates[i]; break; }
+            }
+            if (!dir) return;
+            const mod = host.req(dir);
+            if (mod && typeof mod.attach === "function") mod.attach(window);
+        } catch (e) {
+            report("combat-rt boot", e);
+        }
+    }
 
     // Load the pure rules module and publish it on window.UF.Rules.
     // Headless suites eval this file in a vm that has no require. The host console's
@@ -839,10 +877,14 @@
                 versatile: o.versatile
             });
             if (attResult.sameZViolation) {
-                return { hit: false, error: "Different Z level (same-Z combat invariant)", sameZViolation: true };
+                const refused = { hit: false, error: "Different Z level (same-Z combat invariant)", sameZViolation: true };
+                notifyCombatRt(attacker, target, refused);
+                return refused;
             }
             if (attResult.totalCover) {
-                return { hit: false, error: "Total cover", totalCover: true, damage: 0, rolled: 0, killed: false };
+                const covered = { hit: false, error: "Total cover", totalCover: true, damage: 0, rolled: 0, killed: false };
+                notifyCombatRt(attacker, target, covered);
+                return covered;
             }
             hit = !!attResult.hit;
             isCrit = !!attResult.critical;
@@ -965,6 +1007,7 @@
             disadvantage: attResult ? !!attResult.disadvantage : finalDis,
             roll: rollA
         });
+        notifyCombatRt(attacker, target, result);
         return result;
     };
 
@@ -1409,6 +1452,7 @@
     }
     function step() {
         const w = World();
+        if (window.UF && UF.CombatRT && typeof UF.CombatRT.ownsCombat === "function" && UF.CombatRT.ownsCombat()) return;
         if (!Combat.enabled || !w || !w.state || loopBlocked() || (window.UF && UF.Time && UF.Time.paused)) return;
         const st = cstate();
         st.updates++;
@@ -2778,4 +2822,6 @@
                 `uncaught errors during the suite: ${errs.length ? errs.join("; ") : "none"}; errors caught inside UF_Combat: ${mine.length ? mine.join("; ") : "none"}`);
         });
     }
+
+    bootCombatRtPresentation();
 })();
