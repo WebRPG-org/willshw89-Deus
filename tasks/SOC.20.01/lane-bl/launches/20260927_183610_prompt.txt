@@ -1,0 +1,5 @@
+Act as the independent Grok reviewer for corrected lane-bl, SOC.20.01, at exact writer tip fe0bc0730f1eb2fa5b4875b08bef62ba2c0d38cc.
+
+Review the complete merge-base-to-tip change against tasks/SOC.20.01/lane-bl/BRIEF.md and the prior review findings recorded at 57cda559 and 10debc5d. Rerun both recorded gates and all provocations. Verify specifically that a dead or deceased holder cannot retain office or full capability; culturalTitles is required and complete for every canonical ancestry; reciprocal multi-office cycles are rejected; and every production rule has an isolated targeted fixture. Also verify the correction preserves open cardinality, succession, aliases, duty hours, the office tree, and domain separation. Check allowed paths and confirm no art or audio changes.
+
+Write only tasks/SOC.20.01/lane-bl/review_grok_fe0bc073.md. State the exact writer tip reviewed, gate results, findings with severity and evidence, and end with an exact PASS or FAIL verdict. Commit the review as: [grok] SOC.20.01 review fe0bc073
