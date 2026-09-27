@@ -150,9 +150,9 @@
     "qualityTier": {
       "type": "string",
       "enum": [
+        "CRUDE",
         "STANDARD",
-        "SUPERIOR",
-        "EXCELLENT",
+        "FINE",
         "MASTERWORK"
       ]
     },

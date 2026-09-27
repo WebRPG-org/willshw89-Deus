@@ -16,19 +16,21 @@ const catalogue = {
     "2. Duty Decoupling: Current Duty describes transient operational activity and is never an identity axis or a substitute for craft vocation (INV-SOC-02).",
     "3. Physical Production Foundation: Crafts manipulate authentic physical materials, workstations, and recipes governed by strict material conservation (INV-ECON-01).",
     "4. Apprentice-to-Master Competence Progression: Independent vocation advancement through four standard tiers (Apprentice -> Journeyman -> Artisan -> Master) without combat class prerequisites.",
-    "5. Canonical 2014 SRD Alignment: Tool proficiencies, 5 gp/day crafting throughput, and downtime training rules grounded in authentic 2014 SRD 5.1 references.",
+    "5. Canonical 2014 SRD Alignment: Tool proficiencies, 5 gp/day crafting throughput, and downtime training rules grounded in authentic 2014 SRD 5.1 references (srd:rule:adventuring-between-adventures).",
     "6. Universal NONE Axis Semantics: NONE is a fully valid token on the craft axis for non-specialized persons, children, elders, or pure officeholders."
   ],
   noneSemantics: {
     token: "NONE",
-    description: "Indicates that the person currently holds no specialized economic craft profession. Standard for dependent children, infirm elders, unspecialized commoners, and full-time civic leaders.",
+    description: "Indicates that the person currently holds no specialized economic craft profession. Standard for dependent children, infirm elders, unspecialized commoners, and full-time civic leaders. Persons with craft: NONE are eligible for unspecialized operational tasks (e.g. haul, gather, fetch, move, sleep) and civic office work. Concrete duty scheduling tokens remain an open architectural integration point deferred to SOC.13.",
     allowedDutyAssignments: [
-      "HAUL_RESOURCE",
-      "BASIC_FORAGE",
-      "EMERGENCY_DEFENSE",
-      "CIVIC_OFFICE_WORK",
-      "SLEEP",
-      "REST_RECREATION"
+      "haul",
+      "gather",
+      "fetch",
+      "move",
+      "wander",
+      "sleep",
+      "eat",
+      "drink"
     ],
     independentAxes: {
       civicOfficeIndependent: true,
@@ -42,8 +44,8 @@ const catalogue = {
       "2. String job (data.job) if mapped by calling-craft table or craft token",
       "3. Fallback to NONE (job objects and unmapped tokens yield NONE)"
     ],
-    dutyIsolationRule: "Under no circumstance may currentDuty, duty, or live job objects overwrite or derive the craft identity axis.",
-    unmappedCallingsStatus: "The 20 unmapped callings identified in DEUS_PersonIdentity.md Question 5 (e.g. laborer, shepherd, stonecutter, physician) remain mapped to NONE until explicit Owner resolution."
+    dutyIsolationRule: "Under no circumstance may currentDuty, transient duty, or live job objects overwrite or derive the craft identity axis (INV-SOC-02).",
+    unmappedCallingsStatus: "The 21 unmapped callings identified in DEUS_PersonIdentity.md Question 5 (e.g. laborer, shepherd, stonecutter, physician) remain mapped to NONE until explicit Owner resolution."
   },
   crafts: []
 };
@@ -58,8 +60,8 @@ const craftDefs = [
     primaryWorkstations: ["farm_plot"],
     primaryResourceClasses: ["FOOD", "FIBER"],
     productionChain: {
-      inputs: ["seeds"],
-      outputs: ["berries", "fruit", "root", "straw", "fiber"],
+      inputs: [],
+      outputs: [],
       associatedRecipes: [],
       associatedLabors: []
     },
@@ -67,9 +69,9 @@ const craftDefs = [
       toolProficiency: null,
       toolName: null,
       artisanToolCategory: null,
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-practicing-a-profession",
-      sourceCitation: "SRD 5.1 pp. 150, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 88-89"
     },
     callingMappings: ["farmer", "farmhand"],
     knowledgeNode: "craft.field"
@@ -82,18 +84,18 @@ const craftDefs = [
     primaryWorkstations: [],
     primaryResourceClasses: ["IRON", "COPPER", "GOLD", "SILVER", "PLATINUM", "STONE"],
     productionChain: {
-      inputs: ["stone_pick"],
-      outputs: ["ore_iron", "ore_copper", "gold", "stone", "clay", "sand", "gem_rough"],
-      associatedRecipes: ["dig_clay", "sift_sand"],
+      inputs: [],
+      outputs: [],
+      associatedRecipes: [],
       associatedLabors: []
     },
     srd51Reference: {
       toolProficiency: null,
       toolName: null,
       artisanToolCategory: null,
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-practicing-a-profession",
-      sourceCitation: "SRD 5.1 pp. 150, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 88-89"
     },
     callingMappings: ["miner"],
     knowledgeNode: "craft.ore"
@@ -106,8 +108,8 @@ const craftDefs = [
     primaryWorkstations: [],
     primaryResourceClasses: ["WOOD"],
     productionChain: {
-      inputs: ["stone_axe", "axe_iron"],
-      outputs: ["log", "firewood"],
+      inputs: ["log"],
+      outputs: ["firewood"],
       associatedRecipes: ["split_firewood"],
       associatedLabors: []
     },
@@ -115,9 +117,9 @@ const craftDefs = [
       toolProficiency: null,
       toolName: null,
       artisanToolCategory: null,
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-practicing-a-profession",
-      sourceCitation: "SRD 5.1 pp. 150, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 88-89"
     },
     callingMappings: ["lumberjack"],
     knowledgeNode: "craft.wood"
@@ -130,18 +132,18 @@ const craftDefs = [
     primaryWorkstations: [],
     primaryResourceClasses: ["STONE"],
     productionChain: {
-      inputs: ["stone_pick", "stone_axe"],
-      outputs: ["stone", "sand"],
-      associatedRecipes: ["sift_sand"],
+      inputs: [],
+      outputs: [],
+      associatedRecipes: [],
       associatedLabors: []
     },
     srd51Reference: {
       toolProficiency: "srd:tool:masons-tools",
       toolName: "Mason’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-practicing-a-profession",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: [],
     knowledgeNode: "craft.stone"
@@ -154,8 +156,8 @@ const craftDefs = [
     primaryWorkstations: [],
     primaryResourceClasses: ["FOOD", "FIBER"],
     productionChain: {
-      inputs: ["bow_short", "bow_long", "arrows", "spear"],
-      outputs: ["meat_raw", "hide", "bone", "feathers"],
+      inputs: [],
+      outputs: [],
       associatedRecipes: [],
       associatedLabors: []
     },
@@ -163,9 +165,9 @@ const craftDefs = [
       toolProficiency: null,
       toolName: null,
       artisanToolCategory: null,
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-practicing-a-profession",
-      sourceCitation: "SRD 5.1 pp. 150, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 88-89"
     },
     callingMappings: ["hunter"],
     knowledgeNode: "craft.survival"
@@ -178,8 +180,8 @@ const craftDefs = [
     primaryWorkstations: [],
     primaryResourceClasses: ["FOOD"],
     productionChain: {
-      inputs: ["fiber", "stone_knife"],
-      outputs: ["fish"],
+      inputs: [],
+      outputs: [],
       associatedRecipes: [],
       associatedLabors: []
     },
@@ -187,9 +189,9 @@ const craftDefs = [
       toolProficiency: null,
       toolName: null,
       artisanToolCategory: null,
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-practicing-a-profession",
-      sourceCitation: "SRD 5.1 pp. 150, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 88-89"
     },
     callingMappings: ["fisherman"],
     knowledgeNode: "craft.sustenance"
@@ -198,22 +200,22 @@ const craftDefs = [
     id: "FORAGER",
     family: "extractive",
     displayName: "Forager",
-    description: "Gatherer of wild herbs, berries, edible fungi, tubers, reeds, and surface stones in uncultivated biomes.",
+    description: "Gatherer of wild herbs, berries, roots, fungi, seeds, and surface cordage fiber across wilderness biomes.",
     primaryWorkstations: [],
     primaryResourceClasses: ["FOOD", "FIBER"],
     productionChain: {
       inputs: [],
-      outputs: ["berries", "fruit", "mushroom", "root", "fiber", "stone"],
+      outputs: [],
       associatedRecipes: [],
       associatedLabors: []
     },
     srd51Reference: {
-      toolProficiency: null,
-      toolName: null,
-      artisanToolCategory: null,
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-practicing-a-profession",
-      sourceCitation: "SRD 5.1 pp. 150, 187"
+      toolProficiency: "srd:tool:herbalism-kit",
+      toolName: "Herbalism kit",
+      artisanToolCategory: "kits",
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70-71, 88-89"
     },
     callingMappings: [],
     knowledgeNode: "craft.survival"
@@ -224,12 +226,12 @@ const craftDefs = [
     id: "SMELTER",
     family: "pyrometallurgical_and_smiths",
     displayName: "Smelter",
-    description: "Operator of reduction furnaces and bloomeries, converting raw metallic ores into refined ingots and bars.",
+    description: "Operator of blast furnaces and charcoal burners, reducing raw iron and copper ores into refined metal ingots.",
     primaryWorkstations: ["furnace"],
-    primaryResourceClasses: ["IRON", "COPPER", "STEEL"],
+    primaryResourceClasses: ["IRON", "COPPER", "WOOD"],
     productionChain: {
-      inputs: ["ore_iron", "ore_copper", "charcoal", "firewood"],
-      outputs: ["bar_iron", "bar_copper", "charcoal"],
+      inputs: ["firewood", "ore_iron", "ore_copper", "charcoal"],
+      outputs: ["charcoal", "bar_iron", "bar_copper"],
       associatedRecipes: ["charcoal", "bar_iron", "bar_copper"],
       associatedLabors: ["furnace_operator"]
     },
@@ -237,9 +239,9 @@ const craftDefs = [
       toolProficiency: "srd:tool:smiths-tools",
       toolName: "Smith’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: [],
     knowledgeNode: "craft.ore"
@@ -248,22 +250,22 @@ const craftDefs = [
     id: "BLACKSMITH",
     family: "pyrometallurgical_and_smiths",
     displayName: "Blacksmith",
-    description: "Artisan of iron and metal forging, shaping tools, nails, hardware, chains, and general camp ironwork.",
-    primaryWorkstations: ["smithy", "furnace"],
-    primaryResourceClasses: ["IRON", "COPPER", "STEEL"],
+    description: "Master of anvil and forge, crafting structural hardware, nails, and general iron goods for settlements.",
+    primaryWorkstations: ["smithy"],
+    primaryResourceClasses: ["IRON"],
     productionChain: {
-      inputs: ["bar_iron", "bar_copper", "charcoal", "log"],
-      outputs: ["hardware_iron", "axe_iron", "spear", "mace"],
-      associatedRecipes: ["forge_hardware", "axe_iron", "spear_iron", "mace"],
-      associatedLabors: ["armorsmith", "weaponsmith"]
+      inputs: ["bar_iron"],
+      outputs: ["hardware_iron"],
+      associatedRecipes: ["forge_hardware"],
+      associatedLabors: []
     },
     srd51Reference: {
       toolProficiency: "srd:tool:smiths-tools",
       toolName: "Smith’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["blacksmith"],
     knowledgeNode: "craft.smith"
@@ -272,9 +274,9 @@ const craftDefs = [
     id: "ARMORER",
     family: "pyrometallurgical_and_smiths",
     displayName: "Armorer",
-    description: "Specialist smith fabricating metallic protective gear including mail shirts, helms, greaves, and iron shields.",
+    description: "Specialized metalworker shaping iron plate, mail shirts, greaves, and defensive shields for faction defenders.",
     primaryWorkstations: ["smithy"],
-    primaryResourceClasses: ["IRON", "STEEL"],
+    primaryResourceClasses: ["IRON", "WOOD"],
     productionChain: {
       inputs: ["bar_iron", "leather", "log"],
       outputs: ["helmet_iron", "mail_iron", "greaves_iron", "shield_iron"],
@@ -285,9 +287,9 @@ const craftDefs = [
       toolProficiency: "srd:tool:smiths-tools",
       toolName: "Smith’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["armorsmith"],
     knowledgeNode: "craft.smith"
@@ -296,22 +298,22 @@ const craftDefs = [
     id: "WEAPONSMITH",
     family: "pyrometallurgical_and_smiths",
     displayName: "Weaponsmith",
-    description: "Specialist blade and armaments smith forging daggers, arming swords, long swords, spearheads, and polearms.",
+    description: "Specialized smith forging iron and bronze martial implements: spears, daggers, short swords, long swords, axes, and maces.",
     primaryWorkstations: ["smithy"],
-    primaryResourceClasses: ["IRON", "STEEL"],
+    primaryResourceClasses: ["IRON", "COPPER", "WOOD"],
     productionChain: {
-      inputs: ["bar_iron", "leather", "log"],
-      outputs: ["dagger_iron", "sword_short", "sword_long", "spear"],
-      associatedRecipes: ["dagger_iron", "sword_short", "sword_long", "spear_iron"],
+      inputs: ["bar_iron", "bar_copper", "log", "leather", "fiber"],
+      outputs: ["spear", "dagger_iron", "sword_short", "sword_long", "axe_iron", "mace"],
+      associatedRecipes: ["spear_iron", "dagger_iron", "sword_short", "sword_long", "axe_iron", "mace"],
       associatedLabors: ["weaponsmith"]
     },
     srd51Reference: {
       toolProficiency: "srd:tool:smiths-tools",
       toolName: "Smith’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["weaponsmith"],
     knowledgeNode: "craft.smith"
@@ -322,22 +324,22 @@ const craftDefs = [
     id: "CARPENTER",
     family: "construction_and_woodcraft",
     displayName: "Carpenter",
-    description: "Master of structural timber, joinery, furniture, frames, doors, and wooden defensive palisades.",
+    description: "Builder and joiner converting raw logs into dressed planks, wooden furniture, clubs, stone spears, and wooden shields.",
     primaryWorkstations: ["workbench"],
-    primaryResourceClasses: ["WOOD"],
+    primaryResourceClasses: ["WOOD", "STONE"],
     productionChain: {
-      inputs: ["log", "leather", "fiber"],
-      outputs: ["plank_dressed", "club", "spear", "shield_wood"],
-      associatedRecipes: ["plane_planks", "club", "spear_stone", "shield_wood"],
+      inputs: ["log", "stone", "leather", "fiber"],
+      outputs: ["club", "spear", "shield_wood", "plank_dressed"],
+      associatedRecipes: ["club", "spear_stone", "shield_wood", "plane_planks"],
       associatedLabors: ["carpenter"]
     },
     srd51Reference: {
       toolProficiency: "srd:tool:carpenters-tools",
       toolName: "Carpenter’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["carpenter"],
     knowledgeNode: "craft.wood"
@@ -346,22 +348,22 @@ const craftDefs = [
     id: "MASON",
     family: "construction_and_woodcraft",
     displayName: "Mason",
-    description: "Shaper of stone, cutting ashlar blocks, constructing stone walls, hearths, furnaces, and permanent fortifications.",
+    description: "Cutter and dresser of stone ashlar blocks, builder of stone walls, fortifications, and bedrock structures.",
     primaryWorkstations: ["mason_bench"],
     primaryResourceClasses: ["STONE"],
     productionChain: {
-      inputs: ["stone", "mortar_lime"],
-      outputs: ["stone_block", "stone_knife", "stone_axe", "stone_pick"],
-      associatedRecipes: ["chisel_stone_block", "stone_knife", "stone_axe", "stone_pick"],
+      inputs: ["stone"],
+      outputs: ["stone_block"],
+      associatedRecipes: ["chisel_stone_block"],
       associatedLabors: []
     },
     srd51Reference: {
       toolProficiency: "srd:tool:masons-tools",
       toolName: "Mason’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["mason"],
     knowledgeNode: "craft.stone"
@@ -370,22 +372,22 @@ const craftDefs = [
     id: "WOODCARVER",
     family: "construction_and_woodcraft",
     displayName: "Woodcarver",
-    description: "Fine artisan of wood ornamentation, detailed carvings, wooden figurines, tableware, and wooden utensils.",
+    description: "Detailed artisan sculpting wooden figurines, handles, utensils, and ornamental woodwork.",
     primaryWorkstations: ["workbench"],
     primaryResourceClasses: ["WOOD"],
     productionChain: {
-      inputs: ["log", "plank_dressed"],
-      outputs: ["club"],
-      associatedRecipes: ["club"],
-      associatedLabors: ["carpenter"]
+      inputs: [],
+      outputs: [],
+      associatedRecipes: [],
+      associatedLabors: []
     },
     srd51Reference: {
       toolProficiency: "srd:tool:woodcarvers-tools",
       toolName: "Woodcarver’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: [],
     knowledgeNode: "craft.wood"
@@ -394,22 +396,22 @@ const craftDefs = [
     id: "THATCHER",
     family: "construction_and_woodcraft",
     displayName: "Thatcher",
-    description: "Roofer and weather-sealer using reeds, straw, and sod to protect dwellings against elements.",
-    primaryWorkstations: ["workbench"],
-    primaryResourceClasses: ["FIBER", "WOOD"],
+    description: "Roofer and weatherproofer layering straw, reed thatch, and turf over rafters and building frames.",
+    primaryWorkstations: [],
+    primaryResourceClasses: ["FIBER"],
     productionChain: {
-      inputs: ["straw", "fiber", "log"],
-      outputs: ["fiber_wrap"],
-      associatedRecipes: ["fiber_wrap"],
+      inputs: [],
+      outputs: [],
+      associatedRecipes: [],
       associatedLabors: []
     },
     srd51Reference: {
       toolProficiency: null,
       toolName: null,
       artisanToolCategory: null,
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-practicing-a-profession",
-      sourceCitation: "SRD 5.1 pp. 150, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 88-89"
     },
     callingMappings: [],
     knowledgeNode: "craft.wood"
@@ -420,12 +422,12 @@ const craftDefs = [
     id: "LEATHERWORKER",
     family: "organic_and_textiles",
     displayName: "Leatherworker",
-    description: "Crafter of cured leather into armor, boots, bracers, straps, pouches, and slings.",
+    description: "Crafter of leather gear: slings, leather helmets, leather armor, and leggings.",
     primaryWorkstations: ["workbench"],
     primaryResourceClasses: ["FIBER"],
     productionChain: {
       inputs: ["leather", "fiber"],
-      outputs: ["sling", "helmet_leather", "armor_leather", "leggings_leather", "pouch"],
+      outputs: ["sling", "helmet_leather", "armor_leather", "leggings_leather"],
       associatedRecipes: ["sling", "helmet_leather", "armor_leather", "leggings_leather"],
       associatedLabors: ["leatherworker"]
     },
@@ -433,9 +435,9 @@ const craftDefs = [
       toolProficiency: "srd:tool:leatherworkers-tools",
       toolName: "Leatherworker’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["leatherworker"],
     knowledgeNode: "craft.hide"
@@ -444,7 +446,7 @@ const craftDefs = [
     id: "TANNER",
     family: "organic_and_textiles",
     displayName: "Tanner",
-    description: "Processor of raw animal hides through soaking, scraping, and vegetable or salt tanning into supple leather.",
+    description: "Processor of raw animal hides into durable, cured leather across scraping and tanning racks.",
     primaryWorkstations: ["tanning_rack"],
     primaryResourceClasses: ["FIBER"],
     productionChain: {
@@ -457,9 +459,9 @@ const craftDefs = [
       toolProficiency: "srd:tool:leatherworkers-tools",
       toolName: "Leatherworker’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["tanner"],
     knowledgeNode: "craft.hide"
@@ -468,12 +470,12 @@ const craftDefs = [
     id: "TAILOR",
     family: "organic_and_textiles",
     displayName: "Tailor",
-    description: "Maker of fitted clothing, garments, cloaks, tunics, and bedding from woven fabrics and hides.",
-    primaryWorkstations: ["workbench"],
+    description: "Stitcher of garments and cloaks from woven fiber and tanned hides.",
+    primaryWorkstations: [],
     primaryResourceClasses: ["FIBER"],
     productionChain: {
-      inputs: ["fiber", "hide", "leather"],
-      outputs: ["fiber_wrap", "hide_cloak", "common_clothes"],
+      inputs: ["fiber", "hide"],
+      outputs: ["fiber_wrap", "hide_cloak"],
       associatedRecipes: ["fiber_wrap", "hide_cloak"],
       associatedLabors: []
     },
@@ -481,9 +483,9 @@ const craftDefs = [
       toolProficiency: "srd:tool:weavers-tools",
       toolName: "Weaver’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: [],
     knowledgeNode: "craft.fiber"
@@ -492,22 +494,22 @@ const craftDefs = [
     id: "WEAVER",
     family: "organic_and_textiles",
     displayName: "Weaver",
-    description: "Loom operator weaving spun yarn, wool, and plant fiber threads into durable cloth bolts and canvas.",
+    description: "Loom operator producing textiles, bolts of cloth, and woven blankets from spun yarns.",
     primaryWorkstations: ["workbench"],
     primaryResourceClasses: ["FIBER"],
     productionChain: {
-      inputs: ["fiber", "wool"],
-      outputs: ["fiber_wrap", "common_clothes"],
-      associatedRecipes: ["fiber_wrap"],
+      inputs: [],
+      outputs: [],
+      associatedRecipes: [],
       associatedLabors: []
     },
     srd51Reference: {
       toolProficiency: "srd:tool:weavers-tools",
       toolName: "Weaver’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["weaver"],
     knowledgeNode: "craft.fiber"
@@ -516,22 +518,22 @@ const craftDefs = [
     id: "SPINNER",
     family: "organic_and_textiles",
     displayName: "Spinner",
-    description: "Carder and spinner drawing raw wool, flax, and plant fiber into continuous yarn and thread.",
+    description: "Preparer of raw wool and raw plant fibers into spun threads, cordage, and yarn.",
     primaryWorkstations: ["workbench"],
     primaryResourceClasses: ["FIBER"],
     productionChain: {
-      inputs: ["wool", "fiber"],
-      outputs: ["fiber"],
-      associatedRecipes: ["fiber_wrap"],
+      inputs: [],
+      outputs: [],
+      associatedRecipes: [],
       associatedLabors: []
     },
     srd51Reference: {
       toolProficiency: "srd:tool:weavers-tools",
       toolName: "Weaver’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["spinner"],
     knowledgeNode: "craft.fiber"
@@ -542,12 +544,12 @@ const craftDefs = [
     id: "COOK",
     family: "sustenance_and_processing",
     displayName: "Cook",
-    description: "Preparer of nourishing meals, roasted meats, stews, and preserved travel rations over hearths and campfires.",
+    description: "Preparer of nourishing meals, roasting raw meats and fresh fish over kitchen hearths and open campfires.",
     primaryWorkstations: ["kitchen_hearth", "campfire"],
     primaryResourceClasses: ["FOOD"],
     productionChain: {
-      inputs: ["meat_raw", "fish", "berries", "root", "firewood"],
-      outputs: ["meat_cooked", "rations"],
+      inputs: ["meat_raw", "fish"],
+      outputs: ["meat_cooked"],
       associatedRecipes: ["cook_meat", "cook_fish"],
       associatedLabors: []
     },
@@ -555,9 +557,9 @@ const craftDefs = [
       toolProficiency: "srd:tool:cooks-utensils",
       toolName: "Cook’s utensils",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["chef"],
     knowledgeNode: "craft.survival"
@@ -566,12 +568,12 @@ const craftDefs = [
     id: "BREWER",
     family: "sustenance_and_processing",
     displayName: "Brewer",
-    description: "Fermenter of grains, wild hops, and tuber starches into ales, beers, and potable preserved spirits.",
+    description: "Fermenter of ales, meads, and ciders from grains, honey, and wild berries.",
     primaryWorkstations: ["kitchen_hearth"],
     primaryResourceClasses: ["FOOD", "WATER"],
     productionChain: {
-      inputs: ["berries", "root", "firewood"],
-      outputs: ["rations"],
+      inputs: [],
+      outputs: [],
       associatedRecipes: [],
       associatedLabors: []
     },
@@ -579,9 +581,9 @@ const craftDefs = [
       toolProficiency: "srd:tool:brewers-supplies",
       toolName: "Brewer’s supplies",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["brewer"],
     knowledgeNode: "craft.sustenance"
@@ -590,12 +592,12 @@ const craftDefs = [
     id: "MILLER",
     family: "sustenance_and_processing",
     displayName: "Miller",
-    description: "Operator of quern stones and millstones, grinding raw grains and tubers into flour and meal for baking.",
+    description: "Grinder of harvested cereal grains, dried roots, and seeds into baking flour.",
     primaryWorkstations: ["workbench"],
     primaryResourceClasses: ["FOOD"],
     productionChain: {
-      inputs: ["root", "seeds"],
-      outputs: ["rations"],
+      inputs: [],
+      outputs: [],
       associatedRecipes: [],
       associatedLabors: []
     },
@@ -603,9 +605,9 @@ const craftDefs = [
       toolProficiency: null,
       toolName: null,
       artisanToolCategory: null,
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-practicing-a-profession",
-      sourceCitation: "SRD 5.1 pp. 150, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 88-89"
     },
     callingMappings: ["miller"],
     knowledgeNode: "craft.field"
@@ -614,22 +616,22 @@ const craftDefs = [
     id: "BUTCHER",
     family: "sustenance_and_processing",
     displayName: "Butcher",
-    description: "Dresser of carcass game and livestock into culinary cuts of meat, bones, tallow, and raw hides.",
+    description: "Dresser and carver of animal carcasses into portioned meats, fats, bones, and raw hides.",
     primaryWorkstations: ["kitchen_counter", "workbench"],
     primaryResourceClasses: ["FOOD"],
     productionChain: {
-      inputs: ["meat_raw"],
-      outputs: ["meat_cooked", "bone", "hide"],
-      associatedRecipes: ["cook_meat"],
+      inputs: [],
+      outputs: [],
+      associatedRecipes: [],
       associatedLabors: []
     },
     srd51Reference: {
       toolProficiency: "srd:tool:cooks-utensils",
       toolName: "Cook’s utensils",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["butcher"],
     knowledgeNode: "craft.sustenance"
@@ -638,12 +640,12 @@ const craftDefs = [
     id: "BAKER",
     family: "sustenance_and_processing",
     displayName: "Baker",
-    description: "Baker of flour, root starch, water, and leavening into loaves of bread, hardtack, and travel provisions.",
+    description: "Kneader and baker of flour, leavening, and water into hearth bread and hardtack rations.",
     primaryWorkstations: ["kitchen_hearth"],
     primaryResourceClasses: ["FOOD"],
     productionChain: {
-      inputs: ["root", "berries", "firewood"],
-      outputs: ["rations"],
+      inputs: [],
+      outputs: [],
       associatedRecipes: [],
       associatedLabors: []
     },
@@ -651,9 +653,9 @@ const craftDefs = [
       toolProficiency: "srd:tool:cooks-utensils",
       toolName: "Cook’s utensils",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: [],
     knowledgeNode: "craft.sustenance"
@@ -664,11 +666,11 @@ const craftDefs = [
     id: "POTTER",
     family: "artisan_and_specialized",
     displayName: "Potter",
-    description: "Shaper and kiln-firer of earthen clay into durable storage vessels, ceramic jars, and structural bricks.",
+    description: "Shaper and firer of earthen clay into bricks, ceramic vessels, and slaked lime mortar.",
     primaryWorkstations: ["pottery_kiln"],
     primaryResourceClasses: ["STONE"],
     productionChain: {
-      inputs: ["clay", "sand", "firewood"],
+      inputs: ["clay", "stone", "sand"],
       outputs: ["brick_clay", "mortar_lime"],
       associatedRecipes: ["fire_brick", "lime_mortar"],
       associatedLabors: []
@@ -677,9 +679,9 @@ const craftDefs = [
       toolProficiency: "srd:tool:potters-tools",
       toolName: "Potter’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["potter"],
     knowledgeNode: "craft.kiln"
@@ -688,22 +690,22 @@ const craftDefs = [
     id: "GLASSWORKER",
     family: "artisan_and_specialized",
     displayName: "Glassworker",
-    description: "Furnace blower of silica sand and flux into glass flasks, vials, panes, and optical lenses.",
+    description: "Artisan melting quartz sand, potash, and flux into blown glass phials, ampoules, and window panes.",
     primaryWorkstations: ["furnace"],
     primaryResourceClasses: ["STONE"],
     productionChain: {
-      inputs: ["sand", "charcoal"],
-      outputs: ["sand"],
-      associatedRecipes: ["sift_sand"],
+      inputs: [],
+      outputs: [],
+      associatedRecipes: [],
       associatedLabors: []
     },
     srd51Reference: {
       toolProficiency: "srd:tool:glassblowers-tools",
       toolName: "Glassblower’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["glasswright"],
     knowledgeNode: "craft.fine"
@@ -712,12 +714,12 @@ const craftDefs = [
     id: "JEWELER",
     family: "artisan_and_specialized",
     displayName: "Jeweler",
-    description: "Lapidary cutter of rough gems, setter of precious stones, and craftsman of gold and silver ornamentation.",
+    description: "Gemcutter and lapidary setting precious stones, gold filigree, and silver amulets.",
     primaryWorkstations: ["workbench"],
     primaryResourceClasses: ["GOLD", "SILVER", "PLATINUM"],
     productionChain: {
-      inputs: ["gem_rough", "gold", "gold_coin"],
-      outputs: ["gem_cut"],
+      inputs: [],
+      outputs: [],
       associatedRecipes: [],
       associatedLabors: []
     },
@@ -725,9 +727,9 @@ const craftDefs = [
       toolProficiency: "srd:tool:jewelers-tools",
       toolName: "Jeweler’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["jeweler"],
     knowledgeNode: "craft.fine"
@@ -736,7 +738,7 @@ const craftDefs = [
     id: "FLETCHER",
     family: "artisan_and_specialized",
     displayName: "Fletcher",
-    description: "Maker of arrow shafts, hafting stone, bone, or iron tips with split goose and raptor feather fletchings.",
+    description: "Craftsman shaping arrow shafts, binding fletching feathers, and hafting stone, bone, and iron points.",
     primaryWorkstations: ["fletcher_bench"],
     primaryResourceClasses: ["WOOD", "STONE", "IRON"],
     productionChain: {
@@ -749,9 +751,9 @@ const craftDefs = [
       toolProficiency: "srd:tool:woodcarvers-tools",
       toolName: "Woodcarver’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["fletcher"],
     knowledgeNode: "craft.bow"
@@ -760,7 +762,7 @@ const craftDefs = [
     id: "BOWYER",
     family: "artisan_and_specialized",
     displayName: "Bowyer",
-    description: "Tiller of staves, crafting short bows, recurve long bows, and composite bows from seasoned yew and cordage.",
+    description: "Shaper of resilient stave timbers and bowstrings into short bows and long bows.",
     primaryWorkstations: ["bowyer_bench"],
     primaryResourceClasses: ["WOOD", "FIBER"],
     productionChain: {
@@ -773,9 +775,9 @@ const craftDefs = [
       toolProficiency: "srd:tool:woodcarvers-tools",
       toolName: "Woodcarver’s tools",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: [],
     knowledgeNode: "craft.bow"
@@ -784,12 +786,12 @@ const craftDefs = [
     id: "HERBALIST",
     family: "artisan_and_specialized",
     displayName: "Herbalist",
-    description: "Preparer of wild medicinal flora, compounding healing salves, poultices, antivenoms, and soothing tisanes.",
+    description: "Compounder of medicinal herbs, poultices, salves, and botanical extracts for healing ailments.",
     primaryWorkstations: ["apothecary_bench"],
     primaryResourceClasses: ["FOOD"],
     productionChain: {
-      inputs: ["root", "berries", "mushroom"],
-      outputs: ["rations"],
+      inputs: [],
+      outputs: [],
       associatedRecipes: [],
       associatedLabors: []
     },
@@ -797,9 +799,9 @@ const craftDefs = [
       toolProficiency: "srd:tool:herbalism-kit",
       toolName: "Herbalism kit",
       artisanToolCategory: "kits",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70-71, 88-89"
     },
     callingMappings: ["herbalist"],
     knowledgeNode: "craft.learning"
@@ -808,22 +810,22 @@ const craftDefs = [
     id: "ALCHEMIST",
     family: "artisan_and_specialized",
     displayName: "Alchemist",
-    description: "Practitioner of proto-chemical transformation, solvent distillation, elemental extractions, and mineral reagents.",
+    description: "Practitioner of mineral transmutations, acids, reagents, and volatile compounds.",
     primaryWorkstations: ["apothecary_bench", "furnace"],
     primaryResourceClasses: ["STONE", "IRON"],
     productionChain: {
-      inputs: ["clay", "sand", "charcoal", "ore_iron", "ore_copper"],
-      outputs: ["sand", "charcoal"],
-      associatedRecipes: ["charcoal", "sift_sand"],
+      inputs: [],
+      outputs: [],
+      associatedRecipes: [],
       associatedLabors: []
     },
     srd51Reference: {
       toolProficiency: "srd:tool:alchemists-supplies",
       toolName: "Alchemist’s supplies",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: ["alchemist"],
     knowledgeNode: "craft.fine"
@@ -832,22 +834,22 @@ const craftDefs = [
     id: "SCRIBE",
     family: "artisan_and_specialized",
     displayName: "Scribe",
-    description: "Inscriber of parchment rolls, ink maker, transcriber of contracts, administrative rolls, and historical records.",
+    description: "Illuminator of legal codices, institutional charters, historical chronicles, and maps.",
     primaryWorkstations: ["workbench"],
     primaryResourceClasses: ["FIBER"],
     productionChain: {
-      inputs: ["fiber", "hide"],
-      outputs: ["pouch"],
+      inputs: [],
+      outputs: [],
       associatedRecipes: [],
       associatedLabors: []
     },
     srd51Reference: {
       toolProficiency: "srd:tool:calligraphers-supplies",
-      toolName: "Calligrapher’s supplies",
+      toolName: "Calligrapher's supplies",
       artisanToolCategory: "artisan_tools",
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-crafting",
-      sourceCitation: "SRD 5.1 pp. 68, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 70, 88-89"
     },
     callingMappings: [],
     knowledgeNode: "craft.learning"
@@ -856,12 +858,12 @@ const craftDefs = [
     id: "MERCHANT",
     family: "artisan_and_specialized",
     displayName: "Merchant",
-    description: "Facilitator of trade, valuation of goods, caravan logistics, ledger accounting, and exchange of physical coin.",
+    description: "Broker of commodity exchange, caravan logistics, weights and balances, and market trading.",
     primaryWorkstations: ["shop_counter"],
     primaryResourceClasses: ["COPPER", "SILVER", "GOLD"],
     productionChain: {
-      inputs: ["gold_coin", "rations", "pouch"],
-      outputs: ["gold_coin"],
+      inputs: [],
+      outputs: [],
       associatedRecipes: [],
       associatedLabors: []
     },
@@ -869,9 +871,9 @@ const craftDefs = [
       toolProficiency: null,
       toolName: null,
       artisanToolCategory: null,
-      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD p. 187)",
-      downtimeActivity: "srd:rule:downtime-activities-practicing-a-profession",
-      sourceCitation: "SRD 5.1 pp. 150, 187"
+      craftingRate: "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+      downtimeActivity: "srd:rule:adventuring-between-adventures",
+      sourceCitation: "SRD 5.1 pp. 88-89"
     },
     callingMappings: ["merchant"],
     knowledgeNode: "craft.trade"
@@ -884,7 +886,7 @@ for (const craft of craftDefs) {
       rank: 1,
       tier: "APPRENTICE",
       title: "Apprentice " + craft.displayName,
-      efficiencyMultiplier: 0.75,
+      efficiencyMultiplier: 1.0,
       qualityTierAccess: "STANDARD",
       downtimeTrainingDays: 250
     },
@@ -892,23 +894,23 @@ for (const craft of craftDefs) {
       rank: 2,
       tier: "JOURNEYMAN",
       title: "Journeyman " + craft.displayName,
-      efficiencyMultiplier: 1.0,
-      qualityTierAccess: "SUPERIOR",
+      efficiencyMultiplier: 1.25,
+      qualityTierAccess: "STANDARD",
       downtimeTrainingDays: 500
     },
     {
       rank: 3,
       tier: "ARTISAN",
       title: "Artisan " + craft.displayName,
-      efficiencyMultiplier: 1.25,
-      qualityTierAccess: "EXCELLENT",
+      efficiencyMultiplier: 1.5,
+      qualityTierAccess: "FINE",
       downtimeTrainingDays: 1000
     },
     {
       rank: 4,
       tier: "MASTER",
       title: "Master " + craft.displayName,
-      efficiencyMultiplier: 1.5,
+      efficiencyMultiplier: 1.75,
       qualityTierAccess: "MASTERWORK",
       downtimeTrainingDays: 1500
     }

@@ -15,7 +15,7 @@
  * - Canonical 2014 SRD 5.1 tool and crafting alignment
  * - Calling-to-craft consistency with identity.js
  * - Faction Development Plan knowledge node two-way closure
- * - Rule 4 mutation checks: 19 targeted failing fixtures/mutants killed
+ * - Rule 4 mutation checks: 26 targeted failing fixtures/mutants killed
  *
  * Usage: node tools/society/test_craft_catalogue.js
  */
@@ -32,6 +32,7 @@ const WORLD_CATALOG_PATH = path.join(ROOT, "game", "data", "DEUS_WorldCatalog.js
 const RESOURCE_REGISTRY_PATH = path.join(ROOT, "game", "data", "DEUS_ResourceRegistry.json");
 const TEMPLATE_PLAN_PATH = path.join(ROOT, "game", "data", "plans", "TEMPLATE.plan.json");
 const SRD_EQUIPMENT_PATH = path.join(ROOT, "game", "data", "srd51", "equipment.json");
+const SRD_RULES_PATH = path.join(ROOT, "game", "data", "srd51", "rules.json");
 const IDENTITY_PATH = path.join(ROOT, "game", "js", "sim", "society", "identity.js");
 
 const rawCatalogue = fs.readFileSync(CATALOGUE_PATH, "utf8");
@@ -42,6 +43,7 @@ const worldCat = JSON.parse(fs.readFileSync(WORLD_CATALOG_PATH, "utf8"));
 const resReg = JSON.parse(fs.readFileSync(RESOURCE_REGISTRY_PATH, "utf8"));
 const templatePlan = JSON.parse(fs.readFileSync(TEMPLATE_PLAN_PATH, "utf8"));
 const srdEquipment = JSON.parse(fs.readFileSync(SRD_EQUIPMENT_PATH, "utf8"));
+const srdRules = JSON.parse(fs.readFileSync(SRD_RULES_PATH, "utf8"));
 const Identity = require(IDENTITY_PATH);
 
 function clone(v) {
@@ -194,14 +196,16 @@ function runCatalogueChecks(cat, schemaDoc) {
     }
     check("three_axes_independent", axesOk && dutyOk, "all crafts assert axis independence and contain no office/class/duty couplings");
 
-    const dutyIsolated = cat.callingResolutionRules &&
-        typeof cat.callingResolutionRules.dutyIsolationRule === "string" &&
-        cat.callingResolutionRules.dutyIsolationRule.length > 0;
-    check("duty_scheduler_isolated", dutyIsolated, "calling resolution rules explicitly isolate duty from craft identity");
+    const dutyRule = cat.callingResolutionRules && cat.callingResolutionRules.dutyIsolationRule;
+    const dutyIsolated = typeof dutyRule === "string" &&
+        dutyRule.length > 0 &&
+        /under no circumstance|never|must not|cannot|does not|prohibits/i.test(dutyRule) &&
+        /overwrite|derive|substitute/i.test(dutyRule);
+    check("duty_scheduler_isolated", dutyIsolated, "calling resolution rules explicitly isolate duty from craft identity with strict negative assertion");
 
     // 6. 4-Tier Progression Monotonic Invariants
     const expectedTiers = ["APPRENTICE", "JOURNEYMAN", "ARTISAN", "MASTER"];
-    const expectedQuality = ["STANDARD", "SUPERIOR", "EXCELLENT", "MASTERWORK"];
+    const expectedQuality = ["STANDARD", "STANDARD", "FINE", "MASTERWORK"];
     let tierCountOk = true;
     let ranksMonotone = true;
     let efficiencyMonotone = true;
@@ -226,7 +230,7 @@ function runCatalogueChecks(cat, schemaDoc) {
     check("progression_four_tiers_per_craft", tierCountOk, "every craft defines exactly 4 tiers");
     check("progression_ranks_monotone", ranksMonotone, "ranks are 1, 2, 3, 4 strictly monotone");
     check("progression_efficiency_monotone", efficiencyMonotone, "efficiency multipliers strictly increasing");
-    check("progression_quality_access_stepped", qualityStepped, "quality access hierarchy is STANDARD -> SUPERIOR -> EXCELLENT -> MASTERWORK");
+    check("progression_quality_access_stepped", qualityStepped, "quality access conforms to DEUS standard: STANDARD -> STANDARD -> FINE -> MASTERWORK");
     check("progression_downtime_days_monotone", downtimeMonotone, "training days non-decreasing across tiers");
 
     // 7. DEUS Production Chain & Resource Registry Alignment
@@ -268,22 +272,119 @@ function runCatalogueChecks(cat, schemaDoc) {
     check("production_labors_valid", laborsOk, "all labors exist in DEUS_WorldCatalog labors.list");
     check("production_items_valid", itemsOk, "all inputs and outputs exist in DEUS_WorldCatalog items.types");
 
-    // 8. 2014 SRD 5.1 Tool Integration & Crafting Rate
+    // 8. Production Recipes Exact Reconciliation
+    let recipesReconciled = true;
+    let reconciliationReason = "";
+    const recipesById = new Map(((worldCat.recipes && worldCat.recipes.list) || []).map(r => [r.id, r]));
+
+    for (const c of crafts) {
+        const cited = c.productionChain.associatedRecipes;
+        if (cited.length > 0) {
+            const expectedInputs = new Set();
+            const expectedOutputs = new Set();
+            const expectedLabors = new Set();
+            const requiredStations = new Set();
+
+            for (const rId of cited) {
+                const r = recipesById.get(rId);
+                if (!r) {
+                    recipesReconciled = false;
+                    reconciliationReason = `${c.id} cites non-existent recipe ${rId}`;
+                    break;
+                }
+                for (const inp of Object.keys(r.inputs || {})) expectedInputs.add(inp);
+                for (const out of Object.keys(r.outputs || {})) expectedOutputs.add(out);
+                if (r.labor) expectedLabors.add(r.labor);
+                if (r.at) requiredStations.add(r.at);
+            }
+
+            const actualInputs = new Set(c.productionChain.inputs);
+            const actualOutputs = new Set(c.productionChain.outputs);
+            const actualLabors = new Set(c.productionChain.associatedLabors);
+
+            for (const inp of expectedInputs) {
+                if (!actualInputs.has(inp)) {
+                    recipesReconciled = false;
+                    reconciliationReason = `${c.id} missing recipe input ${inp}`;
+                }
+            }
+            for (const inp of actualInputs) {
+                if (!expectedInputs.has(inp)) {
+                    recipesReconciled = false;
+                    reconciliationReason = `${c.id} has extra input ${inp} not in cited recipes`;
+                }
+            }
+            for (const out of expectedOutputs) {
+                if (!actualOutputs.has(out)) {
+                    recipesReconciled = false;
+                    reconciliationReason = `${c.id} missing recipe output ${out}`;
+                }
+            }
+            for (const out of actualOutputs) {
+                if (!expectedOutputs.has(out)) {
+                    recipesReconciled = false;
+                    reconciliationReason = `${c.id} has extra output ${out} not in cited recipes`;
+                }
+            }
+            for (const lab of expectedLabors) {
+                if (!actualLabors.has(lab)) {
+                    recipesReconciled = false;
+                    reconciliationReason = `${c.id} missing required recipe labor ${lab}`;
+                }
+            }
+            for (const st of requiredStations) {
+                const matches = c.primaryWorkstations.some(wsId => {
+                    if (wsId === st) return true;
+                    const obj = (worldCat.objects || []).find(o => o.id === wsId);
+                    return obj && (obj.tags || []).includes(st);
+                });
+                if (!matches) {
+                    recipesReconciled = false;
+                    reconciliationReason = `${c.id} workstations ${c.primaryWorkstations.join(",")} do not satisfy recipe station ${st}`;
+                }
+            }
+        } else {
+            if (c.productionChain.associatedLabors.length > 0) {
+                recipesReconciled = false;
+                reconciliationReason = `${c.id} has labors without recipes`;
+            }
+            if (c.productionChain.inputs.length > 0) {
+                recipesReconciled = false;
+                reconciliationReason = `${c.id} has inputs without recipes`;
+            }
+            if (c.productionChain.outputs.length > 0) {
+                recipesReconciled = false;
+                reconciliationReason = `${c.id} has outputs without recipes`;
+            }
+        }
+    }
+    check("production_recipes_reconciled", recipesReconciled,
+        recipesReconciled ? "all cited recipes reconciled with inputs, outputs, stations, and labors; empty rows claim zero outputs" : reconciliationReason);
+
+    // 9. 2014 SRD 5.1 Tool Integration & Rules Grounding
     const srdEntries = Array.isArray(srdEquipment.entries) ? srdEquipment.entries : (Array.isArray(srdEquipment) ? srdEquipment : []);
     const validSrdTools = new Set(srdEntries.filter(e => e.kind === "tool").map(e => e.id));
+    const srdRuleEntries = Array.isArray(srdRules.entries) ? srdRules.entries : (Array.isArray(srdRules) ? srdRules : []);
+    const validSrdRules = new Set(srdRuleEntries.map(r => r.id));
 
     let srdToolsOk = true;
+    let srdRulesOk = true;
     let srdRateOk = true;
     for (const c of crafts) {
         const tp = c.srd51Reference.toolProficiency;
         if (tp !== null && !validSrdTools.has(tp)) srdToolsOk = false;
+        const da = c.srd51Reference.downtimeActivity;
+        if (!validSrdRules.has(da)) srdRulesOk = false;
         if (!c.srd51Reference.craftingRate.includes("5 gp market value per 8-hour day")) srdRateOk = false;
+        if (!c.srd51Reference.craftingRate.includes("88-89")) srdRateOk = false;
     }
     check("srd51_tools_grounded", srdToolsOk, "all non-null toolProficiencies exist in srd51/equipment.json");
-    check("srd51_crafting_rate_standard", srdRateOk, "every craft cites 5 gp market value per 8-hour day rate");
+    check("srd51_rules_grounded", srdRulesOk, "all downtimeActivity rule IDs exist in srd51/rules.json");
+    check("srd51_crafting_rate_standard", srdRateOk, "every craft cites 5 gp market value per 8-hour day rate and pp. 88-89");
 
-    // 9. Calling Mappings Consistency
+    // 10. Calling Mappings Consistency (Bidirectional Closure)
     let callingMapOk = true;
+    let callingReason = "";
     const catCallingMap = {};
     for (const c of crafts) {
         for (const cal of c.callingMappings) {
@@ -291,11 +392,20 @@ function runCatalogueChecks(cat, schemaDoc) {
         }
     }
     for (const [cal, cr] of Object.entries(Identity.CALLING_CRAFT)) {
-        if (catCallingMap[cal] !== cr) callingMapOk = false;
+        if (catCallingMap[cal] !== cr) {
+            callingMapOk = false;
+            callingReason = `Identity.CALLING_CRAFT[${cal}] = ${cr}, but catalogue has ${catCallingMap[cal]}`;
+        }
     }
-    check("calling_mappings_consistent", callingMapOk, "callingMappings match Identity.CALLING_CRAFT exactly");
+    for (const cal of Object.keys(catCallingMap)) {
+        if (!Object.prototype.hasOwnProperty.call(Identity.CALLING_CRAFT, cal)) {
+            callingMapOk = false;
+            callingReason = `Catalogue defines extra calling ${cal} -> ${catCallingMap[cal]} not in Identity.CALLING_CRAFT`;
+        }
+    }
+    check("calling_mappings_consistent", callingMapOk, callingMapOk ? "callingMappings match Identity.CALLING_CRAFT exactly without extra callings" : callingReason);
 
-    // 10. Faction Development Plan Knowledge Closure (Two-Way)
+    // 11. Faction Development Plan Knowledge Closure (Two-Way)
     const planCraftNodes = new Map();
     (templatePlan.knowledge || []).filter(k => k.kind === "craft").forEach(k => {
         (k.unlocks || []).filter(u => u.kind === "craft").forEach(u => {
@@ -375,6 +485,13 @@ const MUTANTS = [
         }
     },
     {
+        name: "mutant_duty_isolation_rewritten",
+        kills: ["duty_scheduler_isolated"],
+        mutate: cat => {
+            cat.callingResolutionRules.dutyIsolationRule = "Duty overwrites and derives craft vocation dynamically.";
+        }
+    },
+    {
         name: "mutant_progression_tier_count",
         kills: ["progression_four_tiers_per_craft", "schema_validates"],
         mutate: cat => {
@@ -403,7 +520,15 @@ const MUTANTS = [
         kills: ["progression_quality_access_stepped"],
         mutate: cat => {
             const arm = cat.crafts.find(c => c.id === "ARMORER");
-            if (arm) arm.progression[3].qualityTierAccess = "STANDARD";
+            if (arm) arm.progression[3].qualityTierAccess = "CRUDE";
+        }
+    },
+    {
+        name: "mutant_progression_downtime_inverted",
+        kills: ["progression_downtime_days_monotone"],
+        mutate: cat => {
+            const smith = cat.crafts.find(c => c.id === "BLACKSMITH");
+            if (smith) smith.progression[3].downtimeTrainingDays = 10;
         }
     },
     {
@@ -424,18 +549,34 @@ const MUTANTS = [
     },
     {
         name: "mutant_invalid_recipe",
-        kills: ["production_recipes_valid"],
+        kills: ["production_recipes_valid", "production_recipes_reconciled"],
         mutate: cat => {
             const ws = cat.crafts.find(c => c.id === "WEAPONSMITH");
             if (ws) ws.productionChain.associatedRecipes.push("summon_demon_blade");
         }
     },
     {
-        name: "mutant_invalid_input_item",
-        kills: ["production_items_valid"],
+        name: "mutant_invalid_labor",
+        kills: ["production_labors_valid", "production_recipes_reconciled"],
         mutate: cat => {
-            const jew = cat.crafts.find(c => c.id === "JEWELER");
-            if (jew) jew.productionChain.inputs.push("mithril_dust");
+            const sm = cat.crafts.find(c => c.id === "SMELTER");
+            if (sm) sm.productionChain.associatedLabors.push("invalid_rogue_labor");
+        }
+    },
+    {
+        name: "mutant_invalid_input_item",
+        kills: ["production_items_valid", "production_recipes_reconciled"],
+        mutate: cat => {
+            const ws = cat.crafts.find(c => c.id === "WEAPONSMITH");
+            if (ws) ws.productionChain.inputs.push("mithril_dust");
+        }
+    },
+    {
+        name: "mutant_recipe_reconciliation_mismatch",
+        kills: ["production_recipes_reconciled"],
+        mutate: cat => {
+            const arm = cat.crafts.find(c => c.id === "ARMORER");
+            if (arm) arm.productionChain.outputs.push("sword_long");
         }
     },
     {
@@ -447,11 +588,35 @@ const MUTANTS = [
         }
     },
     {
+        name: "mutant_invalid_srd_rule_id",
+        kills: ["srd51_rules_grounded"],
+        mutate: cat => {
+            const cook = cat.crafts.find(c => c.id === "COOK");
+            if (cook) cook.srd51Reference.downtimeActivity = "srd:rule:does-not-exist";
+        }
+    },
+    {
+        name: "mutant_invalid_crafting_rate",
+        kills: ["srd51_crafting_rate_standard"],
+        mutate: cat => {
+            const carp = cat.crafts.find(c => c.id === "CARPENTER");
+            if (carp) carp.srd51Reference.craftingRate = "10 gp market value per 8-hour day";
+        }
+    },
+    {
         name: "mutant_calling_map_mismatch",
         kills: ["calling_mappings_consistent"],
         mutate: cat => {
             const carp = cat.crafts.find(c => c.id === "CARPENTER");
             if (carp) carp.callingMappings.push("blacksmith");
+        }
+    },
+    {
+        name: "mutant_extra_calling",
+        kills: ["calling_mappings_consistent"],
+        mutate: cat => {
+            const farmer = cat.crafts.find(c => c.id === "FARMER");
+            if (farmer) farmer.callingMappings.push("shepherd");
         }
     },
     {
