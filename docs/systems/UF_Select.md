@@ -135,15 +135,17 @@ The file registers further checks after those 15 (tile clicks, the wall button, 
 
 ## 8. Cross-layer selection and group orders (WG.00.36)
 
-Selection can hold units on several levels at once. Orders for that group use one flat formation on the level the player clicked. Cover is never reimplemented here: a lower cell is eligible only when `UF.LayerOverlays.cellVisible` says so. That is the same walk the overlay planner uses (`pointVisible`): not above the view, not past `UF.Depth.config.maxDepth` (2 unless the depth plugin says otherwise), and every layer strictly above the unit through the view is open. `UF.Depth.isOpen` answers the single-cell question. A unit standing on the viewed level is eligible even when that cell is solid, because nothing is above them. A unit under solid cover is not. A unit on a level the renderer does not draw (deeper than `maxDepth`) is not.
+Selection can hold units on several levels at once. Orders for that group use one flat formation on the level the player clicked. Cover is never reimplemented here: a lower cell is eligible only when `UF.LayerOverlays.cellVisible` says so. That is the same walk the overlay planner uses (`pointVisible`): not above the view, not past the renderer's reach, and every layer strictly above the unit through the view is open. `UF.Depth.isOpen` answers the single-cell question. A unit standing on the viewed level is eligible even when that cell is solid, because nothing is above them. A unit under solid cover is not.
 
-The occupancy map is built from `UF.World.units()` once when a drag starts and again when the button is released. While the rectangle is unchanged, a later frame does no work. When the rectangle grows, the pick reads only the buckets for visible cells inside it. It does not walk every unit in the world on those frames.
+Reach follows the renderer. With no `UF.Depth` plugin the cap stays 2. When that plugin is loaded, lower levels are eligible only while `config.enabled === true`. `config.maxDepth` is the cap (2 unless Depth says otherwise), and `config.exposes(z)` stops the walk at the first level the renderer will not bind. Turning drawing off or on takes effect on the next click or box. A level the renderer does not draw is not selectable.
+
+The occupancy index is updated when a unit is added, removed, moves, changes area, or changes level. It is built from `UF.World.units()` once when those listeners bind, if units are already present, and once when a save loads, because that load does not emit a per-unit event. Starting a drag, moving the rectangle, and releasing the button do not walk that list. While the rectangle is unchanged, a later frame does no work. When it changes, the pick reads only the buckets for the cells inside the box.
 
 ### Gestures
 
-The viewed level is `viewZ()`. "Visible lower" means a level from `viewZ - 1` down through `viewZ - maxDepth` whose cell passes `cellVisible`. Hotkeys, toolbar tools, Esc, and right-click-to-leave-a-tool are unchanged. Designation drags (chop, mine, stockpile, and the rest) still mark only the level the drag started on.
+The viewed level is `viewZ()`. "Visible lower" means a level from `viewZ - 1` down through the renderer's reach whose cell passes `cellVisible`, and only while depth drawing is on. Hotkeys, toolbar tools, Esc, and right-click-to-leave-a-tool are unchanged. Designation drags (chop, mine, stockpile, and the rest) still mark only the level the drag started on.
 
-| Gesture | Viewed level | Visible lower level | Hidden, above the view, or past `maxDepth` |
+| Gesture | Viewed level | Visible lower level | Hidden, above the view, past the reach, or depth drawing off |
 |---|---|---|---|
 | Plain click | Selects that unit and replaces the group. Unchanged when a unit stands on the viewed cell. | If the viewed cell has no unit, selects the topmost unit in the column. | Not hit. |
 | Plain click on empty ground | Clears the selection. Unchanged. | A visible unit in the column is a unit click, not ground. | Clears when the column shows nobody. |
@@ -175,6 +177,8 @@ Units on the viewed level keep the existing selection corners in the tilemap. A 
 
 ### Checks
 
-`node tools/select_xlayer/test_xlayer_select.js` checks the five rules above (`box_visible`, `shift_layers`, `group_orders`, `survive`, `perf`). `--provoke=<name>` makes that check FAIL (exit 1). `--provoke-all` runs each provocation and exits 0 only when every one failed. The snapshot suite in section 7 is unchanged and must still pass.
+`node tools/select_xlayer/test_xlayer_select.js` checks the five rules above (`box_visible`, `shift_layers`, `group_orders`, `survive`, `perf`). Each check loads this plugin with `PluginManager` present and drives the live drag, click, group-move, level-change, and view-change paths. `--provoke=<name>` makes that live path FAIL (exit 1). `--provoke-all` runs each provocation and exits 0 only when every one failed.
+
+The snapshot suite in section 7 is unchanged. The harness registers it more than once. On base `ecc7b898` and on this tip, two of those registrations fail the same checks and the two that own the input handler pass every check, including `box_units`, `shift_adds`, `group_move`, and `level_scope`. That split is the baseline (see the lane report). A regression would be a check that passed on a base registration and fails on the matching tip registration.
 
 ---
