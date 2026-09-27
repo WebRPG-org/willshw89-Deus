@@ -217,7 +217,8 @@
         }
     }
 
-    function opaqueAt(x, y, z) {
+    function opaqueAt(world, x, y, z) {
+        if (world && typeof world.opaque === "function") return world.opaque(x, y, z) === true;
         if (useFn) return opaqueFn(x, y, z) === true;
         return opaqueSet ? opaqueSet.has(cellKey(x, y, z)) : false;
     }
@@ -229,9 +230,25 @@
         const win = world.window;
         if (win && (x < win.x0 || x > win.x1 || y < win.y0 || y > win.y1)) return false;
         for (let zz = z + 1; zz <= world.viewZ; zz++) {
-            if (opaqueAt(x, y, zz)) return false;
+            if (opaqueAt(world, x, y, zz)) return false;
         }
         return true;
+    }
+
+    // The column rule Select calls. Do not copy this walk into another plugin.
+    function cellVisible(query) {
+        if (!query || !Number.isInteger(query.viewZ)) return false;
+        return pointVisible(query, query.x, query.y, query.z);
+    }
+
+    function unitMarked(unit) {
+        if (!unit) return false;
+        if (unit.selected === true) return true;
+        const data = unit.data;
+        if (data && data.selected === true) return true;
+        const S = root.UF && root.UF.Select;
+        if (S && typeof S.isSelected === "function") return S.isSelected(unit.id) === true;
+        return false;
     }
 
     function shiftOf(world, z) {
@@ -400,7 +417,7 @@
                 pushRec(r, z, world.viewZ);
             }
         }
-        if (unit.selected) {
+        if (unitMarked(unit)) {
             const r = base("selection", z, ORDER.selection);
             r.unitId = id;
             r.shape = "square";
@@ -516,7 +533,7 @@
             const lo = spell.casterZ < spell.z ? spell.casterZ : spell.z;
             const hi = spell.casterZ > spell.z ? spell.casterZ : spell.z;
             for (let z = lo + 1; z < hi; z++) {
-                if (!opaqueAt(spell.x, spell.y, z)) list.push(z);
+                if (!opaqueAt(world, spell.x, spell.y, z)) list.push(z);
             }
             r.between = list;
         } else {
@@ -992,6 +1009,7 @@
         stampAcc = Math.imul(stampAcc, 33) ^ idHash(u && u.id);
         stampAcc = Math.imul(stampAcc, 33) ^ (sprite.x | 0);
         stampAcc = Math.imul(stampAcc, 33) ^ (sprite.y | 0);
+        stampAcc = Math.imul(stampAcc, 33) ^ (unitMarked(u) ? 1 : 0);
         const data = u && u.data;
         if (!data) return;
         stampAcc = Math.imul(stampAcc, 33) ^ (data.hp | 0);
@@ -1110,7 +1128,7 @@
         } else if (slot.flash) {
             slot.flash.visible = false;
         }
-        const selected = !!(u.selected || (data && data.selected));
+        const selected = unitMarked(u);
         if (selected) {
             if (!slot.selection) {
                 slot.selection = makeSprite(bm.cell);
@@ -1297,6 +1315,7 @@
         DAMAGE_COLOR: DAMAGE_COLOR,
         EMPTY_FILTERS: EMPTY_FILTERS,
         sync: sync,
+        cellVisible: cellVisible,
         reset: reset,
         stats: stats,
         benchmark: benchmark,
