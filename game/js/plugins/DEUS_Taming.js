@@ -17,10 +17,11 @@
  * Handling) check through UF.Rules. The target must already be restrained,
  * unconscious at 0 HP, trapped, or otherwise subdued.
  *
- * Humanoids are refused. Prisoners are SOC.40.03. Party combat with a tamed
- * creature is WG.00.39. This plugin does not edit combat, jobs, or ecology
- * files. It aliases UF.Jobs.create and UF.Ecology.population when those
- * objects are already present.
+ * Humanoids are refused. Prisoners are SOC.40.03. A domesticated creature
+ * whose role is allowed to fight joins party combat through UF.Taming.enlist
+ * and UF.CombatRT.enlistTamed. Combat numbers stay the SRD stat block.
+ * This plugin does not edit jobs or ecology files. It aliases UF.Jobs.create
+ * and UF.Ecology.population when those objects are already present.
  *
  * Register this plugin after DEUS_Wildlife, DEUS_Combat, DEUS_Ecology, and
  * DEUS_Jobs. Do not edit plugins.js here; the lane report carries the entry.
@@ -208,7 +209,26 @@
             const eng = engineOf();
             return eng ? eng.labourHook(unit) : null;
         },
-        questions: sim ? sim.QUESTIONS : []
+        joinsParty: function (unit) {
+            return sim ? sim.party.joinsParty(unit) : false;
+        },
+        combatProfile: function (unit) {
+            const rules = rulesOf();
+            if (!sim || !rules) return null;
+            return sim.combatProfile(rules, unit);
+        },
+        enlist: function (engine, units) {
+            const rules = rulesOf();
+            if (!sim || !rules) return { added: [], refused: [{ ok: false, reason: "NO_RULES" }] };
+            return sim.enlistParty(engine, rules, units);
+        },
+        issueOrder: function (unit, order) {
+            return sim ? sim.party.issueOrder(unit, order) : { ok: false, reason: "NO_SIM", order: null };
+        },
+        noteDeath: function (unit, info) {
+            return sim ? sim.party.noteDeath(unit, info) : { updated: false, reason: "NO_SIM", knockout: false };
+        },
+        questions: sim ? sim.QUESTIONS.concat(sim.PARTY_QUESTIONS || []) : []
     };
 
     root.DEUS.Taming = Taming;

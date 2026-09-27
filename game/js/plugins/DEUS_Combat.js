@@ -269,6 +269,70 @@
             return null;
         }
     }
+    let partyMod;
+    function partyApi() {
+        if (partyMod !== undefined) return partyMod;
+        const host = nodeRequire();
+        if (!host) { partyMod = null; return null; }
+        const path = host.req("path");
+        const fs = host.req("fs");
+        const candidates = [];
+        if (typeof __dirname === "string") candidates.push(path.join(__dirname, "..", "sim", "taming", "party.js"));
+        if (host.cwd) {
+            candidates.push(path.join(host.cwd, "game", "js", "sim", "taming", "party.js"));
+            candidates.push(path.join(host.cwd, "js", "sim", "taming", "party.js"));
+        }
+        let file = null;
+        for (let i = 0; i < candidates.length; i++) {
+            if (candidates[i] && fs.existsSync(candidates[i])) { file = candidates[i]; break; }
+        }
+        partyMod = file ? host.req(file) : null;
+        return partyMod;
+    }
+    // Domesticated, and the role is one the party table lets fight. Not an answer to OQ-BG-01.
+    function tamedFriendly(unit) {
+        const party = partyApi();
+        if (!party || typeof party.joinsParty !== "function" || party.joinsParty(unit) !== true) return false;
+        const published = window.UF && window.UF.Rules;
+        if (!published || typeof published.creatureOf !== "function") return true;
+        let block = null;
+        try {
+            block = published.creatureOf(unit);
+        } catch (err) {
+            if (err && (err.name === "RulesError" || err.name === "DiceError")) return false;
+            throw err;
+        }
+        return !!block;
+    }
+    function tamedBody(unit) {
+        if (!tamedFriendly(unit)) return unit;
+        const party = partyApi();
+        return party && typeof party.rulesBody === "function" ? party.rulesBody(unit) : unit;
+    }
+    function prepareTamed(unit) {
+        if (!tamedFriendly(unit) || !unit.data || unit.data.dead === true || unit.data._isDying === true) return;
+        const party = partyApi();
+        const rules = rulesApi();
+        if (!party || typeof party.livingHp !== "function" || !rules) return;
+        const hp = party.livingHp(rules, unit);
+        if (!hp) return;
+        unit.data.maxHp = hp.max;
+        if (typeof unit.data.hp !== "number" || unit.data.hp <= 0 || unit.data.hp > hp.max) unit.data.hp = hp.hp;
+    }
+    function applyTamedOrder(unit) {
+        if (!tamedFriendly(unit)) return;
+        const party = partyApi();
+        if (!party || typeof party.orderOf !== "function") return;
+        const order = party.orderOf(unit);
+        const c = cd(unit);
+        if (!order || order.type === "follow") return;
+        if (order.type === "hold") {
+            c.targetId = null;
+            c.retaliate = false;
+            return;
+        }
+        if (order.type === "attack" && order.targetId != null) c.targetId = order.targetId;
+    }
     function rulesApi() {
         const published = window.UF && window.UF.Rules;
         if (published && typeof published.attack === "function") return published;
@@ -609,7 +673,7 @@
             err.code = "RULES_NOT_LOADED";
             throw err;
         }
-        return Rules.armorClass(unit).ac;
+        return Rules.armorClass(tamedBody(unit)).ac;
     };
 
     /** Maps a weapon profile or catalog item to a standardized SRD 5.1 weapon key. */
@@ -657,6 +721,12 @@
         return Math.max(1, prof.speed + styleBonus(styleOf(unit, prof)).speed);
     }
     function modeOf(unit) {
+        if (tamedFriendly(unit)) {
+            const party = partyApi();
+            const order = party && typeof party.orderOf === "function" ? party.orderOf(unit) : null;
+            if (order && order.type === "hold") return "manual";
+            return "nearest";
+        }
         const c = unit && unit.data && unit.data.combat;
         if (c && MODES.includes(c.mode)) return c.mode;
         const dm = cfg().defaultModes;
@@ -835,6 +905,11 @@
         let rollA = 0;
         let rollD = 0;
         let weaponKey = Combat.resolveWeaponKey(n.prof);
+        if (tamedFriendly(attacker)) {
+            const party = partyApi();
+            const key = party && typeof party.primaryAttackKey === "function" ? party.primaryAttackKey(attacker, rulesApi()) : null;
+            if (key) weaponKey = key;
+        }
         let attResult = null;
         let maxExpression = null;
 
@@ -867,7 +942,7 @@
                 err.code = "RULES_NOT_LOADED";
                 throw err;
             }
-            attResult = Rules.attack(attacker, target, weaponKey, {
+            attResult = Rules.attack(tamedBody(attacker), tamedBody(target), weaponKey, {
                 rng: rngFn,
                 advantage: finalAdv,
                 disadvantage: finalDis,
@@ -897,7 +972,7 @@
                 attResult.critical = true;
             }
             if (hit) {
-                const dmgResult = Rules.damage(attacker, target, attResult, { rng: rngFn, extraDamage: o.extraDamage || 0 });
+                const dmgResult = Rules.damage(tamedBody(attacker), tamedBody(target), attResult, { rng: rngFn, extraDamage: o.extraDamage || 0 });
                 rolled = dmgResult.damage;
             }
         }
@@ -1069,6 +1144,8 @@
         d._isDying = true;
         d.dead = true;
         d.hp = 0;
+        const party = partyApi();
+        if (party && typeof party.noteDeath === "function") party.noteDeath(victim, { cause: "hp0", killerId: killer && killer.id });
         const Forensics = (window.UF && window.UF.DeathForensics) || (typeof global !== "undefined" && global.UF && global.UF.DeathForensics);
         if (Forensics && typeof Forensics.recordDeath === "function") {
             try { Forensics.recordDeath(victim, d.deathCause || null, killer); } catch (_) {}
@@ -1220,6 +1297,7 @@
     function computeSide(u) {
         const d = u && u.data;
         if (!d) return null;
+        if (tamedFriendly(u)) return "friendly";
         if (Array.isArray(d.tags) && d.tags.includes("hostile")) return "hostile";
         const S = window.UF && UF.Stance;
         const s = S && typeof S.of === "function" ? S.of(u) : (d.kind === "colonist" || d.faction === "player" ? "friendly" : null);
@@ -1412,6 +1490,7 @@
         const hostiles = [], friendlies = [];
         for (const u of units) {
             byId.set(u.id, u);
+            prepareTamed(u);
             if (isDead(u) || (u.data && u.data.hp <= 0)) continue;
             const side = sideOf(u);
             if (side === "hostile") hostiles.push(u);
@@ -1423,6 +1502,7 @@
         }
         const leash = cfg().leash;
         for (const u of units) {
+            applyTamedOrder(u);
             const c = u.data && u.data.combat;
             if (!c || isDead(u) || (u.data && u.data.hp <= 0)) continue;
             if (modeOf(u) === "flee") {

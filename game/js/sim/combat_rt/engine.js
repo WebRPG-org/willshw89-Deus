@@ -34,6 +34,7 @@ function createEngine(opts) {
     const rng = o.rng || Rng.createRng(o.seed >>> 0);
     const rngFn = function () { return rng.next(); };
     const passable = typeof o.passable === "function" ? o.passable : function () { return true; };
+    const Party = o.party || require("../taming/party");
 
     let mode = o.mode === "hero" ? "hero" : "fortress";
     let paused = false;
@@ -65,7 +66,7 @@ function createEngine(opts) {
         return best;
     }
 
-    function get(id) { return index.get(id) || null; }
+    function get(id) { return index.get(String(id)) || null; }
 
     function addUnit(spec) {
         const s = spec || {};
@@ -118,6 +119,25 @@ function createEngine(opts) {
                 deathSaves: { successes: 0, failures: 0 }
             }
         };
+        if (s.tamed) {
+            unit.tamed = true;
+            unit.pc = false;
+            unit.className = "";
+            unit.shield = false;
+            unit.order = Party.orderOf(s);
+            unit.worldUnit = s.worldUnit || null;
+            unit.attacks = Array.isArray(s.attacks) ? s.attacks : [];
+            unit.multiattack = Array.isArray(s.multiattack) ? s.multiattack.slice() : [];
+            unit.equipmentSlots = [];
+            unit.data.equipment = {}; // BG_ENGINE_GEAR
+            unit.data.species = s.species || null;
+            unit.data.srdId = s.srdId || null;
+            unit.data.taming = s.taming || null;
+            unit.data.kind = "creature";
+            unit.data.level = null;
+            if (s.weaponKey) unit.weaponKey = s.weaponKey;
+            if (s.reachSquares) unit.reachSquares = s.reachSquares;
+        }
         if (hp <= 0) {
             unit.data.hp = 0;
             unit.dead = !unit.pc;
@@ -130,6 +150,10 @@ function createEngine(opts) {
     }
 
     function rangeBands(unit) {
+        if (unit.tamed) {
+            const reach = unit.reachSquares || 1;
+            return { ranged: false, normal: reach, long: reach };
+        }
         const key = C.slug(unit.weaponKey);
         const def = defs[key] || null;
         const group = P.weaponGroup(unit.weaponKey);
@@ -223,11 +247,53 @@ function createEngine(opts) {
         return { type: "attack", targetId: any.other.id };
     }
 
+    function partyAnchor(unit) {
+        const rec = unit.data && unit.data.taming;
+        if (rec && rec.ownerId != null) {
+            const owner = get(String(rec.ownerId));
+            if (owner && !owner.dead && owner.id !== unit.id) return owner;
+        }
+        let person = null;
+        let ally = null;
+        for (let i = 0; i < units.length; i++) {
+            const other = units[i];
+            if (other.id === unit.id || other.dead || other.side !== unit.side) continue;
+            const d = G.squaresApart(unit, other);
+            if (!other.tamed && (!person || d < person.d || (d === person.d && other.id < person.other.id))) {
+                person = { other: other, d: d };
+            }
+            if (!ally || d < ally.d || (d === ally.d && other.id < ally.other.id)) ally = { other: other, d: d };
+        }
+        if (person) return person.other;
+        return ally ? ally.other : null;
+    }
+
+    function tamedLook(unit) {
+        return {
+            living: function (id) {
+                const found = get(String(id));
+                return !!(found && !found.dead);
+            },
+            enemyInReach: function () {
+                const bands = rangeBands(unit);
+                const near = nearest(unit, function (o) {
+                    return o.z === unit.z && G.squaresApart(unit, o) <= bands.normal;
+                });
+                return near ? { id: near.other.id } : null;
+            },
+            anchorId: function () {
+                const anchor = partyAnchor(unit);
+                return anchor ? anchor.id : null;
+            }
+        };
+    }
+
     function peekAction(id) {
         const unit = get(id);
         if (!unit) return { type: "none" };
         if (unit.dead) return { type: "none" };
         if (unit.dying && unit.pc) return { type: "death-save" };
+        if (unit.tamed) return Party.nextAction(unit, tamedLook(unit));
         const q = orders.get(id);
         if (q && q.length) return Object.assign({}, q[0]);
         return decideBehaviour(unit);
@@ -237,6 +303,17 @@ function createEngine(opts) {
         if (unit.dead) return { type: "none" };
         if (unit.dying && unit.pc) return { type: "death-save" };
         const q = orders.get(unit.id);
+        if (unit.tamed) {
+            if (q && q.length) {
+                const next = q.shift();
+                if (next && (next.type === "follow" || next.type === "hold" || next.type === "attack")) {
+                    Party.issueOrder(unit, next);
+                } else if (next) {
+                    return next;
+                }
+            }
+            return Party.nextAction(unit, tamedLook(unit));
+        }
         if (q && q.length) return q.shift();
         return decideBehaviour(unit);
     }
@@ -349,9 +426,14 @@ function createEngine(opts) {
                 target.dead = true;
                 target.dying = false;
                 target.pose = "DEAD";
+                if (target.tamed) Party.noteDeath(target, { cause: "hp0" });
             }
         } else {
             target.pose = "HURT";
+        }
+        if (target.tamed && target.worldUnit && target.worldUnit.data) {
+            target.worldUnit.data.hp = target.data.hp;
+            target.worldUnit.data.maxHp = target.data.maxHp;
         }
         return dmg;
     }
@@ -403,6 +485,11 @@ function createEngine(opts) {
         };
     }
 
+    function rulesCombatant(unit) {
+        if (!unit || !unit.tamed) return unit;
+        return Party.rulesBody(unit);
+    }
+
     function resolveAttack(actor, action, slot) {
         const event = baseEvent(actor, slot, "attack");
         const target = get(action.targetId);
@@ -417,7 +504,7 @@ function createEngine(opts) {
         event.effectZ = target.z;
         faceToward(actor, target);
         if (actor.z !== target.z) {
-            const att = rules.attack(actor, target, actor.weaponKey || "unarmed", { rng: rngFn });
+            const att = rules.attack(rulesCombatant(actor), rulesCombatant(target), actor.weaponKey || "unarmed", { rng: rngFn });
             event.sameZViolation = !!att.sameZViolation;
             event.hit = false;
             event.damage = 0;
@@ -436,17 +523,19 @@ function createEngine(opts) {
         }
         const call = { rng: rngFn };
         if (bands.ranged && dist > bands.normal) call.disadvantage = true;
-        const att = rules.attack(actor, target, actor.weaponKey || "unarmed", call);
+        const att = rules.attack(rulesCombatant(actor), rulesCombatant(target), actor.weaponKey || "unarmed", call);
         if (att.sameZViolation) {
             event.sameZViolation = true;
             event.number = P.damageNumber(0, "miss", false);
             return pushEvent(event);
         }
         event.natural = att.natural;
+        event.attackMod = att.attackMod;
+        event.effectiveAC = att.effectiveAC;
         event.damageType = att.damageType || null;
         let damage = 0;
         if (att.hit) {
-            const dmg = rules.damage(actor, target, att, { rng: rngFn });
+            const dmg = rules.damage(rulesCombatant(actor), rulesCombatant(target), att, { rng: rngFn });
             damage = applyDamage(target, dmg.damage, !!att.critical);
         }
         event.hit = !!att.hit;
@@ -563,9 +652,113 @@ function createEngine(opts) {
         return pushEvent(event);
     }
 
+    function attackKeys(actor) {
+        if (Array.isArray(actor.multiattack) && actor.multiattack.length) return actor.multiattack.slice();
+        if (actor.weaponKey) return [actor.weaponKey];
+        return [];
+    }
+
+    function resolveFollow(actor, slot) {
+        const event = baseEvent(actor, slot, "follow");
+        const anchor = partyAnchor(actor);
+        event.targetId = anchor ? anchor.id : null;
+        event.clip = "WALK";
+        if (anchor && G.squaresApart(actor, anchor) > 1) stepToward(actor, anchor, stepBudget(actor));
+        event.x = actor.x;
+        event.y = actor.y;
+        actor.pose = anchor ? "WALK" : "IDLE";
+        return pushEvent(event);
+    }
+
+    function resolveNatural(actor, action, slot) {
+        const event = baseEvent(actor, slot, "attack");
+        const target = get(action.targetId);
+        event.clip = P.attackClip(actor);
+        event.swings = [];
+        if (!target || target.dead) {
+            event.type = "hold";
+            actor.pose = "IDLE";
+            return pushEvent(event);
+        }
+        event.targetId = target.id;
+        event.targetZ = target.z;
+        event.effectZ = target.z;
+        faceToward(actor, target);
+        const keys = attackKeys(actor);
+        const actorBody = Party.rulesBody(actor);
+        const targetBody = target.tamed ? Party.rulesBody(target) : target;
+        if (actor.z !== target.z) {
+            const att = rules.attack(actorBody, targetBody, keys[0] || "unarmed", { rng: rngFn });
+            event.sameZViolation = !!att.sameZViolation;
+            event.hit = false;
+            event.damage = 0;
+            event.natural = att.natural === undefined ? null : att.natural;
+            event.attackMod = att.attackMod;
+            event.effectiveAC = att.effectiveAC;
+            event.number = P.damageNumber(0, att.damageType || "miss", false);
+            actor.pose = event.clip || "IDLE";
+            return pushEvent(event);
+        }
+        const bands = rangeBands(actor);
+        if (G.squaresApart(actor, target) > bands.long) stepToward(actor, target, stepBudget(actor));
+        if (G.squaresApart(actor, target) > bands.long) {
+            event.outOfRange = true;
+            event.number = P.damageNumber(0, "miss", false);
+            return pushEvent(event);
+        }
+        let damage = 0;
+        let anyHit = false;
+        let last = null;
+        for (let i = 0; i < keys.length; i++) {
+            if (target.dead) break;
+            if (G.squaresApart(actor, target) > bands.normal) break;
+            const att = rules.attack(actorBody, targetBody, keys[i], { rng: rngFn });
+            let dealt = 0;
+            if (att.hit && !att.sameZViolation) {
+                const dmg = rules.damage(actorBody, targetBody, att, { rng: rngFn });
+                dealt = applyDamage(target, dmg.damage, !!att.critical);
+                damage += dealt;
+                anyHit = true;
+            }
+            last = att;
+            event.swings.push({
+                weaponKey: keys[i],
+                hit: !!att.hit,
+                damage: dealt,
+                attackMod: att.attackMod,
+                fromStatBlock: !!att.fromStatBlock,
+                natural: att.natural
+            });
+        }
+        event.natural = last ? last.natural : null;
+        event.damageType = last ? (last.damageType || null) : null;
+        event.attackMod = last ? last.attackMod : null;
+        event.effectiveAC = last ? last.effectiveAC : null;
+        event.hit = anyHit;
+        event.damage = damage;
+        const kb = P.knockPixels(damage, !!(last && last.critical));
+        actor.cosmetic = { x: 0, y: 0 };
+        target.cosmetic = P.knockVector(actor, target, kb);
+        event.knock = target.cosmetic;
+        event.gridMoved = 0;
+        event.flash = anyHit;
+        event.flashFrame = anyHit ? 3 : null;
+        event.number = P.damageNumber(damage, (last && last.damageType) || "miss", anyHit);
+        event.targetAnim = target.dead ? "KNOCKDOWN" : (anyHit ? "HURT" : null);
+        if (target.dead) target.pose = "DEAD";
+        actor.pose = event.clip || "IDLE";
+        if (anyHit && damage > 0) {
+            marks.push({ kind: "blood", x: target.x, y: target.y, z: target.z, fadeSteps: 3, step: 0, placeholder: true });
+            event.blood = true;
+        }
+        return pushEvent(event);
+    }
+
     function resolve(actor, action, slot) {
         const type = action && action.type;
+        if (type === "attack" && actor.tamed) return resolveNatural(actor, action, slot);
         if (type === "attack") return resolveAttack(actor, action, slot);
+        if (type === "follow") return resolveFollow(actor, slot);
         if (type === "spell") return resolveSpell(actor, action, slot);
         if (type === "heal") return resolveHeal(actor, action, slot);
         if (type === "flee") return resolveFlee(actor, slot);
@@ -591,7 +784,7 @@ function createEngine(opts) {
         for (let i = 0; i < list.length; i++) {
             const u = list[i];
             if (u.dead) continue;
-            const roll = rules.initiative(u, { rng: rngFn });
+            const roll = rules.initiative(u.tamed ? Party.rulesBody(u) : u, { rng: rngFn });
             initiative.push({ id: u.id, total: roll.total, natural: roll.natural });
         }
         initiative.sort(function (a, b) {
@@ -677,6 +870,10 @@ function createEngine(opts) {
             size: u.size,
             weaponKey: u.weaponKey,
             shield: u.shield,
+            tamed: !!u.tamed,
+            order: u.tamed ? { type: (u.order && u.order.type) || "follow", targetId: u.order && u.order.targetId ? u.order.targetId : null } : null,
+            equipmentSlots: u.tamed ? [] : null,
+            speedFt: u.speedFt,
             summonedBy: u.summonedBy,
             squadId: u.squadId,
             cosmetic: { x: u.cosmetic.x, y: u.cosmetic.y },
@@ -802,6 +999,17 @@ function createEngine(opts) {
             if (!orders.has(id)) orders.set(id, []);
             orders.get(id).push(Object.assign({}, order));
             return api;
+        },
+        setOrder: function (id, order) {
+            const u = get(id);
+            if (!u || !u.tamed) return { ok: false, reason: "NOT_TAMED", order: null };
+            return Party.issueOrder(u, order);
+        },
+        enlistTamed: function (list) {
+            return Party.enlist(api, rules, list);
+        },
+        equipCreature: function () {
+            return { ok: false, reason: "NO_CREATURE_GEAR", slot: null };
         },
         setBehaviour: function (id, behaviour) {
             const u = get(id);

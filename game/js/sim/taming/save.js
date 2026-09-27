@@ -11,7 +11,7 @@ function exportState(units) {
         const unit = list[i];
         const rec = record.recordOf(unit);
         if (!unit || unit.id == null || !rec) continue;
-        if (rec.status !== "captive" && rec.status !== "domesticated") continue;
+        if (rec.status !== "captive" && rec.status !== "domesticated" && rec.status !== "dead") continue;
         rows.push({ unitId: unit.id, taming: record.copyRecord(rec) });
     }
     return { version: VERSION, rows: rows };

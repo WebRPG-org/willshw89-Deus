@@ -153,6 +153,7 @@ function command(engine, cmd) {
     else if (c.type === "speed") engine.setSpeed(c.speed);
     else if (c.type === "behaviour") engine.setBehaviour(c.unitId, c.behaviour);
     else if (c.type === "order") engine.queueOrder(c.unitId, c.order);
+    else if (c.type === "creature-order" && typeof engine.setOrder === "function") engine.setOrder(c.unitId, c.order);
     else if (c.type === "select") engine.selectRect(c.rect);
     else if (c.type === "zoom") engine.setZoom(c.zoom);
     else if (c.type === "hero") engine.setHero(c.unitId);

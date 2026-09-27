@@ -18,6 +18,8 @@
  * UF.CombatRT.start({ rules, seed, mode }) begins an encounter and pauses the
  * legacy combat tick while it owns the fight. UF.CombatRT.noteResolved
  * records presentation for an attack DEUS_Combat already resolved.
+ * UF.CombatRT.enlistTamed(units) adds domesticated creatures on the player side.
+ * UF.CombatRT.setOrder(id, { type }) is follow, attack, or hold.
  */
 
 (() => {
