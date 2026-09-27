@@ -81,7 +81,7 @@ Every office document validates against `game/data/society/office_schema.json` a
 - `officeId`: Unique stable alphanumeric identifier (e.g. `OFFICE_LEADER`, `OFFICE_TREASURER`).
 - `canonicalFunction`: Functional semantic category from the canonical catalogue (`LEADER`, `EXECUTIVE`, `STEWARD`, `ADMIN`, `TREASURER`, `MINT_MASTER`, `MARSHAL`, `QUARTERMASTER`, `MASTER_OF_WORKS`, `PROVISIONER`, `RECORDER`, `MAGISTRATE`, `HEALER_DIRECTOR`, `HEALER`, `ENVOY`, `TRADE_MASTER`, `TAX_COLLECTOR`, `PAYMASTER`, `CLERK`).
 - `department`: Institutional branch (`GOVERNANCE`, `ADMINISTRATION`, `FINANCE`, `DEFENSE`, `LOGISTICS`, `INFRASTRUCTURE`, `SUSTENANCE`, `RECORDS`, `JUSTICE`, `HEALTH`, `DIPLOMACY`, `COMMERCE`).
-- `titles`: Default functional title and cultural/species title mapping (`defaultTitle` + `culturalTitles`). All 9 canonical SRD ancestries are mapped to `defaultTitle` to avoid inventing unapproved cultural lore (DEC-015, DEC-025).
+- `titles`: Default functional title and cultural/species title mapping (`defaultTitle` + `culturalTitles`). All 9 canonical SRD ancestries are mapped to `defaultTitle` to avoid inventing unapproved cultural lore (DEC-015, DEC-025). The `culturalTitles` map is required in the schema; omission is rejected by both schema and catalogue validation.
 
 ### Pillar II: Jurisdiction & Authority Scopes
 - `jurisdiction`:
@@ -115,8 +115,9 @@ Every office document validates against `game/data/society/office_schema.json` a
   - `vacancyReason`: Explicit cause of vacancy (`"UNASSIGNED" | "HOLDER_DECEASED" | "HOLDER_DISMISSED" | "HOLDER_RESIGNED" | "HOLDER_INCAPACITATED" | "OFFICE_CREATED" | null`).
   - `operationalCapability`: Floating-point scalar between `0.0` and `1.0`.
     - `VACANT`, `SUSPENDED`, `DORMANT`: MUST be strictly `0.0`. Primary holder, acting holder, and co-holders MUST be `null` / empty.
-    - `OCCUPIED`: MUST be strictly `1.0`. `primaryHolderId` MUST be non-null.
-    - `ACTING`: MUST be between `0.5` and `0.75` inclusive. `actingHolderId` MUST be non-null.
+    - `OCCUPIED`: MUST be strictly `1.0`. `primaryHolderId` MUST be non-null. Cannot have `vacancyReason: "HOLDER_DECEASED"`.
+    - `ACTING`: MUST be between `0.5` and `0.75` inclusive. `actingHolderId` MUST be non-null. If `vacancyReason` is `HOLDER_DECEASED`, `primaryHolderId` cannot be retained and must be `null`.
+    - Deceased Holder Rejection (INV-SOC-03): An office state that retains a deceased holder (`primaryHolderId`) at full operational capability (`1.0`) or `OCCUPIED` status is rejected fail-closed.
   - `degradationEffects`: Explicit array of administrative penalties active while the office is vacant or degraded. Must adhere to uppercase format tokens and cannot embed duty strings.
 
 ### Pillar IV: Succession Policy Data
@@ -211,9 +212,11 @@ The transition model follows discrete institutional states with fail-closed inte
    - `isVacant: false`, `operationalCapability: 1.0`.
    - All authority scopes active.
    - `primaryHolderId` references active person (cannot be null).
+   - `vacancyReason` cannot be `HOLDER_DECEASED`.
 2. **`ACTING`:**
    - `isVacant: false`, `operationalCapability: 0.5..0.75`.
    - `actingHolderId` references deputy (cannot be null).
+   - If vacancy was caused by death (`HOLDER_DECEASED`), `primaryHolderId` must remain `null`.
    - Routine administrative actions proceed with minor latency.
 3. **`VACANT` (or `SUSPENDED`, `DORMANT`):**
    - `isVacant: true`, `operationalCapability: 0.0`.
@@ -228,7 +231,7 @@ The transition model follows discrete institutional states with fail-closed inte
 The test suite in `tools/society/test_offices.js` enforces deterministic validation across:
 1. **Schema Integrity:** Verifies `office_schema.json` against JSON Schema Draft 2020-12 constraints.
 2. **Canonical Office Coverage:** Validates all 16 canonical records in `game/data/society/offices/`.
-3. **Cross-Office Relational Integrity:** Enforces bidirectional parent-subordinate consistency across the entire office catalogue.
+3. **Cross-Office Relational Integrity:** Enforces bidirectional parent-subordinate consistency and acyclic tree hierarchy (strictly rejecting reciprocal multi-office cycles) across the entire office catalogue.
 4. **Invariant FACTION-001 (INV-SOC-03):** Proves an office entity survives holder removal and maintains its institutional jurisdiction.
 5. **Invariant INV-SOC-06:** Proves strict domain separation between monetary wealth (`TREASURY_CHEST`) and physical stores / assaying.
 6. **Three-Axis Separation (INV-SOC-01 & INV-SOC-02):** Proves the office entity rejects current duty or personal craft mutations.

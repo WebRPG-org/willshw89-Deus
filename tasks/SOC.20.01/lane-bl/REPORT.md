@@ -5,54 +5,58 @@
 **Lane:** lane-bl  
 **Branch:** task/lane-bl  
 **Base:** main `a768eba377deab388e5def474a0bb1752fd732c3`  
-**Reviewer:** grok (independent review disposition below)  
-**Status:** Complete / Review Remediated / Gate Verified. This report does not self-certify or mark the task DONE.
+**Reviewer:** grok (re-review findings disposition below)  
+**Status:** Complete / Re-Review Remediated / Gate Verified. This report does not self-certify or mark the task DONE.
 
 ---
 
-## Review Finding Disposition (Grok Review 786b5084 Remediation)
+## Re-Review Finding Disposition (Grok Review a7ba49a5 / Commit 10debc5d Remediation)
 
-### Blocker Findings
+### 1. Deceased Holder Operational Capability Rejection (Finding 1)
+- **Problem Identified:** `validateOffice` previously allowed an office with `vacancyReason: "HOLDER_DECEASED"` to retain `primaryHolderId` and operational capability 1.0 when `status: "OCCUPIED"`.
+- **Remedy:** Implemented fail-closed deceased-holder consistency rules in `validateOffice` (`tools/society/test_offices.js`):
+  - When `vacancyReason === "HOLDER_DECEASED"`:
+    - If `status === "OCCUPIED"` or `operationalCapability >= 1.0`, emits `semantic-deceased-holder-full-capability` on `vacancyState.operationalCapability`.
+    - If `holder.primaryHolderId !== null`, emits `semantic-deceased-primary-holder-retained` on `holder.primaryHolderId`.
+  - In `ACTING` interim command, `primaryHolderId` must remain `null` while `actingHolderId` is assigned to a living deputy at degraded capability (`0.5..0.75`).
+  - Added targeted failing provocations `provocation_deceased_holder_full_capability_retained` and `provocation_deceased_holder_acting_retains_primary`, each isolated to 0 other errors.
 
-1. **BLOCKER 1: Canonical records answer open owner questions (cardinality, concurrency, succession method, aliases).**
-   - **Remedy:** In all 16 canonical office files (`game/data/society/offices/*.json`), set `holder.cardinality: "UNDECIDED"`, `holder.maxHolders: null`, `holder.allowConcurrentOffices: null`, `successionPolicy.method: "OPEN_POLICY"`, and `successionPolicy.appointmentAuthority: null`. In `game/data/society/office_schema.json`, added `"HEALER"` to the `canonicalFunction` enum alongside `HEALER_DIRECTOR`, `LEADER`, `EXECUTIVE`, `STEWARD`, and `ADMIN`. In `game/data/society/offices/manifest.json`, set `aliases: []` across all offices to keep functional equivalence open rather than prematurely decided. In `docs/systems/DEUS_FactionOffices.md`, documented that these pairs remain open questions. In `tools/society/test_offices.js`, added assertions proving that `HEALER`, `EXECUTIVE`, and `ADMIN` all validate without error and that open policies are maintained across records.
+### 2. Complete Canonical Ancestry-Title Coverage Even When Omitted (Finding 2)
+- **Problem Identified:** `titles.required` in `office_schema.json` only required `defaultTitle`, and `validateCatalogue` ran ancestry checks conditionally on `office.titles.culturalTitles`. Deleting `culturalTitles` bypassed validation.
+- **Remedy:**
+  - In `game/data/society/office_schema.json`, added `culturalTitles` to `titles.required`: `"required": ["defaultTitle", "culturalTitles"]`.
+  - In `validateCatalogue`, if `office.titles.culturalTitles` is omitted, validation immediately emits `catalogue-missing-canonical-ancestry`.
+  - Added targeted failing provocation `provocation_missing_cultural_titles` (fails on `required`) and targeted catalogue fixture `fixture_catalogue_omitted_cultural_titles` (fails on `catalogue-missing-canonical-ancestry`). Omission cannot bypass validation.
 
-2. **BLOCKER 2: Race-specific office names authored and assigned to wrong peoples.**
-   - **Remedy:** In all 16 canonical office files, removed non-canonical keys (`orc`, `goblin`) and added all 9 canonical SRD ancestries per DEC-025 (`human`, `dwarf`, `elf`, `halfling`, `dragonborn`, `gnome`, `half-elf`, `half-orc`, `tiefling`). Removed all invented race-specific titles (`High King`, `Jarl`, `Chief`, `Swindle Factor`, `Nugget Puncher`, etc.) per DEC-015 point 4; mapped every canonical ancestry to the neutral `defaultTitle` of the respective office. In `test_offices.js`, added cross-office catalogue verification and targeted failing fixtures for missing canonical ancestries, non-canonical ancestries, and invented race titles.
+### 3. Reciprocal Multi-Office Hierarchy Cycle Rejection (Finding 3 / Minor 1)
+- **Problem Identified:** `validateOffice` rejected only self-parent and self-subordinate pointers, while `validateCatalogue` verified only direct parent/subordinate consistency. Reciprocal multi-office cycles (e.g. 2-cycle or 3-cycle) passed validation.
+- **Remedy:**
+  - Implemented catalogue-wide parent-pointer DFS cycle detection in `validateCatalogue` (`tools/society/test_offices.js`).
+  - Any circular path across the hierarchy graph is detected and rejected with `catalogue-hierarchy-cycle`.
+  - Added targeted failing fixture `fixture_catalogue_hierarchy_cycle` demonstrating rejection of reciprocal 2-office cycles.
 
-### Major Findings
-
-1. **MAJOR 1: Vacancy, holder, capability, and cardinality consistency (fail-closed vacancy semantics).**
-   - **Remedy:** Implemented fail-closed validation rules in `validateOffice` (`tools/society/test_offices.js`):
-     - `VACANT`, `SUSPENDED`, and `DORMANT` statuses mandate `isVacant: true`, `operationalCapability: 0.0`, `primaryHolderId: null`, `actingHolderId: null`, and `coHolderIds: []`. Any active/deceased holder or non-zero capability causes immediate validation failure.
-     - `OCCUPIED` mandates `isVacant: false`, `operationalCapability: 1.0`, and non-null `primaryHolderId`.
-     - `ACTING` mandates `isVacant: false`, `operationalCapability: 0.5..0.75`, and non-null `actingHolderId`.
-     - `SINGLE` cardinality mandates empty `coHolderIds` and `maxHolders: 1 | null`.
-     - Active holder count is checked against `maxHolders`.
-     - Added targeted failing provocations for all vacancy, capability, and cardinality rules.
-
-2. **MAJOR 2: Parent and subordinate links in catalogue disagree; Mint placed under Treasurer.**
-   - **Remedy:** Reconciled bidirectional hierarchy across all 16 office records:
-     - Established `OFFICE_MINT_MASTER` as a peer founder office directly under `OFFICE_LEADER` (`parentOfficeId: "OFFICE_LEADER"`, subordinates `[]`). Removed mint from `OFFICE_TREASURER` subordinates and order of precedence.
-     - `OFFICE_TREASURER` subordinates are strictly `["OFFICE_TAX_COLLECTOR", "OFFICE_PAYMASTER"]`.
-     - `OFFICE_RECORDER` subordinates are strictly `["OFFICE_CLERK"]`.
-     - Removed `OFFICE_CLERK` from `OFFICE_STEWARD` subordinates.
-     - Reconciled `OFFICE_LEADER` subordinates to list all 12 top-level offices (`STEWARD`, `TREASURER`, `MINT_MASTER`, `MARSHAL`, `QUARTERMASTER`, `MASTER_OF_WORKS`, `PROVISIONER`, `RECORDER`, `HEALER_DIRECTOR`, `MAGISTRATE`, `ENVOY`, `TRADE_MASTER`).
-     - Added `validateCatalogue` in `test_offices.js` with a targeted failing fixture testing mismatched parent/subordinate links.
-
-3. **MAJOR 3: Eligibility criteria invent class gates, craft gates, and an age of majority (INV-SOC-01 breach).**
-   - **Remedy:** Stripped all invented craft gates, class gates, class level gates, and age of majority from all 16 canonical records (`minAge: null`, `requiredCrafts: []`, `requiredClasses: []`, `minLevel: null`). This upholds Invariant INV-SOC-01 (strict independence of Craft, Civic Office, and Class).
-
-4. **MAJOR 4: Quartermaster and Mint Master jurisdiction domain leak (INV-SOC-06 breach).**
-   - **Remedy:** Removed `"TREASURY_CHEST"` from `OFFICE_QUARTERMASTER` (retaining `["WORKSHOPS"]`) and from `OFFICE_MINT_MASTER` (retaining `["FOUNDRY_MINT"]`). Enforced Invariant INV-SOC-06 (strict separation between monetary balance and physical goods/assaying). Added catalogue validator rule and targeted failing fixture confirming `TREASURY_CHEST` is excluded from Quartermaster and Mint Master domains.
-
-### Minor Findings
-
-1. **MINOR 1: Kill counter was hardcoded ratio; match helper allowed loose matching.**
-   - **Remedy:** Refactored `test_offices.js` provocation loop with an authentic kill counter (`killedCount++` only on matched error rule and property). Tightened error matching to exact rule and property path. Added targeted failing provocations covering all live checks (missing canonicalFunction, fractional sinceYear, negative sinceTick, nested additionalProperties, acting mismatch, and all fail-closed vacancy checks), increasing total provocations to 64.
-
-2. **MINOR 2: Workload baseline hours and degradation effects duty phrases.**
-   - **Remedy:** Updated `office_schema.json` to make `workloadProfile.baselineHoursPerWeek` nullable (`type: ["number", "null"]`), and set `baselineHoursPerWeek: null` across all 16 canonical records to avoid inventing concrete unsourced weekly hours. Added `pattern: "^[A-Z0-9_]+$"` in schema and semantic rejection in validator for duty phrases in `degradationEffects`. Replaced paymaster and marshal effects with neutral administrative degradation tokens.
+### 4. Targeted Failing Fixtures for All Uncovered Production Validator Rules (Finding 3 / Minor 2)
+- **Problem Identified:** 15 validator rules lacked targeted failing fixtures, and uppercase duty tokens in `degradationEffects` passed case-sensitive search while lowercase failed pattern.
+- **Remedy:**
+  - In `validateOffice`, updated degradation effects check to search case-insensitively for `"DUTY"`. Added `provocation_duty_phrase_in_degradation_effects` testing schema-valid `"CURRENT_DUTY_DEFEND_GATE"` against `semantic-duty-in-degradation-effects`, and `provocation_invalid_token_pattern_in_degradation_effects` testing invalid syntax against `pattern`.
+  - Added `provocation_office_id_max_length_exceeded` testing 67-character `officeId` against `maxLength`.
+  - Added isolated catalogue fixtures in Section 9 of `test_offices.js` for all uncovered catalogue rules:
+    - `fixture_catalogue_missing_parent` -> `catalogue-missing-parent`
+    - `fixture_catalogue_missing_subordinate` -> `catalogue-missing-subordinate`
+    - `fixture_catalogue_parent_mismatch` -> `catalogue-parent-mismatch`
+    - `fixture_catalogue_decided_max_holders` -> `catalogue-decided-max-holders`
+    - `fixture_catalogue_decided_concurrent_offices` -> `catalogue-decided-concurrent-offices`
+    - `fixture_catalogue_decided_succession_method` -> `catalogue-decided-succession-method`
+    - `fixture_catalogue_decided_appointment_authority` -> `catalogue-decided-appointment-authority`
+    - `fixture_catalogue_culture_outcome_not_open` -> `catalogue-culture-outcome-not-open`
+    - `fixture_catalogue_invented_age_gate` -> `catalogue-invented-age-gate`
+    - `fixture_catalogue_invented_craft_gate` -> `catalogue-invented-craft-gate`
+    - `fixture_catalogue_invented_class_gate` -> `catalogue-invented-class-gate`
+    - `fixture_catalogue_invented_level_gate` -> `catalogue-invented-level-gate`
+    - `fixture_catalogue_invented_baseline_hours` -> `catalogue-invented-baseline-hours`
+    - `fixture_catalogue_hierarchy_cycle` -> `catalogue-hierarchy-cycle`
+    - `fixture_catalogue_omitted_cultural_titles` -> `catalogue-missing-canonical-ancestry`
+  - Every fixture explicitly verifies isolation: fails on the intended rule, and passes when only that rule is disabled (`otherErrors.length === 0`).
 
 ---
 
@@ -60,26 +64,9 @@
 
 | File | Role / Change Reason |
 | :--- | :--- |
-| `game/data/society/office_schema.json` | Updated schema: added `HEALER` to `canonicalFunction` enum, made `workloadProfile.baselineHoursPerWeek` nullable, and constrained `degradationEffects` items pattern to `^[A-Z0-9_]+$`. |
-| `game/data/society/offices/manifest.json` | Updated manifest: cleared decided aliases to `aliases: []` across all 16 canonical offices to preserve open question status. |
-| `game/data/society/offices/leader.json` | Remediated canonical record: neutral titles across 9 canonical SRD ancestries, `cardinality: UNDECIDED`, `allowConcurrentOffices: null`, `method: OPEN_POLICY`, `minAge: null`, `baselineHoursPerWeek: null`, and reconciled all 12 subordinate offices. |
-| `game/data/society/offices/treasurer.json` | Remediated canonical record: neutral titles, `cardinality: UNDECIDED`, `allowConcurrentOffices: null`, `method: OPEN_POLICY`, removed `OFFICE_MINT_MASTER` from subordinates and precedence, parent set to `OFFICE_LEADER`, subordinates set to tax collector and paymaster. |
-| `game/data/society/offices/mint_master.json` | Remediated canonical record: peer founder office under `OFFICE_LEADER`, removed `TREASURY_CHEST` from domains (INV-SOC-06), neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, craft/class gates removed (INV-SOC-01). |
-| `game/data/society/offices/marshal.json` | Remediated canonical record: neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, class gates removed, parent `OFFICE_LEADER`, neutral degradation tokens. |
-| `game/data/society/offices/quartermaster.json` | Remediated canonical record: removed `TREASURY_CHEST` from domains (INV-SOC-06), neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, parent `OFFICE_LEADER`. |
-| `game/data/society/offices/master_of_works.json` | Remediated canonical record: neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, craft gates removed (INV-SOC-01), parent `OFFICE_LEADER`. |
-| `game/data/society/offices/provisioner.json` | Remediated canonical record: neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, craft gates removed (INV-SOC-01), parent `OFFICE_LEADER`. |
-| `game/data/society/offices/recorder.json` | Remediated canonical record: neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, craft gates removed, subordinates `["OFFICE_CLERK"]`, parent `OFFICE_LEADER`. |
-| `game/data/society/offices/steward.json` | Remediated canonical record: neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, removed `OFFICE_CLERK` from subordinates, parent `OFFICE_LEADER`. |
-| `game/data/society/offices/healer_director.json` | Remediated canonical record: neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, craft and class gates removed (INV-SOC-01), parent `OFFICE_LEADER`. |
-| `game/data/society/offices/magistrate.json` | Remediated canonical record: neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, craft gates removed (INV-SOC-01), parent `OFFICE_LEADER`. |
-| `game/data/society/offices/envoy.json` | Remediated canonical record: neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, class gates removed (INV-SOC-01), parent `OFFICE_LEADER`. |
-| `game/data/society/offices/trade_master.json` | Remediated canonical record: neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, craft gates removed (INV-SOC-01), parent `OFFICE_LEADER`. |
-| `game/data/society/offices/tax_collector.json` | Remediated canonical record: neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, craft gates removed, parent `OFFICE_TREASURER`. |
-| `game/data/society/offices/paymaster.json` | Remediated canonical record: neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, craft gates removed, parent `OFFICE_TREASURER`, neutral degradation tokens. |
-| `game/data/society/offices/clerk.json` | Remediated canonical record: neutral titles, `cardinality: UNDECIDED`, `method: OPEN_POLICY`, craft gates removed, parent `OFFICE_RECORDER`. |
-| `docs/systems/DEUS_FactionOffices.md` | Authoritative system specification updated to reflect fail-closed vacancy semantics, reconciled parent/subordinate hierarchy, INV-SOC-06 domain separation, 9 canonical SRD ancestries neutral coverage, and preservation of open owner questions. |
-| `tools/society/test_offices.js` | Test suite and validator rewritten: fail-closed vacancy rules, cross-office relational validator `validateCatalogue`, authentic kill counter, exact error matching, 6 targeted failing fixtures for catalogue production rules, and 64 targeted failing provocations. |
+| `game/data/society/office_schema.json` | Updated `titles` definition: added `culturalTitles` to `required` array (`["defaultTitle", "culturalTitles"]`). |
+| `docs/systems/DEUS_FactionOffices.md` | Authoritative system specification updated: documented deceased-holder fail-closed semantics, mandatory cultural titles coverage, and acyclic catalogue hierarchy tree enforcement. |
+| `tools/society/test_offices.js` | Updated test suite and validator: added deceased holder checks, case-insensitive duty detection in `degradationEffects`, required culturalTitles check in `validateCatalogue`, parent-pointer DFS cycle detection, 21 isolated catalogue fixtures, and 69 targeted failing provocations. |
 
 ---
 
@@ -88,6 +75,12 @@
 Executed both lane gates in the foreground within the workspace directory:
 1. `node tools/society/test_offices.js`
 2. `node tools/check_deus_syntax.js`
+
+Executed programmatic verification of Grok re-review probes:
+- Probe 1 (`OCCUPIED` + `HOLDER_DECEASED` + capability 1.0 + `PERSON_184`): rejected with `semantic-deceased-holder-full-capability`.
+- Probe 2 (`ACTING` + `HOLDER_DECEASED` + capability 0.6 + primary `PERSON_184` + acting `PERSON_227`): rejected with `semantic-deceased-primary-holder-retained`.
+- Probe 3 (Omitted `culturalTitles` map): rejected with `required` in `validateOffice` and `catalogue-missing-canonical-ancestry` in `validateCatalogue`.
+- Probe 4 (Reciprocal 2-office and 3-office cycles): rejected with `catalogue-hierarchy-cycle`.
 
 ---
 
@@ -125,22 +118,39 @@ Executed both lane gates in the foreground within the workspace directory:
   [PASS] open_question_functions: All 19 canonical functions (including HEALER) validate successfully
 
 --- Targeted Failing Fixtures for Production Rules ---
-  [PASS] fixture_catalogue_mismatched_parent_subordinate: Detected subordinate mismatch when parent omits subordinate
-  [PASS] fixture_catalogue_quartermaster_treasury_chest: Detected INV-SOC-06 violation: Quartermaster holding TREASURY_CHEST
-  [PASS] fixture_catalogue_missing_canonical_ancestry: Detected missing canonical ancestry (half-elf)
-  [PASS] fixture_catalogue_noncanonical_ancestry: Detected non-canonical ancestry key (goblin)
-  [PASS] fixture_catalogue_invented_race_title: Detected invented race title 'Jarl' violating DEC-015
-  [PASS] fixture_catalogue_decided_cardinality: Detected premature decision of holder cardinality (SINGLE instead of UNDECIDED)
+  [PASS] fixture_catalogue_mismatched_parent_subordinate: Detected subordinate mismatch when parent omits subordinate (isolated: catalogue-subordinate-mismatch, passes when disabled)
+  [PASS] fixture_catalogue_quartermaster_treasury_chest: Detected INV-SOC-06 violation: Quartermaster holding TREASURY_CHEST (isolated: catalogue-inv-soc-06-treasury-chest-leak, passes when disabled)
+  [PASS] fixture_catalogue_missing_canonical_ancestry: Detected missing canonical ancestry (half-elf) (isolated: catalogue-missing-canonical-ancestry, passes when disabled)
+  [PASS] fixture_catalogue_noncanonical_ancestry: Detected non-canonical ancestry key (goblin) (isolated: catalogue-noncanonical-ancestry-key, passes when disabled)
+  [PASS] fixture_catalogue_invented_race_title: Detected invented race title 'Jarl' violating DEC-015 (isolated: catalogue-invented-race-title, passes when disabled)
+  [PASS] fixture_catalogue_decided_cardinality: Detected premature decision of holder cardinality (SINGLE instead of UNDECIDED) (isolated: catalogue-decided-cardinality, passes when disabled)
+  [PASS] fixture_catalogue_missing_parent: Detected missing parent office not found in catalogue (isolated: catalogue-missing-parent, passes when disabled)
+  [PASS] fixture_catalogue_missing_subordinate: Detected missing subordinate office not found in catalogue (isolated: catalogue-missing-subordinate, passes when disabled)
+  [PASS] fixture_catalogue_parent_mismatch: Detected parent mismatch when office lists subordinate pointing to another parent (isolated: catalogue-parent-mismatch, passes when disabled)
+  [PASS] fixture_catalogue_decided_max_holders: Detected premature decision of maxHolders in canonical record (isolated: catalogue-decided-max-holders, passes when disabled)
+  [PASS] fixture_catalogue_decided_concurrent_offices: Detected premature decision of allowConcurrentOffices in canonical record (isolated: catalogue-decided-concurrent-offices, passes when disabled)
+  [PASS] fixture_catalogue_decided_succession_method: Detected premature decision of succession method in canonical record (isolated: catalogue-decided-succession-method, passes when disabled)
+  [PASS] fixture_catalogue_decided_appointment_authority: Detected premature decision of appointmentAuthority in canonical record (isolated: catalogue-decided-appointment-authority, passes when disabled)
+  [PASS] fixture_catalogue_culture_outcome_not_open: Detected cultureOutcomeOpen set to false in canonical record (isolated: catalogue-culture-outcome-not-open, passes when disabled)
+  [PASS] fixture_catalogue_invented_age_gate: Detected invented minAge gate in canonical record (isolated: catalogue-invented-age-gate, passes when disabled)
+  [PASS] fixture_catalogue_invented_craft_gate: Detected invented requiredCrafts gate in canonical record (isolated: catalogue-invented-craft-gate, passes when disabled)
+  [PASS] fixture_catalogue_invented_class_gate: Detected invented requiredClasses gate in canonical record (isolated: catalogue-invented-class-gate, passes when disabled)
+  [PASS] fixture_catalogue_invented_level_gate: Detected invented minLevel gate in canonical record (isolated: catalogue-invented-level-gate, passes when disabled)
+  [PASS] fixture_catalogue_invented_baseline_hours: Detected invented baselineHoursPerWeek in canonical record (isolated: catalogue-invented-baseline-hours, passes when disabled)
+  [PASS] fixture_catalogue_hierarchy_cycle: Detected reciprocal multi-office hierarchy cycle (isolated: catalogue-hierarchy-cycle, passes when disabled)
+  [PASS] fixture_catalogue_omitted_cultural_titles: Detected omitted culturalTitles map in canonical office (isolated: catalogue-missing-canonical-ancestry, passes when disabled)
 
 --- Targeted Failing Provocations (Binding Rule) ---
   [PASS] provocation_missing_office_id: Killed: [required] officeId -> Missing required property: officeId
   [PASS] provocation_bad_office_id_pattern: Killed: [pattern] officeId -> String does not match pattern ^[A-Za-z][A-Za-z0-9_.:-]*$
+  [PASS] provocation_office_id_max_length_exceeded: Killed: [maxLength] officeId -> String length 67 > maxLength 64
   [PASS] provocation_missing_schema_version: Killed: [required] schemaVersion -> Missing required property: schemaVersion
   [PASS] provocation_bad_schema_version: Killed: [const] schemaVersion -> Expected constant "deus-office-schema/1.0.0", got "2.0.0"
   [PASS] provocation_missing_canonical_function: Killed: [required] canonicalFunction -> Missing required property: canonicalFunction
   [PASS] provocation_unknown_canonical_function: Killed: [enum] canonicalFunction -> Value "ARCH_LICH_KING" not in enum: [LEADER, EXECUTIVE, STEWARD, ADMIN, TREASURER, MINT_MASTER, MARSHAL, QUARTERMASTER, MASTER_OF_WORKS, PROVISIONER, RECORDER, MAGISTRATE, HEALER_DIRECTOR, HEALER, ENVOY, TRADE_MASTER, TAX_COLLECTOR, PAYMASTER, CLERK]
   [PASS] provocation_unknown_department: Killed: [enum] department -> Value "ALCHEMY_GUILD_DEPARTMENT" not in enum: [GOVERNANCE, ADMINISTRATION, FINANCE, DEFENSE, LOGISTICS, INFRASTRUCTURE, SUSTENANCE, RECORDS, JUSTICE, HEALTH, DIPLOMACY, COMMERCE]
   [PASS] provocation_missing_titles: Killed: [required] titles -> Missing required property: titles
+  [PASS] provocation_missing_cultural_titles: Killed: [required] titles.culturalTitles -> Missing required property: culturalTitles
   [PASS] provocation_empty_default_title: Killed: [minLength] titles.defaultTitle -> String length 0 < minLength 1
   [PASS] provocation_missing_jurisdiction: Killed: [required] jurisdiction -> Missing required property: jurisdiction
   [PASS] provocation_invalid_jurisdiction_scope: Killed: [enum] jurisdiction.scope -> Value "MULTIVERSE_LEVEL" not in enum: [FACTION, SETTLEMENT, REGIONAL, DEPARTMENTAL]
@@ -167,10 +177,13 @@ Executed both lane gates in the foreground within the workspace directory:
   [PASS] provocation_acting_missing_acting_holder: Killed: [semantic-acting-missing-holder] holder.actingHolderId -> An ACTING office must have a non-null actingHolderId
   [PASS] provocation_acting_bad_capability_low: Killed: [semantic-acting-capability-range] vacancyState.operationalCapability -> An ACTING office must have operationalCapability between 0.5 and 0.75
   [PASS] provocation_acting_bad_capability_high: Killed: [semantic-acting-capability-range] vacancyState.operationalCapability -> An ACTING office must have operationalCapability between 0.5 and 0.75
+  [PASS] provocation_deceased_holder_full_capability_retained: Killed: [semantic-deceased-holder-full-capability] vacancyState.operationalCapability -> An office cannot retain full operational capability (1.0) or OCCUPIED status when vacancyReason is HOLDER_DECEASED
+  [PASS] provocation_deceased_holder_acting_retains_primary: Killed: [semantic-deceased-primary-holder-retained] holder.primaryHolderId -> An office cannot retain a primaryHolderId when vacancyReason is HOLDER_DECEASED
   [PASS] provocation_single_cardinality_with_co_holders: Killed: [semantic-single-cardinality-coholders] holder.coHolderIds -> Single cardinality office cannot have co-holders
   [PASS] provocation_single_cardinality_bad_max_holders: Killed: [semantic-single-cardinality-max-holders] holder.maxHolders -> Single cardinality office maxHolders must be 1 or null
   [PASS] provocation_max_holders_exceeded: Killed: [semantic-max-holders-exceeded] holder.maxHolders -> Holder count (2) exceeds maxHolders (1)
-  [PASS] provocation_duty_phrase_in_degradation_effects: Killed: [pattern] vacancyState.degradationEffects[0] -> String does not match pattern ^[A-Z0-9_]+$
+  [PASS] provocation_duty_phrase_in_degradation_effects: Killed: [semantic-duty-in-degradation-effects] vacancyState.degradationEffects[0] -> degradationEffects cannot contain duty phrases or colon syntax
+  [PASS] provocation_invalid_token_pattern_in_degradation_effects: Killed: [pattern] vacancyState.degradationEffects[0] -> String does not match pattern ^[A-Z0-9_]+$
   [PASS] provocation_out_of_range_capability_negative: Killed: [minimum] vacancyState.operationalCapability -> Number -0.25 < minimum 0
   [PASS] provocation_out_of_range_capability_excess: Killed: [maximum] vacancyState.operationalCapability -> Number 1.25 > maximum 1
   [PASS] provocation_negative_since_year: Killed: [minimum] vacancyState.sinceYear -> Number -10 < minimum 0
@@ -199,8 +212,8 @@ Executed both lane gates in the foreground within the workspace directory:
   [PASS] provocation_extra_forbidden_property: Killed: [additionalProperties] unauthorizedExtraProperty -> Forbidden extra property: unauthorizedExtraProperty
 
 ==================================================
-TEST SUMMARY: 97 PASS, 0 FAIL
-PROVOCATIONS KILLED: 64/64
+TEST SUMMARY: 117 PASS, 0 FAIL
+PROVOCATIONS KILLED: 69/69
 ==================================================
 ```
 Exit code: 0.

@@ -386,13 +386,31 @@ function validateOffice(schemaObj, officeObj) {
             if (Array.isArray(vs.degradationEffects)) {
                 for (let i = 0; i < vs.degradationEffects.length; i++) {
                     const eff = String(vs.degradationEffects[i]);
-                    if (eff.includes("currentDuty") || eff.includes("duty") || eff.includes(":")) {
+                    const upper = eff.toUpperCase();
+                    if (upper.includes("DUTY") || eff.includes(":")) {
                         errors.push({
                             path: `vacancyState.degradationEffects[${i}]`,
                             rule: "semantic-duty-in-degradation-effects",
                             message: "degradationEffects cannot contain duty phrases or colon syntax"
                         });
                     }
+                }
+            }
+
+            // Deceased holder consistency (INV-SOC-03)
+            if (vs.vacancyReason === "HOLDER_DECEASED") {
+                if (vs.status === "OCCUPIED" || vs.operationalCapability >= 1.0) {
+                    errors.push({
+                        path: "vacancyState.operationalCapability",
+                        rule: "semantic-deceased-holder-full-capability",
+                        message: "An office cannot retain full operational capability (1.0) or OCCUPIED status when vacancyReason is HOLDER_DECEASED"
+                    });
+                } else if (officeObj.holder && officeObj.holder.primaryHolderId !== null) {
+                    errors.push({
+                        path: "holder.primaryHolderId",
+                        rule: "semantic-deceased-primary-holder-retained",
+                        message: "An office cannot retain a primaryHolderId when vacancyReason is HOLDER_DECEASED"
+                    });
                 }
             }
         }
@@ -523,8 +541,14 @@ function validateCatalogue(officesMap) {
         }
 
         // 3. Complete canonical ancestry coverage (DEC-025 & DEC-015)
-        if (office.titles && office.titles.culturalTitles) {
-            const ct = office.titles.culturalTitles;
+        const ct = (office.titles && office.titles.culturalTitles) ? office.titles.culturalTitles : null;
+        if (!ct) {
+            errors.push({
+                path: `${officeId}.titles.culturalTitles`,
+                rule: "catalogue-missing-canonical-ancestry",
+                message: `Office ${officeId} is missing culturalTitles map; all 9 canonical ancestries are required (DEC-025)`
+            });
+        } else {
             for (const ancestry of CANONICAL_ANCESTRIES) {
                 if (!(ancestry in ct)) {
                     errors.push({
@@ -532,7 +556,7 @@ function validateCatalogue(officesMap) {
                         rule: "catalogue-missing-canonical-ancestry",
                         message: `Missing canonical ancestry key: ${ancestry}`
                     });
-                } else if (ct[ancestry] !== office.titles.defaultTitle) {
+                } else if (office.titles && ct[ancestry] !== office.titles.defaultTitle) {
                     errors.push({
                         path: `${officeId}.titles.culturalTitles.${ancestry}`,
                         rule: "catalogue-invented-race-title",
@@ -638,6 +662,35 @@ function validateCatalogue(officesMap) {
                 rule: "catalogue-invented-baseline-hours",
                 message: `Canonical record invents baseline hours ${office.workloadProfile.baselineHoursPerWeek}; must be null`
             });
+        }
+    }
+
+    // 5. Hierarchy cycle detection across the catalogue (DFS / path walk)
+    const cycleReported = new Set();
+    for (const officeId of officeIds) {
+        const visitedInPath = [];
+        const visitedSet = new Set();
+        let currId = officeId;
+        while (currId) {
+            if (visitedSet.has(currId)) {
+                // Cycle detected
+                const cycleNodes = visitedInPath.slice(visitedInPath.indexOf(currId));
+                cycleNodes.sort();
+                const cycleKey = cycleNodes.join("->");
+                if (!cycleReported.has(cycleKey)) {
+                    cycleReported.add(cycleKey);
+                    errors.push({
+                        path: `${currId}.parentOfficeId`,
+                        rule: "catalogue-hierarchy-cycle",
+                        message: `Hierarchy cycle detected involving offices: ${cycleNodes.join(", ")}`
+                    });
+                }
+                break;
+            }
+            visitedInPath.push(currId);
+            visitedSet.add(currId);
+            const nextOffice = officesMap[currId];
+            currId = nextOffice ? nextOffice.parentOfficeId : null;
         }
     }
 
@@ -902,67 +955,235 @@ try {
 // ---------------------------------------------------------------------------
 console.log("\n--- Targeted Failing Fixtures for Production Rules ---");
 
-{
-    // Fixture 1: Mismatched parent-subordinate link
+function testCatalogueFixture(name, desc, expectedRule, mutateFn) {
     const catClone = clone(officesMapById);
-    catClone["OFFICE_LEADER"].subordinateOffices = catClone["OFFICE_LEADER"].subordinateOffices.filter(id => id !== "OFFICE_STEWARD");
-    const res1 = validateCatalogue(catClone);
-    if (!res1.ok && res1.errors.some(e => e.rule === "catalogue-subordinate-mismatch")) {
-        pass("fixture_catalogue_mismatched_parent_subordinate", "Detected subordinate mismatch when parent omits subordinate");
+    mutateFn(catClone);
+    const res = validateCatalogue(catClone);
+    const hasExpected = !res.ok && res.errors.some(e => e.rule === expectedRule);
+    const otherErrors = res.errors.filter(e => e.rule !== expectedRule);
+    if (hasExpected && otherErrors.length === 0) {
+        pass(name, `${desc} (isolated: ${expectedRule}, passes when disabled)`);
+    } else if (!hasExpected) {
+        fail(name, `Expected rule ${expectedRule} not fired. Errors: ${JSON.stringify(res.errors)}`);
     } else {
-        fail("fixture_catalogue_mismatched_parent_subordinate", "Failed to detect subordinate mismatch");
-    }
-
-    // Fixture 2: INV-SOC-06 Quartermaster domain leak
-    const catClone2 = clone(officesMapById);
-    catClone2["OFFICE_QUARTERMASTER"].jurisdiction.domains.push("TREASURY_CHEST");
-    const res2 = validateCatalogue(catClone2);
-    if (!res2.ok && res2.errors.some(e => e.rule === "catalogue-inv-soc-06-treasury-chest-leak")) {
-        pass("fixture_catalogue_quartermaster_treasury_chest", "Detected INV-SOC-06 violation: Quartermaster holding TREASURY_CHEST");
-    } else {
-        fail("fixture_catalogue_quartermaster_treasury_chest", "Failed to detect INV-SOC-06 violation");
-    }
-
-    // Fixture 3: Missing canonical ancestry
-    const catClone3 = clone(officesMapById);
-    delete catClone3["OFFICE_LEADER"].titles.culturalTitles["half-elf"];
-    const res3 = validateCatalogue(catClone3);
-    if (!res3.ok && res3.errors.some(e => e.rule === "catalogue-missing-canonical-ancestry")) {
-        pass("fixture_catalogue_missing_canonical_ancestry", "Detected missing canonical ancestry (half-elf)");
-    } else {
-        fail("fixture_catalogue_missing_canonical_ancestry", "Failed to detect missing canonical ancestry");
-    }
-
-    // Fixture 4: Non-canonical ancestry key
-    const catClone4 = clone(officesMapById);
-    catClone4["OFFICE_LEADER"].titles.culturalTitles["goblin"] = "Chief";
-    const res4 = validateCatalogue(catClone4);
-    if (!res4.ok && res4.errors.some(e => e.rule === "catalogue-noncanonical-ancestry-key")) {
-        pass("fixture_catalogue_noncanonical_ancestry", "Detected non-canonical ancestry key (goblin)");
-    } else {
-        fail("fixture_catalogue_noncanonical_ancestry", "Failed to detect non-canonical ancestry key");
-    }
-
-    // Fixture 5: Invented race title
-    const catClone5 = clone(officesMapById);
-    catClone5["OFFICE_LEADER"].titles.culturalTitles["dwarf"] = "Jarl";
-    const res5 = validateCatalogue(catClone5);
-    if (!res5.ok && res5.errors.some(e => e.rule === "catalogue-invented-race-title")) {
-        pass("fixture_catalogue_invented_race_title", "Detected invented race title 'Jarl' violating DEC-015");
-    } else {
-        fail("fixture_catalogue_invented_race_title", "Failed to detect invented race title");
-    }
-
-    // Fixture 6: Decided holder cardinality in canonical record
-    const catClone6 = clone(officesMapById);
-    catClone6["OFFICE_TREASURER"].holder.cardinality = "SINGLE";
-    const res6 = validateCatalogue(catClone6);
-    if (!res6.ok && res6.errors.some(e => e.rule === "catalogue-decided-cardinality")) {
-        pass("fixture_catalogue_decided_cardinality", "Detected premature decision of holder cardinality (SINGLE instead of UNDECIDED)");
-    } else {
-        fail("fixture_catalogue_decided_cardinality", "Failed to detect premature decision of holder cardinality");
+        fail(name, `Not isolated: had ${otherErrors.length} unexpected error(s): ${JSON.stringify(otherErrors)}`);
     }
 }
+
+// Fixture 1: Subordinate mismatch
+testCatalogueFixture(
+    "fixture_catalogue_mismatched_parent_subordinate",
+    "Detected subordinate mismatch when parent omits subordinate",
+    "catalogue-subordinate-mismatch",
+    cat => {
+        cat["OFFICE_LEADER"].subordinateOffices = cat["OFFICE_LEADER"].subordinateOffices.filter(id => id !== "OFFICE_STEWARD");
+    }
+);
+
+// Fixture 2: INV-SOC-06 Quartermaster domain leak
+testCatalogueFixture(
+    "fixture_catalogue_quartermaster_treasury_chest",
+    "Detected INV-SOC-06 violation: Quartermaster holding TREASURY_CHEST",
+    "catalogue-inv-soc-06-treasury-chest-leak",
+    cat => {
+        cat["OFFICE_QUARTERMASTER"].jurisdiction.domains.push("TREASURY_CHEST");
+    }
+);
+
+// Fixture 3: Missing canonical ancestry
+testCatalogueFixture(
+    "fixture_catalogue_missing_canonical_ancestry",
+    "Detected missing canonical ancestry (half-elf)",
+    "catalogue-missing-canonical-ancestry",
+    cat => {
+        delete cat["OFFICE_LEADER"].titles.culturalTitles["half-elf"];
+    }
+);
+
+// Fixture 4: Non-canonical ancestry key
+testCatalogueFixture(
+    "fixture_catalogue_noncanonical_ancestry",
+    "Detected non-canonical ancestry key (goblin)",
+    "catalogue-noncanonical-ancestry-key",
+    cat => {
+        cat["OFFICE_LEADER"].titles.culturalTitles["goblin"] = "Chief";
+    }
+);
+
+// Fixture 5: Invented race title
+testCatalogueFixture(
+    "fixture_catalogue_invented_race_title",
+    "Detected invented race title 'Jarl' violating DEC-015",
+    "catalogue-invented-race-title",
+    cat => {
+        cat["OFFICE_LEADER"].titles.culturalTitles["dwarf"] = "Jarl";
+    }
+);
+
+// Fixture 6: Decided holder cardinality in canonical record
+testCatalogueFixture(
+    "fixture_catalogue_decided_cardinality",
+    "Detected premature decision of holder cardinality (SINGLE instead of UNDECIDED)",
+    "catalogue-decided-cardinality",
+    cat => {
+        cat["OFFICE_TREASURER"].holder.cardinality = "SINGLE";
+    }
+);
+
+// Fixture 7: Missing parent office
+testCatalogueFixture(
+    "fixture_catalogue_missing_parent",
+    "Detected missing parent office not found in catalogue",
+    "catalogue-missing-parent",
+    cat => {
+        cat["OFFICE_TREASURER"].parentOfficeId = "OFFICE_DOES_NOT_EXIST";
+        cat["OFFICE_LEADER"].subordinateOffices = cat["OFFICE_LEADER"].subordinateOffices.filter(id => id !== "OFFICE_TREASURER");
+    }
+);
+
+// Fixture 8: Missing subordinate office
+testCatalogueFixture(
+    "fixture_catalogue_missing_subordinate",
+    "Detected missing subordinate office not found in catalogue",
+    "catalogue-missing-subordinate",
+    cat => {
+        cat["OFFICE_LEADER"].subordinateOffices.push("OFFICE_GHOST");
+    }
+);
+
+// Fixture 9: Parent mismatch (subordinate points to different parent)
+testCatalogueFixture(
+    "fixture_catalogue_parent_mismatch",
+    "Detected parent mismatch when office lists subordinate pointing to another parent",
+    "catalogue-parent-mismatch",
+    cat => {
+        cat["OFFICE_STEWARD"].subordinateOffices = ["OFFICE_CLERK"];
+    }
+);
+
+// Fixture 10: Decided maxHolders in canonical record
+testCatalogueFixture(
+    "fixture_catalogue_decided_max_holders",
+    "Detected premature decision of maxHolders in canonical record",
+    "catalogue-decided-max-holders",
+    cat => {
+        cat["OFFICE_TREASURER"].holder.maxHolders = 1;
+    }
+);
+
+// Fixture 11: Decided concurrent offices in canonical record
+testCatalogueFixture(
+    "fixture_catalogue_decided_concurrent_offices",
+    "Detected premature decision of allowConcurrentOffices in canonical record",
+    "catalogue-decided-concurrent-offices",
+    cat => {
+        cat["OFFICE_TREASURER"].holder.allowConcurrentOffices = true;
+    }
+);
+
+// Fixture 12: Decided succession method in canonical record
+testCatalogueFixture(
+    "fixture_catalogue_decided_succession_method",
+    "Detected premature decision of succession method in canonical record",
+    "catalogue-decided-succession-method",
+    cat => {
+        cat["OFFICE_TREASURER"].successionPolicy.method = "HEREDITARY";
+    }
+);
+
+// Fixture 13: Decided appointment authority in canonical record
+testCatalogueFixture(
+    "fixture_catalogue_decided_appointment_authority",
+    "Detected premature decision of appointmentAuthority in canonical record",
+    "catalogue-decided-appointment-authority",
+    cat => {
+        cat["OFFICE_TREASURER"].successionPolicy.appointmentAuthority = "OFFICE_RECORDER";
+    }
+);
+
+// Fixture 14: Culture outcome not open in canonical record
+testCatalogueFixture(
+    "fixture_catalogue_culture_outcome_not_open",
+    "Detected cultureOutcomeOpen set to false in canonical record",
+    "catalogue-culture-outcome-not-open",
+    cat => {
+        cat["OFFICE_TREASURER"].successionPolicy.cultureOutcomeOpen = false;
+    }
+);
+
+// Fixture 15: Invented age gate in canonical record
+testCatalogueFixture(
+    "fixture_catalogue_invented_age_gate",
+    "Detected invented minAge gate in canonical record",
+    "catalogue-invented-age-gate",
+    cat => {
+        cat["OFFICE_TREASURER"].successionPolicy.eligibilityCriteria.minAge = 18;
+    }
+);
+
+// Fixture 16: Invented craft gate in canonical record (INV-SOC-01 breach)
+testCatalogueFixture(
+    "fixture_catalogue_invented_craft_gate",
+    "Detected invented requiredCrafts gate in canonical record",
+    "catalogue-invented-craft-gate",
+    cat => {
+        cat["OFFICE_TREASURER"].successionPolicy.eligibilityCriteria.requiredCrafts = ["SCRIBE"];
+    }
+);
+
+// Fixture 17: Invented class gate in canonical record (INV-SOC-01 breach)
+testCatalogueFixture(
+    "fixture_catalogue_invented_class_gate",
+    "Detected invented requiredClasses gate in canonical record",
+    "catalogue-invented-class-gate",
+    cat => {
+        cat["OFFICE_TREASURER"].successionPolicy.eligibilityCriteria.requiredClasses = ["bard"];
+    }
+);
+
+// Fixture 18: Invented level gate in canonical record
+testCatalogueFixture(
+    "fixture_catalogue_invented_level_gate",
+    "Detected invented minLevel gate in canonical record",
+    "catalogue-invented-level-gate",
+    cat => {
+        cat["OFFICE_TREASURER"].successionPolicy.eligibilityCriteria.minLevel = 1;
+    }
+);
+
+// Fixture 19: Invented baseline hours in canonical record
+testCatalogueFixture(
+    "fixture_catalogue_invented_baseline_hours",
+    "Detected invented baselineHoursPerWeek in canonical record",
+    "catalogue-invented-baseline-hours",
+    cat => {
+        cat["OFFICE_TREASURER"].workloadProfile.baselineHoursPerWeek = 25;
+    }
+);
+
+// Fixture 20: Reciprocal multi-office hierarchy cycle
+testCatalogueFixture(
+    "fixture_catalogue_hierarchy_cycle",
+    "Detected reciprocal multi-office hierarchy cycle",
+    "catalogue-hierarchy-cycle",
+    cat => {
+        cat["OFFICE_LEADER"].subordinateOffices = cat["OFFICE_LEADER"].subordinateOffices.filter(id => id !== "OFFICE_STEWARD" && id !== "OFFICE_MARSHAL");
+        cat["OFFICE_STEWARD"].parentOfficeId = "OFFICE_MARSHAL";
+        cat["OFFICE_STEWARD"].subordinateOffices = ["OFFICE_MARSHAL"];
+        cat["OFFICE_MARSHAL"].parentOfficeId = "OFFICE_STEWARD";
+        cat["OFFICE_MARSHAL"].subordinateOffices = ["OFFICE_STEWARD"];
+    }
+);
+
+// Fixture 21: Completely omitted culturalTitles map in canonical office
+testCatalogueFixture(
+    "fixture_catalogue_omitted_cultural_titles",
+    "Detected omitted culturalTitles map in canonical office",
+    "catalogue-missing-canonical-ancestry",
+    cat => {
+        delete cat["OFFICE_LEADER"].titles.culturalTitles;
+    }
+);
 
 // ---------------------------------------------------------------------------
 // 10. Targeted Failing Provocations (Every Check Must Have a Failing Fixture)
@@ -982,6 +1203,12 @@ const provocations = [
         name: "provocation_bad_office_id_pattern",
         mutate: o => o.officeId = "123_invalid_start!",
         expectedRule: "pattern",
+        expectedProp: "officeId"
+    },
+    {
+        name: "provocation_office_id_max_length_exceeded",
+        mutate: o => o.officeId = "OFFICE_" + "A".repeat(60),
+        expectedRule: "maxLength",
         expectedProp: "officeId"
     },
     {
@@ -1019,6 +1246,12 @@ const provocations = [
         mutate: o => delete o.titles,
         expectedRule: "required",
         expectedProp: "titles"
+    },
+    {
+        name: "provocation_missing_cultural_titles",
+        mutate: o => delete o.titles.culturalTitles,
+        expectedRule: "required",
+        expectedProp: "titles.culturalTitles"
     },
     {
         name: "provocation_empty_default_title",
@@ -1237,6 +1470,31 @@ const provocations = [
         expectedProp: "vacancyState.operationalCapability"
     },
     {
+        name: "provocation_deceased_holder_full_capability_retained",
+        mutate: o => {
+            o.vacancyState.status = "OCCUPIED";
+            o.vacancyState.isVacant = false;
+            o.vacancyState.operationalCapability = 1.0;
+            o.vacancyState.vacancyReason = "HOLDER_DECEASED";
+            o.holder.primaryHolderId = "PERSON_184";
+        },
+        expectedRule: "semantic-deceased-holder-full-capability",
+        expectedProp: "vacancyState.operationalCapability"
+    },
+    {
+        name: "provocation_deceased_holder_acting_retains_primary",
+        mutate: o => {
+            o.vacancyState.status = "ACTING";
+            o.vacancyState.isVacant = false;
+            o.vacancyState.operationalCapability = 0.5;
+            o.vacancyState.vacancyReason = "HOLDER_DECEASED";
+            o.holder.actingHolderId = "PERSON_227";
+            o.holder.primaryHolderId = "PERSON_184";
+        },
+        expectedRule: "semantic-deceased-primary-holder-retained",
+        expectedProp: "holder.primaryHolderId"
+    },
+    {
         name: "provocation_single_cardinality_with_co_holders",
         mutate: o => {
             o.holder.cardinality = "SINGLE";
@@ -1268,7 +1526,15 @@ const provocations = [
     {
         name: "provocation_duty_phrase_in_degradation_effects",
         mutate: o => {
-            o.vacancyState.degradationEffects = ["currentDuty:DEFEND_GATE"];
+            o.vacancyState.degradationEffects = ["CURRENT_DUTY_DEFEND_GATE"];
+        },
+        expectedRule: "semantic-duty-in-degradation-effects",
+        expectedProp: "vacancyState.degradationEffects[0]"
+    },
+    {
+        name: "provocation_invalid_token_pattern_in_degradation_effects",
+        mutate: o => {
+            o.vacancyState.degradationEffects = ["INVALID TOKEN!"];
         },
         expectedRule: "pattern",
         expectedProp: "vacancyState.degradationEffects[0]"
@@ -1462,4 +1728,12 @@ console.log(`TEST SUMMARY: ${passed} PASS, ${failed} FAIL`);
 console.log(`PROVOCATIONS KILLED: ${killedCount}/${provocations.length}`);
 console.log("==================================================");
 
-process.exit(failed > 0 ? 1 : 0);
+if (require.main === module) {
+    process.exit(failed > 0 ? 1 : 0);
+}
+
+module.exports = {
+    validateOffice,
+    validateCatalogue,
+    schemaObj
+};

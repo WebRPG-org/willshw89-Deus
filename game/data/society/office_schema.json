@@ -40,7 +40,7 @@
     "titles": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["defaultTitle"],
+      "required": ["defaultTitle", "culturalTitles"],
       "properties": {
         "defaultTitle": {
           "type": "string",
