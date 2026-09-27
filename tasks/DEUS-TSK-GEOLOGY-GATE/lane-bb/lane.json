@@ -1,0 +1,17 @@
+{
+    "lane": "lane-bb",
+    "taskId": "DEUS-TSK-GEOLOGY-GATE",
+    "branch": "task/lane-bb",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "allowedPaths": [
+        "tools/test_geology_strata.js",
+        "tasks/DEUS-TSK-GEOLOGY-GATE/**"
+    ],
+    "gateTests": [
+        { "cmd": "node", "args": [ "tools/test_geology_strata.js" ], "timeoutSec": 900 },
+        { "cmd": "node", "args": [ "tools/test_strata_foundation.js" ], "timeoutSec": 1800 },
+        { "cmd": "node", "args": [ "tools/check_deus_syntax.js" ], "timeoutSec": 900 }
+    ]
+}
