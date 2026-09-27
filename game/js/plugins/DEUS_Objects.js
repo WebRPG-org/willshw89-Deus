@@ -72,6 +72,33 @@
         const W = World(), view = W && (typeof W.viewLevel === "function" ? W.viewLevel() : W.currentArea());
         return sameArea(view, area) && zOf(view) === zOf(area);
     };
+    // SIM.40.11. UF.Matter is absent until a host attaches it. Unattached calls do not change the world write.
+    function matterNote(kind, detail) {
+        const M = window.UF && UF.Matter;
+        if (!M || typeof M.note !== "function") return { ok: true, unbound: true };
+        try {
+            const v = M.note(kind, detail) || { ok: true };
+            if (v.ok === false && v.refuse && M.strict) {
+                const err = new Error(v.code || "E_MATTER");
+                err.code = v.code;
+                throw err;
+            }
+            return v;
+        } catch (err) {
+            if (M.strict) throw err;
+            if (typeof M.fail === "function") M.fail(kind, err);
+            return { ok: false, code: err && err.code };
+        }
+    }
+    function matterCover(fn) {
+        const M = window.UF && UF.Matter;
+        if (M && typeof M.cover === "function") return M.cover(fn);
+        return fn();
+    }
+    function matterCovered() {
+        const M = window.UF && UF.Matter;
+        return !!(M && typeof M.covered === "function" && M.covered());
+    }
 
     //-------------------------------------------------------------------------
     // Types: the catalog list with typeId = index + 1 (copies; the catalog itself stays untouched)
@@ -306,12 +333,33 @@
         if (to === null) return false;
         const from = W.getObject(area.x, area.y, x, y, z) | 0;
         if (from === to) return true;
-        if (!W.setObject(area.x, area.y, x, y, to, z)) return false; // records the diff and patches this level's maps
         const fromType = from ? typeOf(from) : null;
         const toType = to ? typeOf(to) : null;
+        const before = matterNote("object", {
+            phase: "before",
+            fromId: fromType ? fromType.id : null,
+            toId: toType ? toType.id : null,
+            cause: "objects:setIn"
+        });
+        if (before && before.refuse) return false;
+        if (!W.setObject(area.x, area.y, x, y, to, z)) return false; // records the diff and patches this level's maps
         scheduleRegrow(area, x, y, toType);
         if (z === 0) emit("objects:changed", { x: area.x, y: area.y }, x, y, fromType ? fromType.id : null, toType ? toType.id : null);
         else emit("objects:levelChanged", levelArea(area), x, y, fromType ? fromType.id : null, toType ? toType.id : null);
+        if (!matterCovered()) {
+            const wall = fromType && (fromType.autotile === "wall" || (Array.isArray(fromType.tags) && fromType.tags.indexOf("wall") >= 0));
+            if (wall && !toType && window.UF.Walls && typeof UF.Walls.collapse === "function") {
+                UF.Walls.collapse(fromType.id, 1, "walls:removed");
+            } else {
+                matterNote("object", {
+                    phase: "after",
+                    fromId: fromType ? fromType.id : null,
+                    toId: toType ? toType.id : null,
+                    cause: "objects:setIn",
+                    at: { x: x, y: y, z: z }
+                });
+            }
+        }
         return true;
     }
 
@@ -367,6 +415,7 @@
     function applyIn(area, x, y, action, actor) {
         const from = typeOf(typeIdIn(area, x, y));
         if (!from || !from.actions || !from.actions[action]) return null;
+        const run = () => {
         const a = from.actions[action];
         const yields = Object.assign({}, a.yields || {});
         const actorId = actor && actor.id !== undefined ? actor.id : (actor === undefined ? null : actor);
@@ -416,6 +465,10 @@
             from: from.id, to: toId, yields, items,
             actor: actor && actor.id !== undefined ? actor.id : (actor === undefined ? null : actor)
         };
+        };
+        const result = matterCover(run);
+        if (result) matterNote("harvest", { elementId: from.id, action: action, cause: "objects:" + action, at: { x: x, y: y, z: zOf(area) } });
+        return result;
     }
 
     function findIn(area, opts) {

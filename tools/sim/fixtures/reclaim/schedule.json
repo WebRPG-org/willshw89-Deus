@@ -1,0 +1,27 @@
+{
+  "ticks": 4000,
+  "seeds": [1, 2],
+  "setup": [
+    { "op": "slice", "id": "limestone", "count": 6 },
+    { "op": "slice", "id": "wood", "count": 3 },
+    { "op": "slice", "id": "rubble", "count": 2, "outdoor": true, "exempt": false },
+    { "op": "item", "id": "bar_iron", "count": 1, "exempt": true, "at": { "x": 0, "y": 0, "z": 0 } },
+    { "op": "item", "id": "bar_iron", "count": 1, "exempt": false, "at": { "x": 4, "y": 0, "z": 0 } },
+    { "op": "item", "id": "gold", "count": 1, "at": { "x": 1, "y": 1, "z": 0 } },
+    { "op": "item", "id": "bone", "count": 3628, "at": { "x": 2, "y": 2, "z": 0 } },
+    { "op": "item", "id": "gem_rough", "count": 1 },
+    { "op": "object", "id": "ironstone", "count": 1 },
+    { "op": "object", "id": "wall_wood", "count": 1 }
+  ],
+  "events": [
+    { "tick": 1, "op": "mine", "id": "limestone", "slices": 2 },
+    { "tick": 1, "op": "mine", "id": "wood", "slices": 1 },
+    { "tick": 1, "op": "harvest", "id": "ironstone" },
+    { "tick": 1, "op": "build", "id": "campfire" },
+    { "tick": 1, "op": "decay", "materialId": "bone" },
+    { "tick": 25, "op": "collapse", "id": "campfire" },
+    { "tick": 40, "op": "deconstruct", "id": "wall_wood" },
+    { "tick": 80, "op": "mine", "id": "limestone", "slices": 1, "seedMod": 2 },
+    { "tick": 80, "op": "mine", "id": "wood", "slices": 1, "seedMod": 1 }
+  ]
+}

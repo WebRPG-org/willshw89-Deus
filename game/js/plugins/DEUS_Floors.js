@@ -39,6 +39,29 @@
     const Objects = () => (window.UF && UF.Objects) || null;
     const Items = () => (window.UF && UF.Items) || null;
     const Jobs = () => (window.UF && UF.Jobs) || null;
+    // SIM.40.11. UF.Matter is absent until a host attaches it. Unattached calls do not change the world write.
+    function matterNote(kind, detail) {
+        const M = window.UF && UF.Matter;
+        if (!M || typeof M.note !== "function") return { ok: true, unbound: true };
+        try {
+            const v = M.note(kind, detail) || { ok: true };
+            if (v.ok === false && v.refuse && M.strict) {
+                const err = new Error(v.code || "E_MATTER");
+                err.code = v.code;
+                throw err;
+            }
+            return v;
+        } catch (err) {
+            if (M.strict) throw err;
+            if (typeof M.fail === "function") M.fail(kind, err);
+            return { ok: false, code: err && err.code };
+        }
+    }
+    function matterCover(fn) {
+        const M = window.UF && UF.Matter;
+        if (M && typeof M.cover === "function") return M.cover(fn);
+        return fn();
+    }
     const Tiles = () => (window.UF && UF.Tiles) || null;
     // Records store z beside area; API handles store it inside the area.
     const zOf = ref => ref && ref.z !== undefined ? ref.z : ref && ref.area && ref.area.z !== undefined ? ref.area.z : 0;
@@ -275,6 +298,8 @@
             const [cx, cy] = key.split(",").map(Number);
             L.setShape({ area: copyArea(area), x: cx, y: cy, z: targetZ }, "floor", { constructed: true, material: mat });
         }
+        // A deck written with no consumed bill is an unpaid world write. The ledger does not invent its mass.
+        matterNote("deck", { material: mat, count: cells.size, cause: "floors:deck" });
         return true;
     }
 
@@ -323,6 +348,7 @@
         if (!k || !floorKind(k.id) || !setGround(area, x, y, "dirt")) return false;
         const st = floorState(); if (st) st.removed++;
         emit("floors:removed", area, x, y, k.id);
+        matterNote("deconstruct", { elementId: k.id, count: 1, cause: "floors:removed", at: { x: x, y: y, z: zOf(area) } });
         return true;
     }
     function canLay(area, x, y, force) {
@@ -391,10 +417,20 @@
                     delete p.fetchItemId;
                     return "continue";
                 }
-                const ground = consumeGround(area, job.target.x, job.target.y, p.item, need);
-                const carried = ground < need && I ? I.consumeFrom(unit.id, p.item, need - ground) : 0;
-                if (ground + carried < need) { job.reason = `needs ${p.item}`; return; }
+                const paid = matterCover(() => {
+                    const ground = consumeGround(area, job.target.x, job.target.y, p.item, need);
+                    const carried = ground < need && I ? I.consumeFrom(unit.id, p.item, need - ground) : 0;
+                    return ground + carried;
+                });
+                if (paid < need) { job.reason = `needs ${p.item}`; return; }
                 if (!setFloor(area, job.target.x, job.target.y, p.kind)) { job.reason = "the floor could not be laid"; return; }
+                matterNote("build", {
+                    elementId: p.kind,
+                    item: p.item,
+                    count: need,
+                    cause: "floors:lay",
+                    at: { x: job.target.x, y: job.target.y, z: zOf(area) }
+                });
                 job.result = { kind: p.kind, item: p.item, count: need };
             },
             describe(job) {
