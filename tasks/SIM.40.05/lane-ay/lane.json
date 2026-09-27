@@ -1,0 +1,47 @@
+{
+    "lane": "lane-ay",
+    "taskId": "SIM.40.05",
+    "branch": "task/lane-ay",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "allowedPaths": [
+        "game/js/sim/decay/**",
+        "game/data/sim/decay_params.json",
+        "game/data/sim/decay_params.schema.json",
+        "tools/sim/test_decay_core.js",
+        "tools/sim/fixtures/decay/**",
+        "docs/systems/DEUS_Decay.md",
+        "tasks/SIM.40.05/lane-ay/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": [
+                "tools/sim/test_decay_core.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/sim/test_materials.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/sim/test_ledger.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/check_deus_syntax.js"
+            ],
+            "timeoutSec": 900
+        }
+    ]
+}
