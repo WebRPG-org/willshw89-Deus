@@ -1,0 +1,567 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://deus.local/srd_classes.schema.json",
+  "title": "DEUS canonical 2014 SRD 5.1 classes (SOC.11.01)",
+  "description": "Twelve SRD 5.1 classes keyed by the person-identity class ids. Conventions: null means the SRD class table prints an em dash (nothing at that level; never zero). An empty list means the SRD states 'None'. status NONE means the SRD class has no such feature or subsection. status UNAVAILABLE means the tracked extraction does not state the fact. Every src object names a source file key, an srd51 entry id, a JSON path inside that entry, and a verbatim quote.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "task", "edition", "license", "sources", "identity", "characterAdvancement", "raceClassPolicy", "unavailableFacts", "sourceDiscrepancies", "classes"],
+  "properties": {
+    "schema": { "const": 1 },
+    "task": { "const": "SOC.11.01" },
+    "edition": { "const": "SRD 5.1 (2014)" },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "url", "attribution"],
+      "properties": {
+        "id": { "const": "CC-BY-4.0" },
+        "url": { "type": "string", "minLength": 1 },
+        "attribution": { "type": "string", "minLength": 1 }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["character_options", "rules", "spells", "equipment", "creatures", "magic_items"],
+      "properties": {
+        "character_options": { "$ref": "#/$defs/sourceFile" },
+        "rules": { "$ref": "#/$defs/sourceFile" },
+        "spells": { "$ref": "#/$defs/sourceFile" },
+        "equipment": { "$ref": "#/$defs/sourceFile" },
+        "creatures": { "$ref": "#/$defs/sourceFile" },
+        "magic_items": { "$ref": "#/$defs/sourceFile" }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["module", "export", "schema"],
+      "properties": {
+        "module": { "const": "game/js/sim/society/identity.js" },
+        "export": { "const": "CLASS_IDS" },
+        "schema": { "const": "game/data/society/person_identity.schema.json" }
+      }
+    },
+    "characterAdvancement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["src", "levels"],
+      "properties": {
+        "src": { "$ref": "#/$defs/src" },
+        "levels": {
+          "type": "array",
+          "minItems": 20,
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["level", "experiencePoints", "proficiencyBonus"],
+            "properties": {
+              "level": { "$ref": "#/$defs/level" },
+              "experiencePoints": { "type": "integer", "minimum": 0 },
+              "proficiencyBonus": { "type": "integer", "minimum": 2, "maximum": 6 }
+            }
+          }
+        }
+      }
+    },
+    "raceClassPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule", "decision", "races", "statement"],
+      "properties": {
+        "rule": { "const": "NO_LOCKS" },
+        "decision": { "const": "DEC-036" },
+        "races": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^srd:race:[a-z-]+$" }
+        },
+        "statement": { "type": "string", "minLength": 1 }
+      }
+    },
+    "unavailableFacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field", "classes", "reason"],
+        "properties": {
+          "field": { "enum": ["primaryAbility"] },
+          "classes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/classId" } },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "sourceDiscrepancies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["class", "level", "tableLabel", "featureName", "note"],
+        "properties": {
+          "class": { "$ref": "#/$defs/classId" },
+          "level": { "$ref": "#/$defs/level" },
+          "tableLabel": { "type": "string", "minLength": 1 },
+          "featureName": { "type": "string", "minLength": 1 },
+          "note": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "classes": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": { "$ref": "#/$defs/class" }
+    }
+  },
+  "$defs": {
+    "classId": {
+      "enum": [
+        "srd:class:barbarian", "srd:class:bard", "srd:class:cleric", "srd:class:druid",
+        "srd:class:fighter", "srd:class:monk", "srd:class:paladin", "srd:class:ranger",
+        "srd:class:rogue", "srd:class:sorcerer", "srd:class:warlock", "srd:class:wizard"
+      ]
+    },
+    "ability": { "enum": ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"] },
+    "level": { "type": "integer", "minimum": 1, "maximum": 20 },
+    "count": { "type": ["integer", "null"], "minimum": 0 },
+    "sourceFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "contentSha256", "pdfSha256"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^game/data/srd51/[a-z_]+\\.json$" },
+        "contentSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "pdfSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "src": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "entry", "path", "quote"],
+      "properties": {
+        "file": { "enum": ["character_options", "rules", "spells", "equipment", "creatures", "magic_items"] },
+        "entry": { "type": "string", "pattern": "^srd:[a-z-]+:[a-z0-9-]+$" },
+        "path": { "type": "array", "minItems": 1, "items": { "type": ["string", "integer"] } },
+        "quote": { "type": "string", "minLength": 1 }
+      }
+    },
+    "slot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "kind", "refs"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["FEATURE_GAINED", "FEATURE_ADVANCED", "FEATURE_IMPROVED", "SUBCLASS_FEATURE"] },
+        "refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "detail": { "type": "string", "minLength": 1 }
+      },
+      "oneOf": [
+        { "properties": { "kind": { "enum": ["FEATURE_GAINED", "FEATURE_ADVANCED"] } } },
+        { "properties": { "kind": { "enum": ["FEATURE_IMPROVED", "SUBCLASS_FEATURE"] } }, "not": { "required": ["detail"] } }
+      ]
+    },
+    "classColumnValues": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rages": { "oneOf": [{ "type": "integer", "minimum": 0 }, { "const": "UNLIMITED" }, { "type": "null" }] },
+        "rageDamage": { "type": ["integer", "null"], "minimum": 0 },
+        "martialArts": { "oneOf": [{ "type": "string", "pattern": "^[0-9]+d[0-9]+$" }, { "type": "null" }] },
+        "kiPoints": { "$ref": "#/$defs/count" },
+        "unarmoredMovement": { "type": ["integer", "null"], "minimum": 0 },
+        "sneakAttack": { "oneOf": [{ "type": "string", "pattern": "^[0-9]+d[0-9]+$" }, { "type": "null" }] },
+        "sorceryPoints": { "$ref": "#/$defs/count" },
+        "invocationsKnown": { "$ref": "#/$defs/count" }
+      }
+    },
+    "levelSpellcasting": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["slots"],
+          "properties": {
+            "cantripsKnown": { "$ref": "#/$defs/count" },
+            "spellsKnown": { "$ref": "#/$defs/count" },
+            "slots": { "type": "array", "minItems": 5, "maxItems": 9, "items": { "$ref": "#/$defs/count" } }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["cantripsKnown", "spellsKnown", "pactSlots"],
+          "properties": {
+            "cantripsKnown": { "$ref": "#/$defs/count" },
+            "spellsKnown": { "$ref": "#/$defs/count" },
+            "pactSlots": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["count", "slotLevel"],
+              "properties": {
+                "count": { "$ref": "#/$defs/count" },
+                "slotLevel": { "type": ["integer", "null"], "minimum": 1, "maximum": 9 }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "levelRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "proficiencyBonus", "features", "classColumns", "spellcasting"],
+      "properties": {
+        "level": { "$ref": "#/$defs/level" },
+        "proficiencyBonus": { "type": "integer", "minimum": 2, "maximum": 6 },
+        "features": { "type": "array", "items": { "$ref": "#/$defs/slot" } },
+        "classColumns": { "$ref": "#/$defs/classColumnValues" },
+        "spellcasting": { "$ref": "#/$defs/levelSpellcasting" }
+      }
+    },
+    "noneBasis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "basis"],
+      "properties": {
+        "status": { "const": "NONE" },
+        "basis": { "enum": ["NO_SPELLCASTING_FEATURE", "NO_RITUAL_CASTING_SUBSECTION", "NO_SPELLCASTING_FOCUS_SUBSECTION"] }
+      }
+    },
+    "spellcasting": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "basis"],
+          "properties": {
+            "status": { "const": "NONE" },
+            "basis": { "const": "NO_SPELLCASTING_FEATURE" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "feature", "featureIndex", "gainedAtLevel", "ability", "abilitySrc", "spellList", "slotModel", "maxSlotLevel",
+            "progressionColumns", "preparation", "slotRecovery", "ritualCasting", "focus"],
+          "properties": {
+            "status": { "const": "PRESENT" },
+            "feature": { "enum": ["Spellcasting", "Pact Magic"] },
+            "featureIndex": { "type": "integer", "minimum": 0 },
+            "gainedAtLevel": { "$ref": "#/$defs/level" },
+            "ability": { "$ref": "#/$defs/ability" },
+            "abilitySrc": { "$ref": "#/$defs/src" },
+            "spellList": { "type": "string", "pattern": "^srd:spell-list:[a-z]+-spells$" },
+            "slotModel": { "enum": ["SPELL_LEVEL_SLOTS", "PACT_SLOTS"] },
+            "maxSlotLevel": { "type": "integer", "minimum": 1, "maximum": 9 },
+            "progressionColumns": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "enum": ["cantripsKnown", "spellsKnown", "slots", "pactSlots"] }
+            },
+            "preparation": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["model", "src"],
+                  "properties": { "model": { "const": "KNOWN" }, "src": { "$ref": "#/$defs/src" } }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["model", "ability", "classLevel", "minimum", "src"],
+                  "properties": {
+                    "model": { "const": "PREPARED" },
+                    "ability": { "$ref": "#/$defs/ability" },
+                    "classLevel": { "enum": ["FULL", "HALF_ROUNDED_DOWN"] },
+                    "minimum": { "type": "integer", "minimum": 1 },
+                    "src": { "$ref": "#/$defs/src" }
+                  }
+                }
+              ]
+            },
+            "slotRecovery": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["rest", "src"],
+              "properties": { "rest": { "enum": ["LONG_REST", "SHORT_OR_LONG_REST"] }, "src": { "$ref": "#/$defs/src" } }
+            },
+            "ritualCasting": {
+              "oneOf": [
+                { "$ref": "#/$defs/noneBasis" },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["status", "spellSource", "src"],
+                  "properties": {
+                    "status": { "const": "PRESENT" },
+                    "spellSource": { "enum": ["KNOWN", "PREPARED", "IN_SPELLBOOK"] },
+                    "src": { "$ref": "#/$defs/src" }
+                  }
+                }
+              ]
+            },
+            "focus": {
+              "oneOf": [
+                { "$ref": "#/$defs/noneBasis" },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["status", "item", "src"],
+                  "properties": {
+                    "status": { "const": "PRESENT" },
+                    "item": { "type": "string", "minLength": 1 },
+                    "src": { "$ref": "#/$defs/src" }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "class": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "source", "hitDie", "hitPoints", "primaryAbility", "savingThrows", "proficiencies", "spellcasting", "subclass",
+        "tableSrc", "classColumns", "features", "levels"],
+      "properties": {
+        "id": { "$ref": "#/$defs/classId" },
+        "name": { "type": "string", "minLength": 1 },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["file", "entry", "pages", "heading", "readiness"],
+          "properties": {
+            "file": { "const": "character_options" },
+            "entry": { "$ref": "#/$defs/classId" },
+            "pages": { "type": "array", "minItems": 1, "items": { "type": "integer", "minimum": 1 } },
+            "heading": { "type": "string", "minLength": 1 },
+            "readiness": { "enum": ["extracted", "parsed", "verified", "adapted"] }
+          }
+        },
+        "hitDie": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["die", "sides", "src"],
+          "properties": {
+            "die": { "type": "string", "pattern": "^d(6|8|10|12)$" },
+            "sides": { "enum": [6, 8, 10, 12] },
+            "src": { "$ref": "#/$defs/src" }
+          }
+        },
+        "hitPoints": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["firstLevel", "laterLevels"],
+          "properties": {
+            "firstLevel": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["base", "plusModifier", "src"],
+              "properties": {
+                "base": { "type": "integer", "minimum": 1 },
+                "plusModifier": { "$ref": "#/$defs/ability" },
+                "src": { "$ref": "#/$defs/src" }
+              }
+            },
+            "laterLevels": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["roll", "fixed", "plusModifier", "src"],
+              "properties": {
+                "roll": { "type": "string", "pattern": "^1d(6|8|10|12)$" },
+                "fixed": { "type": "integer", "minimum": 1 },
+                "plusModifier": { "$ref": "#/$defs/ability" },
+                "src": { "$ref": "#/$defs/src" }
+              }
+            }
+          }
+        },
+        "primaryAbility": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reason", "search"],
+          "properties": {
+            "status": { "const": "UNAVAILABLE" },
+            "reason": { "type": "string", "minLength": 1 },
+            "search": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["files", "pattern", "caseInsensitive", "matches"],
+              "properties": {
+                "files": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": { "enum": ["character_options", "rules", "spells", "equipment", "creatures", "magic_items"] }
+                },
+                "pattern": { "type": "string", "minLength": 1 },
+                "caseInsensitive": { "const": true },
+                "matches": { "const": 0 }
+              }
+            }
+          }
+        },
+        "savingThrows": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["abilities", "src"],
+          "properties": {
+            "abilities": { "type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": { "$ref": "#/$defs/ability" } },
+            "src": { "$ref": "#/$defs/src" }
+          }
+        },
+        "proficiencies": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["armor", "weapons", "tools", "skills"],
+          "properties": {
+            "armor": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["grants", "qualifier", "src"],
+              "properties": {
+                "grants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["token", "armorCategories"],
+                    "properties": {
+                      "token": { "type": "string", "minLength": 1 },
+                      "armorCategories": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": { "enum": ["light", "medium", "heavy", "shield"] }
+                      }
+                    }
+                  }
+                },
+                "qualifier": { "type": ["string", "null"], "minLength": 1 },
+                "src": { "$ref": "#/$defs/src" }
+              }
+            },
+            "weapons": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["grants", "src"],
+              "properties": {
+                "grants": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["token", "weaponCategory"],
+                        "properties": { "token": { "type": "string", "minLength": 1 }, "weaponCategory": { "enum": ["simple", "martial"] } }
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["token", "equipment"],
+                        "properties": {
+                          "token": { "type": "string", "minLength": 1 },
+                          "equipment": { "type": "string", "pattern": "^srd:weapon:[a-z-]+$" }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "src": { "$ref": "#/$defs/src" }
+              }
+            },
+            "tools": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["fixed", "choice", "src"],
+              "properties": {
+                "fixed": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^srd:tool:[a-z-]+$" } },
+                "choice": {
+                  "oneOf": [
+                    { "type": "null" },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["count", "groups"],
+                      "properties": {
+                        "count": { "type": "integer", "minimum": 1 },
+                        "groups": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+                      }
+                    }
+                  ]
+                },
+                "src": { "$ref": "#/$defs/src" }
+              }
+            },
+            "skills": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["choose", "from", "src"],
+              "properties": {
+                "choose": { "type": "integer", "minimum": 1 },
+                "from": {
+                  "oneOf": [
+                    { "const": "ANY" },
+                    { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+                  ]
+                },
+                "src": { "$ref": "#/$defs/src" }
+              }
+            }
+          }
+        },
+        "spellcasting": { "$ref": "#/$defs/spellcasting" },
+        "subclass": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["choiceFeature", "choiceLevel", "featureLevels", "srdSubclasses"],
+          "properties": {
+            "choiceFeature": { "type": "string", "minLength": 1 },
+            "choiceLevel": { "$ref": "#/$defs/level" },
+            "featureLevels": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/level" } },
+            "srdSubclasses": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "pattern": "^srd:subclass:[a-z-]+$" } }
+          }
+        },
+        "tableSrc": { "$ref": "#/$defs/src" },
+        "classColumns": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["key", "sourceColumn", "valueType"],
+            "properties": {
+              "key": { "enum": ["rages", "rageDamage", "martialArts", "kiPoints", "unarmoredMovement", "sneakAttack", "sorceryPoints", "invocationsKnown"] },
+              "sourceColumn": { "type": "string", "minLength": 1 },
+              "valueType": { "enum": ["COUNT", "COUNT_OR_UNLIMITED", "BONUS", "DICE", "FEET_BONUS"] }
+            }
+          }
+        },
+        "features": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "level", "sourceIndex"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "level": { "$ref": "#/$defs/level" },
+              "sourceIndex": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "levels": { "type": "array", "minItems": 20, "maxItems": 20, "items": { "$ref": "#/$defs/levelRow" } }
+      }
+    }
+  }
+}
