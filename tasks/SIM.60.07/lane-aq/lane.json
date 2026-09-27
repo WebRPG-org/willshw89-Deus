@@ -1,0 +1,30 @@
+{
+    "lane":  "lane-aq",
+    "taskId":  "SIM.60.07",
+    "branch":  "task/lane-aq",
+    "writer":  "grok",
+    "reviewer":  "gemini",
+    "push":  true,
+    "allowedPaths":  [
+                         "game/js/plugins/DEUS_Wildlife.js",
+                         "tools/sim/test_wildlife_rules_damage.js",
+                         "tools/sim/fixtures/wildlife_rules/**",
+                         "tasks/SIM.60.07/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/sim/test_wildlife_rules_damage.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  900
+                      }
+                  ]
+}
