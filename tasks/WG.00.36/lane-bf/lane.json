@@ -1,0 +1,38 @@
+{
+    "lane": "lane-bf",
+    "taskId": "WG.00.36",
+    "branch": "task/lane-bf",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "allowedPaths": [
+        "game/js/plugins/DEUS_Select.js",
+        "game/js/plugins/DEUS_LayerOverlays.js",
+        "docs/systems/UF_Select.md",
+        "tools/select_xlayer/**",
+        "tasks/WG.00.36/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": [
+                "tools/select_xlayer/test_xlayer_select.js"
+            ],
+            "timeoutSec": 1800
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/layer_overlays/test_layer_overlays.js"
+            ],
+            "timeoutSec": 1800
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/check_deus_syntax.js"
+            ],
+            "timeoutSec": 900
+        }
+    ]
+}
