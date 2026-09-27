@@ -1,0 +1,451 @@
+# DEUS Class Map Sprite Standard (v1, draft for Owner approval)
+
+Written 2026-09-26, 16:29–16:50 CT. **0 generations spent** (balance 9,741.1; hard stop 9,740).
+Companion files: `DEUS_GENERATION_RECIPES.md` §3.0 (pointer), `PIXELLAB_DOCS_REFERENCE.md`, look-test page `look/LOOK_COMPARISON.html`.
+
+## Summary (for the Owner)
+Every playable look is **one PixelLab v3 character per race × class × sex (9 × 12 × 2 = 216)**, drawn in the look of look-test row 6 (the plain v3 human, L09), but at the heights in our repo size chart. Each one is made the same way:
+1. A **base** character (8 directions) with idle and walk.
+2. Five **States** made from that base: attack, cast, ranged, down, working. Each State gets one animation.
+
+Gear, moods and conditions never change the map sprite. Gear is not shown; moods use emote balloons; conditions use shared overlays; people differ through their 144×144 faceset portraits.
+
+Every prompt is filled from a fixed template. The slots take the chart heights, head/torso/leg pixel counts, anchor points, per-material hex ramps and weapon lengths. Because the look test showed PixelLab treats these numbers as hints, every output is also cropped, anchored and palette-snapped locally, then measured against the chart before it is accepted.
+
+Estimated cost is **~130–150 gens per sprite first pass (~158–183 with retries), ~28,100–32,400 for all 216 (~34,100–39,500 with retries)**. That is 3–4× the current balance, so the Owner needs to decide on budget or the cost options in §9.
+
+---
+
+## 1. Locked rulings (Owner, 2026-09-26)
+| # | Ruling | Time CT |
+|---|---|---|
+| R1 | 216 map sprites = 9 SRD races × 12 SRD classes × 2 sexes | 16:17 / 16:18 |
+| R2 | Fully generated PixelLab **v3 characters**, 8 directions, `view` "low top-down"; no paper-doll layering | 16:17 |
+| R3 | Style target = look-test row 6 (L09 plain v3 human, 44 canvas), with the height fixed to the chart (L09 came out 39–40 px, below the 40 px minimum) | 16:29 |
+| R4 | Workflow: base character, then States, then animations | 16:10 / 16:15 |
+| R5 | Every character gets **6 states**: base (idle and walk animations on it), attack (class signature weapon, own pose), cast, ranged, down (death/KO), working/crafting | 16:21–16:29 |
+| R6 | Everything else (moods, SRD conditions) is emote balloons, portraits or shared condition overlays, never per-character states | 16:29 |
+| R7 | Multiclass uses the highest-level class sprite; a tie keeps the current sprite | 16:29 |
+| R8 | Gear does not change the map sprite | 16:17 |
+| R9 | Facesets carry per-person variety: 144×144 whole-image portraits in the Owner style ref (`reference/OWNER_PORTRAIT_STYLE_REF_01.png`) | 16:05 / 16:17 |
+| R10 | Maximum pixel-level control in every prompt | 16:16 |
+| R11 | Use **our repo size reference** (scale_chart.json, DEUS_HUMAN_SCALE_STRIP_V1.png, DEUS_HUMAN_WORLD_SCALE_STANDARD.md), not a PixelLab feature | 16:20 |
+| R12 | Each class has its own attack pose and weapon; no shared swing and no rotating weapon sprite | 16:21 |
+
+## 2. Size authority (repo files, copied read-only to `/workspace/pixellab/reference/scale/`)
+| File | sha256 (first 16) | Used for |
+|---|---|---|
+| `art/catalogue/scale_chart.json` | f3af0b1140eaa864 | HUMAN 18×42 (14–22 × 40–44), DWARF 20×36, ELF 16×43, CHILD 14×26; LARGE 64×80 |
+| `art/reference/DEUS_HUMAN_SCALE_STRIP_V1.png` | 5ce5cefef0a39d7b | Visual yardstick: its human is 42 px (head 12, torso 12, belt 2, legs 16), baseline y=180 |
+| `docs/art/DEUS_HUMAN_WORLD_SCALE_STANDARD.md` | c19014d8fd1aa8cb | Anchor x=24, baseline y=47 in the 48 cell; human ~3.0–3.2 heads; dwarf ~2.8; elf ~3.3 |
+| `art/catalogue/size_classes.json` | 91bc1fcfcff9ebca | Drawn heights for the six races the chart lacks (7 px per foot) |
+| `art/catalogue/geometry.json` | n/a | Frame classes: SMALL/MEDIUM = 48×48; the TALL_MEDIUM 48×64 option exists but is disabled; small-race readability floor 26–28 px exists but is disabled |
+| `art/reference/DEUS_SCALE_LANGUAGE_V1.png` | 7ccbc8d9b67bd736 | Proportion/feel comparison only (not a ruler, per the standard) |
+| (derived) `reference/scale/SIZE_BLOCK_HUMAN42_48cell.png` | bb1144b4be083372 | The strip's human cut to a 48 cell (42×18, feet on row 47); post-process overlay and contact sheets |
+
+**How the size reference enters the pipeline:**
+- PixelLab has no size-reference input.
+- `create-character-v3`'s only image input is `reference_image`, and the model *rotates* that image. It copies the image, so we do not pass the strip there.
+- The size reference is therefore used in three places:
+  - **(a) Prompt numbers.** Every prompt carries the chart numbers (§4 slots).
+  - **(b) Post-process gate.** Height/width/anchor are checked against the chart row (§3 step 7).
+  - **(c) Review.** Every contact sheet shows SIZE_BLOCK_HUMAN42 beside the sprite on the same 1x ground.
+- **Log per attempt:** `size_ref_files` = [scale_chart.json@f3af0b11 row id or size_classes.json@91bc1fcf race id, DEUS_HUMAN_SCALE_STRIP_V1.png@5ce5cefe].
+
+## 3. Step-by-step process (one step per stage)
+Global settings for every call:
+- Base URL `https://api.pixellab.ai/v2`.
+- `no_background` true.
+- `view` "low top-down".
+- `template_id` "mannequin".
+- `outline` "single color outline" (self-tinted; never "single color black outline").
+- `detail` "medium detail".
+- `enhance_prompt` **false** (it rewrites the text and drops the pixel numbers).
+- Seed `crc32("{race}_{sex}_{class}_{stage}") % 2^31 + 1000 × attempt`.
+
+Budget guard: pre-check `balance − expected_cost ≥ hard stop` before every call. Never print the API key.
+
+### Step 0. Preflight (0 gens)
+- **Inputs:** race row (§6), class row (§5), sex, the palette file `art/palette/deus_master_world_palette_v1.hex` (sha befb4641…), and the ramps in §6/§5.
+- **Do:**
+  - Build the prompt strings from the templates (§4) by code, never by hand.
+  - Build `pal_{race}_{class}.png`: all ramp colours plus the outline shades, ≤40 colours [TUNE].
+  - Write the manifest row.
+- **Accept:** every slot is filled, and no forbidden words appear ("16-bit", "JRPG", "transparent", "sprite sheet", "paper-doll", "background").
+
+### Step 1. Base character
+- **Endpoint:** `POST /create-character-v3`, from scratch (no `reference_image`).
+- **Settings:**
+  - `description` = Template B (§4.1).
+  - `image_size` {C,C} with C = the race canvas (§6): human 44.
+  - Global settings as above. `name` = `{race}_{sex}_{class}_base`.
+- **Cost:** ~2 gens at C ≤ 64 (measured 2.0–2.05 ×3).
+- **Output:** 8 rotations. GET `/characters/{id}` and download `rotation_urls` with `curl -sfL -A 'Mozilla/5.0'`.
+- **Post:**
+  1. Binary-alpha check.
+  2. Measure the bbox, feet row and centre column per direction.
+  3. Anchor-crop into the 48×48 cell: feet on y=47, bbox centre on x=24, whole pixels only, no scaling.
+  4. OKLab no-dither snap to `pal_{race}_{class}`, then save `base_palette.png` (the colours actually used).
+- **Accept:**
+  - Height within the race min–max in all 8 directions.
+  - Height within ±1 of the target in S/W/E/N.
+  - Width (torso, excluding weapon) within the chart min–max.
+  - Weapon (sheathed/slung) inside the 48 cell.
+  - Outline self-tinted: 0 pure-black outline pixels (`#000000`–`#0a0a0a`).
+  - ≤40 colours after the snap.
+  - Straight-on S view; face readable at 1x.
+  - The class silhouette items from §5 are visible in S and N.
+
+### Step 2. Base animations: idle and walk (on the base character)
+- **Endpoint:** `POST /characters/animations` `mode` "v3", one direction per call, directions S, W, E, N.
+- **Settings:**
+  - `character_id` = base; `description` = Template B + that direction's facing phrase.
+  - `action_description` = Template A-idle or A-walk.
+  - `frame_count`: idle 4, walk 4 (select 3 for RMMZ: 1-2-3-2 playback).
+  - `keep_first_frame` false.
+  - `color_image` = base_palette.png, `force_colors` true.
+  - Seed per policy.
+- **Cost:** ~1 gen per direction (measured) → 8 gens.
+- **Post:**
+  - Frames come back on a larger canvas (44 → 64). Crop the whole clip with **one** offset, computed from the base rotation's feet/centre. Never re-centre per frame.
+  - Snap to base_palette.
+- **Accept:**
+  - Feet row ±1 across frames (a whole-pixel re-anchor on the feet is allowed).
+  - Head px exact vs base ≥80 % outside moving parts.
+  - 0 colours outside base_palette after the snap.
+  - Loops cleanly.
+
+### Step 3. States (5 per character)
+- **Endpoint:** `POST /create-character-state`, the API equivalent of the web "Create State" screen.
+- **Settings:**
+  - `character_id` = base.
+  - `edit_description` = Template S-{state} (§4.2).
+  - `override_frame_size` {CS,CS} with CS = the state canvas (§6): human 56. Always resize, because every state moves limbs or a weapon out of the standing silhouette. Multiples of 4, ≥ C.
+  - `use_color_palette_from_reference` **true** for all 5 states: they are pose changes of the same outfit, and gear does not change. Set it **false** only if the Owner approves a state that adds new colours, such as spell glow. Then list the new ramp in the prompt and add it to the palette.
+  - `no_background` true; `seed` per policy; `state_name` = "Attack" / "Cast" / "Ranged" / "Down" / "Work".
+- **No style input:** the State API has none; the base character is the only reference.
+- **Cost:** 20 gens at CS ≤ 84 (web: 20–40); verify on the first call.
+- **Post:**
+  - Download 8 rotations.
+  - Anchor by feet/centre into the 48 cell; for Down, anchor the body's centre of mass on x=24 and its lowest pixel on y=47.
+  - **Snap to base_palette.** The look test showed a State redraws with a new ≈26-colour palette (only 1 exact colour shared with the base).
+- **Accept:**
+  - All opaque pixels fit inside the 48×48 cell after anchoring (frame class MEDIUM/SMALL = 48×48). If a weapon is clipped, retry. After 2 retries, raise the Owner decision O4 (64-px action frames).
+  - Figure height ±1 of the base (not for Down).
+  - Face, hair and outfit read as the same person; head IoU vs base ≥0.6 (measured 0.57–0.82).
+  - Weapon length within ±2 px of §5.
+  - The weapon is in the correct hand (character's right = viewer's left in S).
+
+### Step 4. State animations (one per state)
+- **Endpoint:** `POST /characters/animations` `mode` "v3", directions S, W, E, N, one per call.
+- **Settings:**
+  - `character_id` = that State; `description` = Template B + facing phrase.
+  - `action_description` = Template A-{state}.
+  - `frame_count` 6 for every state clip.
+  - `keep_first_frame` false.
+  - `color_image` = base_palette.png + `force_colors` true.
+  - **Down only:** interpolate from standing with `custom_start_frame` = base rotation (that direction) and `end_frame` = the Down State rotation.
+- **Cost:** ~1 gen per direction at ≤64; 1–2 above 64 [TUNE] → 20 gens (5 states × 4).
+- **Post:**
+  - One crop offset per clip; the 48 cell (or the O4 frame).
+  - Snap to base_palette. The look test had 7–15 off-palette colours per frame even with force_colors.
+- **Accept:**
+  - Feet ±1 (L11 drifted 3 px, so re-anchor).
+  - Weapon length ±2 px frame to frame (L11: 13–18 px).
+  - Nothing outside the cell.
+  - The motion reads at 1x.
+
+### Step 5. Directions for RMMZ
+- Use the S/W/E/N rotations and animations; diagonals are kept for DEUS use only.
+- No W↔E mirroring, because weapons are handed.
+
+### Step 6. Packing
+RMMZ `$` sheets with 48×48 frames:
+- Walk: 3 frames × 4 rows per sheet.
+- Idle and each state clip: 3–6 frames × 4 rows.
+- Layout per `docs/RMMZ_ASSET_SPEC.md` and geometry.json `rmmzCharacterBlocks`.
+- The sidecar stores the anchor (24,47) and the hand/weapon anchors.
+
+### Step 7. QA gate and contact sheet (0 gens)
+- Build a 1x sheet on grass, dirt, stone and snow, with SIZE_BLOCK_HUMAN42 and the H05 cottage for scale, plus a view-only 3x nearest-neighbour copy.
+- Automated checks:
+  - Binary alpha.
+  - 1:1 grid (no fat pixels).
+  - Height/width vs the race row.
+  - Anchor ±1.
+  - In-palette 100 %.
+  - Outline rule.
+  - Light check: upper-left mean L > lower-right mean L.
+  - Grayscale readability.
+- The Owner approves per race (first sprite) and then by sample.
+
+### Retry rule (all stages)
+- If an output fails acceptance, retry with the next seed (attempt+1), max **2 retries** per stage.
+- A failure on a measurable number (height, weapon length, clipping) may add one corrective sentence to the prompt; log it as `prompt_patch`.
+- After 3 failed attempts, stop and flag the item as `NEEDS_OWNER` (hand-fix, O4, or a chart question).
+- Never loosen the chart or accept a scaled image.
+
+### Logging fields (one JSON line per attempt, `pixellab/prod/log.jsonl`)
+- **Identity:** `asset_id` (`{race}_{sex}_{class}_{stage}[_{anim}_{dir}]`), `race`, `sex`, `class`, `stage`, `attempt`.
+- **Request:** `endpoint`, the full `request_body` (base64 images replaced by file path + sha), the `prompt`/`edit_description`/`action_description` text verbatim, `seed`.
+- **References:** `size_ref_files` (with sha and row id), `palette_file` (+sha), `source_character_id`, `result_character_id` / `animation_id`.
+- **Cost and time:** `gens_cost`, `balance_before`, `balance_after`, `started_ct`, `finished_ct`.
+- **Results:** `raw_files[]`, `post_files[]`, measurements (`height[dir]`, `width[dir]`, `feet_row`, `centre_col`, `colours`, `off_palette_px`, `clipped_px`, `head_iou`, `weapon_len`), `accept` (pass/fail and which check), `prompt_patch`, `reviewer`.
+
+## 4. Prompt templates
+**Phrasing rule.** Use the L09 phrasing, which produced the preferred look: a short plain noun phrase, "with …", "wearing A, B, C and D", "empty hands".
+
+L09 was generated with prompt enhancement ON. Its enhanced text was:
+> A man with short brown hair and a determined expression, wearing a simple undyed linen tunic, a brown leather belt, wool trousers, and leather boots, standing in a steady, neutral pose with a single color outline.
+
+We keep that sentence style and add the pixel block after it. Enhancement is **off** so the numbers survive [TEST O7].
+
+**Coordinates.** Anchors are given as **(dx, dy) from the ground anchor**:
+- dx = columns right of the centre column (viewer's right is +).
+- dy = rows above the feet baseline.
+
+That makes them valid on any canvas (base C, state CS, or the 48 cell). The canvas rows are also stated for the base.
+
+### 4.1 Template B — base character (`description`)
+```
+{race_noun} {sex_noun} {class_noun} with {hair_style} {hair_colour_word} hair and {face_trait}, wearing {garment_1}, {garment_2}, {garment_3} and {footwear}, {carried_weapon_phrase}, empty hands.
+Low top-down view. Figure {H} px tall and {W} px wide at the shoulders in a {C}x{C} px canvas: top of head on row {C-H}, feet on row {C-1}, body centred on column {C/2}.
+Head {h_head} px, torso {h_torso} px, legs {h_legs} px ({heads} heads tall); shoulders at {H-h_head} px above the feet, belt at {h_legs} px above the feet, hands hanging at {dy_hand} px above the feet, {dx_hand} px left and right of centre.
+Colours: skin {skin_b} with shadow {skin_s} and highlight {skin_h}; hair {hair_b}, shadow {hair_s}, highlight {hair_h}; {mat_1_name} {m1_b}, shadow {m1_s}, highlight {m1_h}; {mat_2_name} {m2_b}, shadow {m2_s}, highlight {m2_h}; {mat_3_name} {m3_b}, shadow {m3_s}, highlight {m3_h}; {accent_name} {acc_b}, shadow {acc_s}, highlight {acc_h}. At most {N_colours} colours.
+{sig_item_1: shape, W x H px, position (dx,dy), material, colour}; {sig_item_2 …}; {carried weapon: length px, width px, angle, position}.
+1 px dark outline tinted from each area's own shadow colour, no anti-aliasing, no dithering. Light from the top left, shadows on the lower right.
+```
+Slots:
+- `{race_noun}`: human, dwarf, elf, halfling, gnome, half-elf, half-orc, tiefling, dragonborn. `{sex_noun}`: man / woman (dwarf man, elf woman …).
+- `{class_noun}` per §5.
+- H, W, C, `h_*`, `heads` per §6.
+- `dy_hand` = round(0.36 × H); `dx_hand` = W/2 + 1.
+- Ramps per §5/§6.
+- `N_colours` 32 [TUNE].
+
+**Facing phrases** (animations only; the base generates all 8 directions):
+- S: "facing the viewer"
+- W: "facing left, left side profile"
+- E: "facing right, right side profile"
+- N: "facing away from the viewer"
+
+### 4.2 State templates (`edit_description`, imperative; always end with the KEEP clause)
+**KEEP clause (append to every state):**
+```
+Keep {his|her} face, hair, body proportions, outfit, colours and 1 px self-tinted outline exactly the same; the figure stays {H} px tall with the feet on the same baseline and centred on the same column. Everything stays inside a 48 x 48 px box around the feet.
+```
+- **S-attack:**
+  ```
+  Change to an attack pose with the {weapon}: {attack_pose}. The {weapon} is {L_w} px long ({part lengths}), {width} px wide, held in {his|her} {hand} hand at ({dx_grip},{dy_grip}) and angled {angle} from vertical toward {direction}; {offhand item: shape, px, position, material, hex}. Feet {stance_px} px apart. + KEEP
+  ```
+- **S-cast:**
+  ```
+  Change to a spellcasting pose: {cast_gesture}. {focus item: shape, px, position, hex}; {glow: none | a {g} px {glow_hex} glow at (dx,dy)}. Weapon {sheathed|slung|in the other hand as in the base}. + KEEP
+  ```
+- **S-ranged:**
+  ```
+  Change to a ranged attack pose: {ranged_action}. The {ranged_weapon} is {L_r} px {long|wide}, held at ({dx},{dy}) with {his|her} {hand} hand, aimed {aim}; {ammo: px, colour}. + KEEP
+  ```
+- **S-down:**
+  ```
+  Change to lying unconscious on the ground on {his|her} back, body stretched horizontally with the head to the viewer's left, arms loose at the sides, eyes closed; the body is {H} px long and at most {W_down} px tall from the ground, lowest pixel on the feet baseline, centred on the same column; {weapon} lies on the ground beside {him|her}, {L_w} px long. Keep {his|her} face, hair, outfit, colours and 1 px self-tinted outline exactly the same. Everything stays inside a 48 x 48 px box.
+  ```
+  `W_down` = W + 2.
+- **S-work:**
+  ```
+  Change to a working pose: {work_action}. The {work_tool} is {L_t} px long, held at ({dx},{dy}) in {his|her} {hand} hand; {workpiece: shape, px, position, colour}. Weapon {sheathed|slung as in the base}. + KEEP
+  ```
+
+### 4.3 Animation templates (`action_description`: movement only, plus pixel constraints)
+**Constraint tail (append to every animation):**
+```
+The feet stay on the baseline, the head and body keep their size, the {item} stays exactly {L} px long, and nothing leaves the 48 x 48 px box around the feet.
+```
+- **A-idle** (base, 4 f): `standing idle breathing in 4 frames: the chest and shoulders rise 1 px and fall back; the arms sway 1 px; the feet stay planted.` + tail (item = "sheathed weapon").
+- **A-walk** (base, 4 f): `walking in place in 4 frames: frame 1 left foot forward, frame 2 passing with both feet under the body and the head 1 px higher, frame 3 right foot forward, frame 4 passing; the arms swing opposite to the legs by 2 px.` + tail.
+- **A-attack** (Attack state, 6 f): `{class attack motion} in 6 frames: frame 1 ready pose, frames 2-3 wind-up {wind_up}, frame 4 strike {strike}, frame 5 follow-through {follow}, frame 6 return to the ready pose.` + tail.
+- **A-cast** (Cast state, 6 f): `{cast motion} in 6 frames: frame 1 ready, frames 2-3 {gather}, frame 4 {release}, frames 5-6 return to ready.` + tail. A glow of at most {g} px, only if the state has one.
+- **A-ranged** (Ranged state, 6 f): `{ranged motion} in 6 frames: frame 1 ready, frames 2-3 {draw_or_wind}, frame 4 {release}, frames 5-6 recover to ready.` + tail.
+- **A-down** (Down state, 6 f, `custom_start_frame` = base standing, `end_frame` = Down): `collapsing in 6 frames: frame 1 standing, frame 2 knees buckle, frame 3 falls to the knees, frame 4 tips backward, frame 5 hits the ground, frame 6 lying still; the {weapon} falls beside the body.` + tail (feet clause becomes: the lowest pixel ends on the baseline).
+- **A-work** (Work state, 6 f, loop): `{work motion} in 6 frames as a loop: frames 1-2 {raise}, frame 3 {contact}, frames 4-6 {return}; the workpiece stays fixed in place.` + tail.
+
+## 5. Class sheet
+[C] = needs Owner confirmation. Weapon lengths are proposals scaled to the 42 px human; there is no chart row for weapons [C].
+
+Accent ramps (base / shadow / highlight) are all taken from the master palette:
+- **Red:** #b5280d / #6d1109 / #cf8667
+- **Purple:** #8239b5 / #4a1e69 / #be65fa
+- **Green:** #4f823f / #325c2c / #78ad5b
+- **Forest:** #415c32 / #293b22 / #618247
+- **Blue:** #356182 / #23445a / #4f8fb2
+- **Deep blue:** #356182 / #172c3d / #5289b0
+- **Violet-dark:** #4a1e69 / #220c30 / #8239b5
+- **Saffron:** #be891b / #834a34 / #ffb833
+- **Charcoal:** #3a3e42 / #27272b / #606568
+- **White:** #ede9de / #b4aba1 / #e2eff8
+- **Hide:** #91694a / #674a35 / #c8c3b7
+
+Shared material ramps:
+- **Steel:** #8c9da9 / #55636f / #ede9de
+- **Iron:** #606568 / #3a3e42 / #7c8389
+- **Leather:** #734f2d / #49331e / #a2713f
+- **Linen:** #c8c3b7 / #a39984 / #ede9de
+- **Wool brown:** #674a35 / #423023 / #91694a
+- **Oak:** #834a34 / #583224 / #b06a4b
+- **Gold:** #f7c03d / #a2713f / #fff2a3
+
+Glows [C: whether states may carry a glow at all]:
+- **Arcane:** #7bc0e3
+- **Divine:** #dedf5e
+- **Nature:** #91b851
+- **Fel:** #be65fa
+- **Fire:** #f26018
+
+| Class | Signature silhouette items (base) | Accent | Attack (weapon, length, pose) | Ranged (weapon/action) | Cast gesture | Work tool / action |
+|---|---|---|---|---|---|---|
+| Barbarian | bare arms, fur mantle over the shoulders (W+4 px wide, 5 px deep), hide kilt, wild hair or topknot, greataxe slung on the back | Hide + red war-paint stripe (2 px) | **greataxe**, 22 px (haft 20, head 6×7), two-handed overhead chop | throws a **handaxe** (9 px) overarm | war-cry: fists raised, head back (non-caster; see O2) [C] | **wood axe** chopping a log (axe 12 px, log 14×6) [C] |
+| Bard | feathered cap (8×4, 2 px feather), short cape (to belt), **lute on the back** (14×7), rapier at the hip | Purple | **rapier**, 17 px (blade 13×1, cup guard 3×3), forward lunge | **hand crossbow** (8×5) one-handed shot | strums the lute held across the chest, 2 px note sparkles [C] | tunes the lute / writes with a quill (quill 5 px) [C] |
+| Cleric | white tabard with a **gold holy symbol** (4×4) on the chest, mail sleeves, mace at the belt, round shield on the back | White + gold | **mace**, 12 px (haft 9, head 4×4), overhead smash with the shield forward (shield 12 px round) | **light crossbow** (14 wide × 12 long) | raises the holy symbol overhead in the left hand, right palm open [C] | grinds herbs with a mortar and pestle (mortar 6×5) [C] |
+| Druid | fur-trimmed green robe, **antler or leaf circlet** (2–3 px points), wooden staff | Green | **quarterstaff**, 30 px, two-handed sweep (alt: scimitar 14 px) [C] | **sling**, 8 px cord + 2 px stone, overhead whirl | staff planted, free palm raised, 3 leaves circling (2 px each) [C] | harvests herbs with a **sickle** (7 px) [C] |
+| Fighter | steel mail shirt, dark red brigandine, pauldrons (5×4), **longsword at the left hip**, **round shield on the back** | Red + steel | **longsword**, 18 px (blade 14×2, crossguard 5, grip 3), rising diagonal slash; shield on the left forearm (12 px round) | **longbow**, 30 px tall, full draw | raises a scroll open in both hands and reads (non-caster) [C] | smith's **hammer** on an anvil (hammer 8 px, anvil 12×7) [C] |
+| Monk | wrap trousers, **sash** (2 px, trailing 6 px), bare feet or wraps, shaved head or topknot, hand wraps | Saffron | **unarmed strike**: straight punch plus front kick, no weapon (alt quarterstaff 30 px) [C] | throws **darts** (3 px) | ki focus: palms together at the chest, then push forward (ki glow 2 px, arcane) [C] | sweeps with a **broom** (20 px) / brews tea [C] |
+| Paladin | plate breastplate with a **blue tabard and gold sun emblem** (4×4), closed gauntlets, longsword at the hip, kite shield on the back | Blue + gold + steel | **longsword**, 18 px, overhead two-handed downward cut (alt warhammer 14 px) [C] | throws a **javelin** (24 px) | holds the sword hilt-up before the face like a holy symbol, 2 px divine glow at the pommel [C] | sharpens the sword with a **whetstone** (4×2) [C] |
+| Ranger | **hooded forest-green cloak** (hood up, 3 px peak), leather jerkin, **quiver on the back** (4×10 with 3 fletchings), longbow slung | Forest | **twin shortswords**, 12 px each, crossing double slash [C] (alt longsword 18) | **longbow**, 30 px tall, full draw | two fingers to the brow, then points ahead (hunter's mark), 2 px nature glow [C] | fletches an arrow with a knife (arrow 14 px) [C] |
+| Rogue | **dark hood and face mask**, fitted charcoal leathers, belt pouches (3×3), daggers at both hips | Charcoal + red lining | **dagger**, 7 px, reverse-grip quick stab (twin daggers) | **shortbow**, 20 px tall, quick draw | reads a scroll (non-caster; Arcane Trickster later) [C] | picks a lock with **thieves' tools** (3 px picks) on a small chest (10×7) [C] |
+| Sorcerer | open-front mantle with a high collar (3 px), bare hands with **ember marks**, no staff, dagger at the belt | Red + fire glow | **dagger**, 7 px, slash [C] (alt: fire bolt from the palm as attack?) | **light crossbow** (14 × 12) [C] | both palms thrust forward, 3 px fire glow between them [C] | stirs a cauldron with a ladle (cauldron 12×9, ladle 10) [C] |
+| Warlock | **jagged hooded cloak** (tattered hem 3 px teeth), pact amulet (3×3), dark gloves, dagger | Violet-dark + fel glow | **pact blade**, 15 px curved sword [C] (alt dagger 7) | **light crossbow** (14 × 12) [C] (alt eldritch blast as cast) | one clawed hand thrust forward, 3 px fel glow; the other hand clutches the amulet [C] | inscribes a tome with a quill (tome 8×6) [C] |
+| Wizard | **pointed hat** (brim 14 px, cone 9 px tall) or deep hood, long robe to the ankles, **spellbook at the belt** (5×6), quarterstaff | Deep blue | **quarterstaff**, 30 px, two-handed thrust | throws a **dagger** (7 px) (SRD wizard has no bow) [C] | staff raised in the right hand, left hand tracing a 3 px arcane rune [C] | writes in the spellbook at a lectern (book 8×6) [C] |
+
+## 6. Race sheet
+Heights come from `scale_chart.json` where it has a row (HUMAN, DWARF, ELF), and from `size_classes.json` for the rest. [G] marks a gap or conflict; §8 lists them.
+
+Formulas:
+- `h_head = round(H / heads)`.
+- Legs: ≈38 % of H for tall races, 30 % for dwarf, 28–33 % for small races.
+- Torso = the remainder.
+- Canvas C = the smallest multiple of 4 ≥ H+2 (v3 minimum 32; ≤48 because the frame is 48).
+- State canvas CS = C+12 (56 for most races).
+- Top row in C = C−H; feet row = C−1; centre column = C/2.
+
+| Race | Source row | H target (min–max) | W target (min–max) | Heads | Head / torso / legs px | C | CS | Top row | Palette notes (base / shadow / highlight) |
+|---|---|---|---|---|---|---|---|---|---|
+| Human | scale_chart HUMAN_ADULT | **42** (40–44) | 18 (14–22) | 3.2 (chart 3.0–3.2) | 13 / 13 / 16 | 44 | 56 | 2 | skin #dc906b / #b06a4b / #cfb38d; hair (brown) #734f2d / #49331e / #a2713f. One skin tone per sprite [G2] |
+| Dwarf | scale_chart DWARF_ADULT | **36** (34–38) [G1: size_classes says 32 (28–35)] | 20 (18–24) | 2.8 (chart) | 13 / 12 / 11 | 40 | 52 | 4 | skin #dc906b / #b06a4b / #cfb38d (ruddy); beard (red-brown) #a16147 / #764432 / #cf8667, beard 6–8 px long; broad shoulders W 20 |
+| Elf | scale_chart ELF_ADULT | **43** (42–46) [G1: size_classes says 39 (33–44)] | 16 (14–18) | 3.3 (chart) | 13 / 13 / 17 | 48 | 60 | 5 | skin needs a pale ramp [G3]: proposed #cfb38d / #a3845f / #ede9de; hair (pale gold) #d3b680 / #a88c5d / #fff2a3; pointed ears 3 px |
+| Half-elf | size_classes RACE_HALF_ELF | **39** (35–42) | 18 (14–22) [PROPOSED; suggest 17] | 3.2 [G4 proposed] | 12 / 12 / 15 | 44 | 56 | 5 | skin #dc906b / #b06a4b / #cfb38d; hair (dark brown) #583224 / #38291c / #834a34; ears 2 px |
+| Halfling | size_classes RACE_HALFLING | **21** (21–21) [G5: readability floor 26–28 OFF] | 18 listed (copied human, PROPOSED) [G6: suggest 12] | 2.3 [G4] | 9 / 5 / 7 | 32 | 44 | 11 | skin #dc906b / #b06a4b / #cfb38d; curly hair #834a34 / #583224 / #b06a4b; bare large feet 3 px |
+| Gnome | size_classes RACE_GNOME | **25** (21–28) [G5] | 18 listed (PROPOSED) [G6: suggest 13] | 2.4 [G4] | 10 / 7 / 8 | 32 | 44 | 7 | skin #cfb38d / #dc906b / #ede9de; white hair #ede9de / #b4aba1 / #e2eff8; big nose 2 px |
+| Half-orc | size_classes RACE_HALF_ORC | **41** (35–46) | 18 listed (PROPOSED) [G6: suggest 20, bulkier] | 3.0 [G4] | 14 / 12 / 15 | 44 | 56 | 3 | skin (grey-green) #809c73 / #5b7353 / #3d523a; black hair #27272b / #161618 / #464754; tusks 1×2 px #ede9de |
+| Tiefling | size_classes RACE_TIEFLING | **42** (35–46), horns included in H [G7] | 18 (14–22) | 3.1 [G4] | 13 / 13 / 16 | 44 | 56 | 2 | skin needs a red/violet ramp [G3]: proposed #b06a4b / #834a34 / #cf8667 (or #b5280d reds); horns #4e3e33 / #28231e / #6e6457 (3 px curved); dark hair #333b45 / #1c2126 / #525d6b; tail 8 px |
+| Dragonborn | size_classes RACE_DRAGONBORN | **47** (46–48) | 18 listed (PROPOSED) [G6: suggest 20] | 3.3 [G4] | 14 / 15 / 18 | 48 | 60 | 1 | scales (bronze; one ancestry, others by palette swap [G8]) #a2713f / #834a34 / #d0995c; belly scales #cfb38d / #ba8c66 / #fff2a3; snout +3 px in side views; no hair |
+
+**Palette gaps [G3]:** the master palette (226 colours) has thin skin ramps. It has no pale elf skin, no tiefling red/violet skin, and few light warm tones (known since trial B09/B10). Proposal: add a `pal_skin_hair` block of ≤24 colours, Owner-approved, to the palette authority.
+
+## 7. Worked example — human man fighter (all 6 states)
+Values:
+- Race: H=42, W=18, C=44, CS=56, heads 3.2, head 13 / torso 13 / legs 16, top row 2, feet row 43, centre column 22.
+- Anchors: dy_hand = 15, dx_hand = 10; shoulders at dy 29, belt at dy 16.
+- Seeds: crc32 of `human_m_fighter_{stage}`, attempt 0.
+- Size refs: scale_chart.json@f3af0b11 CHARACTER_HUMAN_ADULT + strip@5ce5cefe.
+- Palette: `pal_human_fighter.png`.
+
+**Stage 1 — Base** (`create-character-v3`, image_size 44×44, low top-down, mannequin, single color outline, medium detail, enhance_prompt false, no_background true)
+```
+human man fighter with short brown hair and a determined face, wearing a steel mail shirt, a dark red padded brigandine vest with a brown leather belt, brown wool trousers and brown leather boots, a longsword sheathed at his left hip and a round wooden shield slung on his back, empty hands.
+Low top-down view. Figure 42 px tall and 18 px wide at the shoulders in a 44x44 px canvas: top of head on row 2, feet on row 43, body centred on column 22.
+Head 13 px, torso 13 px, legs 16 px (3.2 heads tall); shoulders at 29 px above the feet, belt at 16 px above the feet, hands hanging at 15 px above the feet, 10 px left and right of centre.
+Colours: skin #dc906b with shadow #b06a4b and highlight #cfb38d; hair #734f2d, shadow #49331e, highlight #a2713f; steel mail #8c9da9, shadow #55636f, highlight #ede9de; dark red brigandine #b5280d, shadow #6d1109, highlight #cf8667; leather belt and boots #734f2d, shadow #49331e, highlight #a2713f; wool trousers #674a35, shadow #423023, highlight #91694a. At most 32 colours.
+Rounded steel pauldrons 5 x 4 px on each shoulder; brigandine vest from the shoulders to the belt with 1 px rivet dots #ede9de; scabbard 14 px long and 2 px wide at the left hip from (+8,17) to (+11,4), leather #734f2d with a gold #f7c03d crossguard 5 px wide showing at the top; round oak shield 12 px across on his back, oak #834a34 with a 1 px iron rim #606568, showing 2 px beyond each shoulder in the front view.
+1 px dark outline tinted from each area's own shadow colour, no anti-aliasing, no dithering. Light from the top left, shadows on the lower right.
+```
+Base animations (`characters/animations` v3, per direction S/W/E/N):
+- `description` = the base text with the facing phrase added after "empty hands" (e.g. "…, empty hands, facing the viewer."). `color_image` = base_palette, `force_colors` true, `keep_first_frame` false.
+- **Idle** (frame_count 4): `standing idle breathing in 4 frames: the chest and shoulders rise 1 px and fall back; the arms sway 1 px; the feet stay planted. The feet stay on the baseline, the head and body keep their size, the sheathed longsword stays exactly 14 px long, and nothing leaves the 48 x 48 px box around the feet.`
+- **Walk** (frame_count 4): `walking in place in 4 frames: frame 1 left foot forward, frame 2 passing with both feet under the body and the head 1 px higher, frame 3 right foot forward, frame 4 passing; the arms swing opposite to the legs by 2 px. The feet stay on the baseline, the head and body keep their size, the sheathed longsword stays exactly 14 px long, and nothing leaves the 48 x 48 px box around the feet.`
+
+**Stage 2 — Attack State** (`create-character-state`, override_frame_size 56×56, use_color_palette_from_reference true, state_name "Attack")
+```
+Change to an attack pose with the longsword: he has drawn the longsword and holds it raised over his right shoulder ready for a rising diagonal slash, with the round shield on his left forearm in front of his chest. The longsword is 18 px long (blade 14 px, crossguard 5 px wide, grip 3 px), the blade 2 px wide steel #8c9da9 with a 1 px #ede9de edge, held in his right hand at (-9,22) and angled 45 degrees from vertical up and away from his body; the shield is round, 12 px across, centred on his left forearm at (+8,20), oak #834a34 planks with a 1 px iron rim #606568 and a 3 px steel boss #8c9da9. Feet 8 px apart. Keep his face, hair, body proportions, outfit, colours and 1 px self-tinted outline exactly the same; the figure stays 42 px tall with the feet on the same baseline and centred on the same column. Everything stays inside a 48 x 48 px box around the feet.
+```
+Attack animation (v3, 6 frames, on the Attack State):
+```
+rising diagonal sword slash in 6 frames: frame 1 ready pose with the sword over the right shoulder, frames 2-3 wind-up drawing the sword back and down to the right hip, frame 4 strike sweeping the blade up and across the body to the upper left, frame 5 follow-through with the blade high on the left and the shield tucked in, frame 6 return to the ready pose. The feet stay on the baseline, the head and body keep their size, the longsword stays exactly 18 px long, and nothing leaves the 48 x 48 px box around the feet.
+```
+**Stage 3 — Cast State** (override 56×56, palette-from-reference true, "Cast")
+```
+Change to a spellcasting pose: he holds an open scroll in both hands at chest height and reads it aloud, elbows out. The scroll is 10 px wide and 6 px tall, parchment #ede9de with shadow #b4aba1 and 1 px wooden rollers #834a34 at each end, centred at (0,24); no glow. The longsword stays sheathed at his left hip and the shield stays on his back as in the base. Keep his face, hair, body proportions, outfit, colours and 1 px self-tinted outline exactly the same; the figure stays 42 px tall with the feet on the same baseline and centred on the same column. Everything stays inside a 48 x 48 px box around the feet.
+```
+Cast animation:
+```
+reading a scroll aloud in 6 frames: frame 1 ready holding the scroll, frames 2-3 lifts the scroll 2 px and leans in, frame 4 thrusts the scroll forward 2 px, frames 5-6 lowers it back to ready. The feet stay on the baseline, the head and body keep their size, the scroll stays exactly 10 px wide, and nothing leaves the 48 x 48 px box around the feet.
+```
+**Stage 4 — Ranged State** (override 56×56, palette-from-reference true, "Ranged")
+```
+Change to a ranged attack pose: he stands side-on with a longbow at full draw, the bow held upright in his left hand with the arm straight and the arrow drawn to his right cheek. The longbow is 30 px tall and 2 px thick, yew #734f2d with shadow #49331e, its grip at (+11,24) in his left hand, string 1 px #c8c3b7; the arrow is 16 px long, shaft #a2713f with a 2 px steel tip #8c9da9 and 2 px fletching #b5280d, aimed straight ahead. The shield stays on his back and the longsword sheathed as in the base. Keep his face, hair, body proportions, outfit, colours and 1 px self-tinted outline exactly the same; the figure stays 42 px tall with the feet on the same baseline and centred on the same column. Everything stays inside a 48 x 48 px box around the feet.
+```
+Ranged animation:
+```
+shooting a longbow in 6 frames: frame 1 ready with an arrow nocked, frames 2-3 draws the string back to the right cheek, frame 4 releases with the string snapping forward and the arrow leaving, frames 5-6 lowers the bow and nocks the next arrow. The feet stay on the baseline, the head and body keep their size, the longbow stays exactly 30 px tall, and nothing leaves the 48 x 48 px box around the feet.
+```
+**Stage 5 — Down State** (override 56×56, palette-from-reference true, "Down")
+```
+Change to lying unconscious on the ground on his back, body stretched horizontally with the head to the viewer's left, arms loose at the sides, eyes closed; the body is 42 px long and at most 20 px tall from the ground, lowest pixel on the feet baseline, centred on the same column; the round shield lies flat beside his hip and the longsword lies on the ground beside him, 18 px long. Keep his face, hair, outfit, colours and 1 px self-tinted outline exactly the same. Everything stays inside a 48 x 48 px box.
+```
+Down animation (v3, 6 frames, on the Down State, `custom_start_frame` = base rotation of that direction, `end_frame` = Down rotation):
+```
+collapsing in 6 frames: frame 1 standing, frame 2 knees buckle, frame 3 falls to the knees, frame 4 tips backward, frame 5 hits the ground, frame 6 lying still; the longsword falls beside the body. The lowest pixel ends on the baseline, the head and body keep their size, the longsword stays exactly 18 px long, and nothing leaves the 48 x 48 px box around the feet.
+```
+**Stage 6 — Work State** (override 56×56, palette-from-reference true, "Work")
+```
+Change to a working pose: he stands at a small anvil and raises a smith's hammer in his right hand, the left hand holding a glowing bar on the anvil with tongs. The hammer is 8 px long (haft 6 px oak #834a34, head 3 x 2 px iron #606568), held at (-8,26); the anvil is 12 px wide and 7 px tall, iron #606568 with shadow #3a3e42 and highlight #7c8389, standing on the ground at (+6,0); the bar is 6 x 1 px #f26018. The longsword stays sheathed and the shield on his back as in the base. Keep his face, hair, body proportions, outfit, colours and 1 px self-tinted outline exactly the same; the figure stays 42 px tall with the feet on the same baseline and centred on the same column. Everything stays inside a 48 x 48 px box around the feet.
+```
+Work animation (loop):
+```
+hammering at an anvil in 6 frames as a loop: frames 1-2 raises the hammer above the shoulder, frame 3 strikes the bar on the anvil, frames 4-6 lifts back to the start; the anvil stays fixed in place. The feet stay on the baseline, the head and body keep their size, the hammer stays exactly 8 px long, and nothing leaves the 48 x 48 px box around the feet.
+```
+Note: the fire-orange bar (#f26018) is a new colour for the fighter palette. Either add it to `pal_human_fighter` or drop the glow [C, O3].
+
+## 8. Open items needing Owner decision
+- **O1 Height conflicts [G1].**
+  - Dwarf: scale_chart 36 px (34–38) vs size_classes 32 px (28–35).
+  - Elf: scale_chart 43 (42–46) vs size_classes 39 (33–44).
+  - This draft uses scale_chart (Owner-named). Pick one; the other file should be fixed.
+- **O2 Cast state for non-casters** (barbarian, fighter, monk, rogue). Proposal: fighter and rogue read a scroll; barbarian war-cry; monk ki gesture. Alternatively, all four read a scroll.
+- **O3 Glows in States.** Is a small glow (≤3 px) allowed in cast states, or are all spell visuals separate FX layers? A glow needs `use_color_palette_from_reference` false for that state, or a palette entry.
+- **O4 Action frames.** Frame class MEDIUM/SMALL is 48×48. Big weapons (greataxe 22, staff/longbow 30) are designed to fit inside the 48 box, but swings may clip. Should action clips be allowed a 64×64 (or 48×64 TALL_MEDIUM) frame? Default: fit into 48, clip = retry.
+- **O5 Base carries the weapon sheathed/slung with empty hands** (best for idle/walk, matches the L09 look), and the weapon appears in hand only in the Attack state. Confirm.
+- **O6 Signature weapons, ranged weapons, cast gestures and work tools** in §5 (all marked [C]). Should work animations follow the **class** (proposal) or the colony **job** (then one shared work set per job instead)?
+- **O7 Prompt enhancement off.** L09's preferred look was made with enhancement ON. First production call: A/B base human with `enhance_prompt` false vs true (2×2 gens).
+- **O8 Small races [G5]:** halfling 21 px / gnome 25 px at the v3 minimum canvas of 32 (the model tends to fill the canvas). Turn on the readability floor (26–28 px)? The first gnome and halfling are test calls.
+- **O9 Widths [G6]:** size_classes copies the human width (14–22) to the small races and to dragonborn/half-orc with status PROPOSED. Suggested widths: halfling 12, gnome 13, half-orc 20, dragonborn 20.
+- **O10 Head ratios [G4]** for races the chart lacks (half-elf 3.2, half-orc 3.0, tiefling 3.1, dragonborn 3.3, gnome 2.4, halfling 2.3): proposed.
+- **O11 Palette [G3]:** add a ≤24-colour skin/hair block (pale elf, tiefling red/violet, more warm light skins) to the master palette. Also: one skin tone per race sprite, or 2–3 palette-swap variants (0 gens, local) to match faceset people [G2].
+- **O12 Dragonborn ancestry [G8]:** one bronze sprite plus palette swaps for the other ancestries (0 gens)?
+- **O13 Tiefling horns and tail [G7]:** counted inside the 42 px height (proposal) or on top?
+- **O14 Budget** (§9).
+
+## 9. Generation estimate
+Per sprite (first pass, measured prices where known):
+| Item | Calls | Gens |
+|---|---|---|
+| Base (v3, C ≤ 64) | 1 | 2 |
+| States (5 × 20, CS ≤ 84) | 5 | 100 |
+| Base idle + walk (2 anims × 4 dirs × ~1) | 8 | 8 |
+| State animations (5 × 4 dirs × 1–2) | 20 | 20–40 |
+| **First pass** | 34 | **130–150** |
+| Retries (base 30 %, states 20 %, anims 25 %) | | +1 / +20 / +7–12 → **~158–183** |
+
+**All 216:** first pass **28,080–32,400 gens**; with retries **~34,100–39,500**; plus the O7 / O8 test calls (~10–30). Current balance is 9,741 against a hard stop of 9,740, so there is **no usable budget**.
+
+Cost levers (Owner choice):
+- **(a)** Down and Work as v3 animations on the base (`end_frame` poses from skeleton poses) instead of States: saves 40 per sprite, about 8,640 in total.
+- **(b)** Share the Work state per sex × race (the tool differs, the pose does not): not recommended, because class tools differ.
+- **(c)** Diagonal directions are free in States, since the State API always returns 8.
+- **(d)** Mirror W→E only for clips where the weapon sits centred on the back (some idles): saves up to 2 per sprite. The default stays no mirroring.
+
+The minimum set of base + attack + cast + ranged + animations is about 90 per sprite, about 19,400 in total.
+
+## 10. Manifest and files
+- Prompts are generated by code from §4 with slot values from `pixellab/prod/slots/{race}.json` and `{class}.json` (to create). Every call is logged per §3.
+- Outputs go to `pixellab/prod/{race}/{sex}_{class}/` (raw, post, sheets, contact).
+- This standard supersedes the class-sprite parts of `DEUS_GENERATION_RECIPES.md` §3.0/§3.1 where they differ.

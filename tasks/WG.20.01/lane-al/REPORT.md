@@ -1,13 +1,17 @@
 # WG.20.01 lane-al report
 
+## Item 43 (2026-09-26)
+
 Writer: grok. Reviewer: gemini, not this lane. This report does not certify the work.
+
+ADDENDUM 0509 (Owner 17:09 CT, sha256 `87210fe055efa306…`) was applied with item 43. Character map sprites are 18 unarmored PixelLab v3 bases, 72 armor States (90 armor states), and 19 animations in eight directions. Prompts are plain language. The canvas is 48 px, the outline is Selective outline, and the PixelLab camera is High Top-Down. The one-hand group is ATK_1H. ATK_1H_SHIELD is reserved. The recorded first pass is 15,200 generation calls. Production waits for Owner sign-off. No art was generated. No PixelLab call was made. The combat brief and the world-item brief live outside this lane's allow-list, so they were not edited; the normative structure is AS-CHMAP-001.
 
 No art was generated. No image prompts. Deliverables are markdown, JSON and Node.
 
 ## Files
 
-- `docs/art/DEUS_ASSET_STANDARD.md` — normative standard, 119 rule ids, appendices A–C.
-- `game/data/UF_AssetStandard.json` — `schemaVersion` `deus-asset-standard/1.1.0`. Same 119 rule ids. `outfitMatrix` length 135. `summons` length 29.
+- `docs/art/DEUS_ASSET_STANDARD.md` — normative standard, 151 rule ids, appendices A–C. Item 43 is AS-CHMAP-001.
+- `game/data/UF_AssetStandard.json` — `schemaVersion` `deus-asset-standard/1.5.0`. Same 151 rule ids. `outfitMatrix` length 27. `summons` length 29.
 - `game/data/UF_SpellVisualTable.schema.json` — JSON Schema draft 2020-12 (`$schema` is `https://json-schema.org/draft/2020-12/schema`). Six example rows: Fire Bolt, Fireball, Cone of Cold, Lightning Bolt, Shield, Cure Wounds. Not the 319-spell table.
 - `tools/art/validate_asset_standard.js` — coverage checker. Reads the catalogue, the standard, the spell schema and `game/data/srd51/spells.json`. Does not write files and does not read pixels.
 - `tools/art/test_validate_asset_standard.js` and `tools/art/fixtures/asset_standard/**` — each check has a passing case and a mutant that the check must reject.
@@ -262,3 +266,219 @@ Exit 0. This pass did not edit a plugin.
 - `PROPOSED-AL-14` — generation log, yield store, and routing re-benchmark on the golden test set.
 - `PROPOSED-AL-15` — icon and 144 px portrait for every non-face entity.
 - `PROPOSED-AL-16` — the 11 window skins and the hair, balding and face-gene part expansion.
+
+## Addendum A9b
+
+Resume on `task/lane-al` at `5acdaefa`, the addendum brief on top of `origin/main` `2fb1bc92`. This pass is Owner items 12–15 only. The A1–A9 rules already on main stay. No art was generated. No image prompt was run. No PNG was written.
+
+- **Item 12 (13:30–13:37 CT).** **AS-SRC-001**, **AS-REPO-001**, **AS-PREVIEW-001**, **AS-GEN-005**. A paper-doll layer is one sheet per design: all 30 action rows, 16 by 30 squares, 768 by 1440. RMMZ-native sizes stay: charset 576 by 384, faces 576 by 288, SV battler 576 by 384, tileset B–E 768 by 768, balloon 384 by 720, window 192 by 192. No source side is over 2048 px. Large and larger creature rows stay strips. The blank template committed here is that geometry plus the 480-cell slot map for `paperdoll:elf:f:hair:07`. The pixels are not in the repo (DEC-007). Approved art is Git LFS under `art/approved/**`. Raw generations, rejects and logs stay out. Putting those patterns into Git is `PROPOSED-AL-17`. Every generated asset is previewed in an animated in-game 1:1 scene and needs an Owner yea before merge. One generator per category, and one generator id per layered set. A named roster is 2 or 3 generators. The roster in this file is empty (`unassigned`), the same posture as **AS-GEN-004**. A set that mixes two ids fails now.
+- **Item 13 (13:50 CT).** **AS-SEX-001**, **AS-SEX-002**. Each of the nine races has a male and a female adult body, a male and a female elder body, and its own child body. Hair, beards and face bases are per sex. The 135 outfits are drawn on `adult-male`, `adult-female` and `child` (`outfitId__race__body`). Elder garb stays the adult sheet of the same sex (**AS-ELDER-001**). A creature is `sexVariant` `none` or `dimorphic`. Dimorphic requires a male set and a female set, each with `base`, `tamed` and `saddle`. A sex set on a `none` creature fails. Exact-name check of `game/data/srd51/creatures.json` (317 entries): Lion, Deer, Elk, Giant Elk, Boar, Giant Boar, Goat, Giant Goat, Draft Horse, Riding Horse, Warhorse, Pony, Elephant, Mammoth, Baboon and Ape are in that file once each, and each is a beast. Cattle, Sheep, Pig, Chicken and Duck are not in that file. Wolf is the `none` sample. Adding another dimorphic name is Appendix B.
+- **Item 14 (13:56 CT).** **AS-ID-001**. Every slot has a permanent unique human-readable id. The committed example is `CH.HAIR.ELF.F.07.WALK.D.F2` at column 2, row 1. Grammars cover charset layers, faces, creatures (including sex), icons, portraits, tiles, buildings, effects and UI. Retired id `CH.HAIR.ELF.F.06.WALK.D.F0` stays reserved. The runtime and the packer resolve by id only. Each id links to a catalogue id, a sheet, a cell, an anchor and a provenance record (attempts, reviewer, Owner decision, timestamps). Blank cells are `pending`. The checker counts 495 ids: the 480 sheet cells plus 15 grammar samples.
+- **Item 15 (14:09 and 14:10 CT).** **AS-ANCHOR-001**, **AS-EQUIP-001**. The tool detects feet, head, main hand and off hand and shifts the frame by whole pixels onto the slot anchor. That shift is not scaling. Clipping, wrong proportions, wrong size and head drift are rejected and generated again. All 236 body frames store main-hand, off-hand, a grip angle and a draw-order flag. Down is in front. Up is behind. The side facings in this file are a baseline `in-front`, the same kind of baseline as the elder stoop offsets. A weapon or shield is drawn once per grip pose and pinned by the compositor. The hand numbers are the **AS-HUM-002** stand-down baseline.
+
+`slotId` is now required on every prompt-spec template (**AS-PROMPT-001**). The other template fields are unchanged. No registry, catalogue or tool file outside `allowedPaths` was edited.
+
+### Catalogue coverage (this pass)
+
+`node tools/art/validate_asset_standard.js` against `art/catalogue/catalogue.json`. Exit 0. Per-entry counts match the A9 table above: 10089 entries, 77 pass, 11 violate, 10001 unknown. The 11 filename violations are unchanged. New rules are global passes. `--strict` would exit 1 because violations are non-zero (11 filenames plus 3 biome-set globals). Nothing was written under `art/` or `game/img/`.
+
+```
+entries 10089 pass 77 violate 11 unknown 10001
+rule-results pass 10985 violate 11 unknown 10195
+global-violations 3
+global violate AS-BIOME-005 game/data/DEUS_BiomeRegistry.json canonical TEMP,WET,ARID,HIGH,VOLC
+global violate AS-BIOME-005 docs/art/DEUS_BiomeRegistry.json canonical TEMP,WET,ARID,HIGH,VOLC
+global violate AS-BIOME-005 catalogue canonical TEMP,WET,ARID,HIGH,VOLC
+```
+
+New global passes from this pass: **AS-SRC-001** (768 by 1440, cap 2048, RMMZ sizes), **AS-REPO-001**, **AS-PREVIEW-001**, **AS-GEN-005**, **AS-SEX-001**, **AS-SEX-002** (21 dimorphic creatures), **AS-ID-001** (495 slot ids), **AS-ANCHOR-001**, **AS-EQUIP-001** (236 body frames).
+
+### Gate output (this pass)
+
+`node tools/art/test_validate_asset_standard.js`
+
+```
+RESULT: 217 passed, 0 failed
+```
+
+Exit 0. Each new check printed `PASS` for the good record and for the mutant before that result line. The count was 171 at the A9 tip. This pass adds 46 (23 killed mutants).
+
+`node tools/check_deus_syntax.js`
+
+```
+Checked 52 DEUS plugin files. Errors: 0
+```
+
+Exit 0. This pass did not edit a plugin.
+
+### Follow-ups added
+
+- `PROPOSED-AL-17` — Git LFS for `art/approved/**`, and exclude rules for `art/raw/**`, `art/rejects/**` and `art/logs/**`. Those paths are outside this lane.
+- `PROPOSED-AL-18` — the animated in-game 1:1 preview sent to the Owner before merge.
+- `PROPOSED-AL-19` — the anchor tool: landmark detection, whole-pixel shift, and pinning weapons and shields.
+- `PROPOSED-AL-13` already names the slot-map generator and the packer. It now also means the 768 by 1440 sheet and lookup by slot id. The other blank maps (every race, layer and dimorphic set) stay on that follow-up.
+
+Appendix B items 9 and 10 are open and were not answered: further dimorphic creatures, and the picture in the fourth cell of bow-loose, dodge and parry. The schema header at the end of A9b was `deus-asset-standard/1.2.0`.
+
+## Addendum A9c
+
+Resume on `task/lane-al` at `b38c9901065c2a16e07777159a7939c80c4f75d6`, the A9c brief on top of the A9b tip `d9579630163b9262b133d722b5ba530083abbcd8`. This pass is Owner items 16–37 and section F only. A1–A9b rules stay. The A1 addendum file was not edited. No art was generated. No image prompt was run. No PNG was written. `art/palette/**` was read and not written.
+
+Schema header is now `deus-asset-standard/1.3.0` in the markdown and the JSON. New rules are **AS-LOOK-001** through **AS-VIS-001** (22 rules) in §2.18. Each rule carries a note for the future Deus Art manual.
+
+- **Item 16.** Readable high-contrast fantasy. Ultima VII oblique stays. Head about 1/5 of body height (proportion, not a height split). The checker tests the ratio on all nine races.
+- **Item 17.** Oblique top face and front face. Map order is row, then Z layer. Four directions. Eight-direction sheets stay declined. Diagonal movement stays free.
+- **Item 18.** Furniture and placeables have four facings. Symmetric reuse is by flag only. Category `PLACEABLE`.
+- **Items 19 and 34.** 48 px PixelLab tiles-pro Wang tiles on a custom dual-grid renderer. 24 px detail decals (pebbles, tufts, cracks, leaves). 3–5 ground types per biome, chained, with 2–3 plain variants. Trial findings are recorded: size 42, skeleton-v3 on create-character-v3 bodies, layer propagation to armour/helmet/hair, south walk 2 px low, rotate-tool angles, straight-on Ultima VII view. Small item world sprites stay an open test. A 64 px tile was not adopted. Native 1:1. No A2 autotile path.
+- **Item 20.** Ground marks: boot, bare, paw, hoof; snow, mud, sand, blood, wet; four directions; three fade steps; a path may become a road.
+- **Item 21.** Every light source has a glow id, a master-palette colour and a radius, on the additive light layer. No blur.
+- **Item 22.** Depth ramps, cliff faces, hard dithered shadows, 1 px ledge rims, ramps, 24 px half-steps. Depth-demo toggles are recorded. Renderer code is not this lane.
+- **Item 23.** Oblique world sprite beside the icon and the 144 portrait, with anchor, footprint and sim hook.
+- **Section F.** Seasons, 4-stage damage, and work rows (farm, mine, chop, build, craft, carry, fish, cook) on the layered system. Chop and carry were already rows.
+- **Item 24.** Placement fields: 6 px cells, sizes 12/24/48 at true size, quarter surfaces, footprint-then-height draw order, SRD weight, passability, 100,000 item benchmark.
+- **Item 25.** Containers: movable window, free-placed contents, backpack 1 cu ft / 30 lb, open and closed in four facings, open animation, window background. Starter types are backpack, chest, barrel, crate and sack.
+- **Item 26.** 1 Z layer = 5 ft = 48 px. Four quarters of 1.25 ft = 12 px. Torch 4+4 tiles. Walk 4 px/frame, run 6, diagonal 3. Tick is one 6 s round. The historical domain is unchanged.
+- **Item 27.** Integer scale only, 2× default, nearest-neighbour, letterbox or more map. Depth demo toggles 1×/2×/3×.
+- **Item 28.** Cross-layer collapse, 4-stage wall breaches, cave-ins, through the mass ledger.
+- **Item 29.** Quarters replace the old strata split. `stratumPx` is `[12, 12, 12, 12]`.
+- **Item 30.** Construction category: palette-swap ghost, blueprint, foundation, scaffolding, partial build, site props, build animation.
+- **Items 31–32.** Grayscale value step 3 (4 for a 12 px item) on a 0–15 luma scale. Saturated controlled palette, no gray mush. Brightest colours reserved. Mood from light and grading. The table-with-items reference is reviewed at true 2×. No image was generated.
+- **Item 33, LOCKED, including the 15:05 CT PM revision.** Top-left light. 1 px self-tinted outline on characters and items, none on terrain. One master: the S/T file's 226 colours are `masterPalette.colours`. Thirty reserved slots make 256 slots. `uf.hex` is 256 lines, 250 unique, zero overlap, and is not a second master. Caps are 16 / 32 / 48. Walk is 3 frames played 1, 2, 1, 0. Idle 4, attack 6, cast 6, work 6, death 6. Additive glow is the only maximum brightness. Fixed grading. 32 px icons. Shape-coded markers.
+- **Item 35.** Separate weapon sprite, six-frame attack, swing types, hit spark, 1–2 px knockback, drawn 10 to 20 percent larger, not scaled.
+- **Item 36.** PM defaults the Owner may override. Screen sizes and SRD footprints. Nine race heights, with half-elf and tiefling at 42. Doors 1 tile by at least 1.5 layers. West-from-east mirroring is allowed for bodies, gear layers and creatures. Weapons and shields stay on hand anchors. Fortress view is 1× plus a colour-coded minimap. One pixel font.
+- **Item 37.** Faces: armour and helmet only. Charsets: armour, helmet, weapon and shield. Other gear is item, icon, portrait or world sprite. PM assumption, flagged: class garb is in the race and class base body. Children have no class.
+
+Geometry in `geometry`: `layerFt` 5, `layerPx` 48, `strataPerLayer` 4, `stratumPx` `[12, 12, 12, 12]`. The committed paper-doll example stays 768 by 1440.
+
+Sheet estimate, replacing 30 × 3.5 × 4 = 420 cells. The 30 rows at the item 33 budgets, with unnamed rows left at their A9 counts, are 564 cells. Section F adds 144. A full layer design is **708** cells. Bounding sheet 1152 by 1728, under 2048. Base bodies: 216 adult + 216 elder + 9 child = **441**. Armour 81. Helmets 81. Elder armour and helmet add 0 (offset reuse). Separate class-garb sheets go from 324 to 0. Drawn body, armour and helmet designs: **603** sheets × 708 cells. Hair and beard counts are unchanged from **AS-GENE-001**. The 216 elder sheets are flagged in Appendix B and were not reduced. The PM re-runs the cost on 708, not on 420.
+
+New slot grammars (item 14 shape) and one blank sample each: ground-mark, glow, decal, wang-tile, world-sprite, container, damage, construction, cross-layer, season, work-anim, depth, placeable, marker, font, range-marker, hit-spark. The checker counts 512 slot ids (480 example cells + 32 grammar samples). It resolves by id only.
+
+No registry, catalogue file or tool file outside `allowedPaths` was edited. The three **AS-BIOME-005** violations are the same five-biome files as A9b.
+
+### Catalogue coverage (this pass)
+
+`node tools/art/validate_asset_standard.js` against `art/catalogue/catalogue.json`. Exit 0. Per-entry counts match A9b. New rules are global passes. `--strict` would exit 1 because violations are non-zero (11 filenames plus 3 biome-set globals). Nothing was written under `art/` or `game/img/`.
+
+```
+entries 10089 pass 77 violate 11 unknown 10001
+rule-results pass 10985 violate 11 unknown 10195
+global-violations 3
+global violate AS-BIOME-005 game/data/DEUS_BiomeRegistry.json canonical TEMP,WET,ARID,HIGH,VOLC
+global violate AS-BIOME-005 docs/art/DEUS_BiomeRegistry.json canonical TEMP,WET,ARID,HIGH,VOLC
+global violate AS-BIOME-005 catalogue canonical TEMP,WET,ARID,HIGH,VOLC
+```
+
+New global passes: the 22 A9c rules, including **AS-LOCK-001**, **AS-SCALE-001**, **AS-QTR-001** and **AS-VIS-001**.
+
+### Gate output (this pass)
+
+`node tools/art/test_validate_asset_standard.js`
+
+```
+RESULT: 333 passed, 0 failed
+```
+
+Exit 0. The count was 217 at the A9b tip. This pass adds the A9c killed mutants, the canonical-palette file check, and the phrase checks.
+
+`node tools/check_deus_syntax.js`
+
+```
+Checked 52 DEUS plugin files. Errors: 0
+```
+
+Exit 0. This pass did not edit a plugin.
+
+### Follow-ups added
+
+- `PROPOSED-AL-20` — the 48 px dual-grid Wang renderer and the depth-demo toggles. Already queued on the AA / depth-demo lane. Not this lane.
+- `PROPOSED-AL-21` — point runtime colour at the canonical 226. `art/palette/**` is outside this lane. The active list already lives in `UF_AssetStandard.json`.
+- `PROPOSED-AL-22` — per-row anchor correction for the south walk row, and rotate-tool weapon angles. No art in that follow-up until the Owner allows generation.
+
+Appendix B items 11–13 are open and were not answered: whether 216 elder class bodies should shrink, the open small-item world-sprite test, and the picture in the fourth walk cell of the committed example sheet. World item placement and U7 melee runtime stay on their own queued lanes. The schema header is `deus-asset-standard/1.3.0` in the markdown and the JSON.
+
+## Addendum A9c item 38
+
+Resume on `task/lane-al` at `ef9488823e94d2ad152653694f32c55f392b6a91`, the Owner override on top of the A9c tip `0c2a1cbc50f955ceb5c77f0aa206629592abcf48`. This pass applies item 38 only. Other A9b and A9c rules stay. No art was generated. No image prompt was run. No PNG was written. Schema header is now `deus-asset-standard/1.3.1` in the markdown and the JSON.
+
+The view is the RMMZ standard top-down 3/4 view. Sprites stay four-direction. Map draw order stays row, then Z layer. Movement is 4-way on the grid. Unit movement is orthogonal only. SRD 5-5-5 stays for spell areas and ranges only. World sprites, U7-style placement, containers and the U7 melee rules stay. The checker reads the standard and the JSON and fails if either one carries a projection rule or a diagonal-movement rule. A 5-5-5 mention passes only when the same passage names spell areas and ranges, and names orthogonal movement when it also names movement.
+
+Removed or reverted:
+
+- **Item 16 / AS-LOOK-001.** The Ultima VII oblique reference as the view is removed. Ultima VII stays a feel and readability reference. The view sentence now points at **AS-PROJ-001**. The head ratio is unchanged.
+- **Item 17 / AS-PROJ-001.** The top-and-front projection rule is removed. The rule that drew a Z layer as front walls and cliff faces is removed. "Diagonal movement stays free" is removed. The sentence that said this does not add diagonal sprite rows is removed with it. Four-direction sprites, declined eight-direction sheets, and row-then-layer draw order stay.
+- **Item 22 / AS-DEPTH-001.** Cliff and wall front faces, including the four quarter-height front strips per material, revert to standard RMMZ-style cliff and wall tiles. The depth cues stay: a palette ramp per layer, a hard dithered drop shadow, a 1 px ledge rim, ramps, and the 24 px half-step. Catalogue category `DEPTH` stays. The sizing row is 48 by 48, form `rmmz-tile`.
+- **Slot `DP.CLIFF.TEMPERATE.FACE`.** This was the live cliff front-face sample. It is retired and stays reserved (**AS-ID-001**). The live sample is `DP.CLIFF.TEMPERATE.TILE`. The checker still counts 512 slot ids.
+- **Side walls, side roofs, corner joints.** These pieces were not given slot ids in the A9c pass, so none were added to `retiredIds`. They are not on the building piece list (**AS-BLDG-001**). The building grammar does not grow a token for them.
+- **Tall-object splits.** No split slot was issued. A tall object stays one sprite. It is not split into stacked pieces. The Large, Huge and Gargantuan frame classes are unchanged.
+- **Item 23 / AS-WITEM-001.** The word that called the world sprite an oblique sprite is removed. The world sprite stays, in the RMMZ standard top-down 3/4 view, with the anchor, footprint and sim hook. Placement and containers are unchanged.
+- **Item 26 / AS-SCALE-001.** "A diagonal step is 3 px on each axis" is removed, and `diagonalPxPerAxis` is removed. There was no separate gliding sentence. Free diagonal movement was the rule that allowed a glide, and that rule is removed. Walk stays 4 px per frame and run stays 6, on orthogonal steps. SRD 5-5-5 is limited to spell areas and ranges. `diagonalScope` is `spell-areas-and-ranges`. `unitMovement` is `orthogonal`.
+- **Item 29 / AS-QTR-001.** Wall faces are no longer a quarter-height front class. Quarters stay on strata, ramps, half-step slopes, cliff and edge strips, and surfaces. Cliff and wall pieces are the RMMZ-style tiles.
+- **Item 34 trial.** "Straight-on Ultima VII oblique" and the ban on a three-quarter isometric angle are removed. Prompts must force the RMMZ standard top-down 3/4 view. The rest of the trial record stays: size 42, skeleton-v3, layer propagation, the south walk row 2 px low, and the open small-item test.
+
+Left in place, and not a movement rule: **AS-GLOBAL-023** still says the diagonal rows of a legacy 8-way sheet are not standard, and `diagonalFacings` is still the list the checker uses for that. That is the 12:38 CT four-direction sheet rule.
+
+### Catalogue coverage (this pass)
+
+`node tools/art/validate_asset_standard.js --json` against `art/catalogue/catalogue.json`. Exit 0. Per-entry counts match the A9c tip. `--strict` would exit 1 because violations are non-zero (11 filenames plus 3 biome-set globals). Nothing was written under `art/` or `game/img/`.
+
+```
+entries 10089 pass 77 violate 11 unknown 10001
+rule-results pass 10985 violate 11 unknown 10195
+global-violations 3
+global violate AS-BIOME-005 game/data/DEUS_BiomeRegistry.json canonical TEMP,WET,ARID,HIGH,VOLC
+global violate AS-BIOME-005 docs/art/DEUS_BiomeRegistry.json canonical TEMP,WET,ARID,HIGH,VOLC
+global violate AS-BIOME-005 catalogue canonical TEMP,WET,ARID,HIGH,VOLC
+```
+
+**AS-PROJ-001**, **AS-LOOK-001**, **AS-DEPTH-001**, **AS-WITEM-001**, **AS-SCALE-001**, **AS-QTR-001** and **AS-ID-001** are global passes. **AS-ID-001** reports 512 slot ids.
+
+### Gate output (this pass)
+
+`node tools/art/test_validate_asset_standard.js`
+
+```
+RESULT: 353 passed, 0 failed
+```
+
+Exit 0. The count was 333 at the A9c tip. This pass adds the item 38 mutants and the text checks. A copy that puts the projection word back, or that restores free stepping, the 3 px rule, an unscoped 5-5-5, a quarter-height front flag, or a dropped piece, fails.
+
+`node tools/check_deus_syntax.js`
+
+```
+Checked 52 DEUS plugin files. Errors: 0
+```
+
+Exit 0. This pass did not edit a plugin.
+
+Gemini reviews. This lane does not certify the result. No merge.
+
+## Addendum A9c items 39-41
+
+Resume on `task/lane-al` at `69e5ca6c45cb0965ca693c97f603328d26deb5dd`, the PM brief for items 39-41, on top of the item-38 tip `66199063ebc6741f0be2c736584d580f870e9e37`. This pass applies items 39, 40 and 41 only. No art was generated. No image prompt was run. No PNG was written. Schema header is `deus-asset-standard/1.4.0`.
+
+- **Item 39.** Melee is a fixed upright right-hand grip. The body stays mostly still. The weapon sprite plays the arc (up, 45 forward, level, back). The strike is held, with a hit spark and 1-2 px knockback. Two authored angles plus lossless 90 degree turns and flips bake 8 frames. There is no runtime rotation. Body rows `melee-swing` and `thrust` are not drawn. Cast, bow and work rows stay. PixelLab is the primary generator. Retro Diffusion is standby. Nano Banana Pro is concepts only. The bake-off is off. One generator per layered set remains, and that generator is PixelLab.
+- **Item 40.** There are no class outfits. Eighteen race garbs (9 races by 2 sexes) sit on the race body template in the race palette. Fourteen class signature kit layers, one accent colour per class, held class items with 2 authored angles, and a 4-frame monk stance idle replace the class-outfit matrix. Martial classes are armour, weapons and the accent. Facesets never change with gear. Class-outfit slot ids stay reserved.
+- **Item 41.** Visible genetics are withdrawn. Each race has 24 presets (8 male and 8 female adults, 2 elder and 2 child per sex), 216 in all. Each preset is a charset head and a matching 144 px faceset with 8 expressions, plus 3 in-game palette swaps. The player picks a preset and a colour. Sim genetics stay on stats only. Dwarf adult and elder, male and female, are explicit body templates at 36 px.
+
+Sizing re-run. Item 33's full layer was 708 cells. Dropping the two melee body rows removes 48 cells, so a drawn full layer is 660. Base bodies are 45 (18 adult, 18 elder, 9 child). Race garbs are 18. Kit sheets are 14 by 18 adult templates = 252. Armour stays 81 and helmets stay 81. Those sheets sum to 477. Preset looks are 216 charset heads and 216 facesets. Palette swaps add 0 sheets. The former 108 class-outfit designs, and the old 324 separate sheets, stay retired.
+
+### Gate output (this pass)
+
+`node tools/art/test_validate_asset_standard.js`
+
+```
+RESULT: 369 passed, 0 failed
+```
+
+Exit 0.
+
+`node tools/check_deus_syntax.js`
+
+```
+Checked 52 DEUS plugin files. Errors: 0
+```
+
+Exit 0. This pass did not edit a plugin.
+
+Gemini reviews the combined tip for items 12-41. This lane does not certify the result. No merge.

@@ -1,7 +1,7 @@
 # DEUS Master Asset Standard
 
 **Document ID:** `DEUS-ASSET-STANDARD-01`
-**Machine form:** `game/data/UF_AssetStandard.json` (`schemaVersion` `deus-asset-standard/1.0.0`)
+**Machine form:** `game/data/UF_AssetStandard.json` (`schemaVersion` `deus-asset-standard/1.5.0`)
 **Spell rows:** `game/data/UF_SpellVisualTable.schema.json` (JSON Schema draft 2020-12)
 **Checker:** `tools/art/validate_asset_standard.js`
 **Status:** Normative for new asset work. No art is produced by this document (DEC-007).
@@ -10,31 +10,31 @@ This standard is the required set for every DEUS asset: what must exist, what it
 
 Owner rulings win over older art docs. The conflicts and the winning line are in Appendix A. Questions this document does not answer are in Appendix B. How today's files sit against the standard is in Appendix C.
 
-The pose grid in **AS-HUM-016** is the standard's default and is marked **PM-proposed, Owner may amend**. Addenda A7 through A9 (Owner 12:56 CT through 13:24 CT, and the PM decisions marked on those rules) are §§2.13–2.16.
+The pose grid in **AS-HUM-016** is the standard's default and is marked **PM-proposed, Owner may amend**. Addenda A7 through A9 (Owner 12:56 CT through 13:24 CT, and the PM decisions marked on those rules) are §§2.13–2.16. Addendum A9b (Owner 13:30 CT through 14:10 CT) is §2.17. Addendum A9c (Owner 14:38 CT through 17:09 CT) is §2.18 and §2.19. Item 38 sets the RMMZ standard top-down 3/4 view. Item 43 gives characters eight directions. Items 39, 40 and 41 are retired for character map sprites by §2.19. Item 42 makes each faceset one complete image. Each A9c rule ends with a note for the future Deus Art manual.
 
 ## 1. Global rules
 
 **AS-GLOBAL-001.** The grid is 48 px. One cell is one 5 ft square. Frame widths and heights for characters, creatures, items and effects MUST be integer multiples of 48. UI icons are the one exception and use the 32 px icon grid in **AS-ICON-001**. The world-map overview is 1 px per tile (**AS-MAP-001**) and is a map image, not a world tile.
 
-**AS-GLOBAL-002.** DEC-011: every Z layer renders at 1 source pixel = 1 screen pixel. There is no blur, bloom, glow shader, ColorMatrix, parallax, fog filter, or alpha fade. The first goal is a correct flat layer.
+**AS-GLOBAL-002.** DEC-011: every Z layer renders at 1 source pixel = 1 screen pixel. There is no blur, bloom, glow shader, ColorMatrix, parallax filter, fog filter, or alpha fade. The first goal is a correct flat layer. Presentation integer scale of the finished frame is **AS-RENDER-001**. It does not resample an asset. A whole-pixel depth-demo layer offset is **AS-DEPTH-001**. It is not a parallax filter.
 
-**AS-GLOBAL-003.** Alpha is binary: 0 or 255. Brightness, glow and "energy" come from drawn frames and palette ramps, not from a blend mode.
+**AS-GLOBAL-003.** Alpha is binary: 0 or 255. Brightness and "energy" come from drawn frames and palette ramps. The one additive path is a pre-drawn glow frame on the light layer in **AS-GLOW-001** and **AS-LOCK-001**. That frame's alpha stays binary. The composite is not a bloom shader and not a blur.
 
-**AS-GLOBAL-017.** The runtime MUST NOT scale, rotate, mirror or tint a frame as a substitute for a drawn frame. A weapon angle is chosen from a pre-drawn cel (**AS-HUM-016**). Asymmetrical gear is not produced by flipping the opposite facing (**AS-HUM-014**).
+**AS-GLOBAL-017.** The runtime MUST NOT scale, rotate or tint a frame as a substitute for a drawn frame. Character attacks are whole-sprite clips (**AS-CHMAP-001**). **AS-RENDER-001** is nearest-neighbour integer scale of the finished frame, not of one asset. **AS-PM-001** allows an offline east-to-west mirror for creatures and props. Characters are authored in eight directions and are not mirrored. Furniture still needs the symmetric flag (**AS-FURN-001**). **AS-MIRROR-001** remains the rule for its own offline bake.
 
-**AS-GLOBAL-004.** Colour is named by ramp id, never by a fresh hex invented for one asset. `art/palette/uf.hex` is the canonical runtime palette now (ADR-002). `art/palette/deus_master_world_palette_v1.hex` (226 active colours, 30 reserved) and `game/data/DEUS_PaletteRegistry.json` (58 material ramps) are the approved target. New runtime colour sources use `uf.hex` entries until the migration leaf. The asset standard adds ramp ids the registry does not have yet (`RAMP_DMG_*`, `RAMP_SCHOOL_*`, `RAMP_RACE_*`, `RAMP_NIGHT`, `RAMP_HAIR_GREY`, `RAMP_CONDITION_*`, `RAMP_SCALE`). Those ids are the contract. Filling their hex is a follow-up, not a licence to pick colours in a generator prompt.
+**AS-GLOBAL-004.** Colour is named by ramp id, never by a fresh hex invented for one asset. The canonical master is the Lanes S/T file `art/palette/deus_master_world_palette_v1.hex`: 226 active colours, copied into `masterPalette.colours` in the JSON. Thirty reserved slots bring the master slot count to 256. Those reserved slots are empty. They are not filled from anywhere else. `art/palette/uf.hex` is a different file: 256 lines, 250 unique colours, six repeated lines, and zero colours in common with the master. It is not a second master. The active list is not shrunk. `game/data/DEUS_PaletteRegistry.json` (58 material ramps) stays the ramp architecture. This lane does not edit `art/palette/**`. The asset standard adds ramp ids the registry does not have yet (`RAMP_DMG_*`, `RAMP_SCHOOL_*`, `RAMP_RACE_*`, `RAMP_NIGHT`, `RAMP_HAIR_GREY`, `RAMP_CONDITION_*`, `RAMP_SCALE`, `RAMP_PORTRAIT_SKIN_HAIR`). Those ids are the contract. Filling their hex is a follow-up, not a licence to pick colours in a generator prompt. Membership, caps and the grayscale step are **AS-LOCK-001** and **AS-READ-001**.
 
 **AS-GLOBAL-005.** One light direction for every asset: top-left, 315° azimuth, 45° elevation (`docs/art/DEUS_ENVIRONMENT_MATERIAL_STANDARD.md` §2.1). Highlights sit on top and left edges. Core shadow sits on the bottom and right. The light is baked into the pixels.
 
-**AS-GLOBAL-006.** Selout is a 1 px outline on the outer silhouette only. Its colour is the darkest step of the local material ramp, and the bottom and right of the silhouette use the deep-shadow step. It is not a global black. Internal edges (fingers on a grip, hair against the face) are not outlined. Seamless ground fills have no silhouette outline.
+**AS-GLOBAL-006.** Selout is a 1 px outline on the outer silhouette only. Its colour is the darkest step of the local material ramp, and the bottom and right of the silhouette use the deep-shadow step. It is not a global black. Internal edges (fingers on a grip, hair against the face) are not outlined. **AS-LOCK-001** locks this outline on map sprites and items, self-tinted, and locks none on terrain tiles. A character faceset does not require it. A character faceset may use a black contour. A depth-toned overlay may keep an outline (**AS-DEPTH-001**). A terrain tile does not. Seamless ground fills have no silhouette outline.
 
 **AS-GLOBAL-007.** The contact shadow is a drawn ellipse at the shadow anchor (human baseline `[24, 45]` in a 48 px cell). Seamless ground tiles MUST NOT carry a baked shadow of an off-screen tree or mountain. There is no drop-shadow filter.
 
-**AS-GLOBAL-008.** Back-to-front draw order of a layer: ground, strata faces and ramps, objects, the unit body, equipment, effects, UI.
+**AS-GLOBAL-008.** Back-to-front draw order inside a layer: ground, strata faces and ramps, objects, the unit body, equipment, effects, UI. Map order is by row, then by Z layer (**AS-PROJ-001**). Item order inside that is footprint bottom line, then height offset (**AS-PLAY-001**).
 
-**AS-GLOBAL-009.** Equipment on a unit draws in the `DEUS_Anim` slot order, bottom to top: feet, legs, waist, armor, torso, neck, shoulders, arms, hands, ring1, ring2, head, eyes, back, offHand, shield, mainHand, weapon.
+**AS-GLOBAL-009.** The `DEUS_Anim` data order, bottom to top, stays: feet, legs, waist, armor, torso, neck, shoulders, arms, hands, ring1, ring2, head, eyes, back, offHand, shield, mainHand, weapon. Pixels drawn on a charset follow **AS-VIS-001**. Slots outside that stack are items, icons, portraits and world sprites.
 
-**AS-GLOBAL-018.** DEC-013 geometry still governs the simulation: 32 Z layers, 1 cell = 5 ft, 1 layer = 10 ft, 5 strata of 2 ft, and exactly nine races (human, elf, halfling, dwarf, gnome, dragonborn, half-elf, half-orc, tiefling). Which race lives on which layer is open (Appendix B). A 9-layer test configuration may still exist. It is not the world.
+**AS-GLOBAL-018.** Thirty-two Z layers (−16..+15) and exactly nine races stay (human, elf, halfling, dwarf, gnome, dragonborn, half-elf, half-orc, tiefling). Which race lives on which layer is open (Appendix B). A 9-layer test configuration may still exist. It is not the world. Owner items 26 and 29 replace the layer height. One Z layer is 5 ft and 48 px. Partial height is four quarters of 1.25 ft, 12 px each. `stratumPx` is `[12, 12, 12, 12]`. The earlier 10 ft layer, and the five 2 ft strata, are not the geometry. The numbers are **AS-SCALE-001** and **AS-QTR-001**. A 64 px tile was not adopted.
 
 **AS-GLOBAL-019.** DEC-030 replaces the old band ranges and the 5-biome set. Depth bands:
 
@@ -53,9 +53,9 @@ Natural terrain stops at +11. `AIR` has no natural terrain. Biome ids are `VOLCA
 
 **AS-GLOBAL-021.** DEC-016: the scale chart governs drawn size, envelope, footprint and anchor. The numeric source is `game/data/DEUS_ScaleRegistry.json`. The picture is `art/reference/DEUS_HUMAN_SCALE_STRIP_V1.png`. `art/catalogue/scale_chart.json` records both. A human adult is 42 px tall inside the 48 px cell (chart row `CHARACTER_HUMAN_ADULT`, drawn height 40–44). If the Owner means a different file by "the scale chart", that file is still unnamed (Appendix B).
 
-**AS-GLOBAL-022.** Every character and every creature uses four directions. Row order on an RMMZ sheet is South, West, East, North (rows 0..3). That is the RMMZ order and the Owner ruling of 12:38 CT.
+**AS-GLOBAL-022.** Creatures use four directions. Row order on a creature sheet is South, West, East, North. Character map sprites use eight directions (**AS-CHMAP-001**).
 
-**AS-GLOBAL-023.** A sheet whose facings include `SW`, `NW`, `NE` or `SE` is a legacy 8-way source. The straight rows S, W, E, N may be mined. The diagonal rows are not part of the standard. The checker flags them.
+**AS-GLOBAL-023.** A creature sheet whose facings include `SW`, `NW`, `NE` or `SE` is a legacy source. The straight rows S, W, E, N may be mined from that creature sheet. Character map sprites use those diagonal facings together with S, W, E and N.
 
 **AS-GLOBAL-010.** A catalogue id is `BAND_BIOME_CATEGORY_TYPE_VARIANT_STATE`: six fields of letters and digits, joined by `_`, with a hyphen allowed inside a field (`docs/art/catalogue/SCHEMA.md`). Example: `ALL_SHARED_CREATURE_WILD-HORSE_V1_DEFAULT`.
 
@@ -63,11 +63,11 @@ Natural terrain stops at +11. `AIR` has no natural terrain. Biome ids are `VOLCA
 
 **AS-GLOBAL-012.** Every character sheet and every layer sheet has a sidecar with the same basename: `frameWidth`, `frameHeight`, `anchor`, `footprint`, `facings`, `animations`, `frameMs`. The default clock is 150 ms (**AS-ANIM-001**).
 
-**AS-GLOBAL-013.** One charset block is 3 columns by 4 facing rows. Walk playback is stand, left step, stand, right step. Extra actions MUST NOT add a fifth row to that walk block.
+**AS-GLOBAL-013.** One reserved RMMZ charset block is 3 columns by 4 facing rows. Walk playback on that block is stand, left step, stand, right step. Character map sprite clips use eight direction rows (**AS-CHMAP-001**).
 
 **AS-GLOBAL-016.** Tall Large frames are 48 by 96. Long Large frames are 96 by 48. The matching RMMZ blocks are 144 by 384 and 288 by 192. Further actions are more `$` sheets, or sidecar-declared rows on those sheets. They do not change the 3 by 4 walk read.
 
-**AS-GLOBAL-014.** A face sheet is 576 by 288: 4 columns by 2 rows of 144 by 144 cells.
+**AS-GLOBAL-014.** A face sheet is 576 by 288: 4 columns by 2 rows of 144 by 144 cells. Each cell is one complete portrait. The sheet is not a stack of face layers (**AS-FACE-002**).
 
 **AS-GLOBAL-015.** DEUS uses SV battlers on the RMMZ battle screen (DEC-017 keeps that screen). An SV sheet is 9 columns by 6 rows of 64 by 64 (576 by 384, 18 motions). Humanoids MUST have one. Creatures of size Medium, Large, Huge and Gargantuan MUST have one. Tiny and Small critters have none. The SV sheet does not replace the map action rows.
 
@@ -134,32 +134,15 @@ Also required, from the crosswalk, and stored the same way: `ROOT_PELVIS`, `PALM
 
 **AS-HUM-014.** `dominantHand` is `right` or `left` (charter: 88% right, 12% left). `HAND_PRIMARY` binds to the dominant hand. Grips: `ONE_HANDED`, `OFF_HAND`, `TWO_HANDED`, `VERSATILE`. Presentation states: `HELD`, `HIP`, `BACK`, `SLUNG`, `HIDDEN`. A heraldic shield, an eye patch, or any other asymmetrical piece is drawn for the facing it needs. The only mirror is **AS-MIRROR-001**.
 
-**AS-HUM-003.** Part layers, back to front where they overlap the body: hair back (behind the body), body/skin, eyes, racial ears, horns, tail, scales, hair front, beard. Racial parts exist on the races that have them (elf and gnome and halfling ears, tiefling and dragonborn horns, tiefling tail, dragonborn scales). They are parts, not extra character sheets.
+**AS-HUM-003.** Race features sit on the body template: ears on elf, gnome and halfling; horns on tiefling and dragonborn; a tiefling tail; dragonborn scales. They are features of that template, not a genetics pick and not extra character sheets. Head, hair and beard are the preset in **AS-GENE-001**.
 
 **AS-HUM-004.** Catalogue paper-doll z-order, matching the 34 existing equipment rows: `legs` 1, `torso` 2, `clothes` 2 (the clothes alias of torso), `head` 3, `back` 4, `shield` 5, `held` 6, `fx` 7. The 18 runtime slots still draw in **AS-GLOBAL-009** order. The coarse paper-doll layer is what the catalogue stores.
 
-**AS-HUM-008.** Visible loci and the part or ramp they select. Inheritance rules stay in the sim. Today `geneticsFor` stores `variation`, `skinTone`, `hairColor`, `hairStyle`, `beard`, `clothing`, and inherits only `skinTone` and `hairColor`.
+**AS-HUM-008.** Visible looks are the preset pool in **AS-GENE-001**. A player picks one preset and one of three skin and hair colour variants. On the charset those three variants are in-game master-palette swaps. On the portrait, each preset records `colourVariantMethod`: `palette-swap` when the skin and hair ramps map onto the master plus `RAMP_PORTRAIT_SKIN_HAIR`, and `separate-generation` otherwise. Sim genetics may store stats. They do not select a sprite, a face, a hair style or a colour. `geneticsLoci` is retired as an art selector. Race features in **AS-HUM-003** stay on the body template. `dominantHand` is still `right` or `left` and binds `HAND_PRIMARY`.
 
-| Locus | Values | Maps to |
-|---|---|---|
-| `skinTone` | 1, 2, 3 | body part, ramp family `RAMP_SKIN` |
-| `hairStyle` | 1, 2, 3, 4 | `hair-front` and `hair-back` |
-| `hairColor` | brown, blonde, black, red | ramp family `RAMP_HAIR` |
-| `greying` | natural, salt-and-pepper, grey, white | `RAMP_HAIR_GREY` on the hair parts |
-| `beard` | 0 none, 1 goatee, 2 full, 3 braided | beard part, same hair ramp |
-| `clothing` | 1, 2, 3, 4 | cloth part (today's bake only) |
-| `balding` | `receding`, `crown`, `advanced` | three overlays on any hair style (**AS-GENE-001**) |
-| `height` | low, mid, high | drawn height inside the scale-chart min/target/max |
-| `build` | slight, average, broad | drawn width inside the scale-chart min/target/max |
-| `horns` | 0, 1, 2 | `horns` part |
-| `tail` | 0, 1 | `tail` part |
-| `ears` | the race's ear part | `ears_<race>` |
-| `scaleColor` | a step of family `RAMP_SCALE` | dragonborn `scales` part. Step count is open |
-| `dominantHand` | right, left | socket binding |
+**AS-HUM-018.** Horns, tail, ears and dragonborn scale colour are race features on the body template. They do not change the frame class. Body height is the race height in **AS-PM-001**, including the dwarf male and female templates at 36 px.
 
-**AS-HUM-018.** Height, build, horns, tail, ears and dragonborn scale colour are the body-variety loci in the table above. They do not change the frame class.
-
-**AS-HUM-007.** Greying is the four-step ramp in that table, not a tint. The current baker's elder colour is a single silver ramp. Silver is the legacy bake of the white end (Appendix C), not a fifth step. Balding is the three overlays in **AS-GENE-001** (PM decision 13:02 CT, Owner may amend). They sit on any hair style.
+**AS-HUM-007.** Greying and balding belong to the elder presets only. There is no separate balding overlay and no greying ramp painted onto an adult preset. The current baker's elder silver is the legacy bake (Appendix C).
 
 **AS-HUM-006.** The age axis is required. This standard requires three templates and does not freeze any further step.
 
@@ -208,11 +191,11 @@ Also required, from the crosswalk, and stored the same way: `ROOT_PELVIS`, `PALM
 | unconscious | Row `unconscious`, distinct from prone and from death |
 | invisible | The body is replaced by a 1 px selout contour in `RAMP_CONDITION_INVISIBLE` (opaque pixels) for viewers who can perceive the creature, plus the condition icon. Everyone else gets no sprite. There is no alpha and no shimmer shader |
 
-**AS-HUM-005.** The face shows the armour, cloak and helmet the charset is wearing. Gear is face layer 6 (**AS-FACE-002**).
+**AS-HUM-005.** A faceset never changes with gear. It is one complete 144 by 144 image for that preset. The race background is painted into the image. The 8 expressions in **AS-FACE-003** are generated from it and keep its identity. The faceset is not built from layers. Armour, helmets and class headwear are charset layers only (**AS-FACE-002**, **AS-VIS-001**).
 
-**AS-HUM-015.** Each of the nine races has a default garb for each of the 12 SRD classes (barbarian, bard, cleric, druid, fighter, monk, paladin, ranger, rogue, sorcerer, warlock, wizard) and a light, medium and heavy armour set. That is 15 outfit ids and 135 art variants. The outfit id is race-neutral (`outfit_class_wizard`, `outfit_armor_heavy`). The art key is `outfitId__race` (**AS-ITEM-002**).
+**AS-HUM-015.** Character map sprites are the 18 unarmored bases and their armor States (**AS-CHMAP-001**). Race garb records stay reserved and are not the map sprite. Light, medium and heavy armour stay as three race-neutral armour ids with custom pixels per race (`outfit_armor_light`, `outfit_armor_medium`, `outfit_armor_heavy`). That is 27 armour icon variants. The art key is `outfitId__race` for those icons (**AS-ITEM-002**). Class outfit ids are icon-only. They are not required sprite variants. The former class-outfit slot ids stay reserved.
 
-Owner 13:14 CT: these 135 outfits are fully custom drawings per race. The silhouette name below is the slot pattern, not a shared drawing. Ramp `RAMP_RACE_<RACE>` and motif `MOTIF_RACE_<RACE>` still apply. Weapons, tools and accessories are not in this custom set (**AS-GEAR-001**).
+Owner 13:14 CT, as amended by item 40: armour pixels stay custom per race. The silhouette name below is the slot pattern for armour. Ramp `RAMP_RACE_<RACE>` and motif `MOTIF_RACE_<RACE>` still apply. Weapons, tools and accessories are not in this custom set (**AS-GEAR-001**). Class signature kits are **AS-VIS-001**.
 
 | Silhouette | Runtime slots | Paper-doll layers |
 |---|---|---|
@@ -220,9 +203,9 @@ Owner 13:14 CT: these 135 outfits are fully custom drawings per race. The silhou
 | medium | feet, legs, torso, arms, shoulders | legs, torso |
 | heavy | feet, legs, waist, torso, arms, shoulders, hands, head | legs, torso, head |
 
-Class garb uses light, except cleric, fighter and paladin, which use medium. Deforming pieces on class garb: bard and warlock `cape`; cleric, sorcerer and wizard `long-robe`. Armour-weight outfits have no deforming piece. Motifs: `MOTIF_CLASS_<CLASS>` and `MOTIF_ARMOR_<WEIGHT>`. The full 135-row matrix is `outfitMatrix` in the JSON.
+Armour motifs are `MOTIF_ARMOR_<WEIGHT>`. `outfitMatrix` is the 27 armour icon rows. Race garb rows stay reserved and are not the map sprite (**AS-CHMAP-001**). A generic cape is not drawn. Shields stay items (**AS-HUM-017**).
 
-**AS-HUM-016.** PM-proposed, Owner may amend. Body poses are drawn once per body template. Every non-deforming garb and armour layer is drawn frame-for-frame on that same grid. A weapon or shield does not rotate at runtime. Each frame stores an anchor `{x, y, angle}`. `angle` is one of `A0`, `A45`, `A90`, `A135`, `A180`, `A225`, `A270`, `A315`, and each of those is a pre-drawn cel.
+**AS-HUM-016.** PM-proposed, Owner may amend. Character attacks are whole-sprite weapon-group clips (**AS-CHMAP-001**). A rotating weapon sprite is retired for character map sprites. The runtime does not rotate a frame as a substitute for a drawn frame.
 
 Default pose grid (four directions each):
 
@@ -234,17 +217,17 @@ Default pose grid (four directions each):
 
 Walk stays the RMMZ 3-column cycle (**AS-GLOBAL-013**).
 
-**AS-HUM-017.** Capes, long robes, large shields and bows mid-draw (`cape`, `long-robe`, `large-shield`, `bow-draw`) have their own frames for every pose in the grid. They are not one angled cel.
+**AS-HUM-017.** Shields are items, icons and world sprites. They are not drawn on a character map sprite. A generic cape is not a drawn layer. Class kit layers are retired for character map sprites (**AS-CHMAP-001**). `deformingRetired` names `generic-cape` only.
 
 ### 2.4 Faces
 
-**AS-FACE-001.** Every race has its own faceset background, using that race's ramp and motif from **AS-HUM-015**.
+**AS-FACE-001.** Owner 16:05 CT. The race background is part of the portrait. It is painted into the one complete image, in that race's ramp and motif from **AS-HUM-015**. It has no layer of its own and no sheet of its own.
 
-**AS-FACE-002.** Layers, bottom to top: (1) race background, (2) optional faction frame/trim, (3) race body base (shoulders, neck, skin, age applied), (4) face (features, age lines, expression), (5) hair and facial hair, (6) worn gear matching the charset, (7) overlays (condition marks, scars, paint, tattoos).
+**AS-FACE-002.** Owner 16:05 CT. A faceset is not paper-dolled. Each preset is one complete 144 by 144 image. The 8 expressions in **AS-FACE-003** are generated from that image and keep its identity. Those expressions are the 8 cells of one 576 by 288 sheet. A faceset built from layers fails this rule. A faceset has no armour, no helmet, no class headwear and no other gear. Faction identity is trim, banners and buildings, not the face. Greying and balding appear only when the preset is an elder preset. Face-layer slot ids stay reserved (**AS-ID-001**). The retired kind tokens are `BG`, `FRAME`, `BODY`, `FEATURES`, `HAIR`, `GEAR` and `OVERLAY`. The live kind token is `PRESET`.
 
-**AS-FACE-003.** The 4 by 2 sheet is exactly these expressions, index order: 0 neutral, 1 happy, 2 angry, 3 sad, 4 surprised, 5 hurt, 6 determined, 7 afraid.
+**AS-FACE-003.** The 4 by 2 sheet is exactly these expressions, index order: 0 neutral, 1 happy, 2 angry, 3 sad, 4 surprised, 5 hurt, 6 determined, 7 afraid. Neutral is the complete source image. The other seven cells are generated from it.
 
-**AS-FACE-004.** Anchors on the 144 px cell, human baseline (other races keep the ids and may store new coordinates):
+**AS-FACE-004.** Anchors on the 144 px cell, human baseline (other races keep the ids and may store new coordinates). They are landmarks on the complete image:
 
 | Anchor | x, y |
 |---|---|
@@ -254,13 +237,13 @@ Walk stays the RMMZ 3-column cycle (**AS-GLOBAL-013**).
 | `collarLine` | 72, 108 |
 | `neckBase` | 72, 120 |
 
-`collarLine` y = 108 matches the current portrait baker, which paints cloth on y 108..144. The stone arch in today's `face_gen_*` portraits is faction trim (layer 2), not the race background.
+`collarLine` y = 108 is the landmark where the bust meets the painted background. The race background is already in the image. Faction trim is not a faceset layer. The stone arch on today's `face_gen_*` portraits is old art, not a layer of this faceset.
 
 ### 2.5 Biomes
 
 **AS-BIOME-001.** Six biomes times five depth bands is 30 sets. Pairwise transitions are the 15 ids `VOLCANIC-WET`, `VOLCANIC-ARID`, `VOLCANIC-TEMPERATE`, `VOLCANIC-COLD`, `VOLCANIC-WILD`, `WET-ARID`, `WET-TEMPERATE`, `WET-COLD`, `WET-WILD`, `ARID-TEMPERATE`, `ARID-COLD`, `ARID-WILD`, `TEMPERATE-COLD`, `TEMPERATE-WILD`, `COLD-WILD`. The earlier biome in the DEC-030 list comes first.
 
-**AS-BIOME-002.** Each of the 30 sets, and each transition, has: ground autotiles, cliffs, multi-layer ramps (one 10 ft layer across 5 squares, the five stratum heights), water, vegetation, props, four season frames, and a colour ramp id.
+**AS-BIOME-002.** Each of the 30 sets, and each transition, has: ground tiles, cliffs (RMMZ-style tiles, **AS-DEPTH-001**), multi-layer ramps (one 5 ft layer, heights in 12 px quarters; a half-step slope is 2 quarters, 24 px), water, vegetation, props, four season frames, and a colour ramp id. Terrain rendering is the 48 px dual-grid Wang path in **AS-TERR-001**.
 
 **AS-BIOME-003.** `TEMPERATE`, `WET`, `ARID` and `VOLCANIC` keep the physical identities in `DEUS_BIOME_IDENTITY_STANDARD.md` (there TEMP, WET, ARID, VOLC). `COLD` and `WILD` are required ids. What they look like is open (Appendix B). `HIGH` / Highland is not a sixth biome. Existing `HIGH_*` ramps stay in the registry until an Owner maps them.
 
@@ -270,7 +253,7 @@ Walk stays the RMMZ 3-column cycle (**AS-GLOBAL-013**).
 
 **AS-BLDG-004.** Function, grammar and style are three layers (`DEUS_FACTION_ARCHITECTURE_STANDARD.md` §2). The sim sees the functional contract. The grammar is the layout (compact rectangle, L, longhouse, terrace, stilted pavilion). The style is the art kit. Universal classes: `dwelling_small`, `dwelling_medium`, `communal_hall`, `workshop_general`, `workshop_specialized`, `storehouse`, `shrine`, `watchtower`, `wall_gate`, `farm_outbuilding`, `stockpile_border`, `quarry_mine_support`.
 
-**AS-BLDG-001.** The piece list is the same for every style: foundation, wall, wall-top, roof-edge, roof-fill, door, window, floor, pillar, connector, furniture, workstation. Each structural piece has states `intact`, `ruined` and `charred`. Construction is the same pieces shown as foundation, then walls, then roof, then finished openings and floors. It is not a second illustration style.
+**AS-BLDG-001.** The piece list is the same for every style: foundation, wall, wall-top, roof-edge, roof-fill, door, window, floor, pillar, connector, furniture, workstation. Each structural piece has states `intact`, `ruined` and `charred`. Construction is the same pieces shown as foundation, then walls, then roof, then finished openings and floors. It is not a second illustration style. Side-wall, side-roof and corner-joint pieces are not on this list. A tall object is one sprite and is not split into stacked pieces (**AS-PROJ-001**).
 
 **AS-BLDG-002.** Style profiles, visual rules quoted from that standard and not extended: `human_frontier`, `dwarf_stonehold`, `elf_glade`, `halfling_homestead`, `dragonborn_citadel`, `goblin_salvage`.
 
@@ -287,9 +270,9 @@ Walk stays the RMMZ 3-column cycle (**AS-GLOBAL-013**).
 
 ### 2.7 Items and icons
 
-**AS-ITEM-001.** Items are race-neutral SRD items. There is one Plate Armor, one item id, one stat block. There is no Elven Plate Armor, no Dwarven Longsword, and no race token inside the item id. This covers armour, weapons, shields and the class garb in **AS-HUM-015**. The 135 outfits are art variants of 15 outfit ids, not 135 items.
+**AS-ITEM-001.** Items are race-neutral SRD items. There is one Plate Armor, one item id, one stat block. There is no Elven Plate Armor, no Dwarven Longsword, and no race token inside the item id. This covers armour, weapons and shields. Armour weights keep race art variants. Class outfit ids, when they remain, are icon-only. They are not required sprite variants.
 
-**AS-ITEM-002.** The layer key is `<itemId>__<race>`, for example `outfit_class_wizard__elf` and `armor_plate__dwarf`. Lookup order: the race key, then `<itemId>__human`, then nothing. A missing variant is not tinted and is not replaced with another race's art. The runtime file is `$UF_Layer_<itemId>__<race>.png`. For weapons, tools and accessories the race key selects the ramp and the decal (**AS-GEAR-001**), not a second silhouette. Class garb and armour weights stay custom drawings.
+**AS-ITEM-002.** The layer key is `<itemId>__<race>`, for example `outfit_armor_heavy__elf` and `armor_plate__dwarf`. Lookup order: the race key, then `<itemId>__human`, then nothing. A missing variant is not tinted and is not replaced with another race's art. The runtime file is `$UF_Layer_<itemId>__<race>.png`. For weapons, tools and accessories the race key selects the ramp and the decal (**AS-GEAR-001**), not a second silhouette. Armour weights stay custom drawings. A class outfit id has no required race art variant.
 
 Weapon presentation still uses the crosswalk's 17 families (`BLADE_ONE_HAND` through `UNARMED`). The closed SRD weapon list counted in the presentation data is 37. Armour plus shield is 13: padded, leather, studded leather, hide, chain shirt, scale mail, breastplate, half plate, ring mail, chain mail, splint, plate, shield. The material heading says 18 and the list names 20 (`IRON`, `STEEL`, `BRONZE`, `COPPER`, `SILVER`, `GOLD`, `ADAMANTINE`, `MITHRAL`, `WOOD_LIGHT`, `WOOD_DARK`, `LEATHER`, `HIDE`, `BONE`, `HORN`, `LINEN`, `WOOL`, `SILK`, `STONE`, `GLASS`, `CRYSTAL`). Icon slots cover the 20 names. The count mismatch is in Appendix A.
 
@@ -432,38 +415,19 @@ Fog is a drawn dither with binary alpha. UI pulse is two drawn frames, not a tin
 
 **AS-VAR-002.** PM decision 13:01 CT, Owner may amend. Season states on those pieces are palette-swap frames of the base drawing, on `RAMP_SEASON_SPRING`, `RAMP_SEASON_SUMMER`, `RAMP_SEASON_AUTUMN` and `RAMP_SEASON_WINTER`. That swap is precomputed ramp data. It is not a runtime ColorMatrix. A horizontal flip is an offline bake, and only for a piece whose shading is light-neutral. A piece drawn with the top-left light is not flipped.
 
-**AS-GENE-001.** PM decision 13:02 CT, Owner may amend. Counts, per race and per adult body type `male` and `female`:
+**AS-GENE-001.** Owner 15:54 CT, as amended by item 42. Children do not visibly inherit a parent's face or hair. The part library is retired. Each race has a fixed preset pool: 8 male and 8 female adult looks, 2 elder looks per sex and 2 child looks per sex. That is 24 presets per race and 216 for the nine races. Each preset is one complete head, hair and face for the charset, and one complete 144 by 144 portrait. The 8 expressions in **AS-FACE-003** are generated from that portrait and keep its identity. The player picks a preset and one of three skin and hair colour variants at character creation. Charset variants are in-game master-palette swaps and add no charset sheet. Portrait variants are recorded per preset on `colourVariantMethod`. The value is `palette-swap` when that preset's skin and hair ramps map onto the master plus `RAMP_PORTRAIT_SKIN_HAIR`. The value is `separate-generation` otherwise. Factions are trim, banners and building styles. Sim genetics may remain for stats only. Catalogue category `PRESET`. Slot example `FA.PRESET.HUMAN.M.01.NEUTRAL.C0`. Retired part-library slot ids and retired face-layer slot ids stay reserved.
 
-| Locus | Count |
-|---|---|
-| Hair styles | 12, of which 3 or 4 are race-distinctive |
-| Balding overlays | 3: `receding`, `crown`, `advanced`, on any style |
-| Facial hair | 8: `stubble`, `short`, `full`, `long`, `braided`, `mustache`, `goatee`, `forked` |
-| Dwarf facial hair | those 8 plus at least `dwarf-plait` |
-| Face shape | 4: `oval`, `round`, `square`, `long` |
-| Eyes | 5 shapes; colour from `RAMP_EYE` |
-| Brows | 4 |
-| Nose | 5 |
-| Mouth | 4 |
-| Ears | 3 ids per race |
-| Jaw | 3 |
-| Skin | ramp `RAMP_SKIN`, steps 1, 2, 3 |
-| Markings | 4 overlays: `freckles`, `moles`, `birthmark`, `patch` |
-| Race features | 3 or 4 option ids per race |
-
-Hair colour is one ramp, `RAMP_HAIR`, with 12 steps. The legacy names `black`, `brown`, `blonde` and `red` are four of the steps. The other eight ids are `step-05` through `step-12` until the Owner names them. Race-specific hair colours are an empty list until named (Appendix B). Greying stays the four steps in **AS-HUM-007**. No step gets its own drawing. The sim mixes the parents' genes and may apply a rare mutation. Age layers `child`, `adult` and `elder` sit on the same gene ids so the face stays recognisable. Races in `beardlessRaces` get no facial-hair parts. That list is empty until the Owner names a race (Appendix B). Option pictures for `rf1`–`rf3` are not named here.
-
-**AS-PORT-001.** Owner 13:03 CT. Every non-face entity (item, creature, resource, building, workstation, spell) has a 32 by 32 icon and a 144 by 144 portrait for the inspect, tooltip and crafting view. The portrait uses a per-category background, the same palette and selout as the icon, and the rarity overlay from **AS-ICON-003**. A race-styled item uses that race's background. A race-neutral item has one portrait per race art variant. The file name is in **AS-STYLE-001**. A catalogue row that does not yet carry the fields is `unknown`. A row that has one of the two and not the other fails.
+**AS-PORT-001.** Owner 13:03 CT. Every non-face entity (item, creature, resource, building, workstation, spell) has a 32 by 32 icon and a 144 by 144 portrait for the inspect, tooltip and crafting view. The portrait uses a per-category background, the same palette and selout as the icon, and the rarity overlay from **AS-ICON-003**. A race-styled item uses that race's background. A race-neutral item has one portrait per race art variant. The file name is in **AS-STYLE-001**. A catalogue row that does not yet carry the fields is `unknown`. A row that has one of the two and not the other fails. A character faceset is not this portrait. The character faceset is **AS-FACE-002** and the portrait colour class in **AS-LOCK-001**.
 
 ### 2.15 Head layers, elders, gear, mirrors, poses, biome files (A9)
 
-**AS-HEAD-001.** Owner 13:14 CT. Hair, balding, beards and head-only race features are a grid of 12 frames: directions S, W, E, N, and head-state indices 0, 1 and 2, one frame each, each with an anchor. The gestures those indices draw are not named (Appendix B). Every body-template frame stores `headAnchor` `[x, y]` and `headState` in `0..2`. Long hair may add frames on `death` and `dodge` only. No other extra row is allowed. Placement is the anchor. There is no runtime transform.
+**AS-HEAD-001.** Owner 13:14 CT, as amended by item 41. A preset head is one complete look on a grid of 12 frames: directions S, W, E, N, and head-state indices 0, 1 and 2, one frame each, each with an anchor. The gestures those indices draw are not named (Appendix B). Every body-template frame stores `headAnchor` `[x, y]` and `headState` in `0..2`. Long hair on a preset may add frames on `death` and `dodge` only. Placement is the anchor. There is no runtime transform and no combinatorial hair, beard or balding library.
 
-**AS-ELDER-001.** Only the stooped elder body is a new sheet (**AS-HUM-019**). Garb, gear and hair use the adult sheets. Each body frame has a torso offset and a head offset, in pixels, that move those adult layers onto the elder body. The checker flags an elder-specific garb, gear or hair sheet, and any frame index with no offset. The numbers shipped here are a baseline stoop (`torso [0, 2]`, `head [0, 4]`) so the table is complete; authored frames replace the pair.
+**AS-ELDER-001.** Only the stooped elder body is a new sheet (**AS-HUM-019**). There are 18 elder bodies: 9 races by male and female. Dwarf elder male and dwarf elder female are 36 px, the same height as the dwarf adult templates. Offsets apply to armour, helmet and the adult preset head of the same sex. Each body frame has a torso offset and a head offset, in pixels. The checker flags an elder-specific armour, helmet or preset-head sheet, and any frame index with no offset. The numbers shipped here are a baseline stoop (`torso [0, 2]`, `head [0, 4]`) so the table is complete; authored frames replace the pair. Class does not multiply elder bodies. Elder looks in the preset pool are 2 per sex per race, and those presets already include greying or balding.
 
-**AS-GEAR-001.** An accessory, a weapon or a tool has one silhouette. Race selects `RAMP_RACE_<RACE>` and a motif decal whose anchor is stored per frame and per angle. A second silhouette for the same item id fails. The 135 class and armour outfits stay custom per race (`pixels: custom-per-race` on `outfitMatrix`).
+**AS-GEAR-001.** An accessory, a weapon or a tool has one silhouette. Race selects `RAMP_RACE_<RACE>` and a motif decal whose anchor is stored per frame and per angle. A second silhouette for the same item id fails. The 27 armour icon rows stay custom per race (`pixels: custom-per-race` on `outfitMatrix`). Race garb and class kits are not the character map sprite (**AS-CHMAP-001**). Class outfit ids are not a custom sprite set.
 
-**AS-MIRROR-001.** A layer may be mirrored only when it is flagged `symmetric` and its shading is light-neutral. The mirror is an offline bake from W to E. The E frame is then stored. The runtime does not flip. A mirrored frame on any other layer fails. Asymmetric gear, including shields with a device, is drawn for each facing.
+**AS-MIRROR-001.** A layer may use this bake only when it is flagged `symmetric` and its shading is light-neutral. The mirror is an offline bake from W to E. The E frame is then stored. The runtime does not flip. A mirrored frame on any other layer fails this rule. **AS-PM-001** is the later Owner rule for west-from-east on bodies, gear layers and creatures. Weapons and shields stay on the hand anchors under that rule. Furniture uses **AS-FURN-001**.
 
 **AS-POSE-001.** Rows, four directions each, also on the pose grid at 4 frames: `prone`, `unconscious`, `sleep`, `sit`, `sneak`, `climb`. Mapping: SRD Prone uses row `prone`; SRD Unconscious uses row `unconscious`; `sleep`, `sit`, `sneak` and `climb` are activity rows. `sneak` and `climb` were already action rows; they are now on the pose grid too, so garb layers follow them.
 
@@ -496,11 +460,13 @@ One Gargantuan square action row is 4 frames by 4 directions of 4-square cells: 
 | `tileset-b-e` | 768 by 768 | 16 by 16 cells of 48, anchor `[24, 24]` |
 | `action-row` | 4 frames by 4 directions, times the footprint | a 1 by 1 footprint is 192 by 192; a 4 by 4 footprint is 768 by 768 |
 
+Paper-doll layers do not use the 192 by 192 strip. Owner 13:30 CT stacks the 30 action rows into the one sheet in **AS-SRC-001**. Large and larger creature rows stay strips so no source side exceeds 2048 px.
+
 The runtime packs 2048 by 2048 atlases. The cell grid is 42 by 42 squares of 48 px (2016 px). The remaining 32 px is the padding budget, 1 or 2 px, and origins stay on the 48 px grid. A 4096 atlas is allowed for terrain only after a benchmark. The packer writes a lookup (`atlasId`, `x`, `y`, `w`, `h`, `catalogueId`, `sheetId`, `col`, `row`). That file is not created in this lane.
 
-**AS-PIPE-001.** Owner 13:16–13:21 CT. The manifest records `catalogueId`, grid squares, frame count, anchor, `templateId`, palette ramp and layer role. The slot map records `sheetId`, column, row, `catalogueId`, facing, frame index, anchor and pixel size. Output must already be the final pixel size, on the grid, in the palette, on the anchor. Off-size, off-palette or off-anchor output is rejected and generated again. It is not resized. Cropping removes transparent margins only. `MISSING` is derived from an empty slot. One generation may target a whole strip; each slot is validated on its own, still at exact size. The tools are another lane. This lane generates no art.
+**AS-PIPE-001.** Owner 13:16–13:21 CT. The manifest records `catalogueId`, grid squares, frame count, anchor, `templateId`, palette ramp and layer role. The slot map records `sheetId`, column, row, `catalogueId`, facing, frame index, anchor and pixel size. Output must already be the final pixel size, on the grid, in the palette, on the anchor. Off-size, off-palette or off-anchor output is rejected and generated again. It is not resized. Cropping removes transparent margins only. `MISSING` is derived from an empty slot. One generation may target a whole strip; each slot is validated on its own, still at exact size. A whole-pixel shift onto the slot anchor, and a trim of transparent margins, are not scaling (**AS-ANCHOR-001**). The tools are another lane. This lane generates no art.
 
-**AS-PROMPT-001.** Owner 13:21 CT. `promptSpecTemplates` has one field template for each of: `humanoid-layer`, `face-layer`, `creature`, `terrain-tile`, `building-piece`, `item-icon`, `portrait`, `effect`, `ui`. Each template lists the same fields and the place the value comes from. There is no prose prompt. Nothing in this block is sent to a generator.
+**AS-PROMPT-001.** Owner 13:21 CT. `promptSpecTemplates` has one field template for each of: `humanoid-layer`, `face-layer`, `creature`, `terrain-tile`, `building-piece`, `item-icon`, `portrait`, `effect`, `ui`. Each template lists the same fields and the place the value comes from. There is no prose prompt. Nothing in this block is sent to a generator. The category id `face-layer` is the historical field template for one complete character portrait. It does not authorise a faceset layer stack.
 
 | Field | Source |
 |---|---|
@@ -511,6 +477,7 @@ The runtime packs 2048 by 2048 atlases. The cell grid is 42 by 42 squares of 48 
 | `shadingRules`, `lightDirection` | **AS-GLOBAL-005** |
 | `referenceImages` | golden reference library |
 | `negativeConstraints` | rejection notes |
+| `slotId` | slot map |
 
 **AS-GEN-001.** Owner 13:22 CT and 13:24 CT. A generation log row has `slotId`, `promptSpecId`, `promptTemplateVersion`, `generator`, `generatorVersion`, `model`, `seed`, `settings`, `references`, `outcome` (`pass` or `fail`) and `reasons`. Reason codes are `size`, `palette`, `anchor`, `outline`, `style`. A fail with no reason is a violation.
 
@@ -518,7 +485,195 @@ The runtime packs 2048 by 2048 atlases. The cell grid is 42 by 42 squares of 48 
 
 **AS-GEN-003.** A prompt-template version is promoted only when an A/B comparison beats the current version's yield. Candidates stay candidates until then. Adapters for each generator are built from the one shared field template, not from a second spec.
 
-**AS-GEN-004.** Generator records have `id` and `version`. No generator is assigned in this standard (`status: unassigned`). Routing sends a category to the generator with the best current yield per cost, and that choice is re-benchmarked on the fixed golden test set. The golden checks are palette, outline, anchor and style, against the shared reference library. A style LoRA or fine-tune is `optional-later` and needs an Owner decision after approved art exists. It is not a required set. No art is generated here.
+**AS-GEN-004.** Owner 15:44 CT. PixelLab is the primary generator for every category. Retro Diffusion is standby and is not assigned to a category. Nano Banana Pro is for concepts only and is not a production generator. The multi-generator bake-off is off. Records still have `id` and `version`. The golden checks stay palette, outline, anchor and style, on the fixed golden test set. A style LoRA or fine-tune is `optional-later` and needs an Owner decision after approved art exists. It is not a required set. One generator per layered set is **AS-GEN-005**. No art is generated here.
+
+### 2.17 Source sheets, sex, slot ids, anchors (A9b)
+
+Owner 13:30–13:37 CT, 13:50 CT, 13:56 CT and 14:09–14:10 CT. No art is generated here. No image is written.
+
+**AS-SRC-001.** A paper-doll layer source sheet is one sheet per layer design. The committed example holds all 30 action rows in `humanoidRows`. Each row is 4 directions by 4 frame cells, so the sheet is 16 by 30 squares of 48 px: 768 by 1440. Direction columns run D, L, R, U, which are facings S, W, E, N. Frames in a row are F0, F1, F2, F3. RMMZ-native sheets keep their RMMZ sizes: charset 576 by 384, faces 576 by 288, SV battler 576 by 384, tileset B–E 768 by 768, balloon 384 by 720, window 192 by 192. No source sheet side is over 2048 px. A side of 2048 is still allowed. Large, Huge and Gargantuan creature rows stay strips (**AS-SLOT-001**). A stacked sheet of those sizes fails. This replaces the 192 by 192 per-row strip for paper-doll layers only. The A9c frame budgets and the visible-gear sheet counts are **AS-LOCK-001** and **AS-VIS-001**. They recompute the estimate. They do not resize this example. Walk authors three frames (**AS-LOCK-001**). The fourth walk cell on this example stays reserved.
+
+**AS-REPO-001.** Blank template geometry and the slot map are committed in this file. The example sheet is `paperdoll:elf:f:hair:07`, 480 cells, and its pixels are not in the repo. Approved art is Git LFS under `art/approved/**`. Raw generations, rejects and logs stay out (`art/raw/**`, `art/rejects/**`, `art/logs/**`). Putting those patterns into Git is a follow-up, because those files are outside this lane. This lane writes no PNG.
+
+**AS-PREVIEW-001.** Every generated asset is shown in an animated in-game scene at 1 source pixel to 1 screen pixel, sent to the Owner in chat, and merged only after yea. Nay sends it back to be generated again. The preview uses the drawn frames at 1:1.
+
+**AS-GEN-005.** One generator per category and per layered set. That generator is PixelLab. A paper-doll set and a creature family each carry that one id. A set whose members disagree fails. Retro Diffusion and Nano Banana Pro are not mixed into a layered set.
+
+**AS-SEX-001.** Each of the nine races has `body:<race>:adult-male`, `body:<race>:adult-female`, `body:<race>:elder-male`, `body:<race>:elder-female` and `body:<race>:child`. The child body is its own sheet, drawn at the child frame class, and it is not split by sex. Dwarf `adult-male`, `adult-female`, `elder-male` and `elder-female` are 36 px tall. The head preset serves the portrait (**AS-GENE-001**). The character map sprite is the unarmored base for that race and sex (**AS-CHMAP-001**). Children and elders have no map-sprite base yet. Dwarf heights above stay 36 px. The art key `outfitId__race__body` remains the armour icon key.
+
+**AS-SEX-002.** `sexVariant` is `none` or `dimorphic`. A dimorphic creature has a male set and a female set, and each of those has `base`, `tamed` and `saddle`. A `none` creature has no sex set. A creature that is not in the dimorphic list is `none`. The list was checked by exact name against `game/data/srd51/creatures.json` (317 entries). These 16 names are in that file, once each, and each is a beast: Lion, Deer, Elk, Giant Elk, Boar, Giant Boar, Goat, Giant Goat, Draft Horse, Riding Horse, Warhorse, Pony, Elephant, Mammoth, Baboon, Ape. These five are not in that file: Cattle, Sheep, Pig, Chicken, Duck. Pair labels use the Owner's words where that creature is the one named: lion/lioness, stag/doe, boar/sow, stallion/mare, bull/cow, ram/ewe, rooster/hen. The other rows are labelled `male/female`. Wolf is the `none` sample. Saddle here is the visual marker in **AS-TAME-001**. It is not a creature equipment slot (**AS-TAME-002**).
+
+**AS-ID-001.** Every slot id is permanent, unique and human-readable. A retired id stays reserved and is never issued again. The runtime and the atlas packer resolve by that id only. Packed x and y record the rectangle after packing. The committed map includes `CH.HAIR.ELF.F.07.WALK.D.F2` at column 2, row 1 (walk, facing D, frame F2). Each id links to a catalogue id in the six-field shape, a sheet file, a cell, an integer anchor and a provenance record. Provenance holds every attempt (prompt spec, generator, version, seed, validation), the reviewer model, the Owner decision (`pending`, `yea` or `nay`) and the timestamps. A blank cell has an empty attempt list, decision `pending`, and null detected anchors. An accepted cell needs a passing attempt, a yea, and the detected anchors.
+
+| Category | Shape | Example |
+|---|---|---|
+| Charset layer | `CH.LAYER.RACE.SEX.DESIGN.ROW.DIR.FRAME` | `CH.HAIR.ELF.F.07.WALK.D.F2` |
+| Face | `FA.PRESET.RACE.SEX.DESIGN.EXPR.CELL` | `FA.PRESET.HUMAN.M.01.NEUTRAL.C0` |
+| Creature | `CR.SPECIES.SEX.VARIANT.ROW.DIR.FRAME` | `CR.LION.F.BASE.WALK.D.F0` |
+| Icon | `IC.DOMAIN.NAME.STATE` | `IC.WEAPON.LONGSWORD.DEFAULT` |
+| Portrait | `PO.DOMAIN.NAME.VARIANT` | `PO.CREATURE.LION.N` |
+| Tile | `TL.BIOME.BAND.KIND.VARIANT.SEASON` | `TL.TEMPERATE.LOWLAND.GROUND.01.SUMMER` |
+| Building | `BD.PROFILE.PIECE.STATE.VARIANT` | `BD.DWARF-STONEHOLD.WALL.INTACT.01` |
+| Effect | `FX.PHASE.SHAPE.DAMAGE.FRAME` | `FX.IMPACT.SPHERE.FIRE.F0` |
+| UI | `UI.SKIN.PART.STATE` | `UI.DEUS.WINDOW.NORMAL` |
+
+Sex tokens are `M`, `F` and `C` (the child body, which is not split by sex). Creature sex `N` is the single design on a `none` creature. Variant tokens are `BASE`, `TAMED` and `SADDLE`. Direction tokens are `D`, `L`, `R` and `U`. Frame tokens on a charset or creature row are `F0` through `F3`. The pattern strings are `slotMap.grammar`. The face grammar still matches the retired kind tokens so those ids can stay reserved. A live face sample uses `PRESET` only. Retired ids stay reserved: `CH.HAIR.ELF.F.06.WALK.D.F0`, `DP.CLIFF.TEMPERATE.FACE`, and the face-layer ids `FA.BG.ELF.F.07.NEUTRAL.C0`, `FA.FRAME.HUMAN.M.01.NEUTRAL.C0`, `FA.BODY.HUMAN.M.01.NEUTRAL.C0`, `FA.HAIR.HUMAN.M.01.NEUTRAL.C0` and `FA.OVERLAY.HUMAN.M.01.NEUTRAL.C0`. The live cliff tile is `DP.CLIFF.TEMPERATE.TILE`. The live face example is `FA.PRESET.HUMAN.M.01.NEUTRAL.C0`.
+
+**AS-ANCHOR-001.** Generators do not supply anchors. After a generation the tool reads the transparent-pixel mask, the silhouette, the foot line and the head outline. It finds the feet at the bottom centre, the head centre, and the main-hand and off-hand points. It shifts the frame by whole pixels until those landmarks sit on that cell's slot-map anchor, and it writes the detected points onto the slot (**AS-ID-001**). Whole-pixel shifts, and trimming transparent margins, are not scaling (**AS-PIPE-001**). A frame that would clip, or that has the wrong proportions, the wrong size, or head drift against the body, is rejected and generated again. A pose reference with the body already placed may be sent. The usual correction is 1 or 2 px. The reference is not required on every call.
+
+**AS-EQUIP-001.** The landmark anchor tool shifts a frame by whole pixels onto the slot anchor (**AS-ANCHOR-001**). Equipment-anchor compositing is retired for character map sprites. Weapons are drawn inside the weapon-group attack clips (**AS-CHMAP-001**). The runtime does not rotate a frame.
+
+### 2.18 Readable fantasy, quarters, and visible gear (A9c)
+
+Owner 14:38 CT through 15:40 CT. No art is generated here. No image is written. A 64 px tile was considered and was not adopted. Terrain stays 48 px, with a 2× integer presentation scale (**AS-RENDER-001**). RMMZ-native sizes elsewhere, including the 64 by 64 SV battler frame and the 144 by 144 face, are unchanged. Notes under each rule are for the future Deus Art manual.
+
+**AS-LOOK-001.** Item 16, as amended by item 38. The art direction is readable high-contrast fantasy at the 48 px scale. Ultima VII stays a feel and readability reference. The view is the RMMZ standard top-down 3/4 view (**AS-PROJ-001**). Proportions are realistic, not chibi. A head is about 1/5 of the body height. That is a proportion rule. It is not a height split (**AS-QTR-001**). The checker requires `headPx / bodyPx` from 0.18 through 0.22 on every race sample. The human sample is body 42 px and head 8 px.
+
+Manual note. Draw readable high-contrast fantasy at the 48 px scale. Ultima VII stays a feel and readability reference. The view is the RMMZ standard top-down 3/4 view. A head is about 1/5 of the body height.
+
+**AS-PROJ-001.** Item 17, as amended by items 38 and 43. The view is the RMMZ standard top-down 3/4 view. Map draw order is by row, then by Z layer. Characters use eight directions and move 8-way through an RMMZ plugin. The diagonal walk step is 3 px per axis per frame. Terrain, walls and caves stay on the square grid with rounded and ragged corners. Creatures, furniture and ground marks stay on the four facings S, W, E and N. Cliff and wall pieces are standard RMMZ-style tiles with the depth cues in **AS-DEPTH-001**. They are not a stack of quarter-height front strips. The building piece list does not add a side-wall piece, a side-roof piece, or a corner-joint piece. A tall object is one sprite. It is not split into stacked pieces. The retired slot id `DP.CLIFF.TEMPERATE.FACE` stays reserved. The live cliff tile is `DP.CLIFF.TEMPERATE.TILE`.
+
+Manual note. The view is the RMMZ standard top-down 3/4 view. Draw the map by row, then by Z layer. Characters use eight directions. The diagonal walk step is 3 px per axis per frame. Terrain, walls and caves stay on the square grid. SRD 5-5-5 applies to spell areas and ranges only. Cliff and wall pieces are RMMZ-style tiles. Side-wall, side-roof and corner-joint pieces are not added. Tall objects are not split.
+
+**AS-FURN-001.** Item 18. Furniture and other placeables have four facings, S, W, E, N. A symmetric object may reuse a view only when `symmetric` is true and `reuse` is `flagged`. An unflagged object has four unique views. Catalogue category `PLACEABLE`. Slot grammar `placeable`, for example `PL.TABLE.D`.
+
+Manual note. Furniture and placeables have four facings. A symmetric object may reuse a view only when its symmetric flag is set.
+
+**AS-TERR-001.** Items 19 and 34. Terrain is 48 px PixelLab tiles-pro Wang tiles, rendered by a custom dual-grid tile renderer. That replaces 24 by 24 tiles assembled into an RMMZ A2 autotile. Big features are separate map objects. Each of the six biomes has 3 to 5 ground types, joined in a chain of transition pairs, with 2 or 3 plain variants each. The names `ground-a`, `ground-b` and `ground-c` are structural. What `COLD` and `WILD` look like stays open (Appendix B). Detail decals stay 24 px, on an overlay: pebbles, tufts, cracks and leaves. Wang tiles, decals and the 12, 24 and 48 px item sprites are native 1:1. They are not scaled. The renderer is a follow-on on the depth-demo lane. It is not code in this lane.
+
+Trial findings, recorded and not run here. The item 34 trial asked for skeleton-v3 on bare create-character-v3 bodies, then layer propagation, and for size 42. That path is retired for character map sprites. Characters are whole-sprite PixelLab v3 on a 48 px canvas, at chart heights (**AS-CHMAP-001**). The south walk row of that trial sits 2 px low, and **AS-ANCHOR-001** corrects that row. The game view stays the RMMZ standard top-down 3/4 view. PixelLab is the primary generator (**AS-GEN-004**). Small item world sprites remain an open test (Appendix B).
+
+Catalogue categories `WANG` and `DECAL`. Slot examples `WG.TEMPERATE.GRASS.DIRT.01` and `DC.TEMPERATE.LEAF.01`.
+
+Manual note. Terrain is 48 px tiles-pro Wang on a dual-grid renderer. Each biome has 3 to 5 ground types in a transition chain, with 2 or 3 plain variants. Detail decals stay 24 px.
+
+Trial note. The item 34 trial used skeleton-v3 and create-character-v3 at size 42. Character map sprites no longer use that layer path. The south walk row sits 2 px low. The view stays the RMMZ standard top-down 3/4 view. PixelLab is the primary generator. Small item world sprites remain an open test.
+
+**AS-TRACK-001.** Item 20. Ground marks are boot, bare, paw and hoof prints on snow, mud, sand, blood and wet ground. Each has four directions and three fade steps (the allowed range is 2 or 3). A worn path may become a road. Catalogue category `GROUNDMARK`. Slot example `GM.SNOW.BOOT.D.F0`.
+
+Manual note. Ground marks cover boot, bare, paw and hoof on snow, mud, sand, blood and wet ground, in four directions, with three fade steps. A worn path may become a road.
+
+**AS-GLOW-001.** Item 21. Every light source has a matching animated, pixel-stepped glow on an additive light layer. Colour and radius are stored with the source's glow id. The colour is a master-palette entry. The radius is a positive whole-pixel count. The torch sample uses 192 px, which is the 4-tile bright range in **AS-SCALE-001**. There is no blur. Catalogue category `GLOW`. Slot example `GL.TORCH.F00`.
+
+Manual note. Every light source has a glow id. The glow is pixel-stepped art on the additive light layer, and it stores colour and radius with that id.
+
+**AS-DEPTH-001.** Item 22, as amended by item 38. The Z-layer look uses a depth palette ramp per layer, standard RMMZ-style cliff and wall tiles per biome and material, hard dithered drop shadows, a 1 px ledge rim highlight, ramps, and half-step slopes of 2 quarters (24 px). Those tiles carry the depth cues. They are not quarter-height front strips. Depth-toned overlays may have outlines. Terrain tiles do not. Renderer toggles for the depth demo, recorded with their asset needs, are: whole-pixel parallax, unit height shift on ramps, camera layer easing, dithered cutaways, cross-layer effects, glows lighting lower layers, and weather by exposed layer. Day length and the 1x/2x/3x scale toggle are **AS-SCALE-001** and **AS-RENDER-001**. Renderer code is not in this lane. Catalogue category `DEPTH`. Slot example `DP.CLIFF.TEMPERATE.TILE`. The earlier sample `DP.CLIFF.TEMPERATE.FACE` is retired and stays reserved.
+
+Manual note. Depth uses per-layer ramps, RMMZ-style cliff and wall tiles, hard dithered shadows, a 1 px ledge rim, ramps and a 24 px half-step. Quarter-height front strips are not the cliff or wall class. The depth demo toggles are recorded here. The renderer is another lane.
+
+**AS-WITEM-001.** Item 23, as amended by item 38. Every item has a world sprite in the RMMZ standard top-down 3/4 view beside its 32 px icon and its 144 px portrait. Legal drawn sizes are the 12, 24 and 48 px classes in **AS-PLAY-001**, which is how the 16 to 24 px description is met: the 24 px class is the ordinary small sprite. Items are placed at whole-pixel offsets on tiles, on surfaces and in containers. The world sprite stores an anchor, a footprint and a sim hook. The runtime placer is another lane. Catalogue category `WORLDSPRITE`. Slot example `WS.LONGSWORD.24.D`.
+
+Manual note. Every item has a world sprite in the RMMZ standard top-down 3/4 view beside its icon and its 144 px portrait. Placement stores an anchor, a footprint and the sim hook.
+
+**AS-FEAT-001.** Section F. Seasonal variants cover terrain, vegetation, and buildings or objects where they change, in spring, summer, autumn and winter. Building and object damage uses 4 stages (the allowed wall range is 3 or 4). Character work is the WORK clip on each armor state (**AS-CHMAP-001**). Shared overlays for farming, mining, chopping, building, crafting, carrying, fishing and cooking stay available when one work clip does not match the job. Those overlays are 6 frames in four directions. Catalogue categories `SEASON`, `DAMAGE` and `WORKANIM`. Slot examples `SE.TERRAIN.TEMPERATE.SUMMER.01`, `DM.WALL.WALL.S1` and `WK.FARM.D.F0`.
+
+Manual note. Seasonal variants and building damage stay. Character work is one WORK clip on each armor state. Colony jobs that need a different tool use a shared overlay. That match is Owner-open.
+
+**AS-PLAY-001.** Item 24. Near the player, placed items are drawn in full. Far away, the sim keeps summarized counts and re-places them from a fixed seed. Storage is by chunk and layer. Clutter is cleaned up. Saves are change-only. The stress benchmark is 100,000 placed items. Placement logic uses 6 px cells, 8 per 48 px tile side, and renders on whole pixels. Size classes are 12, 24 and 48 px, drawn true size, with no scaling. Heights stack as whole-pixel offsets. Surfaces use 12 px quarters: a table top is 1 quarter, a shelf is 2 or 3. Item draw order, inside the row-then-layer map order, is footprint bottom line, then height offset. SRD pound weights set surface load and spill or collapse, and they feed the mass ledger. Small items get a 1 or 2 px hard drop shadow and receive nearby glows. Units still move tile to tile. Pathfinding treats 12 px and 24 px items as passable and 48 px items as blocking. Catalogue category `PLACEMENT`, on the world-sprite grammar.
+
+Manual note. Near the player, items are drawn in full. Far away, the sim keeps counts and replaces them from a fixed seed. Legal drawn sizes are 12, 24 and 48 px, with no scaling.
+
+**AS-CONT-001.** Item 25. A double-click opens a movable window. The interior is the container's art, and the contents are free-placed world sprites, not a grid. Drag moves items among containers, the map and the paper doll. Nesting opens one window each. Several windows may be open. The worked capacity is the backpack: 1 cu ft and 30 lb. Nested weight counts toward carried weight. Locks and traps are the SRD check (thieves' tools against a DC, or a key item). A destroyed or burned container spills or destroys its contents through the mass ledger. NPC shop stock lives in a real container and can be stolen. A container with contents counts as one object for item-count and save budgets. Art for each starter type (backpack, chest, barrel, crate, sack) is an open sprite and a closed sprite in four facings, an open animation, and a container-window background, with race variants where that container is worn or built by a race. Catalogue category `CONTAINER`. Slot example `CN.BACKPACK.CLOSED.D`.
+
+Manual note. A container opens a movable window of free-placed sprites. Backpack capacity in the worked example is 1 cu ft and 30 lb. Art is open and closed, four facings, plus a window background.
+
+**AS-SCALE-001.** Item 26, as amended by items 38 and 43. One Z layer is 5 ft and 48 px. One quarter is 1.25 ft and 12 px. SRD squares are 5 ft. SRD 5-5-5 applies to spell areas and ranges only. Character movement is 8-way. The diagonal walk step is 3 px per axis per frame. Cardinal walk is 4 px per frame and run is 6 px per frame at 60 fps. Feet convert to squares for movement, spell areas, light and vision. A torch is 20 ft bright and 20 ft dim, which is 4 tiles plus 4 tiles. Falling is 1d6 per 2 layers. Carry is Str × 15 lb. Animation holds are an integer number of 60 fps frames (150 ms is 9 frames and still divides evenly). One sim tick is one 6 s SRD round, and 10 ticks are one game minute. This is the action-domain tick. The historical domain stays as already recorded. Day length targets 24 to 48 real minutes, as a depth-demo toggle. Bright light is a solid glow. Dim light is a 2 or 3 step dithered palette falloff, with no gradients, and that falloff is also a depth-demo toggle. Positions are whole pixels. Terrain sits on the 48 px square grid. Heights sit on 12 px steps. A 64 px tile is not adopted.
+
+Manual note. One Z layer is 5 ft and 48 px. A quarter is 1.25 ft and 12 px. SRD 5-5-5 applies to spell areas and ranges only. Character movement is 8-way on the eight directions. The diagonal walk step is 3 px per axis per frame. Terrain stays on the square grid. A 64 px tile is not adopted.
+
+**AS-RENDER-001.** Item 27. Scale is an integer only. The default is 2×. The game picks the largest integer that keeps at least about 20 tiles across: 2× on 1080p, 3× on 1440p and on 4K. The player may override. Sampling is nearest-neighbour, with no smoothing and no blur. The camera moves in whole art pixels. UI and window skins use the same factor. Extra space is a letterbox, or it shows more map. It is never stretched. The depth demo has a 1×, 2× and 3× toggle.
+
+Manual note. The finished frame scales by an integer only. The default is 2×, nearest-neighbour. Extra space letterboxes or shows more map.
+
+**AS-XLAYER-001.** Item 28. Cross-layer destruction is modular and runs through the mass ledger: ground collapse, wall breaches of 4 stages (allowed 3 or 4), and multi-layer cave-ins. Catalogue category `XLAYER`. Slot example `XL.BREACH.S1.01`.
+
+Manual note. Cross-layer destruction covers ground collapse, wall breaches of 4 stages, and cave-ins, through the mass ledger.
+
+**AS-QTR-001.** Item 29, as amended by item 38. Partial heights are quarters of a layer, 12 px steps. That replaces the earlier strata split on strata, ramps, half-step slopes, cliff and edge strips, and surfaces. Cliff and wall pieces are standard RMMZ-style tiles (**AS-DEPTH-001**), not quarter-height front strips. `strataPerLayer` is 4. `stratumPx` is `[12, 12, 12, 12]`. `stratumFt` is 1.25. The head ratio of about 1/5 stays a proportion rule.
+
+Manual note. Partial heights are quarters of 12 px. Cliff and wall pieces are RMMZ-style tiles, not quarter-height front strips. The old strata split is not used. The head ratio of about 1/5 stays a proportion rule.
+
+**AS-SITE-001.** Item 30. The construction category is a placement ghost tinted by a precomputed palette swap (not an alpha fade), a blueprint, a foundation, scaffolding, partial build stages, site props and a build animation. Catalogue category `CONSTRUCTION`. Slot example `CS.HUMAN-FRONTIER.SCAFFOLD.01`.
+
+Manual note. Construction art is a palette-swap ghost, a blueprint, foundation, scaffolding, partial stages, site props and build animation. The ghost is not an alpha fade.
+
+**AS-READ-001.** Item 31. Backgrounds and terrain sit a step calmer than the actors. Mood comes from lighting, glows and grading, not from a darker base palette. Interactable items and characters keep a clear value contrast and a strong silhouette. The grayscale test uses value `round((0.299 R + 0.587 G + 0.114 B) / 255 × 15)`, levels 0 through 15. The minimum step is 3. A 12 px item uses a high-contrast pair and a minimum step of 4. Both colours are master-palette entries. The asset's typical ground is stored with the asset. The checker runs that difference. Approval requires a pass, and the Owner's yea is still the approval in **AS-PREVIEW-001**. UI, recorded for the placement lane, is a 1 px hover outline plus a name tooltip, a drag preview snapped to 6 px cells, topmost-first picking with a modifier that cycles a stack, and an optional hold-to-zoom at integer 3× or 4×. The PixelLab table-with-items trial is the readability reference, reviewed at true 2×. This lane does not generate that image.
+
+Manual note. Characters and items must clear their ground by the grayscale value step before approval. The table-with-items trial is the reference, reviewed at true 2×. No image is generated here.
+
+**AS-PAL-001.** Item 32. Five rules. (1) The palette is saturated and controlled, with no gray mush. Each biome keeps a distinct colour family. (2) Value comes first. Characters and items contrast with their ground, and they use the crisp dark outline. (3) The brightest and most saturated master colours are reserved for interactables, characters, spell effects, loot and danger. Backgrounds are a step calmer. (4) Mood, including a dark dungeon, night, blood or ruin, comes from lighting, glows and grading. (5) Every asset passes the grayscale test before approval.
+
+Manual note. The palette is saturated and controlled, with no gray mush. Value carries the read. The brightest colours are reserved. Mood comes from light and grading. Every asset passes grayscale before approval.
+
+**AS-LOCK-001.** Item 33, with the portrait class from item 42. These defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision is included. Light is top-left. The outline is 1 px and self-tinted on map sprites and items, and none on terrain. A character faceset does not require that outline. A black contour is allowed on a character faceset, because the Owner reference has one (correction 16:39 CT). The master is the single S/T master in **AS-GLOBAL-004**: 226 active colours, 30 reserved slots, 256 slots, and no shrink of that list. Per-asset caps, drawn from that master, are about 16 for a small item or icon, about 32 for a character or creature sheet including its layers, and about 48 for a tileset. A character faceset is its own class: up to 64 colours, drawn from the master plus `RAMP_PORTRAIT_SKIN_HAIR` when the master is short of a skin or hair step. Painterly soft shading is allowed on that class. Map sprites keep the 16, 32 and 48 caps and the 1 px self-tinted outline. The checker uses those counts as maxima. Race and biome sub-palettes are drawn from the same master. The grayscale rules still apply, including to the character faceset. The style bar is `tasks/WG.20.01/lane-al/refs/OWNER_PORTRAIT_STYLE_REF_01.png`: a painterly pixel portrait, soft detailed shading, warm light, and a plain dark background. Its sha256 is `b1c0c721bcbd7eca39b69488073b4d0beff73fb590cb39dcd9c74a86ccafb984`. This lane does not generate that image. It is the reference the PM committed with the brief.
+
+The reserved paper-doll example keeps the RMMZ 4-step cycle 1, 2, 1, 0. Character map sprites do not use that cycle. Idle is 4 frames and walk is 4 frames. Every other character clip is 6 frames (**AS-CHMAP-001**). The clip palette cap after the snap is 40 colours, marked TUNE and Owner-open, beside the locked sheet cap of about 32. Prompts do not state a colour count. Effects use the same palette and outline. Additive glow is the only place maximum brightness is allowed. Grading for dawn, day, dusk, night and underground is a fixed palette shift, not a colour matrix. Icons are 32 px and match the world sprites. Markers for selection, faction, summon controller and low HP are colour-blind-safe and shape-coded: diamond, square, triangle and circle. Colour is not the only channel.
+
+The retired paper-doll estimate counted 708 cells, then 660 after the melee body rows were dropped. That count is not the character map sprite estimate. The character estimate is in **AS-CHMAP-001**. Catalogue category `MARKER`. Slot example `CB.SELECT.DIAMOND`.
+
+Manual note. Style defaults are LOCKED. The PM may revise them on trial or style-bible evidence, with notice to the Owner. The 15:05 CT revision keeps one master, caps colours, and sets the frame budgets. Item 33 counted 708 cells. Item 39 draws 660. A character faceset may use up to 64 colours, painterly soft shading, and a black contour. Map sprites keep the 1 px self-tinted outline.
+
+**AS-MELEE-001.** Items 35 and 39 are retired for character map sprites. Attacks are the eight weapon-group clips in **AS-CHMAP-001**. A fixed grip and a rotating weapon sprite are not the character method. Shields are not animated. A heavy hit may draw 1 or 2 px of knockback as a separate offset. PixelLab is the primary generator. Retro Diffusion is standby. Nano Banana Pro is for concepts only. Catalogue category `SPARK`. Slot example `SP.SLASH.F0`. The weapon-angle ids stay reserved.
+
+Manual note. The fixed upright grip and the rotating weapon sprite are retired for character map sprites. Attacks are whole-sprite weapon-group clips. PixelLab is the primary generator. Retro Diffusion is standby. Nano Banana Pro is for concepts only. A heavy hit may use knockback as a separate offset.
+
+**AS-PM-001.** Item 36. These are PM defaults. The Owner may override them. On-screen size classes: Tiny 24 px, Small about 36 px in the 48 frame, Medium 42 px, Large 48 by 96 or 96 by 48, Huge 144 px frames, Gargantuan 192 px frames. Combat footprints stay SRD: Tiny shares a square, Small and Medium are 1, Large is 2 by 2, Huge is 3 by 3, Gargantuan is 4 by 4. Race heights in the 48 frame: human 42, elf 43 from the scale chart, dwarf 36 from the scale chart, half-elf and tiefling 42, halfling and gnome 33 px inside 32–34, half-orc and dragonborn 44. Races the chart does not list stay Owner-open in **AS-CHMAP-001**. Doors are 1 tile wide and at least 1.5 layers tall (72 px, 6 quarters). Walls are whole layers. Floors are 1 layer. Mirroring is allowed for creatures and props. West-facing creatures and props may be mirrored from east, offline, and the west frame is then stored. The runtime does not flip. Characters are authored in eight directions and are not mirrored. Gear flagged asymmetric on a prop gets its own west view. Fortress zoom-out is a 1× render plus a colour-coded tile minimap, with no downscaled blur. Range and area markers are whole squares on the tile grid and match the SRD shape. One pixel font draws damage numbers and status, at native size, at a whole-pixel scale, coloured by damage type through a precomputed ramp. Catalogue categories `FONT` and `RANGE`. Slot examples `FN.PIXEL.DAMAGE` and `RG.SQUARE.01`.
+
+Manual note. These size, footprint, door, mirror, fortress, marker and font defaults are the PM defaults. The Owner may override them. Elf height follows the scale chart at 43. Characters are authored in eight directions. Creatures and props may mirror west from east.
+
+**AS-VIS-001.** Items 37, 40, 41, 42 and 43. There are no class outfits. The character map sprite is one whole PixelLab v3 sprite per armor state (**AS-CHMAP-001**). Paper-doll layers, race garb and class kits are not that sprite. Class shows in the portrait and the selected-unit panel. Facesets never change with gear. Each faceset is one complete 144 by 144 image. The race background is part of that image. The 8 expressions are generated from it. A faceset is not built from layers.
+
+The retired paper-doll estimate was 708 cells, then 660. Those counts are not the character map sprite estimate. Slot ids for race garb, kits and held class items stay reserved.
+
+Item 42 keeps the faceset as one image. Each of the 216 presets has one complete 144 by 144 portrait, and that portrait is the neutral cell of one 576 by 288 sheet. The other 7 expressions are generated from it and keep its identity. Portrait skin and hair variants are the per-preset field `colourVariantMethod`. No portrait has been drawn in this lane, so no skin and hair ramp has been shown to map onto the master plus `RAMP_PORTRAIT_SKIN_HAIR`. All 216 presets are recorded `separate-generation`. That is 216 × 3 = 648 variant sheets. Complete faceset sheets are 216 + 648 = 864. Expression cells are 864 × 8 = 6912. Generation calls are the same 6912. Presets serve portraits. They do not drive the map sprite.
+
+Manual note. There are no class outfits. The map sprite is the armor state. Facesets never change with gear. Each faceset is one complete image and is not built from layers. Dwarf male and female adult and elder bodies are 36 px. The preset pool is 216 looks. Item 42 records 864 complete faceset sheets and 6912 generation calls.
+
+### 2.19 Character map sprites (item 43)
+
+Owner 16:10 CT through 16:47 CT, amended 17:09 CT by `tasks/WG.20.01/lane-al/refs/ADDENDUM_0509_RULINGS.md` (sha256 `87210fe055efa306c4ba4ec55b9e286e27161da71fa88425f47803d4790077f4`). This section is the character map sprite rule. It cites `tasks/WG.20.01/lane-al/refs/DEUS_CLASS_SPRITE_STANDARD.md` v3 (sha256 `27f74ee271f3777f8ab1d11606c17ca2d56638ed8f714be010a964b4ce5593ce`, superseding v1 `7baffd45ce4e0558` and v2 `bf34763f41327644`) and `tasks/WG.20.01/lane-al/refs/DEUS_GENERATION_RECIPES.md` (sha256 `9785c0690a402be8916b1c9ceaed93ac14c24c6e5c2ed873c408f67e9c2ba32e`). Recipes section 3.0 still describes 216 class sprites and is superseded. No art is generated in this lane. The Owner generates all art in the PixelLab web UI.
+
+**AS-CHMAP-001.** Each race and sex has one unarmored PixelLab v3 base, plain clothes, empty hands. That is 9 races by 2 sexes, 18 bases. ROBE, LIGHT, MEDIUM and HEAVY are PixelLab States of that base, 72 States. With the unarmored base that is 90 armor states. There is no per-class map sprite and no commoner sprite set. Unarmored covers commoners and villagers. Robe covers casters. The armor state follows the worn armor category. The attack animation follows the wielded weapon group. No other gear changes the map sprite. Bases and armor States carry no weapon. The weapon is drawn only inside its attack animation. Class shows in the portrait and the selected-unit panel. An unarmored unit shows ROBE when its highest-level class is a caster, and UNARMORED otherwise. That caster list is Owner-open.
+
+Characters use eight directions: S, SW, W, NW, N, NE, E, SE. Movement is 8-way through an RMMZ plugin. The diagonal walk step is 3 px per axis per frame. The camera stays the RMMZ standard top-down 3/4 view. Terrain, walls and caves stay on the square grid with rounded and ragged corners. Characters are not mirrored. Creatures and props may still mirror west from east.
+
+Each armor state has 19 animations, each in all eight directions. Life clips are idle, walk, work, sleep, sit, eat and drink, carry, hurt, knocked down and dead. Weapon groups are unarmed, dagger, one-hand sword, two-hand, spear and polearm, staff, bow and crossbow. Cast is the nineteenth clip. Idle and walk are 4 frames. Every other clip is 6. The slot id is `CH.<RACE>.<SEX>.<ARMOR>.<ANIM>.<DIR8>.F<n>`. ARMOR is UNARMORED, ROBE, LIGHT, MEDIUM or HEAVY. ANIM is IDLE, WALK, WORK, SLEEP, SIT, EAT, CARRY, HURT, KNOCKDOWN, DEAD, ATK_UNARMED, ATK_DAGGER, ATK_1H, ATK_2H, ATK_POLEARM, ATK_STAFF, ATK_BOW, ATK_XBOW or CAST. The code ATK_1H_SHIELD is retired and reserved. The sample is `CH.HUMAN.M.UNARMORED.IDLE.S.F0`. Paper-doll, race-garb, kit and per-class map-sprite ids stay reserved. The 768 by 1440 sheet remains a reserved example. It is not the map sprite.
+
+Style target is look-test row 6 at chart heights. The canvas is 48 px. A human is about 42 px tall and 18 px wide inside it. Size authority is `art/catalogue/scale_chart.json` (sha256 `f3af0b1140eaa864`), `art/reference/DEUS_HUMAN_SCALE_STRIP_V1.png` and `docs/art/DEUS_HUMAN_WORLD_SCALE_STANDARD.md`. Where scale_chart and `art/catalogue/size_classes.json` disagree, scale_chart wins until the Owner picks one file. Dwarf is 36 (the size-class file says 32). Elf is 43 (the size-class file says 39). PixelLab controls for these sprites are Selective outline, High Top-Down, medium detail and a 48 px canvas. Whether furniture, buildings and creatures use High Top-Down is Owner-open.
+
+Prompts are short plain language: who the character is, what they wear or hold, the pose or motion, the view and the style. The same pattern is used for every character. Prompt text carries no pixel coordinates, no hex lists and no pixel sizes. Size and palette are enforced by the canvas, the outline, the detail setting and the post-process. The post-process snaps the palette, anchors the figure, checks height and checks weapon length on every frame. Acceptance for weapon length is plus or minus 1 px. The locked character-sheet cap stays about 32. The snap cap of 40 colours is TUNE and Owner-open.
+
+Prompt templates:
+
+- Base: `{race} {sex}, {clothes}, empty hands, standing relaxed, high top-down view, readable high-contrast fantasy pixel art`
+- Armor State: `Change the clothes to {armor clothes}. Keep the face, hair, skin, body and standing pose. Empty hands. No weapon.`
+- Animation: `{facing}. {motion}. High top-down view, readable high-contrast fantasy pixel art.`
+
+Facing phrases: S, facing the viewer. SW, facing down and to the left, three-quarter front view. W, facing left, side profile. NW, facing up and to the left, three-quarter back view. N, facing away from the viewer. NE, facing up and to the right, three-quarter back view. E, facing right, side profile. SE, facing down and to the right, three-quarter front view.
+
+Life motions, in plain words: idle is standing and breathing. Walk is an in-place step cycle. Work uses that armor state's tool. Sleep ends lying on one side. Sit ends cross-legged. Eat uses a bowl. Carry holds a crate. Hurt is a flinch and a recovery. Knocked down ends lying on the back. Dead ends lying face down. Cast uses that armor state's gesture.
+
+Weapon motions: unarmed is a right punch and a left follow-up. Dagger is a short stab. One-hand sword is a rising diagonal slash with a longsword. Two-hand is a downward cut with a greatsword. Polearm is a two-handed spear thrust. Staff is a two-handed sweep. Bow is a draw, a release and a recovery. Crossbow is an aim, a release and a reload.
+
+Worked example, human man, medium armor, south:
+
+`human man, plain linen work clothes, a leather belt and leather boots, empty hands, standing relaxed, high top-down view, readable high-contrast fantasy pixel art`
+
+`Change his clothes to a mail shirt and a tabard with a gold sun emblem, steel pauldrons, a leather belt and leather boots. Keep his face, hair, skin, body and standing pose. Empty hands. No weapon.`
+
+`facing the viewer. He swings a longsword in a rising diagonal slash. High top-down view, readable high-contrast fantasy pixel art.`
+
+The Owner's web UI steps, which this lane does not run, are: fill the template (step 0); Create Character for the unarmored base (step 1); Create State for robe, light, medium and heavy (step 2); Animations, one direction at a time (step 3); keep all eight directions, with no mirror (step 5); pack 48 by 48 frames in the row order above (step 6); post-process palette, anchor, height, outline, grayscale and weapon length (step 7). A failed measurable check may be retried twice. After that the item is flagged for the Owner.
+
+Post-process weapon lengths, not prompt text: unarmed has none, dagger 7, longsword 18, greatsword 22, spear 30, quarterstaff 30, shortbow 20, light crossbow 12. The one-hand group draws the longsword only. Thrown weapons have no group yet (Owner-open).
+
+Race themes: each race has one theme of clothing, trim, materials, motifs and silhouette cues. The same block feeds all five armor states and that race's buildings, walls, furniture, workstations, constructed objects, UI window skin and faceset background. The selected-unit panel uses the selected unit's race window skin, and its faceset uses that race's background. The theme text itself is Owner-open.
+
+Estimate, re-run flagged. 18 bases at about 2 each is 36. 72 armor States at 20 each is 1,440. 90 states by 19 animations by 8 directions is 13,680 animation calls. The computed first pass is 15,156, recorded as 15,200, with a range of 15,200 to 19,300 and 18,900 to 24,000 once retries are included. Per race and sex the low figure is 842. The figure sits inside the 40,000 the Owner accepted. Production waits for Owner sign-off. The first test is human man MEDIUM, all eight weapon animations in eight directions: base 2, State 20 and 64 animation calls, about 86, about 110 with retries. Slot example for that test: `CH.HUMAN.M.MEDIUM.ATK_1H.S.F3`.
+
+Owner-open items O1 through O25 stay open except O5 and O20, which are resolved: life clips show empty hands, and shields are not drawn on any character clip. O6 keeps the work-tool question open. O15 is the robe rule. O16 is a class badge on the portrait, with no extra generation. O17 is children and elders. O21 is the weapon-length test and its fallbacks.
+
+Manual note. Eighteen unarmored bases and 72 armor States make 90 armor states. Each state has 19 animations in eight directions. Idle and walk are 4 frames. The other clips are 6. The first-pass estimate is 15,200 generation calls, and production waits for Owner sign-off. Prompts are plain language. The post-process checks palette, anchor, height and weapon length. No art is generated here.
 
 ## 3. Worked spell rows
 
@@ -535,7 +690,7 @@ Owner rulings win. The source line is the conflict. The resolution is the ruling
 5. **Nine layers and the five-Z model vs 32 layers.** Identity standard line 274, "five physical Z levels" Z+2..Z−2. The production charter's five-Z section and the lattice's Z+2..Z−2 are the same model. DEC-013 line 179 and DEC-030 line 407: 32 layers, −16..+15. A 9-layer automated test remains allowed. It is not the world.
 6. **Band ranges.** DEC-013 lines 189–193: Lower-2 −16..−9, Lower-1 −8..−1, Surface 0..+3, Upper-1 +4..+9, Upper-2 +10..+15. Catalogue `geometry.json` `bands` still use those ranges. **DEC-030 wins** with the table in **AS-GLOBAL-019**.
 7. **V64 vs SRD 5.1.** DEC-027 lines 368–374 retires V64. These still describe V64 or OSRS combat as live: `docs/VISION.md` lines 73, 106, 112 and 116; `docs/design/COMBAT_CHAINS.md` lines 5–7; `docs/design/ABILITIES.md`; `docs/design/CRAFTING.md`; `docs/design/CLASSES.md` line 26; `docs/design/CHAIN_OF_COMMAND.md` line 9. **DEC-027 wins.**
-8. **Eight-way sheets vs four directions.** `docs/VISION.md` line 15 (V3) requires eight facings. `docs/RMMZ_ASSET_SPEC.md` lines 49 and 101 describe the AR-600 8-row master. `docs/handoffs/GENERATOR_PROMPTS.md` rule 10 requires eight facings for every action. `docs/ASSET_REQUESTS.md` AR-600 does the same. **Owner 12:38 CT wins** for sprites: four directions, and 8-way sheets are mined for S, W, E, N. The charter line 38 already says "standard 4-directional locomotion". Engine text that keeps 8-direction movement (`docs/ART_STANDARD.md` F5, VISION V110) is movement, not a sheet rule. This standard does not change pathfinding.
+8. **Eight-way sheets vs four directions.** `docs/VISION.md` line 15 (V3) requires eight facings. `docs/RMMZ_ASSET_SPEC.md` lines 49 and 101 describe the AR-600 8-row master. `docs/handoffs/GENERATOR_PROMPTS.md` rule 10 requires eight facings for every action. `docs/ASSET_REQUESTS.md` AR-600 does the same. **Item 43 wins for characters:** eight directions. Creature sheets stay four-direction, and a legacy creature sheet is mined for S, W, E, N. Engine files outside this lane are not edited here. Character movement is 8-way (**AS-PROJ-001**, **AS-CHMAP-001**).
 9. **Tint, alpha, blur, glow shaders vs DEC-011.** Charter lines 190–191 (Invisible at 20% alpha, Poisoned as a tint pulse) and lines 266–268 (VFX exempt from binary alpha). Crosswalk lines 207–208 (the same alpha and tint). `DEUS_VFX_UI_INFORMATION_STANDARD.md` line 29 (permissive alpha and additive blend) and lines 141–142 (fog desaturated and dimmed). Environment standard lines 57–66 (time of day as a WebGL color matrix) and line 107 (seasons as a colour LUT). Native-resolution text that allows smooth VFX alpha. Visual-QC text that exempts translucent VFX from the palette clamp. Build-ghost text at 35% alpha in the VFX standard. **DEC-011 wins** for all of those: drawn frames and ramps, binary alpha. **AS-LIGHT-001**, Owner 12:52 CT, adds one later hook: optional per-pixel or per-tile tint, blur forbidden, default off. That hook does not revive ColorMatrix, blur, or alpha fades.
 10. **Invisible and poisoned.** Resolved by **AS-HUM-012**. The 20% alpha and the green tint pulse are not the standard.
 11. **Giant sockets "scaled by 2.0×".** Charter line 303. **DEC-011 / AS-GLOBAL-017:** Large frames are authored at 96 px, not scaled at runtime.
@@ -553,14 +708,38 @@ Owner rulings win. The source line is the conflict. The resolution is the ruling
 23. **Child labour.** Charter §8: a child is ineligible for heavy labour. **AS-HUM-019** still requires the work rows on the child template.
 24. **WG.00.01–.05**, for the record, not all of them conflict: WG.00.01 visual charter (flat 3/4, chibi 3.0–3.2 heads); WG.00.02 native 48 px, 1:1, binary alpha; WG.00.03 human scale, 42 px adult; WG.00.04 five biomes and 10 transitions (superseded); WG.00.05 master palette and 58 ramps (still the target architecture).
 25. **Registry canonical set is five.** `game/data/DEUS_BiomeRegistry.json` `canonicalBiomes` (lines 9–15) is `TEMP`, `WET`, `ARID`, `HIGH`, `VOLC`. The same array is `docs/art/DEUS_BiomeRegistry.json` lines 7–13. The game file also keys `biomes`, `materialTaxonomy.signatureMaterials` and `horizontalTransitions` (10 keys, lines 562–653) with that five. `art/catalogue/catalogue.json` `biomes.canonical` (lines 110–116) is the same five, and all 10,089 entry biome tokens are `SHARED`. **AS-BIOME-005** flags a declared canonical set that is not the six DEC-030 ids. Those three files are not edited here.
-26. **Shared outfit silhouette vs custom 135.** A1 said armour-weight silhouettes are shared and only the ramp and motif change. Owner 13:14 CT says the 135 class and armour outfits stay fully custom per race. **AS-HUM-015** and **AS-GEAR-001** follow 13:14. The silhouette field remains the slot pattern.
+26. **Shared outfit silhouette vs custom armour.** A1 said armour-weight silhouettes are shared and only the ramp and motif change. Owner 13:14 CT keeps armour pixels custom per race. Item 40 withdraws class outfits. **AS-HUM-015** keeps 27 custom armour icon rows. Race garb is reserved and is not the map sprite. The silhouette field remains the armour icon pattern.
 27. **Season frames vs palette swaps.** **AS-BIOME-004** names four season states and rejects a runtime LUT. PM 13:01 CT (**AS-VAR-002**, Owner may amend) builds variety-piece seasons as palette-swap frames on precomputed season ramps. That is not a ColorMatrix. The four names stay.
 28. **Six profile window skins vs eleven selectable skins.** **AS-UI-001** had named a window sheet per building profile. Owner 12:57 CT (**AS-UI-004**) requires Deus, Deus Dark and one skin per race. The six profiles remain building styles and banners.
 29. **Legal mirror.** Item 12 stands. **AS-MIRROR-001** is the only added path: an offline W-to-E bake of a layer flagged `symmetric` with light-neutral shading.
 30. **Huge and Gargantuan multiples.** They were open. Owner 13:16–13:20 CT sets them in **AS-SIZE-001**. `geometry.json` still has nulls and was not edited.
 31. **Creature equipment.** Owner 13:01 CT supersedes any creature-gear slot. **AS-TAME-002**. No barding.
 32. **Window background opacity.** A generator handoff describes the RMMZ window background at 75% opacity. **AS-UI-004** keeps the rectangles and requires opaque pixels.
-33. **Separate elder bakes.** The generator pool bakes elder keys as their own charsets. **AS-ELDER-001**: only the stooped body is a new sheet. Garb, gear and hair are the adult sheets plus the offset table.
+33. **Separate elder bakes.** The generator pool bakes elder keys as their own charsets. **AS-ELDER-001**: only the stooped body is a new sheet, one per race and sex. Race garb, armour and the preset head are the adult sheets plus the offset table.
+34. **Per-row strips vs one paper-doll sheet.** **AS-SLOT-001** still describes a 192 by 192 action-row strip. Owner 13:30 CT stacks paper-doll layers into 768 by 1440 (**AS-SRC-001**). The strip remains for Large and larger creature rows. The RMMZ charset is not that sheet.
+35. **Walk is 3 columns vs 4 frames on the layer sheet.** **AS-GLOBAL-013** keeps the RMMZ 3-column walk on the charset. The paper-doll sheet writes that cycle as stand, left, stand, right.
+36. **Pose-grid counts of 3 vs 4 columns.** **AS-HUM-016** still counts bow-loose, dodge and parry at 3 frames for the 236-frame offset table. The source sheet has 4 columns on every row. What the fourth cell shows on those three rows is open (Appendix B). The cell still has an id.
+37. **Garb on each body vs elder reuse.** Owner 13:50 CT draws garb and armour on each body. **AS-ELDER-001** still reuses the adult sheet. **AS-SEX-001** draws adult male, adult female and the child body, and places the same sex's adult sheet on the elder with the offset table.
+38. **One anchor vs two hands.** **AS-HUM-016** stores one `{x, y, angle}` cel. **AS-EQUIP-001** stores main-hand and off-hand points, the grip angle and the draw-order flag. The eight angle cels stay.
+39. **Catalogue slot ids vs permanent ids.** Existing catalogue `slot.slotId` values are atlas addresses. **AS-ID-001** is the id the runtime keeps. The catalogue file was not edited.
+40. **Generator routing.** Item 39 names PixelLab as the primary generator for every category. Retro Diffusion is standby. Nano Banana Pro is for concepts only. The multi-generator bake-off is off. One generator per layered set still holds, and that generator is PixelLab.
+41. **Layer height.** DEC-013, and **AS-GLOBAL-018** as first written, used 1 layer = 10 ft and five strata of 2 ft. Owner items 26 and 29 replace that with 1 layer = 5 ft = 48 px and four quarters of 12 px. `stratumPx` is `[12, 12, 12, 12]`. Lanes that still assume a 10 ft step are not edited here.
+42. **A 64 px tile.** It was considered and was not adopted. Terrain stays 48 px. Integer presentation scale is **AS-RENDER-001**. The 64 by 64 SV battler frame stays.
+43. **Art-direction wording.** The 14:38 CT direction is replaced by readable high-contrast fantasy (Owner 15:02 CT). Mood sits in lighting and grading.
+44. **Outline weight.** A heavier outline gives way to the 1 px self-tinted outline on map sprites and items, and none on terrain (**AS-LOCK-001**). A character faceset does not require that outline. A black contour is allowed on a character faceset (Owner 16:39 CT).
+45. **Two palette files.** `uf.hex` (256 lines, 250 unique, no shared hex) is not a second master. The S/T file's 226 colours are the active canonical set. Thirty reserved slots make 256 slots. The active list is not shrunk.
+46. **Frame average.** The 3.5 frames-per-row estimate (420 cells) is replaced by the budgets in **AS-LOCK-001**. Item 33 counted 708 cells. Item 39 draws 660 after the melee body rows drop.
+47. **Visible gear.** Item 43 withdraws paper-doll map sprites, race garb and class kits. **AS-CHMAP-001** is the map sprite. Facesets never change with gear. The A1 addendum file is not edited.
+48. **West from east.** Owner 15:11 CT allows that mirror for bodies, gear layers and creatures. Weapons and shields stay on hand anchors. **AS-MIRROR-001** still forbids a runtime flip.
+49. **Terrain assembly.** A 24 px Wang tile assembled into an RMMZ A2 autotile is not the terrain path. 48 px tiles-pro Wang on a dual-grid renderer is. 24 px remains the detail-decal size.
+50. **Where maximum brightness sits.** It sits only on additive glow frames.
+51. **Half-step slopes.** Item 22's half-step is 2 quarters, 24 px.
+52. **Action tick.** One action-domain tick is one 6 s SRD round. The historical domain is unchanged.
+53. **View and stepping.** The view is the RMMZ standard top-down 3/4 view. Characters use eight directions and move 8-way. The diagonal walk step is 3 px per axis per frame. Terrain, walls and caves stay on the square grid. Draw order stays row, then layer. SRD 5-5-5 applies to spell areas and ranges only. Cliff and wall pieces are RMMZ-style tiles with the depth cues. Side-wall, side-roof and corner-joint pieces are not added. Tall objects are not split. Quarter-height front strips are not a cliff or wall class. The retired slot id is `DP.CLIFF.TEMPERATE.FACE`. The live cliff tile is `DP.CLIFF.TEMPERATE.TILE`.
+54. **Melee body frames.** Item 43 retires the fixed grip and the rotating weapon sprite for character map sprites. Attacks are the weapon-group clips in **AS-CHMAP-001**.
+55. **Class outfits.** Item 40 withdrew them. Item 43 also withdraws race garb and class kits as the map sprite. The map sprite is the armor state.
+56. **Visible genetics.** Item 41 withdraws them. Art uses 216 presets. Sim genetics stay on stats only. Dwarf male and female adult and elder bodies are 36 px.
+57. **Faceset layer stack.** Items 37, 40 and 41, and the A1 face-stack rule, described a faceset as layers. Owner 16:05 CT withdraws that stack (**AS-FACE-002**). Each preset is one complete 144 by 144 image. The 8 expressions are generated from it. The race background is painted into the image. The checker requires one complete sheet of 8 expressions per preset, and it rejects a faceset built from layers. Face-layer slot ids stay reserved. Portrait colour variants are recorded per preset. All 216 are `separate-generation` until a ramp map is proven, which is 864 faceset sheets and 6912 generation calls.
 
 ## Appendix B. Open questions
 
@@ -573,9 +752,7 @@ These are not answered here.
    - What `COLD` looks like, given WG.00.04 forbids a snow biome, and where the existing `HIGH_*` ramps go.
    - What `WILD` looks like. No WG.00.04 entry describes it.
    - How many dragonborn scale-colour steps in `RAMP_SCALE`.
-   - Eight of the twelve hair-ramp steps are still unnamed (`step-05` through `step-12`). Race-specific hair colours are unnamed.
-   - The fourth marking id is `patch`. The Owner renames it if that is the wrong mark.
-   - Race-feature option pictures (`rf1`, `rf2`, `rf3`) are unnamed. Ears, horns, tail and scales stay their own parts.
+   - Ears, horns, tail and scales stay race features on the body template. The old hair, beard, balding and face-part lists are retired with the preset pool.
    - Do `DEEP` and `CAVERN` exhaust "underground depth band", or does `LOWLAND`'s negative Z count too?
    - Head-state indices 0, 1 and 2 are not named gestures.
    - DEC-016's open sentence: if "the scale chart" means a file other than the registry plus the strip, the Owner names it.
@@ -587,9 +764,14 @@ These are not answered here.
 5. **Deity roster.** No DEUS pantheon is on file. `docs/design/EMERGENT_SOCIETY.md` says not to add unapproved named gods. The SRD historical-pantheon appendix is not this roster. Which deities, if any, get a holy symbol?
 6. **Collar, saddle, harness.** After the 13:01 correction these are not slots and not stats. Are the visual markers wanted at all?
 7. **Biome code mapping.** This lane does not map `HIGH` to `COLD` and does not invent a source token for `WILD`. `TEMP`, `WET`, `ARID` and `VOLC` already have identity-standard counterparts named in **AS-BIOME-003**. The Owner decides the migration, including `HIGH` and `WILD`.
-8. **Beards.** Which of the nine races skip the eight facial-hair parts? `beardlessRaces` stays empty until that answer. Dwarf has the eight plus at least `dwarf-plait`. How many further dwarf extras?
+8. **Beards.** Closed by item 41. Facial hair is part of the preset. Elder presets carry greying and balding. There is no separate facial-hair part list.
+9. **Further dimorphic creatures.** The verified list is the 21 names in **AS-SEX-002**. A creature that is not on that list stays `none`. Adding another is an Owner call.
+10. **Fourth frame on three-frame poses.** Bow-loose, dodge and parry have a fourth cell on the 768 by 1440 sheet. What that cell shows is open. The id is already reserved.
+11. **Elder bodies.** Closed by items 40 and 41. Elder bodies are 18, one male and one female per race, at that race's height. Dwarf elder male and dwarf elder female are 36 px. The offset table reuses the adult armour, helmet and preset head.
+12. **Small item world sprites.** The PixelLab trial left them as an open test (**AS-TERR-001**). No size was accepted or rejected here beyond the 12, 24 and 48 px classes already set for placement.
+13. **Fourth walk cell.** Walk now authors three frames. The committed example sheet still has a fourth walk cell. What that cell shows is open. The id stays reserved.
 
-The four-direction rule is decided (12:38 CT). It is not in this appendix. Huge and Gargantuan frame squares are decided (13:16–13:20 CT). Balding overlays are three (PM 13:02 CT, Owner may amend). Those are not open questions.
+Character direction count is decided in §2.19 (Owner 16:41 CT and 17:09 CT). Huge and Gargantuan frame squares are decided (13:16–13:20 CT). The reserved paper-doll example sheet size, the 2048 px cap, the dimorphic list above, and permanent slot ids are decided (13:30–14:10 CT). Layer height, the single master palette and the PM size defaults are in §2.18. The 216 portrait presets and the complete faceset are decided (Owner 15:54 CT, 16:05 CT and 16:39 CT). Character map sprites are decided in §2.19. The open items above, plus O1 through O25 in that section, are the ones still listed.
 
 ## Appendix C. Existing assets
 
@@ -607,9 +789,9 @@ Counts below are names and JSON only, from this worktree, not from pixel reads.
 | `$UF_Layer_*` | 24 PNGs | Names have no `__<race>` suffix. They fail **AS-STYLE-001** until renamed. Seven are cited by the catalogue. |
 | Generator pool loci | skin 1–3, hair style 1–4, hair brown/blonde/black/red/silver, beard 0–3, clothing 1–4 | The visible-locus table extends this. Silver is the elder bake only. |
 | People sheets | human 12 walk sheets; elf, dwarf, gnome have sheets; halfling, dragonborn, half-elf, half-orc, tiefling are empty strings | The nine race templates are not drawn. |
-| SV battlers, spell-visual rows, summon slots, 135 outfit variants, resource states, night ramps | not in the catalogue as this standard describes them | Follow-up leaves. Not this lane. |
+| SV battlers, spell-visual rows, summon slots, the 216 portrait presets, resource states, night ramps | not in the catalogue as this standard describes them | Follow-up leaves. Not this lane. |
 
-Reusable now: the 48 px grid, the 3 by 4 S/W/E/N charset, the 144 face cell, the paper-doll z-order, the 18-slot draw order, the human 42 px scale row, the four-direction rows already on catalogue entries, and the SRD ids in `game/data/srd51/`. Legacy, to be mined or replaced rather than extended: 8-way sidecars, `$gen_*` mirrors, `$UF_Layer_*` names without a race, face sheets in the old 4-mood layout, and catalogue band ids from DEC-013.
+Reusable now: the 48 px grid, the 144 face cell, the human 42 px scale row, and the SRD ids in `game/data/srd51/`. Character map sprites are the eight-direction clips in §2.19. Legacy, to be mined or replaced rather than extended: old 8-way creature sidecars, `$gen_*` mirrors, `$UF_Layer_*` names without a race, face sheets in the old 4-mood layout, and catalogue band ids from DEC-013.
 
 ## Rule index
 
@@ -618,7 +800,7 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-GLOBAL-001.** 48 px grid. Frame sizes are multiples of 48.
 - **AS-GLOBAL-002.** DEC-011 flat 1:1. No blur, bloom, glow shader, ColorMatrix, parallax or alpha fade.
 - **AS-GLOBAL-003.** Binary alpha. Brightness from drawn frames and ramps.
-- **AS-GLOBAL-004.** Ramp ids. `uf.hex` now, master palette as the target.
+- **AS-GLOBAL-004.** One canonical master: 226 active S/T colours, 30 reserved slots. `uf.hex` is not a second master.
 - **AS-GLOBAL-005.** Light from the top-left, 315° / 45°, baked.
 - **AS-GLOBAL-006.** 1 px selout, local ramp, darker bottom-right, outer silhouette only.
 - **AS-GLOBAL-007.** Drawn contact shadow. No baked ground-tile shadows. No shadow filter.
@@ -632,7 +814,7 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-GLOBAL-015.** SV battlers for humanoids and Medium+ creatures only.
 - **AS-GLOBAL-016.** Tall 48×96, long 96×48, extra actions on more `$` sheets.
 - **AS-GLOBAL-017.** No runtime scale, rotation or tint as a substitute.
-- **AS-GLOBAL-018.** DEC-013: 32 layers, 5 ft cell, 10 ft layer, 2 ft strata, nine races.
+- **AS-GLOBAL-018.** 32 layers, nine races. 1 layer = 5 ft = 48 px. Four quarters of 12 px.
 - **AS-GLOBAL-019.** DEC-030 bands and six biomes. Legacy tokens are unknown.
 - **AS-GLOBAL-020.** SRD 5.1. V64 retired.
 - **AS-GLOBAL-021.** DEC-016 scale chart.
@@ -650,23 +832,23 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-HUM-002.** Fixed socket ids, per-frame coordinates, human baseline.
 - **AS-HUM-003.** Body, eyes, hair front/back, beard, racial parts.
 - **AS-HUM-004.** Paper-doll z-order legs 1 through fx 7.
-- **AS-HUM-005.** Face matches worn charset gear.
+- **AS-HUM-005.** Faceset is one complete image, with the race background painted in and 8 expressions generated from it. Gear does not change it.
 - **AS-HUM-006.** Age axis. Further steps open.
-- **AS-HUM-007.** Greying ramp and three balding overlays.
-- **AS-HUM-008.** Visible genetic loci and their parts.
+- **AS-HUM-007.** Greying and balding belong to the elder presets.
+- **AS-HUM-008.** Preset pool. Sim genetics are stats only.
 - **AS-HUM-009.** Humanoid action rows.
 - **AS-HUM-010.** F01–F14 mapped onto those rows.
 - **AS-HUM-011.** RMMZ balloons.
 - **AS-HUM-012.** Fifteen conditions, DEC-011 treatments, Invisible as a contour.
 - **AS-HUM-013.** Pregnancy stages 0–3 as a torso decal.
 - **AS-HUM-014.** Handedness and grips. No blind mirror.
-- **AS-HUM-015.** 9 × 15 outfit matrix. Pixels are custom per race. Slot pattern stays named.
-- **AS-HUM-016.** Pose grid and pre-drawn weapon angles. PM-proposed, Owner may amend.
-- **AS-HUM-017.** Deforming pieces have per-pose frames.
+- **AS-HUM-015.** 27 custom armour icon variants. Race garb is reserved. Class outfits are icon-only.
+- **AS-HUM-016.** Character attacks are whole-sprite clips. PM-proposed, Owner may amend.
+- **AS-HUM-017.** Shields are items. Generic cape is not drawn.
 - **AS-HUM-018.** Height, build, horns, tail, ears, scale colour.
 - **AS-HUM-019.** Child template and stooped working elder.
-- **AS-FACE-001.** Per-race faceset background.
-- **AS-FACE-002.** Seven-layer face stack.
+- **AS-FACE-001.** Race background is painted into the complete portrait.
+- **AS-FACE-002.** One complete faceset sheet of 8 expressions per preset. A faceset is not built from layers.
 - **AS-FACE-003.** Eight expressions in index order.
 - **AS-FACE-004.** 144 px face anchors.
 - **AS-BIOME-001.** 30 biome-depth sets and 15 transitions.
@@ -718,11 +900,11 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-TAME-002.** No creature armour, barding or crafted creature gear.
 - **AS-VAR-001.** Per-biome and per-underground-band piece floors. PM decision, Owner may amend.
 - **AS-VAR-002.** Variety seasons are palette swaps. Flip only when light-neutral.
-- **AS-GENE-001.** Hair, balding, facial hair and face-gene counts. PM decision, Owner may amend.
+- **AS-GENE-001.** 216 presets. One complete faceset each. Portrait colour method recorded per preset. Genetics do not select art.
 - **AS-PORT-001.** Icon and 144 px portrait for every non-face entity.
-- **AS-HEAD-001.** 12-frame head grid and a head anchor on every body frame.
-- **AS-ELDER-001.** Elder reuses adult garb, gear and hair via per-frame offsets.
-- **AS-GEAR-001.** One silhouette for weapons, tools and accessories, plus ramp and decal.
+- **AS-HEAD-001.** Preset head on a 12-frame grid and a head anchor on every body frame.
+- **AS-ELDER-001.** 18 elder bodies. Adult armour, helmet and preset head via per-frame offsets. Dwarf elders are 36 px.
+- **AS-GEAR-001.** One silhouette for weapons, tools and accessories, plus ramp and decal. Armour and race garb stay custom.
 - **AS-MIRROR-001.** Offline W-to-E bake only, symmetric and light-neutral.
 - **AS-POSE-001.** Prone, unconscious, sleep, sit, sneak, climb, with the condition map.
 - **AS-BIOME-005.** Declared canonical biome sets must be the six DEC-030 ids.
@@ -733,4 +915,36 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-GEN-001.** Generation log: generator, version, seed, outcome, reason codes.
 - **AS-GEN-002.** Yield, cost and time per usable slot, per generator, category and template.
 - **AS-GEN-003.** Template versions promote only when A/B yield wins.
-- **AS-GEN-004.** Adapters, routing, golden test set. Style tune is optional and later.
+- **AS-GEN-004.** PixelLab primary. Retro Diffusion standby. Nano Banana Pro for concepts only. Bake-off off.
+- **AS-SRC-001.** Paper-doll layer sheet 768 by 1440. RMMZ sizes stay. No source side over 2048 px.
+- **AS-REPO-001.** Slot map in the repo. Approved art on Git LFS. Raw generations, rejects and logs stay out.
+- **AS-PREVIEW-001.** Animated in-game 1:1 preview. Owner yea or nay before merge.
+- **AS-GEN-005.** One generator per category and per layered set. That generator is PixelLab.
+- **AS-SEX-001.** Male and female adult and elder bodies, including dwarf at 36 px. Own child body. Preset head.
+- **AS-SEX-002.** Creature `sexVariant` none or dimorphic. Both sets, with tamed and saddle, only when dimorphic.
+- **AS-ID-001.** Permanent unique slot id per cell. Grammar, no reuse, catalogue link. Resolve by id only.
+- **AS-ANCHOR-001.** Whole-pixel shift onto the slot anchor. Reject clip, proportion, size and head drift.
+- **AS-EQUIP-001.** Landmark anchor tool. Equipment compositing is retired for character map sprites.
+- **AS-LOOK-001.** Readable high-contrast fantasy. RMMZ standard top-down 3/4 view. Head about 1/5 of body height.
+- **AS-PROJ-001.** RMMZ standard top-down 3/4 view. Row, then layer. Characters use eight directions. Terrain stays on the square grid.
+- **AS-FURN-001.** Four facings. Symmetric reuse only by flag.
+- **AS-TERR-001.** 48 px Wang dual-grid. 24 px decals. Trial findings recorded.
+- **AS-TRACK-001.** Ground marks, four directions, three fade steps, path to road.
+- **AS-GLOW-001.** Glow id, colour and radius on every light source.
+- **AS-DEPTH-001.** RMMZ-style cliff and wall tiles, depth cues, and the depth-demo toggles.
+- **AS-WITEM-001.** World sprite in the RMMZ standard top-down 3/4 view, anchor, footprint, sim hook.
+- **AS-FEAT-001.** Seasons, damage stages, sim work rows.
+- **AS-PLAY-001.** Placement sizes 12, 24 and 48. 6 px cells. 100,000 item benchmark.
+- **AS-CONT-001.** Container window, four facings, open and closed, capacity.
+- **AS-SCALE-001.** 5 ft layer, 48 px, 6 s tick. SRD 5-5-5 applies to spell areas and ranges only. Characters move 8-way. 64 px tiles not adopted.
+- **AS-RENDER-001.** Integer scale, 2× default, nearest-neighbour.
+- **AS-XLAYER-001.** Cross-layer collapse, breach and cave-in.
+- **AS-QTR-001.** Four quarters of 12 px. Cliff and wall pieces are RMMZ-style tiles.
+- **AS-SITE-001.** Construction ghost, scaffold, partial build.
+- **AS-READ-001.** Grayscale value step. Table-with-items reference at true 2×.
+- **AS-PAL-001.** Saturated palette, value first, grayscale before approval.
+- **AS-LOCK-001.** LOCKED style defaults. Map-sprite caps, frame budgets, one master. Character facesets may use up to 64 colours, painterly soft shading and a black contour.
+- **AS-MELEE-001.** Weapon-group clips. Fixed grip and rotating weapons are retired for characters.
+- **AS-PM-001.** PM defaults the Owner may override. Elf is 43. Characters are not mirrored.
+- **AS-VIS-001.** Whole-sprite map. No class outfits. Facesets never change with gear and are not built from layers.
+- **AS-CHMAP-001.** 18 unarmored bases, 72 armor States, 90 armor states, 19 animations, eight directions. Plain-language prompts. Post-process checks. Owner sign-off.

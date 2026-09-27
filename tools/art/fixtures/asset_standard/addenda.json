@@ -15,11 +15,14 @@
   "face": {
     "race": "human",
     "rampId": "RAMP_RACE_HUMAN",
+    "raceBackground": "in-composition",
+    "completeImage": true,
+    "builtFromLayers": false,
     "cell": [144, 144],
+    "sheet": [576, 288],
     "cols": 4,
     "rows": 2,
     "expressions": ["neutral", "happy", "angry", "sad", "surprised", "hurt", "determined", "afraid"],
-    "layers": ["background", "faction-trim", "body-base", "face", "hair", "gear", "overlay"],
     "anchors": {
       "neckBase": [72, 120],
       "collarLine": [72, 108],
