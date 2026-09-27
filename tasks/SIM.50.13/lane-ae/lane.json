@@ -1,0 +1,44 @@
+{
+    "lane":  "lane-ae",
+    "taskId":  "SIM.50.13",
+    "branch":  "task/lane-ae",
+    "writer":  "grok",
+    "reviewer":  "gemini",
+    "push":  true,
+    "launchGate":  [
+                       "Lane AA (WG.00.17) merged to main and its claim retired: DEUS_Ecology.js and DEUS_Fluid.js are in Lane AA\u0027s live write set.",
+                       "Gemini waives or drops the WBS dependency on SIM.50.02 (PM proposal in Directive 0068-BQ: the two bug fixes do not need the SIM.50.02 deliverable). Until Gemini records that, this lane stays blocked.",
+                       "PM confirms which file loads/attaches the fluid solver on the post-AA main and adds it to allowedPaths if it is not DEUS_Fluid.js itself."
+                   ],
+    "allowedPaths":  [
+                         "game/js/plugins/DEUS_Ecology.js",
+                         "game/js/plugins/DEUS_Fluid.js",
+                         "tools/sim/test_ore_sprout.js",
+                         "tools/sim/test_fluid_attach.js",
+                         "tools/sim/fixtures/sim5013/**",
+                         "tasks/SIM.50.13/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/sim/test_ore_sprout.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/sim/test_fluid_attach.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  600
+                      }
+                  ]
+}

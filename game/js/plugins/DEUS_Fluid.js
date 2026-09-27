@@ -45,10 +45,29 @@
 var Imported = Imported || {};
 Imported.DEUS_Fluid = true;
 
-var UF = UF || {};
+// Assigned inside the loader below. A `var UF = UF || {}` here is local to Node's
+// require() wrapper (DEUS_Core loads this file with require), so UF.Fluid would
+// never land on the object consumers read (F-05 / D-4 option b).
+var UF;
 
 (function() {
     "use strict";
+
+    // One object shared with window.DEUS. Core's later
+    // `window.DEUS = window.DEUS || {}; window.UF = window.DEUS` then keeps Fluid.
+    // When both already exist and differ, window.UF (what consumers read) is kept.
+    function bindSharedNamespace() {
+        if (typeof window === "undefined") return UF || {};
+        if (!window.DEUS && !window.UF) {
+            window.DEUS = window.UF = {};
+        } else if (!window.UF) {
+            window.UF = window.DEUS;
+        } else if (!window.DEUS) {
+            window.DEUS = window.UF;
+        }
+        return window.UF;
+    }
+    UF = bindSharedNamespace();
 
     // --- Constants ---
     const DEPTH_MAX = 7;
@@ -893,6 +912,11 @@ var UF = UF || {};
 
         _configure(opts = {}) {
             Object.assign(config, opts);
+        },
+
+        // Re-bind onto the live window.UF. Map setup and layer-built events call this.
+        attach() {
+            return attachFluid();
         }
     };
 
@@ -951,8 +975,28 @@ var UF = UF || {};
     }
 
     // --- Event Listeners: Change Creates Work ---
+    // The Events bus we last hooked. A replaced bus (a new window.UF) hooks once;
+    // a second map load on the same bus does not stack listeners.
+    let hookedEvents = null;
+    let attachTimer = null;
+    let attachDeadline = null;
+
+    function cancelAttachWait() {
+        if (attachTimer !== null && typeof clearInterval === "function") clearInterval(attachTimer);
+        if (attachDeadline !== null && typeof clearTimeout === "function") clearTimeout(attachDeadline);
+        attachTimer = null;
+        attachDeadline = null;
+    }
+
+    function liveNamespace() {
+        return (typeof window !== "undefined" && window.UF) ? window.UF : UF;
+    }
+
     function setupEventHooks() {
-        if (!window.UF || !UF.Events || typeof UF.Events.on !== "function") return;
+        const ns = liveNamespace();
+        if (!ns || !ns.Events || typeof ns.Events.on !== "function") return false;
+        if (hookedEvents === ns.Events) return true;
+        hookedEvents = ns.Events;
 
         function handleGeometryChange(payload) {
             if (!payload) return;
@@ -964,13 +1008,17 @@ var UF = UF || {};
             wakeCellAndNeighbors(ax, ay, x, y, z);
         }
 
-        UF.Events.on("levels:cellChanged", handleGeometryChange);
-        UF.Events.on("levels:shapeChanged", handleGeometryChange);
-        UF.Events.on("levels:strataChanged", handleGeometryChange);
-        UF.Events.on("levels:strataDestroyed", handleGeometryChange);
+        ns.Events.on("levels:cellChanged", handleGeometryChange);
+        ns.Events.on("levels:shapeChanged", handleGeometryChange);
+        ns.Events.on("levels:strataChanged", handleGeometryChange);
+        ns.Events.on("levels:strataDestroyed", handleGeometryChange);
+
+        // Every area and underground layer load re-binds. Attaching does not write fluid.
+        ns.Events.on("world:areaBuilt", function() { attachFluid(); });
+        ns.Events.on("world:levelBuilt", function() { attachFluid(); });
 
         // Door State Changes
-        UF.Events.on("doors:opened", function(door) {
+        ns.Events.on("doors:opened", function(door) {
             if (!door) return;
             const at = door.at || door;
             const a = at.area || {};
@@ -980,7 +1028,7 @@ var UF = UF || {};
             wakeCellAndNeighbors(ax, ay, at.x | 0, at.y | 0, z | 0);
         });
 
-        UF.Events.on("doors:closed", function(door) {
+        ns.Events.on("doors:closed", function(door) {
             if (!door) return;
             const at = door.at || door;
             const a = at.area || {};
@@ -990,7 +1038,7 @@ var UF = UF || {};
             wakeCellAndNeighbors(ax, ay, at.x | 0, at.y | 0, z | 0);
         });
 
-        UF.Events.on("doors:broken", function(door) {
+        ns.Events.on("doors:broken", function(door) {
             if (!door) return;
             const at = door.at || door;
             const a = at.area || {};
@@ -999,21 +1047,28 @@ var UF = UF || {};
             const z = at.z !== undefined ? at.z : 0;
             wakeCellAndNeighbors(ax, ay, at.x | 0, at.y | 0, z | 0);
         });
+        return true;
     }
 
-    if (window.UF && UF.Events) {
-        setupEventHooks();
-    } else {
-        // Deferred hook check
-        const _initCheck = setInterval(function() {
-            if (window.UF && UF.Events) {
-                setupEventHooks();
-                clearInterval(_initCheck);
-            }
-        }, 100);
-        if (typeof setTimeout !== "undefined") {
-            setTimeout(() => clearInterval(_initCheck), 5000);
+    // Publish the solver on the live namespace and hook its bus.
+    // Returns true once listeners are on the current bus. Binding itself
+    // writes no cells, so a map or layer load cannot create water.
+    function attachFluid() {
+        UF = bindSharedNamespace();
+        if (UF) UF.Fluid = Fluid;
+        const hooked = setupEventHooks();
+        if (hooked) cancelAttachWait();
+        return hooked;
+    }
+
+    function ensureAttached() {
+        if (attachFluid()) return true;
+        if (attachTimer !== null || typeof setInterval !== "function") return false;
+        attachTimer = setInterval(function() { attachFluid(); }, 100);
+        if (typeof setTimeout === "function") {
+            attachDeadline = setTimeout(function() { cancelAttachWait(); }, 5000);
         }
+        return false;
     }
 
     // --- Save/Load Engine Hooks ---
@@ -1043,10 +1098,19 @@ var UF = UF || {};
             _Game_Map_update.call(this, sceneActive);
             Fluid.tick();
         };
+        // Each map load is a layer load (one map id per level). Re-bind there.
+        if (typeof Game_Map.prototype.setup === "function") {
+            const _Game_Map_setup = Game_Map.prototype.setup;
+            Game_Map.prototype.setup = function(mapId) {
+                _Game_Map_setup.call(this, mapId);
+                attachFluid();
+            };
+        }
     }
 
-    // Register on window.UF
-    UF.Fluid = Fluid;
+    // Register on window.UF. Events may not exist yet (Core assigns them after
+    // require returns); ensureAttached retries until the bus is there.
+    ensureAttached();
 
     if (typeof module !== "undefined" && module.exports) {
         module.exports = Fluid;

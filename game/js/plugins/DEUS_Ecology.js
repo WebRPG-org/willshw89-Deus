@@ -731,22 +731,33 @@
     //-------------------------------------------------------------------------
     // Per-Beat Resource Sprouting and Maturation (User specification 2026-09-19)
     // Resources sprout across axes 0, -1, -2 each beat and mature over 2-3 minutes.
+    // Loose stones never mature into ore. Ore is placed by worldgen geology only
+    // (F-03). A non-ore stone outcome (granite boulder) may still mature.
 
     const SPROUT_CAP_PER_LEVEL = 40;
+    // Object ids that mine into ore. Kept in sync with the catalog's "ore" tag
+    // so a save that already scheduled one of these cannot finish the maturation.
+    const ORE_SPROUT_IDS = new Set(["ironstone", "copper_outcrop", "gold_outcrop"]);
+    function isOreSproutOutcome(id) {
+        if (ORE_SPROUT_IDS.has(id)) return true;
+        const O = Objects();
+        const type = O && typeof O.type === "function" ? O.type(id) : null;
+        return !!(type && Array.isArray(type.tags) && type.tags.indexOf("ore") >= 0);
+    }
     const SPROUT_DEFS = {
         0: [
             { sprout: "sapling", matures: ["oak", "pine", "birch", "fruit_tree"], weights: [5, 2, 2, 1], delay: 120 },
-            { sprout: "rocks_small", matures: ["ironstone", "copper_outcrop", "granite_boulder", "gold_outcrop"], weights: [4, 3, 2, 1], delay: 150 },
+            { sprout: "rocks_small", matures: ["granite_boulder"], weights: [2], delay: 150 },
             { sprout: "bush", matures: ["berry_bush", "fruit_tree", "wild_grain"], weights: [5, 3, 2], delay: 120 }
         ],
         "-1": [
             { sprout: "cave_mushrooms", matures: ["tower_cap", "glow_caps", "cave_moss"], weights: [5, 3, 2], delay: 120 },
-            { sprout: "rocks_small", matures: ["ironstone", "copper_outcrop", "granite_boulder", "gold_outcrop"], weights: [4, 3, 2, 1], delay: 150 },
+            { sprout: "rocks_small", matures: ["granite_boulder"], weights: [2], delay: 150 },
             { sprout: "crystal_small", matures: ["crystal", "crystal_spire"], weights: [6, 4], delay: 180 }
         ],
         "-2": [
             { sprout: "glow_caps", matures: ["tower_cap", "crystal_spire"], weights: [6, 4], delay: 120 },
-            { sprout: "rocks_small", matures: ["ironstone", "gold_outcrop", "granite_boulder"], weights: [4, 3, 3], delay: 150 },
+            { sprout: "rocks_small", matures: ["granite_boulder"], weights: [3], delay: 150 },
             { sprout: "crystal_small", matures: ["crystal_spire", "crystal"], weights: [6, 4], delay: 180 }
         ]
     };
@@ -782,6 +793,12 @@
                 const cur = O.atIn(levelArea, s.x, s.y);
                 if (cur && cur.id === s.sproutType) {
                     if (!standerAt(levelArea, s.x, s.y)) {
+                        // A scheduled ore outcome (including one already stored on a save)
+                        // is dropped. The loose stone stays; it is not replaced with ore.
+                        if (isOreSproutOutcome(s.matureType)) {
+                            st.sprouts.splice(i, 1);
+                            continue;
+                        }
                         O.setIn(levelArea, s.x, s.y, s.matureType);
                         st.stats.matured++;
                         result.matured++;
