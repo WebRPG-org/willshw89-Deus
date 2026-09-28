@@ -557,3 +557,82 @@ Every decision item recorded in this log must provide:
   8. **Deterministic Calendar Math:** Authoritative 360-day calendar (12x30 days, 4x90 seasons) uses explicit zero-based day-of-year wrapping:
      dayOfYear = absoluteDay % 360 (0..359); month = Math.floor(dayOfYear / 30) + 1 (1..12); dayOfMonth = (dayOfYear % 30) + 1 (1..30); season = Math.floor(dayOfYear / 90) (0=Spring, 1=Summer, 2=Autumn, 3=Winter).
   9. **Ratification of NAT.03.01 in Lane bx:** Lean Aquifer & Water Table Kernel authorized for execution in lane-bx with MiniMax M3 writer and Grok reviewer under these exact specifications.
+
+---
+
+### Decision `DEC-039`: Rules-Source Hierarchy (SRD 5.1 -> Minecraft Reference -> DEUS Law)
+- **Date Logged:** 2026-09-28
+- **Status:** `DECIDED` (Owner Directive 2026-09-28)
+- **Decider:** Owner
+- **Summary:**
+  1. **Canonical Five-Tier Rules Hierarchy:**
+     1. **OWNER DECISIONS** (Project vision, architectural rulings, freezes, explicit directives).
+     2. **SRD 5.1 (CC-BY-4.0)** (Creatures, class/spell mechanics, ability scores, combat, saving throws, core traits).
+     3. **VANILLA MINECRAFT (Java Edition Stable Behavior)** (Default behavioral/gameplay reference when SRD is silent or too abstract for a simulated world).
+     4. **DEUS-SPECIFIC PHYSICAL INTERPRETATION** (Translation to 5-ft lattice, 32 Z, 2-ft strata, continuous coordinates, closed mass).
+     5. **ORIGINAL DEUS CONTENT** (Original pixel art, lore, factions, original code; zero asset copying).
+  2. **Core Operational Rule:** Use the SRD wherever it gives an answer. When the SRD is silent or too abstract to define a functioning simulated world, use vanilla Minecraft Java Edition as the default behavioral reference unless an explicit DEUS decision overrides it.
+  3. **Behavior Reference vs Implementation:** Copy gameplay logic and reference behavior, NEVER textures, source code, sounds, names, or art.
+  4. **World Generation vs Regeneration Philosophy:**
+     - **Generation Order:** `WORLD SEED -> base terrain -> geology -> water -> soil/environment -> vegetation -> fauna/monsters -> structures/features`. Establishes initial world state.
+     - **Regeneration Law:** Regeneration happens ONLY through physical world rules (seed dispersal, suitable soil/light/moisture for plants; breeding/migration for wildlife). Zero magic chunk reload respawning or arbitrary respawn timers. Supernatural entities follow explicit SRD rules.
+  5. **Minecraft Rule Record Format:** Every Minecraft-derived DEUS specification must document: `SOURCE`, `REFERENCE BEHAVIOR`, `DEUS TRANSLATION`, and `DEVIATIONS`.
+
+---
+
+### Decision `DEC-040`: Universal Closed-Mass World Invariant & Magma/Core Reservoirs
+- **Date Logged:** 2026-09-28
+- **Status:** `DECIDED` (Owner Directive 2026-09-28)
+- **Decider:** Owner
+- **Summary:**
+  1. **Master Conservation Law:** Project DEUS is a closed-mass world. Matter may move, combine, separate, change phase, decay, burn, be eaten, mined, crafted, carried, dissolved, or transformed—but total world mass never changes:
+     $$\text{WORLD\_TOTAL\_MASS}(t) \equiv \text{WORLD\_TOTAL\_MASS}(\text{Year 0})$$
+     Strictly enforced in authoritative integer centipounds ($1\text{ unit} = 0.01\text{ lb}$).
+  2. **No Deletion Sinks:** No sink—including lava, deep earth, fire, decay, digestion, or offscreen simulation—may delete matter. Every transformation identifies source reservoir, destination reservoir, and conserved transferred mass.
+  3. **Core Environmental Reservoirs:** Solid strata, loose items/rubble, carried/container inventory, liquid water/groundwater, atmospheric/gaseous products, living plant biomass, creature body mass, magma/core reservoirs.
+  4. **Subsystem Conservation Contracts:**
+     - **Mining/Excavation:** Displaced solid stratum mass transfers exactly to loose rubble/ore item mass.
+     - **Logging/Harvesting:** Plant biomass transfers into logs, branches, stumps, crop food, and seeds.
+     - **Fauna/Digestion:** Consumed food transfers to creature body mass and waste; death transfers body mass to corpse, meat, bones, hide, and decay products.
+     - **Smelting/Burning:** Wood/ore mass transfers exactly into metal, slag, ash, and smoke/combustion gases.
+  5. **Magma & Planetary Core as Mass-Bearing Reservoirs:**
+     - Lava is a mass-transfer and transformation system, not a deletion sink.
+     - Matter engulfed by lava melts/decomposes into magma mass, dissolved minerals, and volcanic gases/ash.
+     - Magma reservoirs track mass, temperature, pressure, density, viscosity, volatile load, and composition.
+     - Magma outputs (eruptions, intrusions, basalt ridges, ash clouds, geothermal deposits) transfer mass out of the magma reservoir with exact balance.
+     - Deep Earth ($Z \in [-16 \dots -11]$) interfaces with an aggregated mantle/core reservoir beneath the playable 32-Z stack. The planetary core is not an infinite material faucet.
+
+---
+
+### Decision `DEC-041`: 24/7 Multi-Agent Orchestration Architecture & Natural World v1 Exit Gate
+- **Date Logged:** 2026-09-28
+- **Status:** `DECIDED` (Owner Directive 2026-09-28)
+- **Decider:** Owner
+- **Summary:**
+  1. **Campaign & Execution Architecture:**
+     - `/teamwork-preview`: Multi-day Natural World campaign coordinator.
+     - `/goal`: Bounded current task objectives (single-lane completion through review, gate, and merge).
+     - `/schedule`: Idempotent 5-minute watchdog pulse (`*/5 * * * *`).
+  2. **Watchdog Idempotency & Per-Lane Leases:**
+     - Every pulse verifies: worker active (PID + output stream), review active, merge in progress, SHA reviewed, lane merged, Owner approval present.
+     - If an active lease exists, the watchdog observes; it never launches duplicate workers or reviews.
+     - If rate-limited, records timestamp in `provider_status.json` and sleeps until reset without spinning context.
+  3. **Strict Lane Exit States:** Every lane terminates in exactly one of: `MERGED`, `REJECTED`, `SUPERSEDED`, or `PAUSED-BLOCKED`.
+  4. **Automated Worktree Archiving:** Worktrees are removed (`git worktree remove`) ONLY after merge SHA, remote push, review evidence, and task report are safely recorded on `main`.
+  5. **Hard Owner Package Gates:** Orchestration autonomously advances approved leaves through `Writer -> Verify -> Review -> Merge Gate -> Main`. However, upon package completion (e.g. Package 3 Water -> Package 4 Soil), it produces read-only preflight and proposal, then HALTS for explicit Owner approval before opening implementation lanes.
+  6. **Single Machine-Readable Canonical Registry:** Master truth resides in `tasks/wbs_registry.json`. Markdown WBS and `docs/STATUS.md` derive from or reference this registry.
+  7. **Natural World v1 Exit Gate (Final 12-Point Scenario):**
+     Before final Natural World v1 sign-off, a fixed-seed in-engine scenario must prove:
+     1. World topology survives region seams and save/load cycles;
+     2. Physical world objects remain persistent;
+     3. Excavation exposes predetermined geological strata;
+     4. Unsupported terrain triggers cascading collapse into rubble;
+     5. Groundwater breach produces conserved Darcy seepage;
+     6. Groundwater and surface water hydrate soil moisture;
+     7. Terrain elevation and volcanism dynamically drive continuous climate;
+     8. Soil moisture, light, and temperature govern plant germination and growth;
+     9. Vegetation biomass determines herbivore carrying capacity;
+     10. Wildlife populations persist and reproduce rather than arbitrarily respawning;
+     11. Full region unload and reload reproduces bit-identical state;
+     12. Quiescent sleep guarantees zero global full-world per-frame scans.
+
