@@ -269,6 +269,70 @@
             return null;
         }
     }
+    let partyMod;
+    function partyApi() {
+        if (partyMod !== undefined) return partyMod;
+        const host = nodeRequire();
+        if (!host) { partyMod = null; return null; }
+        const path = host.req("path");
+        const fs = host.req("fs");
+        const candidates = [];
+        if (typeof __dirname === "string") candidates.push(path.join(__dirname, "..", "sim", "taming", "party.js"));
+        if (host.cwd) {
+            candidates.push(path.join(host.cwd, "game", "js", "sim", "taming", "party.js"));
+            candidates.push(path.join(host.cwd, "js", "sim", "taming", "party.js"));
+        }
+        let file = null;
+        for (let i = 0; i < candidates.length; i++) {
+            if (candidates[i] && fs.existsSync(candidates[i])) { file = candidates[i]; break; }
+        }
+        partyMod = file ? host.req(file) : null;
+        return partyMod;
+    }
+    // Domesticated, and the role is one the party table lets fight. Not an answer to OQ-BG-01.
+    function tamedFriendly(unit) {
+        const party = partyApi();
+        if (!party || typeof party.joinsParty !== "function" || party.joinsParty(unit) !== true) return false;
+        const published = window.UF && window.UF.Rules;
+        if (!published || typeof published.creatureOf !== "function") return true;
+        let block = null;
+        try {
+            block = published.creatureOf(unit);
+        } catch (err) {
+            if (err && (err.name === "RulesError" || err.name === "DiceError")) return false;
+            throw err;
+        }
+        return !!block;
+    }
+    function tamedBody(unit) {
+        if (!tamedFriendly(unit)) return unit;
+        const party = partyApi();
+        return party && typeof party.rulesBody === "function" ? party.rulesBody(unit) : unit;
+    }
+    function prepareTamed(unit) {
+        if (!tamedFriendly(unit) || !unit.data || unit.data.dead === true || unit.data._isDying === true) return;
+        const party = partyApi();
+        const rules = rulesApi();
+        if (!party || typeof party.livingHp !== "function" || !rules) return;
+        const hp = party.livingHp(rules, unit);
+        if (!hp) return;
+        unit.data.maxHp = hp.max;
+        if (typeof unit.data.hp !== "number" || unit.data.hp <= 0 || unit.data.hp > hp.max) unit.data.hp = hp.hp;
+    }
+    function applyTamedOrder(unit) {
+        if (!tamedFriendly(unit)) return;
+        const party = partyApi();
+        if (!party || typeof party.orderOf !== "function") return;
+        const order = party.orderOf(unit);
+        const c = cd(unit);
+        if (!order || order.type === "follow") return;
+        if (order.type === "hold") {
+            c.targetId = null;
+            c.retaliate = false;
+            return;
+        }
+        if (order.type === "attack" && order.targetId != null) c.targetId = order.targetId;
+    }
     function rulesApi() {
         const published = window.UF && window.UF.Rules;
         if (published && typeof published.attack === "function") return published;
@@ -535,6 +599,14 @@
         if (e) e.prof = p;
         return p;
     }
+    function tamedWeaponProfile(unit) {
+        const base = unarmedProfile();
+        const party = partyApi();
+        const rules = rulesApi();
+        const key = party && rules && typeof party.primaryAttackKey === "function" ? party.primaryAttackKey(unit, rules) : null;
+        if (!key) return base;
+        return Object.assign({}, base, { name: key, natural: true });
+    }
     function computeWeapon(unit) {
         const block = creatureBlock(unit);
         if (block) {
@@ -543,6 +615,9 @@
             const far = type === "ranged" || type === "magic";
             return { name: "natural", itemType: null, record: null, speed: pos(block.attackSpeed, 4), types: [type], styles: [style], reach: 1,
                 ranged: far ? { range: pos(block.range, 5), ammo: null } : null, ammo: null, natural: true };
+        }
+        if (tamedFriendly(unit)) { // BG_LEGACY_GEAR
+            return tamedWeaponProfile(unit);
         }
         const it = slotItem(unit, "mainHand") || slotItem(unit, "weapon");
         const w = it && it.type.weapon;
@@ -609,7 +684,7 @@
             err.code = "RULES_NOT_LOADED";
             throw err;
         }
-        return Rules.armorClass(unit).ac;
+        return Rules.armorClass(tamedBody(unit)).ac;
     };
 
     /** Maps a weapon profile or catalog item to a standardized SRD 5.1 weapon key. */
@@ -657,6 +732,12 @@
         return Math.max(1, prof.speed + styleBonus(styleOf(unit, prof)).speed);
     }
     function modeOf(unit) {
+        if (tamedFriendly(unit)) {
+            const party = partyApi();
+            const order = party && typeof party.orderOf === "function" ? party.orderOf(unit) : null;
+            if (order && order.type === "hold") return "manual";
+            return "nearest";
+        }
         const c = unit && unit.data && unit.data.combat;
         if (c && MODES.includes(c.mode)) return c.mode;
         const dm = cfg().defaultModes;
@@ -800,6 +881,54 @@
             return null;
         }
 
+        if (tamedFriendly(attacker) && !o._tamedSwing) {
+            const party = partyApi();
+            const rules = rulesApi();
+            let keys = null;
+            if (party && rules && typeof party.attackSequence === "function") {
+                let block = null;
+                try { block = rules.creatureOf(tamedBody(attacker)); } catch (err) {
+                    if (!(err && (err.name === "RulesError" || err.name === "DiceError"))) throw err;
+                }
+                const seq = block ? party.attackSequence(block, rules) : null;
+                if (seq && seq.sequence && seq.sequence.length > 1) keys = seq.sequence.slice();
+            }
+            if (keys) {
+                const swings = [];
+                let total = 0;
+                let any = false;
+                let killedSwing = false;
+                let last = null;
+                for (let i = 0; i < keys.length; i++) {
+                    if (target.data.dead || target.data._isDying || target.data.hp <= 0) break;
+                    const one = Combat.resolveAttack(attacker, target, Object.assign({}, o, {
+                        _tamedSwing: true,
+                        weaponKeyOverride: keys[i],
+                        bypassGcd: true
+                    }));
+                    if (!one) break;
+                    swings.push({
+                        weaponKey: keys[i],
+                        hit: !!one.hit,
+                        damage: one.damage,
+                        fromStatBlock: true,
+                        natural: one.attackRoll
+                    });
+                    total += one.damage || 0;
+                    any = any || !!one.hit;
+                    killedSwing = killedSwing || !!one.killed;
+                    last = one;
+                }
+                if (!last) return null;
+                last.swings = swings;
+                last.damage = total;
+                last.hit = any;
+                last.killed = killedSwing;
+                last.weaponKey = keys[0];
+                return last;
+            }
+        }
+
         const isTargetUnconscious = (target.data.hp <= 0) || (Cond && typeof Cond.has === "function" && Cond.has(target, "unconscious"));
         const dist = cheb(attacker, target);
 
@@ -835,6 +964,19 @@
         let rollA = 0;
         let rollD = 0;
         let weaponKey = Combat.resolveWeaponKey(n.prof);
+        if (o.weaponKeyOverride) weaponKey = o.weaponKeyOverride;
+        else if (tamedFriendly(attacker)) {
+            const party = partyApi();
+            const key = party && typeof party.primaryAttackKey === "function" ? party.primaryAttackKey(attacker, rulesApi()) : null;
+            if (key) weaponKey = key;
+        }
+        if (tamedFriendly(attacker)) {
+            const party = partyApi();
+            const near = World() && typeof World().units === "function" ? World().units() : [];
+            if (party && typeof party.packAdvantage === "function" && party.packAdvantage(rulesApi(), attacker, target, near) && !finalDis) {
+                finalAdv = true;
+            }
+        }
         let attResult = null;
         let maxExpression = null;
 
@@ -867,7 +1009,7 @@
                 err.code = "RULES_NOT_LOADED";
                 throw err;
             }
-            attResult = Rules.attack(attacker, target, weaponKey, {
+            attResult = Rules.attack(tamedBody(attacker), tamedBody(target), weaponKey, {
                 rng: rngFn,
                 advantage: finalAdv,
                 disadvantage: finalDis,
@@ -897,7 +1039,7 @@
                 attResult.critical = true;
             }
             if (hit) {
-                const dmgResult = Rules.damage(attacker, target, attResult, { rng: rngFn, extraDamage: o.extraDamage || 0 });
+                const dmgResult = Rules.damage(tamedBody(attacker), tamedBody(target), attResult, { rng: rngFn, extraDamage: o.extraDamage || 0 });
                 rolled = dmgResult.damage;
             }
         }
@@ -942,13 +1084,29 @@
                         if (typeof startDyingFn === "function") startDyingFn(target);
                         emit("combat:downed", { attacker, target });
                     } else {
-                        // Non-colonist: dies instantly
-                        killed = true;
-                        target.data.dead = true;
-                        Combat.onUnitDeath(target, attacker);
+                        const party = partyApi();
+                        const rules = rulesApi();
+                        if (party && typeof party.defersDeath === "function" && party.defersDeath(target, rules)) {
+                            killed = false;
+                            target.data.hp = 0;
+                            target.data.dead = false;
+                            target.data._isDying = false;
+                            if (typeof party.noteDamageType === "function") party.noteDamageType(target, rules, attResult && attResult.damageType);
+                        } else {
+                            // Non-colonist: dies instantly
+                            killed = true;
+                            target.data.dead = true;
+                            Combat.onUnitDeath(target, attacker);
+                        }
                     }
                 } else {
                     target.data.hp -= rolled;
+                }
+            }
+            if (tamedFriendly(target)) {
+                const party = partyApi();
+                if (party && typeof party.noteDamageType === "function") {
+                    party.noteDamageType(target, rulesApi(), (attResult && attResult.damageType) || o.damageType || null);
                 }
             }
         }
@@ -1069,6 +1227,8 @@
         d._isDying = true;
         d.dead = true;
         d.hp = 0;
+        const party = partyApi();
+        if (party && typeof party.noteDeath === "function") party.noteDeath(victim, { cause: "hp0", killerId: killer && killer.id });
         const Forensics = (window.UF && window.UF.DeathForensics) || (typeof global !== "undefined" && global.UF && global.UF.DeathForensics);
         if (Forensics && typeof Forensics.recordDeath === "function") {
             try { Forensics.recordDeath(victim, d.deathCause || null, killer); } catch (_) {}
@@ -1220,6 +1380,7 @@
     function computeSide(u) {
         const d = u && u.data;
         if (!d) return null;
+        if (tamedFriendly(u)) return "friendly";
         if (Array.isArray(d.tags) && d.tags.includes("hostile")) return "hostile";
         const S = window.UF && UF.Stance;
         const s = S && typeof S.of === "function" ? S.of(u) : (d.kind === "colonist" || d.faction === "player" ? "friendly" : null);
@@ -1397,6 +1558,205 @@
         }
         for (const all of groups.values()) runLevelTick(tick, all, levelArea(all[0]));
     }
+    function tamedOwned(id) {
+        return !!(Combat._tamedOwned && Combat._tamedOwned.has(id));
+    }
+    function tamedOrderType(u) {
+        const party = partyApi();
+        if (!party || typeof party.orderOf !== "function") return null;
+        const order = party.orderOf(u);
+        return order && order.type;
+    }
+    function tamedOwner(u, byId) {
+        const rec = u && u.data && u.data.taming;
+        if (!rec || rec.ownerId == null) return null;
+        if (byId && byId.has(rec.ownerId)) return byId.get(rec.ownerId);
+        const asNumber = Number(rec.ownerId);
+        if (byId && Number.isFinite(asNumber) && byId.has(asNumber)) return byId.get(asNumber);
+        const w = World();
+        return w && typeof w.unit === "function" ? w.unit(rec.ownerId) : null;
+    }
+    function followTamed(u, byId, occ, size, area) {
+        if (!tamedFriendly(u) || tamedOrderType(u) !== "follow") return false;
+        const c = cd(u);
+        let touching = null;
+        if (byId) {
+            for (const other of byId.values()) {
+                if (!other || other === u || isDead(other) || sideOf(other) !== "hostile") continue;
+                if (cheb(u, other) <= 1) { touching = other; break; }
+            }
+        }
+        if (touching) {
+            c.targetId = touching.id;
+            return false;
+        }
+        c.targetId = null;
+        c.chase = null;
+        const owner = tamedOwner(u, byId);
+        const w = World();
+        if (!owner || cheb(u, owner) <= 1) {
+            if (w && typeof w.stopUnit === "function") w.stopUnit(u.id);
+            return true;
+        }
+        chase(u, owner, occ, size, area);
+        return true;
+    }
+    function loadCombatRt() {
+        if (loadCombatRt.mod) return loadCombatRt.mod;
+        const host = nodeRequire();
+        if (!host) return null;
+        try {
+            const path = host.req("path");
+            const fs = host.req("fs");
+            const candidates = [];
+            if (typeof __dirname === "string") candidates.push(path.join(__dirname, "..", "sim", "combat_rt"));
+            if (host.cwd) {
+                candidates.push(path.join(host.cwd, "game", "js", "sim", "combat_rt"));
+                candidates.push(path.join(host.cwd, "js", "sim", "combat_rt"));
+            }
+            for (let i = 0; i < candidates.length; i++) {
+                if (candidates[i] && fs.existsSync(path.join(candidates[i], "index.js"))) {
+                    loadCombatRt.mod = host.req(candidates[i]);
+                    return loadCombatRt.mod;
+                }
+            }
+        } catch (e) {
+            report("tamed-rt", e);
+        }
+        return null;
+    }
+    let tamedEngineRef = null;
+    function tamedEngine() {
+        if (tamedEngineRef) return tamedEngineRef;
+        const mod = loadCombatRt();
+        const rules = rulesApi();
+        if (!mod || typeof mod.createEngine !== "function" || !rules) return null;
+        const w = World();
+        const seed = w && w.state && w.state.seed != null ? (w.state.seed >>> 0) : 1;
+        tamedEngineRef = mod.createEngine({ rules: rules, seed: seed });
+        return tamedEngineRef;
+    }
+    Combat.tamedEngine = function () { return tamedEngineRef; };
+    function legacyTurnClock(dt) {
+        if (Combat.tamedEncounter !== false) return;
+        const party = partyApi();
+        const rules = rulesApi();
+        const w = World();
+        if (!party || !rules || !w || typeof w.units !== "function" || typeof party.beginTurn !== "function") return;
+        const list = w.units() || [];
+        for (let i = 0; i < list.length; i++) {
+            const u = list[i];
+            if (!tamedFriendly(u) || !u.data || !u.data.taming) continue;
+            const rec = u.data.taming;
+            rec.turnMs = (rec.turnMs || 0) + dt;
+            if (rec.turnMs < 6000) continue;
+            rec.turnMs -= 6000;
+            const turn = party.beginTurn(u, rules);
+            if (turn && turn.died) u.data.hp = 0;
+        }
+    }
+    function driveTamedFrame(dt) {
+        Combat._tamedOwned = null;
+        if (Combat.tamedEncounter === false) {
+            legacyTurnClock(dt);
+            return;
+        }
+        const w = World();
+        const party = partyApi();
+        const rules = rulesApi();
+        if (!w || typeof w.units !== "function" || !party || !rules || typeof party.joinsParty !== "function") return;
+        if (window.UF && UF.Time && UF.Time.paused) return;
+        if (!Combat.enabled) return;
+        const all = w.units() || [];
+        const pets = [];
+        for (let i = 0; i < all.length; i++) {
+            if (all[i] && party.joinsParty(all[i])) pets.push(all[i]);
+        }
+        if (!pets.length) return;
+        const engine = tamedEngine();
+        if (!engine) return;
+        const owned = new Set();
+        Combat._tamedOwned = owned;
+        for (let i = 0; i < pets.length; i++) {
+            const pet = pets[i];
+            owned.add(pet.id);
+            if (!engine.unit(pet.id) && typeof party.enlist === "function") party.enlist(engine, rules, [pet]);
+            const rec = pet.data && pet.data.taming;
+            if (!rec || rec.ownerId == null || engine.unit(rec.ownerId)) continue;
+            const owner = typeof w.unit === "function" ? w.unit(rec.ownerId) : null;
+            if (!owner) continue;
+            engine.addUnit({
+                id: owner.id,
+                x: owner.x | 0,
+                y: owner.y | 0,
+                z: owner.z || 0,
+                side: "player",
+                hp: owner.data && typeof owner.data.hp === "number" ? owner.data.hp : 20,
+                maxHp: owner.data && typeof owner.data.maxHp === "number" ? owner.data.maxHp : 20,
+                stats: (owner.data && owner.data.stats) || { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+                behaviour: "defend",
+                anchorHold: true,
+                weaponKey: "unarmed"
+            });
+        }
+        for (let i = 0; i < all.length; i++) {
+            const u = all[i];
+            if (!u || pets.indexOf(u) >= 0 || isDead(u)) continue;
+            if (sideOf(u) !== "hostile") continue;
+            let near = false;
+            for (let p = 0; p < pets.length; p++) {
+                if (cheb(pets[p], u) <= 12) near = true;
+            }
+            if (!near) continue;
+            owned.add(u.id);
+            if (!engine.unit(u.id)) {
+                engine.addUnit({
+                    id: u.id,
+                    x: u.x | 0,
+                    y: u.y | 0,
+                    z: u.z || 0,
+                    side: "enemy",
+                    hp: u.data && typeof u.data.hp === "number" ? u.data.hp : 10,
+                    maxHp: u.data && typeof u.data.maxHp === "number" ? u.data.maxHp : 10,
+                    stats: (u.data && u.data.stats) || { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+                    behaviour: "attack-nearest",
+                    worldUnit: u,
+                    weaponKey: "longsword"
+                });
+            } else if (typeof engine.relocate === "function") {
+                engine.relocate(u.id, u.x, u.y, u.z || 0);
+            }
+        }
+        for (let i = 0; i < pets.length; i++) {
+            const rec = pets[i].data && pets[i].data.taming;
+            if (!rec || rec.ownerId == null || typeof engine.relocate !== "function") continue;
+            const owner = typeof w.unit === "function" ? w.unit(rec.ownerId) : null;
+            if (owner) engine.relocate(rec.ownerId, owner.x, owner.y, owner.z || 0);
+        }
+        engine.advanceReal(dt);
+        for (let i = 0; i < pets.length; i++) {
+            const pet = pets[i];
+            const snap = engine.unit(pet.id);
+            if (!snap) continue;
+            pet.x = snap.x;
+            pet.y = snap.y;
+            if (snap.z != null) pet.z = snap.z;
+            if (pet.data) {
+                pet.data.hp = snap.hp;
+                pet.data.maxHp = snap.maxHp;
+            }
+        }
+        for (let i = 0; i < all.length; i++) {
+            const u = all[i];
+            if (!u || !owned.has(u.id) || pets.indexOf(u) >= 0) continue;
+            const snap = engine.unit(u.id);
+            if (!snap || !u.data) continue;
+            u.x = snap.x;
+            u.y = snap.y;
+            u.data.hp = snap.hp;
+            if (snap.hp <= 0 && !u.data.dead && !u.data._isDying) Combat.onUnitDeath(u, null);
+        }
+    }
     function runLevelTick(tick, all, area) {
         const w = World();
         const units = Combat.testFilter ? all.filter(u => Combat.testFilter.has(u.id)) : all;
@@ -1412,25 +1772,36 @@
         const hostiles = [], friendlies = [];
         for (const u of units) {
             byId.set(u.id, u);
+            prepareTamed(u);
             if (isDead(u) || (u.data && u.data.hp <= 0)) continue;
             const side = sideOf(u);
             if (side === "hostile") hostiles.push(u);
             else if (side === "friendly") friendlies.push(u);
         }
         if (hostiles.length && friendlies.length) {
-            for (const u of hostiles) seek(u, friendlies, tick, byId, seed);
-            for (const u of friendlies) seek(u, hostiles, tick, byId, seed);
+            for (const u of hostiles) {
+                if (tamedOwned(u.id)) continue;
+                seek(u, friendlies, tick, byId, seed);
+            }
+            for (const u of friendlies) {
+                if (tamedOwned(u.id)) continue;
+                if (tamedFriendly(u) && tamedOrderType(u) === "follow") continue;
+                seek(u, hostiles, tick, byId, seed);
+            }
         }
         const leash = cfg().leash;
         for (const u of units) {
+            if (tamedOwned(u.id)) continue;
+            applyTamedOrder(u);
             const c = u.data && u.data.combat;
             if (!c || isDead(u) || (u.data && u.data.hp <= 0)) continue;
             if (modeOf(u) === "flee") {
                 flee(u, units, tick, size, area);
                 continue;
             }
+            if (followTamed(u, byId, occ, size, area)) continue; // BG_LEGACY_FOLLOW
             if (c.targetId === null || c.targetId === undefined) continue;
-            const t = byId.get(c.targetId);
+            const t = byId.get(c.targetId); // BG_LEGACY_LOOKUP
             if (!t || isDead(t) || cheb(u, t) > leash || (t.data && t.data.hp <= 0)) {
                 c.targetId = null;
                 c.chase = null;
@@ -1474,6 +1845,11 @@
         Game_Map.prototype.update = function(sceneActive) {
         _Game_Map_update.call(this, sceneActive);
         const t0 = performance.now();
+        try {
+            if (sceneActive !== false) driveTamedFrame(1000 / 60); // BG_RUNTIME_DELIVER
+        } catch (e) {
+            report("tamed-frame", e);
+        }
         try {
             step();
         } catch (e) {

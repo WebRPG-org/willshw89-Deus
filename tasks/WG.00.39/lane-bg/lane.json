@@ -1,0 +1,62 @@
+{
+    "lane": "lane-bg",
+    "taskId": "WG.00.39",
+    "branch": "task/lane-bg",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "allowedPaths": [
+        "game/js/sim/combat_rt/**",
+        "game/js/plugins/DEUS_CombatRT.js",
+        "game/js/plugins/DEUS_Combat.js",
+        "game/js/sim/taming/**",
+        "game/js/plugins/DEUS_Taming.js",
+        "tools/taming_party/**",
+        "docs/systems/DEUS_TamedPartyCombat.md",
+        "tasks/WG.00.39/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": [
+                "tools/taming_party/test_tamed_party_combat.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/taming/test_taming.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/combat_rt/test_combat_rt.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/test_srd_combat_proof.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/sim/test_wildlife_rules_damage.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/check_deus_syntax.js"
+            ],
+            "timeoutSec": 900
+        }
+    ]
+}

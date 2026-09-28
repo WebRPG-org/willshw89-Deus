@@ -10,6 +10,7 @@ const care = require("./care");
 const gear = require("./gear");
 const census = require("./census");
 const save = require("./save");
+const party = require("./party");
 
 function createTaming(rules, opts) {
     if (!rules || typeof rules.check !== "function") {
@@ -50,7 +51,13 @@ function createTaming(rules, opts) {
         importState: save.importState,
         mayHunt: record.mayHunt,
         refuseHuntJob: record.refuseHuntJob,
-        withdrawnFromWild: record.withdrawnFromWild
+        withdrawnFromWild: record.withdrawnFromWild,
+        joinsParty: party.joinsParty,
+        combatProfile: function (unit) { return party.combatProfile(rules, unit); },
+        enlistParty: function (engine, units) { return party.enlist(engine, rules, units); },
+        issueOrder: party.issueOrder,
+        noteDeath: party.noteDeath,
+        partyQuestions: party.QUESTIONS
     };
 }
 
@@ -65,5 +72,11 @@ module.exports = {
     refuseHuntJob: record.refuseHuntJob,
     withdrawnFromWild: record.withdrawnFromWild,
     exportState: save.exportState,
-    importState: save.importState
+    importState: save.importState,
+    party: party,
+    enlistParty: party.enlist,
+    combatProfile: party.combatProfile,
+    ROLE_FIGHTS: party.ROLE_FIGHTS,
+    PARTY_ORDERS: party.ORDERS,
+    PARTY_QUESTIONS: party.QUESTIONS
 };

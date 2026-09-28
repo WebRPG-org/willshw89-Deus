@@ -44,7 +44,9 @@ function copyRecord(rec) {
 
 function withdrawnFromWild(unit) {
     const rec = recordOf(unit);
-    return !!rec && (rec.status === "captive" || rec.status === "domesticated");
+    if (!rec) return false;
+    if (rec.status === "dead" || rec.dead === true) return true;
+    return rec.status === "captive" || rec.status === "domesticated";
 }
 
 function factionOf(unit) {

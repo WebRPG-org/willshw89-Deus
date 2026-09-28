@@ -35,7 +35,14 @@ function createBus() {
             if (encounter && bus.enabled && !encounter.paused) encounter.advanceReal(1000 / 60);
         },
         project: function () { return encounter ? UI.project(encounter) : null; },
-        encounter: function () { return encounter; }
+        encounter: function () { return encounter; },
+        enlistTamed: function (units) {
+            return encounter ? encounter.enlistTamed(units) : null;
+        },
+        setOrder: function (id, order) {
+            if (!encounter || typeof encounter.setOrder !== "function") return { ok: false, reason: "NO_ENCOUNTER", order: null };
+            return encounter.setOrder(id, order);
+        }
     };
     return bus;
 }
