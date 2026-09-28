@@ -1,0 +1,14 @@
+{
+  "lane":"lane-bp2",
+  "taskId":"SOC.31.01",
+  "branch":"task/lane-bp2",
+  "writer":"codex",
+  "reviewer":"grok",
+  "push":false,
+  "effortClass":"mechanical",
+  "allowedPaths":["game/data/society/treasury.schema.json","game/js/sim/society/DEUS_Treasury.js","docs/systems/DEUS_Treasury.md","tools/society/test_treasury.js","tasks/SOC.31.01/lane-bp2/**"],
+  "gateTests":[
+    {"cmd":"node","args":["tools/society/test_treasury.js"],"timeoutSec":1200},
+    {"cmd":"node","args":["tools/check_deus_syntax.js"],"timeoutSec":900}
+  ]
+}

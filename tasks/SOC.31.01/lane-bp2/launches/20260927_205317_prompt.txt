@@ -1,0 +1,7 @@
+Fix only the clean-branch evidence-path defect in lane-bp2 at exact tip 0a09758c3e6944e6b56d3e1f059178b828da51f0.
+
+The exact reviewed treasury test exits before assertions because it hard-codes tasks/SOC.31.01/lane-bp/AUTHORITY_GAPS.md, which is intentionally absent from the clean branch. The reviewed system documentation also has stale lane-bp task references. This is a task-local provenance portability defect, not an owner decision.
+
+Create tasks/SOC.31.01/lane-bp2/AUTHORITY_GAPS.md by faithfully porting the authority-gap evidence from corrected source commit 3eddf8f6a1ed8503dfe9c99c87b7fc26c8e8d18b. Update only the stale lane-bp evidence references in tools/society/test_treasury.js and docs/systems/DEUS_Treasury.md to point to lane-bp2. Do not change treasury behavior, schema, test assertions, thresholds, policy, or any other documentation. Do not edit BRIEF.md or lane.json.
+
+Run node tools/society/test_treasury.js and node tools/check_deus_syntax.js in the foreground. Require 131 passed, 0 failed and syntax 60/0. Prove game/data/society/treasury.schema.json and game/js/sim/society/DEUS_Treasury.js still match commit 3eddf8f6 exactly, and show that test/doc diffs are limited to the task-folder token replacement. Update the fresh lane-bp2 REPORT.md with exact evidence, inspect allowed paths, and commit with subject `[codex] SOC.31.01 fix clean evidence paths`. Do not merge or push. Do not read, generate, edit, request, catalogue, move, or integrate art or audio.
