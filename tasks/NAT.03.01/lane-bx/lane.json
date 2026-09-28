@@ -1,0 +1,21 @@
+{
+  "lane": "lane-bx",
+  "taskId": "NAT.03.01",
+  "branch": "task/lane-bx",
+  "writer": "minimax",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "game/js/sim/hydrology/**",
+    "tools/test_aquifer_seepage.js",
+    "tasks/NAT.03.01/lane-bx/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_aquifer_seepage.js"
+      ],
+      "timeoutSec": 300
+    }
+  ]
+}
