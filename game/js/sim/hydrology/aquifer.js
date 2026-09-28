@@ -266,9 +266,12 @@ class AquiferEngine {
                 desiredTransfer = -integerFlow;
             }
 
+            // Safely guarded process.env access for host-agnostic runtimes
+            const mutant = typeof process !== "undefined" && process.env ? process.env.MUTANT : undefined;
+
             // Check negative control mutant 'no_clamp'
             let transfer;
-            if (process.env.MUTANT === "no_clamp") {
+            if (mutant === "no_clamp") {
                 transfer = desiredTransfer; // bypass clamping
             } else {
                 // Generalized double-sided clamping invariant:
@@ -279,7 +282,7 @@ class AquiferEngine {
 
             if (transfer > 0) {
                 // Check negative control mutant 'infinite_water'
-                if (process.env.MUTANT !== "infinite_water") {
+                if (mutant !== "infinite_water") {
                     donor.removeWater(transfer);
                 }
                 receiver.addWater(transfer);
