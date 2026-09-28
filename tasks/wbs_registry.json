@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "registryVersion": "1.0.0",
-  "lastUpdated": "2026-09-28T18:47:00Z",
+  "lastUpdated": "2026-09-28T20:11:00Z",
   "repository": "willshw89/Deus",
-  "mainSha": "4794e67068933ebe427e34523d776cfbd4686be5",
+  "mainSha": "4100f7ff124319a0e2d886fd0fa44b7dfe7335b3",
   "activeMilestone": "Pre-Faction World Lock",
   "governingPhaseLock": "DEC-037 (Natural World Phase Lock)",
   "rulesHierarchy": "DEC-039 (Owner Decisions -> SRD 5.1 -> Vanilla Minecraft -> DEUS Translation -> Original Content)",
@@ -79,6 +79,22 @@
     }
   ],
   "tasks": {
+    "TOOL.01.01": {
+      "title": "Art Catalogue Schema 1.2 & Blank Template Validator",
+      "package": "TOOLING",
+      "status": "DONE",
+      "lane": "lane-bz",
+      "writer": "Gemini",
+      "writerSha": "88589056de2c5aec11945eec7e97e5932041889b",
+      "reviewer": "Grok (grok-4.7-build)",
+      "reviewVerdict": "PASS",
+      "reviewDoc": "tasks/TOOL.01.01/lane-bz/review_grok_88589056.md",
+      "mergedSha": "4100f7ff124319a0e2d886fd0fa44b7dfe7335b3",
+      "gateTests": [
+        "tools/art/test_catalogue.js",
+        "tools/art/make_blank_templates.js --catalogue art/catalogue/catalogue.json --out art/templates --bg transparent"
+      ]
+    },
     "NAT.03.01": {
       "title": "Lean Aquifer & Water Table Kernel",
       "package": "PKG-03",
