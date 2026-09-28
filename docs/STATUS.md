@@ -1,6 +1,6 @@
 # STATUS: Project DEUS Current Operational State
 **Project Formal Name:** DEUS  
-**Last Updated:** 2026-09-25 23:45 CT (Directive 001-L)  
+**Last Updated:** 2026-09-28 13:47 CT (Directive DEC-041)  
 **Coordinator & Integration Authority:** Gemini / Antigravity  
 **Reporting Policy:** Immediate notification on commits, failures, defects, crashes, or power events; routine pulse every 15 minutes.  
 **Historical Ledger:** All completed historical records prior to 2026-09-25 are archived in [`docs/archive/STATUS_LEDGER_20260925.md`](archive/STATUS_LEDGER_20260925.md).  
@@ -32,7 +32,7 @@
 - **Heavy Job Cap:** Formally **LIFTED** as of 2026-09-25 per Owner decision.
 - **Automatic Tripwire:** Any instant power loss automatically reinstates `MAX_SIMULTANEOUS_HEAVY_LOCAL_JOBS = 1` until explicitly lifted by the Owner. Any power event must be reported immediately.
 - **Remote Git Origin:** Formally configured and live per DEC-005: `origin = https://github.com/willshw89/Deus.git` (private remote). Verified clean clone with 10,259 tracked files, fsck clean, checks pass.
-- **Origin in Sync:** **YES** (`main` and `origin/main` both at `1d8f4101`).
+- **Origin in Sync:** **YES** (`main` and `origin/main` both at `4794e670`).
 - **Backup State:** **COMPLETE (git); untracked-essentials zip awaiting Owner off-laptop copy** (`C:\Users\snewt\DEUS_backups\deus_untracked_2026-09-25.zip`, 89.5 MB, SHA256 D3A49004…C0CD1).
 - **Pre-Execution Checkpoint Discipline:** Before launching any heavy execution, workers must checkpoint in `tasks/<task-id>/state.md`, save all open files, verify git branch/worktree, and commit uncommitted work.
 - **Migration Freeze:** The physical copy to `C:\Dev\DEUS` is frozen until all active writers commit and pause at a synchronized freeze point.
@@ -40,14 +40,15 @@
 ---
 
 ## In progress
-- **PM watch merge wave (2026-09-28 12:55 CT):** MERGED to origin/main and pushed: lane-bp2 SOC.31.01 (merge_gate PASS `53c1bbc2`); then board/STATUS merge-ready society queue via manual --no-ff after merge_gate formality refusals (gates+verdicts already PASS): BN SOC.11.01, BL SOC.20.01, BK SOC.12.01, BM SOC.11.02, BO SOC.30.01, BH SOC.10.03, BQ SOC.40.02, BR SOC.32.01. Tip after wave: `1d8f4101`.
-- **Lane bt (WG.00.41):** MERGED (`a0a44eb8`).
-- **Lane bv (NAT.02.01):** MERGED (`c00ada72`).
-- **Lane bx (NAT.03.01 Lean Aquifer):** IN_PROGRESS. MiniMax writer tip `ed9ee8f4` with uncommitted aquifer edits; do not launch overlapping NAT writers. Reviewer: Grok when tip finishes and gates pass.
-- **Lane bw (NAT.05.01):** ON_HOLD pending upstream water/soil authorities.
-- **Lane BB (DEUS-TSK-GEOLOGY-GATE FIX2):** tip `d171c0fd`. Fresh-clone gates 2026-09-28: foundation 26/0 EXIT 0, geology 9/0 EXIT 0, syntax EXIT 0; cuts/caves still 12/6 EXIT 2 (outside allowedPaths). HOLD review/merge until cuts repaired or Owner removes that gate from lane.json.
+- **Package 3 (NAT.03.01 Lean Aquifer Kernel):** **MERGED TO MAIN (`4794e670`) & PUSHED TO ORIGIN**. MiniMax M3 repaired browser-host guard (`71f8ee46`); Grok independently reviewed and recorded clean `PASS` (`593c5232`); merged via `--no-ff`; all 12/12 contract tests pass in 7 ms (`tools/test_aquifer_seepage.js`).
+- **Package 4 Gate (NAT.04.01 Geomorphology & Soil):** **PROPOSAL COMPLETE — HALTED AT OWNER PACKAGE GATE**. Preflight specification and game translation block complete; awaiting explicit Owner sign-off before opening `lane-by`.
+- **Lane bw (NAT.05.01 Climate Engine):** ON_HOLD pending upstream water/soil authorities per DEC-037.
+- **Lane BB (DEUS-TSK-GEOLOGY-GATE FIX2):** tip `d171c0fd`. Fresh-clone gates: foundation 26/0 EXIT 0, geology 9/0 EXIT 0, syntax EXIT 0; cuts/caves still 12/6 EXIT 2 (outside allowedPaths). HOLD review/merge until cuts repaired or Owner removes that gate from lane.json.
 - **Lane BD (DEUS-TSK-ZRANGE-HARNESS):** tip `fce22083` writer delivered; not yet reviewed this watch.
-- **Orchestration:** DEC-037/038 active. Claude/Codex exhausted until ~Tue 2026-09-29 5 PM / 9:34 PM CT. Gemini Pro reset window (was ~7:04 PM CT Sep 27) has passed — prefer Pro for merge-gate reviews when launching new ones. No art.
+- **PM watch merge wave (2026-09-28 12:55 CT):** MERGED to origin/main and pushed: lane-bp2 SOC.31.01 (`53c1bbc2`); then BN SOC.11.01, BL SOC.20.01, BK SOC.12.01, BM SOC.11.02, BO SOC.30.01, BH SOC.10.03, BQ SOC.40.02, BR SOC.32.01. Society tasks now phase-frozen per DEC-037.
+- **Lane bt (WG.00.41):** MERGED (`a0a44eb8`).
+- **Lane bv (NAT.02.01):** MERGED (`c00ada72` / `54f67436`).
+- **Orchestration:** DEC-037/038/039/040/041 active. Machine-readable canonical registry initialized at `tasks/wbs_registry.json`. No art generation (DEC-007).
 
 ---
 

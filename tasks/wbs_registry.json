@@ -1,0 +1,222 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "registryVersion": "1.0.0",
+  "lastUpdated": "2026-09-28T18:47:00Z",
+  "repository": "willshw89/Deus",
+  "mainSha": "4794e67068933ebe427e34523d776cfbd4686be5",
+  "activeMilestone": "Pre-Faction World Lock",
+  "governingPhaseLock": "DEC-037 (Natural World Phase Lock)",
+  "rulesHierarchy": "DEC-039 (Owner Decisions -> SRD 5.1 -> Vanilla Minecraft -> DEUS Translation -> Original Content)",
+  "closedMassInvariant": "DEC-040 (WORLD_TOTAL_MASS(t) == WORLD_TOTAL_MASS(Year 0) in integer centipounds)",
+  "orchestrationExitGate": "DEC-041 (12-Point Fixed-Seed In-Engine Scenario)",
+  "packages": [
+    {
+      "id": "PKG-01",
+      "name": "Package 1: Physical Space Foundation",
+      "status": "COMPLETED",
+      "causalOrder": 1,
+      "leaves": ["WG.00.40", "WG.00.41"]
+    },
+    {
+      "id": "PKG-02",
+      "name": "Package 2: Physical Matter & Structural Mechanics",
+      "status": "COMPLETED",
+      "causalOrder": 2,
+      "leaves": ["NAT.02.01"]
+    },
+    {
+      "id": "PKG-03",
+      "name": "Package 3: Water & Hydrology",
+      "status": "COMPLETED",
+      "causalOrder": 3,
+      "leaves": ["NAT.03.01"]
+    },
+    {
+      "id": "PKG-04",
+      "name": "Package 4: Geomorphology & Soil",
+      "status": "PROPOSED",
+      "causalOrder": 4,
+      "leaves": ["NAT.04.01"]
+    },
+    {
+      "id": "PKG-05",
+      "name": "Package 5: Continuous Climate",
+      "status": "DEPENDENCY_LOCKED",
+      "causalOrder": 5,
+      "leaves": ["NAT.05.01"]
+    },
+    {
+      "id": "PKG-06",
+      "name": "Package 6: Flora & Biomass Succession",
+      "status": "DEPENDENCY_LOCKED",
+      "causalOrder": 6,
+      "leaves": ["NAT.06.01"]
+    },
+    {
+      "id": "PKG-07",
+      "name": "Package 7: Fauna & Monsters",
+      "status": "DEPENDENCY_LOCKED",
+      "causalOrder": 7,
+      "leaves": ["NAT.07.01"]
+    },
+    {
+      "id": "PKG-08",
+      "name": "Package 8: Pre-Faction World Proof",
+      "status": "DEPENDENCY_LOCKED",
+      "causalOrder": 8,
+      "leaves": ["NAT.08.01"]
+    }
+  ],
+  "tasks": {
+    "NAT.03.01": {
+      "title": "Lean Aquifer & Water Table Kernel",
+      "package": "PKG-03",
+      "status": "DONE",
+      "lane": "lane-bx",
+      "writer": "MiniMax M3",
+      "writerSha": "71f8ee46d8a933b7bd019010d353fcc67a8c7cbc",
+      "reviewer": "Grok (grok-4.7-build)",
+      "reviewVerdict": "PASS",
+      "reviewDoc": "tasks/NAT.03.01/lane-bx/review_grok_71f8ee46.md",
+      "mergedSha": "4794e67068933ebe427e34523d776cfbd4686be5",
+      "gateTests": ["tools/test_aquifer_seepage.js"]
+    },
+    "NAT.02.01": {
+      "title": "Structural Support & Cascading Collapse Engine",
+      "package": "PKG-02",
+      "status": "DONE",
+      "lane": "lane-bv",
+      "writer": "Claude / Fable",
+      "reviewer": "Grok",
+      "reviewVerdict": "PASS",
+      "mergedSha": "54f67436",
+      "gateTests": ["tools/test_structural_support.js"]
+    },
+    "WG.00.41": {
+      "title": "32-Layer Column Architecture & Region-Seam Continuity",
+      "package": "PKG-01",
+      "status": "DONE",
+      "lane": "lane-bt",
+      "writer": "Claude / Fable",
+      "reviewer": "Grok",
+      "reviewVerdict": "PASS",
+      "mergedSha": "a0a44eb8",
+      "gateTests": ["tools/test_region_seam_continuity.js"]
+    },
+    "WG.00.40": {
+      "title": "Physical World Objects & 3x3 Continuous Coordinate Space",
+      "package": "PKG-01",
+      "status": "DONE",
+      "lane": "lane-bs",
+      "writer": "Claude / Fable",
+      "reviewer": "Grok",
+      "reviewVerdict": "PASS",
+      "mergedSha": "cdc0fb95",
+      "gateTests": ["tools/test_physical_inventory_proof.js"]
+    },
+    "NAT.04.01": {
+      "title": "Lean Geomorphology & Soil Kernel",
+      "package": "PKG-04",
+      "status": "PROPOSED",
+      "lane": "lane-by",
+      "proposedWriter": "Codex / MiniMax M3",
+      "proposedReviewer": "Grok",
+      "haltReason": "Awaiting explicit Owner Package Gate approval per DEC-041"
+    },
+    "NAT.05.01": {
+      "title": "Continuous Climate Engine",
+      "package": "PKG-05",
+      "status": "DEPENDENCY_LOCKED",
+      "lane": "lane-bw",
+      "haltReason": "Blocked by Package 4 (Soil/Geomorphology) upstream completion"
+    },
+    "SOC.10.01": {
+      "title": "Three-Axis Person Identity Schema",
+      "package": "SOCIETY-01",
+      "status": "PHASE_FROZEN",
+      "lane": "lane-ba",
+      "mergedSha": "37f3814b",
+      "governance": "DEC-037 Phase Lock active; civilization development frozen"
+    },
+    "SOC.10.02": {
+      "title": "Faction Plan Schema",
+      "package": "SOCIETY-01",
+      "status": "PHASE_FROZEN",
+      "lane": "lane-az",
+      "mergedSha": "1228ed9d",
+      "governance": "DEC-037 Phase Lock active"
+    },
+    "SOC.10.03": {
+      "title": "Nine-Race Demographic Development Plans",
+      "package": "SOCIETY-01",
+      "status": "PHASE_FROZEN",
+      "lane": "lane-bh",
+      "mergedSha": "72b01f52",
+      "governance": "DEC-037 Phase Lock active"
+    },
+    "SOC.11.01": {
+      "title": "2014 SRD Class Integration & Progression",
+      "package": "SOCIETY-01",
+      "status": "PHASE_FROZEN",
+      "lane": "lane-bn",
+      "mergedSha": "ba333df3",
+      "governance": "DEC-037 Phase Lock active"
+    },
+    "SOC.11.02": {
+      "title": "Race-Class Cultural Affinity Tables",
+      "package": "SOCIETY-01",
+      "status": "PHASE_FROZEN",
+      "lane": "lane-bm",
+      "mergedSha": "d3d57e96",
+      "governance": "DEC-037 Phase Lock active"
+    },
+    "SOC.12.01": {
+      "title": "Master Craft Production Catalogue",
+      "package": "SOCIETY-01",
+      "status": "PHASE_FROZEN",
+      "lane": "lane-bk",
+      "mergedSha": "415af8c3",
+      "governance": "DEC-037 Phase Lock active"
+    },
+    "SOC.20.01": {
+      "title": "Faction Governance & Duty Offices",
+      "package": "SOCIETY-01",
+      "status": "PHASE_FROZEN",
+      "lane": "lane-bl",
+      "mergedSha": "32c0cce8",
+      "governance": "DEC-037 Phase Lock active"
+    },
+    "SOC.30.01": {
+      "title": "Conserved Physical Minting Engine",
+      "package": "SOCIETY-01",
+      "status": "PHASE_FROZEN",
+      "lane": "lane-bo",
+      "mergedSha": "53121bf7",
+      "governance": "DEC-037 Phase Lock active"
+    },
+    "SOC.31.01": {
+      "title": "Treasury Allocation & Faction Budgeting",
+      "package": "SOCIETY-01",
+      "status": "PHASE_FROZEN",
+      "lane": "lane-bp2",
+      "mergedSha": "53c1bbc2",
+      "governance": "DEC-037 Phase Lock active"
+    },
+    "SOC.32.01": {
+      "title": "Quartermaster Stockpile Logistics",
+      "package": "SOCIETY-01",
+      "status": "PHASE_FROZEN",
+      "lane": "lane-br",
+      "mergedSha": "1d8f4101",
+      "governance": "DEC-037 Phase Lock active"
+    },
+    "SOC.40.02": {
+      "title": "Threat-Driven Militia Mobilization",
+      "package": "SOCIETY-01",
+      "status": "PHASE_FROZEN",
+      "lane": "lane-bq",
+      "mergedSha": "3430cf3c",
+      "governance": "DEC-037 Phase Lock active"
+    }
+  }
+}
