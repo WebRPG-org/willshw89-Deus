@@ -1,0 +1,7 @@
+Act as the independent Grok reviewer for lane-bq, task SOC.40.02, at exact writer tip c42519986358a51bb5e46bfda4c87aed9193aa3d.
+
+Review the complete merge-base-to-tip delta against the lane BRIEF, INV-SOC-07, INV-SOC-08, and tracked authority. Rerun both recorded gates and the mutation checks. Verify that the implementation contains no fixed mobilization ratios or population thresholds; that eligibility, status authorization, post demand, post capacity, priorities, and tie-breaks are explicit caller inputs; that dead or ineligible people cannot be assigned; that no person or order is duplicated; that nonexistent posts and overcapacity plans are rejected; that ties and permuted inputs remain deterministic; that displaced civilian duties preserve exact provenance and economic-impact evidence; that input and plan validation, safe-integer aggregate bounds, immutability, and canonical serialization are sound; and that the lane does not infer class authorization or perform engine integration.
+
+Scrutinize the six-token service-status contract, including the ELITE_RETINUE wording mismatch in INV-SOC-07, the boundary of the greedy allocation algorithm, and every authority gap identified by the writer. Treat true owner decisions as documented boundaries, but fail the lane for any invented policy or untracked assumption. Check allowed paths and confirm no art or audio files changed.
+
+Write only the required review file in the lane's allowed review path. Give an exact PASS or FAIL verdict with concrete evidence. Commit the review and make no other changes.
