@@ -1,0 +1,5 @@
+Implement SOC.11.02 exactly as specified in BRIEF.md and lane.json. Use DEC-036 as the sole authority for race affinities and unresolved values. Inspect existing race and class identifiers before authoring data. Keep all race-class combinations legal and represent every unresolved number or non-obvious role classification as OWNER_TODO without guessing.
+
+Create the canonical data, JSON schema, documentation, and a deterministic validator with targeted negative fixtures for each substantive rule. Run every recorded gate and all provocations. Stay strictly inside allowedPaths. Do not modify WBS/status, owner decisions, provider status, art, audio, or scheduler implementation. Do not merge or push.
+
+Commit the complete lane with subject [grok] SOC.11.02 race-class affinity data and validator. End with FINAL SHA: <full sha>.

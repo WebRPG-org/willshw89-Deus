@@ -1,0 +1,32 @@
+{
+    "lane":  "lane-bm",
+    "taskId":  "SOC.11.02",
+    "branch":  "task/lane-bm",
+    "writer":  "grok",
+    "reviewer":  "gemini",
+    "push":  false,
+    "effortClass":  "mechanical",
+    "allowedPaths":  [
+                         "game/data/society/race_class_affinity.json",
+                         "game/data/society/race_class_affinity.schema.json",
+                         "docs/systems/DEUS_RaceClassAffinity.md",
+                         "tools/society/test_race_class_affinity.js",
+                         "tasks/SOC.11.02/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/society/test_race_class_affinity.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  900
+                      }
+                  ]
+}
