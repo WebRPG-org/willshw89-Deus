@@ -1,0 +1,21 @@
+{
+  "lane": "lane-bv",
+  "taskId": "NAT.02.01",
+  "branch": "task/lane-bv",
+  "writer": "codex",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "game/js/sim/structural/**",
+    "tools/test_structural_collapse.js",
+    "tasks/NAT.02.01/lane-bv/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_structural_collapse.js"
+      ],
+      "timeoutSec": 300
+    }
+  ]
+}
