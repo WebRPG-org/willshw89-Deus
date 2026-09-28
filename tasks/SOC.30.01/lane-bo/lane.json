@@ -1,0 +1,31 @@
+{
+    "lane":  "lane-bo",
+    "taskId":  "SOC.30.01",
+    "branch":  "task/lane-bo",
+    "writer":  "codex",
+    "reviewer":  "gemini",
+    "push":  false,
+    "effortClass":  "substantive",
+    "allowedPaths":  [
+                         "game/js/plugins/DEUS_Mint.js",
+                         "docs/systems/DEUS_MintingEngine.md",
+                         "tools/society/test_minting_engine.js",
+                         "tasks/SOC.30.01/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/society/test_minting_engine.js"
+                                   ],
+                          "timeoutSec":  1200
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  900
+                      }
+                  ]
+}
