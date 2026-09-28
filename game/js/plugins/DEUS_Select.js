@@ -22,11 +22,17 @@
  * Implements modern DF-style drag rectangles and unit group management (VISION V86).
  *
  * Mouse gestures:
- *   Left-drag with no tool: selects all player units inside the box.
- *   Shift + Left-drag: adds units to selection.
- *   Left-click on ground with >= 2 units selected: moves group in compact formation (V68).
- *   Left-drag with a tool: marks all eligible cells with that tool's designation.
+ *   Left-drag with no tool: selects player units inside the box on the viewed
+ *   level and on lower levels visible through open cells (UF.LayerOverlays.cellVisible).
+ *   Lower levels are not taken when UF.Depth is loaded and its drawing is off.
+ *   Shift + Left-drag: adds those units. Shift + click toggles one, including a
+ *   unit seen through an open cell when the viewed cell itself is empty.
+ *   Right-click with units selected: group move. Slots are the V68 ring on the
+ *   clicked level; every order's z is that level, including units on other levels.
+ *   Left-drag with a tool: marks the viewed level only (unchanged).
  *   Right-click / Esc: backs out one step (cancels box -> leaves tool -> clears selection).
+ *   Changing the viewed level cancels a drag and does not clear the selection.
+ *   A selected unit that changes level keeps the selection and its move order.
  *
  * Tools (toolbar or keys):
  *   Chop (C), Gather (G), Pick up (P), Mine (M), Quarry (R), Dig (V),
@@ -36,8 +42,252 @@
  * Design: docs/design/SELECTION.md
  */
 
-(() => {
+(function (root) {
     "use strict";
+
+    // Cross-layer selection. Headless: require this file (no PluginManager).
+    // Cover is UF.LayerOverlays.cellVisible. This block does not reimplement that walk.
+    const XLayer = (function () {
+        const EMPTY = Object.freeze([]);
+
+        function occKey(ax, ay, x, y, z) {
+            return (ax | 0) + "," + (ay | 0) + "," + (x | 0) + "," + (y | 0) + "," + (z | 0);
+        }
+
+        function indexUnits(units) {
+            const map = new Map();
+            const list = units || EMPTY;
+            for (let i = 0; i < list.length; i++) {
+                const u = list[i];
+                if (!u) continue;
+                const ax = u.area ? u.area.x | 0 : 0;
+                const ay = u.area ? u.area.y | 0 : 0;
+                const k = occKey(ax, ay, u.x, u.y, u.z || 0);
+                let bucket = map.get(k);
+                if (!bucket) {
+                    bucket = [];
+                    map.set(k, bucket);
+                }
+                bucket.push(u);
+            }
+            return { map: map, size: list.length };
+        }
+
+        function unitsAt(index, ax, ay, x, y, z) {
+            if (!index || !index.map) return EMPTY;
+            return index.map.get(occKey(ax, ay, x, y, z)) || EMPTY;
+        }
+
+        // Cells of the box, then each level from the view down through maxDepth.
+        // `visible` is the overlay rule. Units are read only for cells it accepts.
+        function unitsInBox(opts) {
+            const x0 = Math.min(opts.x0, opts.x1) | 0;
+            const x1 = Math.max(opts.x0, opts.x1) | 0;
+            const y0 = Math.min(opts.y0, opts.y1) | 0;
+            const y1 = Math.max(opts.y0, opts.y1) | 0;
+            const viewZ = opts.viewZ | 0;
+            const maxDepth = opts.maxDepth == null ? 0 : opts.maxDepth | 0;
+            const visible = opts.visible;
+            const at = opts.unitsAt;
+            const isPlayer = opts.isPlayer;
+            const area = opts.area;
+            const ids = [];
+            const seen = new Set();
+            let cells = 0;
+            let unitVisits = 0;
+            const lo = viewZ - maxDepth;
+            for (let y = y0; y <= y1; y++) {
+                for (let x = x0; x <= x1; x++) {
+                    for (let z = viewZ; z >= lo; z--) {
+                        cells++;
+                        if (typeof visible !== "function" || visible(x, y, z) !== true) continue;
+                        const bucket = at ? at(x, y, z) : EMPTY;
+                        if (!bucket || !bucket.length) continue;
+                        for (let i = 0; i < bucket.length; i++) {
+                            unitVisits++;
+                            const u = bucket[i];
+                            if (!u || seen.has(u.id)) continue;
+                            if (area) {
+                                if (!u.area || u.area.x !== area.x || u.area.y !== area.y) continue;
+                            }
+                            if (typeof isPlayer === "function" && isPlayer(u) !== true) continue;
+                            seen.add(u.id);
+                            ids.push(u.id);
+                        }
+                    }
+                }
+            }
+            return { ids: ids, cells: cells, unitVisits: unitVisits, fullScans: 0 };
+        }
+
+        function applyBox(selected, ids, shift) {
+            if (!shift) return ids.slice();
+            const out = selected.slice();
+            const have = new Set(out);
+            for (let i = 0; i < ids.length; i++) {
+                if (!have.has(ids[i])) {
+                    have.add(ids[i]);
+                    out.push(ids[i]);
+                }
+            }
+            return out;
+        }
+
+        function toggleId(selected, id) {
+            const out = selected.slice();
+            const i = out.indexOf(id);
+            if (i >= 0) out.splice(i, 1);
+            else out.push(id);
+            return out;
+        }
+
+        // Viewed-level hit wins. Otherwise the topmost unit in a visible lower cell.
+        function visibleUnitAt(opts) {
+            if (opts.viewHit) return opts.viewHit;
+            const viewZ = opts.viewZ | 0;
+            const maxDepth = opts.maxDepth == null ? 0 : opts.maxDepth | 0;
+            const lo = viewZ - maxDepth;
+            for (let z = viewZ - 1; z >= lo; z--) {
+                if (typeof opts.visible !== "function" || opts.visible(opts.x, opts.y, z) !== true) continue;
+                const bucket = opts.unitsAt ? opts.unitsAt(opts.x, opts.y, z) : EMPTY;
+                if (!bucket) continue;
+                for (let i = 0; i < bucket.length; i++) {
+                    if (bucket[i]) return bucket[i];
+                }
+            }
+            return null;
+        }
+
+        function cornerStep(cornerFree, fromX, fromY, toX, toY) {
+            const dx = toX - fromX;
+            const dy = toY - fromY;
+            if (dx !== 0 && dy !== 0) {
+                if (!cornerFree(fromX + dx, fromY) || !cornerFree(fromX, fromY + dy)) return false;
+            }
+            return true;
+        }
+
+        // V68 on one level: Chebyshev rings from T, no corner cutting, nearest unit takes the nearest cell.
+        function planLevel(units, tx, ty, maxRadius, standable, cornerFree) {
+            const canStand = standable || function () { return true; };
+            const free = cornerFree || function () { return true; };
+            const queue = [];
+            const visited = new Set();
+            queue.push({ x: tx, y: ty });
+            visited.add(tx + "," + ty);
+            const candidates = [];
+            while (queue.length > 0) {
+                const cur = queue.shift();
+                const cheb = Math.max(Math.abs(cur.x - tx), Math.abs(cur.y - ty));
+                if (cheb <= maxRadius) {
+                    if (canStand(cur.x, cur.y)) {
+                        candidates.push({
+                            x: cur.x,
+                            y: cur.y,
+                            cheb: cheb,
+                            euclid: (cur.x - tx) * (cur.x - tx) + (cur.y - ty) * (cur.y - ty)
+                        });
+                    }
+                    for (let dx = -1; dx <= 1; dx++) {
+                        for (let dy = -1; dy <= 1; dy++) {
+                            if (dx === 0 && dy === 0) continue;
+                            const nx = cur.x + dx;
+                            const ny = cur.y + dy;
+                            const key = nx + "," + ny;
+                            if (!visited.has(key) && Math.max(Math.abs(nx - tx), Math.abs(ny - ty)) <= maxRadius) {
+                                visited.add(key);
+                                if (cornerStep(free, cur.x, cur.y, nx, ny)) queue.push({ x: nx, y: ny });
+                            }
+                        }
+                    }
+                }
+            }
+            candidates.sort(function (a, b) {
+                if (a.cheb !== b.cheb) return a.cheb - b.cheb;
+                if (a.euclid !== b.euclid) return a.euclid - b.euclid;
+                if (a.y !== b.y) return a.y - b.y;
+                return a.x - b.x;
+            });
+            const sortedUnits = units.slice().sort(function (a, b) {
+                const da = (a.x - tx) * (a.x - tx) + (a.y - ty) * (a.y - ty);
+                const db = (b.x - tx) * (b.x - tx) + (b.y - ty) * (b.y - ty);
+                if (da !== db) return da - db;
+                return a.id - b.id;
+            });
+            const assigned = [];
+            let noCell = 0;
+            for (let i = 0; i < sortedUnits.length; i++) {
+                const cell = candidates[i];
+                if (cell) {
+                    assigned.push({
+                        id: sortedUnits[i].id,
+                        x: cell.x,
+                        y: cell.y,
+                        fromZ: sortedUnits[i].z | 0
+                    });
+                } else {
+                    noCell++;
+                }
+            }
+            return { assigned: assigned, noCell: noCell };
+        }
+
+        // One flat formation on the clicked level. Every order's z is that level.
+        function planGroupOrders(units, target, opts) {
+            const tx = target.x | 0;
+            const ty = target.y | 0;
+            const tz = Number.isInteger(target.z) ? target.z : 0;
+            const maxRadius = opts && Number.isInteger(opts.maxRadius) ? opts.maxRadius : 12;
+            const planned = planLevel(units || EMPTY, tx, ty, maxRadius, opts && opts.standable, opts && opts.cornerFree);
+            const orders = [];
+            for (let i = 0; i < planned.assigned.length; i++) {
+                const a = planned.assigned[i];
+                orders.push({ id: a.id, x: a.x, y: a.y, z: tz, fromZ: a.fromZ });
+            }
+            return { orders: orders, noCell: planned.noCell };
+        }
+
+        // A level change does not drop the id or replace the order objects.
+        function retain(selected, orders, unitId, nextZ) {
+            return {
+                selected: selected.slice(),
+                orders: orders,
+                held: selected.indexOf(unitId) >= 0,
+                nextZ: nextZ
+            };
+        }
+
+        function viewKeeps(selected) {
+            return selected.slice();
+        }
+
+        return {
+            occKey: occKey,
+            indexUnits: indexUnits,
+            unitsAt: unitsAt,
+            unitsInBox: unitsInBox,
+            applyBox: applyBox,
+            toggleId: toggleId,
+            visibleUnitAt: visibleUnitAt,
+            planLevel: planLevel,
+            planGroupOrders: planGroupOrders,
+            retain: retain,
+            viewKeeps: viewKeeps
+        };
+    })();
+
+    root.DEUS = root.DEUS || {};
+    root.DEUS.SelectX = XLayer;
+    if (root.UF) root.UF.SelectX = XLayer;
+    else {
+        root.UF = root.DEUS;
+        root.UF.SelectX = XLayer;
+    }
+
+    if (typeof PluginManager === "undefined") {
+        if (typeof module !== "undefined" && module.exports) module.exports = XLayer;
+        return;
+    }
 
     const pluginParams = (PluginManager.parameters("DEUS_Select") && Object.keys(PluginManager.parameters("DEUS_Select")).length ? PluginManager.parameters("DEUS_Select") : PluginManager.parameters("UF_Select")) || {};
     function getProvokeString() {
@@ -58,6 +308,15 @@
         const low = name.toLowerCase();
         const set = prov.split(",").map(s => s.trim()).filter(Boolean);
         return set.includes("all") || set.includes("select.all") || set.includes(low) || set.includes(`select.${low}`);
+    }
+
+    // Cross-layer harness only. "select.all" does not trip these: that flag belongs to the snapshot suite.
+    function xlayerProvoked(name) {
+        const prov = getProvokeString().toLowerCase();
+        if (!prov || !name) return false;
+        const set = prov.split(",").map(s => s.trim()).filter(Boolean);
+        const low = String(name).toLowerCase();
+        return set.indexOf(low) >= 0 || set.indexOf("xlayer." + low) >= 0 || set.indexOf("xlayer.all") >= 0;
     }
 
     // Default catalog config if not in UF_WorldCatalog.json
@@ -661,6 +920,7 @@
     let previewCache = null;    // Uint8Array 256x256
     let previewCount = 0;
     let previewDone = true;
+    let previewRect = "";
     let previewCursor = 0;
     let replayingClick = false;
     let replayData = null;      // { x, y }
@@ -716,6 +976,7 @@
         if (activeBox) {
             activeBox = null;
             previewCache = null;
+            previewRect = "";
             setStatus(reason ? `Box cancelled: ${reason}.` : "Box cancelled.");
             emit("select:boxCancelled", reason || "cancelled");
         }
@@ -1142,89 +1403,48 @@
             return;
         }
 
-        // Check standable cells via BFS
         const memberIds = new Set(units.map(u => u.id));
-        const visited = new Set();
-        const queue = [];
 
-        function canStep(fromX, fromY, toX, toY) {
-            const dx = toX - fromX, dy = toY - fromY;
-            if (dx !== 0 && dy !== 0) {
-                // Diagonal step: no corner cutting (V3)
-                const s1 = J.standable(area, fromX + dx, fromY);
-                const s2 = J.standable(area, fromX, fromY + dy);
-                if (!s1 || !s2) return false;
-            }
-            return true;
+        // Formation is one flat V68 ring on the clicked level (tz). Units on other
+        // levels take slots on that level and path across slopes, stairs and ramps.
+        // When tz is 0 the standable area has no z field, matching the old call.
+        const levelArea = { x: area.x, y: area.y };
+        if (tz !== 0) levelArea.z = tz;
+        function cornerFree(x, y) {
+            return !!J.standable(levelArea, x, y);
         }
-
-        queue.push({ x: tx, y: ty, dist: 0 });
-        visited.add(`${tx},${ty}`);
-
-        const candidates = [];
-        while (queue.length > 0) {
-            const cur = queue.shift();
-            const cheb = Math.max(Math.abs(cur.x - tx), Math.abs(cur.y - ty));
-            if (cheb <= maxRadius) {
-                const uOnCell = findUnitAt(cur.x, cur.y, area, target.z || 0);
-                const isGroupMember = uOnCell && memberIds.has(uOnCell.id);
-                if (J.standable(area, cur.x, cur.y) || isGroupMember) {
-                    candidates.push({ x: cur.x, y: cur.y, cheb, euclid: (cur.x - tx) ** 2 + (cur.y - ty) ** 2 });
-                }
-
-                // 8 neighbors
-                for (let dx = -1; dx <= 1; dx++) {
-                    for (let dy = -1; dy <= 1; dy++) {
-                        if (dx === 0 && dy === 0) continue;
-                        const nx = cur.x + dx, ny = cur.y + dy;
-                        const key = `${nx},${ny}`;
-                        if (!visited.has(key) && Math.max(Math.abs(nx - tx), Math.abs(ny - ty)) <= maxRadius) {
-                            visited.add(key);
-                            if (canStep(cur.x, cur.y, nx, ny)) {
-                                queue.push({ x: nx, y: ny, dist: cur.dist + 1 });
-                            }
-                        }
-                    }
-                }
-            }
+        function standable(x, y) {
+            if (cornerFree(x, y)) return true;
+            const uOnCell = findUnitAt(x, y, area, tz || 0);
+            return !!(uOnCell && memberIds.has(uOnCell.id));
         }
-
-        // Sort candidates: Chebyshev ring, then Euclidean dist, then y, then x
-        candidates.sort((a, b) => {
-            if (a.cheb !== b.cheb) return a.cheb - b.cheb;
-            if (a.euclid !== b.euclid) return a.euclid - b.euclid;
-            if (a.y !== b.y) return a.y - b.y;
-            return a.x - b.x;
+        const planned = XLayer.planGroupOrders(units, { x: tx, y: ty, z: tz }, {
+            maxRadius: maxRadius,
+            standable: standable,
+            cornerFree: cornerFree
         });
-
-        // Sort units by distance to T, then id
-        const sortedUnits = units.slice().sort((a, b) => {
-            const da = (a.x - tx) ** 2 + (a.y - ty) ** 2;
-            const db = (b.x - tx) ** 2 + (b.y - ty) ** 2;
-            if (da !== db) return da - db;
-            return a.id - b.id;
-        });
+        const byId = new Map();
+        for (let ui = 0; ui < units.length; ui++) byId.set(units[ui].id, units[ui]);
 
         let movingCount = 0;
-        let noCellCount = 0;
+        const noCellCount = planned.noCell;
 
-        for (let i = 0; i < sortedUnits.length; i++) {
-            const u = sortedUnits[i];
-            const cell = candidates[i];
-            if (cell) {
-                let orderedJob = null;
-                if (C && typeof C.order === "function" && C.isColonist(u)) {
-                    orderedJob = C.order(u.id, { type: "move", target: { area, x: cell.x, y: cell.y, z: tz } });
-                    console.log("DEBUG_GROUPMOVE_ORDER: C.isColonist=true, orderedJob=" + (orderedJob ? orderedJob.id : "null"));
-                }
-                if (!orderedJob && J && typeof J.create === "function") {
-                    orderedJob = J.create({ type: "move", target: { area, x: cell.x, y: cell.y, z: tz }, owner: u.id, params: { ordered: true } });
-                    console.log("DEBUG_GROUPMOVE_J_CREATE: orderedJob=" + (orderedJob ? orderedJob.id : "null"));
-                }
-                if (orderedJob) movingCount++;
-            } else {
-                noCellCount++;
+        for (let i = 0; i < planned.orders.length; i++) {
+            const slot = planned.orders[i];
+            const u = byId.get(slot.id);
+            let orderedJob = null;
+            // A provoked group writes the unit's current level. The live order uses the clicked level.
+            const orderZ = xlayerProvoked("group_orders") ? (u ? u.z | 0 : slot.fromZ) : slot.z;
+            const moveTarget = { area, x: slot.x, y: slot.y, z: orderZ };
+            if (u && C && typeof C.order === "function" && C.isColonist(u)) {
+                orderedJob = C.order(u.id, { type: "move", target: moveTarget });
+                console.log("DEBUG_GROUPMOVE_ORDER: C.isColonist=true, orderedJob=" + (orderedJob ? orderedJob.id : "null"));
             }
+            if (!orderedJob && J && typeof J.create === "function") {
+                orderedJob = J.create({ type: "move", target: moveTarget, owner: slot.id, params: { ordered: true } });
+                console.log("DEBUG_GROUPMOVE_J_CREATE: orderedJob=" + (orderedJob ? orderedJob.id : "null"));
+            }
+            if (orderedJob) movingCount++;
         }
 
         if (movingCount > 0) {
@@ -1237,6 +1457,250 @@
     }
 
     //-------------------------------------------------------------------------
+    // Cross-layer picks. Cover comes from UF.LayerOverlays.cellVisible.
+    //-------------------------------------------------------------------------
+
+    // Cell buckets kept by unit events. A box reads the cells it tests. It does not walk World.units.
+    let occMap = new Map();
+    let occWhere = new Map();
+    let occReady = false;
+    const EMPTY_OCC = Object.freeze([]);
+    const visQuery = {
+        x: 0,
+        y: 0,
+        z: 0,
+        viewZ: 0,
+        maxDepth: 2,
+        window: null,
+        area: null,
+        opaque: function (x, y, z) {
+            return terrainOpaque(visQuery.area, x, y, z);
+        }
+    };
+
+    // How many levels below viewZ the renderer can draw. No Depth plugin: the documented cap is 2.
+    // Depth loaded but not drawing (enabled is not true): no lower planes, so the reach is 0.
+    // exposes(z) stops the walk at the first level the renderer will not bind.
+    function depthReach(viewZ) {
+        const D = window.UF && UF.Depth;
+        if (!D || !D.config) return 2;
+        if (D.config.enabled !== true) return 0;
+        let n = 2;
+        const raw = D.config.maxDepth;
+        if (typeof raw === "number" && raw >= 0) n = raw | 0;
+        const exposes = D.config.exposes;
+        if (typeof exposes !== "function") return n;
+        let reach = 0;
+        let z = viewZ | 0;
+        while (reach < n) {
+            if (exposes(z) !== true) break;
+            reach++;
+            z--;
+        }
+        return reach;
+    }
+
+    function terrainOpaque(area, x, y, z) {
+        const D = window.UF && UF.Depth;
+        if (!area || !D || typeof D.isOpen !== "function") return true;
+        return D.isOpen(area.x, area.y, x, y, z) !== true;
+    }
+
+    function columnVisible(area, x, y, z, viewZ) {
+        if (xlayerProvoked("box_visible")) return true;
+        const LO = window.UF && UF.LayerOverlays;
+        if (!LO || typeof LO.cellVisible !== "function") return (z | 0) === (viewZ | 0);
+        visQuery.x = x | 0;
+        visQuery.y = y | 0;
+        visQuery.z = z | 0;
+        visQuery.viewZ = viewZ | 0;
+        visQuery.maxDepth = depthReach(viewZ);
+        visQuery.area = area;
+        return LO.cellVisible(visQuery) === true;
+    }
+
+    function unitKey(u) {
+        const ax = u.area ? u.area.x | 0 : 0;
+        const ay = u.area ? u.area.y | 0 : 0;
+        return XLayer.occKey(ax, ay, u.x | 0, u.y | 0, u.z || 0);
+    }
+
+    function removeIdFrom(key, id) {
+        const bucket = occMap.get(key);
+        if (!bucket) return;
+        for (let i = bucket.length - 1; i >= 0; i--) {
+            if (bucket[i] && bucket[i].id === id) bucket.splice(i, 1);
+        }
+        if (!bucket.length) occMap.delete(key);
+    }
+
+    function noteUnit(u) {
+        if (!u || u.id == null) return;
+        const key = unitKey(u);
+        const prev = occWhere.get(u.id);
+        if (prev === key) {
+            const same = occMap.get(key);
+            if (same) {
+                for (let i = 0; i < same.length; i++) {
+                    if (same[i] && same[i].id === u.id) {
+                        same[i] = u;
+                        return;
+                    }
+                }
+            }
+        }
+        if (prev != null) removeIdFrom(prev, u.id);
+        let bucket = occMap.get(key);
+        if (!bucket) {
+            bucket = [];
+            occMap.set(key, bucket);
+        }
+        bucket.push(u);
+        occWhere.set(u.id, key);
+    }
+
+    function forgetUnit(id) {
+        if (id == null || !occWhere.has(id)) return;
+        removeIdFrom(occWhere.get(id), id);
+        occWhere.delete(id);
+    }
+
+    // Save load replaces the unit table without a per-unit event. Boot calls this once too.
+    // A drag does not.
+    function reseedOcc() {
+        occMap = new Map();
+        occWhere = new Map();
+        const W = World();
+        const list = W && typeof W.units === "function" ? W.units() : null;
+        if (!list) return;
+        for (let i = 0; i < list.length; i++) noteUnit(list[i]);
+    }
+
+    function hookSaveReseed() {
+        if (hookSaveReseed.done) return;
+        hookSaveReseed.done = true;
+        if (typeof DataManager === "undefined" || !DataManager || typeof DataManager.extractSaveContents !== "function") return;
+        const prev = DataManager.extractSaveContents;
+        DataManager.extractSaveContents = function (contents) {
+            const ret = prev.apply(this, arguments);
+            reseedOcc();
+            return ret;
+        };
+    }
+
+    function cellUnits(area, x, y, z, repair) {
+        const ax = area ? area.x | 0 : 0;
+        const ay = area ? area.y | 0 : 0;
+        const key = XLayer.occKey(ax, ay, x | 0, y | 0, z | 0);
+        const bucket = occMap.get(key);
+        if (!bucket || !bucket.length) return EMPTY_OCC;
+        if (!repair) return bucket;
+        let dirty = false;
+        for (let i = 0; i < bucket.length; i++) {
+            const u = bucket[i];
+            if (!u || unitKey(u) !== key) { dirty = true; break; }
+        }
+        if (!dirty) return bucket;
+        const staying = [];
+        const left = [];
+        for (let i = 0; i < bucket.length; i++) {
+            const u = bucket[i];
+            if (u && unitKey(u) === key) staying.push(u);
+            else if (u) left.push(u);
+        }
+        if (staying.length) occMap.set(key, staying);
+        else occMap.delete(key);
+        for (let i = 0; i < left.length; i++) {
+            occWhere.delete(left[i].id);
+            noteUnit(left[i]);
+        }
+        return occMap.get(key) || EMPTY_OCC;
+    }
+
+    function queryBoxUnits(box, force) {
+        // Provocation: index every world unit on the pick, including setup and release.
+        if (xlayerProvoked("perf")) {
+            const W = World();
+            const list = W && typeof W.units === "function" ? W.units() : [];
+            for (let i = 0; i < list.length; i++) noteUnit(list[i]);
+        }
+        const viewZ = box.z | 0;
+        const area = box.area;
+        const reach = depthReach(viewZ);
+        return XLayer.unitsInBox({
+            x0: box.x0,
+            y0: box.y0,
+            x1: box.x1,
+            y1: box.y1,
+            viewZ: viewZ,
+            maxDepth: reach,
+            area: area,
+            visible: function (x, y, z) { return columnVisible(area, x, y, z, viewZ); },
+            unitsAt: function (x, y, z) { return cellUnits(area, x, y, z, !!force); },
+            isPlayer: isPlayerUnit
+        });
+    }
+
+    function resolveClickUnit(mx, my, area, curZ, sx, sy) {
+        const viewHit = findUnitAt(mx, my, area, curZ, sx, sy);
+        if (viewHit) return viewHit;
+        const view = curZ | 0;
+        return XLayer.visibleUnitAt({
+            x: mx | 0,
+            y: my | 0,
+            viewZ: view,
+            maxDepth: depthReach(view),
+            visible: function (x, y, z) { return columnVisible(area, x, y, z, view); },
+            unitsAt: function (x, y, z) { return cellUnits(area, x, y, z, true); }
+        });
+    }
+
+    function rewriteOrdersToUnitLevel(unit) {
+        const J = Jobs();
+        if (!J || typeof J.list !== "function" || !unit) return;
+        const list = J.list();
+        for (let i = 0; i < list.length; i++) {
+            const job = list[i];
+            if (job && job.owner === unit.id && job.target) job.target.z = unit.z | 0;
+        }
+    }
+
+    function onUnitGone(u) {
+        if (u && typeof u === "object") forgetUnit(u.id);
+        else forgetUnit(u);
+    }
+
+    function bindLevelRetention() {
+        const E = window.UF && UF.Events;
+        if (!E || typeof E.on !== "function" || bindLevelRetention.done) return;
+        bindLevelRetention.done = true;
+        E.on("world:unitAdded", function (u) { noteUnit(u); });
+        E.on("world:unitRemoved", onUnitGone);
+        E.on("world:unitMoved", function (u) { noteUnit(u); });
+        E.on("world:unitAreaChanged", function (u) { noteUnit(u); });
+        E.on("world:unitLevelChanged", function (u) {
+            // DEC-020. The id stays selected. The move order stays on the job.
+            // The bucket follows the unit so the next box reads the new cell only.
+            if (u) noteUnit(u);
+            if (xlayerProvoked("survive")) {
+                clearSelection();
+                rewriteOrdersToUnitLevel(u);
+            }
+        });
+        E.on("levels:viewChanged", function () {
+            // The selection stays. Cancel a drag whose level is no longer the view.
+            if (xlayerProvoked("survive")) {
+                clearSelection();
+                return;
+            }
+            if (activeBox && activeBox.z !== viewZ()) cancelBox("the level changed");
+        });
+        hookSaveReseed();
+        reseedOcc();
+        occReady = true;
+    }
+
+    //-------------------------------------------------------------------------
     // Incremental Preview Calculation
     //-------------------------------------------------------------------------
 
@@ -1246,23 +1710,16 @@
         const tDef = cfg.tools.find(t => t.id === activeBox.tool);
 
         if (!tDef) {
-            // Unit selection box: count player units inside
-            const W = World();
-            if (!W) return;
+            // Unit selection box. Unchanged rectangle: no work. A change reads the box cells only.
             const x0 = Math.min(activeBox.x0, activeBox.x1);
             const x1 = Math.max(activeBox.x0, activeBox.x1);
             const y0 = Math.min(activeBox.y0, activeBox.y1);
             const y1 = Math.max(activeBox.y0, activeBox.y1);
-            let count = 0;
-            const units = W.units ? W.units() : [];
-            for (const u of units) {
-                if (u.area && activeBox && activeBox.area && u.area.x === activeBox.area.x && u.area.y === activeBox.area.y && (u.z || 0) === activeBox.z) {
-                    if (u.x >= x0 && u.x <= x1 && u.y >= y0 && u.y <= y1 && isPlayerUnit(u)) {
-                        count++;
-                    }
-                }
-            }
-            previewCount = count;
+            const rect = x0 + "," + y0 + "," + x1 + "," + y1 + "," + activeBox.z;
+            if (previewDone && previewRect === rect && occReady) return;
+            const picked = queryBoxUnits(activeBox, false);
+            previewCount = picked.ids.length;
+            previewRect = rect;
             previewDone = true;
             return;
         }
@@ -2223,6 +2680,8 @@
         if (window.UF && UF.Test && UF.Test.active) {
             registerSelectChecks();
         }
+        // Core requires this file before UF.Events exists. Bind once the boot scene runs.
+        bindLevelRetention();
     };
 
     //-------------------------------------------------------------------------
@@ -2357,7 +2816,7 @@
                     queueCommit(tDef, { x0: p.mx, y0: p.my, x1: p.mx, y1: p.my, z: p.z, area: p.area, shift: false, tool: activeTool });
                 }
             } else if (p.shift) {
-                const u = findUnitAt(p.mx, p.my, p.area, p.z, p.sx, p.sy);
+                const u = resolveClickUnit(p.mx, p.my, p.area, p.z, p.sx, p.sy);
                 if (u && isPlayerUnit(u)) {
                     if (selectedGroup.includes(u.id)) {
                         selectedGroup = selectedGroup.filter(id => id !== u.id);
@@ -2375,7 +2834,7 @@
                     }
                 }
             } else if (!isProvoked("plain_click")) {
-                const u = findUnitAt(p.mx, p.my, p.area, p.z, p.sx, p.sy);
+                const u = resolveClickUnit(p.mx, p.my, p.area, p.z, p.sx, p.sy);
                 const hasUnitSelected = (selectedGroup.length > 0) || (window.$colonyManager && !!$colonyManager.selectedColonist);
 
                 if (u) {
@@ -2483,6 +2942,7 @@
                 previewCache = null;
                 previewCount = 0;
                 previewDone = false;
+                previewRect = "";
                 previewCursor = 0;
 
                 const L = Look();
@@ -2566,23 +3026,11 @@
             const y0 = Math.min(box.y0, box.y1);
             const y1 = Math.max(box.y0, box.y1);
 
-            const unitsInside = [];
             window._lastCommittedBox = { x0, x1, y0, y1, box_x0: box.x0, box_x1: box.x1, tool: box.tool, shift: box.shift };
-            const allUnits = W.units ? W.units() : [];
-            for (const u of allUnits) {
-                if (u.area && box && box.area && u.area.x === box.area.x && u.area.y === box.area.y && (u.z || 0) === box.z) {
-                    if (u.x >= x0 && u.x <= x1 && u.y >= y0 && u.y <= y1 && isPlayerUnit(u)) {
-                        unitsInside.push(u.id);
-                    }
-                }
-            }
-
-            const isShift = box.shift && !isProvoked("shift_adds");
-            if (isShift) {
-                setSelection(unitsInside, { add: true });
-            } else {
-                setSelection(unitsInside, { add: false });
-            }
+            const picked = queryBoxUnits(box, true);
+            const isShift = box.shift && !isProvoked("shift_adds") && !xlayerProvoked("shift_layers");
+            const nextIds = XLayer.applyBox(selectedGroup, picked.ids, isShift);
+            setSelection(nextIds, { add: false });
             clearTileSelection();
             SoundManager.playCursor();
         } else if (tDef.id === "cancel") {
@@ -2756,8 +3204,8 @@
             }
             TouchInput._currentState = Object.assign({}, TouchInput._currentState, { triggered: false });
         } else if (isShift) {
-            // Shift-click: toggle player unit in selection
-            const u = findUnitAt(mx, my, area, curZ, TouchInput.x, TouchInput.y);
+            // Shift-click: toggle the viewed unit, or the topmost visible unit below an empty cell.
+            const u = resolveClickUnit(mx, my, area, curZ, TouchInput.x, TouchInput.y);
             if (u && isPlayerUnit(u)) {
                 if (selectedGroup.includes(u.id)) {
                     selectedGroup = selectedGroup.filter(id => id !== u.id);
@@ -2769,7 +3217,7 @@
                 TouchInput._currentState = Object.assign({}, TouchInput._currentState, { triggered: false });
             }
         } else if (!isProvoked("plain_click")) {
-            const u = findUnitAt(mx, my, area, curZ, TouchInput.x, TouchInput.y);
+            const u = resolveClickUnit(mx, my, area, curZ, TouchInput.x, TouchInput.y);
             const hasUnitSelected = (selectedGroup.length > 0) || (window.$colonyManager && !!$colonyManager.selectedColonist);
 
             if (u) {
@@ -2867,6 +3315,7 @@
         isPlayerUnit,
         pointerOverUI,
         selected: () => selectedGroup.slice(),
+        isSelected: (id) => selectedGroup.indexOf(id) >= 0,
         hasSelection: () => selectedGroup.length > 0,
         primary: primaryUnit,
         setSelection,
@@ -3628,5 +4077,6 @@
     }
 
     registerSelectChecks();
+    bindLevelRetention();
 
-})();
+})(typeof window !== "undefined" ? window : globalThis);

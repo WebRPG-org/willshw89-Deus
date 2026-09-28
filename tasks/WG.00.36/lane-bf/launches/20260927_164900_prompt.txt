@@ -1,0 +1,5 @@
+Resume WG.00.36 on task/lane-bf as the Grok writer. Read the lane BRIEF, lane.json, REPORT.md, and tasks/WG.00.36/lane-bf/review_codex_32a9d3b9.md before editing.
+
+Fix every review finding within the existing allowedPaths: selection must honor the renderer-disabled state, box-selection setup and release must avoid full-world population scans, and production-path integration tests must exercise live transitions, mixed-layer group orders/path traversal, retention, and locality. Replace surrogate-only proofs with tests that can fail when the actual production behavior breaks. Do not weaken existing tests or narrow the acceptance contract. If a required fix is outside allowedPaths or needs an owner decision, write a precise escalation in the lane task folder and stop that part.
+
+Run every gateTests command from lane.json in the foreground and all provocations. Update REPORT.md with exact commands and exits. Do not touch art, audio, WBS/status, provider status, plugin registration, or another lane. Commit all fixes on task/lane-bf with a [grok] WG.00.36 subject. Do not merge or push. End with FINAL SHA: <full sha>.

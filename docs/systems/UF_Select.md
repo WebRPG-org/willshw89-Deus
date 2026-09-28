@@ -16,7 +16,7 @@ Status: built 2026-09-19. Checks: `select` (15 checks, all PASS on snapshot `sel
 - Group movement uses Euclidean-sorted Chebyshev ring targets to dispatch non-overlapping destinations.
 - Area designation tools support batch work orders (chop, gather, pick, mine, quarry, dig, dismantle, floor, wall, stockpile, cancel) with progressive frame budgets preventing hitching on large rectangles (up to $30\times 30$).
 - Bitset-encoded stockpile zones persist in world state via `JsonEx`.
-- Drag operations are scoped strictly to the current vertical Z-level (`SelectAPI.viewZ()`); switching levels immediately cancels any active drag.
+- A unit box on the viewed level also takes player units on lower levels whose cell is visible through open cells (`UF.LayerOverlays.cellVisible`, the same rule as the depth overlays). Designation tools stay on the box's own level. Switching the viewed level cancels an active drag and does not clear the selection.
 
 ---
 
@@ -60,6 +60,8 @@ When multiple units are selected and the player clicks a destination cell $T = (
 4. Issues a direct `"move"` job to each unit via `UF.Jobs.create({ type: "move", owner: u.id, target: { area, x, y, z } })`.
 5. Displays a temporary confirmation notification (e.g. `"5 moving"`).
 
+A mixed-level group uses the same ring on the clicked level. Every order's `z` is that level, including units that are still on another level. See section 8.
+
 ---
 
 ## 4. Progressive Commit & Performance Budgets
@@ -102,6 +104,9 @@ To ensure silky frame rates when dragging large boxes (e.g. $30\times 30 = 900$ 
 | `commits()` | Returns array of pending commit batches. |
 | `registeredKeys()` | Returns dictionary of hotkey registrations and collision checks. |
 | `viewZ()` | Returns current active Z-level from `UF.Levels` or `UF.World`. |
+| `isSelected(id)` | True when that unit id is in the group. Lower-layer overlays read this for the selection square. The flag is not written onto the unit, and it is not saved. |
+| `UF.SelectX` | Headless cross-layer helpers (`unitsInBox`, `applyBox`, `toggleId`, `visibleUnitAt`, `planGroupOrders`, `retain`, `viewKeeps`, `indexUnits`). `require` of `DEUS_Select.js` returns this object when `PluginManager` is absent. |
+| `UF.LayerOverlays.cellVisible(query)` | The column rule a box calls. `query` is `{ x, y, z, viewZ, maxDepth, opaque }`. A cell under any opaque cell above it, above the view, or deeper than `maxDepth` is not visible. |
 
 ---
 
@@ -125,3 +130,55 @@ Suite `select` runs 15 checks via `tools/test_snapshot.js --name select_test --p
 15. `select.no_errors`: Verifies zero console errors thrown across the entire suite.
 
 All 15 checks have been verified with clean passes (15/15 PASS) and provoked failures (`UF_TEST_PROVOKE = "select.all"`, 0/15 PASS, exit 1).
+
+The file registers further checks after those 15 (tile clicks, the wall button, and others). WG.00.36 does not change them. Cross-layer checks are section 8.
+
+## 8. Cross-layer selection and group orders (WG.00.36)
+
+Selection can hold units on several levels at once. Orders for that group use one flat formation on the level the player clicked. Cover is never reimplemented here: a lower cell is eligible only when `UF.LayerOverlays.cellVisible` says so. That is the same walk the overlay planner uses (`pointVisible`): not above the view, not past the renderer's reach, and every layer strictly above the unit through the view is open. `UF.Depth.isOpen` answers the single-cell question. A unit standing on the viewed level is eligible even when that cell is solid, because nothing is above them. A unit under solid cover is not.
+
+Reach follows the renderer. With no `UF.Depth` plugin the cap stays 2. When that plugin is loaded, lower levels are eligible only while `config.enabled === true`. `config.maxDepth` is the cap (2 unless Depth says otherwise), and `config.exposes(z)` stops the walk at the first level the renderer will not bind. Turning drawing off or on takes effect on the next click or box. A level the renderer does not draw is not selectable.
+
+The occupancy index is updated when a unit is added, removed, moves, changes area, or changes level. It is built from `UF.World.units()` once when those listeners bind, if units are already present, and once when a save loads, because that load does not emit a per-unit event. Starting a drag, moving the rectangle, and releasing the button do not walk that list. While the rectangle is unchanged, a later frame does no work. When it changes, the pick reads only the buckets for the cells inside the box.
+
+### Gestures
+
+The viewed level is `viewZ()`. "Visible lower" means a level from `viewZ - 1` down through the renderer's reach whose cell passes `cellVisible`, and only while depth drawing is on. Hotkeys, toolbar tools, Esc, and right-click-to-leave-a-tool are unchanged. Designation drags (chop, mine, stockpile, and the rest) still mark only the level the drag started on.
+
+| Gesture | Viewed level | Visible lower level | Hidden, above the view, past the reach, or depth drawing off |
+|---|---|---|---|
+| Plain click | Selects that unit and replaces the group. Unchanged when a unit stands on the viewed cell. | If the viewed cell has no unit, selects the topmost unit in the column. | Not hit. |
+| Plain click on empty ground | Clears the selection. Unchanged. | A visible unit in the column is a unit click, not ground. | Clears when the column shows nobody. |
+| Shift+click | Toggles that unit. Unchanged. | Toggles the topmost unit in the column when the viewed cell is empty. | No toggle. |
+| Plain drag | Replaces the group with player units in the box on this level. | Also takes player units in the box on visible lower cells. | Never taken. |
+| Shift+drag | Adds the units in the box. Does not remove units outside it. | Adds those visible units too. | Never added. |
+| Right-click, or Move here | Group move (below). | The same order. | A unit already selected still gets an order. |
+| View level changes | Cancels an in-progress drag (`select.level_scope`). | The group stays. | The group stays. |
+| Unit walks onto another level | Stays selected. Its move order is not cleared or rewritten. | The selection square is drawn by the lower-layer overlay when the cell is visible. | No square while the cell is not visible. The id stays selected. |
+
+Shift+drag adds. It does not toggle off units that are already selected inside the new box. Shift+click toggles one unit. Both match the single-level gestures.
+
+A click prefers the viewed cell. A colonist standing on the viewed cell is the one who is toggled, even if another colonist is visible in the shaft below. To toggle the lower colonist, the viewed cell has to be empty so the click goes through the opening.
+
+### Group move
+
+The clicked cell is `T = (x, y, Zt)` with `Zt` the level of the click (the viewed level for a map click).
+
+1. One V68 formation is searched on `Zt` only: standable cells, Chebyshev rings out to `formationRadius` (12), no corner cutting, nearest unit (horizontal distance, then id) takes the nearest cell.
+2. Every selected unit, including units on other levels, is in that one assignment. Each order is `{ area, x, y, z: Zt }`.
+3. A unit that is not yet on `Zt` keeps that order while it crosses a slope, stair, or ramp. Selection does not cancel the job when `world:unitLevelChanged` fires, and it does not clear the group when `levels:viewChanged` fires.
+4. A unit with no free cell left is counted as before: `"5 moving; 1 found no free cell."` The formation is not a second ring on the unit's current level.
+
+On the ground (`Zt` 0) the standable query is the same `{ x, y }` area object the single-level move used, so an all-on-one-level group gets the same cells as before.
+
+### Selection square
+
+Units on the viewed level keep the existing selection corners in the tilemap. A selected unit on a lower visible level gets the overlay's selection square (`DEUS_LayerOverlays`, kind `selection`): one cell, scale 1, no filter, blur, tint, fog, or fade (DEC-011). The overlay asks `UF.Select.isSelected(id)` and still honours `unit.selected` / `unit.data.selected`. Nothing is written onto the saved unit.
+
+### Checks
+
+`node tools/select_xlayer/test_xlayer_select.js` checks the five rules above (`box_visible`, `shift_layers`, `group_orders`, `survive`, `perf`). Each check loads this plugin with `PluginManager` present and drives the live drag, click, group-move, level-change, and view-change paths. `--provoke=<name>` makes that live path FAIL (exit 1). `--provoke-all` runs each provocation and exits 0 only when every one failed.
+
+The snapshot suite in section 7 is unchanged. The harness registers it more than once. On base `ecc7b898` and on this tip, two of those registrations fail the same checks and the two that own the input handler pass every check, including `box_units`, `shift_adds`, `group_move`, and `level_scope`. That split is the baseline (see the lane report). A regression would be a check that passed on a base registration and fails on the matching tip registration.
+
+---
