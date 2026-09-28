@@ -526,15 +526,34 @@ Every decision item recorded in this log must provide:
 
 ---
 
-### Decision `DEC-038`: Lean Natural World v1 Physical Foundations & Mathematical Calibration
+### Decision `DEC-038`: Lean Natural World v1 Physical Foundations & Mathematical Calibration (Amended)
 - **Date Logged:** 2026-09-28
-- **Status:** `DECIDED` (Owner rulings 2026-09-28 on Mathematical and Physical Foundations)
+- **Status:** `DECIDED` (Owner rulings 2026-09-28 on Mathematical and Physical Foundations, with Final Ratification Amendments)
 - **Decider:** Owner
 - **Summary:**
-  1. **5 Biomes + 1 Wildness Axis:** Reclassify `WILD` from a mutually exclusive climate biome into a continuous wildness modifier (0.0 to 1.0, settled-looking to primal/untamed). The 5 fundamental climate/terrain biomes are: `TEMPERATE`, `WET`, `ARID`, `COLD`, `VOLCANIC`.
-  2. **Terrain Step Resolution vs. Normal Slope:** The 2-ft vertical strata per 5-ft cell represents discrete cellular resolution and maximum local rise, not default/normal slope. Standard terrain slope is classified into: flat (0–5%), gentle (5–12%), rolling (12–20%), steep (20–40%), and cliff/steep rise (>40%).
-  3. **Stratum-Aware & Event-Driven Groundwater Authority:** Groundwater operates at the 2-ft stratum level (5 strata per 10-ft Z cell) where material properties (porosity, permeability, saturation, head) vary. Groundwater is event-driven and dirty-region based (e.g., local breaches, excavations, regional drawdowns); no global per-tick full-world scans.
-  4. **Central Fixed/Integer Internal Unit Policy:** Conserved simulation quantities utilize integer/fixed-point internal representation to eliminate floating-point drift over multi-year simulations (space in integer cell/stratum, mass in grams or fixed 0.01 lb, fluid in milliliters or fixed fluid units, time in integer ticks, temperature in fixed tenths/hundredths, hydraulic head in fixed sub-stratum units). Presentation layers convert to feet, lbs, gallons, and °F.
-  5. **Canonical 360-Day Calendar:** Locked to a 360-day calendar year (12 x 30-day months, 4 x 90-day seasons, zero leap days). Acceleration applies to game time, not biological/climate timescales.
-  6. **Altitude Climate as Compressed Gameplay Climate Coefficient:** Elevation cooling (e.g. -0.35°F/Z) is formally defined as a compressed geographic gameplay climate coefficient rather than literal real-world atmospheric lapse rate, ensuring elevation differences produce meaningful gameplay consequences in DEUS's compressed geography.
-  7. **Approval of NAT.03.01 in Lane bx:** Lean Aquifer & Water Table Kernel authorized for implementation in `lane-bx` with MiniMax M3 writer and Grok independent reviewer.
+  1. **Physical Continua over Categorical Biome Enums:** The fundamental physical authorities are four continuous dimensions: temperature, moisture, volcanism, and wildness, anchored to discrete physical elevation (stratum/Z). Biome designations (e.g. tundra, taiga, temperate marsh, primeval forest, arid scrub, geothermal caldera) are derived content/presentation labels, not primitive physics enums.
+  2. **Restoration of Canonical Five-Band Depth Architecture:** The tested five-band vertical stratification is canonically restored:
+     - Deep Earth: Z = -16 .. -11 (6 levels = 60 ft)
+     - Caverns: Z = -10 .. -5 (6 levels = 60 ft)
+     - Lowlands: Z = -4 .. +1 (6 levels = 60 ft)
+     - Uplands: Z = +2 .. +6 (5 levels = 50 ft)
+     - Highlands: Z = +7 .. +11 (5 levels = 50 ft)
+     - Sky (Atmosphere): Z = +12 .. +15 (4 levels = 40 ft)
+  3. **Authoritative Integer Internal-Unit Policy (Zero Ambiguity):**
+     - Spatial Address: Integer cell (x, y, z) and stratum s in [0..4].
+     - Mass: Integer centipounds (1 unit = 0.01 lb).
+     - Water Mass: Authoritative mass in centipounds; display volume in derived gallons (1 gal = 834 centipounds).
+     - Saturation: Integer basis points (0 .. 10000, where 10000 = 100.00%).
+     - Hydraulic Head: Integer millistrata (1000 units = 1 stratum = 2 ft; elevation head relative to global bedrock datum).
+     - Temperature: Integer centi-Fahrenheit (7250 = 72.50°F).
+     - Simulation Time: Integer ticks.
+  4. **Slope Generation via Continuous Target Gradient + Accumulated 2-ft Rasterization:** Rather than quantizing slopes to coarse cell multiples, the terrain generator accumulates continuous rise (accumulatedRise += 5 ft * targetSlope). When accumulatedRise >= 2 ft, elevation rises one stratum and decrements 2 ft, preserving the exact 2-ft vertical lattice while supporting arbitrary smooth grades.
+  5. **Aquifer Equations & Hydraulic Precision (NAT.03.01):**
+     - Total hydraulic head h = elevationHead + pressureHead using a global bedrock elevation datum.
+     - Interface conductivity across adjacent cells uses the harmonic mean: K_interface = (2 * K_A * K_B) / (K_A + K_B).
+     - Discrete flow calculations carry a deterministic fractional residual accumulator to prevent small flows from permanently truncating to zero. Net mass strictly conserved in ledger.
+  6. **Configurable Climate Scaling:** Elevation cooling is defined as a configurable gameplay coefficient (CLIMATE_CONFIG.elevationScale = -35 centi-F/Z, initial baseline -0.35°F/Z) rather than a hardcoded atmospheric lapse rate, subject to tuning after playtest observation.
+  7. **Natural World v1 Simulation Envelopes:** 32 Z vertically and 768x768 (3x3 regions) horizontally are formally declared as the Natural World v1 simulation envelopes, not permanent engine-level maximum ceilings.
+  8. **Deterministic Calendar Math:** Authoritative 360-day calendar (12x30 days, 4x90 seasons) uses explicit zero-based day-of-year wrapping:
+     dayOfYear = absoluteDay % 360 (0..359); month = Math.floor(dayOfYear / 30) + 1 (1..12); dayOfMonth = (dayOfYear % 30) + 1 (1..30); season = Math.floor(dayOfYear / 90) (0=Spring, 1=Summer, 2=Autumn, 3=Winter).
+  9. **Ratification of NAT.03.01 in Lane bx:** Lean Aquifer & Water Table Kernel authorized for execution in lane-bx with MiniMax M3 writer and Grok reviewer under these exact specifications.
