@@ -504,3 +504,37 @@ Every decision item recorded in this log must provide:
      - Role tags for non-obvious rows (e.g. Half-elf Fighter/Druid/Bard, Half-orc Barbarian/Druid/Fighter): `OWNER_TODO`
      - Playtest starting suggestions (unapproved, pending Owner ruling): +1 on class main rolls, ~10% faster class XP, ~1.5x job-pick weight.
   5. **Cross-References:** DEC-013 item 5 (nine races), SOC.10.01 (person identity class axis allows any class for any race; merged at `099be7b9`), SOC.11.01 (2014 SRD class integration), SOC.13.01 (central duty scheduler). Planning task tracked in SOC.11.02.
+
+---
+
+### Decision `DEC-037`: Lean Natural World v1 Phase Lock & Causal Dependency Chain
+- **Date Logged:** 2026-09-28
+- **Status:** `DECIDED` (Owner Directive 2026-09-28)
+- **Decider:** Owner
+- **Summary:**
+  1. **Lean Natural World v1 Phase Lock:** Engineering effort must focus strictly on what materially matters to completing a believable, deterministic, playable natural world. Defer luxury features, eliminate redundant systems, and trim speculative complexity.
+  2. **Upstream-First Causal Dependency Order:**
+     `Physical Space -> Physical Matter -> Water -> Geomorphology / Soil -> Climate -> Flora -> Fauna`.
+     Do not implement downstream runtime systems until their upstream physical contracts exist and have passed required gates.
+  3. **Tiered Allocation:**
+     - **CORE:** Focus implementation and review resources on a few robust physical authorities.
+     - **DERIVED:** Prefer outcomes emerging from core systems and prove them with tests; avoid redundant feature systems.
+     - **ENRICHMENT:** Wait.
+     - **PRESENTATION:** Wait unless needed for verification, within existing approvals and DEC-007.
+     - **CIVILIZATION:** Frozen. No civilization, farming, faction, or society implementation under this phase.
+     - **CUT / superseded:** Allocate no new work.
+
+---
+
+### Decision `DEC-038`: Lean Natural World v1 Physical Foundations & Mathematical Calibration
+- **Date Logged:** 2026-09-28
+- **Status:** `DECIDED` (Owner rulings 2026-09-28 on Mathematical and Physical Foundations)
+- **Decider:** Owner
+- **Summary:**
+  1. **5 Biomes + 1 Wildness Axis:** Reclassify `WILD` from a mutually exclusive climate biome into a continuous wildness modifier (0.0 to 1.0, settled-looking to primal/untamed). The 5 fundamental climate/terrain biomes are: `TEMPERATE`, `WET`, `ARID`, `COLD`, `VOLCANIC`.
+  2. **Terrain Step Resolution vs. Normal Slope:** The 2-ft vertical strata per 5-ft cell represents discrete cellular resolution and maximum local rise, not default/normal slope. Standard terrain slope is classified into: flat (0–5%), gentle (5–12%), rolling (12–20%), steep (20–40%), and cliff/steep rise (>40%).
+  3. **Stratum-Aware & Event-Driven Groundwater Authority:** Groundwater operates at the 2-ft stratum level (5 strata per 10-ft Z cell) where material properties (porosity, permeability, saturation, head) vary. Groundwater is event-driven and dirty-region based (e.g., local breaches, excavations, regional drawdowns); no global per-tick full-world scans.
+  4. **Central Fixed/Integer Internal Unit Policy:** Conserved simulation quantities utilize integer/fixed-point internal representation to eliminate floating-point drift over multi-year simulations (space in integer cell/stratum, mass in grams or fixed 0.01 lb, fluid in milliliters or fixed fluid units, time in integer ticks, temperature in fixed tenths/hundredths, hydraulic head in fixed sub-stratum units). Presentation layers convert to feet, lbs, gallons, and °F.
+  5. **Canonical 360-Day Calendar:** Locked to a 360-day calendar year (12 x 30-day months, 4 x 90-day seasons, zero leap days). Acceleration applies to game time, not biological/climate timescales.
+  6. **Altitude Climate as Compressed Gameplay Climate Coefficient:** Elevation cooling (e.g. -0.35°F/Z) is formally defined as a compressed geographic gameplay climate coefficient rather than literal real-world atmospheric lapse rate, ensuring elevation differences produce meaningful gameplay consequences in DEUS's compressed geography.
+  7. **Approval of NAT.03.01 in Lane bx:** Lean Aquifer & Water Table Kernel authorized for implementation in `lane-bx` with MiniMax M3 writer and Grok independent reviewer.

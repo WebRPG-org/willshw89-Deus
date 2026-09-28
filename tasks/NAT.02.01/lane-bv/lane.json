@@ -2,7 +2,7 @@
   "lane": "lane-bv",
   "taskId": "NAT.02.01",
   "branch": "task/lane-bv",
-  "writer": "codex",
+  "writer": "minimax",
   "reviewer": "grok",
   "allowedPaths": [
     "game/js/sim/structural/**",

@@ -6,6 +6,17 @@ Project formal name: **DEUS** (formally renamed by user directive 2026-09-20; re
 Applies to every AI agent working in this folder (Claude Code, Gemini, anything else). Read it at the start of every session, before touching anything.
 If a rule here conflicts with your habits, this file wins. If it conflicts with something the user tells you directly, the user wins. Then record the change in `docs/VISION.md` → Decision log.
 
+## Persistent orchestration rules (Owner request, 2026-09-28)
+
+Read these rules at every session start, including through non-Antigravity providers:
+- `.agents/rules/deus-governance.md`: DEC-007, Owner approval before any new WBS leaf/lane or scope expansion, engine-core protection, and existing lane/worktree isolation.
+- `.agents/rules/deus-review-policy.md`: zero self-certification, independent model-family review, evidence before closure, and mandatory `merge_gate` / `--no-ff` integration.
+- `.agents/rules/deus-natural-world.md`: DEC-037 Natural World phase lock and the lean upstream-first critical path; civilization/farming/faction implementation remains frozen.
+- `.agents/rules/deus-multiagent-routing.md`: quality-preserving failover, protected local files, and bounded Teamwork/Goal operation.
+- `.agents/rules/deus-game-translation.md`: mandatory code-to-game traceability, named consumers, bridge status, and separate headless/playable proof. Templates: `tools/ops/GAME_TRANSLATION_TEMPLATE.md`.
+
+The practical procedure and launch templates are in `tools/ops/ANTIGRAVITY.md`. This supplement records the Owner's current orchestration request; it does not open a task lane, change WBS status, or grant self-review/merge authority. Current explicit Owner instructions and recorded freezes override older role descriptions and autonomous art mandates in this file, `GEMINI.md`, or other guides. Continue only already approved work; preserve existing lanes and their local files. The setup changes remain working-copy configuration pending independent review and normal integration, not a self-certified completion.
+
 ## Read order
 1. `AGENTS.md` (this file)
 2. `docs/STATUS.md`: what actually works, what's broken, who is working on what (current state; historical ledger archived in `docs/archive/STATUS_LEDGER_20260925.md`)

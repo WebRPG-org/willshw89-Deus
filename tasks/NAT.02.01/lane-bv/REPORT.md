@@ -3,7 +3,7 @@
 ## 1. Overview
 - **WBS ID**: `NAT.02.01`
 - **Lane**: `lane-bv`
-- **Writer**: `codex` (MiniMax M3 / Cline)
+- **Writer**: MiniMax (MiniMax M3 via Cline execution surface)
 - **Reviewer**: `grok`
 - **Status**: IMPLEMENTATION COMPLETE & GATE PASS (5 of 5 checks pass, negative controls verified)
 
