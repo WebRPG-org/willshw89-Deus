@@ -1,0 +1,5 @@
+Act as the independent Grok reviewer for lane-bl SOC.20.01. The writer is Gemini and the exact writer tip is 786b50844dffc1f13ca0d0bcb61232ff6c23c6fa. Review that exact tip against BRIEF.md, lane.json, the society WBS row, and canonical person/institution/faction sources.
+
+Inspect the full merge-base-to-writer diff. Independently rerun every gate and targeted provocation. Verify office identity survives holder death, authority and jurisdiction are structured, vacancy/succession are internally consistent, current duty stays separate, and open owner questions remain undecided. Check schema and canonical records for invented decisions and confirm no art/audio work. Do not fix implementation, merge, push, or edit WBS/status.
+
+Write only tasks/SOC.20.01/lane-bl/review_grok_786b5084.md. Include exact identity, scope, commands/exits, findings ranked BLOCKER/MAJOR/MINOR, and one final line exactly VERDICT: CLEAN PASS or VERDICT: FAIL. Commit only that review file with subject [grok] SOC.20.01 review 786b5084. End with FINAL SHA: <full sha>.

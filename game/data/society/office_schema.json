@@ -1,0 +1,446 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://deus.local/society/office_schema.json",
+  "title": "DEUS Faction Office Schema",
+  "description": "Defines a faction office as a durable institutional entity independent of any living holder (INV-SOC-03 / FACTION-001). Stores jurisdiction, authority scopes, vacancy state, and succession policy data without deciding open owner questions such as holder cardinality or culture-specific succession outcomes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "officeId",
+    "canonicalFunction",
+    "department",
+    "titles",
+    "jurisdiction",
+    "authorityScopes",
+    "vacancyState",
+    "holder",
+    "successionPolicy",
+    "subordinateOffices",
+    "parentOfficeId",
+    "workloadProfile"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "deus-office-schema/1.0.0"
+    },
+    "officeId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$"
+    },
+    "canonicalFunction": {
+      "$ref": "#/$defs/canonicalFunction"
+    },
+    "department": {
+      "$ref": "#/$defs/department"
+    },
+    "titles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["defaultTitle", "culturalTitles"],
+      "properties": {
+        "defaultTitle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "culturalTitles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        }
+      }
+    },
+    "jurisdiction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope", "domains"],
+      "properties": {
+        "scope": {
+          "$ref": "#/$defs/jurisdictionScope"
+        },
+        "factionId": {
+          "type": ["string", "null"],
+          "maxLength": 64
+        },
+        "settlementId": {
+          "type": ["string", "null"],
+          "maxLength": 64
+        },
+        "domains": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/jurisdictionDomain"
+          }
+        },
+        "geographicBounds": {
+          "type": ["string", "null"],
+          "maxLength": 100
+        }
+      }
+    },
+    "authorityScopes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/authorityToken"
+      }
+    },
+    "vacancyState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "isVacant", "operationalCapability"],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/vacancyStatus"
+        },
+        "isVacant": {
+          "type": "boolean"
+        },
+        "sinceYear": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "sinceTick": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "vacancyReason": {
+          "type": ["string", "null"],
+          "enum": [
+            "UNASSIGNED",
+            "HOLDER_DECEASED",
+            "HOLDER_DISMISSED",
+            "HOLDER_RESIGNED",
+            "HOLDER_INCAPACITATED",
+            "OFFICE_CREATED",
+            null
+          ]
+        },
+        "operationalCapability": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "degradationEffects": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z0-9_]+$"
+          }
+        }
+      }
+    },
+    "holder": {
+      "type": "object",
+      "description": "Holder tracking without deciding open owner questions such as holder cardinality (single vs multiple co-holders) or concurrent office holding.",
+      "additionalProperties": false,
+      "required": [
+        "cardinality",
+        "primaryHolderId",
+        "coHolderIds",
+        "deputyIds"
+      ],
+      "properties": {
+        "cardinality": {
+          "$ref": "#/$defs/holderCardinality"
+        },
+        "primaryHolderId": {
+          "type": ["string", "null"],
+          "maxLength": 64
+        },
+        "actingHolderId": {
+          "type": ["string", "null"],
+          "maxLength": 64
+        },
+        "coHolderIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "maxLength": 64
+          }
+        },
+        "deputyIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "maxLength": 64
+          }
+        },
+        "maxHolders": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        },
+        "allowConcurrentOffices": {
+          "type": ["boolean", "null"]
+        }
+      }
+    },
+    "successionPolicy": {
+      "type": "object",
+      "description": "Succession policy parameters without deciding culture-specific succession outcomes (preserved as an open owner question).",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "interregnumPolicy",
+        "cultureOutcomeOpen"
+      ],
+      "properties": {
+        "method": {
+          "$ref": "#/$defs/successionMethod"
+        },
+        "appointmentAuthority": {
+          "type": ["string", "null"],
+          "maxLength": 64
+        },
+        "orderOfPrecedence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 64
+          }
+        },
+        "eligibilityCriteria": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["requireFactionMember"],
+          "properties": {
+            "minAge": {
+              "type": ["integer", "null"],
+              "minimum": 0
+            },
+            "requiredCrafts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "requiredClasses": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "minLevel": {
+              "type": ["integer", "null"],
+              "minimum": 1,
+              "maximum": 20
+            },
+            "requireFactionMember": {
+              "type": "boolean"
+            },
+            "additionalCriteria": {
+              "type": ["array", "null"],
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "interregnumPolicy": {
+          "$ref": "#/$defs/interregnumPolicy"
+        },
+        "cultureOutcomeOpen": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "subordinateOffices": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "maxLength": 64
+      }
+    },
+    "parentOfficeId": {
+      "type": ["string", "null"],
+      "maxLength": 64
+    },
+    "workloadProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["criticalityTier"],
+      "properties": {
+        "baselineHoursPerWeek": {
+          "type": ["number", "null"],
+          "minimum": 0.0
+        },
+        "criticalityTier": {
+          "$ref": "#/$defs/criticalityTier"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "canonicalFunction": {
+      "type": "string",
+      "enum": [
+        "LEADER",
+        "EXECUTIVE",
+        "STEWARD",
+        "ADMIN",
+        "TREASURER",
+        "MINT_MASTER",
+        "MARSHAL",
+        "QUARTERMASTER",
+        "MASTER_OF_WORKS",
+        "PROVISIONER",
+        "RECORDER",
+        "MAGISTRATE",
+        "HEALER_DIRECTOR",
+        "HEALER",
+        "ENVOY",
+        "TRADE_MASTER",
+        "TAX_COLLECTOR",
+        "PAYMASTER",
+        "CLERK"
+      ]
+    },
+    "department": {
+      "type": "string",
+      "enum": [
+        "GOVERNANCE",
+        "ADMINISTRATION",
+        "FINANCE",
+        "DEFENSE",
+        "LOGISTICS",
+        "INFRASTRUCTURE",
+        "SUSTENANCE",
+        "RECORDS",
+        "JUSTICE",
+        "HEALTH",
+        "DIPLOMACY",
+        "COMMERCE"
+      ]
+    },
+    "jurisdictionScope": {
+      "type": "string",
+      "enum": [
+        "FACTION",
+        "SETTLEMENT",
+        "REGIONAL",
+        "DEPARTMENTAL"
+      ]
+    },
+    "jurisdictionDomain": {
+      "type": "string",
+      "enum": [
+        "SOVEREIGNTY",
+        "DEFENSE_PERIMETER",
+        "TREASURY_CHEST",
+        "MINES_AND_WORKS",
+        "COMMUNAL_GRANARY",
+        "MARKETPLACE_DISTRICT",
+        "MILITIA_GARRISON",
+        "ARCHIVES",
+        "INFIRMARY",
+        "WORKSHOPS",
+        "CIVIL_RECORDS",
+        "FOREIGN_ENVOYS",
+        "FOUNDRY_MINT",
+        "TAX_DISTRICTS",
+        "PAYROLL_OFFICE"
+      ]
+    },
+    "authorityToken": {
+      "type": "string",
+      "enum": [
+        "COMMAND_SOVEREIGN",
+        "EMERGENCY_DECREE",
+        "DIPLOMATIC_TREATY",
+        "CIVIL_ADMINISTRATION",
+        "LABOR_ALLOCATION",
+        "CENSUS_MAINTAIN",
+        "BUDGET_DISBURSE",
+        "COIN_MINT",
+        "TAX_ASSESS",
+        "TAX_COLLECT",
+        "WAGE_PAY",
+        "FINANCIAL_AUDIT",
+        "MILITARY_MOBILIZATION",
+        "DEFENSE_PATROL",
+        "GARRISON_COMMAND",
+        "STOCKPILE_ALLOCATION",
+        "TOOL_DISTRIBUTION",
+        "CONSTRUCTION_ORDER",
+        "INFRASTRUCTURE_PLAN",
+        "FOOD_RATIONING",
+        "HARVEST_QUOTA",
+        "CHRONICLE_RECORD",
+        "ARCHIVE_MAINTAIN",
+        "DISPUTE_ARBITRATION",
+        "LAW_ENFORCEMENT",
+        "PUNISHMENT_SENTENCE",
+        "QUARANTINE_ORDER",
+        "INFIRMARY_DIRECT",
+        "TRADE_LICENSE",
+        "TARIFF_LEVY",
+        "MARKET_REGULATE"
+      ]
+    },
+    "vacancyStatus": {
+      "type": "string",
+      "enum": [
+        "OCCUPIED",
+        "VACANT",
+        "ACTING",
+        "SUSPENDED",
+        "DORMANT"
+      ]
+    },
+    "holderCardinality": {
+      "type": "string",
+      "enum": [
+        "SINGLE",
+        "MULTIPLE",
+        "COLLEGIATE",
+        "UNDECIDED"
+      ]
+    },
+    "successionMethod": {
+      "type": "string",
+      "enum": [
+        "APPOINTMENT",
+        "HEREDITARY",
+        "SENIORITY",
+        "ELECTION",
+        "COUNCIL_SELECTION",
+        "AUTOMATIC_DEPUTY",
+        "LOT",
+        "OPEN_POLICY"
+      ]
+    },
+    "interregnumPolicy": {
+      "type": "string",
+      "enum": [
+        "ACTING_DEPUTY",
+        "REVERT_TO_SOVEREIGN",
+        "COUNCIL_STEWARDSHIP",
+        "FREEZE_OPERATIONS",
+        "IMMEDIATE_SUCCESSION"
+      ]
+    },
+    "criticalityTier": {
+      "type": "string",
+      "enum": [
+        "CORE_FOUNDER",
+        "PRIMARY_GOVERNANCE",
+        "SPECIALIZED_DEPARTMENT",
+        "SUBORDINATE_EXPANSION"
+      ]
+    }
+  }
+}

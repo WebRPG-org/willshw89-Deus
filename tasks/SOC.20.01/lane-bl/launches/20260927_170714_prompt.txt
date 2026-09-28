@@ -1,0 +1,5 @@
+Implement SOC.20.01 in lane-bl as the Gemini writer. Read BRIEF.md and lane.json first, then read the canonical person/institution specification, DEUS_PersonIdentity, DEUS_FactionPlans, and existing faction/identity data as read-only sources.
+
+Create a faction office schema in which an office is a durable institutional entity independent of any living holder. Store jurisdiction, authority scopes, vacancy state, and succession policy data without deciding open owner questions such as holder cardinality or culture-specific succession outcomes. Supply canonical office definitions, documentation, and a deterministic validator/test suite with targeted failing fixtures/provocations. Do not generate, edit, request, catalogue, move, or integrate art or audio.
+
+Run every lane.json gate in the foreground. Record exact commands, outputs, exits, test counts, limitations, and open questions in REPORT.md. Do not edit WBS/status, owner decisions, provider status, plugins, ops/governance, or another lane. Commit on task/lane-bl with a [gemini] SOC.20.01 subject. Do not merge or push. End with FINAL SHA: <full sha>.

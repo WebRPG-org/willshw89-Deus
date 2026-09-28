@@ -1,0 +1,32 @@
+{
+    "lane":  "lane-bl",
+    "taskId":  "SOC.20.01",
+    "branch":  "task/lane-bl",
+    "writer":  "gemini",
+    "reviewer":  "grok",
+    "push":  false,
+    "effortClass":  "mechanical",
+    "allowedPaths":  [
+                         "game/data/society/office_schema.json",
+                         "game/data/society/offices/**",
+                         "docs/systems/DEUS_FactionOffices.md",
+                         "tools/society/test_offices.js",
+                         "tasks/SOC.20.01/**"
+                     ],
+    "gateTests":  [
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/society/test_offices.js"
+                                   ],
+                          "timeoutSec":  900
+                      },
+                      {
+                          "cmd":  "node",
+                          "args":  [
+                                       "tools/check_deus_syntax.js"
+                                   ],
+                          "timeoutSec":  900
+                      }
+                  ]
+}

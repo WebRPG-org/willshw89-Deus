@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "deus-office-schema/1.0.0",
+  "officeId": "OFFICE_TRADE_MASTER",
+  "canonicalFunction": "TRADE_MASTER",
+  "department": "COMMERCE",
+  "titles": {
+    "defaultTitle": "Trade Master",
+    "culturalTitles": {
+      "human": "Trade Master",
+      "dwarf": "Trade Master",
+      "elf": "Trade Master",
+      "halfling": "Trade Master",
+      "dragonborn": "Trade Master",
+      "gnome": "Trade Master",
+      "half-elf": "Trade Master",
+      "half-orc": "Trade Master",
+      "tiefling": "Trade Master"
+    }
+  },
+  "jurisdiction": {
+    "scope": "SETTLEMENT",
+    "factionId": null,
+    "settlementId": null,
+    "domains": [
+      "MARKETPLACE_DISTRICT"
+    ],
+    "geographicBounds": null
+  },
+  "authorityScopes": [
+    "TRADE_LICENSE",
+    "TARIFF_LEVY",
+    "MARKET_REGULATE"
+  ],
+  "vacancyState": {
+    "status": "VACANT",
+    "isVacant": true,
+    "sinceYear": 0,
+    "sinceTick": 0,
+    "vacancyReason": "UNASSIGNED",
+    "operationalCapability": 0.0,
+    "degradationEffects": [
+      "MERCHANT_STALL_LICENSING_HALTED",
+      "MARKET_TARIFF_LEAKAGE",
+      "CARAVAN_DISPUTES_UNREGULATED"
+    ]
+  },
+  "holder": {
+    "cardinality": "UNDECIDED",
+    "primaryHolderId": null,
+    "actingHolderId": null,
+    "coHolderIds": [],
+    "deputyIds": [],
+    "maxHolders": null,
+    "allowConcurrentOffices": null
+  },
+  "successionPolicy": {
+    "method": "OPEN_POLICY",
+    "appointmentAuthority": null,
+    "orderOfPrecedence": [
+      "DEPUTY"
+    ],
+    "eligibilityCriteria": {
+      "minAge": null,
+      "requiredCrafts": [],
+      "requiredClasses": [],
+      "minLevel": null,
+      "requireFactionMember": true,
+      "additionalCriteria": null
+    },
+    "interregnumPolicy": "ACTING_DEPUTY",
+    "cultureOutcomeOpen": true
+  },
+  "subordinateOffices": [],
+  "parentOfficeId": "OFFICE_LEADER",
+  "workloadProfile": {
+    "baselineHoursPerWeek": null,
+    "criticalityTier": "SPECIALIZED_DEPARTMENT"
+  }
+}
