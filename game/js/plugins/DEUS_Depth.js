@@ -60,6 +60,15 @@
  * DEUS_LayerOverlays, when it is loaded, draws the lower-layer HP bars and combat overlays
  * on these planes. The depth suite does not load that plugin. The calls below are a null
  * check until it is registered.
+ *
+ * WG.00.21 occlusion (DEC-021, V149, V133). A cell of a lower level is drawn only when
+ * every level between the viewed level and it is open, and nothing under the first opaque
+ * surface is drawn. The walk stays inside MaxDepth (still 2; the parameter is not raised)
+ * and inside the camera bounds from UF.Culling. It runs when the camera cell, the view or
+ * a shape changes, not as a per-frame scan of the map or of every level. A covered cell
+ * gets no tile paint and no unit, object, item, cliff, ramp or effect sprite. A shape
+ * change dirties every lower plane, so closing one column drops that column's sprites
+ * without a camera move. Docs: docs/systems/DEUS_OcclusionCulling.md.
  */
 
 (() => {
@@ -126,9 +135,187 @@
     const stats = {
         rebuilds: 0, paints: 0, lastPaintMs: 0, peeks: 0, lastPeekMs: 0, layersAlive: 0, canvasesMade: 0, canvasesDestroyed: 0,
         updates: 0, lastUpdateMs: 0, unitSteps: 0, preloads: 0, mainRepaints: 0,
-        unitsScanned: 0, candidateRebuilds: 0, entityRebuilds: 0, itemRebuilds: 0, itemDirties: 0, objectDirties: 0
+        unitsScanned: 0, candidateRebuilds: 0, entityRebuilds: 0, itemRebuilds: 0, itemDirties: 0, objectDirties: 0,
+        ocFrameVisits: 0, ocFrameLevelVisits: 0, ocExposedCells: 0, ocColumnChecks: 0, ocLevelVisits: 0,
+        ocMaskBuilds: 0, ocFullScans: 0, ocSpriteTouches: 0, ocSkippedPaints: 0, ocSteadyFrames: 0,
+        ocPaintCells: 0, ocPaintWindows: 0, ocAlloc: 0
     };
     let unitPlaceStamp = 0; // moves when a unit changes level or area (world:unitLevelChanged / world:unitAreaChanged)
+
+    //-------------------------------------------------------------------------
+    // Occlusion (WG.00.21). Headless: require() this file. The renderer below is skipped when
+    // Tilemap or PIXI is absent, and the same plan() decides what the live planes draw.
+
+    const Occlusion = (function () {
+        const DEFAULT_MAX_DEPTH = 2;
+        const KINDS = ["units", "objects", "items", "walls", "ramps", "effects"];
+
+        function wrap(v, size) {
+            if (!(size > 0)) return v | 0;
+            const n = v | 0;
+            return ((n % size) + size) % size;
+        }
+        function boundsOf(bounds) {
+            const x0 = Math.floor(bounds.minX), y0 = Math.floor(bounds.minY);
+            const x1 = Math.floor(bounds.maxX), y1 = Math.floor(bounds.maxY);
+            const w = x1 - x0 + 1, h = y1 - y0 + 1;
+            return { x0, y0, x1, y1, cells: w > 0 && h > 0 ? w * h : 0 };
+        }
+        let liveProvoke = "";
+        function readProvoke(input) {
+            if (input && Object.prototype.hasOwnProperty.call(input, "provoke")) return input.provoke ? String(input.provoke) : "";
+            if (liveProvoke) return liveProvoke;
+            const env = (typeof process !== "undefined" && process.env) || {};
+            const raw = env.UF_OCCLUSION_PROVOKE || env.UF_TEST_PROVOKE || "";
+            const parts = String(raw).split(",");
+            for (let i = 0; i < parts.length; i++) {
+                const s = parts[i].trim();
+                if (s.indexOf("occlusion.") === 0) return s.slice("occlusion.".length);
+            }
+            return "";
+        }
+        function setProvoke(name) { liveProvoke = name ? String(name) : ""; return liveProvoke; }
+        const keyOf = (z, x, y) => z + "," + x + "," + y;
+        // A steady frame reuses the sets and returns its own counters. The build's object is left as it was.
+        function steady(hit, stale) {
+            return {
+                exposed: hit.exposed, columns: hit.columns, byDepth: hit.byDepth,
+                exposedCells: hit.exposedCells, columnChecks: hit.columnChecks, levelVisits: hit.levelVisits,
+                frameVisits: 0, frameLevelVisits: 0, fullScans: 0, rebuilt: false, stale: stale,
+                boundsCells: hit.boundsCells, maxDepth: hit.maxDepth, viewZ: hit.viewZ
+            };
+        }
+
+        function buildPlan(input) {
+            const provoke = readProvoke(input);
+            const maxDepth = Number.isFinite(input.maxDepth) ? input.maxDepth | 0 : DEFAULT_MAX_DEPTH;
+            const viewZ = input.viewZ | 0;
+            const zMin = input.zMin | 0, zMax = input.zMax | 0, size = input.size | 0;
+            const b = boundsOf(input.bounds);
+            const shapeStamp = input.shapeStamp;
+            const cache = input._cache;
+            const depthCap = maxDepth > 0 ? maxDepth : 0;
+
+            if (provoke === "switch_and_pan" && cache && cache.hit) return steady(cache.hit, true);
+            if (provoke !== "no_full_scan" && provoke !== "cost_proportional" && cache
+                && cache.viewZ === viewZ && cache.maxDepth === depthCap && cache.zMin === zMin && cache.zMax === zMax
+                && cache.size === size && cache.x0 === b.x0 && cache.y0 === b.y0 && cache.x1 === b.x1 && cache.y1 === b.y1
+                && cache.shapeStamp === shapeStamp && cache.provoke === provoke) {
+                return steady(cache.hit, false);
+            }
+            if (provoke === "cost_proportional") {
+                const layers = zMax >= zMin ? (zMax - zMin + 1) : 0;
+                input._cache = null;
+                return {
+                    exposed: new Set(), columns: new Set(), byDepth: [],
+                    exposedCells: b.cells * layers, columnChecks: b.cells,
+                    levelVisits: b.cells * Math.max(0, layers - 1),
+                    frameVisits: b.cells * layers, frameLevelVisits: b.cells * Math.max(0, layers - 1),
+                    fullScans: 1, rebuilt: true, stale: false, boundsCells: b.cells, maxDepth: depthCap, viewZ
+                };
+            }
+            if (provoke === "no_full_scan") {
+                let visits = 0;
+                const n = size > 0 ? size : 0;
+                for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) visits++;
+                input._cache = null;
+                return {
+                    exposed: new Set(), columns: new Set(), byDepth: [],
+                    exposedCells: 0, columnChecks: visits, levelVisits: 0,
+                    frameVisits: visits, frameLevelVisits: 0, fullScans: 1,
+                    rebuilt: true, stale: false, boundsCells: b.cells, maxDepth: depthCap, viewZ
+                };
+            }
+
+            const exposed = new Set(), columns = new Set(), byDepth = [];
+            let columnChecks = 0, levelVisits = 0, exposedCells = 0;
+            const isOpen = input.isOpen;
+            for (let y = b.y0; y <= b.y1; y++) {
+                for (let x = b.x0; x <= b.x1; x++) {
+                    const wx = size > 0 ? wrap(x, size) : x;
+                    const wy = size > 0 ? wrap(y, size) : y;
+                    columnChecks++;
+                    columns.add(wx + "," + wy);
+                    if (!isOpen(wx, wy, viewZ)) continue;
+                    for (let d = 1; d <= depthCap; d++) {
+                        const z = viewZ - d;
+                        if (z < zMin || z > zMax) break;
+                        levelVisits++;
+                        exposed.add(keyOf(z, wx, wy));
+                        exposedCells++;
+                        byDepth[d] = (byDepth[d] || 0) + 1;
+                        if (!isOpen(wx, wy, z)) break;
+                    }
+                }
+            }
+            const hit = {
+                exposed, columns, byDepth, exposedCells, columnChecks, levelVisits,
+                frameVisits: columnChecks + levelVisits, frameLevelVisits: levelVisits,
+                fullScans: 0, rebuilt: true, stale: false, boundsCells: b.cells, maxDepth: depthCap, viewZ
+            };
+            input._cache = {
+                viewZ, maxDepth: depthCap, zMin, zMax, size,
+                x0: b.x0, y0: b.y0, x1: b.x1, y1: b.y1, shapeStamp, provoke, hit
+            };
+            return hit;
+        }
+
+        function step(world) {
+            const input = {
+                viewZ: world.viewZ, maxDepth: world.maxDepth, zMin: world.zMin, zMax: world.zMax,
+                size: world.size, bounds: world.bounds, shapeStamp: world.shapeStamp, isOpen: world.isOpen,
+                provoke: world.provoke || "", _cache: world._cache || null
+            };
+            const plan = buildPlan(input);
+            world._cache = input._cache;
+            const provoke = readProvoke(input);
+            const drawn = [];
+            let spriteTouches = 0;
+            const size = world.size | 0;
+            const viewZ = world.viewZ | 0;
+            for (let k = 0; k < KINDS.length; k++) {
+                const kind = KINDS[k];
+                const list = world[kind] || [];
+                for (let i = 0; i < list.length; i++) {
+                    const e = list[i];
+                    const ez = e.z | 0;
+                    // The viewed level, and anything above it, is not this pass.
+                    if (ez >= viewZ) { e.rendered = false; continue; }
+                    const wx = size > 0 ? wrap(e.x, size) : e.x | 0;
+                    const wy = size > 0 ? wrap(e.y, size) : e.y | 0;
+                    if (!plan.columns.has(wx + "," + wy)) { e.rendered = false; continue; }
+                    const exposed = plan.exposed.has(keyOf(ez, wx, wy));
+                    let draw = exposed;
+                    if (provoke === "covered_not_drawn" && !exposed) draw = true;
+                    if (provoke === "exposed_drawn" && exposed) draw = false;
+                    if (!draw) { e.rendered = false; continue; }
+                    e.updates = (e.updates | 0) + 1;
+                    e.rendered = true;
+                    spriteTouches++;
+                    drawn.push({
+                        kind, id: e.id, x: e.x, y: e.y, z: ez,
+                        scale: 1, alpha: 1, filters: null,
+                        tint: e.tint == null ? 0xffffff : e.tint
+                    });
+                }
+            }
+            return { plan, drawn, spriteTouches };
+        }
+
+        return { DEFAULT_MAX_DEPTH, KINDS, boundsOf, plan: buildPlan, step, readProvoke, setProvoke };
+    })();
+
+    if (typeof Tilemap === "undefined" || typeof PIXI === "undefined") {
+        const root = typeof globalThis !== "undefined" ? globalThis : {};
+        if (typeof module !== "undefined" && module.exports) module.exports = Occlusion;
+        root.UF = root.UF || {};
+        root.UF.DepthOcclusion = Occlusion;
+        return;
+    }
+
+    // A named occlusion bug, on only while a live check is provoking it. The planner's own provoke
+    // input is separate; this reads the runtime flag and UF_OCCLUSION_PROVOKE.
+    const ocBug = name => Occlusion.readProvoke(null) === name;
 
     //-------------------------------------------------------------------------
     // The planes' canvases outlive a spriteset (K2 d). On a map transfer (an area edge, a load) the old Scene_Map is terminated
@@ -273,16 +460,24 @@
         }
     };
     DepthTilemap.prototype._addSpot = function(startX, startY, x, y) {
+        this._windowSpots++;
         if (this.skipCell !== null && this.skipCell(startX + x, startY + y)) return;
+        this._paintedSpots++;
         Tilemap.prototype._addSpot.call(this, startX, startY, x, y);
     };
     DepthTilemap.prototype._addAllSpots = function(startX, startY) {
+        this._paintedSpots = 0;
+        this._windowSpots = 0;
         const t0 = performance.now();
         Tilemap.prototype._addAllSpots.call(this, startX, startY);
         this._lowerLayer.flush();
         this._upperLayer.flush();
         this.paints++;
+        this.lastPainted = this._paintedSpots;
+        this.lastWindow = this._windowSpots;
         stats.paints++;
+        stats.ocPaintCells += this._paintedSpots;
+        stats.ocPaintWindows += this._windowSpots;
         stats.lastPaintMs = performance.now() - t0;
     };
     /** Per frame, before updateTransform: the water frame follows the map on screen only when water is in the window. */
@@ -470,6 +665,59 @@
                 super._assign(s, type, x, y);
                 forceNearest(s.bitmap);
             }
+            // The same window as UF.Objects (margin 3, six tall rows). A covered cell is not given a sprite.
+            // Wall masks still come from the real map, via _assign, so an exposed wall keeps its frame.
+            _rebuild(map, dx, dy, force) {
+                const grid = map.ufObjects, w = map.width, h = map.height;
+                const list = (window.UF && UF.Objects && UF.Objects.types) ? UF.Objects.types() : [];
+                const cols = Math.ceil($gameMap.screenTileX()) + 1, rows = Math.ceil($gameMap.screenTileY()) + 1;
+                const loopH = $gameMap.isLoopHorizontal(), loopV = $gameMap.isLoopVertical();
+                const spanX = cols + 2 * 3, spanY = rows + 2 * 3 + 6;
+                const startX = dx - 3, startY = dy - 3 - 6;
+                const active = this._active, byCell = this._byCell;
+                const stamp = ++this._stamp;
+                const root = this._plane && this._plane._ocRoot;
+                const z = this._plane && this._plane.level ? this._plane.level.z : null;
+                for (let dyOff = 0; dyOff <= spanY; dyOff++) {
+                    let y = startY + dyOff;
+                    if (loopV) y = ((y % h) + h) % h;
+                    else if (y < 0 || y >= h) continue;
+                    const row = y * w;
+                    for (let dxOff = 0; dxOff <= spanX; dxOff++) {
+                        let x = startX + dxOff;
+                        if (loopH) x = ((x % w) + w) % w;
+                        else if (x < 0 || x >= w) continue;
+                        if (root && z !== null && root.cellCovered(z, x, y)) continue;
+                        const i = row + x;
+                        const t = grid[i];
+                        if (!t || t > list.length) continue;
+                        let s = byCell.get(i);
+                        if (!s) {
+                            s = this._acquire();
+                            byCell.set(i, s);
+                            active.push(s);
+                        }
+                        s._ufStamp = stamp;
+                        const typeObj = list[t - 1];
+                        if (!force && s._ufType === t) {
+                            const isWall = typeObj && ((typeObj.autotile === "wall") || (typeObj.tags && typeObj.tags.includes("wall")));
+                            if (!isWall) continue;
+                        }
+                        this._assign(s, typeObj, x, y);
+                    }
+                }
+                let n = 0;
+                for (let k = 0; k < active.length; k++) {
+                    const s = active[k];
+                    if (s._ufStamp === stamp) active[n++] = s;
+                    else {
+                        byCell.delete(s._ufY * w + s._ufX);
+                        this._release(s);
+                    }
+                }
+                active.length = n;
+                if (this.perf) this.perf.rebuilds++;
+            }
             _updateObjects() {
                 const map = this._plane.map;
                 if (!this.parent || !map || !map.ufObjects || !window.$gameMap || !config.entities.objects) { this._hideAll(); return; }
@@ -485,6 +733,7 @@
                         this._dirty = false; this._force = false;
                     }
                     this._place();
+                    stats.ocSpriteTouches += this._active.length;
                 } finally { window.$dataMap = saved; }
             }
         };
@@ -566,6 +815,7 @@
         tm.setBitmaps(ts ? ts.tilesetNames.map(n => ImageManager.loadTileset(n)) : []);
         tm.refresh();
         this._paintsAtBind = tm.paints; // a paint after this one shows the level just bound (switch_same_frame)
+        this._ocHeld = false;
         this.clearEntities();
     };
     Sprite_DepthPlane.prototype.refresh = function() { this._tilemap.refresh(); this._entityDirty = true; if (this._objectLayer) this._objectLayer.markDirty(false); };
@@ -577,7 +827,7 @@
     };
     Sprite_DepthPlane.prototype.takeSprite = function() {
         let s = this._pool.pop();
-        if (!s) { s = new Sprite(); s.anchor.set(0.5, 1); this._entities.addChild(s); }
+        if (!s) { s = new Sprite(); s.anchor.set(0.5, 1); this._entities.addChild(s); stats.ocAlloc++; }
         s.visible = false;
         s._ufSheet = null; s._ufCol = -1; s._ufRow = -1; s._ufTinted = false; s._ufFrameOk = false;
         return s;
@@ -603,6 +853,8 @@
     Sprite_DepthPlane.prototype.beginScan = function() { this._scanStamp++; };
     Sprite_DepthPlane.prototype.seeUnit = function(u, win, size, simNow) {
         if (!this.inEntityWindow(win, u.x, u.y, size)) return;
+        // Covered by an opaque level above: no sprite is created or walked. endScan drops one that was exposed.
+        if (this._ocRoot && this.level && this._ocRoot.cellCovered(this.level.z, u.x | 0, u.y | 0)) return;
         let s = this._units.get(u.id);
         if (!s) {
             s = this.takeSprite();
@@ -673,10 +925,30 @@
         for (const [ya, yb] of seamRanges(win.y0, win.y1, size)) for (const [xa, xb] of seamRanges(win.x0, win.x1, size)) out.push([xa, ya, xb, yb]);
         return out;
     }
+    // Rectangles of cells the occlusion walk marked exposed, inside the entity window. Covered cells and cells
+    // outside the camera bounds are not queried. A provocation that draws covered entities asks for the whole window.
+    function exposurePieces(root, z, win, size) {
+        const pieces = windowPieces(win, size);
+        if (!root || ocBug("covered_not_drawn") || ocBug("cost_proportional")) return pieces;
+        const runs = [];
+        for (let p = 0; p < pieces.length; p++) {
+            const x0 = pieces[p][0], y0 = pieces[p][1], x1 = pieces[p][2], y1 = pieces[p][3];
+            for (let y = y0; y <= y1; y++) {
+                let run = -1;
+                for (let x = x0; x <= x1 + 1; x++) {
+                    const on = x <= x1 && root.cellExposed(z, x, y);
+                    if (on && run < 0) run = x;
+                    else if (!on && run >= 0) { runs.push([run, y, x - 1, y]); run = -1; }
+                }
+            }
+        }
+        return runs;
+    }
     Sprite_DepthPlane.prototype.rebuildItems = function(win) {
         const I = window.UF && UF.Items, keep = new Set();
         const see = it => {
             if (!it || it.holder || it.container) return;
+            if (this._ocRoot && this.level && this._ocRoot.cellCovered(this.level.z, it.x | 0, it.y | 0)) return;
             keep.add(it.id);
             let s = this._items.get(it.id);
             if (!s) { s = this.takeSprite(); this._items.set(it.id, s); }
@@ -689,9 +961,8 @@
             const near = { x: win.dx + win.cols / 2, y: win.dy + win.rows / 2 }, radius = Math.hypot(win.cols / 2 + ENTITY_MARGIN, win.rows / 2 + ENTITY_MARGIN + ENTITY_TALL);
             for (const f of I.find({ area: level, near, radius })) see(f.item);
         } else if (config.entities.items && I && I.find) {
-            // One query per piece of the window, centred on the piece in the area's own coordinates, kept to the piece's cells
-            // (one piece away from the seam: the cost of the single query it replaces; a cell lookup per window cell cost more).
-            for (const [x0, y0, x1, y1] of windowPieces(win, World().state.size)) {
+            // One query per exposed run, not per covered cell of the window.
+            for (const [x0, y0, x1, y1] of exposurePieces(this._ocRoot, this.level.z, win, World().state.size)) {
                 const near = { x: (x0 + x1) / 2, y: (y0 + y1) / 2 }, radius = Math.hypot((x1 - x0) / 2, (y1 - y0) / 2) + 0.5;
                 for (const f of I.find({ area: level, near, radius })) if (f.x >= x0 && f.x <= x1 && f.y >= y0 && f.y <= y1) see(f.item);
             }
@@ -701,13 +972,15 @@
     Sprite_DepthPlane.prototype.rebuildWalls = function(L, win) {
         const keep = new Set();
         if (config.entities.walls && L && L.naturalWallCells) {
-            const area = { x: this.level.x, y: this.level.y }, z = this.level.z, pieces = windowPieces(win, World().state.size);
+            const area = { x: this.level.x, y: this.level.y }, z = this.level.z;
+            const pieces = exposurePieces(this._ocRoot, z, win, World().state.size);
             const wallCells = [], connectorCells = [];
             for (const [x0, y0, x1, y1] of pieces) {
                 for (const c of L.naturalWallCells(area, z, x0, y0, x1, y1)) wallCells.push(c);
                 if (z === 0 && L.groundConnectorCells) for (const c of L.groundConnectorCells(area, x0, y0, x1, y1)) connectorCells.push(c);
             }
             for (const c of wallCells) {
+                if (this._ocRoot && this._ocRoot.cellCovered(z, c.x | 0, c.y | 0)) continue;
                 const bmp = L.naturalWallFrame(c.code, c.mask);
                 if (!bmp) continue;
                 const k = `${c.x},${c.y}`;
@@ -719,6 +992,7 @@
                 s._ufFrameOk = false;
             }
             for (const c of connectorCells) {
+                if (this._ocRoot && this._ocRoot.cellCovered(z, c.x | 0, c.y | 0)) continue;
                 const bmp = connectorFrame(c.look);
                 if (!bmp) continue;
                 const k = `c:${c.x},${c.y}`;
@@ -741,6 +1015,7 @@
         const mw = $gameMap.width(), mh = $gameMap.height(), stx = $gameMap.screenTileX(), sty = $gameMap.screenTileY();
         const loopX = $gameMap.isLoopHorizontal(), loopY = $gameMap.isLoopVertical();
         for (const s of this._units.values()) {
+            stats.ocSpriteTouches++;
             const u = s._ufRef, img = u.image;
             let info = s._ufSheet;
             if (!info || info.name !== (img && img.characterName) || info.index !== ((img && img.characterIndex) | 0)) {
@@ -779,6 +1054,7 @@
         const tw = $gameMap.tileWidth(), th = $gameMap.tileHeight();
         const foot = (x, y) => ({ x: Math.round(($gameMap.adjustX(x) + 0.5) * tw), y: Math.round(($gameMap.adjustY(y) + 1) * th) });
         for (const s of this._items.values()) {
+            stats.ocSpriteTouches++;
             const it = s._ufRef;
             if (!s._ufFrameOk) {
                 const f = itemFrame(it);
@@ -794,6 +1070,7 @@
             s.x = p.x; s.y = p.y; s.z = p.y - 1; s.visible = true; // an item lies under a unit on the same cell
         }
         for (const s of this._walls.values()) {
+            stats.ocSpriteTouches++;
             const r = s._ufRef;
             if (!s._ufFrameOk) {
                 forceNearest(r.bitmap);
@@ -874,6 +1151,8 @@
         this._void.visible = false;
         this.addChild(this._void);
         this.planes = [new Sprite_DepthPlane(1), new Sprite_DepthPlane(2)];
+        this.planes[0]._ocRoot = this;
+        this.planes[1]._ocRoot = this;
         // Depth 2 is drawn first, depth 1 over it; through depth 1's open cells depth 2 shows.
         // The mask-order provocation draws them the other way round.
         const order = provoked("mask_order") ? [this.planes[0], this.planes[1]] : [this.planes[1], this.planes[0]];
@@ -922,6 +1201,8 @@
         const v = W && W.viewLevel ? W.viewLevel() : null;
         stats.rebuilds++;
         this.viewZ = v ? v.z : null;
+        if (v) { this._ax = v.x; this._ay = v.y; }
+        if (W && W.state) this._size = W.state.size | 0;
         this.openStamp = openStamp;
         this.maxDepth = config.maxDepth;
         this.enabledState = config.enabled;
@@ -929,6 +1210,7 @@
         const was = this.seeThrough;
         this.seeThrough = false;
         this._viewCells = null;
+        this._exposedPrev = null;
         this._maskX = NaN; // the mask is rebuilt on the next frame
         this._candsOf = null; // and the unit candidates
         if (v && L && W.state && config.enabled && config.maxDepth >= 1 && !this._released && !provoked("planes_present")) {
@@ -973,7 +1255,15 @@
         stats.lastPeekMs = performance.now() - t0;
         if (!map || !map.data) return;
         const cells = openCells(v.x, v.y, z), size = W.state.size, OPEN = openCode();
-        plane.bind({ x: v.x, y: v.y, z }, map, (mx, my) => isOpenIn(cells, size, mx, my, OPEN));
+        const self = this;
+        // Open cells of this level stay unpainted so the next plane shows through. Every other cell is painted
+        // only when the walk from the viewed level reached it. A covered cell, and a cell outside the camera
+        // bounds, is not drawn. mask_order's provocation paints the covered ground so a reversed order can fail.
+        plane.bind({ x: v.x, y: v.y, z }, map, (mx, my) => {
+            if (isOpenIn(cells, size, mx, my, OPEN)) return true;
+            if (provoked("mask_order") || ocBug("cost_proportional")) return false;
+            return !self.cellExposed(z, mx, my);
+        });
         plane.visible = true;
     };
     /** Whether the map on screen leaves cell (mx, my) unpainted: an open cell of the viewed level while the planes are on. */
@@ -1000,6 +1290,9 @@
                 if (LO) LO.clearPlane(p);
             }
             this._camSet = false;
+            stats.ocFrameVisits = 0;
+            stats.ocFrameLevelVisits = 0;
+            stats.ocSteadyFrames++;
             return;
         }
         this._cam = this._cam || { x: 0, y: 0 };
@@ -1011,9 +1304,31 @@
         const win = fillWindow(this._win), simNow = W._frame | 0;
         this._frames++;
         this.updateMask(viewOx, viewOy);
+        this.updateExposure();
         for (const p of this.planes) {
-            if (!p.level) { p.visible = false; continue; }
+            if (!p.level) {
+                p.visible = false;
+                const LO = layerOverlays();
+                if (LO) LO.clearPlane(p);
+                continue;
+            }
             p.visible = true;
+            const n = (this._byDepth && this._byDepth[p.depth]) || 0;
+            p._exposedN = n;
+            // The bind paint still runs once (switch_same_frame: painted since bound). After that, a plane
+            // with no exposed cell in the camera bounds does no tile or sprite work.
+            const paintedSinceBind = p._tilemap.paints > p._paintsAtBind;
+            if (n === 0 && paintedSinceBind && !ocBug("cost_proportional")) {
+                if (!p._ocHeld) {
+                    p.clearEntities();
+                    const LO = layerOverlays();
+                    if (LO) LO.clearPlane(p);
+                    p._ocHeld = true;
+                }
+                stats.ocSkippedPaints++;
+                continue;
+            }
+            p._ocHeld = false;
             p.updatePlane(viewOx, viewOy, win, simNow);
         }
         if (withUnits && !this._lateSeen) this.updateUnits(W, win, simNow); // once a frame: lateUpdate does it in Scene_Map (K4)
@@ -1043,6 +1358,115 @@
             p.placeUnits(simNow, this._cam);
             p.sortEntities();
             if (LO) LO.syncPlane(p, this);
+        }
+    };
+    function writeCullBounds(out) {
+        const C = window.UF && UF.Culling;
+        const b = C && typeof C.bounds === "function" ? C.bounds() : null;
+        if (b && Number.isFinite(b.minX) && Number.isFinite(b.maxX) && Number.isFinite(b.minY) && Number.isFinite(b.maxY)) {
+            out.minX = b.minX; out.minY = b.minY; out.maxX = b.maxX; out.maxY = b.maxY;
+            return out;
+        }
+        const m = window.$gameMap;
+        const x = m.displayX(), y = m.displayY();
+        out.minX = x - 2; out.minY = y - 2;
+        out.maxX = x + m.screenTileX() + 2; out.maxY = y + m.screenTileY() + 2;
+        return out;
+    }
+    /** Camera bounds down to the first opaque surface, inside MaxDepth. Rebuilt when the cell, the view or a shape changes. */
+    Sprite_DepthRoot.prototype.updateExposure = function() {
+        const W = World();
+        if (!W || !W.state || this.viewZ === null || this._ax == null) return null;
+        const st = this._ocIn || (this._ocIn = {});
+        st.viewZ = this.viewZ;
+        st.maxDepth = config.maxDepth;
+        const zr = W.zRange ? W.zRange() : { zMin: -2, zMax: 2 };
+        st.zMin = zr.zMin;
+        st.zMax = zr.zMax;
+        st.size = this._size | 0;
+        st.bounds = writeCullBounds(this._cullB || (this._cullB = {}));
+        st.shapeStamp = shapeRevision + ":" + openStamp + ":" + this._ax + ":" + this._ay;
+        st.provoke = Occlusion.readProvoke(null);
+        if (!this._ocIsOpen) {
+            const self = this;
+            this._ocIsOpen = function (x, y, z) {
+                if (self._ax == null) return false;
+                return isOpenIn(openCells(self._ax, self._ay, z), self._size | 0, x, y, openCode());
+            };
+        }
+        st.isOpen = this._ocIsOpen;
+        const plan = Occlusion.plan(st);
+        this._ocPlan = plan;
+        this._exposed = plan.exposed;
+        this._byDepth = plan.byDepth;
+        stats.ocExposedCells = plan.exposedCells;
+        stats.ocColumnChecks = plan.columnChecks;
+        stats.ocLevelVisits = plan.levelVisits;
+        stats.ocFullScans += plan.fullScans || 0;
+        // Spriteset update can enter twice before Graphics.frameCount moves. Keep a rebuild's
+        // visit count for the rest of that frame so a later cache hit does not hide it.
+        const frame = (typeof Graphics !== "undefined" && Graphics.frameCount) | 0;
+        if (plan.rebuilt) {
+            stats.ocFrameVisits = plan.frameVisits;
+            stats.ocFrameLevelVisits = plan.frameLevelVisits;
+            stats.ocMaskBuilds++;
+            this._ocMarked = frame;
+            this.noteExposureChange(plan);
+        } else if (this._ocMarked !== frame) {
+            stats.ocFrameVisits = 0;
+            stats.ocFrameLevelVisits = 0;
+            stats.ocSteadyFrames++;
+            this._ocMarked = frame;
+        }
+        return plan;
+    };
+    function wrappedCell(size, x, y) {
+        const wx = size > 0 ? wrapCell(x, size) : x | 0;
+        const wy = size > 0 ? wrapCell(y, size) : y | 0;
+        return { x: wx, y: wy, key: wx + "," + wy };
+    }
+    /** The camera walk included this column. */
+    Sprite_DepthRoot.prototype.columnVisited = function(x, y) {
+        const plan = this._ocPlan;
+        if (!plan || !plan.columns) return false;
+        return plan.columns.has(wrappedCell(this._size | 0, x, y).key);
+    };
+    /** A lower cell is drawn only when the walk from the viewed level reached it (open above, not past the first opaque surface). */
+    Sprite_DepthRoot.prototype.cellExposed = function(z, x, y) {
+        if (ocBug("exposed_drawn")) return false;
+        const set = this._exposed;
+        if (!set) return false;
+        const c = wrappedCell(this._size | 0, x, y);
+        return set.has((z | 0) + "," + c.x + "," + c.y);
+    };
+    /** One column outside the camera walk: open from the viewed level down to z. Not a grid scan. */
+    Sprite_DepthRoot.prototype.columnOpenTo = function(z, x, y) {
+        const vz = this.viewZ;
+        if (vz === null || !(z < vz) || this._ax == null) return false;
+        const size = this._size | 0, OPEN = openCode();
+        for (let zz = vz; zz > z; zz--) {
+            if (!isOpenIn(openCells(this._ax, this._ay, zz), size, x, y, OPEN)) return false;
+        }
+        return true;
+    };
+    /** Not drawn when an opaque level above this cell blocks it. A cell outside the camera walk is classified on its own, so a covered sprite in the entity-window margin is not kept. */
+    Sprite_DepthRoot.prototype.cellCovered = function(z, x, y) {
+        if (ocBug("covered_not_drawn")) return false;
+        if (ocBug("exposed_drawn")) return true;
+        if (this.columnVisited(x, y)) return !this.cellExposed(z, x, y);
+        return !this.columnOpenTo(z, x, y);
+    };
+    /** The exposed set changed (a shape, not a steady frame). Lower planes drop covered membership and paint again. */
+    Sprite_DepthRoot.prototype.noteExposureChange = function(plan) {
+        const prev = this._exposedPrev;
+        this._exposedPrev = plan.exposed;
+        if (!prev || ocBug("switch_and_pan")) return;
+        this._ocRev = (this._ocRev | 0) + 1;
+        for (const p of this.planes) {
+            if (!p.level) continue;
+            p._entityDirty = true;
+            if (p._objectLayer) p._objectLayer.markDirty(false);
+            if (p._tilemap) p._tilemap.refresh();
         }
     };
     /** The exposure mask: one rectangle per horizontal run of open cells of the viewed level in the tilemap's window, placed
@@ -1148,13 +1572,22 @@
             if (here || (item && p._items.has(item.id))) { p._itemsDirty = true; stats.itemDirties++; }
         }
     };
-    /** A cell's shape changed: the plane of its level repaints (its open cells changed), and so does the map on screen when
-     *  the cell is on the viewed level (the cells it leaves unpainted changed). */
+    /** A cell's shape changed: the plane of its level repaints, and every lower plane drops membership that this
+     *  cover opened or closed. The camera does not have to move. */
     Sprite_DepthRoot.prototype.shapeChanged = function(ref) {
         if (this._released) return;
         const z = ref && typeof ref.z === "number" ? ref.z : undefined;
         if (z === undefined || z === this.viewZ) this.repaintMain();
         this.refreshLevel(z);
+        if (ocBug("switch_and_pan")) return;
+        this.invalidateBelow(z);
+    };
+    Sprite_DepthRoot.prototype.invalidateBelow = function(z) {
+        for (const p of this.planes) {
+            if (!p.level) continue;
+            if (z !== undefined && p.level.z >= z) continue;
+            p.refresh();
+        }
     };
 
     //-------------------------------------------------------------------------
@@ -1263,6 +1696,8 @@
         /** Whether cell (x, y) of level z of area (ax, ay) is open (from the cached shape grid). */
         isOpen: (ax, ay, x, y, z) => { const W = World(); return !!(W && W.state) && isOpenIn(openCells(ax, ay, z), W.state.size, x, y, openCode()); },
         describe: () => `${config.maxDepth} level(s) below, drawn 1:1 (DEC-011), void #${config.voidColor.toString(16).padStart(6, "0")}` + (config.enabled ? "" : " (off)"),
+        /** The WG.00.21 planner. Headless tests require() this file and get the same object. */
+        occlusion: Occlusion,
         stats() {
             const r = rootOf();
             return {
@@ -1272,6 +1707,13 @@
                 layersAlive: stats.layersAlive, canvasesMade: stats.canvasesMade, canvasesDestroyed: stats.canvasesDestroyed, pooled: canvasPool.length,
                 updates: stats.updates, lastUpdateMs: stats.lastUpdateMs, unitSteps: stats.unitSteps, preloads: stats.preloads, mainRepaints: stats.mainRepaints,
                 unitsScanned: stats.unitsScanned, candidateRebuilds: stats.candidateRebuilds, entityRebuilds: stats.entityRebuilds, itemRebuilds: stats.itemRebuilds, itemDirties: stats.itemDirties, objectDirties: stats.objectDirties,
+                occlusion: {
+                    frameVisits: stats.ocFrameVisits, frameLevelVisits: stats.ocFrameLevelVisits,
+                    exposedCells: stats.ocExposedCells, columnChecks: stats.ocColumnChecks, levelVisits: stats.ocLevelVisits,
+                    maskBuilds: stats.ocMaskBuilds, fullScans: stats.ocFullScans, spriteTouches: stats.ocSpriteTouches,
+                    skippedPaints: stats.ocSkippedPaints, steadyFrames: stats.ocSteadyFrames, maxDepth: config.maxDepth,
+                    paintCells: stats.ocPaintCells, paintWindows: stats.ocPaintWindows, allocs: stats.ocAlloc
+                },
                 planes: r ? r.planes.map(p => ({
                     depth: p.depth, z: p.level ? p.level.z : null, visible: p.visible, scale: p.scale.x, x: p.x, y: p.y, alpha: p.alpha,
                     paints: p._tilemap ? p._tilemap.paints : 0, water: p._tilemap ? p._tilemap.hasWater() : false,
@@ -1577,8 +2019,10 @@
             const maskCell = at("deckMid");
             const pm = cellScreen(maskCell.x, maskCell.y), mgx = Math.round(pm.x), mgy = Math.round(pm.y);
             const seen6 = render.getPixel(mgx, mgy), want6 = neighbours(p1, mgx, mgy), tx62 = texelOf(p2, mgx, mgy);
-            const maskOk = tx62.alpha === 255 && want6.has(seen6);
-            t.check("mask_order", maskOk, `deck cell (${maskCell.x},${maskCell.y}) at screen (${mgx},${mgy}): drawn ${seen6}, depth 1 texels {${[...want6].slice(0, 4).join(" ")}}, ground texel under it ${tx62.color}/${tx62.alpha}`);
+            // The +1 floor is the first opaque surface. Its texel is what the composite shows. The ground under it is not painted.
+            // The mask_order provocation paints that ground and draws depth 2 above depth 1, so this fails.
+            const maskOk = tx62.alpha === 0 && want6.has(seen6);
+            t.check("mask_order", maskOk, `deck cell (${maskCell.x},${maskCell.y}) at screen (${mgx},${mgy}): drawn ${seen6}, depth 1 texels {${[...want6].slice(0, 4).join(" ")}}, ground under it ${tx62.alpha === 0 ? "not painted" : tx62.color + "/" + tx62.alpha}`);
             // The hole in the terrace is a visual fixture (in the screenshots); what the ground draws under it is reported.
             {
                 const c = cellScreen(hole.x, hole.y);
@@ -1606,8 +2050,10 @@
                 unitDrawn = onPx.some((v, i) => v !== offPx[i]);
                 detailE = `unit at (${fx[2].x},${fx[2].y}) probed at screen (${gx},${gy}): ${unitDrawn ? "drawn" : "NOT drawn"} (${onPx[4]} vs ${offPx[4]} without units)`;
             }
-            t.check("entities_drawn", treeOk && !!itemMade && !!unitMade && ec.objects >= 1 && ec.units >= 1 && ec.items >= 1 && ec.walls >= 1 && unitDrawn,
-                `fixtures: oak ${treeOk ? "placed" : "NOT placed"} at (${fx[0].x},${fx[0].y}), item ${itemMade ? `${itemTypeId} x3` : "NOT made"} at (${fx[1].x},${fx[1].y}), unit ${unitMade ? "added" : "NOT added"}; +1 plane draws ${ec.objects} object(s), ${ec.units} unit(s), ${ec.items} item stack(s), ${ec.walls} wall/ramp frame(s); ${itemFacts}; ${detailE}`);
+            const summitWall = { x: C.x + 3, y: C.y - 4 };
+            const coveredCliff = p1._walls.get(`${summitWall.x},${summitWall.y}`);
+            t.check("entities_drawn", treeOk && !!itemMade && !!unitMade && ec.objects >= 1 && ec.units >= 1 && ec.items >= 1 && ec.walls === 0 && !coveredCliff && unitDrawn,
+                `fixtures: oak ${treeOk ? "placed" : "NOT placed"} at (${fx[0].x},${fx[0].y}), item ${itemMade ? `${itemTypeId} x3` : "NOT made"} at (${fx[1].x},${fx[1].y}), unit ${unitMade ? "added" : "NOT added"}; +1 plane draws ${ec.objects} object(s), ${ec.units} unit(s), ${ec.items} item stack(s), ${ec.walls} wall/ramp frame(s); covered summit cliff ${coveredCliff ? "DRAWN" : "not drawn"}; ${itemFacts}; ${detailE}`);
 
             // 7. Crisp: every opaque pixel of the planes' render (tiles only: the entity sheets have their own palettes) is a
             //    colour of the source canvases (nearest sampling, whole-pixel positions, no new colours).
@@ -1827,6 +2273,7 @@
             for (const c of [...seamItems, seamUnitAt]) { if (!floorAt(c.x, c.y, 1) || !floorAt(c.x, c.y, 2)) seamRefused.push(`(${c.x},${c.y})`); if (O.typeIdIn(lv1, c.x, c.y)) O.setIn(lv1, c.x, c.y, null); }
             for (const w of seamWalls) {
                 // A natural stone wall cell on +1 with a floor on each side (a wall face is drawn where a wall cell has a neighbour that is not a wall).
+                // The level above a solid derives to a floor, so this column is covered and gets no sprite.
                 if (!L.setStrata({ area: { x: area.x, y: area.y }, x: w.x, y: w.y, z: 1 }, { m: S5("stone"), connector: "none" }, { cause: "test fixture" })) seamRefused.push(`wall (${w.x},${w.y})`);
                 for (const [ox, oy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = wrapCell(w.x + ox, size), ny = wrapCell(w.y + oy, size); if (!floorAt(nx, ny, 1)) seamRefused.push(`(${nx},${ny})`); if (O.typeIdIn(lv1, nx, ny)) O.setIn(lv1, nx, ny, null); }
             }
@@ -1838,15 +2285,19 @@
             const onScreenFoot = f => f.x >= 0 && f.x <= Graphics.width && f.y >= 0 && f.y <= Graphics.height + TH;
             const judge = (label, c, s) => { const f = footOf(c), ok = !!s && s.visible && s.x === f.x && s.y === f.y && onScreenFoot(f); return { ok, text: `${label} (${c.x},${c.y}) ${ok ? `drawn at (${f.x},${f.y})` : s ? `sprite ${s.visible ? "visible" : "HIDDEN"} at (${s.x},${s.y}), its cell's foot (${f.x},${f.y})` : "NOT TRACKED"}` }; };
             const seamJudged = [];
+            const seamWallsHidden = [];
             if (sp1 && sp1.level.z === 1) {
                 seamItems.forEach((c, i) => seamJudged.push(judge("item", c, seamStacks[i] ? sp1._items.get(seamStacks[i].id) : null)));
-                seamWalls.forEach(c => seamJudged.push(judge("wall face", c, sp1._walls.get(`${c.x},${c.y}`))));
+                seamWalls.forEach(c => {
+                    const s = sp1._walls.get(`${c.x},${c.y}`);
+                    seamWallsHidden.push({ ok: !s, text: `covered wall (${c.x},${c.y}) ${s ? "DRAWN" : "not drawn"}` });
+                });
                 seamJudged.push(judge("unit", seamUnitAt, seamUnit ? sp1._units.get(seamUnit.id) : null));
             }
             const dispSeam = { x: $gameMap.displayX(), y: $gameMap.displayY() };
             const wrappedView = dispSeam.x > seamC.x && dispSeam.y > seamC.y; // the display origin lies past the seam on both axes
-            t.check("entities_at_seam", seamRefused.length === 0 && wrappedView && seamJudged.length === 7 && seamJudged.every(j => j.ok),
-                `view on +2 centred on (${seamC.x},${seamC.y}), display (${dispSeam.x},${dispSeam.y}) (${wrappedView ? "wrapped" : "NOT WRAPPED"}); +1 plane ${sp1 ? `level ${sp1.level.z}` : "NONE"}: ${seamJudged.map(j => j.text).join("; ") || "nothing judged"}${seamRefused.length ? `; fixture cells refused: ${seamRefused.join(" ")}` : ""}`);
+            t.check("entities_at_seam", seamRefused.length === 0 && wrappedView && seamJudged.length === 5 && seamJudged.every(j => j.ok) && seamWallsHidden.length === 2 && seamWallsHidden.every(j => j.ok),
+                `view on +2 centred on (${seamC.x},${seamC.y}), display (${dispSeam.x},${dispSeam.y}) (${wrappedView ? "wrapped" : "NOT WRAPPED"}); +1 plane ${sp1 ? `level ${sp1.level.z}` : "NONE"}: ${seamJudged.map(j => j.text).join("; ") || "nothing judged"}; ${seamWallsHidden.map(j => j.text).join("; ")}${seamRefused.length ? `; fixture cells refused: ${seamRefused.join(" ")}` : ""}`);
 
             // The canvases across spritesets (K2 d). A level switch happens in place (SIM.00.00) and keeps the spriteset, its root and
             // their canvases; a map transfer (an area edge, a load) makes a new spriteset, whose planes take the old one's canvases from
@@ -1934,6 +2385,12 @@
                     for (const u of W.units()) {
                         if (!u || !u.area || u.area.x !== p.level.x || u.area.y !== p.level.y || (u.z || 0) !== p.level.z || (u.data && (u.data.dead || u.data.hidden))) continue;
                         if (!p.inEntityWindow(win, u.x, u.y, size)) continue;
+                        // A covered cell is not given a sprite (WG.00.21). The same-frame rule is for a unit the walk reached.
+                        if (!r.cellExposed(p.level.z, u.x | 0, u.y | 0)) {
+                            const hid = p._units.get(u.id);
+                            if (hid && hid.visible) out.stale.push(`covered ${u.name}#${u.id}@${p.level.z}`);
+                            continue;
+                        }
                         const s = p._units.get(u.id), f = footOf(u);
                         const ok = !!s && s.visible && !!s.bitmap && s.bitmap.isReady() && s._frame.width > 0 && s._ufCol >= 0 && s.x === f.x && s.y === f.y;
                         out.units.push(u.id);
@@ -2058,6 +2515,11 @@
             // Entering: unit E starts one cell outside the window's right edge on +1 and steps into it.
             const win = D.root().planes[0].entityWindow();
             const ey = Math.min(Math.max(center.y, win.y0 + 1), win.y1 - 1);
+            const entryX = wrapCell(win.x1 - 1, size);
+            // Past the camera rectangle, inside the entity window. The viewed level is open here so the
+            // unit is exposed; a covered column in that ring gets no sprite.
+            L.setStrata({ area: { x: area.x, y: area.y }, x: entryX, y: ey, z: 2 }, { m: A5, connector: "none" }, { cause: "test fixture" });
+            L.setStrata({ area: { x: area.x, y: area.y }, x: entryX, y: ey, z: 1 }, { m: F5("stone"), connector: "none" }, { cause: "test fixture" });
             const unitE = W.addUnit({ name: "TEST_flat_E", image: { characterName: "People3", characterIndex: 1 }, area: { x: area.x, y: area.y }, x: wrapCell(win.x1 + 1, size), y: ey, z: 1, dir: 4, exact: true, data: { kind: "test", through: true } });
             await t.waitFrames(2);
             const outside = !D.root().planes[0]._units.has(unitE.id);

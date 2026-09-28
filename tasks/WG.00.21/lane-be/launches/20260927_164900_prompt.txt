@@ -1,0 +1,5 @@
+Resume WG.00.21 on task/lane-be as the Grok writer. Read the lane BRIEF, lane.json, REPORT.md, and tasks/WG.00.21/lane-be/review_codex_87f4e4ee.md before editing.
+
+Fix every M1-M5 finding in that review within the existing allowedPaths. Treat the acceptance contract literally: live tile paint, cliff, entity creation/update/render, cache invalidation, pixel/plane equality, and the stress benchmark must be proven by production-path tests rather than surrogate helpers. Do not reduce scope, weaken assertions, or turn a failure into a skip. Preserve MaxDepth and all owner decisions. If a required fix is outside allowedPaths or needs an owner decision, write a precise escalation in the lane task folder and stop that part.
+
+Run every gateTests command from lane.json in the foreground, plus the review-requested base/tip culling comparison and provocations. Update REPORT.md with exact commands and exits. Do not touch art, audio, WBS/status, provider status, plugin registration, or another lane. Commit all fixes on task/lane-be with a [grok] WG.00.21 subject. Do not merge or push. End with FINAL SHA: <full sha>.

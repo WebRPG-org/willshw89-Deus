@@ -1,0 +1,54 @@
+{
+    "lane": "lane-be",
+    "taskId": "WG.00.21",
+    "branch": "task/lane-be",
+    "writer": "grok",
+    "reviewer": "gemini",
+    "push": true,
+    "allowedPaths": [
+        "game/js/plugins/DEUS_Depth.js",
+        "game/js/plugins/DEUS_Culling.js",
+        "tools/occlusion/**",
+        "docs/systems/DEUS_OcclusionCulling.md",
+        "tasks/WG.00.21/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": [
+                "tools/occlusion/test_occlusion_culling.js"
+            ],
+            "timeoutSec": 2400
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/test_layer_render_flat.js",
+                "--suite",
+                "depth"
+            ],
+            "timeoutSec": 3600
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/depth_demo/test_depth_demo.js"
+            ],
+            "timeoutSec": 1800
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/layer_overlays/test_layer_overlays.js"
+            ],
+            "timeoutSec": 1800
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/check_deus_syntax.js"
+            ],
+            "timeoutSec": 900
+        }
+    ]
+}

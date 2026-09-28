@@ -1,0 +1,84 @@
+{
+  "base": {
+    "seed": 20260927,
+    "center": {
+      "x": 176,
+      "y": 176
+    },
+    "frameHash": 64918904,
+    "crop": {
+      "hash": 64918904,
+      "x": 216,
+      "y": 168,
+      "w": 432,
+      "h": 336
+    },
+    "width": 816,
+    "height": 624,
+    "exposed": [
+      {
+        "name": "hole-floor",
+        "z": 1,
+        "x": 177,
+        "y": 176,
+        "texel": {
+          "color": "#352d24",
+          "alpha": 255
+        }
+      },
+      {
+        "name": "shaft-floor",
+        "z": 0,
+        "x": 176,
+        "y": 176,
+        "texel": {
+          "color": "#71864d",
+          "alpha": 255
+        }
+      }
+    ],
+    "png": "C:\\Users\\snewt\\AppData\\Local\\Temp\\deus_occlusion_equal_bRPcwf\\base\\game\\test_output\\equal_frame.png"
+  },
+  "tip": {
+    "seed": 20260927,
+    "center": {
+      "x": 176,
+      "y": 176
+    },
+    "frameHash": 64918904,
+    "crop": {
+      "hash": 64918904,
+      "x": 216,
+      "y": 168,
+      "w": 432,
+      "h": 336
+    },
+    "width": 816,
+    "height": 624,
+    "exposed": [
+      {
+        "name": "hole-floor",
+        "z": 1,
+        "x": 177,
+        "y": 176,
+        "texel": {
+          "color": "#352d24",
+          "alpha": 255
+        }
+      },
+      {
+        "name": "shaft-floor",
+        "z": 0,
+        "x": 176,
+        "y": 176,
+        "texel": {
+          "color": "#71864d",
+          "alpha": 255
+        }
+      }
+    ],
+    "png": "C:\\Users\\snewt\\AppData\\Local\\Temp\\deus_occlusion_equal_bRPcwf\\tip\\game\\test_output\\equal_frame.png"
+  },
+  "frameEqual": true,
+  "exposedEqual": true
+}
