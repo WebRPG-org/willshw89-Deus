@@ -1,0 +1,14 @@
+{
+  "lane":"lane-bq",
+  "taskId":"SOC.40.02",
+  "branch":"task/lane-bq",
+  "writer":"codex",
+  "reviewer":"grok",
+  "push":false,
+  "effortClass":"substantive",
+  "allowedPaths":["game/js/sim/society/DEUS_Militia.js","docs/systems/DEUS_Militia.md","tools/society/test_militia.js","tasks/SOC.40.02/**"],
+  "gateTests":[
+    {"cmd":"node","args":["tools/society/test_militia.js"],"timeoutSec":1200},
+    {"cmd":"node","args":["tools/check_deus_syntax.js"],"timeoutSec":900}
+  ]
+}
