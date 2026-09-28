@@ -1,6 +1,6 @@
-# Art catalogue schema `deus-art-catalogue/1.1.0`
+# Art catalogue schema `deus-art-catalogue/1.2.0`
 
-Written 2026-09-26 by Claude (lane-s, WG.20.02, including the WG.20.01 schema). Machine form: [`art/catalogue/catalogue.schema.json`](../../../art/catalogue/catalogue.schema.json) (JSON Schema 2020-12, `$id` `deus-art-catalogue/1.1.0`). Counts, coverage and sheets: [INDEX.md](INDEX.md) (generated).
+Written 2026-09-26 by Claude (lane-s, WG.20.02); updated to 1.2.0 on 2026-09-28 (lane-bz, TOOL.01.01). Machine form: [`art/catalogue/catalogue.schema.json`](../../../art/catalogue/catalogue.schema.json) (JSON Schema 2020-12, `$id` `deus-art-catalogue/1.2.0`). Counts, coverage and sheets: [INDEX.md](INDEX.md) (generated).
 
 **The catalogue contains no image data.** It lists ids, sizes, slots, sources, statuses and references so the Owner can paint into blank templates (Lane T) and approved art can be placed and validated (Lane U). Nothing in this lane draws, generates, edits or requests art (DEC-007).
 
@@ -127,7 +127,7 @@ Contract fields (always present):
 | `alphaMode` | BINARY, or OWNER_OPEN (binary until the Owner rules) for rim shadows, height shading, dust, light shafts, ore veins and hole edges |
 | `status`, `statusWhy` | section 7 |
 
-Optional fields: `family` (SOURCE or the addendum family), `groupType` (the ATLAS group), `mapping {scaleBasis, rampBasis, rule}` (MATCH or PROPOSED and the mapping rule used), `geometryDerived {rule: STRATA_WINDOW|LAYER_FACE|RAMP_CELL, strata}`, `ownerOpen: true`, `notes`.
+Optional fields: `family` (SOURCE or the addendum family), `groupType` (the ATLAS group), `mapping {scaleBasis, rampBasis, rule}` (MATCH or PROPOSED and the mapping rule used), `geometryDerived {rule: STRATA_WINDOW|LAYER_FACE|RAMP_CELL, strata}`, `ownerOpen: true`, `notes`, `promptFile` (path to external generation prompt JSON sidecar), `specFile` (path to external production specification JSON sidecar).
 
 **Variants.** A row with `derivedFrom` set owns no paint slot (`slot: null`); its base must exist and must not itself be derived. Derived rows are the per-band recolours of tile art (`paletteSwap: DEPTH_<band>`).
 
@@ -215,7 +215,9 @@ Required coverage (100%, printed in INDEX.md): the WorldCatalog ids, the brief `
 
 ## Additions to the contract
 
-Optional fields added by lane S: top level `sizeClasses`, `references`, `bands`, `biomes`, `depthPalettes`, `sourceIdIndex`; `outOfScope[].kind`; entries `family`, `groupType`, `mapping`, `geometryDerived`, `ownerOpen`, `notes`; `runtime.tileId`, `runtime.slotText`, `runtime.grid`; geometry `bands[].name`, `biomesPerBand`, `facings`, `atlasMaxPx`; the band value `ALL`. The scale chart row `RMMZ_FACE_144` is an RMMZ_SPEC row beyond the brief's tile-class examples, sourced from `docs/RMMZ_ASSET_SPEC.md` §4.
+Optional fields added by lane S (schema 1.1.0): top level `sizeClasses`, `references`, `bands`, `biomes`, `depthPalettes`, `sourceIdIndex`; `outOfScope[].kind`; entries `family`, `groupType`, `mapping`, `geometryDerived`, `ownerOpen`, `notes`; `runtime.tileId`, `runtime.slotText`, `runtime.grid`; geometry `bands[].name`, `biomesPerBand`, `facings`, `atlasMaxPx`; the band value `ALL`. The scale chart row `RMMZ_FACE_144` is an RMMZ_SPEC row beyond the brief's tile-class examples, sourced from `docs/RMMZ_ASSET_SPEC.md` §4.
+
+Optional fields added by lane BZ (schema 1.2.0): entries `promptFile` and `specFile` for linking external prompt and specification artifacts to canonical entries.
 
 ## Choices made here (PROPOSED, listed as Owner questions in conflicts.md)
 

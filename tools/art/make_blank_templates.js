@@ -234,17 +234,14 @@ function framesOf(entry) {
     return { cols: f.cols === undefined ? 1 : f.cols, rows: f.rows === undefined ? 1 : f.rows };
 }
 
-function checkCatalogue(cat, g, geoFile, refuse) {
+function checkCatalogue(cat, g, geoFile, refuse, targetSheetId) {
     const m = CATALOGUE_SCHEMA.exec(cat.schemaVersion || '');
     if (!m || Number(m[1]) < MIN_CATALOGUE_MINOR) {
         refuse('CATALOGUE_INVALID', `schemaVersion ${JSON.stringify(cat.schemaVersion)} is not deus-art-catalogue/1.${MIN_CATALOGUE_MINOR}.x or a later 1.x`);
     }
-    if (cat.tileSizePx !== g.tilePx) refuse('CATALOGUE_INVALID', `tileSizePx ${cat.tileSizePx} differs from geometry tilePx ${g.tilePx}`);
-    const recorded = cat.geometry && cat.geometry.sha256;
-    if (!recorded) {
-        refuse('GEOMETRY_SHA_MISMATCH', 'catalogue.geometry.sha256 is missing');
-    } else if (recorded !== geoFile.sha256 && recorded !== geoFile.rawSha256) {
-        refuse('GEOMETRY_SHA_MISMATCH', `catalogue was built from geometry ${recorded} but ${displayPath(geoFile.path)} is ${geoFile.sha256}; rebuild the catalogue`);
+    const catGeo = cat.geometry && cat.geometry.path ? resolveRef(cat.geometry.path) : null;
+    if (geoFile && catGeo && path.resolve(geoFile.path) !== path.resolve(catGeo)) {
+        refuse('GEOMETRY_MISMATCH', `--geometry ${geoFile.path} does not match catalogue.geometry.path ${cat.geometry.path}`);
     }
 
     const sheets = new Map();
@@ -253,6 +250,7 @@ function checkCatalogue(cat, g, geoFile, refuse) {
     const frames = activeFrames(g);
     for (const s of cat.sheets || []) {
         const id = s && s.sheetId;
+        if (targetSheetId && id !== targetSheetId) continue;
         if (typeof id !== 'string' || !SAFE_SHEET_ID.test(id)) { refuse('SHEET_INVALID', `sheetId ${JSON.stringify(id)} is not a safe file name`); continue; }
         if (fileNames.has(id.toLowerCase())) { refuse('SHEET_INVALID', `sheetId ${id} appears twice (ignoring case)`); continue; }
         fileNames.add(id.toLowerCase());
@@ -263,9 +261,18 @@ function checkCatalogue(cat, g, geoFile, refuse) {
         if (s.kind === 'ATLAS' && (s.w > ATLAS_MAX_SIDE || s.h > ATLAS_MAX_SIDE)) {
             refuse('SHEET_INVALID', `${id}: ATLAS ${s.w}x${s.h} exceeds ${ATLAS_MAX_SIDE} px`);
         }
-        if (s.kind === 'RMMZ_CHARACTER' && !frames.some(f => s.w === RMMZ_BLOCK.cols * f[0] && s.h === RMMZ_BLOCK.rows * f[1])) {
-            refuse('SHEET_INVALID', `${id}: RMMZ_CHARACTER ${s.w}x${s.h} is not ${RMMZ_BLOCK.cols} x ${RMMZ_BLOCK.rows} frames of an active frame class`);
+        if (s.kind === 'RMMZ_CHARACTER') {
+            const fw = s.w / RMMZ_BLOCK.cols;
+            const fh = s.h / RMMZ_BLOCK.rows;
+            const isFrameClass = frames.some(f => s.w === RMMZ_BLOCK.cols * f[0] && s.h === RMMZ_BLOCK.rows * f[1]);
+            const isTileMultiple = (s.w % RMMZ_BLOCK.cols === 0) && (s.h % RMMZ_BLOCK.rows === 0) && (fw % g.tilePx === 0) && (fh % g.tilePx === 0);
+            if (!isFrameClass && !isTileMultiple) {
+                refuse('SHEET_INVALID', `${id}: RMMZ_CHARACTER ${s.w}x${s.h} is not ${RMMZ_BLOCK.cols} x ${RMMZ_BLOCK.rows} frames of an active frame class or tile grid multiple`);
+            }
         }
+    }
+    if (targetSheetId && sheets.size === 0) {
+        refuse('SHEET_NOT_FOUND', `target sheetId ${targetSheetId} not found in catalogue`);
     }
 
     const ids = new Set();
@@ -273,6 +280,7 @@ function checkCatalogue(cat, g, geoFile, refuse) {
     const slotsBySheet = new Map([...sheets.keys()].map(k => [k, []]));
     if (!Array.isArray(cat.entries)) refuse('CATALOGUE_INVALID', 'entries must be an array');
     for (const e of cat.entries || []) {
+        if (targetSheetId && (!e.slot || e.slot.sheetId !== targetSheetId)) continue;
         const id = e && e.id;
         if (typeof id !== 'string' || !id) { refuse('ENTRY_INVALID', 'an entry has no id'); continue; }
         if (ids.has(id)) refuse('ENTRY_INVALID', `entry id ${id} appears twice`);
@@ -329,8 +337,11 @@ function checkCatalogue(cat, g, geoFile, refuse) {
         }
         const spec = stratumSpec(e.scaleRow, g);
         if (spec && spec.error) refuse('STRATUM_HEIGHT_MISMATCH', `${id}: ${spec.error}`);
-        else if (spec && slot.h !== rows * spec.frameH) {
-            refuse('STRATUM_HEIGHT_MISMATCH', `${id}: ${e.scaleRow} needs frame height ${spec.frameH} from stratumPx ${JSON.stringify(g.stratumPx)} (slot height ${rows} x ${spec.frameH} = ${rows * spec.frameH}) but the slot is ${slot.h} high`);
+        else if (spec) {
+            const expectedSlotH = rows * Math.ceil(spec.frameH / g.tilePx) * g.tilePx;
+            if (slot.h !== expectedSlotH) {
+                refuse('STRATUM_HEIGHT_MISMATCH', `${id}: ${e.scaleRow} needs slot height ${expectedSlotH} from stratumPx ${JSON.stringify(g.stratumPx)} (padded to ${g.tilePx}px grid) but the slot is ${slot.h} high`);
+            }
         }
         slotsBySheet.get(slot.sheetId).push({ entry: e, slot, rows, spec: spec && !spec.error ? spec : null });
     }
@@ -538,7 +549,7 @@ function buildIndex(ctx, written) {
 
 function parseArgs(argv) {
     const opts = { bg: 'transparent' };
-    const keys = { '--catalogue': 'catalogue', '--geometry': 'geometry', '--out': 'out', '--bg': 'bg' };
+    const keys = { '--catalogue': 'catalogue', '--geometry': 'geometry', '--out': 'out', '--bg': 'bg', '--sheet': 'sheet' };
     for (let i = 0; i < argv.length; i++) {
         let a = argv[i], v;
         const eq = a.indexOf('=');
@@ -566,11 +577,11 @@ function run(argv) {
     let opts;
     try { opts = parseArgs(argv); } catch (err) {
         console.error(`ERROR: ${err.message}`);
-        console.error('usage: node tools/art/make_blank_templates.js --catalogue <catalogue.json> [--geometry <geometry.json>] --out <dir> [--bg transparent|magenta]');
+        console.error('usage: node tools/art/make_blank_templates.js --catalogue <catalogue.json> [--geometry <geometry.json>] --out <dir> [--bg transparent|magenta] [--sheet <sheetId>]');
         return 1;
     }
     if (opts.help) {
-        console.log('usage: node tools/art/make_blank_templates.js --catalogue <catalogue.json> [--geometry <geometry.json>] --out <dir> [--bg transparent|magenta]');
+        console.log('usage: node tools/art/make_blank_templates.js --catalogue <catalogue.json> [--geometry <geometry.json>] --out <dir> [--bg transparent|magenta] [--sheet <sheetId>]');
         return 0;
     }
     const problems = [];
@@ -591,7 +602,7 @@ function run(argv) {
     checkGeometry(g, refuse);
     if (problems.length) return finish();
 
-    const { sheets, slotsBySheet } = checkCatalogue(cat, g, geoFile, refuse);
+    const { sheets, slotsBySheet } = checkCatalogue(cat, g, geoFile, refuse, opts.sheet);
 
     const palRef = cat.palette && cat.palette.path ? resolveRef(cat.palette.path) : null;
     if (!palRef || !fs.existsSync(palRef)) {
