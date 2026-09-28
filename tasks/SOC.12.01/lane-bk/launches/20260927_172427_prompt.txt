@@ -1,0 +1,5 @@
+Act as the independent Grok reviewer for lane-bk SOC.12.01. The writer is Gemini and the exact writer tip is 991820ec1b411243e32d39347c2762efd58f0be8. Review that exact tip against BRIEF.md, lane.json, the society WBS row, and canonical person/craft/production/SRD sources.
+
+Inspect the full merge-base-to-writer diff. Independently rerun every gate and targeted provocation. Verify exact 34-craft closure, real production IDs, schema strictness, progression semantics, three-axis independence, unresolved owner questions, and that no invented rules or art/audio work entered. Do not fix implementation, merge, push, or edit WBS/status.
+
+Write only tasks/SOC.12.01/lane-bk/review_grok_991820ec.md. Include exact identity, scope, commands/exits, findings ranked BLOCKER/MAJOR/MINOR, and one final line exactly VERDICT: CLEAN PASS or VERDICT: FAIL. Commit only that review file with subject [grok] SOC.12.01 review 991820ec. End with FINAL SHA: <full sha>.

@@ -1,0 +1,2580 @@
+{
+  "schemaVersion": "deus-craft-catalogue/1.0.0",
+  "documentRole": "craftCatalogue",
+  "title": "Project DEUS Master Craft & Productive Profession Catalogue",
+  "standardTask": "SOC.12.01",
+  "authoritativePrinciples": [
+    "1. Three Independent Identity Axes: A person's economic Craft, Civic Office, and combat Class are three completely independent characteristics (INV-SOC-01).",
+    "2. Duty Decoupling: Current Duty describes transient operational activity and is never an identity axis or a substitute for craft vocation (INV-SOC-02).",
+    "3. Physical Production Foundation: Crafts manipulate authentic physical materials, workstations, and recipes governed by strict material conservation (INV-ECON-01).",
+    "4. Apprentice-to-Master Competence Progression: Independent vocation advancement through four standard tiers (Apprentice -> Journeyman -> Artisan -> Master) without combat class prerequisites.",
+    "5. Canonical 2014 SRD Alignment: Tool proficiencies, 5 gp/day crafting throughput, and downtime training rules grounded in authentic 2014 SRD 5.1 references (srd:rule:adventuring-between-adventures).",
+    "6. Universal NONE Axis Semantics: NONE is a fully valid token on the craft axis for non-specialized persons, children, elders, or pure officeholders."
+  ],
+  "noneSemantics": {
+    "token": "NONE",
+    "description": "Indicates that the person currently holds no specialized economic craft profession. Standard for dependent children, infirm elders, unspecialized commoners, and full-time civic leaders. Persons with craft: NONE are eligible for unspecialized operational tasks (e.g. haul, gather, fetch, move, sleep) and civic office work. Concrete duty scheduling tokens remain an open architectural integration point deferred to SOC.13.",
+    "allowedDutyAssignments": [
+      "haul",
+      "gather",
+      "fetch",
+      "move",
+      "wander",
+      "sleep",
+      "eat",
+      "drink"
+    ],
+    "independentAxes": {
+      "civicOfficeIndependent": true,
+      "classIndependent": true,
+      "dutyDecoupled": true
+    }
+  },
+  "callingResolutionRules": {
+    "precedenceOrder": [
+      "1. Primary calling (data.calling, otherwise data.callings[0]) if mapped by calling-craft table",
+      "2. String job (data.job) if mapped by calling-craft table or craft token",
+      "3. Fallback to NONE (job objects and unmapped tokens yield NONE)"
+    ],
+    "dutyIsolationRule": "Under no circumstance may currentDuty, transient duty, or live job objects overwrite or derive the craft identity axis (INV-SOC-02).",
+    "unmappedCallingsStatus": "The 21 unmapped callings identified in DEUS_PersonIdentity.md Question 5 (e.g. laborer, shepherd, stonecutter, physician) remain mapped to NONE until explicit Owner resolution."
+  },
+  "crafts": [
+    {
+      "id": "FARMER",
+      "family": "extractive",
+      "displayName": "Farmer",
+      "description": "Cultivator of soil, tender of crops, and producer of staple grains, vegetables, and plant fibers essential for community sustenance.",
+      "primaryWorkstations": [
+        "farm_plot"
+      ],
+      "primaryResourceClasses": [
+        "FOOD",
+        "FIBER"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": null,
+        "toolName": null,
+        "artisanToolCategory": null,
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 88-89"
+      },
+      "callingMappings": [
+        "farmer",
+        "farmhand"
+      ],
+      "knowledgeNode": "craft.field",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Farmer",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Farmer",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Farmer",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Farmer",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Farmer craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "MINER",
+      "family": "extractive",
+      "displayName": "Miner",
+      "description": "Excavator of subterranean strata, ore veins, coal, and native minerals from rock faces.",
+      "primaryWorkstations": [],
+      "primaryResourceClasses": [
+        "IRON",
+        "COPPER",
+        "GOLD",
+        "SILVER",
+        "PLATINUM",
+        "STONE"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": null,
+        "toolName": null,
+        "artisanToolCategory": null,
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 88-89"
+      },
+      "callingMappings": [
+        "miner"
+      ],
+      "knowledgeNode": "craft.ore",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Miner",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Miner",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Miner",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Miner",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Miner craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "LOGGER",
+      "family": "extractive",
+      "displayName": "Logger",
+      "description": "Harvester of timber, feller of trees, and provider of raw logs and firewood from forest canopies.",
+      "primaryWorkstations": [],
+      "primaryResourceClasses": [
+        "WOOD"
+      ],
+      "productionChain": {
+        "inputs": [
+          "log"
+        ],
+        "outputs": [
+          "firewood"
+        ],
+        "associatedRecipes": [
+          "split_firewood"
+        ],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": null,
+        "toolName": null,
+        "artisanToolCategory": null,
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 88-89"
+      },
+      "callingMappings": [
+        "lumberjack"
+      ],
+      "knowledgeNode": "craft.wood",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Logger",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Logger",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Logger",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Logger",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Logger craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "QUARRYMAN",
+      "family": "extractive",
+      "displayName": "Quarryman",
+      "description": "Extractor and splitter of surface and bedrock boulders into dimension stone and quarry blocks.",
+      "primaryWorkstations": [],
+      "primaryResourceClasses": [
+        "STONE"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:masons-tools",
+        "toolName": "Mason’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [],
+      "knowledgeNode": "craft.stone",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Quarryman",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Quarryman",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Quarryman",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Quarryman",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Quarryman craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "HUNTER",
+      "family": "extractive",
+      "displayName": "Hunter",
+      "description": "Stalker and harvester of wild game, waterfowl, and fauna for raw meat, pelts, bone, and feathers.",
+      "primaryWorkstations": [],
+      "primaryResourceClasses": [
+        "FOOD",
+        "FIBER"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": null,
+        "toolName": null,
+        "artisanToolCategory": null,
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 88-89"
+      },
+      "callingMappings": [
+        "hunter"
+      ],
+      "knowledgeNode": "craft.survival",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Hunter",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Hunter",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Hunter",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Hunter",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Hunter craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "FISHER",
+      "family": "extractive",
+      "displayName": "Fisher",
+      "description": "Harvester of aquatic life, catching freshwater and shoreline fish for settlement sustenance.",
+      "primaryWorkstations": [],
+      "primaryResourceClasses": [
+        "FOOD"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": null,
+        "toolName": null,
+        "artisanToolCategory": null,
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 88-89"
+      },
+      "callingMappings": [
+        "fisherman"
+      ],
+      "knowledgeNode": "craft.sustenance",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Fisher",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Fisher",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Fisher",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Fisher",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Fisher craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "FORAGER",
+      "family": "extractive",
+      "displayName": "Forager",
+      "description": "Gatherer of wild herbs, berries, roots, fungi, seeds, and surface cordage fiber across wilderness biomes.",
+      "primaryWorkstations": [],
+      "primaryResourceClasses": [
+        "FOOD",
+        "FIBER"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:herbalism-kit",
+        "toolName": "Herbalism kit",
+        "artisanToolCategory": "kits",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70-71, 88-89"
+      },
+      "callingMappings": [],
+      "knowledgeNode": "craft.survival",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Forager",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Forager",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Forager",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Forager",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Forager craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "SMELTER",
+      "family": "pyrometallurgical_and_smiths",
+      "displayName": "Smelter",
+      "description": "Operator of blast furnaces and charcoal burners, reducing raw iron and copper ores into refined metal ingots.",
+      "primaryWorkstations": [
+        "furnace"
+      ],
+      "primaryResourceClasses": [
+        "IRON",
+        "COPPER",
+        "WOOD"
+      ],
+      "productionChain": {
+        "inputs": [
+          "firewood",
+          "ore_iron",
+          "ore_copper",
+          "charcoal"
+        ],
+        "outputs": [
+          "charcoal",
+          "bar_iron",
+          "bar_copper"
+        ],
+        "associatedRecipes": [
+          "charcoal",
+          "bar_iron",
+          "bar_copper"
+        ],
+        "associatedLabors": [
+          "furnace_operator"
+        ]
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:smiths-tools",
+        "toolName": "Smith’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [],
+      "knowledgeNode": "craft.ore",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Smelter",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Smelter",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Smelter",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Smelter",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Smelter craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "BLACKSMITH",
+      "family": "pyrometallurgical_and_smiths",
+      "displayName": "Blacksmith",
+      "description": "Master of anvil and forge, crafting structural hardware, nails, and general iron goods for settlements.",
+      "primaryWorkstations": [
+        "smithy"
+      ],
+      "primaryResourceClasses": [
+        "IRON"
+      ],
+      "productionChain": {
+        "inputs": [
+          "bar_iron"
+        ],
+        "outputs": [
+          "hardware_iron"
+        ],
+        "associatedRecipes": [
+          "forge_hardware"
+        ],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:smiths-tools",
+        "toolName": "Smith’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "blacksmith"
+      ],
+      "knowledgeNode": "craft.smith",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Blacksmith",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Blacksmith",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Blacksmith",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Blacksmith",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Blacksmith craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "ARMORER",
+      "family": "pyrometallurgical_and_smiths",
+      "displayName": "Armorer",
+      "description": "Specialized metalworker shaping iron plate, mail shirts, greaves, and defensive shields for faction defenders.",
+      "primaryWorkstations": [
+        "smithy"
+      ],
+      "primaryResourceClasses": [
+        "IRON",
+        "WOOD"
+      ],
+      "productionChain": {
+        "inputs": [
+          "bar_iron",
+          "leather",
+          "log"
+        ],
+        "outputs": [
+          "helmet_iron",
+          "mail_iron",
+          "greaves_iron",
+          "shield_iron"
+        ],
+        "associatedRecipes": [
+          "helmet_iron",
+          "mail_iron",
+          "greaves_iron",
+          "shield_iron"
+        ],
+        "associatedLabors": [
+          "armorsmith"
+        ]
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:smiths-tools",
+        "toolName": "Smith’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "armorsmith"
+      ],
+      "knowledgeNode": "craft.smith",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Armorer",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Armorer",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Armorer",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Armorer",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Armorer craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "WEAPONSMITH",
+      "family": "pyrometallurgical_and_smiths",
+      "displayName": "Weaponsmith",
+      "description": "Specialized smith forging iron and bronze martial implements: spears, daggers, short swords, long swords, axes, and maces.",
+      "primaryWorkstations": [
+        "smithy"
+      ],
+      "primaryResourceClasses": [
+        "IRON",
+        "COPPER",
+        "WOOD"
+      ],
+      "productionChain": {
+        "inputs": [
+          "bar_iron",
+          "bar_copper",
+          "log",
+          "leather",
+          "fiber"
+        ],
+        "outputs": [
+          "spear",
+          "dagger_iron",
+          "sword_short",
+          "sword_long",
+          "axe_iron",
+          "mace"
+        ],
+        "associatedRecipes": [
+          "spear_iron",
+          "dagger_iron",
+          "sword_short",
+          "sword_long",
+          "axe_iron",
+          "mace"
+        ],
+        "associatedLabors": [
+          "weaponsmith"
+        ]
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:smiths-tools",
+        "toolName": "Smith’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "weaponsmith"
+      ],
+      "knowledgeNode": "craft.smith",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Weaponsmith",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Weaponsmith",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Weaponsmith",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Weaponsmith",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Weaponsmith craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "CARPENTER",
+      "family": "construction_and_woodcraft",
+      "displayName": "Carpenter",
+      "description": "Builder and joiner converting raw logs into dressed planks, wooden furniture, clubs, stone spears, and wooden shields.",
+      "primaryWorkstations": [
+        "workbench"
+      ],
+      "primaryResourceClasses": [
+        "WOOD",
+        "STONE"
+      ],
+      "productionChain": {
+        "inputs": [
+          "log",
+          "stone",
+          "leather",
+          "fiber"
+        ],
+        "outputs": [
+          "club",
+          "spear",
+          "shield_wood",
+          "plank_dressed"
+        ],
+        "associatedRecipes": [
+          "club",
+          "spear_stone",
+          "shield_wood",
+          "plane_planks"
+        ],
+        "associatedLabors": [
+          "carpenter"
+        ]
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:carpenters-tools",
+        "toolName": "Carpenter’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "carpenter"
+      ],
+      "knowledgeNode": "craft.wood",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Carpenter",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Carpenter",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Carpenter",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Carpenter",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Carpenter craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "MASON",
+      "family": "construction_and_woodcraft",
+      "displayName": "Mason",
+      "description": "Cutter and dresser of stone ashlar blocks, builder of stone walls, fortifications, and bedrock structures.",
+      "primaryWorkstations": [
+        "mason_bench"
+      ],
+      "primaryResourceClasses": [
+        "STONE"
+      ],
+      "productionChain": {
+        "inputs": [
+          "stone"
+        ],
+        "outputs": [
+          "stone_block"
+        ],
+        "associatedRecipes": [
+          "chisel_stone_block"
+        ],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:masons-tools",
+        "toolName": "Mason’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "mason"
+      ],
+      "knowledgeNode": "craft.stone",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Mason",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Mason",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Mason",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Mason",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Mason craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "WOODCARVER",
+      "family": "construction_and_woodcraft",
+      "displayName": "Woodcarver",
+      "description": "Detailed artisan sculpting wooden figurines, handles, utensils, and ornamental woodwork.",
+      "primaryWorkstations": [
+        "workbench"
+      ],
+      "primaryResourceClasses": [
+        "WOOD"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:woodcarvers-tools",
+        "toolName": "Woodcarver’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [],
+      "knowledgeNode": "craft.wood",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Woodcarver",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Woodcarver",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Woodcarver",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Woodcarver",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Woodcarver craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "THATCHER",
+      "family": "construction_and_woodcraft",
+      "displayName": "Thatcher",
+      "description": "Roofer and weatherproofer layering straw, reed thatch, and turf over rafters and building frames.",
+      "primaryWorkstations": [],
+      "primaryResourceClasses": [
+        "FIBER"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": null,
+        "toolName": null,
+        "artisanToolCategory": null,
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 88-89"
+      },
+      "callingMappings": [],
+      "knowledgeNode": "craft.wood",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Thatcher",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Thatcher",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Thatcher",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Thatcher",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Thatcher craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "LEATHERWORKER",
+      "family": "organic_and_textiles",
+      "displayName": "Leatherworker",
+      "description": "Crafter of leather gear: slings, leather helmets, leather armor, and leggings.",
+      "primaryWorkstations": [
+        "workbench"
+      ],
+      "primaryResourceClasses": [
+        "FIBER"
+      ],
+      "productionChain": {
+        "inputs": [
+          "leather",
+          "fiber"
+        ],
+        "outputs": [
+          "sling",
+          "helmet_leather",
+          "armor_leather",
+          "leggings_leather"
+        ],
+        "associatedRecipes": [
+          "sling",
+          "helmet_leather",
+          "armor_leather",
+          "leggings_leather"
+        ],
+        "associatedLabors": [
+          "leatherworker"
+        ]
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:leatherworkers-tools",
+        "toolName": "Leatherworker’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "leatherworker"
+      ],
+      "knowledgeNode": "craft.hide",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Leatherworker",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Leatherworker",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Leatherworker",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Leatherworker",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Leatherworker craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "TANNER",
+      "family": "organic_and_textiles",
+      "displayName": "Tanner",
+      "description": "Processor of raw animal hides into durable, cured leather across scraping and tanning racks.",
+      "primaryWorkstations": [
+        "tanning_rack"
+      ],
+      "primaryResourceClasses": [
+        "FIBER"
+      ],
+      "productionChain": {
+        "inputs": [
+          "hide"
+        ],
+        "outputs": [
+          "leather"
+        ],
+        "associatedRecipes": [
+          "leather"
+        ],
+        "associatedLabors": [
+          "tanner"
+        ]
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:leatherworkers-tools",
+        "toolName": "Leatherworker’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "tanner"
+      ],
+      "knowledgeNode": "craft.hide",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Tanner",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Tanner",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Tanner",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Tanner",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Tanner craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "TAILOR",
+      "family": "organic_and_textiles",
+      "displayName": "Tailor",
+      "description": "Stitcher of garments and cloaks from woven fiber and tanned hides.",
+      "primaryWorkstations": [],
+      "primaryResourceClasses": [
+        "FIBER"
+      ],
+      "productionChain": {
+        "inputs": [
+          "fiber",
+          "hide"
+        ],
+        "outputs": [
+          "fiber_wrap",
+          "hide_cloak"
+        ],
+        "associatedRecipes": [
+          "fiber_wrap",
+          "hide_cloak"
+        ],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:weavers-tools",
+        "toolName": "Weaver’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [],
+      "knowledgeNode": "craft.fiber",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Tailor",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Tailor",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Tailor",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Tailor",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Tailor craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "WEAVER",
+      "family": "organic_and_textiles",
+      "displayName": "Weaver",
+      "description": "Loom operator producing textiles, bolts of cloth, and woven blankets from spun yarns.",
+      "primaryWorkstations": [
+        "workbench"
+      ],
+      "primaryResourceClasses": [
+        "FIBER"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:weavers-tools",
+        "toolName": "Weaver’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "weaver"
+      ],
+      "knowledgeNode": "craft.fiber",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Weaver",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Weaver",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Weaver",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Weaver",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Weaver craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "SPINNER",
+      "family": "organic_and_textiles",
+      "displayName": "Spinner",
+      "description": "Preparer of raw wool and raw plant fibers into spun threads, cordage, and yarn.",
+      "primaryWorkstations": [
+        "workbench"
+      ],
+      "primaryResourceClasses": [
+        "FIBER"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:weavers-tools",
+        "toolName": "Weaver’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "spinner"
+      ],
+      "knowledgeNode": "craft.fiber",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Spinner",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Spinner",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Spinner",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Spinner",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Spinner craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "COOK",
+      "family": "sustenance_and_processing",
+      "displayName": "Cook",
+      "description": "Preparer of nourishing meals, roasting raw meats and fresh fish over kitchen hearths and open campfires.",
+      "primaryWorkstations": [
+        "kitchen_hearth",
+        "campfire"
+      ],
+      "primaryResourceClasses": [
+        "FOOD"
+      ],
+      "productionChain": {
+        "inputs": [
+          "meat_raw",
+          "fish"
+        ],
+        "outputs": [
+          "meat_cooked"
+        ],
+        "associatedRecipes": [
+          "cook_meat",
+          "cook_fish"
+        ],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:cooks-utensils",
+        "toolName": "Cook’s utensils",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "chef"
+      ],
+      "knowledgeNode": "craft.survival",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Cook",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Cook",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Cook",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Cook",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Cook craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "BREWER",
+      "family": "sustenance_and_processing",
+      "displayName": "Brewer",
+      "description": "Fermenter of ales, meads, and ciders from grains, honey, and wild berries.",
+      "primaryWorkstations": [
+        "kitchen_hearth"
+      ],
+      "primaryResourceClasses": [
+        "FOOD",
+        "WATER"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:brewers-supplies",
+        "toolName": "Brewer’s supplies",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "brewer"
+      ],
+      "knowledgeNode": "craft.sustenance",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Brewer",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Brewer",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Brewer",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Brewer",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Brewer craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "MILLER",
+      "family": "sustenance_and_processing",
+      "displayName": "Miller",
+      "description": "Grinder of harvested cereal grains, dried roots, and seeds into baking flour.",
+      "primaryWorkstations": [
+        "workbench"
+      ],
+      "primaryResourceClasses": [
+        "FOOD"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": null,
+        "toolName": null,
+        "artisanToolCategory": null,
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 88-89"
+      },
+      "callingMappings": [
+        "miller"
+      ],
+      "knowledgeNode": "craft.field",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Miller",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Miller",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Miller",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Miller",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Miller craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "BUTCHER",
+      "family": "sustenance_and_processing",
+      "displayName": "Butcher",
+      "description": "Dresser and carver of animal carcasses into portioned meats, fats, bones, and raw hides.",
+      "primaryWorkstations": [
+        "kitchen_counter",
+        "workbench"
+      ],
+      "primaryResourceClasses": [
+        "FOOD"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:cooks-utensils",
+        "toolName": "Cook’s utensils",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "butcher"
+      ],
+      "knowledgeNode": "craft.sustenance",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Butcher",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Butcher",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Butcher",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Butcher",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Butcher craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "BAKER",
+      "family": "sustenance_and_processing",
+      "displayName": "Baker",
+      "description": "Kneader and baker of flour, leavening, and water into hearth bread and hardtack rations.",
+      "primaryWorkstations": [
+        "kitchen_hearth"
+      ],
+      "primaryResourceClasses": [
+        "FOOD"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:cooks-utensils",
+        "toolName": "Cook’s utensils",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [],
+      "knowledgeNode": "craft.sustenance",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Baker",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Baker",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Baker",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Baker",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Baker craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "POTTER",
+      "family": "artisan_and_specialized",
+      "displayName": "Potter",
+      "description": "Shaper and firer of earthen clay into bricks, ceramic vessels, and slaked lime mortar.",
+      "primaryWorkstations": [
+        "pottery_kiln"
+      ],
+      "primaryResourceClasses": [
+        "STONE"
+      ],
+      "productionChain": {
+        "inputs": [
+          "clay",
+          "stone",
+          "sand"
+        ],
+        "outputs": [
+          "brick_clay",
+          "mortar_lime"
+        ],
+        "associatedRecipes": [
+          "fire_brick",
+          "lime_mortar"
+        ],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:potters-tools",
+        "toolName": "Potter’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "potter"
+      ],
+      "knowledgeNode": "craft.kiln",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Potter",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Potter",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Potter",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Potter",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Potter craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "GLASSWORKER",
+      "family": "artisan_and_specialized",
+      "displayName": "Glassworker",
+      "description": "Artisan melting quartz sand, potash, and flux into blown glass phials, ampoules, and window panes.",
+      "primaryWorkstations": [
+        "furnace"
+      ],
+      "primaryResourceClasses": [
+        "STONE"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:glassblowers-tools",
+        "toolName": "Glassblower’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "glasswright"
+      ],
+      "knowledgeNode": "craft.fine",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Glassworker",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Glassworker",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Glassworker",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Glassworker",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Glassworker craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "JEWELER",
+      "family": "artisan_and_specialized",
+      "displayName": "Jeweler",
+      "description": "Gemcutter and lapidary setting precious stones, gold filigree, and silver amulets.",
+      "primaryWorkstations": [
+        "workbench"
+      ],
+      "primaryResourceClasses": [
+        "GOLD",
+        "SILVER",
+        "PLATINUM"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:jewelers-tools",
+        "toolName": "Jeweler’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "jeweler"
+      ],
+      "knowledgeNode": "craft.fine",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Jeweler",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Jeweler",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Jeweler",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Jeweler",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Jeweler craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "FLETCHER",
+      "family": "artisan_and_specialized",
+      "displayName": "Fletcher",
+      "description": "Craftsman shaping arrow shafts, binding fletching feathers, and hafting stone, bone, and iron points.",
+      "primaryWorkstations": [
+        "fletcher_bench"
+      ],
+      "primaryResourceClasses": [
+        "WOOD",
+        "STONE",
+        "IRON"
+      ],
+      "productionChain": {
+        "inputs": [
+          "log",
+          "feathers",
+          "stone",
+          "bone",
+          "bar_iron"
+        ],
+        "outputs": [
+          "arrows"
+        ],
+        "associatedRecipes": [
+          "arrows_stone",
+          "arrows_bone",
+          "arrows_iron"
+        ],
+        "associatedLabors": [
+          "fletcher"
+        ]
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:woodcarvers-tools",
+        "toolName": "Woodcarver’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "fletcher"
+      ],
+      "knowledgeNode": "craft.bow",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Fletcher",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Fletcher",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Fletcher",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Fletcher",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Fletcher craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "BOWYER",
+      "family": "artisan_and_specialized",
+      "displayName": "Bowyer",
+      "description": "Shaper of resilient stave timbers and bowstrings into short bows and long bows.",
+      "primaryWorkstations": [
+        "bowyer_bench"
+      ],
+      "primaryResourceClasses": [
+        "WOOD",
+        "FIBER"
+      ],
+      "productionChain": {
+        "inputs": [
+          "log",
+          "fiber"
+        ],
+        "outputs": [
+          "bow_short",
+          "bow_long"
+        ],
+        "associatedRecipes": [
+          "bow_short",
+          "bow_long"
+        ],
+        "associatedLabors": [
+          "bowyer"
+        ]
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:woodcarvers-tools",
+        "toolName": "Woodcarver’s tools",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [],
+      "knowledgeNode": "craft.bow",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Bowyer",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Bowyer",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Bowyer",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Bowyer",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Bowyer craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "HERBALIST",
+      "family": "artisan_and_specialized",
+      "displayName": "Herbalist",
+      "description": "Compounder of medicinal herbs, poultices, salves, and botanical extracts for healing ailments.",
+      "primaryWorkstations": [
+        "apothecary_bench"
+      ],
+      "primaryResourceClasses": [
+        "FOOD"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:herbalism-kit",
+        "toolName": "Herbalism kit",
+        "artisanToolCategory": "kits",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70-71, 88-89"
+      },
+      "callingMappings": [
+        "herbalist"
+      ],
+      "knowledgeNode": "craft.learning",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Herbalist",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Herbalist",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Herbalist",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Herbalist",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Herbalist craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "ALCHEMIST",
+      "family": "artisan_and_specialized",
+      "displayName": "Alchemist",
+      "description": "Practitioner of mineral transmutations, acids, reagents, and volatile compounds.",
+      "primaryWorkstations": [
+        "apothecary_bench",
+        "furnace"
+      ],
+      "primaryResourceClasses": [
+        "STONE",
+        "IRON"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:alchemists-supplies",
+        "toolName": "Alchemist’s supplies",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [
+        "alchemist"
+      ],
+      "knowledgeNode": "craft.fine",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Alchemist",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Alchemist",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Alchemist",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Alchemist",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Alchemist craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "SCRIBE",
+      "family": "artisan_and_specialized",
+      "displayName": "Scribe",
+      "description": "Illuminator of legal codices, institutional charters, historical chronicles, and maps.",
+      "primaryWorkstations": [
+        "workbench"
+      ],
+      "primaryResourceClasses": [
+        "FIBER"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": "srd:tool:calligraphers-supplies",
+        "toolName": "Calligrapher's supplies",
+        "artisanToolCategory": "artisan_tools",
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 70, 88-89"
+      },
+      "callingMappings": [],
+      "knowledgeNode": "craft.learning",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Scribe",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Scribe",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Scribe",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Scribe",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Scribe craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    },
+    {
+      "id": "MERCHANT",
+      "family": "artisan_and_specialized",
+      "displayName": "Merchant",
+      "description": "Broker of commodity exchange, caravan logistics, weights and balances, and market trading.",
+      "primaryWorkstations": [
+        "shop_counter"
+      ],
+      "primaryResourceClasses": [
+        "COPPER",
+        "SILVER",
+        "GOLD"
+      ],
+      "productionChain": {
+        "inputs": [],
+        "outputs": [],
+        "associatedRecipes": [],
+        "associatedLabors": []
+      },
+      "srd51Reference": {
+        "toolProficiency": null,
+        "toolName": null,
+        "artisanToolCategory": null,
+        "craftingRate": "5 gp market value per 8-hour day with raw materials worth half market value (2014 SRD pp. 88-89)",
+        "downtimeActivity": "srd:rule:adventuring-between-adventures",
+        "sourceCitation": "SRD 5.1 pp. 88-89"
+      },
+      "callingMappings": [
+        "merchant"
+      ],
+      "knowledgeNode": "craft.trade",
+      "progression": [
+        {
+          "rank": 1,
+          "tier": "APPRENTICE",
+          "title": "Apprentice Merchant",
+          "efficiencyMultiplier": 1,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 250
+        },
+        {
+          "rank": 2,
+          "tier": "JOURNEYMAN",
+          "title": "Journeyman Merchant",
+          "efficiencyMultiplier": 1.25,
+          "qualityTierAccess": "STANDARD",
+          "downtimeTrainingDays": 500
+        },
+        {
+          "rank": 3,
+          "tier": "ARTISAN",
+          "title": "Artisan Merchant",
+          "efficiencyMultiplier": 1.5,
+          "qualityTierAccess": "FINE",
+          "downtimeTrainingDays": 1000
+        },
+        {
+          "rank": 4,
+          "tier": "MASTER",
+          "title": "Master Merchant",
+          "efficiencyMultiplier": 1.75,
+          "qualityTierAccess": "MASTERWORK",
+          "downtimeTrainingDays": 1500
+        }
+      ],
+      "independentAxesPreservation": {
+        "independentOfCivicOffice": true,
+        "independentOfClass": true,
+        "dutyDecoupled": true,
+        "notes": "Preserves INV-SOC-01 and INV-SOC-02: holding Merchant craft does not constrain civic office or combat class, and operational tasks are dispatched dynamically via Current Duty."
+      }
+    }
+  ]
+}
