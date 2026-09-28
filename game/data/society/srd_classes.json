@@ -1,0 +1,3982 @@
+{
+  "schema": 1,
+  "task": "SOC.11.01",
+  "edition": "SRD 5.1 (2014)",
+  "license": {
+    "id": "CC-BY-4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/legalcode",
+    "attribution": "This work includes material taken from the System Reference Document 5.1 (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode."
+  },
+  "sources": {
+    "character_options": {
+      "path": "game/data/srd51/character_options.json",
+      "contentSha256": "85936cdc8956944538f2b528b1f7817e02e5442fc256679f778c791c63cebbfe",
+      "pdfSha256": "2504d2a0abb0a4d491a939be4f17910a2dde0312570ab8d208080225ccf0a1f0"
+    },
+    "rules": {
+      "path": "game/data/srd51/rules.json",
+      "contentSha256": "966f9735e40db81c6096817a217c5e48c99471c701372f14f6a43c2f15a20ed9",
+      "pdfSha256": "2504d2a0abb0a4d491a939be4f17910a2dde0312570ab8d208080225ccf0a1f0"
+    },
+    "spells": {
+      "path": "game/data/srd51/spells.json",
+      "contentSha256": "7f422404bbb9a40ad11065307b30a87e8d81db328bf7a440f7d4f7af0ba31584",
+      "pdfSha256": "2504d2a0abb0a4d491a939be4f17910a2dde0312570ab8d208080225ccf0a1f0"
+    },
+    "equipment": {
+      "path": "game/data/srd51/equipment.json",
+      "contentSha256": "6d28eb81146bf6443594a1ab64ff73b55ee889d84c15e5399ac32497c44b0f5b",
+      "pdfSha256": "2504d2a0abb0a4d491a939be4f17910a2dde0312570ab8d208080225ccf0a1f0"
+    },
+    "creatures": {
+      "path": "game/data/srd51/creatures.json",
+      "contentSha256": "3c8ba1810214dc0f48fdbd7311fa2b24c49f8104863c13c79add79ecad708870",
+      "pdfSha256": "2504d2a0abb0a4d491a939be4f17910a2dde0312570ab8d208080225ccf0a1f0"
+    },
+    "magic_items": {
+      "path": "game/data/srd51/magic_items.json",
+      "contentSha256": "9d0e950de7e0be1fab315a262b41a139a6b25d26ad94df60d212fc4879d2b8ca",
+      "pdfSha256": "2504d2a0abb0a4d491a939be4f17910a2dde0312570ab8d208080225ccf0a1f0"
+    }
+  },
+  "identity": {
+    "module": "game/js/sim/society/identity.js",
+    "export": "CLASS_IDS",
+    "schema": "game/data/society/person_identity.schema.json"
+  },
+  "characterAdvancement": {
+    "src": {
+      "file": "rules",
+      "entry": "srd:rule:beyond-1st-level",
+      "path": ["data","tables",0,"caption"],
+      "quote": "Character Advancement"
+    },
+    "levels": [
+      {"level":1,"experiencePoints":0,"proficiencyBonus":2},
+      {"level":2,"experiencePoints":300,"proficiencyBonus":2},
+      {"level":3,"experiencePoints":900,"proficiencyBonus":2},
+      {"level":4,"experiencePoints":2700,"proficiencyBonus":2},
+      {"level":5,"experiencePoints":6500,"proficiencyBonus":3},
+      {"level":6,"experiencePoints":14000,"proficiencyBonus":3},
+      {"level":7,"experiencePoints":23000,"proficiencyBonus":3},
+      {"level":8,"experiencePoints":34000,"proficiencyBonus":3},
+      {"level":9,"experiencePoints":48000,"proficiencyBonus":4},
+      {"level":10,"experiencePoints":64000,"proficiencyBonus":4},
+      {"level":11,"experiencePoints":85000,"proficiencyBonus":4},
+      {"level":12,"experiencePoints":100000,"proficiencyBonus":4},
+      {"level":13,"experiencePoints":120000,"proficiencyBonus":5},
+      {"level":14,"experiencePoints":140000,"proficiencyBonus":5},
+      {"level":15,"experiencePoints":165000,"proficiencyBonus":5},
+      {"level":16,"experiencePoints":195000,"proficiencyBonus":5},
+      {"level":17,"experiencePoints":225000,"proficiencyBonus":6},
+      {"level":18,"experiencePoints":265000,"proficiencyBonus":6},
+      {"level":19,"experiencePoints":305000,"proficiencyBonus":6},
+      {"level":20,"experiencePoints":355000,"proficiencyBonus":6}
+    ]
+  },
+  "raceClassPolicy": {
+    "rule": "NO_LOCKS",
+    "decision": "DEC-036",
+    "races": [
+      "srd:race:dwarf",
+      "srd:race:elf",
+      "srd:race:halfling",
+      "srd:race:dragonborn",
+      "srd:race:human",
+      "srd:race:gnome",
+      "srd:race:half-elf",
+      "srd:race:half-orc",
+      "srd:race:tiefling"
+    ],
+    "statement": "Every race may take every class. This file records no race condition of any kind on any class."
+  },
+  "unavailableFacts": [
+    {
+      "field": "primaryAbility",
+      "classes": [
+        "srd:class:barbarian",
+        "srd:class:bard",
+        "srd:class:cleric",
+        "srd:class:druid",
+        "srd:class:fighter",
+        "srd:class:monk",
+        "srd:class:paladin",
+        "srd:class:ranger",
+        "srd:class:rogue",
+        "srd:class:sorcerer",
+        "srd:class:warlock",
+        "srd:class:wizard"
+      ],
+      "reason": "No tracked SRD 5.1 file states a primary ability for any class. The only SRD table that pairs classes with ability scores is Multiclassing Prerequisites (srd:rule:beyond-1st-level-multiclassing), which belongs to the optional multiclassing rule and is not a primary-ability statement."
+    }
+  ],
+  "sourceDiscrepancies": [
+    {
+      "class": "srd:class:wizard",
+      "level": 20,
+      "tableLabel": "Signature Spell",
+      "featureName": "Signature Spells",
+      "note": "The Wizard table prints 'Signature Spell'; the 20th-level feature heading is 'Signature Spells'."
+    }
+  ],
+  "classes": [
+    {
+      "id": "srd:class:barbarian",
+      "name": "Barbarian",
+      "source": {
+        "file": "character_options",
+        "entry": "srd:class:barbarian",
+        "pages": [8,9],
+        "heading": "Barbarian",
+        "readiness": "parsed"
+      },
+      "hitDie": {
+        "die": "d12",
+        "sides": 12,
+        "src": {"file":"character_options","entry":"srd:class:barbarian","path":["data","hitDie"],"quote":"1d12"}
+      },
+      "hitPoints": {
+        "firstLevel": {
+          "base": 12,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:barbarian",
+            "path": ["data","hitPoints","level1"],
+            "quote": "12 + your Constitution modifier"
+          }
+        },
+        "laterLevels": {
+          "roll": "1d12",
+          "fixed": 7,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:barbarian",
+            "path": ["data","hitPoints","higher"],
+            "quote": "1d12 (or 7) + your Constitution modifier per barbarian level after 1st"
+          }
+        }
+      },
+      "primaryAbility": {
+        "status": "UNAVAILABLE",
+        "reason": "No tracked SRD 5.1 file states a primary ability for any class. The only SRD table that pairs classes with ability scores is Multiclassing Prerequisites (srd:rule:beyond-1st-level-multiclassing), which belongs to the optional multiclassing rule and is not a primary-ability statement.",
+        "search": {
+          "files": ["character_options","rules","spells","equipment","creatures","magic_items"],
+          "pattern": "primary abilit",
+          "caseInsensitive": true,
+          "matches": 0
+        }
+      },
+      "savingThrows": {
+        "abilities": ["Strength","Constitution"],
+        "src": {
+          "file": "character_options",
+          "entry": "srd:class:barbarian",
+          "path": ["data","savingThrows"],
+          "quote": "[\"Strength\",\"Constitution\"]"
+        }
+      },
+      "proficiencies": {
+        "armor": {
+          "grants": [
+            {"token":"Light armor","armorCategories":["light"]},
+            {"token":"medium armor","armorCategories":["medium"]},
+            {"token":"shields","armorCategories":["shield"]}
+          ],
+          "qualifier": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:barbarian",
+            "path": ["data","proficiencies","armor"],
+            "quote": "Light armor, medium armor, shields"
+          }
+        },
+        "weapons": {
+          "grants": [
+            {"token":"Simple weapons","weaponCategory":"simple"},
+            {"token":"martial weapons","weaponCategory":"martial"}
+          ],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:barbarian",
+            "path": ["data","proficiencies","weapons"],
+            "quote": "Simple weapons, martial weapons"
+          }
+        },
+        "tools": {
+          "fixed": [],
+          "choice": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:barbarian",
+            "path": ["data","proficiencies","tools"],
+            "quote": "None"
+          }
+        },
+        "skills": {
+          "choose": 2,
+          "from": ["Animal Handling","Athletics","Intimidation","Nature","Perception","Survival"],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:barbarian",
+            "path": ["data","proficiencies","skills"],
+            "quote": "Choose two from Animal Handling, Athletics, Intimidation, Nature, Perception, and Survival"
+          }
+        }
+      },
+      "spellcasting": {"status":"NONE","basis":"NO_SPELLCASTING_FEATURE"},
+      "subclass": {
+        "choiceFeature": "Primal Path",
+        "choiceLevel": 3,
+        "featureLevels": [3,6,10,14],
+        "srdSubclasses": ["srd:subclass:path-of-the-berserker"]
+      },
+      "tableSrc": {
+        "file": "character_options",
+        "entry": "srd:class:barbarian",
+        "path": ["data","classTable","caption"],
+        "quote": "The Barbarian"
+      },
+      "classColumns": [
+        {"key":"rages","sourceColumn":"Rages","valueType":"COUNT_OR_UNLIMITED"},
+        {"key":"rageDamage","sourceColumn":"Rage Damage","valueType":"BONUS"}
+      ],
+      "features": [
+        {"name":"Rage","level":1,"sourceIndex":0},
+        {"name":"Unarmored Defense","level":1,"sourceIndex":1},
+        {"name":"Reckless Attack","level":2,"sourceIndex":2},
+        {"name":"Danger Sense","level":2,"sourceIndex":3},
+        {"name":"Primal Path","level":3,"sourceIndex":4},
+        {"name":"Ability Score Improvement","level":4,"sourceIndex":5},
+        {"name":"Extra Attack","level":5,"sourceIndex":6},
+        {"name":"Fast Movement","level":5,"sourceIndex":7},
+        {"name":"Feral Instinct","level":7,"sourceIndex":8},
+        {"name":"Brutal Critical","level":9,"sourceIndex":9},
+        {"name":"Relentless Rage","level":11,"sourceIndex":10},
+        {"name":"Persistent Rage","level":15,"sourceIndex":11},
+        {"name":"Indomitable Might","level":18,"sourceIndex":12},
+        {"name":"Primal Champion","level":20,"sourceIndex":13}
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Rage","kind":"FEATURE_GAINED","refs":["Rage"]},
+            {"label":"Unarmored Defense","kind":"FEATURE_GAINED","refs":["Unarmored Defense"]}
+          ],
+          "classColumns": {"rages":2,"rageDamage":2},
+          "spellcasting": null
+        },
+        {
+          "level": 2,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Reckless Attack","kind":"FEATURE_GAINED","refs":["Reckless Attack"]},
+            {"label":"Danger Sense","kind":"FEATURE_GAINED","refs":["Danger Sense"]}
+          ],
+          "classColumns": {"rages":2,"rageDamage":2},
+          "spellcasting": null
+        },
+        {
+          "level": 3,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Primal Path","kind":"FEATURE_GAINED","refs":["Primal Path"]}],
+          "classColumns": {"rages":3,"rageDamage":2},
+          "spellcasting": null
+        },
+        {
+          "level": 4,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_GAINED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"rages":3,"rageDamage":2},
+          "spellcasting": null
+        },
+        {
+          "level": 5,
+          "proficiencyBonus": 3,
+          "features": [
+            {"label":"Extra Attack","kind":"FEATURE_GAINED","refs":["Extra Attack"]},
+            {"label":"Fast Movement","kind":"FEATURE_GAINED","refs":["Fast Movement"]}
+          ],
+          "classColumns": {"rages":3,"rageDamage":2},
+          "spellcasting": null
+        },
+        {
+          "level": 6,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Path feature","kind":"SUBCLASS_FEATURE","refs":["Primal Path"]}],
+          "classColumns": {"rages":4,"rageDamage":2},
+          "spellcasting": null
+        },
+        {
+          "level": 7,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Feral Instinct","kind":"FEATURE_GAINED","refs":["Feral Instinct"]}],
+          "classColumns": {"rages":4,"rageDamage":2},
+          "spellcasting": null
+        },
+        {
+          "level": 8,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"rages":4,"rageDamage":2},
+          "spellcasting": null
+        },
+        {
+          "level": 9,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Brutal Critical (1 die)","kind":"FEATURE_GAINED","refs":["Brutal Critical"],"detail":"1 die"}],
+          "classColumns": {"rages":4,"rageDamage":3},
+          "spellcasting": null
+        },
+        {
+          "level": 10,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Path feature","kind":"SUBCLASS_FEATURE","refs":["Primal Path"]}],
+          "classColumns": {"rages":4,"rageDamage":3},
+          "spellcasting": null
+        },
+        {
+          "level": 11,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Relentless Rage","kind":"FEATURE_GAINED","refs":["Relentless Rage"]}],
+          "classColumns": {"rages":4,"rageDamage":3},
+          "spellcasting": null
+        },
+        {
+          "level": 12,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"rages":5,"rageDamage":3},
+          "spellcasting": null
+        },
+        {
+          "level": 13,
+          "proficiencyBonus": 5,
+          "features": [
+            {
+              "label": "Brutal Critical (2 dice)",
+              "kind": "FEATURE_ADVANCED",
+              "refs": ["Brutal Critical"],
+              "detail": "2 dice"
+            }
+          ],
+          "classColumns": {"rages":5,"rageDamage":3},
+          "spellcasting": null
+        },
+        {
+          "level": 14,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Path feature","kind":"SUBCLASS_FEATURE","refs":["Primal Path"]}],
+          "classColumns": {"rages":5,"rageDamage":3},
+          "spellcasting": null
+        },
+        {
+          "level": 15,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Persistent Rage","kind":"FEATURE_GAINED","refs":["Persistent Rage"]}],
+          "classColumns": {"rages":5,"rageDamage":3},
+          "spellcasting": null
+        },
+        {
+          "level": 16,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"rages":5,"rageDamage":4},
+          "spellcasting": null
+        },
+        {
+          "level": 17,
+          "proficiencyBonus": 6,
+          "features": [
+            {
+              "label": "Brutal Critical (3 dice)",
+              "kind": "FEATURE_ADVANCED",
+              "refs": ["Brutal Critical"],
+              "detail": "3 dice"
+            }
+          ],
+          "classColumns": {"rages":6,"rageDamage":4},
+          "spellcasting": null
+        },
+        {
+          "level": 18,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Indomitable Might","kind":"FEATURE_GAINED","refs":["Indomitable Might"]}],
+          "classColumns": {"rages":6,"rageDamage":4},
+          "spellcasting": null
+        },
+        {
+          "level": 19,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"rages":6,"rageDamage":4},
+          "spellcasting": null
+        },
+        {
+          "level": 20,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Primal Champion","kind":"FEATURE_GAINED","refs":["Primal Champion"]}],
+          "classColumns": {"rages":"UNLIMITED","rageDamage":4},
+          "spellcasting": null
+        }
+      ]
+    },
+    {
+      "id": "srd:class:bard",
+      "name": "Bard",
+      "source": {"file":"character_options","entry":"srd:class:bard","pages":[11,12,13],"heading":"Bard","readiness":"verified"},
+      "hitDie": {
+        "die": "d8",
+        "sides": 8,
+        "src": {"file":"character_options","entry":"srd:class:bard","path":["data","hitDie"],"quote":"1d8"}
+      },
+      "hitPoints": {
+        "firstLevel": {
+          "base": 8,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:bard",
+            "path": ["data","hitPoints","level1"],
+            "quote": "8 + your Constitution modifier"
+          }
+        },
+        "laterLevels": {
+          "roll": "1d8",
+          "fixed": 5,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:bard",
+            "path": ["data","hitPoints","higher"],
+            "quote": "1d8 (or 5) + your Constitution modifier per bard level after 1st"
+          }
+        }
+      },
+      "primaryAbility": {
+        "status": "UNAVAILABLE",
+        "reason": "No tracked SRD 5.1 file states a primary ability for any class. The only SRD table that pairs classes with ability scores is Multiclassing Prerequisites (srd:rule:beyond-1st-level-multiclassing), which belongs to the optional multiclassing rule and is not a primary-ability statement.",
+        "search": {
+          "files": ["character_options","rules","spells","equipment","creatures","magic_items"],
+          "pattern": "primary abilit",
+          "caseInsensitive": true,
+          "matches": 0
+        }
+      },
+      "savingThrows": {
+        "abilities": ["Dexterity","Charisma"],
+        "src": {
+          "file": "character_options",
+          "entry": "srd:class:bard",
+          "path": ["data","savingThrows"],
+          "quote": "[\"Dexterity\",\"Charisma\"]"
+        }
+      },
+      "proficiencies": {
+        "armor": {
+          "grants": [{"token":"Light armor","armorCategories":["light"]}],
+          "qualifier": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:bard",
+            "path": ["data","proficiencies","armor"],
+            "quote": "Light armor"
+          }
+        },
+        "weapons": {
+          "grants": [
+            {"token":"Simple weapons","weaponCategory":"simple"},
+            {"token":"hand crossbows","equipment":"srd:weapon:crossbow-hand"},
+            {"token":"longswords","equipment":"srd:weapon:longsword"},
+            {"token":"rapiers","equipment":"srd:weapon:rapier"},
+            {"token":"shortswords","equipment":"srd:weapon:shortsword"}
+          ],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:bard",
+            "path": ["data","proficiencies","weapons"],
+            "quote": "Simple weapons, hand crossbows, longswords, rapiers, shortswords"
+          }
+        },
+        "tools": {
+          "fixed": [],
+          "choice": {"count":3,"groups":["Musical instrument"]},
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:bard",
+            "path": ["data","proficiencies","tools"],
+            "quote": "Three musical instruments of your choice"
+          }
+        },
+        "skills": {
+          "choose": 3,
+          "from": "ANY",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:bard",
+            "path": ["data","proficiencies","skills"],
+            "quote": "Choose any three"
+          }
+        }
+      },
+      "spellcasting": {
+        "status": "PRESENT",
+        "feature": "Spellcasting",
+        "featureIndex": 0,
+        "gainedAtLevel": 1,
+        "ability": "Charisma",
+        "abilitySrc": {
+          "file": "character_options",
+          "entry": "srd:class:bard",
+          "path": ["data","features",0,"text"],
+          "quote": "Charisma is your spellcasting ability for your bard spells"
+        },
+        "spellList": "srd:spell-list:bard-spells",
+        "slotModel": "SPELL_LEVEL_SLOTS",
+        "maxSlotLevel": 9,
+        "progressionColumns": ["cantripsKnown","spellsKnown","slots"],
+        "preparation": {
+          "model": "KNOWN",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:bard",
+            "path": ["data","features",0,"subheadings"],
+            "quote": "[\"Cantrips\",\"Spell Slots\",\"Spells Known of 1st Level and Higher\",\"Spellcasting Ability\",\"Ritual Casting\",\"Spellcasting Focus\"]"
+          }
+        },
+        "slotRecovery": {
+          "rest": "LONG_REST",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:bard",
+            "path": ["data","features",0,"text"],
+            "quote": "You regain all expended spell slots when you finish a long rest."
+          }
+        },
+        "ritualCasting": {
+          "status": "PRESENT",
+          "spellSource": "KNOWN",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:bard",
+            "path": ["data","features",0,"text"],
+            "quote": "You can cast any bard spell you know as a ritual if that spell has the ritual tag."
+          }
+        },
+        "focus": {
+          "status": "PRESENT",
+          "item": "musical instrument",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:bard",
+            "path": ["data","features",0,"text"],
+            "quote": "You can use a musical instrument (see “Equipment”) as a spellcasting focus"
+          }
+        }
+      },
+      "subclass": {
+        "choiceFeature": "Bard College",
+        "choiceLevel": 3,
+        "featureLevels": [3,6,14],
+        "srdSubclasses": ["srd:subclass:college-of-lore"]
+      },
+      "tableSrc": {"file":"character_options","entry":"srd:class:bard","path":["data","classTable","caption"],"quote":"The Bard"},
+      "classColumns": [],
+      "features": [
+        {"name":"Spellcasting","level":1,"sourceIndex":0},
+        {"name":"Bardic Inspiration","level":1,"sourceIndex":1},
+        {"name":"Jack of All Trades","level":2,"sourceIndex":2},
+        {"name":"Song of Rest","level":2,"sourceIndex":3},
+        {"name":"Bard College","level":3,"sourceIndex":4},
+        {"name":"Expertise","level":3,"sourceIndex":5},
+        {"name":"Ability Score Improvement","level":4,"sourceIndex":6},
+        {"name":"Font of Inspiration","level":5,"sourceIndex":7},
+        {"name":"Countercharm","level":6,"sourceIndex":8},
+        {"name":"Magical Secrets","level":10,"sourceIndex":9},
+        {"name":"Superior Inspiration","level":20,"sourceIndex":10}
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Spellcasting","kind":"FEATURE_GAINED","refs":["Spellcasting"]},
+            {"label":"Bardic Inspiration (d6)","kind":"FEATURE_GAINED","refs":["Bardic Inspiration"],"detail":"d6"}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":2,"spellsKnown":4,"slots":[2,null,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 2,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Jack of All Trades","kind":"FEATURE_GAINED","refs":["Jack of All Trades"]},
+            {"label":"Song of Rest (d6)","kind":"FEATURE_GAINED","refs":["Song of Rest"],"detail":"d6"}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":2,"spellsKnown":5,"slots":[3,null,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 3,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Bard College","kind":"FEATURE_GAINED","refs":["Bard College"]},
+            {"label":"Expertise","kind":"FEATURE_GAINED","refs":["Expertise"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":2,"spellsKnown":6,"slots":[4,2,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 4,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_GAINED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"spellsKnown":7,"slots":[4,3,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 5,
+          "proficiencyBonus": 3,
+          "features": [
+            {"label":"Bardic Inspiration (d8)","kind":"FEATURE_ADVANCED","refs":["Bardic Inspiration"],"detail":"d8"},
+            {"label":"Font of Inspiration","kind":"FEATURE_GAINED","refs":["Font of Inspiration"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"spellsKnown":8,"slots":[4,3,2,null,null,null,null,null,null]}
+        },
+        {
+          "level": 6,
+          "proficiencyBonus": 3,
+          "features": [
+            {"label":"Countercharm","kind":"FEATURE_GAINED","refs":["Countercharm"]},
+            {"label":"Bard College feature","kind":"SUBCLASS_FEATURE","refs":["Bard College"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"spellsKnown":9,"slots":[4,3,3,null,null,null,null,null,null]}
+        },
+        {
+          "level": 7,
+          "proficiencyBonus": 3,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"spellsKnown":10,"slots":[4,3,3,1,null,null,null,null,null]}
+        },
+        {
+          "level": 8,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"spellsKnown":11,"slots":[4,3,3,2,null,null,null,null,null]}
+        },
+        {
+          "level": 9,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Song of Rest (d8)","kind":"FEATURE_ADVANCED","refs":["Song of Rest"],"detail":"d8"}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"spellsKnown":12,"slots":[4,3,3,3,1,null,null,null,null]}
+        },
+        {
+          "level": 10,
+          "proficiencyBonus": 4,
+          "features": [
+            {
+              "label": "Bardic Inspiration (d10)",
+              "kind": "FEATURE_ADVANCED",
+              "refs": ["Bardic Inspiration"],
+              "detail": "d10"
+            },
+            {"label":"Expertise","kind":"FEATURE_ADVANCED","refs":["Expertise"]},
+            {"label":"Magical Secrets","kind":"FEATURE_GAINED","refs":["Magical Secrets"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":14,"slots":[4,3,3,3,2,null,null,null,null]}
+        },
+        {
+          "level": 11,
+          "proficiencyBonus": 4,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":15,"slots":[4,3,3,3,2,1,null,null,null]}
+        },
+        {
+          "level": 12,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":15,"slots":[4,3,3,3,2,1,null,null,null]}
+        },
+        {
+          "level": 13,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Song of Rest (d10)","kind":"FEATURE_ADVANCED","refs":["Song of Rest"],"detail":"d10"}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":16,"slots":[4,3,3,3,2,1,1,null,null]}
+        },
+        {
+          "level": 14,
+          "proficiencyBonus": 5,
+          "features": [
+            {"label":"Magical Secrets","kind":"FEATURE_ADVANCED","refs":["Magical Secrets"]},
+            {"label":"Bard College feature","kind":"SUBCLASS_FEATURE","refs":["Bard College"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":18,"slots":[4,3,3,3,2,1,1,null,null]}
+        },
+        {
+          "level": 15,
+          "proficiencyBonus": 5,
+          "features": [
+            {
+              "label": "Bardic Inspiration (d12)",
+              "kind": "FEATURE_ADVANCED",
+              "refs": ["Bardic Inspiration"],
+              "detail": "d12"
+            }
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":19,"slots":[4,3,3,3,2,1,1,1,null]}
+        },
+        {
+          "level": 16,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":19,"slots":[4,3,3,3,2,1,1,1,null]}
+        },
+        {
+          "level": 17,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Song of Rest (d12)","kind":"FEATURE_ADVANCED","refs":["Song of Rest"],"detail":"d12"}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":20,"slots":[4,3,3,3,2,1,1,1,1]}
+        },
+        {
+          "level": 18,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Magical Secrets","kind":"FEATURE_ADVANCED","refs":["Magical Secrets"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":22,"slots":[4,3,3,3,3,1,1,1,1]}
+        },
+        {
+          "level": 19,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":22,"slots":[4,3,3,3,3,2,1,1,1]}
+        },
+        {
+          "level": 20,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Superior Inspiration","kind":"FEATURE_GAINED","refs":["Superior Inspiration"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":22,"slots":[4,3,3,3,3,2,2,1,1]}
+        }
+      ]
+    },
+    {
+      "id": "srd:class:cleric",
+      "name": "Cleric",
+      "source": {
+        "file": "character_options",
+        "entry": "srd:class:cleric",
+        "pages": [15,16,17],
+        "heading": "Cleric",
+        "readiness": "parsed"
+      },
+      "hitDie": {
+        "die": "d8",
+        "sides": 8,
+        "src": {"file":"character_options","entry":"srd:class:cleric","path":["data","hitDie"],"quote":"1d8"}
+      },
+      "hitPoints": {
+        "firstLevel": {
+          "base": 8,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:cleric",
+            "path": ["data","hitPoints","level1"],
+            "quote": "8 + your Constitution modifier"
+          }
+        },
+        "laterLevels": {
+          "roll": "1d8",
+          "fixed": 5,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:cleric",
+            "path": ["data","hitPoints","higher"],
+            "quote": "1d8 (or 5) + your Constitution modifier per cleric level after 1st"
+          }
+        }
+      },
+      "primaryAbility": {
+        "status": "UNAVAILABLE",
+        "reason": "No tracked SRD 5.1 file states a primary ability for any class. The only SRD table that pairs classes with ability scores is Multiclassing Prerequisites (srd:rule:beyond-1st-level-multiclassing), which belongs to the optional multiclassing rule and is not a primary-ability statement.",
+        "search": {
+          "files": ["character_options","rules","spells","equipment","creatures","magic_items"],
+          "pattern": "primary abilit",
+          "caseInsensitive": true,
+          "matches": 0
+        }
+      },
+      "savingThrows": {
+        "abilities": ["Wisdom","Charisma"],
+        "src": {
+          "file": "character_options",
+          "entry": "srd:class:cleric",
+          "path": ["data","savingThrows"],
+          "quote": "[\"Wisdom\",\"Charisma\"]"
+        }
+      },
+      "proficiencies": {
+        "armor": {
+          "grants": [
+            {"token":"Light armor","armorCategories":["light"]},
+            {"token":"medium armor","armorCategories":["medium"]},
+            {"token":"shields","armorCategories":["shield"]}
+          ],
+          "qualifier": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:cleric",
+            "path": ["data","proficiencies","armor"],
+            "quote": "Light armor, medium armor, shields"
+          }
+        },
+        "weapons": {
+          "grants": [{"token":"Simple weapons","weaponCategory":"simple"}],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:cleric",
+            "path": ["data","proficiencies","weapons"],
+            "quote": "Simple weapons"
+          }
+        },
+        "tools": {
+          "fixed": [],
+          "choice": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:cleric",
+            "path": ["data","proficiencies","tools"],
+            "quote": "None"
+          }
+        },
+        "skills": {
+          "choose": 2,
+          "from": ["History","Insight","Medicine","Persuasion","Religion"],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:cleric",
+            "path": ["data","proficiencies","skills"],
+            "quote": "Choose two from History, Insight, Medicine, Persuasion, and Religion"
+          }
+        }
+      },
+      "spellcasting": {
+        "status": "PRESENT",
+        "feature": "Spellcasting",
+        "featureIndex": 0,
+        "gainedAtLevel": 1,
+        "ability": "Wisdom",
+        "abilitySrc": {
+          "file": "character_options",
+          "entry": "srd:class:cleric",
+          "path": ["data","features",0,"text"],
+          "quote": "Wisdom is your spellcasting ability for your cleric spells"
+        },
+        "spellList": "srd:spell-list:cleric-spells",
+        "slotModel": "SPELL_LEVEL_SLOTS",
+        "maxSlotLevel": 9,
+        "progressionColumns": ["cantripsKnown","slots"],
+        "preparation": {
+          "model": "PREPARED",
+          "ability": "Wisdom",
+          "classLevel": "FULL",
+          "minimum": 1,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:cleric",
+            "path": ["data","features",0,"text"],
+            "quote": "choose a number of cleric spells equal to your Wisdom modifier + your cleric level (minimum of one spell)"
+          }
+        },
+        "slotRecovery": {
+          "rest": "LONG_REST",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:cleric",
+            "path": ["data","features",0,"text"],
+            "quote": "You regain all expended spell slots when you finish a long rest."
+          }
+        },
+        "ritualCasting": {
+          "status": "PRESENT",
+          "spellSource": "PREPARED",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:cleric",
+            "path": ["data","features",0,"text"],
+            "quote": "You can cast a cleric spell as a ritual if that spell has the ritual tag and you have the spell prepared."
+          }
+        },
+        "focus": {
+          "status": "PRESENT",
+          "item": "holy symbol",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:cleric",
+            "path": ["data","features",0,"text"],
+            "quote": "You can use a holy symbol (see “Equipment”) as a spellcasting focus"
+          }
+        }
+      },
+      "subclass": {
+        "choiceFeature": "Divine Domain",
+        "choiceLevel": 1,
+        "featureLevels": [1,2,6,8,17],
+        "srdSubclasses": ["srd:subclass:life-domain"]
+      },
+      "tableSrc": {
+        "file": "character_options",
+        "entry": "srd:class:cleric",
+        "path": ["data","classTable","caption"],
+        "quote": "The Cleric"
+      },
+      "classColumns": [],
+      "features": [
+        {"name":"Spellcasting","level":1,"sourceIndex":0},
+        {"name":"Divine Domain","level":1,"sourceIndex":1},
+        {"name":"Channel Divinity","level":2,"sourceIndex":2},
+        {"name":"Ability Score Improvement","level":4,"sourceIndex":3},
+        {"name":"Destroy Undead","level":5,"sourceIndex":4},
+        {"name":"Divine Intervention","level":10,"sourceIndex":5}
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Spellcasting","kind":"FEATURE_GAINED","refs":["Spellcasting"]},
+            {"label":"Divine Domain","kind":"FEATURE_GAINED","refs":["Divine Domain"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"slots":[2,null,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 2,
+          "proficiencyBonus": 2,
+          "features": [
+            {
+              "label": "Channel Divinity (1/rest)",
+              "kind": "FEATURE_GAINED",
+              "refs": ["Channel Divinity"],
+              "detail": "1/rest"
+            },
+            {"label":"Divine Domain feature","kind":"SUBCLASS_FEATURE","refs":["Divine Domain"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"slots":[3,null,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 3,
+          "proficiencyBonus": 2,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"slots":[4,2,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 4,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_GAINED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 5,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Destroy Undead (CR 1/2)","kind":"FEATURE_GAINED","refs":["Destroy Undead"],"detail":"CR 1/2"}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,2,null,null,null,null,null,null]}
+        },
+        {
+          "level": 6,
+          "proficiencyBonus": 3,
+          "features": [
+            {
+              "label": "Channel Divinity (2/rest)",
+              "kind": "FEATURE_ADVANCED",
+              "refs": ["Channel Divinity"],
+              "detail": "2/rest"
+            },
+            {"label":"Divine Domain feature","kind":"SUBCLASS_FEATURE","refs":["Divine Domain"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,null,null,null,null,null,null]}
+        },
+        {
+          "level": 7,
+          "proficiencyBonus": 3,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,1,null,null,null,null,null]}
+        },
+        {
+          "level": 8,
+          "proficiencyBonus": 3,
+          "features": [
+            {"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]},
+            {"label":"Destroy Undead (CR 1)","kind":"FEATURE_ADVANCED","refs":["Destroy Undead"],"detail":"CR 1"},
+            {"label":"Divine Domain feature","kind":"SUBCLASS_FEATURE","refs":["Divine Domain"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,2,null,null,null,null,null]}
+        },
+        {
+          "level": 9,
+          "proficiencyBonus": 4,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,3,1,null,null,null,null]}
+        },
+        {
+          "level": 10,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Divine Intervention","kind":"FEATURE_GAINED","refs":["Divine Intervention"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,null,null,null,null]}
+        },
+        {
+          "level": 11,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Destroy Undead (CR 2)","kind":"FEATURE_ADVANCED","refs":["Destroy Undead"],"detail":"CR 2"}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,null,null,null]}
+        },
+        {
+          "level": 12,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,null,null,null]}
+        },
+        {
+          "level": 13,
+          "proficiencyBonus": 5,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,1,null,null]}
+        },
+        {
+          "level": 14,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Destroy Undead (CR 3)","kind":"FEATURE_ADVANCED","refs":["Destroy Undead"],"detail":"CR 3"}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,1,null,null]}
+        },
+        {
+          "level": 15,
+          "proficiencyBonus": 5,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,1,1,null]}
+        },
+        {
+          "level": 16,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,1,1,null]}
+        },
+        {
+          "level": 17,
+          "proficiencyBonus": 6,
+          "features": [
+            {"label":"Destroy Undead (CR 4)","kind":"FEATURE_ADVANCED","refs":["Destroy Undead"],"detail":"CR 4"},
+            {"label":"Divine Domain feature","kind":"SUBCLASS_FEATURE","refs":["Divine Domain"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,1,1,1]}
+        },
+        {
+          "level": 18,
+          "proficiencyBonus": 6,
+          "features": [
+            {
+              "label": "Channel Divinity (3/rest)",
+              "kind": "FEATURE_ADVANCED",
+              "refs": ["Channel Divinity"],
+              "detail": "3/rest"
+            }
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,3,1,1,1,1]}
+        },
+        {
+          "level": 19,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,3,2,1,1,1]}
+        },
+        {
+          "level": 20,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Divine Intervention improvement","kind":"FEATURE_IMPROVED","refs":["Divine Intervention"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,3,2,2,1,1]}
+        }
+      ]
+    },
+    {
+      "id": "srd:class:druid",
+      "name": "Druid",
+      "source": {
+        "file": "character_options",
+        "entry": "srd:class:druid",
+        "pages": [19,20,21,22,23],
+        "heading": "Druid",
+        "readiness": "parsed"
+      },
+      "hitDie": {
+        "die": "d8",
+        "sides": 8,
+        "src": {"file":"character_options","entry":"srd:class:druid","path":["data","hitDie"],"quote":"1d8"}
+      },
+      "hitPoints": {
+        "firstLevel": {
+          "base": 8,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:druid",
+            "path": ["data","hitPoints","level1"],
+            "quote": "8 + your Constitution modifier"
+          }
+        },
+        "laterLevels": {
+          "roll": "1d8",
+          "fixed": 5,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:druid",
+            "path": ["data","hitPoints","higher"],
+            "quote": "1d8 (or 5) + your Constitution modifier per druid level after 1st"
+          }
+        }
+      },
+      "primaryAbility": {
+        "status": "UNAVAILABLE",
+        "reason": "No tracked SRD 5.1 file states a primary ability for any class. The only SRD table that pairs classes with ability scores is Multiclassing Prerequisites (srd:rule:beyond-1st-level-multiclassing), which belongs to the optional multiclassing rule and is not a primary-ability statement.",
+        "search": {
+          "files": ["character_options","rules","spells","equipment","creatures","magic_items"],
+          "pattern": "primary abilit",
+          "caseInsensitive": true,
+          "matches": 0
+        }
+      },
+      "savingThrows": {
+        "abilities": ["Intelligence","Wisdom"],
+        "src": {
+          "file": "character_options",
+          "entry": "srd:class:druid",
+          "path": ["data","savingThrows"],
+          "quote": "[\"Intelligence\",\"Wisdom\"]"
+        }
+      },
+      "proficiencies": {
+        "armor": {
+          "grants": [
+            {"token":"Light armor","armorCategories":["light"]},
+            {"token":"medium armor","armorCategories":["medium"]},
+            {"token":"shields","armorCategories":["shield"]}
+          ],
+          "qualifier": "druids will not wear armor or use shields made of metal",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:druid",
+            "path": ["data","proficiencies","armor"],
+            "quote": "Light armor, medium armor, shields (druids will not wear armor or use shields made of metal)"
+          }
+        },
+        "weapons": {
+          "grants": [
+            {"token":"Clubs","equipment":"srd:weapon:club"},
+            {"token":"daggers","equipment":"srd:weapon:dagger"},
+            {"token":"darts","equipment":"srd:weapon:dart"},
+            {"token":"javelins","equipment":"srd:weapon:javelin"},
+            {"token":"maces","equipment":"srd:weapon:mace"},
+            {"token":"quarterstaffs","equipment":"srd:weapon:quarterstaff"},
+            {"token":"scimitars","equipment":"srd:weapon:scimitar"},
+            {"token":"sickles","equipment":"srd:weapon:sickle"},
+            {"token":"slings","equipment":"srd:weapon:sling"},
+            {"token":"spears","equipment":"srd:weapon:spear"}
+          ],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:druid",
+            "path": ["data","proficiencies","weapons"],
+            "quote": "Clubs, daggers, darts, javelins, maces, quarterstaffs, scimitars, sickles, slings, spears"
+          }
+        },
+        "tools": {
+          "fixed": ["srd:tool:herbalism-kit"],
+          "choice": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:druid",
+            "path": ["data","proficiencies","tools"],
+            "quote": "Herbalism kit"
+          }
+        },
+        "skills": {
+          "choose": 2,
+          "from": ["Arcana","Animal Handling","Insight","Medicine","Nature","Perception","Religion","Survival"],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:druid",
+            "path": ["data","proficiencies","skills"],
+            "quote": "Choose two from Arcana, Animal Handling, Insight, Medicine, Nature, Perception, Religion, and Survival"
+          }
+        }
+      },
+      "spellcasting": {
+        "status": "PRESENT",
+        "feature": "Spellcasting",
+        "featureIndex": 1,
+        "gainedAtLevel": 1,
+        "ability": "Wisdom",
+        "abilitySrc": {
+          "file": "character_options",
+          "entry": "srd:class:druid",
+          "path": ["data","features",1,"text"],
+          "quote": "Wisdom is your spellcasting ability for your druid spells"
+        },
+        "spellList": "srd:spell-list:druid-spells",
+        "slotModel": "SPELL_LEVEL_SLOTS",
+        "maxSlotLevel": 9,
+        "progressionColumns": ["cantripsKnown","slots"],
+        "preparation": {
+          "model": "PREPARED",
+          "ability": "Wisdom",
+          "classLevel": "FULL",
+          "minimum": 1,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:druid",
+            "path": ["data","features",1,"text"],
+            "quote": "choose a number of druid spells equal to your Wisdom modifier + your druid level (minimum of one spell)"
+          }
+        },
+        "slotRecovery": {
+          "rest": "LONG_REST",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:druid",
+            "path": ["data","features",1,"text"],
+            "quote": "You regain all expended spell slots when you finish a long rest."
+          }
+        },
+        "ritualCasting": {
+          "status": "PRESENT",
+          "spellSource": "PREPARED",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:druid",
+            "path": ["data","features",1,"text"],
+            "quote": "You can cast a druid spell as a ritual if that spell has the ritual tag and you have the spell prepared."
+          }
+        },
+        "focus": {
+          "status": "PRESENT",
+          "item": "druidic focus",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:druid",
+            "path": ["data","features",1,"text"],
+            "quote": "You can use a druidic focus (see “Equipment”) as a spellcasting focus"
+          }
+        }
+      },
+      "subclass": {
+        "choiceFeature": "Druid Circle",
+        "choiceLevel": 2,
+        "featureLevels": [2,6,10,14],
+        "srdSubclasses": ["srd:subclass:circle-of-the-land"]
+      },
+      "tableSrc": {
+        "file": "character_options",
+        "entry": "srd:class:druid",
+        "path": ["data","classTable","caption"],
+        "quote": "The Druid"
+      },
+      "classColumns": [],
+      "features": [
+        {"name":"Druidic","level":1,"sourceIndex":0},
+        {"name":"Spellcasting","level":1,"sourceIndex":1},
+        {"name":"Wild Shape","level":2,"sourceIndex":2},
+        {"name":"Druid Circle","level":2,"sourceIndex":3},
+        {"name":"Ability Score Improvement","level":4,"sourceIndex":4},
+        {"name":"Timeless Body","level":18,"sourceIndex":5},
+        {"name":"Beast Spells","level":18,"sourceIndex":6},
+        {"name":"Archdruid","level":20,"sourceIndex":7}
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Druidic","kind":"FEATURE_GAINED","refs":["Druidic"]},
+            {"label":"Spellcasting","kind":"FEATURE_GAINED","refs":["Spellcasting"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":2,"slots":[2,null,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 2,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Wild Shape","kind":"FEATURE_GAINED","refs":["Wild Shape"]},
+            {"label":"Druid Circle","kind":"FEATURE_GAINED","refs":["Druid Circle"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":2,"slots":[3,null,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 3,
+          "proficiencyBonus": 2,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":2,"slots":[4,2,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 4,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Wild Shape improvement","kind":"FEATURE_IMPROVED","refs":["Wild Shape"]},
+            {"label":"Ability Score Improvement","kind":"FEATURE_GAINED","refs":["Ability Score Improvement"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"slots":[4,3,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 5,
+          "proficiencyBonus": 3,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"slots":[4,3,2,null,null,null,null,null,null]}
+        },
+        {
+          "level": 6,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Druid Circle feature","kind":"SUBCLASS_FEATURE","refs":["Druid Circle"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"slots":[4,3,3,null,null,null,null,null,null]}
+        },
+        {
+          "level": 7,
+          "proficiencyBonus": 3,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"slots":[4,3,3,1,null,null,null,null,null]}
+        },
+        {
+          "level": 8,
+          "proficiencyBonus": 3,
+          "features": [
+            {"label":"Wild Shape improvement","kind":"FEATURE_IMPROVED","refs":["Wild Shape"]},
+            {"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"slots":[4,3,3,2,null,null,null,null,null]}
+        },
+        {
+          "level": 9,
+          "proficiencyBonus": 4,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"slots":[4,3,3,3,1,null,null,null,null]}
+        },
+        {
+          "level": 10,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Druid Circle feature","kind":"SUBCLASS_FEATURE","refs":["Druid Circle"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,3,2,null,null,null,null]}
+        },
+        {
+          "level": 11,
+          "proficiencyBonus": 4,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,3,2,1,null,null,null]}
+        },
+        {
+          "level": 12,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,3,2,1,null,null,null]}
+        },
+        {
+          "level": 13,
+          "proficiencyBonus": 5,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,3,2,1,1,null,null]}
+        },
+        {
+          "level": 14,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Druid Circle feature","kind":"SUBCLASS_FEATURE","refs":["Druid Circle"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,3,2,1,1,null,null]}
+        },
+        {
+          "level": 15,
+          "proficiencyBonus": 5,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,3,2,1,1,1,null]}
+        },
+        {
+          "level": 16,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,3,2,1,1,1,null]}
+        },
+        {
+          "level": 17,
+          "proficiencyBonus": 6,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,3,2,1,1,1,1]}
+        },
+        {
+          "level": 18,
+          "proficiencyBonus": 6,
+          "features": [
+            {"label":"Timeless Body","kind":"FEATURE_GAINED","refs":["Timeless Body"]},
+            {"label":"Beast Spells","kind":"FEATURE_GAINED","refs":["Beast Spells"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,3,3,1,1,1,1]}
+        },
+        {
+          "level": 19,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,3,3,2,1,1,1]}
+        },
+        {
+          "level": 20,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Archdruid","kind":"FEATURE_GAINED","refs":["Archdruid"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,3,3,2,2,1,1]}
+        }
+      ]
+    },
+    {
+      "id": "srd:class:fighter",
+      "name": "Fighter",
+      "source": {
+        "file": "character_options",
+        "entry": "srd:class:fighter",
+        "pages": [24,25],
+        "heading": "Fighter",
+        "readiness": "parsed"
+      },
+      "hitDie": {
+        "die": "d10",
+        "sides": 10,
+        "src": {"file":"character_options","entry":"srd:class:fighter","path":["data","hitDie"],"quote":"1d10"}
+      },
+      "hitPoints": {
+        "firstLevel": {
+          "base": 10,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:fighter",
+            "path": ["data","hitPoints","level1"],
+            "quote": "10 + your Constitution modifier"
+          }
+        },
+        "laterLevels": {
+          "roll": "1d10",
+          "fixed": 6,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:fighter",
+            "path": ["data","hitPoints","higher"],
+            "quote": "1d10 (or 6) + your Constitution modifier per fighter level after 1st"
+          }
+        }
+      },
+      "primaryAbility": {
+        "status": "UNAVAILABLE",
+        "reason": "No tracked SRD 5.1 file states a primary ability for any class. The only SRD table that pairs classes with ability scores is Multiclassing Prerequisites (srd:rule:beyond-1st-level-multiclassing), which belongs to the optional multiclassing rule and is not a primary-ability statement.",
+        "search": {
+          "files": ["character_options","rules","spells","equipment","creatures","magic_items"],
+          "pattern": "primary abilit",
+          "caseInsensitive": true,
+          "matches": 0
+        }
+      },
+      "savingThrows": {
+        "abilities": ["Strength","Constitution"],
+        "src": {
+          "file": "character_options",
+          "entry": "srd:class:fighter",
+          "path": ["data","savingThrows"],
+          "quote": "[\"Strength\",\"Constitution\"]"
+        }
+      },
+      "proficiencies": {
+        "armor": {
+          "grants": [
+            {"token":"All armor","armorCategories":["light","medium","heavy"]},
+            {"token":"shields","armorCategories":["shield"]}
+          ],
+          "qualifier": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:fighter",
+            "path": ["data","proficiencies","armor"],
+            "quote": "All armor, shields"
+          }
+        },
+        "weapons": {
+          "grants": [
+            {"token":"Simple weapons","weaponCategory":"simple"},
+            {"token":"martial weapons","weaponCategory":"martial"}
+          ],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:fighter",
+            "path": ["data","proficiencies","weapons"],
+            "quote": "Simple weapons, martial weapons"
+          }
+        },
+        "tools": {
+          "fixed": [],
+          "choice": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:fighter",
+            "path": ["data","proficiencies","tools"],
+            "quote": "None"
+          }
+        },
+        "skills": {
+          "choose": 2,
+          "from": ["Acrobatics","Animal Handling","Athletics","History","Insight","Intimidation","Perception","Survival"],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:fighter",
+            "path": ["data","proficiencies","skills"],
+            "quote": "Choose two skills from Acrobatics, Animal Handling, Athletics, History, Insight, Intimidation, Perception, and Survival"
+          }
+        }
+      },
+      "spellcasting": {"status":"NONE","basis":"NO_SPELLCASTING_FEATURE"},
+      "subclass": {
+        "choiceFeature": "Martial Archetype",
+        "choiceLevel": 3,
+        "featureLevels": [3,7,10,15,18],
+        "srdSubclasses": ["srd:subclass:champion"]
+      },
+      "tableSrc": {
+        "file": "character_options",
+        "entry": "srd:class:fighter",
+        "path": ["data","classTable","caption"],
+        "quote": "The Fighter"
+      },
+      "classColumns": [],
+      "features": [
+        {"name":"Fighting Style","level":1,"sourceIndex":0},
+        {"name":"Second Wind","level":1,"sourceIndex":1},
+        {"name":"Action Surge","level":2,"sourceIndex":2},
+        {"name":"Martial Archetype","level":3,"sourceIndex":3},
+        {"name":"Ability Score Improvement","level":4,"sourceIndex":4},
+        {"name":"Extra Attack","level":5,"sourceIndex":5},
+        {"name":"Indomitable","level":9,"sourceIndex":6}
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Fighting Style","kind":"FEATURE_GAINED","refs":["Fighting Style"]},
+            {"label":"Second Wind","kind":"FEATURE_GAINED","refs":["Second Wind"]}
+          ],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 2,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Action Surge (one use)","kind":"FEATURE_GAINED","refs":["Action Surge"],"detail":"one use"}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 3,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Martial Archetype","kind":"FEATURE_GAINED","refs":["Martial Archetype"]}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 4,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_GAINED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 5,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Extra Attack","kind":"FEATURE_GAINED","refs":["Extra Attack"]}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 6,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 7,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Martial Archetype feature","kind":"SUBCLASS_FEATURE","refs":["Martial Archetype"]}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 8,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 9,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Indomitable (one use)","kind":"FEATURE_GAINED","refs":["Indomitable"],"detail":"one use"}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 10,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Martial Archetype feature","kind":"SUBCLASS_FEATURE","refs":["Martial Archetype"]}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 11,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Extra Attack (2)","kind":"FEATURE_ADVANCED","refs":["Extra Attack"],"detail":"2"}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 12,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 13,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Indomitable (two uses)","kind":"FEATURE_ADVANCED","refs":["Indomitable"],"detail":"two uses"}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 14,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 15,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Martial Archetype feature","kind":"SUBCLASS_FEATURE","refs":["Martial Archetype"]}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 16,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 17,
+          "proficiencyBonus": 6,
+          "features": [
+            {"label":"Action Surge (two uses)","kind":"FEATURE_ADVANCED","refs":["Action Surge"],"detail":"two uses"},
+            {
+              "label": "Indomitable (three uses)",
+              "kind": "FEATURE_ADVANCED",
+              "refs": ["Indomitable"],
+              "detail": "three uses"
+            }
+          ],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 18,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Martial Archetype feature","kind":"SUBCLASS_FEATURE","refs":["Martial Archetype"]}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 19,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": null
+        },
+        {
+          "level": 20,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Extra Attack (3)","kind":"FEATURE_ADVANCED","refs":["Extra Attack"],"detail":"3"}],
+          "classColumns": {},
+          "spellcasting": null
+        }
+      ]
+    },
+    {
+      "id": "srd:class:monk",
+      "name": "Monk",
+      "source": {"file":"character_options","entry":"srd:class:monk","pages":[26,27,28],"heading":"Monk","readiness":"parsed"},
+      "hitDie": {
+        "die": "d8",
+        "sides": 8,
+        "src": {"file":"character_options","entry":"srd:class:monk","path":["data","hitDie"],"quote":"1d8"}
+      },
+      "hitPoints": {
+        "firstLevel": {
+          "base": 8,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:monk",
+            "path": ["data","hitPoints","level1"],
+            "quote": "8 + your Constitution modifier"
+          }
+        },
+        "laterLevels": {
+          "roll": "1d8",
+          "fixed": 5,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:monk",
+            "path": ["data","hitPoints","higher"],
+            "quote": "1d8 (or 5) + your Constitution modifier per monk level after 1st"
+          }
+        }
+      },
+      "primaryAbility": {
+        "status": "UNAVAILABLE",
+        "reason": "No tracked SRD 5.1 file states a primary ability for any class. The only SRD table that pairs classes with ability scores is Multiclassing Prerequisites (srd:rule:beyond-1st-level-multiclassing), which belongs to the optional multiclassing rule and is not a primary-ability statement.",
+        "search": {
+          "files": ["character_options","rules","spells","equipment","creatures","magic_items"],
+          "pattern": "primary abilit",
+          "caseInsensitive": true,
+          "matches": 0
+        }
+      },
+      "savingThrows": {
+        "abilities": ["Strength","Dexterity"],
+        "src": {
+          "file": "character_options",
+          "entry": "srd:class:monk",
+          "path": ["data","savingThrows"],
+          "quote": "[\"Strength\",\"Dexterity\"]"
+        }
+      },
+      "proficiencies": {
+        "armor": {
+          "grants": [],
+          "qualifier": null,
+          "src": {"file":"character_options","entry":"srd:class:monk","path":["data","proficiencies","armor"],"quote":"None"}
+        },
+        "weapons": {
+          "grants": [
+            {"token":"Simple weapons","weaponCategory":"simple"},
+            {"token":"shortswords","equipment":"srd:weapon:shortsword"}
+          ],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:monk",
+            "path": ["data","proficiencies","weapons"],
+            "quote": "Simple weapons, shortswords"
+          }
+        },
+        "tools": {
+          "fixed": [],
+          "choice": {"count":1,"groups":["Artisan’s tools","Musical instrument"]},
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:monk",
+            "path": ["data","proficiencies","tools"],
+            "quote": "Choose one type of artisan’s tools or one musical instrument"
+          }
+        },
+        "skills": {
+          "choose": 2,
+          "from": ["Acrobatics","Athletics","History","Insight","Religion","Stealth"],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:monk",
+            "path": ["data","proficiencies","skills"],
+            "quote": "Choose two from Acrobatics, Athletics, History, Insight, Religion, and Stealth"
+          }
+        }
+      },
+      "spellcasting": {"status":"NONE","basis":"NO_SPELLCASTING_FEATURE"},
+      "subclass": {
+        "choiceFeature": "Monastic Tradition",
+        "choiceLevel": 3,
+        "featureLevels": [3,6,11,17],
+        "srdSubclasses": ["srd:subclass:way-of-the-open-hand"]
+      },
+      "tableSrc": {"file":"character_options","entry":"srd:class:monk","path":["data","classTable","caption"],"quote":"The Monk"},
+      "classColumns": [
+        {"key":"martialArts","sourceColumn":"Martial Arts","valueType":"DICE"},
+        {"key":"kiPoints","sourceColumn":"Ki Points","valueType":"COUNT"},
+        {"key":"unarmoredMovement","sourceColumn":"Unarmored Movement","valueType":"FEET_BONUS"}
+      ],
+      "features": [
+        {"name":"Unarmored Defense","level":1,"sourceIndex":0},
+        {"name":"Martial Arts","level":1,"sourceIndex":1},
+        {"name":"Ki","level":2,"sourceIndex":2},
+        {"name":"Unarmored Movement","level":2,"sourceIndex":3},
+        {"name":"Monastic Tradition","level":3,"sourceIndex":4},
+        {"name":"Deflect Missiles","level":3,"sourceIndex":5},
+        {"name":"Ability Score Improvement","level":4,"sourceIndex":6},
+        {"name":"Slow Fall","level":4,"sourceIndex":7},
+        {"name":"Extra Attack","level":5,"sourceIndex":8},
+        {"name":"Stunning Strike","level":5,"sourceIndex":9},
+        {"name":"Ki-Empowered Strikes","level":6,"sourceIndex":10},
+        {"name":"Evasion","level":7,"sourceIndex":11},
+        {"name":"Stillness of Mind","level":7,"sourceIndex":12},
+        {"name":"Purity of Body","level":10,"sourceIndex":13},
+        {"name":"Tongue of the Sun and Moon","level":13,"sourceIndex":14},
+        {"name":"Diamond Soul","level":14,"sourceIndex":15},
+        {"name":"Timeless Body","level":15,"sourceIndex":16},
+        {"name":"Empty Body","level":18,"sourceIndex":17},
+        {"name":"Perfect Self","level":20,"sourceIndex":18}
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Unarmored Defense","kind":"FEATURE_GAINED","refs":["Unarmored Defense"]},
+            {"label":"Martial Arts","kind":"FEATURE_GAINED","refs":["Martial Arts"]}
+          ],
+          "classColumns": {"martialArts":"1d4","kiPoints":null,"unarmoredMovement":null},
+          "spellcasting": null
+        },
+        {
+          "level": 2,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Ki","kind":"FEATURE_GAINED","refs":["Ki"]},
+            {"label":"Unarmored Movement","kind":"FEATURE_GAINED","refs":["Unarmored Movement"]}
+          ],
+          "classColumns": {"martialArts":"1d4","kiPoints":2,"unarmoredMovement":10},
+          "spellcasting": null
+        },
+        {
+          "level": 3,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Monastic Tradition","kind":"FEATURE_GAINED","refs":["Monastic Tradition"]},
+            {"label":"Deflect Missiles","kind":"FEATURE_GAINED","refs":["Deflect Missiles"]}
+          ],
+          "classColumns": {"martialArts":"1d4","kiPoints":3,"unarmoredMovement":10},
+          "spellcasting": null
+        },
+        {
+          "level": 4,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Ability Score Improvement","kind":"FEATURE_GAINED","refs":["Ability Score Improvement"]},
+            {"label":"Slow Fall","kind":"FEATURE_GAINED","refs":["Slow Fall"]}
+          ],
+          "classColumns": {"martialArts":"1d4","kiPoints":4,"unarmoredMovement":10},
+          "spellcasting": null
+        },
+        {
+          "level": 5,
+          "proficiencyBonus": 3,
+          "features": [
+            {"label":"Extra Attack","kind":"FEATURE_GAINED","refs":["Extra Attack"]},
+            {"label":"Stunning Strike","kind":"FEATURE_GAINED","refs":["Stunning Strike"]}
+          ],
+          "classColumns": {"martialArts":"1d6","kiPoints":5,"unarmoredMovement":10},
+          "spellcasting": null
+        },
+        {
+          "level": 6,
+          "proficiencyBonus": 3,
+          "features": [
+            {"label":"Ki-Empowered Strikes","kind":"FEATURE_GAINED","refs":["Ki-Empowered Strikes"]},
+            {"label":"Monastic Tradition feature","kind":"SUBCLASS_FEATURE","refs":["Monastic Tradition"]}
+          ],
+          "classColumns": {"martialArts":"1d6","kiPoints":6,"unarmoredMovement":15},
+          "spellcasting": null
+        },
+        {
+          "level": 7,
+          "proficiencyBonus": 3,
+          "features": [
+            {"label":"Evasion","kind":"FEATURE_GAINED","refs":["Evasion"]},
+            {"label":"Stillness of Mind","kind":"FEATURE_GAINED","refs":["Stillness of Mind"]}
+          ],
+          "classColumns": {"martialArts":"1d6","kiPoints":7,"unarmoredMovement":15},
+          "spellcasting": null
+        },
+        {
+          "level": 8,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"martialArts":"1d6","kiPoints":8,"unarmoredMovement":15},
+          "spellcasting": null
+        },
+        {
+          "level": 9,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Unarmored Movement improvement","kind":"FEATURE_IMPROVED","refs":["Unarmored Movement"]}],
+          "classColumns": {"martialArts":"1d6","kiPoints":9,"unarmoredMovement":15},
+          "spellcasting": null
+        },
+        {
+          "level": 10,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Purity of Body","kind":"FEATURE_GAINED","refs":["Purity of Body"]}],
+          "classColumns": {"martialArts":"1d6","kiPoints":10,"unarmoredMovement":20},
+          "spellcasting": null
+        },
+        {
+          "level": 11,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Monastic Tradition feature","kind":"SUBCLASS_FEATURE","refs":["Monastic Tradition"]}],
+          "classColumns": {"martialArts":"1d8","kiPoints":11,"unarmoredMovement":20},
+          "spellcasting": null
+        },
+        {
+          "level": 12,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"martialArts":"1d8","kiPoints":12,"unarmoredMovement":20},
+          "spellcasting": null
+        },
+        {
+          "level": 13,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Tongue of the Sun and Moon","kind":"FEATURE_GAINED","refs":["Tongue of the Sun and Moon"]}],
+          "classColumns": {"martialArts":"1d8","kiPoints":13,"unarmoredMovement":20},
+          "spellcasting": null
+        },
+        {
+          "level": 14,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Diamond Soul","kind":"FEATURE_GAINED","refs":["Diamond Soul"]}],
+          "classColumns": {"martialArts":"1d8","kiPoints":14,"unarmoredMovement":25},
+          "spellcasting": null
+        },
+        {
+          "level": 15,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Timeless Body","kind":"FEATURE_GAINED","refs":["Timeless Body"]}],
+          "classColumns": {"martialArts":"1d8","kiPoints":15,"unarmoredMovement":25},
+          "spellcasting": null
+        },
+        {
+          "level": 16,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"martialArts":"1d8","kiPoints":16,"unarmoredMovement":25},
+          "spellcasting": null
+        },
+        {
+          "level": 17,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Monastic Tradition feature","kind":"SUBCLASS_FEATURE","refs":["Monastic Tradition"]}],
+          "classColumns": {"martialArts":"1d10","kiPoints":17,"unarmoredMovement":25},
+          "spellcasting": null
+        },
+        {
+          "level": 18,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Empty Body","kind":"FEATURE_GAINED","refs":["Empty Body"]}],
+          "classColumns": {"martialArts":"1d10","kiPoints":18,"unarmoredMovement":30},
+          "spellcasting": null
+        },
+        {
+          "level": 19,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"martialArts":"1d10","kiPoints":19,"unarmoredMovement":30},
+          "spellcasting": null
+        },
+        {
+          "level": 20,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Perfect Self","kind":"FEATURE_GAINED","refs":["Perfect Self"]}],
+          "classColumns": {"martialArts":"1d10","kiPoints":20,"unarmoredMovement":30},
+          "spellcasting": null
+        }
+      ]
+    },
+    {
+      "id": "srd:class:paladin",
+      "name": "Paladin",
+      "source": {
+        "file": "character_options",
+        "entry": "srd:class:paladin",
+        "pages": [30,31,32,33,34],
+        "heading": "Paladin",
+        "readiness": "parsed"
+      },
+      "hitDie": {
+        "die": "d10",
+        "sides": 10,
+        "src": {"file":"character_options","entry":"srd:class:paladin","path":["data","hitDie"],"quote":"1d10"}
+      },
+      "hitPoints": {
+        "firstLevel": {
+          "base": 10,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:paladin",
+            "path": ["data","hitPoints","level1"],
+            "quote": "10 + your Constitution modifier"
+          }
+        },
+        "laterLevels": {
+          "roll": "1d10",
+          "fixed": 6,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:paladin",
+            "path": ["data","hitPoints","higher"],
+            "quote": "1d10 (or 6) + your Constitution modifier per paladin level after 1st"
+          }
+        }
+      },
+      "primaryAbility": {
+        "status": "UNAVAILABLE",
+        "reason": "No tracked SRD 5.1 file states a primary ability for any class. The only SRD table that pairs classes with ability scores is Multiclassing Prerequisites (srd:rule:beyond-1st-level-multiclassing), which belongs to the optional multiclassing rule and is not a primary-ability statement.",
+        "search": {
+          "files": ["character_options","rules","spells","equipment","creatures","magic_items"],
+          "pattern": "primary abilit",
+          "caseInsensitive": true,
+          "matches": 0
+        }
+      },
+      "savingThrows": {
+        "abilities": ["Wisdom","Charisma"],
+        "src": {
+          "file": "character_options",
+          "entry": "srd:class:paladin",
+          "path": ["data","savingThrows"],
+          "quote": "[\"Wisdom\",\"Charisma\"]"
+        }
+      },
+      "proficiencies": {
+        "armor": {
+          "grants": [
+            {"token":"All armor","armorCategories":["light","medium","heavy"]},
+            {"token":"shields","armorCategories":["shield"]}
+          ],
+          "qualifier": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:paladin",
+            "path": ["data","proficiencies","armor"],
+            "quote": "All armor, shields"
+          }
+        },
+        "weapons": {
+          "grants": [
+            {"token":"Simple weapons","weaponCategory":"simple"},
+            {"token":"martial weapons","weaponCategory":"martial"}
+          ],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:paladin",
+            "path": ["data","proficiencies","weapons"],
+            "quote": "Simple weapons, martial weapons"
+          }
+        },
+        "tools": {
+          "fixed": [],
+          "choice": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:paladin",
+            "path": ["data","proficiencies","tools"],
+            "quote": "None"
+          }
+        },
+        "skills": {
+          "choose": 2,
+          "from": ["Athletics","Insight","Intimidation","Medicine","Persuasion","Religion"],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:paladin",
+            "path": ["data","proficiencies","skills"],
+            "quote": "Choose two from Athletics, Insight, Intimidation, Medicine, Persuasion, and Religion"
+          }
+        }
+      },
+      "spellcasting": {
+        "status": "PRESENT",
+        "feature": "Spellcasting",
+        "featureIndex": 3,
+        "gainedAtLevel": 2,
+        "ability": "Charisma",
+        "abilitySrc": {
+          "file": "character_options",
+          "entry": "srd:class:paladin",
+          "path": ["data","features",3,"text"],
+          "quote": "Charisma is your spellcasting ability for your paladin spells"
+        },
+        "spellList": "srd:spell-list:paladin-spells",
+        "slotModel": "SPELL_LEVEL_SLOTS",
+        "maxSlotLevel": 5,
+        "progressionColumns": ["slots"],
+        "preparation": {
+          "model": "PREPARED",
+          "ability": "Charisma",
+          "classLevel": "HALF_ROUNDED_DOWN",
+          "minimum": 1,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:paladin",
+            "path": ["data","features",3,"text"],
+            "quote": "choose a number of paladin spells equal to your Charisma modifier + half your paladin level, rounded down (minimum of one spell)"
+          }
+        },
+        "slotRecovery": {
+          "rest": "LONG_REST",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:paladin",
+            "path": ["data","features",3,"text"],
+            "quote": "You regain all expended spell slots when you finish a long rest."
+          }
+        },
+        "ritualCasting": {"status":"NONE","basis":"NO_RITUAL_CASTING_SUBSECTION"},
+        "focus": {
+          "status": "PRESENT",
+          "item": "holy symbol",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:paladin",
+            "path": ["data","features",3,"text"],
+            "quote": "You can use a holy symbol as a spellcasting focus"
+          }
+        }
+      },
+      "subclass": {
+        "choiceFeature": "Sacred Oath",
+        "choiceLevel": 3,
+        "featureLevels": [3,7,15,20],
+        "srdSubclasses": ["srd:subclass:oath-of-devotion"]
+      },
+      "tableSrc": {
+        "file": "character_options",
+        "entry": "srd:class:paladin",
+        "path": ["data","classTable","caption"],
+        "quote": "The Paladin"
+      },
+      "classColumns": [],
+      "features": [
+        {"name":"Divine Sense","level":1,"sourceIndex":0},
+        {"name":"Lay on Hands","level":1,"sourceIndex":1},
+        {"name":"Fighting Style","level":2,"sourceIndex":2},
+        {"name":"Spellcasting","level":2,"sourceIndex":3},
+        {"name":"Divine Smite","level":2,"sourceIndex":4},
+        {"name":"Divine Health","level":3,"sourceIndex":5},
+        {"name":"Sacred Oath","level":3,"sourceIndex":6},
+        {"name":"Ability Score Improvement","level":4,"sourceIndex":7},
+        {"name":"Extra Attack","level":5,"sourceIndex":8},
+        {"name":"Aura of Protection","level":6,"sourceIndex":9},
+        {"name":"Aura of Courage","level":10,"sourceIndex":10},
+        {"name":"Improved Divine Smite","level":11,"sourceIndex":11},
+        {"name":"Cleansing Touch","level":14,"sourceIndex":12}
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Divine Sense","kind":"FEATURE_GAINED","refs":["Divine Sense"]},
+            {"label":"Lay on Hands","kind":"FEATURE_GAINED","refs":["Lay on Hands"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"slots":[null,null,null,null,null]}
+        },
+        {
+          "level": 2,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Fighting Style","kind":"FEATURE_GAINED","refs":["Fighting Style"]},
+            {"label":"Spellcasting","kind":"FEATURE_GAINED","refs":["Spellcasting"]},
+            {"label":"Divine Smite","kind":"FEATURE_GAINED","refs":["Divine Smite"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"slots":[2,null,null,null,null]}
+        },
+        {
+          "level": 3,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Divine Health","kind":"FEATURE_GAINED","refs":["Divine Health"]},
+            {"label":"Sacred Oath","kind":"FEATURE_GAINED","refs":["Sacred Oath"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"slots":[3,null,null,null,null]}
+        },
+        {
+          "level": 4,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_GAINED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[3,null,null,null,null]}
+        },
+        {
+          "level": 5,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Extra Attack","kind":"FEATURE_GAINED","refs":["Extra Attack"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[4,2,null,null,null]}
+        },
+        {
+          "level": 6,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Aura of Protection","kind":"FEATURE_GAINED","refs":["Aura of Protection"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[4,2,null,null,null]}
+        },
+        {
+          "level": 7,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Sacred Oath feature","kind":"SUBCLASS_FEATURE","refs":["Sacred Oath"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[4,3,null,null,null]}
+        },
+        {
+          "level": 8,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[4,3,null,null,null]}
+        },
+        {"level":9,"proficiencyBonus":4,"features":[],"classColumns":{},"spellcasting":{"slots":[4,3,2,null,null]}},
+        {
+          "level": 10,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Aura of Courage","kind":"FEATURE_GAINED","refs":["Aura of Courage"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[4,3,2,null,null]}
+        },
+        {
+          "level": 11,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Improved Divine Smite","kind":"FEATURE_GAINED","refs":["Improved Divine Smite"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[4,3,3,null,null]}
+        },
+        {
+          "level": 12,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[4,3,3,null,null]}
+        },
+        {"level":13,"proficiencyBonus":5,"features":[],"classColumns":{},"spellcasting":{"slots":[4,3,3,1,null]}},
+        {
+          "level": 14,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Cleansing Touch","kind":"FEATURE_GAINED","refs":["Cleansing Touch"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[4,3,3,1,null]}
+        },
+        {
+          "level": 15,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Sacred Oath feature","kind":"SUBCLASS_FEATURE","refs":["Sacred Oath"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[4,3,3,2,null]}
+        },
+        {
+          "level": 16,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[4,3,3,2,null]}
+        },
+        {"level":17,"proficiencyBonus":6,"features":[],"classColumns":{},"spellcasting":{"slots":[4,3,3,3,1]}},
+        {
+          "level": 18,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Aura improvements","kind":"FEATURE_IMPROVED","refs":["Aura of Protection","Aura of Courage"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[4,3,3,3,1]}
+        },
+        {
+          "level": 19,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[4,3,3,3,2]}
+        },
+        {
+          "level": 20,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Sacred Oath feature","kind":"SUBCLASS_FEATURE","refs":["Sacred Oath"]}],
+          "classColumns": {},
+          "spellcasting": {"slots":[4,3,3,3,2]}
+        }
+      ]
+    },
+    {
+      "id": "srd:class:ranger",
+      "name": "Ranger",
+      "source": {
+        "file": "character_options",
+        "entry": "srd:class:ranger",
+        "pages": [35,36,37],
+        "heading": "Ranger",
+        "readiness": "parsed"
+      },
+      "hitDie": {
+        "die": "d10",
+        "sides": 10,
+        "src": {"file":"character_options","entry":"srd:class:ranger","path":["data","hitDie"],"quote":"1d10"}
+      },
+      "hitPoints": {
+        "firstLevel": {
+          "base": 10,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:ranger",
+            "path": ["data","hitPoints","level1"],
+            "quote": "10 + your Constitution modifier"
+          }
+        },
+        "laterLevels": {
+          "roll": "1d10",
+          "fixed": 6,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:ranger",
+            "path": ["data","hitPoints","higher"],
+            "quote": "1d10 (or 6) + your Constitution modifier per ranger level after 1st"
+          }
+        }
+      },
+      "primaryAbility": {
+        "status": "UNAVAILABLE",
+        "reason": "No tracked SRD 5.1 file states a primary ability for any class. The only SRD table that pairs classes with ability scores is Multiclassing Prerequisites (srd:rule:beyond-1st-level-multiclassing), which belongs to the optional multiclassing rule and is not a primary-ability statement.",
+        "search": {
+          "files": ["character_options","rules","spells","equipment","creatures","magic_items"],
+          "pattern": "primary abilit",
+          "caseInsensitive": true,
+          "matches": 0
+        }
+      },
+      "savingThrows": {
+        "abilities": ["Strength","Dexterity"],
+        "src": {
+          "file": "character_options",
+          "entry": "srd:class:ranger",
+          "path": ["data","savingThrows"],
+          "quote": "[\"Strength\",\"Dexterity\"]"
+        }
+      },
+      "proficiencies": {
+        "armor": {
+          "grants": [
+            {"token":"Light armor","armorCategories":["light"]},
+            {"token":"medium armor","armorCategories":["medium"]},
+            {"token":"shields","armorCategories":["shield"]}
+          ],
+          "qualifier": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:ranger",
+            "path": ["data","proficiencies","armor"],
+            "quote": "Light armor, medium armor, shields"
+          }
+        },
+        "weapons": {
+          "grants": [
+            {"token":"Simple weapons","weaponCategory":"simple"},
+            {"token":"martial weapons","weaponCategory":"martial"}
+          ],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:ranger",
+            "path": ["data","proficiencies","weapons"],
+            "quote": "Simple weapons, martial weapons"
+          }
+        },
+        "tools": {
+          "fixed": [],
+          "choice": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:ranger",
+            "path": ["data","proficiencies","tools"],
+            "quote": "None"
+          }
+        },
+        "skills": {
+          "choose": 3,
+          "from": ["Animal Handling","Athletics","Insight","Investigation","Nature","Perception","Stealth","Survival"],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:ranger",
+            "path": ["data","proficiencies","skills"],
+            "quote": "Choose three from Animal Handling, Athletics, Insight, Investigation, Nature, Perception, Stealth, and Survival"
+          }
+        }
+      },
+      "spellcasting": {
+        "status": "PRESENT",
+        "feature": "Spellcasting",
+        "featureIndex": 3,
+        "gainedAtLevel": 2,
+        "ability": "Wisdom",
+        "abilitySrc": {
+          "file": "character_options",
+          "entry": "srd:class:ranger",
+          "path": ["data","features",3,"text"],
+          "quote": "Wisdom is your spellcasting ability for your ranger spells"
+        },
+        "spellList": "srd:spell-list:ranger-spells",
+        "slotModel": "SPELL_LEVEL_SLOTS",
+        "maxSlotLevel": 5,
+        "progressionColumns": ["spellsKnown","slots"],
+        "preparation": {
+          "model": "KNOWN",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:ranger",
+            "path": ["data","features",3,"subheadings"],
+            "quote": "[\"Spell Slots\",\"Spells Known of 1st Level and Higher\",\"Spellcasting Ability\"]"
+          }
+        },
+        "slotRecovery": {
+          "rest": "LONG_REST",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:ranger",
+            "path": ["data","features",3,"text"],
+            "quote": "You regain all expended spell slots when you finish a long rest."
+          }
+        },
+        "ritualCasting": {"status":"NONE","basis":"NO_RITUAL_CASTING_SUBSECTION"},
+        "focus": {"status":"NONE","basis":"NO_SPELLCASTING_FOCUS_SUBSECTION"}
+      },
+      "subclass": {
+        "choiceFeature": "Ranger Archetype",
+        "choiceLevel": 3,
+        "featureLevels": [3,7,11,15],
+        "srdSubclasses": ["srd:subclass:hunter"]
+      },
+      "tableSrc": {
+        "file": "character_options",
+        "entry": "srd:class:ranger",
+        "path": ["data","classTable","caption"],
+        "quote": "The Ranger"
+      },
+      "classColumns": [],
+      "features": [
+        {"name":"Favored Enemy","level":1,"sourceIndex":0},
+        {"name":"Natural Explorer","level":1,"sourceIndex":1},
+        {"name":"Fighting Style","level":2,"sourceIndex":2},
+        {"name":"Spellcasting","level":2,"sourceIndex":3},
+        {"name":"Ranger Archetype","level":3,"sourceIndex":4},
+        {"name":"Primeval Awareness","level":3,"sourceIndex":5},
+        {"name":"Ability Score Improvement","level":4,"sourceIndex":6},
+        {"name":"Extra Attack","level":5,"sourceIndex":7},
+        {"name":"Land’s Stride","level":8,"sourceIndex":8},
+        {"name":"Hide in Plain Sight","level":10,"sourceIndex":9},
+        {"name":"Vanish","level":14,"sourceIndex":10},
+        {"name":"Feral Senses","level":18,"sourceIndex":11},
+        {"name":"Foe Slayer","level":20,"sourceIndex":12}
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Favored Enemy","kind":"FEATURE_GAINED","refs":["Favored Enemy"]},
+            {"label":"Natural Explorer","kind":"FEATURE_GAINED","refs":["Natural Explorer"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":null,"slots":[null,null,null,null,null]}
+        },
+        {
+          "level": 2,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Fighting Style","kind":"FEATURE_GAINED","refs":["Fighting Style"]},
+            {"label":"Spellcasting","kind":"FEATURE_GAINED","refs":["Spellcasting"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":2,"slots":[2,null,null,null,null]}
+        },
+        {
+          "level": 3,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Ranger Archetype","kind":"FEATURE_GAINED","refs":["Ranger Archetype"]},
+            {"label":"Primeval Awareness","kind":"FEATURE_GAINED","refs":["Primeval Awareness"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":3,"slots":[3,null,null,null,null]}
+        },
+        {
+          "level": 4,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_GAINED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":3,"slots":[3,null,null,null,null]}
+        },
+        {
+          "level": 5,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Extra Attack","kind":"FEATURE_GAINED","refs":["Extra Attack"]}],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":4,"slots":[4,2,null,null,null]}
+        },
+        {
+          "level": 6,
+          "proficiencyBonus": 3,
+          "features": [
+            {
+              "label": "Favored Enemy and Natural Explorer improvements",
+              "kind": "FEATURE_IMPROVED",
+              "refs": ["Favored Enemy","Natural Explorer"]
+            }
+          ],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":4,"slots":[4,2,null,null,null]}
+        },
+        {
+          "level": 7,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Ranger Archetype feature","kind":"SUBCLASS_FEATURE","refs":["Ranger Archetype"]}],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":5,"slots":[4,3,null,null,null]}
+        },
+        {
+          "level": 8,
+          "proficiencyBonus": 3,
+          "features": [
+            {"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]},
+            {"label":"Land’s Stride","kind":"FEATURE_GAINED","refs":["Land’s Stride"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":5,"slots":[4,3,null,null,null]}
+        },
+        {
+          "level": 9,
+          "proficiencyBonus": 4,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":6,"slots":[4,3,2,null,null]}
+        },
+        {
+          "level": 10,
+          "proficiencyBonus": 4,
+          "features": [
+            {"label":"Natural Explorer improvement","kind":"FEATURE_IMPROVED","refs":["Natural Explorer"]},
+            {"label":"Hide in Plain Sight","kind":"FEATURE_GAINED","refs":["Hide in Plain Sight"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":6,"slots":[4,3,2,null,null]}
+        },
+        {
+          "level": 11,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ranger Archetype feature","kind":"SUBCLASS_FEATURE","refs":["Ranger Archetype"]}],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":7,"slots":[4,3,3,null,null]}
+        },
+        {
+          "level": 12,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":7,"slots":[4,3,3,null,null]}
+        },
+        {
+          "level": 13,
+          "proficiencyBonus": 5,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":8,"slots":[4,3,3,1,null]}
+        },
+        {
+          "level": 14,
+          "proficiencyBonus": 5,
+          "features": [
+            {"label":"Favored Enemy improvement","kind":"FEATURE_IMPROVED","refs":["Favored Enemy"]},
+            {"label":"Vanish","kind":"FEATURE_GAINED","refs":["Vanish"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":8,"slots":[4,3,3,1,null]}
+        },
+        {
+          "level": 15,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ranger Archetype feature","kind":"SUBCLASS_FEATURE","refs":["Ranger Archetype"]}],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":9,"slots":[4,3,3,2,null]}
+        },
+        {
+          "level": 16,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":9,"slots":[4,3,3,2,null]}
+        },
+        {
+          "level": 17,
+          "proficiencyBonus": 6,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":10,"slots":[4,3,3,3,1]}
+        },
+        {
+          "level": 18,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Feral Senses","kind":"FEATURE_GAINED","refs":["Feral Senses"]}],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":10,"slots":[4,3,3,3,1]}
+        },
+        {
+          "level": 19,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":11,"slots":[4,3,3,3,2]}
+        },
+        {
+          "level": 20,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Foe Slayer","kind":"FEATURE_GAINED","refs":["Foe Slayer"]}],
+          "classColumns": {},
+          "spellcasting": {"spellsKnown":11,"slots":[4,3,3,3,2]}
+        }
+      ]
+    },
+    {
+      "id": "srd:class:rogue",
+      "name": "Rogue",
+      "source": {"file":"character_options","entry":"srd:class:rogue","pages":[39,40],"heading":"Rogue","readiness":"parsed"},
+      "hitDie": {
+        "die": "d8",
+        "sides": 8,
+        "src": {"file":"character_options","entry":"srd:class:rogue","path":["data","hitDie"],"quote":"1d8"}
+      },
+      "hitPoints": {
+        "firstLevel": {
+          "base": 8,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:rogue",
+            "path": ["data","hitPoints","level1"],
+            "quote": "8 + your Constitution modifier"
+          }
+        },
+        "laterLevels": {
+          "roll": "1d8",
+          "fixed": 5,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:rogue",
+            "path": ["data","hitPoints","higher"],
+            "quote": "1d8 (or 5) + your Constitution modifier per rogue level after 1st"
+          }
+        }
+      },
+      "primaryAbility": {
+        "status": "UNAVAILABLE",
+        "reason": "No tracked SRD 5.1 file states a primary ability for any class. The only SRD table that pairs classes with ability scores is Multiclassing Prerequisites (srd:rule:beyond-1st-level-multiclassing), which belongs to the optional multiclassing rule and is not a primary-ability statement.",
+        "search": {
+          "files": ["character_options","rules","spells","equipment","creatures","magic_items"],
+          "pattern": "primary abilit",
+          "caseInsensitive": true,
+          "matches": 0
+        }
+      },
+      "savingThrows": {
+        "abilities": ["Dexterity","Intelligence"],
+        "src": {
+          "file": "character_options",
+          "entry": "srd:class:rogue",
+          "path": ["data","savingThrows"],
+          "quote": "[\"Dexterity\",\"Intelligence\"]"
+        }
+      },
+      "proficiencies": {
+        "armor": {
+          "grants": [{"token":"Light armor","armorCategories":["light"]}],
+          "qualifier": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:rogue",
+            "path": ["data","proficiencies","armor"],
+            "quote": "Light armor"
+          }
+        },
+        "weapons": {
+          "grants": [
+            {"token":"Simple weapons","weaponCategory":"simple"},
+            {"token":"hand crossbows","equipment":"srd:weapon:crossbow-hand"},
+            {"token":"longswords","equipment":"srd:weapon:longsword"},
+            {"token":"rapiers","equipment":"srd:weapon:rapier"},
+            {"token":"shortswords","equipment":"srd:weapon:shortsword"}
+          ],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:rogue",
+            "path": ["data","proficiencies","weapons"],
+            "quote": "Simple weapons, hand crossbows, longswords, rapiers, shortswords"
+          }
+        },
+        "tools": {
+          "fixed": ["srd:tool:thieves-tools"],
+          "choice": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:rogue",
+            "path": ["data","proficiencies","tools"],
+            "quote": "Thieves’ tools"
+          }
+        },
+        "skills": {
+          "choose": 4,
+          "from": [
+            "Acrobatics",
+            "Athletics",
+            "Deception",
+            "Insight",
+            "Intimidation",
+            "Investigation",
+            "Perception",
+            "Performance",
+            "Persuasion",
+            "Sleight of Hand",
+            "Stealth"
+          ],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:rogue",
+            "path": ["data","proficiencies","skills"],
+            "quote": "Choose four from Acrobatics, Athletics, Deception, Insight, Intimidation, Investigation, Perception, Performance, Persuasion, Sleight of Hand, and Stealth"
+          }
+        }
+      },
+      "spellcasting": {"status":"NONE","basis":"NO_SPELLCASTING_FEATURE"},
+      "subclass": {
+        "choiceFeature": "Roguish Archetype",
+        "choiceLevel": 3,
+        "featureLevels": [3,9,13,17],
+        "srdSubclasses": ["srd:subclass:thief"]
+      },
+      "tableSrc": {
+        "file": "character_options",
+        "entry": "srd:class:rogue",
+        "path": ["data","classTable","caption"],
+        "quote": "The Rogue"
+      },
+      "classColumns": [{"key":"sneakAttack","sourceColumn":"Sneak Attack","valueType":"DICE"}],
+      "features": [
+        {"name":"Expertise","level":1,"sourceIndex":0},
+        {"name":"Sneak Attack","level":1,"sourceIndex":1},
+        {"name":"Thieves’ Cant","level":1,"sourceIndex":2},
+        {"name":"Cunning Action","level":2,"sourceIndex":3},
+        {"name":"Roguish Archetype","level":3,"sourceIndex":4},
+        {"name":"Ability Score Improvement","level":4,"sourceIndex":5},
+        {"name":"Uncanny Dodge","level":5,"sourceIndex":6},
+        {"name":"Evasion","level":7,"sourceIndex":7},
+        {"name":"Reliable Talent","level":11,"sourceIndex":8},
+        {"name":"Blindsense","level":14,"sourceIndex":9},
+        {"name":"Slippery Mind","level":15,"sourceIndex":10},
+        {"name":"Elusive","level":18,"sourceIndex":11},
+        {"name":"Stroke of Luck","level":20,"sourceIndex":12}
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Expertise","kind":"FEATURE_GAINED","refs":["Expertise"]},
+            {"label":"Sneak Attack","kind":"FEATURE_GAINED","refs":["Sneak Attack"]},
+            {"label":"Thieves’ Cant","kind":"FEATURE_GAINED","refs":["Thieves’ Cant"]}
+          ],
+          "classColumns": {"sneakAttack":"1d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 2,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Cunning Action","kind":"FEATURE_GAINED","refs":["Cunning Action"]}],
+          "classColumns": {"sneakAttack":"1d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 3,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Roguish Archetype","kind":"FEATURE_GAINED","refs":["Roguish Archetype"]}],
+          "classColumns": {"sneakAttack":"2d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 4,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_GAINED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"sneakAttack":"2d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 5,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Uncanny Dodge","kind":"FEATURE_GAINED","refs":["Uncanny Dodge"]}],
+          "classColumns": {"sneakAttack":"3d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 6,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Expertise","kind":"FEATURE_ADVANCED","refs":["Expertise"]}],
+          "classColumns": {"sneakAttack":"3d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 7,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Evasion","kind":"FEATURE_GAINED","refs":["Evasion"]}],
+          "classColumns": {"sneakAttack":"4d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 8,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"sneakAttack":"4d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 9,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Roguish Archetype feature","kind":"SUBCLASS_FEATURE","refs":["Roguish Archetype"]}],
+          "classColumns": {"sneakAttack":"5d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 10,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"sneakAttack":"5d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 11,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Reliable Talent","kind":"FEATURE_GAINED","refs":["Reliable Talent"]}],
+          "classColumns": {"sneakAttack":"6d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 12,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"sneakAttack":"6d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 13,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Roguish Archetype feature","kind":"SUBCLASS_FEATURE","refs":["Roguish Archetype"]}],
+          "classColumns": {"sneakAttack":"7d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 14,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Blindsense","kind":"FEATURE_GAINED","refs":["Blindsense"]}],
+          "classColumns": {"sneakAttack":"7d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 15,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Slippery Mind","kind":"FEATURE_GAINED","refs":["Slippery Mind"]}],
+          "classColumns": {"sneakAttack":"8d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 16,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"sneakAttack":"8d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 17,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Roguish Archetype feature","kind":"SUBCLASS_FEATURE","refs":["Roguish Archetype"]}],
+          "classColumns": {"sneakAttack":"9d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 18,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Elusive","kind":"FEATURE_GAINED","refs":["Elusive"]}],
+          "classColumns": {"sneakAttack":"9d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 19,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"sneakAttack":"10d6"},
+          "spellcasting": null
+        },
+        {
+          "level": 20,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Stroke of Luck","kind":"FEATURE_GAINED","refs":["Stroke of Luck"]}],
+          "classColumns": {"sneakAttack":"10d6"},
+          "spellcasting": null
+        }
+      ]
+    },
+    {
+      "id": "srd:class:sorcerer",
+      "name": "Sorcerer",
+      "source": {
+        "file": "character_options",
+        "entry": "srd:class:sorcerer",
+        "pages": [42,43,44],
+        "heading": "Sorcerer",
+        "readiness": "parsed"
+      },
+      "hitDie": {
+        "die": "d6",
+        "sides": 6,
+        "src": {"file":"character_options","entry":"srd:class:sorcerer","path":["data","hitDie"],"quote":"1d6"}
+      },
+      "hitPoints": {
+        "firstLevel": {
+          "base": 6,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:sorcerer",
+            "path": ["data","hitPoints","level1"],
+            "quote": "6 + your Constitution modifier"
+          }
+        },
+        "laterLevels": {
+          "roll": "1d6",
+          "fixed": 4,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:sorcerer",
+            "path": ["data","hitPoints","higher"],
+            "quote": "1d6 (or 4) + your Constitution modifier per sorcerer level after 1st"
+          }
+        }
+      },
+      "primaryAbility": {
+        "status": "UNAVAILABLE",
+        "reason": "No tracked SRD 5.1 file states a primary ability for any class. The only SRD table that pairs classes with ability scores is Multiclassing Prerequisites (srd:rule:beyond-1st-level-multiclassing), which belongs to the optional multiclassing rule and is not a primary-ability statement.",
+        "search": {
+          "files": ["character_options","rules","spells","equipment","creatures","magic_items"],
+          "pattern": "primary abilit",
+          "caseInsensitive": true,
+          "matches": 0
+        }
+      },
+      "savingThrows": {
+        "abilities": ["Constitution","Charisma"],
+        "src": {
+          "file": "character_options",
+          "entry": "srd:class:sorcerer",
+          "path": ["data","savingThrows"],
+          "quote": "[\"Constitution\",\"Charisma\"]"
+        }
+      },
+      "proficiencies": {
+        "armor": {
+          "grants": [],
+          "qualifier": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:sorcerer",
+            "path": ["data","proficiencies","armor"],
+            "quote": "None"
+          }
+        },
+        "weapons": {
+          "grants": [
+            {"token":"Daggers","equipment":"srd:weapon:dagger"},
+            {"token":"darts","equipment":"srd:weapon:dart"},
+            {"token":"slings","equipment":"srd:weapon:sling"},
+            {"token":"quarterstaffs","equipment":"srd:weapon:quarterstaff"},
+            {"token":"light crossbows","equipment":"srd:weapon:crossbow-light"}
+          ],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:sorcerer",
+            "path": ["data","proficiencies","weapons"],
+            "quote": "Daggers, darts, slings, quarterstaffs, light crossbows"
+          }
+        },
+        "tools": {
+          "fixed": [],
+          "choice": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:sorcerer",
+            "path": ["data","proficiencies","tools"],
+            "quote": "None"
+          }
+        },
+        "skills": {
+          "choose": 2,
+          "from": ["Arcana","Deception","Insight","Intimidation","Persuasion","Religion"],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:sorcerer",
+            "path": ["data","proficiencies","skills"],
+            "quote": "Choose two from Arcana, Deception, Insight, Intimidation, Persuasion, and Religion"
+          }
+        }
+      },
+      "spellcasting": {
+        "status": "PRESENT",
+        "feature": "Spellcasting",
+        "featureIndex": 0,
+        "gainedAtLevel": 1,
+        "ability": "Charisma",
+        "abilitySrc": {
+          "file": "character_options",
+          "entry": "srd:class:sorcerer",
+          "path": ["data","features",0,"text"],
+          "quote": "Charisma is your spellcasting ability for your sorcerer spells"
+        },
+        "spellList": "srd:spell-list:sorcerer-spells",
+        "slotModel": "SPELL_LEVEL_SLOTS",
+        "maxSlotLevel": 9,
+        "progressionColumns": ["cantripsKnown","spellsKnown","slots"],
+        "preparation": {
+          "model": "KNOWN",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:sorcerer",
+            "path": ["data","features",0,"subheadings"],
+            "quote": "[\"Cantrips\",\"Spell Slots\",\"Spells Known of 1st Level and Higher\",\"Spellcasting Ability\",\"Spellcasting Focus\"]"
+          }
+        },
+        "slotRecovery": {
+          "rest": "LONG_REST",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:sorcerer",
+            "path": ["data","features",0,"text"],
+            "quote": "You regain all expended spell slots when you finish a long rest."
+          }
+        },
+        "ritualCasting": {"status":"NONE","basis":"NO_RITUAL_CASTING_SUBSECTION"},
+        "focus": {
+          "status": "PRESENT",
+          "item": "arcane focus",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:sorcerer",
+            "path": ["data","features",0,"text"],
+            "quote": "You can use an arcane focus as a spellcasting focus"
+          }
+        }
+      },
+      "subclass": {
+        "choiceFeature": "Sorcerous Origin",
+        "choiceLevel": 1,
+        "featureLevels": [1,6,14,18],
+        "srdSubclasses": ["srd:subclass:draconic-bloodline"]
+      },
+      "tableSrc": {
+        "file": "character_options",
+        "entry": "srd:class:sorcerer",
+        "path": ["data","classTable","caption"],
+        "quote": "The Sorcerer"
+      },
+      "classColumns": [{"key":"sorceryPoints","sourceColumn":"Sorcery Points","valueType":"COUNT"}],
+      "features": [
+        {"name":"Spellcasting","level":1,"sourceIndex":0},
+        {"name":"Sorcerous Origin","level":1,"sourceIndex":1},
+        {"name":"Font of Magic","level":2,"sourceIndex":2},
+        {"name":"Metamagic","level":3,"sourceIndex":3},
+        {"name":"Ability Score Improvement","level":4,"sourceIndex":4},
+        {"name":"Sorcerous Restoration","level":20,"sourceIndex":5}
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Spellcasting","kind":"FEATURE_GAINED","refs":["Spellcasting"]},
+            {"label":"Sorcerous Origin","kind":"FEATURE_GAINED","refs":["Sorcerous Origin"]}
+          ],
+          "classColumns": {"sorceryPoints":null},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":2,"slots":[2,null,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 2,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Font of Magic","kind":"FEATURE_GAINED","refs":["Font of Magic"]}],
+          "classColumns": {"sorceryPoints":2},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":3,"slots":[3,null,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 3,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Metamagic","kind":"FEATURE_GAINED","refs":["Metamagic"]}],
+          "classColumns": {"sorceryPoints":3},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":4,"slots":[4,2,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 4,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_GAINED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"sorceryPoints":4},
+          "spellcasting": {"cantripsKnown":5,"spellsKnown":5,"slots":[4,3,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 5,
+          "proficiencyBonus": 3,
+          "features": [],
+          "classColumns": {"sorceryPoints":5},
+          "spellcasting": {"cantripsKnown":5,"spellsKnown":6,"slots":[4,3,2,null,null,null,null,null,null]}
+        },
+        {
+          "level": 6,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Sorcerous Origin feature","kind":"SUBCLASS_FEATURE","refs":["Sorcerous Origin"]}],
+          "classColumns": {"sorceryPoints":6},
+          "spellcasting": {"cantripsKnown":5,"spellsKnown":7,"slots":[4,3,3,null,null,null,null,null,null]}
+        },
+        {
+          "level": 7,
+          "proficiencyBonus": 3,
+          "features": [],
+          "classColumns": {"sorceryPoints":7},
+          "spellcasting": {"cantripsKnown":5,"spellsKnown":8,"slots":[4,3,3,1,null,null,null,null,null]}
+        },
+        {
+          "level": 8,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"sorceryPoints":8},
+          "spellcasting": {"cantripsKnown":5,"spellsKnown":9,"slots":[4,3,3,2,null,null,null,null,null]}
+        },
+        {
+          "level": 9,
+          "proficiencyBonus": 4,
+          "features": [],
+          "classColumns": {"sorceryPoints":9},
+          "spellcasting": {"cantripsKnown":5,"spellsKnown":10,"slots":[4,3,3,3,1,null,null,null,null]}
+        },
+        {
+          "level": 10,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Metamagic","kind":"FEATURE_ADVANCED","refs":["Metamagic"]}],
+          "classColumns": {"sorceryPoints":10},
+          "spellcasting": {"cantripsKnown":6,"spellsKnown":11,"slots":[4,3,3,3,2,null,null,null,null]}
+        },
+        {
+          "level": 11,
+          "proficiencyBonus": 4,
+          "features": [],
+          "classColumns": {"sorceryPoints":11},
+          "spellcasting": {"cantripsKnown":6,"spellsKnown":12,"slots":[4,3,3,3,2,1,null,null,null]}
+        },
+        {
+          "level": 12,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"sorceryPoints":12},
+          "spellcasting": {"cantripsKnown":6,"spellsKnown":12,"slots":[4,3,3,3,2,1,null,null,null]}
+        },
+        {
+          "level": 13,
+          "proficiencyBonus": 5,
+          "features": [],
+          "classColumns": {"sorceryPoints":13},
+          "spellcasting": {"cantripsKnown":6,"spellsKnown":13,"slots":[4,3,3,3,2,1,1,null,null]}
+        },
+        {
+          "level": 14,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Sorcerous Origin feature","kind":"SUBCLASS_FEATURE","refs":["Sorcerous Origin"]}],
+          "classColumns": {"sorceryPoints":14},
+          "spellcasting": {"cantripsKnown":6,"spellsKnown":13,"slots":[4,3,3,3,2,1,1,null,null]}
+        },
+        {
+          "level": 15,
+          "proficiencyBonus": 5,
+          "features": [],
+          "classColumns": {"sorceryPoints":15},
+          "spellcasting": {"cantripsKnown":6,"spellsKnown":14,"slots":[4,3,3,3,2,1,1,1,null]}
+        },
+        {
+          "level": 16,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"sorceryPoints":16},
+          "spellcasting": {"cantripsKnown":6,"spellsKnown":14,"slots":[4,3,3,3,2,1,1,1,null]}
+        },
+        {
+          "level": 17,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Metamagic","kind":"FEATURE_ADVANCED","refs":["Metamagic"]}],
+          "classColumns": {"sorceryPoints":17},
+          "spellcasting": {"cantripsKnown":6,"spellsKnown":15,"slots":[4,3,3,3,2,1,1,1,1]}
+        },
+        {
+          "level": 18,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Sorcerous Origin feature","kind":"SUBCLASS_FEATURE","refs":["Sorcerous Origin"]}],
+          "classColumns": {"sorceryPoints":18},
+          "spellcasting": {"cantripsKnown":6,"spellsKnown":15,"slots":[4,3,3,3,3,1,1,1,1]}
+        },
+        {
+          "level": 19,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"sorceryPoints":19},
+          "spellcasting": {"cantripsKnown":6,"spellsKnown":15,"slots":[4,3,3,3,3,2,1,1,1]}
+        },
+        {
+          "level": 20,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Sorcerous Restoration","kind":"FEATURE_GAINED","refs":["Sorcerous Restoration"]}],
+          "classColumns": {"sorceryPoints":20},
+          "spellcasting": {"cantripsKnown":6,"spellsKnown":15,"slots":[4,3,3,3,3,2,2,1,1]}
+        }
+      ]
+    },
+    {
+      "id": "srd:class:warlock",
+      "name": "Warlock",
+      "source": {
+        "file": "character_options",
+        "entry": "srd:class:warlock",
+        "pages": [46,47,48,49,50,51],
+        "heading": "Warlock",
+        "readiness": "parsed"
+      },
+      "hitDie": {
+        "die": "d8",
+        "sides": 8,
+        "src": {"file":"character_options","entry":"srd:class:warlock","path":["data","hitDie"],"quote":"1d8"}
+      },
+      "hitPoints": {
+        "firstLevel": {
+          "base": 8,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:warlock",
+            "path": ["data","hitPoints","level1"],
+            "quote": "8 + your Constitution modifier"
+          }
+        },
+        "laterLevels": {
+          "roll": "1d8",
+          "fixed": 5,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:warlock",
+            "path": ["data","hitPoints","higher"],
+            "quote": "1d8 (or 5) + your Constitution modifier per warlock level after 1st"
+          }
+        }
+      },
+      "primaryAbility": {
+        "status": "UNAVAILABLE",
+        "reason": "No tracked SRD 5.1 file states a primary ability for any class. The only SRD table that pairs classes with ability scores is Multiclassing Prerequisites (srd:rule:beyond-1st-level-multiclassing), which belongs to the optional multiclassing rule and is not a primary-ability statement.",
+        "search": {
+          "files": ["character_options","rules","spells","equipment","creatures","magic_items"],
+          "pattern": "primary abilit",
+          "caseInsensitive": true,
+          "matches": 0
+        }
+      },
+      "savingThrows": {
+        "abilities": ["Wisdom","Charisma"],
+        "src": {
+          "file": "character_options",
+          "entry": "srd:class:warlock",
+          "path": ["data","savingThrows"],
+          "quote": "[\"Wisdom\",\"Charisma\"]"
+        }
+      },
+      "proficiencies": {
+        "armor": {
+          "grants": [{"token":"Light armor","armorCategories":["light"]}],
+          "qualifier": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:warlock",
+            "path": ["data","proficiencies","armor"],
+            "quote": "Light armor"
+          }
+        },
+        "weapons": {
+          "grants": [{"token":"Simple weapons","weaponCategory":"simple"}],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:warlock",
+            "path": ["data","proficiencies","weapons"],
+            "quote": "Simple weapons"
+          }
+        },
+        "tools": {
+          "fixed": [],
+          "choice": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:warlock",
+            "path": ["data","proficiencies","tools"],
+            "quote": "None"
+          }
+        },
+        "skills": {
+          "choose": 2,
+          "from": ["Arcana","Deception","History","Intimidation","Investigation","Nature","Religion"],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:warlock",
+            "path": ["data","proficiencies","skills"],
+            "quote": "Choose two skills from Arcana, Deception, History, Intimidation, Investigation, Nature, and Religion"
+          }
+        }
+      },
+      "spellcasting": {
+        "status": "PRESENT",
+        "feature": "Pact Magic",
+        "featureIndex": 1,
+        "gainedAtLevel": 1,
+        "ability": "Charisma",
+        "abilitySrc": {
+          "file": "character_options",
+          "entry": "srd:class:warlock",
+          "path": ["data","features",1,"text"],
+          "quote": "Charisma is your spellcasting ability for your warlock spells"
+        },
+        "spellList": "srd:spell-list:warlock-spells",
+        "slotModel": "PACT_SLOTS",
+        "maxSlotLevel": 5,
+        "progressionColumns": ["cantripsKnown","spellsKnown","pactSlots"],
+        "preparation": {
+          "model": "KNOWN",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:warlock",
+            "path": ["data","features",1,"subheadings"],
+            "quote": "[\"Cantrips\",\"Spell Slots\",\"Spells Known of 1st Level and Higher\",\"Spellcasting Ability\",\"Spellcasting Focus\"]"
+          }
+        },
+        "slotRecovery": {
+          "rest": "SHORT_OR_LONG_REST",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:warlock",
+            "path": ["data","features",1,"text"],
+            "quote": "You regain all expended spell slots when you finish a short or long rest."
+          }
+        },
+        "ritualCasting": {"status":"NONE","basis":"NO_RITUAL_CASTING_SUBSECTION"},
+        "focus": {
+          "status": "PRESENT",
+          "item": "arcane focus",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:warlock",
+            "path": ["data","features",1,"text"],
+            "quote": "You can use an arcane focus as a spellcasting focus"
+          }
+        }
+      },
+      "subclass": {
+        "choiceFeature": "Otherworldly Patron",
+        "choiceLevel": 1,
+        "featureLevels": [1,6,10,14],
+        "srdSubclasses": ["srd:subclass:the-fiend"]
+      },
+      "tableSrc": {
+        "file": "character_options",
+        "entry": "srd:class:warlock",
+        "path": ["data","classTable","caption"],
+        "quote": "The Warlock"
+      },
+      "classColumns": [{"key":"invocationsKnown","sourceColumn":"Invocations Known","valueType":"COUNT"}],
+      "features": [
+        {"name":"Otherworldly Patron","level":1,"sourceIndex":0},
+        {"name":"Pact Magic","level":1,"sourceIndex":1},
+        {"name":"Eldritch Invocations","level":2,"sourceIndex":2},
+        {"name":"Pact Boon","level":3,"sourceIndex":3},
+        {"name":"Ability Score Improvement","level":4,"sourceIndex":4},
+        {"name":"Mystic Arcanum","level":11,"sourceIndex":5},
+        {"name":"Eldritch Master","level":20,"sourceIndex":6}
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Otherworldly Patron","kind":"FEATURE_GAINED","refs":["Otherworldly Patron"]},
+            {"label":"Pact Magic","kind":"FEATURE_GAINED","refs":["Pact Magic"]}
+          ],
+          "classColumns": {"invocationsKnown":null},
+          "spellcasting": {"cantripsKnown":2,"spellsKnown":2,"pactSlots":{"count":1,"slotLevel":1}}
+        },
+        {
+          "level": 2,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Eldritch Invocations","kind":"FEATURE_GAINED","refs":["Eldritch Invocations"]}],
+          "classColumns": {"invocationsKnown":2},
+          "spellcasting": {"cantripsKnown":2,"spellsKnown":3,"pactSlots":{"count":2,"slotLevel":1}}
+        },
+        {
+          "level": 3,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Pact Boon","kind":"FEATURE_GAINED","refs":["Pact Boon"]}],
+          "classColumns": {"invocationsKnown":2},
+          "spellcasting": {"cantripsKnown":2,"spellsKnown":4,"pactSlots":{"count":2,"slotLevel":2}}
+        },
+        {
+          "level": 4,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_GAINED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"invocationsKnown":2},
+          "spellcasting": {"cantripsKnown":3,"spellsKnown":5,"pactSlots":{"count":2,"slotLevel":2}}
+        },
+        {
+          "level": 5,
+          "proficiencyBonus": 3,
+          "features": [],
+          "classColumns": {"invocationsKnown":3},
+          "spellcasting": {"cantripsKnown":3,"spellsKnown":6,"pactSlots":{"count":2,"slotLevel":3}}
+        },
+        {
+          "level": 6,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Otherworldly Patron feature","kind":"SUBCLASS_FEATURE","refs":["Otherworldly Patron"]}],
+          "classColumns": {"invocationsKnown":3},
+          "spellcasting": {"cantripsKnown":3,"spellsKnown":7,"pactSlots":{"count":2,"slotLevel":3}}
+        },
+        {
+          "level": 7,
+          "proficiencyBonus": 3,
+          "features": [],
+          "classColumns": {"invocationsKnown":4},
+          "spellcasting": {"cantripsKnown":3,"spellsKnown":8,"pactSlots":{"count":2,"slotLevel":4}}
+        },
+        {
+          "level": 8,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"invocationsKnown":4},
+          "spellcasting": {"cantripsKnown":3,"spellsKnown":9,"pactSlots":{"count":2,"slotLevel":4}}
+        },
+        {
+          "level": 9,
+          "proficiencyBonus": 4,
+          "features": [],
+          "classColumns": {"invocationsKnown":5},
+          "spellcasting": {"cantripsKnown":3,"spellsKnown":10,"pactSlots":{"count":2,"slotLevel":5}}
+        },
+        {
+          "level": 10,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Otherworldly Patron feature","kind":"SUBCLASS_FEATURE","refs":["Otherworldly Patron"]}],
+          "classColumns": {"invocationsKnown":5},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":10,"pactSlots":{"count":2,"slotLevel":5}}
+        },
+        {
+          "level": 11,
+          "proficiencyBonus": 4,
+          "features": [
+            {
+              "label": "Mystic Arcanum (6th level)",
+              "kind": "FEATURE_GAINED",
+              "refs": ["Mystic Arcanum"],
+              "detail": "6th level"
+            }
+          ],
+          "classColumns": {"invocationsKnown":5},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":11,"pactSlots":{"count":3,"slotLevel":5}}
+        },
+        {
+          "level": 12,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"invocationsKnown":6},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":11,"pactSlots":{"count":3,"slotLevel":5}}
+        },
+        {
+          "level": 13,
+          "proficiencyBonus": 5,
+          "features": [
+            {
+              "label": "Mystic Arcanum (7th level)",
+              "kind": "FEATURE_ADVANCED",
+              "refs": ["Mystic Arcanum"],
+              "detail": "7th level"
+            }
+          ],
+          "classColumns": {"invocationsKnown":6},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":12,"pactSlots":{"count":3,"slotLevel":5}}
+        },
+        {
+          "level": 14,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Otherworldly Patron feature","kind":"SUBCLASS_FEATURE","refs":["Otherworldly Patron"]}],
+          "classColumns": {"invocationsKnown":6},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":12,"pactSlots":{"count":3,"slotLevel":5}}
+        },
+        {
+          "level": 15,
+          "proficiencyBonus": 5,
+          "features": [
+            {
+              "label": "Mystic Arcanum (8th level)",
+              "kind": "FEATURE_ADVANCED",
+              "refs": ["Mystic Arcanum"],
+              "detail": "8th level"
+            }
+          ],
+          "classColumns": {"invocationsKnown":7},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":13,"pactSlots":{"count":3,"slotLevel":5}}
+        },
+        {
+          "level": 16,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"invocationsKnown":7},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":13,"pactSlots":{"count":3,"slotLevel":5}}
+        },
+        {
+          "level": 17,
+          "proficiencyBonus": 6,
+          "features": [
+            {
+              "label": "Mystic Arcanum (9th level)",
+              "kind": "FEATURE_ADVANCED",
+              "refs": ["Mystic Arcanum"],
+              "detail": "9th level"
+            }
+          ],
+          "classColumns": {"invocationsKnown":7},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":14,"pactSlots":{"count":4,"slotLevel":5}}
+        },
+        {
+          "level": 18,
+          "proficiencyBonus": 6,
+          "features": [],
+          "classColumns": {"invocationsKnown":8},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":14,"pactSlots":{"count":4,"slotLevel":5}}
+        },
+        {
+          "level": 19,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {"invocationsKnown":8},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":15,"pactSlots":{"count":4,"slotLevel":5}}
+        },
+        {
+          "level": 20,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Eldritch Master","kind":"FEATURE_GAINED","refs":["Eldritch Master"]}],
+          "classColumns": {"invocationsKnown":8},
+          "spellcasting": {"cantripsKnown":4,"spellsKnown":15,"pactSlots":{"count":4,"slotLevel":5}}
+        }
+      ]
+    },
+    {
+      "id": "srd:class:wizard",
+      "name": "Wizard",
+      "source": {
+        "file": "character_options",
+        "entry": "srd:class:wizard",
+        "pages": [52,53,54,55],
+        "heading": "Wizard",
+        "readiness": "parsed"
+      },
+      "hitDie": {
+        "die": "d6",
+        "sides": 6,
+        "src": {"file":"character_options","entry":"srd:class:wizard","path":["data","hitDie"],"quote":"1d6"}
+      },
+      "hitPoints": {
+        "firstLevel": {
+          "base": 6,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:wizard",
+            "path": ["data","hitPoints","level1"],
+            "quote": "6 + your Constitution modifier"
+          }
+        },
+        "laterLevels": {
+          "roll": "1d6",
+          "fixed": 4,
+          "plusModifier": "Constitution",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:wizard",
+            "path": ["data","hitPoints","higher"],
+            "quote": "1d6 (or 4) + your Constitution modifier per wizard level after 1st"
+          }
+        }
+      },
+      "primaryAbility": {
+        "status": "UNAVAILABLE",
+        "reason": "No tracked SRD 5.1 file states a primary ability for any class. The only SRD table that pairs classes with ability scores is Multiclassing Prerequisites (srd:rule:beyond-1st-level-multiclassing), which belongs to the optional multiclassing rule and is not a primary-ability statement.",
+        "search": {
+          "files": ["character_options","rules","spells","equipment","creatures","magic_items"],
+          "pattern": "primary abilit",
+          "caseInsensitive": true,
+          "matches": 0
+        }
+      },
+      "savingThrows": {
+        "abilities": ["Intelligence","Wisdom"],
+        "src": {
+          "file": "character_options",
+          "entry": "srd:class:wizard",
+          "path": ["data","savingThrows"],
+          "quote": "[\"Intelligence\",\"Wisdom\"]"
+        }
+      },
+      "proficiencies": {
+        "armor": {
+          "grants": [],
+          "qualifier": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:wizard",
+            "path": ["data","proficiencies","armor"],
+            "quote": "None"
+          }
+        },
+        "weapons": {
+          "grants": [
+            {"token":"Daggers","equipment":"srd:weapon:dagger"},
+            {"token":"darts","equipment":"srd:weapon:dart"},
+            {"token":"slings","equipment":"srd:weapon:sling"},
+            {"token":"quarterstaffs","equipment":"srd:weapon:quarterstaff"},
+            {"token":"light crossbows","equipment":"srd:weapon:crossbow-light"}
+          ],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:wizard",
+            "path": ["data","proficiencies","weapons"],
+            "quote": "Daggers, darts, slings, quarterstaffs, light crossbows"
+          }
+        },
+        "tools": {
+          "fixed": [],
+          "choice": null,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:wizard",
+            "path": ["data","proficiencies","tools"],
+            "quote": "None"
+          }
+        },
+        "skills": {
+          "choose": 2,
+          "from": ["Arcana","History","Insight","Investigation","Medicine","Religion"],
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:wizard",
+            "path": ["data","proficiencies","skills"],
+            "quote": "Choose two from Arcana, History, Insight, Investigation, Medicine, and Religion"
+          }
+        }
+      },
+      "spellcasting": {
+        "status": "PRESENT",
+        "feature": "Spellcasting",
+        "featureIndex": 0,
+        "gainedAtLevel": 1,
+        "ability": "Intelligence",
+        "abilitySrc": {
+          "file": "character_options",
+          "entry": "srd:class:wizard",
+          "path": ["data","features",0,"text"],
+          "quote": "Intelligence is your spellcasting ability for your wizard spells"
+        },
+        "spellList": "srd:spell-list:wizard-spells",
+        "slotModel": "SPELL_LEVEL_SLOTS",
+        "maxSlotLevel": 9,
+        "progressionColumns": ["cantripsKnown","slots"],
+        "preparation": {
+          "model": "PREPARED",
+          "ability": "Intelligence",
+          "classLevel": "FULL",
+          "minimum": 1,
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:wizard",
+            "path": ["data","features",0,"text"],
+            "quote": "choose a number of wizard spells from your spellbook equal to your Intelligence modifier + your wizard level (minimum of one spell)"
+          }
+        },
+        "slotRecovery": {
+          "rest": "LONG_REST",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:wizard",
+            "path": ["data","features",0,"text"],
+            "quote": "You regain all expended spell slots when you finish a long rest."
+          }
+        },
+        "ritualCasting": {
+          "status": "PRESENT",
+          "spellSource": "IN_SPELLBOOK",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:wizard",
+            "path": ["data","features",0,"text"],
+            "quote": "You can cast a wizard spell as a ritual if that spell has the ritual tag and you have the spell in your spellbook. You don’t need to have the spell prepared."
+          }
+        },
+        "focus": {
+          "status": "PRESENT",
+          "item": "arcane focus",
+          "src": {
+            "file": "character_options",
+            "entry": "srd:class:wizard",
+            "path": ["data","features",0,"text"],
+            "quote": "You can use an arcane focus as a spellcasting focus"
+          }
+        }
+      },
+      "subclass": {
+        "choiceFeature": "Arcane Tradition",
+        "choiceLevel": 2,
+        "featureLevels": [2,6,10,14],
+        "srdSubclasses": ["srd:subclass:school-of-evocation"]
+      },
+      "tableSrc": {
+        "file": "character_options",
+        "entry": "srd:class:wizard",
+        "path": ["data","classTable","caption"],
+        "quote": "The Wizard"
+      },
+      "classColumns": [],
+      "features": [
+        {"name":"Spellcasting","level":1,"sourceIndex":0},
+        {"name":"Arcane Recovery","level":1,"sourceIndex":1},
+        {"name":"Arcane Tradition","level":2,"sourceIndex":2},
+        {"name":"Ability Score Improvement","level":4,"sourceIndex":3},
+        {"name":"Spell Mastery","level":18,"sourceIndex":4},
+        {"name":"Signature Spells","level":20,"sourceIndex":5}
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "proficiencyBonus": 2,
+          "features": [
+            {"label":"Spellcasting","kind":"FEATURE_GAINED","refs":["Spellcasting"]},
+            {"label":"Arcane Recovery","kind":"FEATURE_GAINED","refs":["Arcane Recovery"]}
+          ],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"slots":[2,null,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 2,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Arcane Tradition","kind":"FEATURE_GAINED","refs":["Arcane Tradition"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"slots":[3,null,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 3,
+          "proficiencyBonus": 2,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":3,"slots":[4,2,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 4,
+          "proficiencyBonus": 2,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_GAINED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,null,null,null,null,null,null,null]}
+        },
+        {
+          "level": 5,
+          "proficiencyBonus": 3,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,2,null,null,null,null,null,null]}
+        },
+        {
+          "level": 6,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Arcane Tradition feature","kind":"SUBCLASS_FEATURE","refs":["Arcane Tradition"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,null,null,null,null,null,null]}
+        },
+        {
+          "level": 7,
+          "proficiencyBonus": 3,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,1,null,null,null,null,null]}
+        },
+        {
+          "level": 8,
+          "proficiencyBonus": 3,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,2,null,null,null,null,null]}
+        },
+        {
+          "level": 9,
+          "proficiencyBonus": 4,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":4,"slots":[4,3,3,3,1,null,null,null,null]}
+        },
+        {
+          "level": 10,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Arcane Tradition feature","kind":"SUBCLASS_FEATURE","refs":["Arcane Tradition"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,null,null,null,null]}
+        },
+        {
+          "level": 11,
+          "proficiencyBonus": 4,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,null,null,null]}
+        },
+        {
+          "level": 12,
+          "proficiencyBonus": 4,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,null,null,null]}
+        },
+        {
+          "level": 13,
+          "proficiencyBonus": 5,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,1,null,null]}
+        },
+        {
+          "level": 14,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Arcane Tradition feature","kind":"SUBCLASS_FEATURE","refs":["Arcane Tradition"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,1,null,null]}
+        },
+        {
+          "level": 15,
+          "proficiencyBonus": 5,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,1,1,null]}
+        },
+        {
+          "level": 16,
+          "proficiencyBonus": 5,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,1,1,null]}
+        },
+        {
+          "level": 17,
+          "proficiencyBonus": 6,
+          "features": [],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,2,1,1,1,1]}
+        },
+        {
+          "level": 18,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Spell Mastery","kind":"FEATURE_GAINED","refs":["Spell Mastery"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,3,1,1,1,1]}
+        },
+        {
+          "level": 19,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Ability Score Improvement","kind":"FEATURE_ADVANCED","refs":["Ability Score Improvement"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,3,2,1,1,1]}
+        },
+        {
+          "level": 20,
+          "proficiencyBonus": 6,
+          "features": [{"label":"Signature Spell","kind":"FEATURE_GAINED","refs":["Signature Spells"]}],
+          "classColumns": {},
+          "spellcasting": {"cantripsKnown":5,"slots":[4,3,3,3,3,2,2,1,1]}
+        }
+      ]
+    }
+  ]
+}

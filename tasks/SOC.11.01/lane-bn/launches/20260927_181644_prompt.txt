@@ -1,0 +1,5 @@
+Implement SOC.11.01 exactly as specified by BRIEF.md and lane.json. Build the twelve-class data exclusively from tracked 2014 SRD 5.1 sources under game/data/srd51 and existing canonical identity IDs. Inspect source structures before choosing the output shape. Include precise traceability and distinguish unavailable facts from zero, none, or false.
+
+Create the canonical data, strict schema, documentation, and validator. Add targeted negative fixtures for every substantive schema, completeness, ID, source-parity, level progression, spellcasting, proficiency, and no-lock rule. Stay strictly inside allowedPaths. Do not invent mechanics or use non-SRD material. Do not edit affinity data, the scheduler, WBS/status, owner decisions, provider status, art, or audio. Run both recorded gates and all provocations in the foreground.
+
+Commit the complete lane with subject [fable] SOC.11.01 integrate canonical SRD classes. End with FINAL SHA: <full sha>.
