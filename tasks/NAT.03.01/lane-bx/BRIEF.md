@@ -48,21 +48,22 @@
   $$Q \propto K_{\text{interface}} \cdot \frac{h_A - h_B}{\text{distance}}$$
 
 ### 3.4 Canonical Undirected Edge & Signed Residual Tracking
-- Residual transfer flow must be tracked on **canonical undirected interfaces** (`signedResidual[edge(A,B)]` where `edge(A,B) = min(A,B) + "<->" + max(A,B)`):
-  $$\text{signedGrossFlow} = \text{calculatedSignedFlow}_{A \to B} + \text{signedResidual}[\text{edge}(A,B)]$$
-  $$\text{integerFlow} = \text{Math.trunc}(\text{signedGrossFlow})$$
-  $$\text{signedResidual}[\text{edge}(A,B)] = \text{signedGrossFlow} - \text{integerFlow}$$
-  - $\text{integerFlow} > 0 \implies \text{transfer from } A \to B$
-  - $\text{integerFlow} < 0 \implies \text{transfer from } B \to A \text{ with magnitude } |\text{integerFlow}|$
-  - Eliminates neighbor processing order bias and ensures flow reversal naturally cancels fractional remainder rather than preserving stale directional debt.
+- Residual transfer flow must be tracked on **canonical undirected interfaces** (`residual[edgeKey]` where `edgeKey = canonical(min(A,B), max(A,B))`):
+  $$\text{grossSignedFlow} = \text{calculatedSignedFlow}_{A \to B} + \text{residual}[\text{edgeKey}]$$
+  $$\text{integerFlow} = \text{truncTowardZero}(\text{grossSignedFlow})$$
+  $$\text{residual}[\text{edgeKey}] = \text{grossSignedFlow} - \text{integerFlow}$$
+  - Positive flow follows the canonical $A \to B$ direction; negative flow reverses it ($B \to A$ with magnitude $|\text{integerFlow}|$).
+  - Flow reversal naturally cancels prior fractional residual instead of leaving stale directional debt or neighbor-order bias.
 
-### 3.5 Double-Sided Clamping Invariant
+### 3.5 General Receiver-Side Clamping Invariant
 - Every flow transfer step must clamp against both donor availability and receiver capacity:
-  $$\text{transfer} \le \text{donor.availableWater}$$
-  $$\text{transfer} \le \text{receiver.availableCapacity}$$
-- Where $\text{availableCapacity}$ represents:
-  - **Pore capacity** for porous geological strata ($\text{maxPoreVolume} - \text{currentWater}$).
-  - **Open fluid capacity** when the receiver is an exposed cavern/void cell.
+  $$|\text{transfer}| \le \text{donor.availableWater}$$
+  $$|\text{transfer}| \le \text{receiver.availableFluidCapacity}$$
+- `availableFluidCapacity` must resolve according to receiver type:
+  - **Porous geological stratum**: available pore-water capacity ($\text{maxPoreVolume} - \text{currentWater}$).
+  - **Open cavern / void**: available free-fluid volume capacity.
+  - **Open / surface fluid cell**: capacity defined by the existing fluid authority (`DEUS_Fluid`).
+- Do not treat every receiver as porous media.
 - **Invariant**: Strictly eliminates negative water, oversaturation past 10,000 basis points, and phantom mass.
 
 ### 3.6 Event-Driven & Dirty-Region Cadence
