@@ -47,17 +47,23 @@
 - Seepage into an adjacent void/breached cell follows gradient:
   $$Q \propto K_{\text{interface}} \cdot \frac{h_A - h_B}{\text{distance}}$$
 
-### 3.4 Per-Interface Deterministic Residual Tracking
-- Residual transfer flow must be tracked **per interface edge** (`residual[A->B]`):
-  - Prevents neighbor processing order from biasing flow rates.
-  $$\text{grossTransfer} = \text{calculatedFlow} + \text{residual}[A \to B]$$
-  $$\text{actualTransfer} = \lfloor \text{grossTransfer} \rfloor, \quad \text{residual}[A \to B] = \text{grossTransfer} - \text{actualTransfer}$$
+### 3.4 Canonical Undirected Edge & Signed Residual Tracking
+- Residual transfer flow must be tracked on **canonical undirected interfaces** (`signedResidual[edge(A,B)]` where `edge(A,B) = min(A,B) + "<->" + max(A,B)`):
+  $$\text{signedGrossFlow} = \text{calculatedSignedFlow}_{A \to B} + \text{signedResidual}[\text{edge}(A,B)]$$
+  $$\text{integerFlow} = \text{Math.trunc}(\text{signedGrossFlow})$$
+  $$\text{signedResidual}[\text{edge}(A,B)] = \text{signedGrossFlow} - \text{integerFlow}$$
+  - $\text{integerFlow} > 0 \implies \text{transfer from } A \to B$
+  - $\text{integerFlow} < 0 \implies \text{transfer from } B \to A \text{ with magnitude } |\text{integerFlow}|$
+  - Eliminates neighbor processing order bias and ensures flow reversal naturally cancels fractional remainder rather than preserving stale directional debt.
 
 ### 3.5 Double-Sided Clamping Invariant
 - Every flow transfer step must clamp against both donor availability and receiver capacity:
   $$\text{transfer} \le \text{donor.availableWater}$$
-  $$\text{transfer} \le \text{receiver.availablePoreCapacity}$$
-- **Invariant**: Strictly eliminates negative water, oversaturation past 10,000 bp, and phantom mass.
+  $$\text{transfer} \le \text{receiver.availableCapacity}$$
+- Where $\text{availableCapacity}$ represents:
+  - **Pore capacity** for porous geological strata ($\text{maxPoreVolume} - \text{currentWater}$).
+  - **Open fluid capacity** when the receiver is an exposed cavern/void cell.
+- **Invariant**: Strictly eliminates negative water, oversaturation past 10,000 basis points, and phantom mass.
 
 ### 3.6 Event-Driven & Dirty-Region Cadence
 - Zero global per-tick full-world loops.
