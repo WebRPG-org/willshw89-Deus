@@ -134,6 +134,7 @@ function createWorld(opts) {
             interiorY: 0,
             heightQuarters: 0,
             tileX: 0, tileY: 0, cellX: 0, cellY: 0, layer: 0,
+            gx: 0, gy: 0, gz: 0,
             xPx: 0, yPx: 0,
             seedKey: null,
             seedChunk: null,
@@ -156,6 +157,9 @@ function createWorld(opts) {
         item.cellX = cellX;
         item.cellY = cellY;
         item.layer = layer | 0;
+        item.gx = geom.toGlobal(tileX, cellX);
+        item.gy = geom.toGlobal(tileY, cellY);
+        item.gz = item.layer;
         item.xPx = geom.anchorPx(tileX, cellX);
         item.yPx = geom.anchorPx(tileY, cellY);
     }
@@ -164,6 +168,12 @@ function createWorld(opts) {
         const dx = geom.decodePx(xPx);
         const dy = geom.decodePx(yPx);
         applyCell(item, dx.tile, dy.tile, dx.cell, dy.cell, layer);
+    }
+
+    function applyGlobal(item, gx, gy, gz) {
+        const fx = geom.fromGlobal(gx);
+        const fy = geom.fromGlobal(gy);
+        applyCell(item, fx.tile, fy.tile, fx.cell, fy.cell, gz | 0);
     }
 
     function chunkKey(tileX, tileY, layer) {
@@ -418,16 +428,18 @@ function createWorld(opts) {
             spilled.push(list[i].id);
         }
         if (surface.massMu && surface.onSpill) {
-            if (!state.ledger || !state.ledger.isSealed()) fail("E_NOT_SEALED", "collapse needs a sealed ledger");
-            state.ledger.transform(surface.ledgerClass, surface.ledgerForm, surface.onSpill.cls, surface.onSpill.form, surface.massMu, "collapse");
-            if (surface.onSpill.form === "strata") {
-                state.deposits.push({
-                    cls: surface.onSpill.cls, form: surface.onSpill.form, amount: surface.massMu,
-                    tileX: surface.tileX, tileY: surface.tileY, layer: surface.layer
-                });
-                state.depositsDirty = true;
-                erase(surface);
-                return spilled;
+            if (state.ledger) {
+                if (!state.ledger.isSealed()) fail("E_NOT_SEALED", "collapse needs a sealed ledger");
+                state.ledger.transform(surface.ledgerClass, surface.ledgerForm, surface.onSpill.cls, surface.onSpill.form, surface.massMu, "collapse");
+                if (surface.onSpill.form === "strata") {
+                    state.deposits.push({
+                        cls: surface.onSpill.cls, form: surface.onSpill.form, amount: surface.massMu,
+                        tileX: surface.tileX, tileY: surface.tileY, layer: surface.layer
+                    });
+                    state.depositsDirty = true;
+                    erase(surface);
+                    return spilled;
+                }
             }
             surface.ledgerClass = surface.onSpill.cls;
             surface.ledgerForm = surface.onSpill.form;
@@ -483,8 +495,9 @@ function createWorld(opts) {
         if (spec.scale != null && spec.scale !== 1) fail("E_SCALE", "size classes are drawn true size, with no scaling");
         const item = makeItem(def, {});
         state.items.set(item.id, item);
-        const layer = spec.layer | 0;
-        if (spec.xPx != null && spec.yPx != null) applyPx(item, spec.xPx, spec.yPx, layer);
+        const layer = spec.layer != null ? spec.layer | 0 : (spec.gz != null ? spec.gz | 0 : 0);
+        if (spec.gx != null && spec.gy != null) applyGlobal(item, spec.gx, spec.gy, layer);
+        else if (spec.xPx != null && spec.yPx != null) applyPx(item, spec.xPx, spec.yPx, layer);
         else applyCell(item, spec.tileX | 0, spec.tileY | 0, spec.cellX || 0, spec.cellY || 0, layer);
         if (spec.ownerId) item.ownerId = spec.ownerId;
         if (spec.shop) item.shop = true;
@@ -553,8 +566,9 @@ function createWorld(opts) {
     }
 
     function placeOnMap(item, dest) {
-        const layer = dest.layer != null ? dest.layer : item.layer;
-        if (dest.xPx != null && dest.yPx != null) applyPx(item, dest.xPx, dest.yPx, layer);
+        const layer = dest.layer != null ? dest.layer | 0 : (dest.gz != null ? dest.gz | 0 : item.layer);
+        if (dest.gx != null && dest.gy != null) applyGlobal(item, dest.gx, dest.gy, layer);
+        else if (dest.xPx != null && dest.yPx != null) applyPx(item, dest.xPx, dest.yPx, layer);
         else applyCell(item, dest.tileX | 0, dest.tileY | 0, dest.cellX || 0, dest.cellY || 0, layer);
         item.surfaceId = null;
         item.heightQuarters = dest.heightQuarters || 0;
@@ -1051,7 +1065,7 @@ function createWorld(opts) {
             state.pickIndex = index;
         }
         const item = stack[index];
-        return { itemId: item.id, name: item.name, index: index, depth: stack.length };
+        return { id: item.id, itemId: item.id, name: item.name, index: index, depth: stack.length };
     }
 
     function hover(xPx, yPx, layer) {
@@ -1400,8 +1414,12 @@ function createWorld(opts) {
             cellX: item.cellX,
             cellY: item.cellY,
             layer: item.layer,
+            gx: item.gx != null ? item.gx : geom.toGlobal(item.tileX, item.cellX),
+            gy: item.gy != null ? item.gy : geom.toGlobal(item.tileY, item.cellY),
+            gz: item.gz != null ? item.gz : item.layer,
             heightQuarters: item.heightQuarters,
             heightOffsetPx: item.heightQuarters * C.QUARTER_PX,
+            surfaceQuarters: item.surfaceQuarters,
             surfaceId: item.surfaceId,
             parentId: item.parentId,
             interiorX: item.interiorX,
@@ -1425,6 +1443,8 @@ function createWorld(opts) {
             weightOz: item.weightOz,
             facing: item.facing,
             armorCategory: item.armorCategory,
+            loadLimitOz: item.loadLimitOz,
+            collapseOz: item.collapseOz,
             seedKey: item.seedKey || null
         };
     }
@@ -1440,6 +1460,9 @@ function createWorld(opts) {
             cellX: item.cellX,
             cellY: item.cellY,
             layer: item.layer,
+            gx: item.gx != null ? item.gx : geom.toGlobal(item.tileX, item.cellX),
+            gy: item.gy != null ? item.gy : geom.toGlobal(item.tileY, item.cellY),
+            gz: item.gz != null ? item.gz : item.layer,
             heightQuarters: item.heightQuarters,
             surfaceId: item.surfaceId,
             interiorX: item.interiorX,
@@ -1553,7 +1576,11 @@ function createWorld(opts) {
         item.heldBy = heldBy || null;
         item.hauledBy = null;
         item.haulAnim = null;
-        applyCell(item, snap.tileX, snap.tileY, snap.cellX, snap.cellY, snap.layer);
+        if (snap.gx != null && snap.gy != null) {
+            applyGlobal(item, snap.gx, snap.gy, snap.gz != null ? snap.gz : snap.layer);
+        } else {
+            applyCell(item, snap.tileX, snap.tileY, snap.cellX, snap.cellY, snap.layer);
+        }
         item.heightQuarters = snap.heightQuarters || 0;
         item.surfaceId = snap.surfaceId || null;
         item.interiorX = snap.interiorX || 0;
@@ -1796,7 +1823,56 @@ function createWorld(opts) {
         carryCapOz: function (unitId) { return carryCapOz(mustUnit(unitId)); },
         totalOz: function (id) { return totalOz(must(id).id); },
         loadOz: loadOz,
-        ticks: function () { return state.ticks; }
+        ticks: function () { return state.ticks; },
+        atGlobal: function (gx, gy, gz) {
+            return stackAt(geom.toPx(gx), geom.toPx(gy), gz | 0).map(copyItem);
+        },
+        pickGlobal: function (gx, gy, gz, opts) {
+            return pick(geom.toPx(gx), geom.toPx(gy), gz | 0, opts);
+        },
+        placeGlobal: function (spec) {
+            return place(spec);
+        },
+        moveToGlobal: function (id, gx, gy, gz) {
+            return move(id, { gx: gx, gy: gy, gz: gz, layer: gz });
+        },
+        regionOf: function (tileX, tileY) {
+            return geom.regionOf(tileX, tileY, C.REGION_TILES);
+        },
+        regionItems: function (rx, ry, gz) {
+            const size = C.REGION_TILES;
+            const x0 = rx * size;
+            const y0 = ry * size;
+            const x1 = x0 + size;
+            const y1 = y0 + size;
+            const out = [];
+            for (const item of state.items.values()) {
+                if (item.parentId || item.heldBy) continue;
+                if (gz != null && item.layer !== (gz | 0)) continue;
+                if (item.tileX >= x0 && item.tileX < x1 && item.tileY >= y0 && item.tileY < y1) {
+                    out.push(copyItem(item));
+                }
+            }
+            return out;
+        },
+        crossRegionMove: function (id, targetGx, targetGy, targetGz) {
+            const item = must(id);
+            const beforeRegion = geom.regionOf(item.tileX, item.tileY, C.REGION_TILES);
+            const res = move(id, { gx: targetGx, gy: targetGy, gz: targetGz, layer: targetGz });
+            if (!res.ok) return res;
+            const afterItem = must(id);
+            const afterRegion = geom.regionOf(afterItem.tileX, afterItem.tileY, C.REGION_TILES);
+            return {
+                ok: true,
+                id: item.id,
+                fromRegion: beforeRegion,
+                toRegion: afterRegion,
+                isCrossRegion: beforeRegion.rx !== afterRegion.rx || beforeRegion.ry !== afterRegion.ry,
+                gx: afterItem.gx,
+                gy: afterItem.gy,
+                gz: afterItem.gz
+            };
+        }
     });
 }
 

@@ -72,6 +72,53 @@ function withFacing(slotId, facing) {
     return parts.join(".");
 }
 
+// Continuous global coordinates (gx, gy). 1 tile = 48 px = 8 cells of 6 px.
+function toGlobal(tile, cell) {
+    if (typeof tile !== "number" || !Number.isFinite(tile)) fail("E_GLOBAL", "tile must be finite number: " + tile);
+    if (typeof cell !== "number" || !Number.isFinite(cell)) fail("E_GLOBAL", "cell must be finite number: " + cell);
+    return tile + (cell / C.CELLS_PER_TILE);
+}
+
+function fromGlobal(g) {
+    if (typeof g !== "number" || !Number.isFinite(g)) fail("E_GLOBAL", "global coordinate must be finite number: " + g);
+    let tile = Math.floor(g);
+    let frac = g - tile;
+    let cell = Math.round(frac * C.CELLS_PER_TILE);
+    if (cell >= C.CELLS_PER_TILE) {
+        tile += 1;
+        cell = 0;
+    }
+    return { tile: tile, cell: cell };
+}
+
+function toPx(g) {
+    const fg = fromGlobal(g);
+    return anchorPx(fg.tile, fg.cell);
+}
+
+function fromPx(px) {
+    const d = decodePx(px);
+    return toGlobal(d.tile, d.cell);
+}
+
+// Region mapping (default 256 tiles per region, 3x3 regions in 768x768 world)
+function regionOf(tileX, tileY, regionSize) {
+    const size = regionSize || C.REGION_TILES || 256;
+    const rx = Math.floor(tileX / size);
+    const ry = Math.floor(tileY / size);
+    const lx = ((tileX % size) + size) % size;
+    const ly = ((tileY % size) + size) % size;
+    return { rx: rx, ry: ry, lx: lx, ly: ly };
+}
+
+function isCrossRegion(tileX1, tileY1, tileX2, tileY2, regionSize) {
+    const size = regionSize || C.REGION_TILES || 256;
+    const r1 = regionOf(tileX1, tileY1, size);
+    const r2 = regionOf(tileX2, tileY2, size);
+    return r1.rx !== r2.rx || r1.ry !== r2.ry;
+}
+
 module.exports = {
-    snapPx, decodePx, anchorPx, drawKey, drawCompare, containsPx, squares555, shadowPx, withFacing
+    snapPx, decodePx, anchorPx, drawKey, drawCompare, containsPx, squares555, shadowPx, withFacing,
+    toGlobal, fromGlobal, toPx, fromPx, regionOf, isCrossRegion
 };
