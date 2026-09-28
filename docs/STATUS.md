@@ -40,15 +40,15 @@
 ---
 
 ## In progress
-- **Package 3 (NAT.03.01 Lean Aquifer Kernel):** **MERGED TO MAIN (`4794e670`) & PUSHED TO ORIGIN**. MiniMax M3 repaired browser-host guard (`71f8ee46`); Grok independently reviewed and recorded clean `PASS` (`593c5232`); merged via `--no-ff`; all 12/12 contract tests pass in 7 ms (`tools/test_aquifer_seepage.js`).
-- **Package 4 Gate (NAT.04.01 Geomorphology & Soil):** **PROPOSAL COMPLETE — HALTED AT OWNER PACKAGE GATE**. Preflight specification and game translation block complete; awaiting explicit Owner sign-off before opening `lane-by`.
+- **Package 1 (Physical Space / WG.00.40, WG.00.41):** **COMPLETED** (In-Game Proof: VERIFIED | Complete: YES | Evidence: `DEUS-RPT-INENGINE-PROOF-01`).
+- **Package 2 (Physical Matter / NAT.02.01):** **COMPLETED** (In-Game Proof: VERIFIED | Complete: YES | Evidence: `DEUS-RPT-INENGINE-PROOF-01`).
+- **Package 3 (Water / NAT.03.01 Lean Aquifer Kernel):** **COMPLETED** (In-Game Proof: VERIFIED | Complete: YES | Evidence: `DEUS-RPT-INENGINE-PROOF-01`).
+- **Package 4 (NAT.04.01 Geomorphology & Soil):** **AUTHORIZED BY OWNER & IN PROGRESS** in `lane-by`. Worktree provisioned at `C:\Users\snewt\.deus_worktrees\lane-by`, branch `task/lane-by`, `BRIEF.md` and `lane.json` committed (`d837e6d1`) and pushed to origin. Assigned Writer: MiniMax M3; Assigned Reviewer: Grok (grok-4.7-build).
+- **In-Engine Playtest Proof Track:** Verified 16/16 checks passing in live RMMZ NW.js Playtest (`tools/test_package_proofs_ingame.js`) with 0 errors; screenshots archived in `art/review/`.
 - **Lane bw (NAT.05.01 Climate Engine):** ON_HOLD pending upstream water/soil authorities per DEC-037.
-- **Lane BB (DEUS-TSK-GEOLOGY-GATE FIX2):** tip `d171c0fd`. Fresh-clone gates: foundation 26/0 EXIT 0, geology 9/0 EXIT 0, syntax EXIT 0; cuts/caves still 12/6 EXIT 2 (outside allowedPaths). HOLD review/merge until cuts repaired or Owner removes that gate from lane.json.
-- **Lane BD (DEUS-TSK-ZRANGE-HARNESS):** tip `fce22083` writer delivered; not yet reviewed this watch.
-- **PM watch merge wave (2026-09-28 12:55 CT):** MERGED to origin/main and pushed: lane-bp2 SOC.31.01 (`53c1bbc2`); then BN SOC.11.01, BL SOC.20.01, BK SOC.12.01, BM SOC.11.02, BO SOC.30.01, BH SOC.10.03, BQ SOC.40.02, BR SOC.32.01. Society tasks now phase-frozen per DEC-037.
-- **Lane bt (WG.00.41):** MERGED (`a0a44eb8`).
-- **Lane bv (NAT.02.01):** MERGED (`c00ada72` / `54f67436`).
-- **Orchestration:** DEC-037/038/039/040/041 active. Machine-readable canonical registry initialized at `tasks/wbs_registry.json`. No art generation (DEC-007).
+- **Lane BB (DEUS-TSK-GEOLOGY-GATE FIX2):** tip `d171c0fd`. Fresh-clone gates: foundation 26/0 EXIT 0, geology 9/0 EXIT 0, syntax EXIT 0; cuts/caves test running diagnosis.
+- **Lane BD (DEUS-TSK-ZRANGE-HARNESS):** tip `3ea1ab69` (FIX1 brief registered, column landforms 35/0 PASS).
+- **Orchestration:** DEC-037/038/039/040/041 active. Machine-readable canonical registry updated at `tasks/wbs_registry.json`. No art generation (DEC-007).
 
 ---
 
