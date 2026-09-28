@@ -34,6 +34,11 @@ const PICK_MODIFIER = "shift"; // PM default
 const ZOOM_HOLD_3 = "pageup"; // PM default
 const ZOOM_HOLD_4 = "pagedown"; // PM default
 const SHADOW_PX = { 12: 1, 24: 2, 48: 2 };
+const REGION_TILES = 256;
+const WORLD_REGIONS = 3;
+const WORLD_TILES = 768; // 3 regions x 256 tiles
+const Z_MIN = -16;
+const Z_MAX = 15;
 
 module.exports = {
     TILE_PX, CELL_PX, CELLS_PER_TILE, QUARTER_PX, QUARTERS_PER_LAYER,
@@ -43,5 +48,6 @@ module.exports = {
     CARRY_ANIM, ARMOR_STATES, FACINGS, ZOOM_FACTORS, OUTLINE_PX,
     OZ_PER_LB, CUIN_PER_CUFT, CARRY_LB_PER_STR,
     TORCH_BRIGHT_TILES, TORCH_DIM_TILES,
-    PICK_MODIFIER, ZOOM_HOLD_3, ZOOM_HOLD_4, SHADOW_PX
+    PICK_MODIFIER, ZOOM_HOLD_3, ZOOM_HOLD_4, SHADOW_PX,
+    REGION_TILES, WORLD_REGIONS, WORLD_TILES, Z_MIN, Z_MAX
 };

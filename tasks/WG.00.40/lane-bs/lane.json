@@ -1,0 +1,28 @@
+{
+  "lane": "lane-bs",
+  "taskId": "WG.00.40",
+  "branch": "task/lane-bs",
+  "writer": "gemini",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "game/js/sim/world_items/**",
+    "tools/world_items/**",
+    "tasks/WG.00.40/lane-bs/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/world_items/test_world_items.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/world_items/test_persistent_objects.js"
+      ],
+      "timeoutSec": 600
+    }
+  ]
+}
