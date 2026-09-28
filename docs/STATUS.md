@@ -32,7 +32,7 @@
 - **Heavy Job Cap:** Formally **LIFTED** as of 2026-09-25 per Owner decision.
 - **Automatic Tripwire:** Any instant power loss automatically reinstates `MAX_SIMULTANEOUS_HEAVY_LOCAL_JOBS = 1` until explicitly lifted by the Owner. Any power event must be reported immediately.
 - **Remote Git Origin:** Formally configured and live per DEC-005: `origin = https://github.com/willshw89/Deus.git` (private remote). Verified clean clone with 10,259 tracked files, fsck clean, checks pass.
-- **Origin in Sync:** **YES** (`main` and `origin/main` both at `c00ada72`).
+- **Origin in Sync:** **YES** (`main` and `origin/main` both at `1d8f4101`).
 - **Backup State:** **COMPLETE (git); untracked-essentials zip awaiting Owner off-laptop copy** (`C:\Users\snewt\DEUS_backups\deus_untracked_2026-09-25.zip`, 89.5 MB, SHA256 D3A49004…C0CD1).
 - **Pre-Execution Checkpoint Discipline:** Before launching any heavy execution, workers must checkpoint in `tasks/<task-id>/state.md`, save all open files, verify git branch/worktree, and commit uncommitted work.
 - **Migration Freeze:** The physical copy to `C:\Dev\DEUS` is frozen until all active writers commit and pause at a synchronized freeze point.
@@ -40,39 +40,14 @@
 ---
 
 ## In progress
-- **Lane bt (WG.00.41 32-Layer Column & Region-Seam Gate):** MERGED into `main` (`a0a44eb8`) via `merge_gate.js` after independent Grok review PASS (`592ea869`). Full 32-layer column generation across 3x3 multi-area world, 12 region boundary seams verified (max elevation step <= 1, uniform bands byte-identical, column volumetric law holding at edge cells), 4 deep-cut torture probes passed, zero discovery-time RNG (0 Math.random calls), mutant `sky_cap_widened` killed.
-- **Lane bv (NAT.02.01 Structural Support & Cascading Collapse Engine):** MERGED into `main` (`c00ada72`) via `merge_gate.js` after independent Grok review PASS (`54f67436`). Writer family recorded as MiniMax (MiniMax M3 / Cline). Vertical compressive load propagation, horizontal tensile cantilever limits, cascading failure propagation, and exact mass ledger conservation (displaced rock mass -> loose rubble item mass) verified (5/5 checks pass; mutants `infinite_cantilever` and `no_collapse` killed).
-- **Lane bx (NAT.03.01 Lean Aquifer & Water Table Kernel):** IN_PROGRESS. Owner ruling DEC-038 authorizes lane-bx. Writer: MiniMax (MiniMax M3 via Cline), Reviewer: Grok. Governed by DEC-038: 2-ft stratum-level authority, local neighbor Darcy stencil, event-driven/dirty-region updates, fixed-integer unit policy, mass balance tracking in ledger. Excludes wells, pumps, irrigation, civics.
-- **Lane bw (NAT.05.01 Lean Climate Kernel):** ON_HOLD. Read-only design preflight drafted in docs/systems/NAT_05_01_CLIMATE_PREFLIGHT.md; runtime implementation paused pending upstream water and soil authorities. Calibrated per DEC-038 (5 biomes + continuous wildness axis, compressed gameplay climate coefficient -0.35°F/Z, 360-day calendar).
-- **Orchestration & Governance Baseline (Owner rulings 2026-09-28):** DEC-037 (Natural World Phase Lock) and DEC-038 (Mathematical Foundations & Calibration) recorded in `docs/OWNER_DECISIONS.md`. Multi-agent rules in `.agents/rules/` and `tools/ops/ANTIGRAVITY.md` active. Root tracked copy clean.
-- **Incident Correction (Directive 001-H sec 6):** Coordinator output file overwrite at 17:13:55 logged as `DEF-COORD-INJECT-01`; `b1ua8l2oj.output` had real 29/0 EXIT=0 result confirmed by `task-34196.log:1084`; `bvwyow104.output` was hook-script SyntaxError (EXIT=1); coordinator ceased all worker temp file touches.
-- **Worker Relaunch (Directive 001-K §1):** Lane H original worker (Claude PID 6276, `task-35425`) exited at 23:18:50 with uncommitted work while background evidence runs were still executing. Reason: Claude CLI completed its single-prompt turn expecting an asynchronous callback notification ("I don't need a monitor here: the background evidence run will notify me when it finishes..."). Coordinator waited for all background node test runs to complete, then relaunched the worker via `resume_lane_h.ps1` as `task-35727` (PID 21660) at 23:25.
-- **Lane A (Claude / Fable):** WG.00.08 Merged into `main` (`0f7f26cd`), but WG.00.08 stays in `REVIEW` per Directive 001-H sec 2 until Grok verifier commits PASS, DEC-001 is recorded, and PM signs off.
-- **Lane B (Claude / Fable):** WG.00.11 Merged into `main` (`8c0c210c`). Hardening suite verified passing (counts superseded by Lane G).
-- **Lane C1 (Claude CLI):** WG.00.12 Merged into `main` (`e07c86ea`). Backup infrastructure verified.
-- **Lane C2 (Claude CLI):** WG.00.12 Merged into `main` (`83bcc1a7`). Machine governance checker verified (88/88 checks pass, 22 mutants killed). Hook installation held until Grok passes Lane C2b AND Lane E merges, per Directive 001-I §C.
-- **Lane C3 (Claude CLI):** WG.00.12 Merged into `main` (`8db39b0b`). ADR-002 Rev 2 (uf.hex canonical for runtime) PROPOSED, awaiting Grok review; not yet accepted.
-- **Lane D (Grok PM):** Adversarial review delivered (verdicts recorded).
-- **Lane E (Grok Writer / Claude Reviewer):** WG.00.09 Follow-up: Grok revision (`5964f772`) diff-reviewed by Claude across full diff `710fa095..5964f772` (`6a71a4c4`). Verdict: **CHANGES REQUESTED** (0 blocker, 0 major, 2 minor: N5, N6). Findings N2, N4 resolved, N3 resolved as asked, N1 partly resolved (carried into N5). Grok writer to fold in N5 and N6.
-- **Lane F (Claude CLI):** WG.00.12 Merged into `main` (`d09a1295`). 8-test post-F suite all passed with EXIT=0. Pushed to `origin`.
-- **Lane G (Claude CLI):** WG.00.11 Merged into `main` (`da2c16b2`). Provenance: coordinator re-ran in lane-g worktree; PM reproduced exit 0 on lane-g and on merged main da2c16b2 (30/30 gating checks pass, 15 mutants caught, world_age 29/29 pass, carrying capacity 23/23 pass).
-- **Lane H (Claude / Fable):** WG.00.08 Fresh Z-2 cut proof (`tools/test_generated_z2_cut_proof.js`) per Directive 001-I sec B. Committed `c8694f01` and pushed to `origin/task/lane-h`. Baseline 12/12 pass (exit 0), 8/8 mutants exit 1 (including `floating_slab_left`). Claude claims proof hardened and fluid ruling aligned; Grok verification pending.
-- **Lane C2b (Claude):** WG.00.12 Governance hardener (`tools/governance/check_claims.js`) per Directive 001-I sec C. Merged to `main` (`29d60a96`) after independent Grok review PASS (`7619c9cb`).
-- **Lane I (Claude Writer / Grok Reviewer):** WG.00.12 Automated merge gate (`tools/governance/merge_gate.js`). Merged to `main` (`099b6878`) after independent Grok review PASS (`a0183d68`).
-- **Lane J (Claude Writer / Grok Reviewer):** WG.00.12 Standard worker launcher and pre-push guard (`tools/ops/launch_worker.ps1`). Merged to `main` (`62067d1c`) after independent Grok review PASS (`5a1ec388`).
-- **Lane gap-audit (Claude Writer / Grok Reviewer):** SIM.50.01 Living world gap audit (`docs/audits/LIVING_WORLD_GAP_AUDIT.md`). Merged to `main` (`4614dbfa`) after independent Grok review PASS (`15745e41`).
-- **Lane N (Claude Writer / Grok Reviewer):** SIM.00.00 In-place layer switch (`game/js/plugins/DEUS_Levels.js`, `DEUS_World.js`, `tools/test_layer_switch_inplace.js`). Merged to `main` (`e27e8be5`) after independent Grok review CLEAN PASS (`14777983`).
-- **Lane K (Claude Writer):** WG.00.09b Global depth renderer (`game/js/plugins/DEUS_Depth.js`). Grok review of tip `86bf49a9` returned FAIL (`tasks/WG.00.09b/lane-k/review_grok_86bf49a9.md`, commit `423c7754`: seed/timing-dependent gates, escalation figures not in committed baselines). PM-relaunched 2026-09-26 03:40 CT for Fix 1 (`tasks/WG.00.09b/lane-k/BRIEF_FIX1.md`, brief commit `dabf2de2`). Active writer (PID 20296).
-- **Lane S (Claude Writer):** WG.20.02 Art catalogue. Active writer (PID 22756); stopped by Claude usage limit 03:35 CT, PM-relaunched 03:47 CT (resume; WIP checkpoint `7f3e650b`). NO ART GENERATION.
-- **Lane T (Claude Writer):** WG.32.02 Blank template tilesets. Active writer (PID 416). NO ART GENERATION.
-- **Lane U (Claude Writer):** WG.41.01 Placement & validation tooling. Active writer (PID 16548); stopped by Claude usage limit 03:34 CT, PM-relaunched 03:46 CT (resume; WIP checkpoint `4bef75eb`). NO ART GENERATION.
-- **Lane P (Claude Writer):** SIM.60.01 SRD spell-effect audit. Active writer (PID 6288). Design only.
-- **Lane M Rev 3 (Claude Writer):** SIM.00.01 ADR-003 Rev 3. Active writer (PID 21104).
-- **Queued for PM:** Lanes Q, R, W, and people-side gap audit when worker slots free.
-- **Open Ops Debt (PM):**
-  - Merge gate / check_claims distrust of `[pm]` commits (handled via PM manual merge).
-  - Lane S launcher prompt contains stale "Do not push" directive.
-  - Lane M `lane.json` incomplete.
+- **PM watch merge wave (2026-09-28 12:55 CT):** MERGED to origin/main and pushed: lane-bp2 SOC.31.01 (merge_gate PASS `53c1bbc2`); then board/STATUS merge-ready society queue via manual --no-ff after merge_gate formality refusals (gates+verdicts already PASS): BN SOC.11.01, BL SOC.20.01, BK SOC.12.01, BM SOC.11.02, BO SOC.30.01, BH SOC.10.03, BQ SOC.40.02, BR SOC.32.01. Tip after wave: `1d8f4101`.
+- **Lane bt (WG.00.41):** MERGED (`a0a44eb8`).
+- **Lane bv (NAT.02.01):** MERGED (`c00ada72`).
+- **Lane bx (NAT.03.01 Lean Aquifer):** IN_PROGRESS. MiniMax writer tip `ed9ee8f4` with uncommitted aquifer edits; do not launch overlapping NAT writers. Reviewer: Grok when tip finishes and gates pass.
+- **Lane bw (NAT.05.01):** ON_HOLD pending upstream water/soil authorities.
+- **Lane BB (DEUS-TSK-GEOLOGY-GATE FIX2):** tip `d171c0fd`. Fresh-clone gates 2026-09-28: foundation 26/0 EXIT 0, geology 9/0 EXIT 0, syntax EXIT 0; cuts/caves still 12/6 EXIT 2 (outside allowedPaths). HOLD review/merge until cuts repaired or Owner removes that gate from lane.json.
+- **Lane BD (DEUS-TSK-ZRANGE-HARNESS):** tip `fce22083` writer delivered; not yet reviewed this watch.
+- **Orchestration:** DEC-037/038 active. Claude/Codex exhausted until ~Tue 2026-09-29 5 PM / 9:34 PM CT. Gemini Pro reset window (was ~7:04 PM CT Sep 27) has passed — prefer Pro for merge-gate reviews when launching new ones. No art.
 
 ---
 
