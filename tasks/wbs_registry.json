@@ -14,6 +14,9 @@
       "id": "PKG-01",
       "name": "Package 1: Physical Space Foundation",
       "status": "COMPLETED",
+      "inGameProof": "VERIFIED",
+      "complete": true,
+      "proofEvidence": "DEUS-RPT-INENGINE-PROOF-01 / art/review/package_proofs.proof_pkg1_physical_space.png",
       "causalOrder": 1,
       "leaves": ["WG.00.40", "WG.00.41"]
     },
@@ -21,6 +24,9 @@
       "id": "PKG-02",
       "name": "Package 2: Physical Matter & Structural Mechanics",
       "status": "COMPLETED",
+      "inGameProof": "VERIFIED",
+      "complete": true,
+      "proofEvidence": "DEUS-RPT-INENGINE-PROOF-01 / art/review/package_proofs.proof_pkg2_collapse_rubble.png",
       "causalOrder": 2,
       "leaves": ["NAT.02.01"]
     },
@@ -28,13 +34,18 @@
       "id": "PKG-03",
       "name": "Package 3: Water & Hydrology",
       "status": "COMPLETED",
+      "inGameProof": "VERIFIED",
+      "complete": true,
+      "proofEvidence": "DEUS-RPT-INENGINE-PROOF-01 / art/review/package_proofs.proof_pkg3_aquifer_seepage.png",
       "causalOrder": 3,
       "leaves": ["NAT.03.01"]
     },
     {
       "id": "PKG-04",
       "name": "Package 4: Geomorphology & Soil",
-      "status": "PROPOSED",
+      "status": "IN_PROGRESS",
+      "inGameProof": "REQUIRED",
+      "complete": false,
       "causalOrder": 4,
       "leaves": ["NAT.04.01"]
     },
@@ -117,11 +128,14 @@
     "NAT.04.01": {
       "title": "Lean Geomorphology & Soil Kernel",
       "package": "PKG-04",
-      "status": "PROPOSED",
+      "status": "IN_PROGRESS",
       "lane": "lane-by",
-      "proposedWriter": "Codex / MiniMax M3",
-      "proposedReviewer": "Grok",
-      "haltReason": "Awaiting explicit Owner Package Gate approval per DEC-041"
+      "branch": "task/lane-by",
+      "writer": "MiniMax M3",
+      "reviewer": "Grok (grok-4.7-build)",
+      "briefDoc": "tasks/NAT.04.01/lane-by/BRIEF.md",
+      "laneManifest": "tasks/NAT.04.01/lane-by/lane.json",
+      "gateTests": ["tools/test_soil_geomorphology.js"]
     },
     "NAT.05.01": {
       "title": "Continuous Climate Engine",
