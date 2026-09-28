@@ -1,0 +1,22 @@
+{
+  "lane": "lane-bt",
+  "taskId": "WG.00.41",
+  "branch": "task/lane-bt",
+  "writer": "claude",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "game/js/plugins/DEUS_Levels.js",
+    "game/js/plugins/DEUS_World.js",
+    "tools/test_region_seam_continuity.js",
+    "tasks/WG.00.41/lane-bt/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_region_seam_continuity.js"
+      ],
+      "timeoutSec": 600
+    }
+  ]
+}
