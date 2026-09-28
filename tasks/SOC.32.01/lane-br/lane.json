@@ -1,0 +1,14 @@
+{
+  "lane":"lane-br",
+  "taskId":"SOC.32.01",
+  "branch":"task/lane-br",
+  "writer":"codex",
+  "reviewer":"grok",
+  "push":false,
+  "effortClass":"substantive",
+  "allowedPaths":["game/data/society/quartermaster.schema.json","game/js/sim/society/DEUS_Quartermaster.js","docs/systems/DEUS_Quartermaster.md","tools/society/test_quartermaster.js","tasks/SOC.32.01/**"],
+  "gateTests":[
+    {"cmd":"node","args":["tools/society/test_quartermaster.js"],"timeoutSec":1200},
+    {"cmd":"node","args":["tools/check_deus_syntax.js"],"timeoutSec":900}
+  ]
+}
