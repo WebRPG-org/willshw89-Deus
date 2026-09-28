@@ -79,9 +79,25 @@
 ### 3.8 Strict Non-Goals / Exclusions
 - Excludes wells, pumps, irrigation, mining jobs, or civic attachments.
 
-### 3.9 Negative Control Mutants (Rule 4)
+### 3.9 Required Test Attack Vectors (`tools/test_aquifer_seepage.js`)
+The test suite must explicitly attack and verify the 12 simulation contracts:
+1. `test_stratum_storage_and_porosity`: Saturated strata storage at 2-ft stratum level (basis points 0..10000).
+2. `test_darcy_cavern_breach`: Breaching adjacent cavern/void triggers Darcy seepage using harmonic mean conductivity.
+3. `test_impermeable_barrier`: Impermeable strata (K=0, granite/shale) completely prevents seepage.
+4. `test_aquifer_drawdown_equilibrium`: Continuous drainage depletes local head until hydrostatic equilibrium.
+5. `test_sub_unit_seepage_accumulation`: Fractional flows below 1 centipound accumulate on canonical edge residual across ticks without rounding loss.
+6. `test_flow_reversal_residual_cancellation`: Head reversal (hB > hA) naturally cancels previous residual debt on canonical undirected edge without directional bias.
+7. `test_processing_order_invariance`: Shuffling neighbor evaluation order produces bit-identical hydraulic state and residual distribution.
+8. `test_donor_exhaustion_clamp`: Flow strictly clamps to donor.availableWater, preventing negative saturation.
+9. `test_receiver_capacity_clamp`: Flow strictly clamps to receiver.availableFluidCapacity (pore capacity for rock, open volume for void).
+10. `test_mass_ledger_conservation`: All transferred water mass debits rock groundwater and credits open fluid in ledger.js with 100% centipound conservation.
+11. `test_save_load_persistence`: Hydrology state serializes and deserializes preserving exact saturation, head, residuals, and mass balance.
+12. `test_dirty_region_quiescence`: Undisturbed cells do not tick; only dirty regions update, returning to sleep at equilibrium.
+
+### 3.10 Negative Control Mutants (Rule 4)
 - `infinite_water`: Disables aquifer drawdown; tests fail.
 - `leak_free`: Sets permeability to zero; seepage tests fail.
+- `no_clamp`: Donor/receiver clamping bypassed; tests fail.
 
 ---
 
