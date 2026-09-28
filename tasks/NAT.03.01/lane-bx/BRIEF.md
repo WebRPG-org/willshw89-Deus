@@ -19,15 +19,20 @@
 
 ---
 
-## 3. Scope & Requirements (Governed by DEC-038 Amended)
+## 3. Scope & Requirements (Governed by DEC-038 Ratified)
 
 ### 3.1 Stratum-Level Authority (2-ft vertical strata)
 - Groundwater state operates at `(x, y, z, stratum)` for $s \in [0..4]$ within each 10-ft Z cell.
+- Volume: $5\text{ ft} \times 5\text{ ft} \times 2\text{ ft} = 50\text{ cu ft}$ per stratum cell.
 - Material properties vary per stratum (e.g. porous sandstone vs impermeable shale).
 - Each stratum cell tracks:
-  - Effective porosity $\phi$: integer basis points ($0 \dots 10000$).
-  - Hydraulic conductivity $K$: permeability coefficient.
-  - Saturation $S$: integer basis points ($0 \dots 10000$, where $10000 = 100.00\%$).
+  - Effective porosity $\phi$: integer basis points ($0 \dots 10000$, where $10000 = 100.00\%$).
+  - Hydraulic conductivity $K$: integer fixed-point scale ($0 \dots 1,000,000$).
+    - $0 = \text{impermeable}$ (granite, dense shale).
+    - $100,000 = \text{sandstone}$ (reference porous rock).
+    - $500,000 = \text{gravel / alluvium}$ (high yield).
+    - $1,000,000 = \text{reference maximum conductivity}$.
+  - Saturation $S$: integer basis points ($0 \dots 10000$).
   - Total hydraulic head $h$: integer millistrata ($1000\text{ units} = 1\text{ stratum} = 2\text{ ft}$).
 
 ### 3.2 Global Elevation Datum & Hydraulic Head
@@ -38,31 +43,36 @@
 
 ### 3.3 Interface Conductivity & Darcy Flux
 - Flux across cell interfaces uses the **harmonic mean** of neighboring permeabilities:
-  $$K_{\text{interface}} = \frac{2 \cdot K_A \cdot K_B}{K_A + K_B}$$
-  *(If either cell has $K=0$, $K_{\text{interface}} = 0$).*
+  $$K_{\text{interface}} = \begin{cases} 0 & \text{if } K_A = 0 \text{ or } K_B = 0 \\ \left\lfloor \frac{2 \cdot K_A \cdot K_B}{K_A + K_B} \right\rfloor & \text{otherwise} \end{cases}$$
 - Seepage into an adjacent void/breached cell follows gradient:
   $$Q \propto K_{\text{interface}} \cdot \frac{h_A - h_B}{\text{distance}}$$
 
-### 3.4 Integer Unit System & Deterministic Residual Accumulator
-- Conserved mass units: **integer centipounds** ($1\text{ unit} = 0.01\text{ lb}$).
-- Display volume: derived gallons ($1\text{ gal} \approx 834\text{ centipounds}$).
-- Fractional transfer residuals are retained in an accumulator per cell so small flows do not round to zero indefinitely:
-  $$\text{totalToTransfer} = \text{calculatedFlow} + \text{residual}$$
-  $$\text{actualTransfer} = \lfloor \text{totalToTransfer} \rfloor, \quad \text{residual} = \text{totalToTransfer} - \text{actualTransfer}$$
+### 3.4 Per-Interface Deterministic Residual Tracking
+- Residual transfer flow must be tracked **per interface edge** (`residual[A->B]`):
+  - Prevents neighbor processing order from biasing flow rates.
+  $$\text{grossTransfer} = \text{calculatedFlow} + \text{residual}[A \to B]$$
+  $$\text{actualTransfer} = \lfloor \text{grossTransfer} \rfloor, \quad \text{residual}[A \to B] = \text{grossTransfer} - \text{actualTransfer}$$
 
-### 3.5 Event-Driven & Dirty-Region Cadence
+### 3.5 Double-Sided Clamping Invariant
+- Every flow transfer step must clamp against both donor availability and receiver capacity:
+  $$\text{transfer} \le \text{donor.availableWater}$$
+  $$\text{transfer} \le \text{receiver.availablePoreCapacity}$$
+- **Invariant**: Strictly eliminates negative water, oversaturation past 10,000 bp, and phantom mass.
+
+### 3.6 Event-Driven & Dirty-Region Cadence
 - Zero global per-tick full-world loops.
 - Resting subterranean aquifers in undisturbed rock are quiescent (static).
 - Breaches (excavations, collapse voids) mark adjacent aquifer cells as dirty.
 - Only dirty regions update during low-frequency hydraulic equilibration cycles until steady state is reached.
 
-### 3.6 Mass Balance & Conservation
-- Water mass seeping into a breach decrements rock saturation and credits fluid volume in `game/js/sim/ledger.js`. Net mass is 100% conserved.
+### 3.7 Mass Balance & Conservation
+- Water mass seeping into a breach decrements rock saturation and credits fluid volume in `game/js/sim/ledger.js`.
+- Authoritative mass unit: **integer centipounds** ($1\text{ unit} = 0.01\text{ lb}$). Net mass is 100% conserved.
 
-### 3.7 Strict Non-Goals / Exclusions
+### 3.8 Strict Non-Goals / Exclusions
 - Excludes wells, pumps, irrigation, mining jobs, or civic attachments.
 
-### 3.8 Negative Control Mutants (Rule 4)
+### 3.9 Negative Control Mutants (Rule 4)
 - `infinite_water`: Disables aquifer drawdown; tests fail.
 - `leak_free`: Sets permeability to zero; seepage tests fail.
 
@@ -77,10 +87,10 @@ WBS / Lane:
 NAT.03.01 / lane-bx
 
 Approved scope / Owner authorization reference:
-DEC-038 (Owner ruling 2026-09-28, Lean Natural World v1 Foundations & Mathematical Calibration, Amended)
+DEC-038 (Owner ruling 2026-09-28, Lean Natural World v1 Foundations & Mathematical Calibration, Ratified)
 
 Writer SHA / evidence date:
-fe9b0f9b / 2026-09-28
+83b1f2e6 / 2026-09-28
 
 Translation Class:
 B WORLD-BEHAVIOR VISIBLE (Foundational Hydrology Substrate)
@@ -95,7 +105,7 @@ Runtime Authority:
 game/js/sim/hydrology/aquifer.js (Strata-level Hydrology State) + game/js/sim/ledger.js (Mass Conservation Ledger).
 
 Simulation Path:
-evalStrataSaturation(x, y, z, s) -> calcDarcySeepage(neighborStencil, harmonicMeanK) -> transferGroundwaterMass() -> ledger.transferMass("groundwater", "liquid_water", deltaCentipounds).
+evalStrataSaturation(x, y, z, s) -> calcDarcySeepage(neighborStencil, harmonicMeanK) -> clamp(donorAvail, receiverCap) -> transferGroundwaterMass() -> ledger.transferMass("groundwater", "liquid_water", deltaCentipounds).
 
 Engine Bridge:
 Seeped water mass registers into open fluid simulation (DEUS_Fluid.js) which triggers RMMZ A1 water autotile display and depth passability.
@@ -110,7 +120,7 @@ Failure Without This Lane:
 Subterranean excavations have zero interaction with groundwater: either mines never encounter water, or water must be statically painted into map files with no geological realism or drainage.
 
 Automated Proof:
-tools/test_aquifer_seepage.js: Verifies strata-level porosity/saturation, local Darcy stencil flux with harmonic mean permeability, global datum elevation head, residual accumulation, event-driven dirty-region activation, drawdown depletion, and 100% mass ledger conservation.
+tools/test_aquifer_seepage.js: Verifies strata-level porosity/saturation, local Darcy stencil flux with harmonic mean permeability, global datum elevation head, per-interface residual accumulation, double-sided clamping, event-driven dirty-region activation, drawdown depletion, and 100% mass ledger conservation.
 
 In-Game Proof:
 Load test world; locate sandstone stratum at Z=-2; breach rock face; verify water seeps and pools into trench until head balances; verify impermeable shale stratum does not seep.
