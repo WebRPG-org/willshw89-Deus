@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://deus.local/quartermaster.schema.json",
+  "title": "DEUS Quartermaster deterministic allocation plan",
+  "description": "Persisted SOC.32.01 plan. Cross-record uniqueness, references, exact-item eligibility, canonical ordering, conservation, and rejection of non-canonical negative-zero numbers are additionally enforced by DEUS_Quartermaster.validatePlan.",
+  "$ref": "#/$defs/plan",
+  "$defs": {
+    "positiveId": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "positiveQuantity": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "nonnegativeQuantity": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "signedSafeInteger": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "itemId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}(?![\\s\\S])"
+    },
+    "jsonValue": {
+      "anyOf": [
+        { "type": "null" },
+        { "type": "boolean" },
+        { "type": "string" },
+        { "$ref": "#/$defs/signedSafeInteger" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/jsonValue" }
+        },
+        {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/jsonValue" }
+        }
+      ]
+    },
+    "lot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lotId", "sourceItemId", "itemId", "quantity", "selectionOrder", "provenance"],
+      "properties": {
+        "lotId": { "$ref": "#/$defs/positiveId" },
+        "sourceItemId": { "$ref": "#/$defs/positiveId" },
+        "itemId": { "$ref": "#/$defs/itemId" },
+        "quantity": { "$ref": "#/$defs/positiveQuantity" },
+        "selectionOrder": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "provenance": { "$ref": "#/$defs/jsonValue" }
+      }
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requestId", "itemId", "quantity", "priority", "tieBreakOrder", "eligibleLotIds", "destinationId", "provenance"],
+      "properties": {
+        "requestId": { "$ref": "#/$defs/positiveId" },
+        "itemId": { "$ref": "#/$defs/itemId" },
+        "quantity": { "$ref": "#/$defs/positiveQuantity" },
+        "priority": { "$ref": "#/$defs/signedSafeInteger" },
+        "tieBreakOrder": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "eligibleLotIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/positiveId" }
+        },
+        "destinationId": { "$ref": "#/$defs/positiveId" },
+        "provenance": { "$ref": "#/$defs/jsonValue" }
+      }
+    },
+    "destination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["destinationId", "availableCapacity", "provenance"],
+      "properties": {
+        "destinationId": { "$ref": "#/$defs/positiveId" },
+        "availableCapacity": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "provenance": { "$ref": "#/$defs/jsonValue" }
+      }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "kind", "lots", "requests", "destinations"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "kind": { "const": "DEUS_QUARTERMASTER_INPUT" },
+        "lots": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/lot" }
+        },
+        "requests": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/request" }
+        },
+        "destinations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/destination" }
+        }
+      }
+    },
+    "reservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lotId", "sourceItemId", "requestId", "itemId", "destinationId", "quantity", "lotProvenance", "requestProvenance", "destinationProvenance"],
+      "properties": {
+        "lotId": { "$ref": "#/$defs/positiveId" },
+        "sourceItemId": { "$ref": "#/$defs/positiveId" },
+        "requestId": { "$ref": "#/$defs/positiveId" },
+        "itemId": { "$ref": "#/$defs/itemId" },
+        "destinationId": { "$ref": "#/$defs/positiveId" },
+        "quantity": { "$ref": "#/$defs/positiveQuantity" },
+        "lotProvenance": { "$ref": "#/$defs/jsonValue" },
+        "requestProvenance": { "$ref": "#/$defs/jsonValue" },
+        "destinationProvenance": { "$ref": "#/$defs/jsonValue" }
+      }
+    },
+    "allocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requestId", "itemId", "destinationId", "requestedQuantity", "allocatedQuantity", "unfilledQuantity", "status", "provenance"],
+      "properties": {
+        "requestId": { "$ref": "#/$defs/positiveId" },
+        "itemId": { "$ref": "#/$defs/itemId" },
+        "destinationId": { "$ref": "#/$defs/positiveId" },
+        "requestedQuantity": { "$ref": "#/$defs/positiveQuantity" },
+        "allocatedQuantity": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "unfilledQuantity": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "status": { "type": "string", "enum": ["FILLED", "PARTIAL", "REFUSED"] },
+        "provenance": { "$ref": "#/$defs/jsonValue" }
+      }
+    },
+    "refusal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requestId", "itemId", "destinationId", "quantity", "code", "provenance"],
+      "properties": {
+        "requestId": { "$ref": "#/$defs/positiveId" },
+        "itemId": { "$ref": "#/$defs/itemId" },
+        "destinationId": { "$ref": "#/$defs/positiveId" },
+        "quantity": { "$ref": "#/$defs/positiveQuantity" },
+        "code": {
+          "type": "string",
+          "enum": [
+            "ELIGIBLE_EXACT_STOCK_EXHAUSTED",
+            "DESTINATION_CAPACITY_EXHAUSTED",
+            "STOCK_AND_DESTINATION_CAPACITY_EXHAUSTED"
+          ]
+        },
+        "provenance": { "$ref": "#/$defs/jsonValue" }
+      }
+    },
+    "lotRemainder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lotId", "sourceItemId", "itemId", "availableQuantity", "reservedQuantity", "remainingQuantity", "provenance"],
+      "properties": {
+        "lotId": { "$ref": "#/$defs/positiveId" },
+        "sourceItemId": { "$ref": "#/$defs/positiveId" },
+        "itemId": { "$ref": "#/$defs/itemId" },
+        "availableQuantity": { "$ref": "#/$defs/positiveQuantity" },
+        "reservedQuantity": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "remainingQuantity": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "provenance": { "$ref": "#/$defs/jsonValue" }
+      }
+    },
+    "destinationRemainder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["destinationId", "availableCapacity", "reservedCapacity", "remainingCapacity", "provenance"],
+      "properties": {
+        "destinationId": { "$ref": "#/$defs/positiveId" },
+        "availableCapacity": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "reservedCapacity": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "remainingCapacity": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "provenance": { "$ref": "#/$defs/jsonValue" }
+      }
+    },
+    "stockProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["available", "reserved", "remaining"],
+      "properties": {
+        "available": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "reserved": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "remaining": { "$ref": "#/$defs/nonnegativeQuantity" }
+      }
+    },
+    "demandProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requested", "allocated", "refused"],
+      "properties": {
+        "requested": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "allocated": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "refused": { "$ref": "#/$defs/nonnegativeQuantity" }
+      }
+    },
+    "capacityProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["available", "reserved", "remaining"],
+      "properties": {
+        "available": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "reserved": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "remaining": { "$ref": "#/$defs/nonnegativeQuantity" }
+      }
+    },
+    "itemProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemId", "available", "reserved", "remaining"],
+      "properties": {
+        "itemId": { "$ref": "#/$defs/itemId" },
+        "available": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "reserved": { "$ref": "#/$defs/nonnegativeQuantity" },
+        "remaining": { "$ref": "#/$defs/nonnegativeQuantity" }
+      }
+    },
+    "conservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stock", "demand", "capacity", "byItem", "valid"],
+      "properties": {
+        "stock": { "$ref": "#/$defs/stockProof" },
+        "demand": { "$ref": "#/$defs/demandProof" },
+        "capacity": { "$ref": "#/$defs/capacityProof" },
+        "byItem": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/itemProof" }
+        },
+        "valid": { "const": true }
+      }
+    },
+    "plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "kind", "input", "reservations", "allocations", "refusals", "remainingLots", "destinationRemainders", "conservation"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "kind": { "const": "DEUS_QUARTERMASTER_PLAN" },
+        "input": { "$ref": "#/$defs/input" },
+        "reservations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/reservation" }
+        },
+        "allocations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/allocation" }
+        },
+        "refusals": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/refusal" }
+        },
+        "remainingLots": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/lotRemainder" }
+        },
+        "destinationRemainders": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/destinationRemainder" }
+        },
+        "conservation": { "$ref": "#/$defs/conservation" }
+      }
+    }
+  }
+}
