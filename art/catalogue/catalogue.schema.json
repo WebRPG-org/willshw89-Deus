@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "deus-art-catalogue/1.1.0",
+  "$id": "deus-art-catalogue/1.2.0",
   "title": "DEUS art catalogue",
-  "description": "Contract deus-art-catalogue/1.1.0 (tasks/WG.20.02/lane-s/BRIEF.md; field-by-field in docs/art/catalogue/SCHEMA.md). No image data. Validated by tools/art/test_catalogue.js with an in-file validator for the keywords used here: $ref, type, properties, required, additionalProperties (boolean), enum, const, pattern, minimum, minLength, items, minItems.",
+  "description": "Contract deus-art-catalogue/1.2.0 (tasks/TOOL.01.01/lane-bz/BRIEF.md; field-by-field in docs/art/catalogue/SCHEMA.md). No image data. Validated by tools/art/test_catalogue.js with an in-file validator for the keywords used here: $ref, type, properties, required, additionalProperties (boolean), enum, const, pattern, minimum, minLength, items, minItems.",
   "type": "object",
   "required": ["schemaVersion", "tileSizePx", "geometry", "palette", "scaleChart", "sources", "sheets", "entries", "outOfScope"],
   "additionalProperties": false,
   "properties": {
-    "schemaVersion": { "const": "deus-art-catalogue/1.1.0" },
+    "schemaVersion": { "const": "deus-art-catalogue/1.2.0" },
     "tileSizePx": { "type": "integer", "minimum": 1 },
     "geometry": { "$ref": "#/$defs/fileRef" },
     "palette": { "$ref": "#/$defs/fileRef" },
@@ -159,7 +159,9 @@
           "properties": { "rule": { "enum": ["STRATA_WINDOW", "LAYER_FACE", "RAMP_CELL"] }, "strata": { "type": "integer", "minimum": 1 } }
         },
         "ownerOpen": { "const": true },
-        "notes": { "type": "string" }
+        "notes": { "type": "string" },
+        "promptFile": { "type": ["string", "null"] },
+        "specFile": { "type": ["string", "null"] }
       }
     },
     "outOfScope": {

@@ -19,7 +19,8 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const SCHEMA_VERSION = 'deus-art-catalogue/1.1.0';
+const SCHEMA_VERSION = 'deus-art-catalogue/1.2.0';
+const ACCEPTED_GEOMETRY_SCHEMAS = new Set(['deus-art-catalogue/1.1.0', 'deus-art-catalogue/1.2.0']);
 
 const OUT = {
     catalogue: 'art/catalogue/catalogue.json',
@@ -149,7 +150,7 @@ function makeCtx(root) {
 function validateGeometry(g) {
     const errs = [];
     const e = msg => errs.push({ code: 'GEOM_INVALID', id: 'geometry', msg });
-    if (g.schemaVersion !== SCHEMA_VERSION) e(`schemaVersion ${g.schemaVersion} is not ${SCHEMA_VERSION}`);
+    if (!ACCEPTED_GEOMETRY_SCHEMAS.has(g.schemaVersion)) e(`schemaVersion ${g.schemaVersion} is not ${SCHEMA_VERSION}`);
     for (const k of ['squareFt', 'layerFt', 'strataPerLayer', 'stratumFt', 'layerCount', 'zMin', 'zMax', 'tilePx', 'layerPx', 'humanPx', 'pxPerFootCreature', 'atlasMaxPx']) {
         if (!Number.isInteger(g[k])) e(`${k} must be an integer`);
     }
@@ -509,6 +510,8 @@ function entryBase(g, p) {
         geometryDerived: p.geometryDerived || null,
         ownerOpen: !!p.ownerOpen,
         notes: p.notes || null,
+        promptFile: p.promptFile || null,
+        specFile: p.specFile || null,
     };
 }
 
@@ -1667,7 +1670,17 @@ function build(opts) {
     for (const [ar, sel] of Object.entries(S.mapping.arMap || {})) {
         for (const cid of sel) for (const e of base.byCatalog.get(cid) || []) e.sourceIds.ar = uniq(e.sourceIds.ar.concat([ar])).sort(sortStr);
     }
-    for (const e of entries) for (const k of SOURCE_KINDS) e.sourceIds[k] = uniq(e.sourceIds[k]).sort(sortStr);
+    for (const e of entries) {
+        for (const k of SOURCE_KINDS) e.sourceIds[k] = uniq(e.sourceIds[k]).sort(sortStr);
+        if (!e.promptFile) {
+            const pf = `art/prompts/${e.id}.json`;
+            if (ctx.exists(pf)) e.promptFile = pf;
+        }
+        if (!e.specFile) {
+            const sf = `art/specs/${e.id}.json`;
+            if (ctx.exists(sf)) e.specFile = sf;
+        }
+    }
     // Style-lock anchors (art/APPROVALS.md style_anchor_1..4; ownerApproved UNKNOWN) linked to what they anchor.
     const styleOf = e => e.category === 'CHARACTER' || e.category === 'EQUIPMENT' ? 'pack:STYLE_PERSON'
         : e.category === 'TREE' ? 'pack:STYLE_TREE'
