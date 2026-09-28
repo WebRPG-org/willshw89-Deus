@@ -10,7 +10,7 @@ const ROOT = path.resolve(__dirname, "..", "..");
 const MODULE_PATH = path.join(ROOT, "game", "js", "sim", "society", "DEUS_Treasury.js");
 const SCHEMA_PATH = path.join(ROOT, "game", "data", "society", "treasury.schema.json");
 const DOC_PATH = path.join(ROOT, "docs", "systems", "DEUS_Treasury.md");
-const GAPS_PATH = path.join(ROOT, "tasks", "SOC.31.01", "lane-bp", "AUTHORITY_GAPS.md");
+const GAPS_PATH = path.join(ROOT, "tasks", "SOC.31.01", "lane-bp2", "AUTHORITY_GAPS.md");
 
 const Treasury = require(MODULE_PATH);
 const schema = JSON.parse(fs.readFileSync(SCHEMA_PATH, "utf8"));

@@ -72,7 +72,7 @@ Implicit overdrafts are unavailable: an execution that would make the settlement
 
 `issueDebt` requires an affirmative external decision for the exact principal and records that decision's explicit time. It debits an `ASSET` proceeds account and credits a `LIABILITY` account. Debt repayment first requires a matching `DEBT_REPAYMENT` expenditure authorization; it then debits that liability and credits the authorized asset account.
 
-Only principal is modeled. A debt is `OPEN` while principal remains and changes to `SETTLED` only when exact repayments reduce outstanding principal to zero. Reopening, overpayment, repayment after settlement, negative principal, and a persisted status/outstanding mismatch are invalid transitions. Interest, maturity, collateral, default, forgiveness, refinancing, restructuring, and credit limits are unavailable until tracked authority supplies them; see `tasks/SOC.31.01/lane-bp/AUTHORITY_GAPS.md`.
+Only principal is modeled. A debt is `OPEN` while principal remains and changes to `SETTLED` only when exact repayments reduce outstanding principal to zero. Reopening, overpayment, repayment after settlement, negative principal, and a persisted status/outstanding mismatch are invalid transitions. Interest, maturity, collateral, default, forgiveness, refinancing, restructuring, and credit limits are unavailable until tracked authority supplies them; see `tasks/SOC.31.01/lane-bp2/AUTHORITY_GAPS.md`.
 
 ## Public API
 
@@ -121,4 +121,4 @@ The repository-wide recorded syntax gate is `node tools/check_deus_syntax.js`. I
 
 Implementation is isolated from minting, Quartermaster inventories, payroll, tax assessment/collection, office-schema integration, plugin registration, and save-host registration. A financial expenditure record does not assert that physical settlement occurred. No RMMZ editor Playtest or F8 console check is part of this headless, unregistered module lane; those remain integration work after a runtime host is authorized.
 
-Exact gate output and any observed problems are recorded in `tasks/SOC.31.01/lane-bp/REPORT.md` after the foreground runs.
+Exact gate output and any observed problems are recorded in `tasks/SOC.31.01/lane-bp2/REPORT.md` after the foreground runs.
