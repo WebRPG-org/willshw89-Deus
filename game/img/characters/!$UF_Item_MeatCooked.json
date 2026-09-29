@@ -1,5 +1,6 @@
 {
-  "id": "meat_cooked",
+  "id": "UF_Item_MeatCooked",
+  "name": "Cooked Meat",
   "frameWidth": 48,
   "frameHeight": 48,
   "anchor": [
@@ -15,11 +16,9 @@
   ],
   "animations": {
     "stand": [
-      0
+      1
     ]
   },
-  "frameMs": 150,
-  "layer": "object",
-  "species": null,
-  "stage": null
+  "layer": "item",
+  "source": "PixelLab original 16-bit pixel art (48x48)"
 }

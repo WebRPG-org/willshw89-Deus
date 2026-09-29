@@ -164,6 +164,21 @@
         }
         return null;
     }
+    function getItems() {
+        if (typeof window !== "undefined" && window.UF && window.UF.Items) return window.UF.Items;
+        if (typeof global !== "undefined" && global.UF && global.UF.Items) return global.UF.Items;
+        if (typeof require === "function") {
+            const paths = ["./DEUS_Items.js", "./js/plugins/DEUS_Items.js", "./game/js/plugins/DEUS_Items.js", "./UF_Items.js"];
+            for (const p of paths) {
+                try {
+                    const mod = require(p);
+                    if (typeof window !== "undefined" && window.UF && window.UF.Items) return window.UF.Items;
+                    if (mod && mod.create) return mod;
+                } catch (_) {}
+            }
+        }
+        return null;
+    }
     const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
     const now = () => (typeof performance !== "undefined" ? performance.now() : Date.now());
     const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1);
@@ -2749,11 +2764,15 @@
     // A people sheet entry is "Name" or { name, index } (the stock-art catalog).
     const imageSpec = img => (typeof img === "string" ? { characterName: img, characterIndex: 0 } : img && typeof img === "object" ? { characterName: String(img.name || img.characterName || ""), characterIndex: (img.index !== undefined ? img.index : img.characterIndex) | 0 } : { characterName: "", characterIndex: 0 });
 
-    // The catalog id of the camp's center: the 64-slot wooden chest stockpile.
-    const campFireId = () => "chest_wood";
+    // The catalog id of the camp's center: the racial war banner of the faction (User directive 2026-09-28)
+    const campFireId = f => {
+        if (!f) return "banner_human";
+        const sp = (f.species || "human").toLowerCase().replace(/-/g, "_");
+        return `banner_${sp}`;
+    };
 
     function seedStarterChest(cont) {
-        const I = window.UF && UF.Items;
+        const I = getItems();
         if (!I || !cont) return;
         if (cont.items && cont.items.length > 0) return; // Idempotent: do not double-seed
         // Actual shipping starter inventory: 16 cooked meat (1 day of food for 8 founders) + 1 shovel, 1 pickaxe, 1 axe
@@ -2786,53 +2805,77 @@
     }
 
     /**
-     * The central stockpile chest of every year-1 camp: the nine cells of the camp's block are
-     * cleared of any object, then the wooden chest goes on the centre cell, written like a built object.
+     * The central focal point of every year-1 camp: the racial war banner of the faction.
+     * The nine cells of the camp's block are cleared of any object, then the war banner goes on the centre cell.
      * All nine starting tiles are designated as physical stockpile squares.
-     * Creates a 64-slot physical container in UF.Containers and seeds it with the starter kit.
+     * The racial war banner also spawns as a physical item on that cell so it can be picked up, carried, or captured.
+     * Starter supplies are seeded into the founder leader's inventory.
      */
     function placeCamps(state) {
         const W = UF.World, h = state.history, cat = catalog() || {};
-        const fireId = campFireId();
-        const typeId = Math.max(0, (cat.objects || []).findIndex(o => o.id === fireId)) + 1;
         const O = window.UF.Objects && typeof UF.Objects.setIn === "function" ? UF.Objects : null;
         const read = (area, x, y) => (O ? O.typeIdIn(area, x, y) : W.getObject(area.x, area.y, x, y, levelOf(area)));
-        const write = (area, x, y, v) => (O ? O.setIn(area, x, y, v) : W.setObject(area.x, area.y, x, y, v ? typeId : 0, levelOf(area)));
+        const write = (area, x, y, v) => (O ? O.setIn(area, x, y, v) : W.setObject(area.x, area.y, x, y, v ? 1 : 0, levelOf(area)));
         let placed = 0;
         for (const f of state.factions.list) {
             const rec = h.founders[f.id];
             if (!rec) continue;
             rec.camps = [];
+            const bannerId = campFireId(f);
             for (const site of founderSites(h, rec)) {
-            const area = siteArea(site);
-            let cleared = 0;
-            for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
-                if ((dx || dy) && read(area, site.x + dx, site.y + dy)) { write(area, site.x + dx, site.y + dy, null); cleared++; }
-            }
-            const ok = !!write(area, site.x, site.y, fireId);
-            if (ok) placed++;
-            const z = levelOf(site);
-            rec.camps.push({ site: site.id, area: { ...site.area }, x: site.x, y: site.y, z, fire: ok ? fireId : null, cleared });
-            site.focalFire = { area: { ...site.area }, x: site.x, y: site.y, z };
-            f.focalFire = { area: { ...site.area }, x: site.x, y: site.y, z };
-            rec.focalFire = { area: { ...site.area }, x: site.x, y: site.y, z };
-            site.focalChest = { area: { ...site.area }, x: site.x, y: site.y, z };
-            f.focalChest = { area: { ...site.area }, x: site.x, y: site.y, z };
-            rec.focalChest = { area: { ...site.area }, x: site.x, y: site.y, z };
-
-            // Create container in UF.Containers and seed starter inventory
-            const Cont = window.UF && UF.Containers;
-            if (Cont && typeof Cont.create === "function") {
-                const cont = Cont.create("chest_wood", { area, x: site.x, y: site.y, z }, {
-                    maxSlots: 32,
-                    maxWeight: 500.0,
-                    owner: { kind: "faction", id: f.id },
-                    policy: { name: "Central Stockpile Chest" }
-                });
-                if (cont) {
-                    seedStarterChest(cont);
+                const area = siteArea(site);
+                let cleared = 0;
+                for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+                    if ((dx || dy) && read(area, site.x + dx, site.y + dy)) { write(area, site.x + dx, site.y + dy, null); cleared++; }
                 }
-            }
+                const ok = !!write(area, site.x, site.y, bannerId);
+                if (ok) placed++;
+                const z = levelOf(site);
+                rec.camps.push({ site: site.id, area: { ...area }, x: site.x, y: site.y, z, fire: ok ? bannerId : null, cleared });
+                site.focalBanner = { area: { ...area }, x: site.x, y: site.y, z, bannerId, factionId: f.id };
+                f.focalBanner = site.focalBanner;
+                rec.focalBanner = site.focalBanner;
+                site.focalFire = site.focalBanner;
+                f.focalFire = site.focalBanner;
+                rec.focalFire = site.focalBanner;
+                site.focalChest = site.focalBanner;
+                f.focalChest = site.focalBanner;
+                rec.focalChest = site.focalBanner;
+
+                // Spawn the physical racial war banner as an accessible world item
+                const I = getItems();
+                if (I && typeof I.create === "function") {
+                    I.create(bannerId, 1, {
+                        area,
+                        x: site.x,
+                        y: site.y,
+                        z,
+                        factionId: f.id,
+                        sacred: true,
+                        isWarBanner: true
+                    });
+                }
+
+                // Seed starter equipment directly to the founder colonists' inventories
+                if (I && rec.units && rec.units.length > 0) {
+                    const leader = rec.units[0];
+                    const starterKit = [
+                        { type: "meat_cooked", count: 16 },
+                        { type: "shovel", count: 1 },
+                        { type: "stone_pick", count: 1 },
+                        { type: "stone_axe", count: 1 }
+                    ];
+                    for (const spec of starterKit) {
+                        let itType = spec.type;
+                        if (!I.type(itType)) {
+                            if (itType === "pickaxe" || itType === "shovel") itType = "stone_pick";
+                            else if (itType === "axe") itType = "stone_axe";
+                        }
+                        if (I.type(itType)) {
+                            I.create(itType, spec.count, { holder: leader.id, unit: leader.id });
+                        }
+                    }
+                }
 
             // Designate all 9 starting tiles as physical stockpile squares
             const startCells = [];
@@ -3011,7 +3054,7 @@
             if (Items && typeof Items.giveFactionStartingKit === "function") {
                 Items.giveFactionStartingKit(u);
             }
-            rec.units.push({ id: u.id, site: site.id, z: levelOf(site), x: u.x, y: u.y, dir: u.dir, ring: q.ring, gender: p.gender, within: Math.max(Math.abs(u.x - site.x), Math.abs(u.y - site.y)) <= reach });
+            rec.units.push({ id: u.id, site: site.id, area: { ...site.area }, z: levelOf(site), x: u.x, y: u.y, dir: u.dir, ring: q.ring, gender: p.gender, within: Math.max(Math.abs(u.x - site.x), Math.abs(u.y - site.y)) <= reach });
             if (p.leader) {
                 leaders[f.id] = u.id;
                 const r = h.rulers[f.id] && h.rulers[f.id][0];
@@ -3020,6 +3063,32 @@
             out.push(u);
         }
         for (const u of out) if (u.data.rank === 0) u.data.superior = leaders[u.data.faction] || null;
+
+        // Seed colony starter kit into the leader's bag/inventory (User directive 2026-09-28)
+        const I = getItems();
+        if (I && typeof I.give === "function") {
+            for (const f of state.factions.list) {
+                const leaderId = leaders[f.id];
+                if (!leaderId) continue;
+                const starterKit = [
+                    { type: "meat_cooked", count: 16 },
+                    { type: "shovel", count: 1 },
+                    { type: "stone_pick", count: 1 },
+                    { type: "stone_axe", count: 1 }
+                ];
+                for (const spec of starterKit) {
+                    let itType = spec.type;
+                    if (!I.type(itType)) {
+                        if (itType === "pickaxe" || itType === "shovel") itType = "stone_pick";
+                        else if (itType === "axe") itType = "stone_axe";
+                    }
+                    if (I.type(itType)) {
+                        I.give(itType, spec.count, leaderId, { bypassLimits: true });
+                    }
+                }
+            }
+        }
+
         History.pairFounders(state, out);
         const Callings = getCallings();
         if (Callings && typeof Callings.assignFounderQuotas === "function" && state.factions && state.factions.list) {
@@ -4010,16 +4079,18 @@
                     const cellProblems = [];
                     for (const cell of cc.cells) {
                         const k = `${cell.dx},${cell.dy}`;
+                        const expectedCenter = (rec.camp && rec.camp.fire) || fireId;
                         if (k === "0,0") {
-                            if (cell.object !== fireId || cell.units.length) cellProblems.push(`centre: ${cell.object || "nothing"}, ${cell.units.length} units`);
+                            if ((cell.object !== expectedCenter && cell.object !== fireId && !String(cell.object).startsWith("banner_")) || cell.units.length) cellProblems.push(`centre: ${cell.object || "nothing"}, ${cell.units.length} units`);
                         } else if (cell.object || (byCell.has(k) ? cell.units.length !== 1 || !ids.has(cell.units[0].id) || cell.units[0].dir !== faceFire(cell.dx, cell.dy) : cell.units.length !== 0)) {
                             cellProblems.push(`${k}: ${cell.object || "no object"}, ${cell.units.map(u => `${u.name} dir ${u.dir}${ids.has(u.id) ? "" : " (not a founder)"}`).join(" + ") || "empty"}`);
                         }
                     }
                     if (cellProblems.length) campProblems.push(`${label} at the first frame: ${cellProblems.slice(0, 3).join("; ")}`);
+                    const expectedCenter = (rec.camp && rec.camp.fire) || fireId;
                     const pic = [-1, 0, 1].map(dy => [-1, 0, 1].map(dx => {
                         const cell = cc.cells.find(c => c.dx === dx && c.dy === dy);
-                        if (dx === 0 && dy === 0) return cell && cell.object === fireId ? "F" : "?";
+                        if (dx === 0 && dy === 0) return (cell && (cell.object === expectedCenter || cell.object === fireId || String(cell.object).startsWith("banner_"))) ? "F" : "?";
                         return cell && cell.units.length === 1 && ids.has(cell.units[0].id) ? "P" : cell && cell.units.length ? "x" : ".";
                     }).join("")).join("/");
                     capText = `first frame ${pic}`;
@@ -4029,7 +4100,7 @@
                 campRows.push(`${label} (${f.species}, ${camp.x},${camp.y})${want && want.moved ? `, ${want.moved.toFixed(1)} from its centre` : ""}: ${centreId || "nothing"} + ${onRing.length} on the ring (sheets ${sheets}), genders N-NE-E-SE-S-SW-W-NW ${seq.map(g => (g === "male" ? "m" : g === "female" ? "f" : g)).join("")}, facings ${face}, ${capText}${campProblems.length > p0 ? " [PROBLEM]" : ""}`);
             }
             const wantCaptured = h.sites.filter(s => sameArea(s.area, viewedArea()) && levelOf(s) === viewZ()).length;
-            if (fireId !== "chest_wood" && !lit) campProblems.push(`${fireId}: tags ${fireType ? (fireType.tags || []).join("/") : "unknown object"}, fire rule ${fireRule ? JSON.stringify(fireRule) : "none"} (want tag fire and a contained source)`);
+            if (fireId !== "chest_wood" && !String(fireId).startsWith("banner_") && !lit) campProblems.push(`${fireId}: tags ${fireType ? (fireType.tags || []).join("/") : "unknown object"}, fire rule ${fireRule ? JSON.stringify(fireRule) : "none"} (want tag fire and a contained source)`);
             t.check("campfire_start", factions.length > 0 && campProblems.length === 0,
                 `${factions.length} camps as drawn (PPP/PFP/PPP; facings N-NE-E-SE-S-SW-W-NW in RMMZ numbers, 2 down 8 up 6 right 4 left): ${campRows.join("; ")}; `
                 + `${fireId}: placed at center; start capture ${cap.state} after ${cap.frames || 0} frames (ready at ${cap.readyAt === undefined ? "-" : cap.readyAt}), shots ${cap.shots.map(s => s.split(/[\\/]/).pop()).join(", ") || "none"}`

@@ -140,6 +140,32 @@
             }
             return entry;
         });
+
+        // 9 Playable Racial War Banners (User directive 2026-09-28)
+        const BANNER_SPECIES = [
+            { id: "banner_human", name: "Human War Banner", image: "!$UF_Banner_Human" },
+            { id: "banner_elf", name: "Elf War Banner", image: "!$UF_Banner_Elf" },
+            { id: "banner_dwarf", name: "Dwarf War Banner", image: "!$UF_Banner_Dwarf" },
+            { id: "banner_gnome", name: "Gnome War Banner", image: "!$UF_Banner_Gnome" },
+            { id: "banner_halfling", name: "Halfling War Banner", image: "!$UF_Banner_Halfling" },
+            { id: "banner_half_elf", name: "Half-Elf War Banner", image: "!$UF_Banner_Half_Elf" },
+            { id: "banner_half_orc", name: "Half-Orc War Banner", image: "!$UF_Banner_Half_Orc" },
+            { id: "banner_dragonborn", name: "Dragonborn War Banner", image: "!$UF_Banner_Dragonborn" },
+            { id: "banner_tiefling", name: "Tiefling War Banner", image: "!$UF_Banner_Tiefling" }
+        ];
+        for (const b of BANNER_SPECIES) {
+            if (!list.some(o => o.id === b.id)) {
+                list.push({
+                    id: b.id,
+                    typeId: list.length + 1,
+                    name: b.name,
+                    image: b.image,
+                    passable: true,
+                    tags: ["banner", "sacred", "faction_heart"],
+                    tintValue: 0xffffff
+                });
+            }
+        }
         const byId = new Map();
         const blocks = new Uint8Array(list.length + 1); // 1 = units can't enter a cell holding this type
         for (const o of list) {

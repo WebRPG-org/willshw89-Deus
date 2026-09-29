@@ -72,29 +72,36 @@ assert(site, "At least one site must exist");
 const area = site.area;
 const z = site.z || 0;
 
-// 3. Central chest and starter contents
-const chestObj = UF.Containers.at(area, site.x, site.y, z);
-assert(chestObj, `Central chest must exist at (${site.x}, ${site.y})`);
+// 3. Central war banner and starter contents
+const bannerItems = UF.Items.at(area, site.x, site.y, z);
+const banner = bannerItems.find(it => it.isWarBanner || it.type.startsWith("banner_"));
+assert(banner, `Central War Banner must exist at (${site.x}, ${site.y})`);
 
-const chestItems = UF.Containers.itemsIn(chestObj.id);
-console.log(`Starting chest contains ${chestItems.length} item stacks:`);
-for (const it of chestItems) {
+const fRec = world.history.founders[site.faction];
+for (const u of fRec.units) {
+    const inv = UF.Items.inventoryOf(u.id);
+    console.log(`Unit ${u.id}:`, inv.map(i => `${i.count}x ${i.type}`));
+}
+const leader = fRec.units.find(u => UF.Items.inventoryOf(u.id).some(it => it.type === "meat_cooked")) || fRec.units[0];
+const leaderItems = UF.Items.inventoryOf(leader.id);
+console.log(`Starting leader bag contains ${leaderItems.length} item stacks:`);
+for (const it of leaderItems) {
     console.log(`  - ${it.count}x ${it.type} (id: ${it.id})`);
 }
 
-const totalMeat = chestItems.filter(it => it.type === "meat_cooked").reduce((sum, it) => sum + (it.count | 0), 0);
+const totalMeat = leaderItems.filter(it => it.type === "meat_cooked").reduce((sum, it) => sum + (it.count | 0), 0);
 assert(totalMeat === 16, `Must contain 16 meat_cooked (food for 8 people for 1 day), found: ${totalMeat}`);
 
-const shovelItem = chestItems.find(it => it.type === "shovel");
+const shovelItem = leaderItems.find(it => it.type === "shovel");
 assert(shovelItem && shovelItem.count === 1, "Must contain 1 shovel");
 
-const pickItem = chestItems.find(it => it.type === "stone_pick" || it.type === "pickaxe");
+const pickItem = leaderItems.find(it => it.type === "stone_pick" || it.type === "pickaxe");
 assert(pickItem && pickItem.count === 1, "Must contain 1 pickaxe");
 
-const axeItem = chestItems.find(it => it.type === "stone_axe" || it.type === "axe");
+const axeItem = leaderItems.find(it => it.type === "stone_axe" || it.type === "axe");
 assert(axeItem && axeItem.count === 1, "Must contain 1 axe");
 
-console.log("PASS 2: Central chest contains exact starter kit (16 cooked meat, 1 shovel, 1 pickaxe, 1 axe).");
+console.log("PASS 2: Central war banner stands at center; leader bag contains exact starter kit (16 cooked meat, 1 shovel, 1 pickaxe, 1 axe).");
 
 // 4. Nine starting tiles are stockpile squares
 const sp = UF.Stockpiles.at(area, site.x, site.y, z);

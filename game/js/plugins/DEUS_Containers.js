@@ -675,13 +675,16 @@
             // 1. Check if dropped over Container Card
             if (card && card.visible && typeof card.isPointerInsideCoords === "function" && card.isPointerInsideCoords(dropX, dropY)) {
                 const targetSlot = card.slotAtCoords(dropX, dropY);
-                if (src.kind === "inventory") {
-                    // Transfer from Colonist Inventory -> Container
+                if (src.kind === "inventory" || src.kind === "bag") {
+                    // Transfer from Colonist Inventory / Bag -> Container
                     const deposited = Containers.putItem(cId, src.item.id);
                     if (deposited) {
                         SoundManager.playOk();
                         card.refresh();
                         if (sheet) sheet.redraw();
+                        if (scene && scene._ufBagWindow && scene._ufBagWindow.visible) {
+                            scene._ufBagWindow.refresh();
+                        }
                     } else {
                         SoundManager.playBuzzer();
                     }
@@ -702,7 +705,7 @@
 
                 if (targetEquip && u) {
                     // Equip item!
-                    if (src.kind === "inventory" || src.kind === "container") {
+                    if (src.kind === "inventory" || src.kind === "container" || src.kind === "bag") {
                         if (src.kind === "container") {
                             Containers.takeItem(src.containerId, src.item.id, u.id);
                         }
@@ -711,6 +714,9 @@
                         }
                         SoundManager.playEquip();
                         if (card) card.refresh();
+                        if (scene && scene._ufBagWindow && scene._ufBagWindow.visible) {
+                            scene._ufBagWindow.refresh();
+                        }
                         sheet.redraw();
                         return;
                     }
@@ -722,6 +728,9 @@
                     if (transferred) {
                         SoundManager.playOk();
                         if (card) card.refresh();
+                        if (scene && scene._ufBagWindow && scene._ufBagWindow.visible) {
+                            scene._ufBagWindow.refresh();
+                        }
                         sheet.redraw();
                     } else {
                         SoundManager.playBuzzer();
@@ -741,12 +750,15 @@
             const my = $gameMap ? $gameMap.canvasToMapY(dropY) : (u ? u.y : 0);
             const curArea = (u && u.area) || (W ? W.currentArea() : null);
 
-            if (src.kind === "inventory" && u) {
-                // Drop from colonist to ground
+            if ((src.kind === "inventory" || src.kind === "bag") && u) {
+                // Drop from colonist bag / inventory to ground
                 if (typeof I.putDown === "function") {
                     this._lastDropResult = I.putDown(src.item.id, curArea, mx, my);
                     SoundManager.playCursor();
                     if (sheet) sheet.redraw();
+                    if (scene && scene._ufBagWindow && scene._ufBagWindow.visible) {
+                        scene._ufBagWindow.refresh();
+                    }
                 }
             } else if (src.kind === "container") {
                 // Drop from chest to ground

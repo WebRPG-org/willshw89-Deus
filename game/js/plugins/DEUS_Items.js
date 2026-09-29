@@ -115,7 +115,9 @@
         pick: "stone_pick",
         pickaxe: "stone_pick",
         shovel_stone: "shovel",
-        stone_shovel: "shovel"
+        stone_shovel: "shovel",
+        "banner_half-elf": "banner_half_elf",
+        "banner_half-orc": "banner_half_orc"
     };
 
     let typeCache = null;
@@ -126,6 +128,26 @@
             const byId = {};
             const list = rawList.slice();
             for (const t of list) if (t && t.id) byId[t.id] = t;
+
+            // PixelLab authentic 16-bit item icons remap
+            const PIXELLAB_ITEM_REMAP = {
+                stone_axe: "!$UF_Item_StoneAxe",
+                stone_pick: "!$UF_Item_StonePick",
+                stone_knife: "!$UF_Item_StoneKnife",
+                ore_iron: "!$UF_Item_OreIron",
+                ore_copper: "!$UF_Item_OreCopper",
+                meat_raw: "!$UF_Item_MeatRaw",
+                meat_cooked: "!$UF_Item_MeatCooked",
+                firewood: "!$UF_Item_Firewood"
+            };
+            for (const [id, img] of Object.entries(PIXELLAB_ITEM_REMAP)) {
+                if (byId[id]) {
+                    byId[id] = Object.assign({}, byId[id], { image: img });
+                    const idx = list.findIndex(t => t && t.id === id);
+                    if (idx >= 0) list[idx] = byId[id];
+                }
+            }
+
             if (!byId.shovel) {
                 const shovel = {
                     id: "shovel",
@@ -154,6 +176,60 @@
                 byId.waterskin = waterskin;
                 list.push(waterskin);
             }
+            if (!byId.bread_loaf) {
+                const bread = {
+                    id: "bread_loaf",
+                    name: "Loaf of Bread",
+                    image: "!$UF_Item_BreadLoaf",
+                    tags: ["food", "bread", "rations"],
+                    stack: 10,
+                    weight: 1.0
+                };
+                byId.bread_loaf = bread;
+                list.push(bread);
+            }
+            if (!byId.campfire) {
+                const cf = {
+                    id: "campfire",
+                    name: "Campfire Kit",
+                    image: "!$UF_Item_Campfire",
+                    tags: ["tool", "fire", "furniture"],
+                    stack: 1,
+                    weight: 5.0
+                };
+                byId.campfire = cf;
+                list.push(cf);
+            }
+
+            // 9 Playable Racial War Banners (User directive 2026-09-28)
+            const RACIAL_BANNERS = [
+                { id: "banner_human", name: "Human War Banner", image: "!$UF_Banner_Human", species: "human" },
+                { id: "banner_elf", name: "Elf War Banner", image: "!$UF_Banner_Elf", species: "elf" },
+                { id: "banner_dwarf", name: "Dwarf War Banner", image: "!$UF_Banner_Dwarf", species: "dwarf" },
+                { id: "banner_gnome", name: "Gnome War Banner", image: "!$UF_Banner_Gnome", species: "gnome" },
+                { id: "banner_halfling", name: "Halfling War Banner", image: "!$UF_Banner_Halfling", species: "halfling" },
+                { id: "banner_half_elf", name: "Half-Elf War Banner", image: "!$UF_Banner_Half_Elf", species: "half_elf" },
+                { id: "banner_half_orc", name: "Half-Orc War Banner", image: "!$UF_Banner_Half_Orc", species: "half_orc" },
+                { id: "banner_dragonborn", name: "Dragonborn War Banner", image: "!$UF_Banner_Dragonborn", species: "dragonborn" },
+                { id: "banner_tiefling", name: "Tiefling War Banner", image: "!$UF_Banner_Tiefling", species: "tiefling" }
+            ];
+            for (const b of RACIAL_BANNERS) {
+                if (!byId[b.id]) {
+                    const itemDef = {
+                        id: b.id,
+                        name: b.name,
+                        image: b.image,
+                        tags: ["banner", "sacred", "faction_heart"],
+                        stack: 1,
+                        weight: 12.0,
+                        species: b.species,
+                        isWarBanner: true
+                    };
+                    byId[b.id] = itemDef;
+                    list.push(itemDef);
+                }
+            }
+
             typeCache = { source: rawList, list, byId };
         }
         return typeCache;
@@ -313,8 +389,9 @@
             opts = at;
             at = null;
         }
-        const held = at && at.holder !== undefined && at.holder !== null;
-        const holder = held ? World().unit(at.holder) : null;
+        const holderId = at ? (at.holder !== undefined ? at.holder : at.unit) : null;
+        const held = holderId !== undefined && holderId !== null;
+        const holder = held ? World().unit(holderId) : null;
         const contained = at && at.container !== undefined && at.container !== null;
         const area = (at && at.area) ? whereArea(at) : null;
         if (held && (!holder || !validArea(levelArea(holder.area, zOf(holder))))) return null;
@@ -324,6 +401,11 @@
         const q = (opts && opts.q !== undefined && opts.q !== null) ? opts.q : (at && at.q !== undefined && at.q !== null ? at.q : null);
         if (mat) item.mat = mat;
         if (q !== null) item.q = q;
+        if (at && at.factionId) item.factionId = at.factionId;
+        if (opts && opts.factionId) item.factionId = opts.factionId;
+        if (at && at.sacred) item.sacred = at.sacred;
+        if (opts && opts.sacred) item.sacred = opts.sacred;
+        if ((at && at.isWarBanner) || (opts && opts.isWarBanner) || t.isWarBanner) item.isWarBanner = true;
         if (held) {
             const u = holder;
             item.holder = u.id;
@@ -391,9 +473,18 @@
     };
 
     /** Items on a cell of an area. */
-    Items.atIn = (area, x, y) => itemsOnCell(area, x, y).slice();
-    /** Items on a cell of the area on screen. */
-    Items.at = (x, y) => Items.atIn(currentArea(), x, y);
+    Items.atIn = (area, x, y, z) => {
+        const targetZ = z !== undefined ? z : zOf(area);
+        const a = levelArea(area, targetZ);
+        return itemsOnCell(a, x, y).slice();
+    };
+    /** Items on a cell of the area on screen, or of specified area if passed. */
+    Items.at = function(...args) {
+        if (args.length >= 3 && typeof args[0] === "object" && args[0] !== null) {
+            return Items.atIn(args[0], args[1], args[2], args[3]);
+        }
+        return Items.atIn(currentArea(), args[0], args[1]);
+    };
 
     /**
      * Ground items near a cell, nearest first: { near: {x, y}, radius, tags?: [any of], id?: typeId, limit?, area? (default: on screen) }.
@@ -599,6 +690,30 @@
                 Own.claim({ kind: "item", id: it.id }, u, { reason: "first pickup" });
             }
         }
+
+        // Racial War Banner conquest logic (User directive 2026-09-28)
+        if ((it.isWarBanner || (it.tags && it.tags.includes("banner")) || (it.type && it.type.startsWith("banner_"))) && it.factionId) {
+            const unitFaction = u.faction || (u.data && u.data.faction);
+            if (unitFaction && unitFaction !== it.factionId) {
+                const W = World();
+                const factions = (W && W.state && W.state.factions && W.state.factions.list) || [];
+                const targetFac = factions.find(f => f.id === it.factionId);
+                const captorFac = factions.find(f => f.id === unitFaction);
+                if (targetFac && !targetFac.conquered) {
+                    targetFac.conquered = true;
+                    targetFac.conqueredBy = unitFaction;
+                    targetFac.capturedBanner = it.id;
+                    const captorName = captorFac ? captorFac.name : unitFaction;
+                    const targetName = targetFac.name || it.factionId;
+                    const conquestMsg = `${u.name || "A warrior"} of ${captorName} has captured the ${it.name || "War Banner"}! ${targetName} has been conquered!`;
+                    console.log(`[DEUS_CONQUEST] ${conquestMsg}`);
+                    if (window.UF && UF.Chronicle && typeof UF.Chronicle.record === "function") {
+                        UF.Chronicle.record("conquest", { captorUnit: u.id, captorFaction: unitFaction, targetFaction: it.factionId, text: conquestMsg });
+                    }
+                }
+            }
+        }
+
         changed(it, "moved");
         return true;
     };

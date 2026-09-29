@@ -1,0 +1,14 @@
+{
+  "frameWidth": 48,
+  "frameHeight": 96,
+  "anchor": [
+    24,
+    96
+  ],
+  "cellWidth": 48,
+  "cellHeight": 96,
+  "race": "gnome",
+  "title": "Gnomish War Banner",
+  "isBanner": true,
+  "isObjectCharacter": true
+}

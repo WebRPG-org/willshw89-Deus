@@ -73,6 +73,7 @@
             // Synchronously ensure all modular plugins are loaded in NW.js desktop runtime
             const companionPlugins = [
                 "DEUS_Containers",
+                "DEUS_Bag",
                 "DEUS_Stockpiles",
                 "DEUS_Fluid",
                 "DEUS_Conditions",
