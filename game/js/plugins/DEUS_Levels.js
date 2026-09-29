@@ -4463,15 +4463,16 @@
         const t0 = performance.now();
         st.levels = st.levels || {};
         const g = newLevelGen(st, gen);
-        // The core levels have their entries (generator, checksum, changes) from the start; a level outside the core gets
-        // one with its first change (levelEntry), so an unchanged one costs nothing in the save (WG.00.17).
-        for (const z of CORE_LEVELS) if (!st.levels[String(z)]) st.levels[String(z)] = { z, gen: g, checksum: null, strata: {} };
-        for (const z of CORE_LEVELS) {
+        const r = zrSync();
+        const allLevels = (r && r.levels && r.levels.length > 0) ? r.levels : CORE_LEVELS;
+        for (const z of allLevels) if (!st.levels[String(z)]) st.levels[String(z)] = { z, gen: g, checksum: null, strata: {} };
+        for (const z of allLevels) {
             // Allocate Ground too: its checksum still uses its unchanged WorldGen lattice. (Generator 5 makes the area's
             // levels outside the core with its core, in volumeOf.)
             for (let ay = 0; ay < st.areasY; ay++) for (let ax = 0; ax < st.areasX; ax++) baseline(z, ax, ay);
             if (!st.levels[String(z)].checksum) st.levels[String(z)].checksum = checksumOf(z);
         }
+
         // A new world starts at strata schema 1; a save from before the strata has its level changes converted.
         if (st.strataSchemaVersion === undefined) migrateSaveToFiveStrata(st);
         st.version = 4;
