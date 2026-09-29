@@ -1,0 +1,98 @@
+{
+  "set_0": {
+    "id": "34f6bc9b-17ce-49e8-852d-ad5cd1ca9c68",
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "status: failed\nid: 34f6bc9b-17ce-49e8-852d-ad5cd1ca9c68\nerror: asset was not stored (tile was deleted during generation)\n\nhint: create_tiles_pro(...)"
+          }
+        ],
+        "isError": false
+      }
+    }
+  },
+  "set_1": {
+    "id": "92ce97ee-5e8b-4a32-a84f-4ac212c2bb64",
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "status: failed\nid: 92ce97ee-5e8b-4a32-a84f-4ac212c2bb64\nerror: asset was not stored (tile was deleted during generation)\n\nhint: create_tiles_pro(...)"
+          }
+        ],
+        "isError": false
+      }
+    }
+  },
+  "set_2": {
+    "id": "5b87448c-0852-4370-bb25-a9bc78af799c",
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "status: failed\nid: 5b87448c-0852-4370-bb25-a9bc78af799c\nerror: asset was not stored (tile was deleted during generation)\n\nhint: create_tiles_pro(...)"
+          }
+        ],
+        "isError": false
+      }
+    }
+  },
+  "set_3": {
+    "id": "aa902541-ba31-4f77-8e4b-ad530685a9d8",
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "status: failed\nid: aa902541-ba31-4f77-8e4b-ad530685a9d8\nerror: asset was not stored (tile was deleted during generation)\n\nhint: create_tiles_pro(...)"
+          }
+        ],
+        "isError": false
+      }
+    }
+  },
+  "set_4": {
+    "id": "b8b3d0b3-50be-491a-b431-f55cb63a3eb1",
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "status: failed\nid: b8b3d0b3-50be-491a-b431-f55cb63a3eb1\nerror: asset was not stored (tile was deleted during generation)\n\nhint: create_tiles_pro(...)"
+          }
+        ],
+        "isError": false
+      }
+    }
+  },
+  "set_5": {
+    "id": "b36d5ea3-5576-49be-a4f9-53d31c52004f",
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "status: failed\nid: b36d5ea3-5576-49be-a4f9-53d31c52004f\nerror: asset was not stored (tile was deleted during generation)\n\nhint: create_tiles_pro(...)"
+          }
+        ],
+        "isError": false
+      }
+    }
+  }
+}
