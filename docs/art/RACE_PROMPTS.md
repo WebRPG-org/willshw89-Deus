@@ -2,14 +2,12 @@
 
 Owner, 2026-09-29: "Small races are 48x48. Human size races are 48x76. Large races are 48x96. Generate a prompt for male and female of every SRD race." Style: V152 / AS-LOOK-002 (English / British Isles feel with Ultima VII and EverQuest). Living beings are generated only by the Owner (DEC-007); agents never run these prompts.
 
-## Canvas tiers (Owner rule; the PM placed the races)
+## Canvas tiers (Owner rule, 2026-09-29: "Humans, elves, tieflings, half elves - med. dwarf, halfling, gnome - small. Dragonborn, half-orc - large")
 | Tier | Canvas | Figure height inside the canvas | Races |
 |---|---|---|---|
-| Small | 48×48 | 34–40 px, feet on row 47 | Halfling, Gnome |
-| Human-size | 48×76 | 60–68 px (dwarf 52–58 px, broad), feet on row 75 | Human, Elf, Half-Elf, Dwarf, Tiefling |
+| Small | 48×48 | 34–40 px (dwarf 40–44 px, broad), feet on row 47 | Dwarf, Halfling, Gnome |
+| Medium | 48×76 | 60–68 px, feet on row 75 | Human, Elf, Half-Elf, Tiefling |
 | Large | 48×96 | 80–90 px, feet on row 95 | Dragonborn, Half-Orc |
-
-The SRD lists Dragonborn and Half-Orc as Medium but 6–7 ft and heavy; they take the 48×96 canvas so their bulk reads next to a 48×76 human. Dwarves stay on the human canvas at dwarf height so the whole tier shares one sheet layout. Say the word and either moves.
 
 RMMZ sheet layout: 3 columns × 4 rows of the canvas per direction block (walk S/W/E/N), so a 48×76 sheet is 144×304, a 48×96 sheet 144×384, a 48×48 sheet 144×192; the eight-direction charset uses the project's 8-dir layout (AS-CHMAP-001). Post-process snaps the palette and anchors the feet; prompts carry no pixel numbers.
 
@@ -33,7 +31,7 @@ Animation prompt, per clip: `{facing}. {motion}. High top-down view, readable hi
 - **Male:** `half-elf man, border folk between the villages and the fair folk, slight build, sun-browned skin, dark hair cut short, faintly pointed ears, blue-grey wool tunic over hose, leather belt with a small pouch, turnshoes` + tail
 - **Female:** `half-elf woman, border folk, slight and quick, sun-browned skin, dark hair in a single braid, faintly pointed ears, russet wool kirtle with a hooded grey cloak, leather belt with a small pouch, turnshoes` + tail
 
-## Dwarf (48×76, dwarf height, broad)
+## Dwarf (48×48, broad; the tallest of the small tier)
 - **Male:** `dwarf man, smith and miner of the northern isles, short and very broad, thick dark beard braided with iron rings, weathered ruddy face, coarse dark-red wool tunic under a leather smith's apron, heavy hobnailed boots` + tail
 - **Female:** `dwarf woman, smith of the northern isles, short and very broad, thick dark hair in two heavy braids, weathered ruddy face, coarse dark-green wool dress under a leather apron, heavy hobnailed boots` + tail
 
