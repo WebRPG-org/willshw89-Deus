@@ -110,6 +110,14 @@ Project DEUS enforces an essential architectural readability convention inspired
 
 ## 4. Visual Rendering, Shading & Palette Language
 
+0. **The Tripartite Overarching Art Directive (DEC-047):**
+   Every visual asset, environment feature, prop, and prompt across Project DEUS is canonically governed by the tripartite synthesis of three foundational aesthetic pillars:
+   - **English Folklore Flavor:** Authentically grounded in English folklore in the spirit of British Isles mythology and mystery (e.g. the fair folk and the hollow hill, barrows and standing stones, fairy rings, holy wells, wyrm lairs, knocker-haunted mine seams, will-o'-the-wisp bogs, black dogs, boggarts, giants, church-carving devils). Owner's exact words: "Not english countryside, english folklore flavor to the game."
+   - **Ultima VII (The Black Gate / Serpent Isle) Tactile World Density:** Deep 90s Western CRPG pixel craftsmanship, tangible interactable density where objects look heavy and physical, rich earthy midtone ramps, grounded contact shadows, high top-down readability (AS-VIEW-002: high top-down; AS-LOCK-001: no outlines on terrain), and zero plastic vector smoothing.
+   - **Classic Everquest (1999 Norrath / Antonica / Faydwer) Nostalgic Wilderness:** Evocative high-fantasy adventure ambiance, untamed frontier wilderness (misty plains of Karana, ancient mossy druid rings, primeval Faydark woodland, rugged Blackburrow stone crags), high-stakes exploration danger, and nostalgic mystery.
+   - **Canonical Style Tail:** `world feel: English folklore, in the spirit of Ultima VII and EverQuest`
+
+
 1. **Western Pixel, Grimdark Style (FF5 / FF6 Aesthetic Foundation):**
    - **Tone & Mood:** Gritty, dark, grounded low-fantasy medieval world. Characters and props bear the tangible marks of wilderness survival: scarred leather, rusted or notched iron edges, coarse hand-woven cloaks, muddied boots, weathered timbers, chipped masonry.
    - **No Anime / Cute Tropes:** Strictly avoid oversized bubbly anime eyes, exaggerated chibi expressions, cheerful smiling portraits, shiny colorful hair, or whimsical fantasy tropes. Colonists and humanoids have determined, grim, hardened, or weary expressions with restrained facial features.
@@ -231,9 +239,11 @@ All generation prompts for non-living assets must follow this rigid technical st
 Game-ready packed transparent sprite sheet.
 
 [DEUS ART DIRECTION]
-Pure 2D top-down 16-bit pixel art in the Project DEUS Western pixel grimdark style (FF5/FF6 low-fantasy tactical RPG standard). 
+High top-down 16-bit pixel art in the Project DEUS Western pixel grimdark style (DEC-047 tripartite standard: English folklore flavor, Ultima VII tactile CRPG pixel density, and Classic Everquest 1999 wilderness ambiance).
 Cel shaded with 3-4 distinct tones per material. Light from upper-left (135 degrees). 
-Crisp pixel edges, selective deep charcoal contour outlines, zero gradients, zero blur, zero anti-aliasing against background. Palette adheres to classic 16-bit fantasy tactics games (art/palette/uf.hex). No anime tropes, no cute eyes, no 3D or isometric perspective skew.
+Crisp pixel edges, no outlines on terrain (selective charcoal contour only on discrete freestanding props), zero gradients, zero blur, zero anti-aliasing against background. Palette adheres to Project DEUS master palette (art/palette/deus_master_world_palette_v1.hex). No anime tropes, no cute eyes, no 3D or isometric perspective skew.
+world feel: English folklore, in the spirit of Ultima VII and EverQuest
+
 
 [GRID SPECIFICATION]
 Sheet Size: [W]x[H] px.

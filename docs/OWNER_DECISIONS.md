@@ -713,13 +713,15 @@ Every decision item recorded in this log must provide:
 
 ---
 
-### Decision `DEC-047`: Tripartite Overarching Art Directive (British Countryside / Ultima VII / Classic Everquest)
+### Decision `DEC-047`: Tripartite Overarching Art Directive (English Folklore / Ultima VII / Classic Everquest)
 - **Date Logged:** 2026-09-29
-- **Status:** `DECIDED` (Owner directive: "I want the prompts to reference the art styles of British / U7 / everquest these are overarching art directives")
+- **Status:** `DECIDED` (Owner directive: "I want the prompts to reference the art styles of British / U7 / everquest these are overarching art directives"; Owner correction 2026-09-29: "Not english countryside, english folklore flavor to the game.")
 - **Decider:** Owner
 - **Summary:**
   All prompt generation, style references, environment art, and world prop production across Project DEUS must adhere to the three foundational style pillars:
-  1. **British Rural Countryside Realism & Ecology:** Authentically grounded in British Isles / Northern European flora, geology, and agricultural heritage (e.g. peat bogs, heather moors, granite tors, chalk downlands, hawthorn hedgerows, hazel coppicing, drystone field walls, mossy ancient oaks).
-  2. **Ultima VII (The Black Gate / Serpent Isle) World Density & Tactile Grit:** 90s Western CRPG pixel density, tangible interactable environmental clutter, rich earthy palette midtones with deep organic shadow contour lines, grounded contact shadows, and pure top-down orthographic readability.
+  1. **English Folklore Flavor:** Authentically grounded in English folklore in the spirit of British Isles mythology and mystery (e.g. the fair folk and the hollow hill, barrows and standing stones, fairy rings, holy wells, wyrm lairs, knocker-haunted mine seams, will-o'-the-wisp bogs, black dogs, boggarts, giants, church-carving devils). Owner's exact words: "Not english countryside, english folklore flavor to the game."
+  2. **Ultima VII (The Black Gate / Serpent Isle) World Density & Tactile Grit:** 90s Western CRPG pixel density, tangible interactable environmental clutter, rich earthy palette midtones, grounded contact shadows, high top-down readability, and zero plastic vector smoothing. (AS-LOCK-001: no outlines on terrain; AS-VIEW-002: high top-down view).
   3. **Classic Everquest (1999 Norrath / Antonica / Faydwer) Nostalgic Wilderness:** Evocative high-fantasy adventure ambiance, untamed frontier wilderness (misty plains, primeval canopy, craggy bandit hills), ancient megalithic ruins/standing stones reclaimed by roots, high-stakes exploration mood.
+  - **Canonical Style Tail:** `world feel: English folklore, in the spirit of Ultima VII and EverQuest`
+
 
