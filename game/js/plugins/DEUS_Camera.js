@@ -93,7 +93,7 @@
             const val = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, Math.round(raw * 1000) / 1000));
             if (Math.abs(currentZoom - val) < 0.0001) return false;
 
-            const onMap = window.$gameMap && $gameMap.mapId() > 0 && typeof $gameMap.displayX === "function" && $dataMap;
+            const onMap = window.$gameMap && $gameMap.mapId() > 0 && typeof $gameMap.displayX === "function" && window.$dataMap;
             const cx = onMap ? $gameMap.displayX() + $gameMap.screenTileX() / 2 : 0;
             const cy = onMap ? $gameMap.displayY() + $gameMap.screenTileY() / 2 : 0;
 
@@ -222,6 +222,18 @@
             tilemap.width = w;
             tilemap.height = h;
             tilemap.refresh();
+        }
+        if (this._ufDepth && this._ufLastDepthZoom !== z) {
+            this._ufLastDepthZoom = z;
+            this._ufDepth._maskX = NaN;
+            this._ufDepth._maskCols = -1;
+            for (const p of this._ufDepth.planes) {
+                p._entityDirty = true;
+                if (p._tilemap) {
+                    p._tilemap._needsRepaint = true;
+                    p._tilemap.refresh();
+                }
+            }
         }
     };
 

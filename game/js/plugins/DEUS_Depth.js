@@ -85,6 +85,27 @@
         return bus && typeof bus.syncPlane === "function" ? bus : null;
     };
 
+    function depthViewWidth() {
+        const z = (window.UF && UF.Camera && typeof UF.Camera.zoom === "function") ? UF.Camera.zoom() : 1;
+        const gw = (window.Graphics && (Graphics.boxWidth || Graphics.width)) || 816;
+        return Math.ceil(gw / Math.max(0.25, z));
+    }
+    function depthViewHeight() {
+        const z = (window.UF && UF.Camera && typeof UF.Camera.zoom === "function") ? UF.Camera.zoom() : 1;
+        const gh = (window.Graphics && (Graphics.boxHeight || Graphics.height)) || 624;
+        return Math.ceil(gh / Math.max(0.25, z));
+    }
+    function maxDepthTilemapWidth() {
+        const minZ = (window.UF && UF.Camera && UF.Camera.MIN_ZOOM) || 0.50;
+        const gw = (window.Graphics && (Graphics.boxWidth || Graphics.width)) || 816;
+        return Math.ceil(gw / Math.max(0.25, minZ)) + 2 * PAD;
+    }
+    function maxDepthTilemapHeight() {
+        const minZ = (window.UF && UF.Camera && UF.Camera.MIN_ZOOM) || 0.50;
+        const gh = (window.Graphics && (Graphics.boxHeight || Graphics.height)) || 624;
+        return Math.ceil(gh / Math.max(0.25, minZ)) + 2 * PAD;
+    }
+
     //-------------------------------------------------------------------------
     // Test provocations: UF_TEST_PROVOKE=depth.<check>, read only in harness runs (the DEUS_Levels pattern).
 
@@ -431,11 +452,12 @@
     DepthTilemap.prototype = Object.create(Tilemap.prototype);
     DepthTilemap.prototype.constructor = DepthTilemap;
     DepthTilemap.prototype.initialize = function(width, height) {
-        this._window = { width, height };
+        const maxW = maxDepthTilemapWidth(), maxH = maxDepthTilemapHeight();
+        this._window = { width: maxW, height: maxH };
         this.skipCell = null; // (mx, my) -> true: the cell is not painted
         Tilemap.prototype.initialize.call(this);
-        this.width = width;
-        this.height = height;
+        this.width = depthViewWidth() + 2 * PAD;
+        this.height = depthViewHeight() + 2 * PAD;
         this.paints = 0;
     };
     DepthTilemap.prototype._createLayers = function() {
@@ -485,6 +507,13 @@
         const main = SceneManager._scene && SceneManager._scene._spriteset && SceneManager._scene._spriteset._tilemap;
         if (this._lowerLayer.water && main) this.animationCount = main.animationCount;
         this.animationFrame = Math.floor(this.animationCount / 30);
+        const vw = depthViewWidth() + 2 * PAD;
+        const vh = depthViewHeight() + 2 * PAD;
+        if (this.width !== vw || this.height !== vh) {
+            this.width = vw;
+            this.height = vh;
+            this._needsRepaint = true;
+        }
     };
     DepthTilemap.prototype.hasWater = function() { return this._lowerLayer.water || this._upperLayer.water; };
 
@@ -727,9 +756,10 @@
                 const saved = window.$dataMap;
                 window.$dataMap = map;
                 try {
-                    if (this._dirty || this._force || seen.dx !== dx || seen.dy !== dy) {
+                    const zoom = (window.UF && UF.Camera && typeof UF.Camera.zoom === "function") ? UF.Camera.zoom() : 1;
+                    if (this._dirty || this._force || seen.dx !== dx || seen.dy !== dy || seen.zoom !== zoom) {
                         this._rebuild(map, dx, dy, this._force);
-                        seen.grid = map.ufObjects; seen.dx = dx; seen.dy = dy; seen.zoom = 1; seen.mapId = $gameMap.mapId();
+                        seen.grid = map.ufObjects; seen.dx = dx; seen.dy = dy; seen.zoom = zoom; seen.mapId = $gameMap.mapId();
                         this._dirty = false; this._force = false;
                     }
                     this._place();
@@ -756,7 +786,7 @@
         this.map = null;            // its cached build (UF.World.peekArea)
         this.spriteId = Sprite._counter++;
         this.z = 0;
-        this._tilemap = new DepthTilemap(Graphics.width + 2 * PAD, Graphics.height + 2 * PAD);
+        this._tilemap = new DepthTilemap(maxDepthTilemapWidth(), maxDepthTilemapHeight());
         this._root = new PIXI.Container();
         this._root.addChild(this._tilemap);
         this._lower = new Sprite(this._tilemap._lowerLayer.bitmap);
@@ -775,6 +805,8 @@
         this._entityFrame = 0;
         this._winDx = NaN;
         this._winDy = NaN;
+        this._winCols = -1;
+        this._winRows = -1;
         this._scanStamp = 0;
         this._paintsAtBind = 0;
         this.addChild(this._lower);
@@ -824,6 +856,9 @@
         if (this._objectLayer) this._objectLayer._hideAll();
         this._entityDirty = true;
         this._winDx = NaN;
+        this._winDy = NaN;
+        this._winCols = -1;
+        this._winRows = -1;
     };
     Sprite_DepthPlane.prototype.takeSprite = function() {
         let s = this._pool.pop();
@@ -894,9 +929,11 @@
         if (!this.level || !this.map || provoked("entities_drawn")) return; // the provocation: no entities at all
         this._entityFrame++;
         const periodic = this._entityFrame % Math.max(1, config.entityRefreshFrames | 0) === 0;
-        if (this._entityDirty || this._winDx !== win.dx || this._winDy !== win.dy || periodic) {
+        if (this._entityDirty || this._winDx !== win.dx || this._winDy !== win.dy || this._winCols !== win.cols || this._winRows !== win.rows || periodic) {
             this._winDx = win.dx;
             this._winDy = win.dy;
+            this._winCols = win.cols;
+            this._winRows = win.rows;
             this._entityDirty = false;
             this._itemsDirty = false;
             this.rebuildItems(win);
@@ -1147,7 +1184,7 @@
         // The void below the last drawn level: under the planes, over the parallax. Where the level on screen and the
         // drawn level(s) below are all open, this is what shows (never the sky). The void_beyond provocation hides it.
         this._void = new PIXI.Graphics();
-        this._void.beginFill(config.voidColor).drawRect(0, 0, Graphics.width, Graphics.height).endFill();
+        this._void.beginFill(config.voidColor).drawRect(0, 0, maxDepthTilemapWidth(), maxDepthTilemapHeight()).endFill();
         this._void.visible = false;
         this.addChild(this._void);
         this.planes = [new Sprite_DepthPlane(1), new Sprite_DepthPlane(2)];
@@ -1166,6 +1203,8 @@
         if (exposureFault) this._exposureMask.visible = false; // not a mask then, and never drawn itself
         this._maskX = NaN;
         this._maskY = NaN;
+        this._maskCols = -1;
+        this._maskRows = -1;
         this._maskRev = -1;
         this.viewZ = null;
         this.openStamp = -1;
@@ -1212,6 +1251,7 @@
         this._viewCells = null;
         this._exposedPrev = null;
         this._maskX = NaN; // the mask is rebuilt on the next frame
+        this._maskCols = -1;
         this._candsOf = null; // and the unit candidates
         if (v && L && W.state && config.enabled && config.maxDepth >= 1 && !this._released && !provoked("planes_present")) {
             const cells = openCells(v.x, v.y, v.z);
@@ -1476,8 +1516,9 @@
         const margin = main && Number.isFinite(main._margin) ? main._margin : 20;
         const ox = Math.ceil(viewOx), oy = Math.ceil(viewOy);
         const sx = Math.floor((ox - margin) / TW), sy = Math.floor((oy - margin) / TH);
-        if (sx !== this._maskX || sy !== this._maskY || this._maskRev !== shapeRevision || this._maskStamp !== openStamp) {
-            const cols = Math.ceil((Graphics.width + margin * 2) / TW) + 1, rows = Math.ceil((Graphics.height + margin * 2) / TH) + 1;
+        const vw = depthViewWidth(), vh = depthViewHeight();
+        const cols = Math.ceil((vw + margin * 2) / TW) + 1, rows = Math.ceil((vh + margin * 2) / TH) + 1;
+        if (sx !== this._maskX || sy !== this._maskY || this._maskRev !== shapeRevision || this._maskStamp !== openStamp || this._maskCols !== cols || this._maskRows !== rows) {
             m.clear();
             m.beginFill(0xffffff);
             for (let j = 0; j < rows; j++) {
@@ -1491,6 +1532,8 @@
             m.endFill();
             this._maskX = sx;
             this._maskY = sy;
+            this._maskCols = cols;
+            this._maskRows = rows;
             this._maskRev = shapeRevision;
             this._maskStamp = openStamp;
         }
