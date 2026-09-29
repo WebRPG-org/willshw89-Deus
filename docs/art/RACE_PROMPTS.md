@@ -17,6 +17,8 @@ View **high top-down**. Directions: S, SW, W, NW, N, NE, E, SE. Clips: idle 4 fr
 Style tail, appended to every base prompt:
 `, empty hands, standing relaxed, high top-down view, readable high-contrast fantasy pixel art in the DEUS master palette; world feel: medieval English countryside and old British Isles material culture, in the spirit of Ultima VII and EverQuest`
 
+Motif line: each base prompt also carries its people's motif from `docs/art/RACE_MOTIFS.md` (e.g. `; motif: the hedgerow folk, red cap, acorn, hawthorn bank`) before the style tail.
+
 Animation prompt, per clip: `{facing}. {motion}. High top-down view, readable high-contrast fantasy pixel art; same figure, same clothes, same palette.`
 
 ## Human (48×76)
