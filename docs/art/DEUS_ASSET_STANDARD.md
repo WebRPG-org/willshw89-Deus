@@ -203,7 +203,7 @@ Owner 13:14 CT, as amended by item 40: armour pixels stay custom per race. The s
 | medium | feet, legs, torso, arms, shoulders | legs, torso |
 | heavy | feet, legs, waist, torso, arms, shoulders, hands, head | legs, torso, head |
 
-Armour motifs are `MOTIF_ARMOR_<WEIGHT>`. `outfitMatrix` is the 27 armour icon rows. Race garb rows stay reserved and are not the map sprite (**AS-CHMAP-001**). A generic cape is not drawn. Shields stay items (**AS-HUM-017**).
+Armour motifs are `MOTIF_ARMOR_<WEIGHT>`. Owner 2026-09-29: each people has its own motif for basic clothes, robes, light, medium and heavy armour, and its own colour scheme; the resolution of `MOTIF_RACE_<RACE>` × `MOTIF_ARMOR_<WEIGHT>` into one drawing per people and tier, and the schemes that fill `RAMP_RACE_<RACE>`, are in `docs/art/RACE_OUTFITS.md` (**AS-READ-002**). `outfitMatrix` is the 27 armour icon rows. Race garb rows stay reserved and are not the map sprite (**AS-CHMAP-001**). A generic cape is not drawn. Shields stay items (**AS-HUM-017**).
 
 **AS-HUM-016.** PM-proposed, Owner may amend. Character attacks are whole-sprite weapon-group clips (**AS-CHMAP-001**). A rotating weapon sprite is retired for character map sprites. The runtime does not rotate a frame as a substitute for a drawn frame.
 
@@ -603,6 +603,8 @@ Manual note. Construction art is a palette-swap ghost, a blueprint, foundation, 
 
 **AS-READ-001.** Item 31. Backgrounds and terrain sit a step calmer than the actors. Mood comes from lighting, glows and grading, not from a darker base palette. Interactable items and characters keep a clear value contrast and a strong silhouette. The grayscale test uses value `round((0.299 R + 0.587 G + 0.114 B) / 255 × 15)`, levels 0 through 15. The minimum step is 3. A 12 px item uses a high-contrast pair and a minimum step of 4. Both colours are master-palette entries. The asset's typical ground is stored with the asset. The checker runs that difference. Approval requires a pass, and the Owner's yea is still the approval in **AS-PREVIEW-001**. UI, recorded for the placement lane, is a 1 px hover outline plus a name tooltip, a drag preview snapped to 6 px cells, topmost-first picking with a modifier that cycles a stack, and an optional hold-to-zoom at integer 3× or 4×. The PixelLab table-with-items trial is the readability reference, reviewed at true 2×. This lane does not generate that image.
 
+**AS-READ-002.** Owner 2026-09-29: "Everything should be oriented towards readability." Peoples and their outfits are drawn for readability at 1× before anything else. Tiers (UNARMORED, ROBE, LIGHT, MEDIUM, HEAVY) are told apart by silhouette first (shoulder step, hem, head cover) and by torso value second (adjacent tiers differ by at least 2 grayscale levels or by the shoulder step). Peoples are told apart by an identity hue that is always present and a value accent that clears every typical ground ramp by at least 3 levels (4 on the Small canvas), under the AS-READ-001 formula; within one canvas tier no two peoples share the identity hue family with dominant values within 2 levels. The heraldic device appears only where there is room: the HEAVY chest, shields, banners. Colour is never the only channel. The per-people outfit motifs (one drawing per tier, archetype from the SRD armour list), the colour schemes that fill `RAMP_RACE_<RACE>` and the check `tools/art/check_race_schemes.js` are in `docs/art/RACE_OUTFITS.md`. PM-proposed thresholds, Owner may amend.
+
 Manual note. Characters and items must clear their ground by the grayscale value step before approval. The table-with-items trial is the reference, reviewed at true 2×. No image is generated here.
 
 **AS-PAL-001.** Item 32. Five rules. (1) The palette is saturated and controlled, with no gray mush. Each biome keeps a distinct colour family. (2) Value comes first. Characters and items contrast with their ground, and they use the crisp dark outline. (3) The brightest and most saturated master colours are reserved for interactables, characters, spell effects, loot and danger. Backgrounds are a step calmer. (4) Mood, including a dark dungeon, night, blood or ruin, comes from lighting, glows and grading. (5) Every asset passes the grayscale test before approval.
@@ -946,6 +948,7 @@ The JSON `rules` object carries the same ids. The sentence here is the short for
 - **AS-QTR-001.** Four quarters of 12 px. Cliff and wall pieces are RMMZ-style tiles.
 - **AS-SITE-001.** Construction ghost, scaffold, partial build.
 - **AS-READ-001.** Grayscale value step. Table-with-items reference at true 2×.
+- **AS-READ-002.** Readability first for peoples and outfits: tier by silhouette and value, people by identity hue and value accent, device only on HEAVY. Outfit motifs and colour schemes in `docs/art/RACE_OUTFITS.md`.
 - **AS-PAL-001.** Saturated palette, value first, grayscale before approval.
 - **AS-LOCK-001.** LOCKED style defaults. Map-sprite caps, frame budgets, one master. Character facesets may use up to 64 colours, painterly soft shading and a black contour.
 - **AS-MELEE-001.** Weapon-group clips. Fixed grip and rotating weapons are retired for characters.

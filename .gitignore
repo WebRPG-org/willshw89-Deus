@@ -46,7 +46,6 @@
 !/art/templates/README.md
 
 # Local art generation and inspection tooling
-/tools/art/*.js
 !/tools/art/assemble_batch_10_items.js
 !/tools/art/assemble_racial_banners.js
 !/tools/art/assemble_v8_sheet.js
