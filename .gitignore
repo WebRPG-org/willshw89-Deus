@@ -32,11 +32,34 @@
 # Art staging, sprites scratch, and tileset scratch
 /art/staging/
 /art/tilesets/
+/art/sprites/
 
 # Temporary test harnesses and experimental UI assets
 /game/img/system/ui_open_sack*.png
 /tools/capture_sack_ui_playtest.js
 /tools/test_sack_ui_and_loose_items.js
+
+# Reconstructed art prompts and scratch templates
+/art/prompts/*.json
+!/art/prompts/SURFACE_SHARED_STONE_GRANITE-BOULDER_V1_DEFAULT.json
+/art/templates/*
+!/art/templates/README.md
+
+# Local art generation and inspection tooling
+/tools/art/*.js
+!/tools/art/assemble_batch_10_items.js
+!/tools/art/assemble_racial_banners.js
+!/tools/art/assemble_v8_sheet.js
+!/tools/art/build_catalogue.js
+!/tools/art/make_blank_templates.js
+!/tools/art/place_art.js
+!/tools/art/test_blank_templates.js
+!/tools/art/test_catalogue.js
+!/tools/art/test_multi_variant_topology.js
+!/tools/art/test_place_art.js
+!/tools/art/test_validate_asset_standard.js
+!/tools/art/validate_art.js
+!/tools/art/validate_asset_standard.js
 
 # Temporary task execution outputs and local prompts
 /tasks/*.txt
