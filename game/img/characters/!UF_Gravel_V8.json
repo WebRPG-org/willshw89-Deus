@@ -1,0 +1,141 @@
+{
+  "sheet": "!UF_Gravel_V8.png",
+  "width": 576,
+  "height": 384,
+  "characterCount": 8,
+  "blockWidth": 144,
+  "blockHeight": 192,
+  "cellWidth": 48,
+  "cellHeight": 48,
+  "cellsPerCharacter": 12,
+  "topologyClass": "STATIC_VARIANT_8",
+  "rmmzConfig": {
+    "isObjectCharacter": true,
+    "shiftY": 0,
+    "directionFix": true,
+    "walkAnime": false,
+    "stepAnime": false
+  },
+  "variants": [
+    {
+      "index": 0,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "variantIndex": 0,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_0.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "12748544-3d0b-4b99-aff5-9cc766684824",
+          "originalityDistance": null,
+          "notes": "A scattered patch of loos..."
+        }
+      }
+    },
+    {
+      "index": 1,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "variantIndex": 1,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_1.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "a5b2df77-a5f4-49a2-b85e-4112a9ec6af2",
+          "originalityDistance": null,
+          "notes": "A scattered patch of loos..."
+        }
+      }
+    },
+    {
+      "index": 2,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "variantIndex": 2,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_2.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "62fcd9e9-7c0c-4220-ac77-e71e2d482ea6",
+          "originalityDistance": null,
+          "notes": "A scattered patch of loos..."
+        }
+      }
+    },
+    {
+      "index": 3,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "variantIndex": 3,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_3.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "ae9330eb-0b08-4a89-a142-bec0a61601c3",
+          "originalityDistance": null,
+          "notes": "A scattered patch of loos..."
+        }
+      }
+    },
+    {
+      "index": 4,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "variantIndex": 4,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_4.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "f2bca0de-d8cd-4187-a8ae-732012c75933",
+          "originalityDistance": null,
+          "notes": "A scattered patch of loos..."
+        }
+      }
+    },
+    {
+      "index": 5,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "variantIndex": 5,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_5.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "58078a4b-2627-45fe-912e-060a10a49be4",
+          "originalityDistance": null,
+          "notes": "A scattered patch of loos..."
+        }
+      }
+    },
+    {
+      "index": 6,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "variantIndex": 6,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_6.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "af41bdb7-c3a9-442e-85ef-c3e79b5d75e3",
+          "originalityDistance": null,
+          "notes": "A scattered patch of loos..."
+        }
+      }
+    },
+    {
+      "index": 7,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "variantIndex": 7,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT/variant_7.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "e4c0592a-f18c-40e0-99ae-996a965ceda9",
+          "originalityDistance": null,
+          "notes": "A scattered patch of loos..."
+        }
+      }
+    }
+  ]
+}

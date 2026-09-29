@@ -89,3 +89,28 @@ None, aliases only: `Game_Map.prototype.isPassable`, `Spriteset_Map.prototype.cr
 - Sprites stay pooled (hidden) in the tilemap until the scene changes; the pool grows to the most objects ever in view at once at zoom ⅓ (about 600 in a dense forest).
 - `find` scans the square window around `near` (radius 40 = 6 561 cells); call it per decision, not per frame.
 - The passing runs were made after the worldgen rewrite landed (dense generated forests); the checks place their own objects and don't depend on the generator.
+
+## Multi-Variant and Oriented 8-Character Sheets (TOOL.01.02, 2026-09-28)
+
+Project DEUS standardizes environmental objects and directional props on native 8-character RMMZ sheets (`576×384` px, `48×48` px native frame size):
+
+### Topology Classes
+- **`STATIC_VARIANT_8`**: Non-directional environmental assets (boulders, rocks, stumps, bushes, crops, mushrooms). Character indices `0..7` represent distinct hand-crafted visual variants, preventing visual repetition across maps.
+- **`STATIC_ORIENTED_8`**: Physically oriented props (fallen logs, corpses, benches, beds, barricades, hearths). Character indices `0..7` represent physical world orientations (`0=S, 1=SW, 2=W, 3=NW, 4=N, 5=NE, 6=E, 7=SE` or `0=N, 1=NE, 2=E, 3=SE, 4=S, 5=SW, 6=W, 7=NW`).
+
+### Sheet Geometry & Visual Invariance Standard
+- Format: Single standard 8-character RMMZ sheet (`!UF_<Asset>_V8.png`, `576×384` px, no `$` prefix).
+- Character block: `144×192` px (4 blocks wide, 2 blocks high).
+- **12-Cell Duplication**: Each `48×48` frame is repeated across all 12 cells (`3` columns × `4` rows) of its character block.
+- Configuration: `characterIndex = visualVariant`, `directionFix = true`, `walkAnime = false`, `stepAnime = false`. This guarantees RMMZ direction or step-animation triggers cannot cause visual spinning or texture mutation.
+- **`!` Prefix Convention**: The `!` prefix enforces flush bottom ground anchoring in RMMZ (`ImageManager.isObjectCharacter`), avoiding the default 6-pixel upward shift applied to humanoid actors.
+
+### Deterministic Variant Selection & Movement Invariance
+- Initial variant calculation is performed exactly once when an object instance is created:
+  ```js
+  object.visualVariant = computeInitialVisualVariant(worldSeed, objectId, canonicalAssetId, 8);
+  ```
+- Selection algorithm uses deterministic FNV-1a hashing over `${worldSeed}:${objectId}:${canonicalAssetId}`.
+- **Movement Invariance**: Moving, hauling, or dropping a persistent object never recalculates `visualVariant`. Position `(x, y)` never enters the variant calculation for persistent entities.
+- **Save/Load Preservation**: `object.visualVariant` (and `object.orientation`) is serialized and deserialized across save games with exact byte-for-byte fidelity.
+

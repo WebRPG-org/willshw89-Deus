@@ -1,0 +1,141 @@
+{
+  "sheet": "!UF_DesertShrub_V8.png",
+  "width": 576,
+  "height": 384,
+  "characterCount": 8,
+  "blockWidth": 144,
+  "blockHeight": 192,
+  "cellWidth": 48,
+  "cellHeight": 48,
+  "cellsPerCharacter": 12,
+  "topologyClass": "STATIC_VARIANT_8",
+  "rmmzConfig": {
+    "isObjectCharacter": true,
+    "shiftY": 0,
+    "directionFix": true,
+    "walkAnime": false,
+    "stepAnime": false
+  },
+  "variants": [
+    {
+      "index": 0,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "variantIndex": 0,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_0.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "2e244d50-2aed-453a-b62b-31afa9f1052b",
+          "originalityDistance": null,
+          "notes": "A dry weathered arid dese..."
+        }
+      }
+    },
+    {
+      "index": 1,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "variantIndex": 1,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_1.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "3fb92177-8e9f-4f14-8355-3225f7e1c334",
+          "originalityDistance": null,
+          "notes": "A dry weathered arid dese..."
+        }
+      }
+    },
+    {
+      "index": 2,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "variantIndex": 2,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_2.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "18df71e8-58ea-450a-b87d-6681f6e723ab",
+          "originalityDistance": null,
+          "notes": "A dry weathered arid dese..."
+        }
+      }
+    },
+    {
+      "index": 3,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "variantIndex": 3,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_3.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "58e82aef-338a-4dd1-823c-37eb798fe8eb",
+          "originalityDistance": null,
+          "notes": "A dry weathered arid dese..."
+        }
+      }
+    },
+    {
+      "index": 4,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "variantIndex": 4,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_4.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "4e44170f-14b5-4135-9f99-cbf44adcb96a",
+          "originalityDistance": null,
+          "notes": "A dry weathered arid dese..."
+        }
+      }
+    },
+    {
+      "index": 5,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "variantIndex": 5,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_5.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "3e1fe88b-c386-4d85-882a-40dc63c2f13c",
+          "originalityDistance": null,
+          "notes": "A dry weathered arid dese..."
+        }
+      }
+    },
+    {
+      "index": 6,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "variantIndex": 6,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_6.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "c4429afc-7f82-4ecd-a087-23b1ba1e2139",
+          "originalityDistance": null,
+          "notes": "A dry weathered arid dese..."
+        }
+      }
+    },
+    {
+      "index": 7,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "variantIndex": 7,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_DESERT-SHRUB_V1_DEFAULT/variant_7.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "cf12cd54-7229-4b68-9092-79918c6f55c4",
+          "originalityDistance": null,
+          "notes": "A dry weathered arid dese..."
+        }
+      }
+    }
+  ]
+}

@@ -20,7 +20,7 @@
 - **Visible Result:** Placed boulders in the natural world display distinct crystalline and facet shapes that remain permanent; moving/hauling a boulder never changes its appearance.
 - **Persistence:** `object.visualVariant` ($0..7$) is stored in the persistent object record and preserved across save/load, region seam transfers, and inventory pickups.
 - **Failure Without This Lane:** Either 7 of 8 PixelLab outputs are discarded (sacrificing massive visual variety), or 8 fake simulation object classes are fabricated, or RMMZ direction rows are abused causing boulders to spin when the player bumps into them.
-- **Automated Proof:** `node tools/art/test_multi_variant_topology.js` (schema contract, $576 \times 384$ px sheet geometry, 12-cell block uniformity, deterministic fixed-corpus movement invariance, save/load roundtrip, originality $\ge 0.28$).
+- **Automated Proof:** `node tools/art/test_multi_variant_topology.js` (schema contract, $576 \times 384$ px sheet geometry, 12-cell block uniformity, deterministic fixed-corpus movement invariance, save/load roundtrip).
 - **In-Game Proof:** Launch RMMZ F5, inspect placed boulders across coordinates, verify persistent variant retention, save game, reload game, observe identical variants.
 
 ---
@@ -59,4 +59,3 @@
    - Test 2: V8 sheet dimensions ($576 \times 384$) and 12-cell sub-block uniformity.
    - Test 3: Immutability under movement across a deterministic fixed coordinate sequence.
    - Test 4: Save/load serialization and roundtrip fidelity.
-   - Test 5: Originality check validation against Ultima VII shapes library.

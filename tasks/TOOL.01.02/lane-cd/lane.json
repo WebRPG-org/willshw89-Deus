@@ -8,19 +8,17 @@
     "tasks/TOOL.01.02/lane-cd/**",
     "art/catalogue/catalogue.schema.json",
     "art/catalogue/catalogue.json",
-    "art/masters/source_sets/**",
-    "art/masters/SURFACE_SHARED_STONE_GRANITE-BOULDER_V1_DEFAULT.png",
-    "art/masters/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT.png",
-    "game/img/characters/!UF_GraniteBoulder_V8.png",
-    "game/img/characters/!UF_GraniteBoulder_V8.json",
-    "game/img/characters/!UF_RocksSmall_V8.png",
-    "game/img/characters/!UF_RocksSmall_V8.json",
+    "art/masters/**",
+    "game/img/characters/!UF_*_V8.png",
+    "game/img/characters/!UF_*_V8.json",
     "game/js/plugins/DEUS_Objects.js",
     "tools/art/assemble_v8_sheet.js",
+    "tools/art/build_catalogue.js",
     "tools/art/validate_art.js",
     "tools/art/place_art.js",
     "tools/art/test_multi_variant_topology.js",
-    "docs/systems/UF_Objects.md"
+    "docs/systems/UF_Objects.md",
+    "docs/art/catalogue/**"
   ],
   "gateTests": [
     {

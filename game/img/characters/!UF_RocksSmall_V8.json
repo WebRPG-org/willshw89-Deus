@@ -1,0 +1,133 @@
+{
+  "sheet": "!UF_RocksSmall_V8.png",
+  "width": 576,
+  "height": 384,
+  "characterCount": 8,
+  "blockWidth": 144,
+  "blockHeight": 192,
+  "cellWidth": 48,
+  "cellHeight": 48,
+  "cellsPerCharacter": 12,
+  "topologyClass": "STATIC_VARIANT_8",
+  "rmmzConfig": {
+    "isObjectCharacter": true,
+    "shiftY": 0,
+    "directionFix": true,
+    "walkAnime": false,
+    "stepAnime": false
+  },
+  "variants": [
+    {
+      "index": 0,
+      "sourceMaster": null,
+      "provenance": {
+        "variantIndex": 0,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_0.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+          "originalityDistance": null
+        }
+      }
+    },
+    {
+      "index": 1,
+      "sourceMaster": null,
+      "provenance": {
+        "variantIndex": 1,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_1.png",
+        "provenance": {
+          "sourceFacing": "south-west",
+          "generator": "pixellab",
+          "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+          "originalityDistance": null
+        }
+      }
+    },
+    {
+      "index": 2,
+      "sourceMaster": null,
+      "provenance": {
+        "variantIndex": 2,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_2.png",
+        "provenance": {
+          "sourceFacing": "west",
+          "generator": "pixellab",
+          "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+          "originalityDistance": null
+        }
+      }
+    },
+    {
+      "index": 3,
+      "sourceMaster": null,
+      "provenance": {
+        "variantIndex": 3,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_3.png",
+        "provenance": {
+          "sourceFacing": "north-west",
+          "generator": "pixellab",
+          "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+          "originalityDistance": null
+        }
+      }
+    },
+    {
+      "index": 4,
+      "sourceMaster": null,
+      "provenance": {
+        "variantIndex": 4,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_4.png",
+        "provenance": {
+          "sourceFacing": "north",
+          "generator": "pixellab",
+          "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+          "originalityDistance": null
+        }
+      }
+    },
+    {
+      "index": 5,
+      "sourceMaster": null,
+      "provenance": {
+        "variantIndex": 5,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_5.png",
+        "provenance": {
+          "sourceFacing": "north-east",
+          "generator": "pixellab",
+          "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+          "originalityDistance": null
+        }
+      }
+    },
+    {
+      "index": 6,
+      "sourceMaster": null,
+      "provenance": {
+        "variantIndex": 6,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_6.png",
+        "provenance": {
+          "sourceFacing": "east",
+          "generator": "pixellab",
+          "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+          "originalityDistance": null
+        }
+      }
+    },
+    {
+      "index": 7,
+      "sourceMaster": null,
+      "provenance": {
+        "variantIndex": 7,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_7.png",
+        "provenance": {
+          "sourceFacing": "south-east",
+          "generator": "pixellab",
+          "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+          "originalityDistance": null
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "topologyClass": "STATIC_VARIANT_8",
+  "variantCount": 8,
+  "variantSelectionMode": "DETERMINISTIC_HASH",
+  "runtime": {
+    "kind": "RMMZ_CHARACTER_8",
+    "file": "img/characters/!UF_CactusTall_V8.png",
+    "index": 0
+  },
+  "sourceVariants": [
+    {
+      "variantIndex": 0,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_CACTUS-TALL_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "5c810b03-c1eb-45c0-863a-80cbbd441765",
+        "originalityDistance": null,
+        "notes": "A tall towering desert sa..."
+      }
+    },
+    {
+      "variantIndex": 1,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_CACTUS-TALL_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "5e492138-5d48-4e2b-a031-86e5cca9ed41",
+        "originalityDistance": null,
+        "notes": "A tall towering desert sa..."
+      }
+    },
+    {
+      "variantIndex": 2,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_CACTUS-TALL_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "06b9d8db-ceb9-4497-a6b6-dd0df900d940",
+        "originalityDistance": null,
+        "notes": "A tall towering desert sa..."
+      }
+    },
+    {
+      "variantIndex": 3,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_CACTUS-TALL_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "f910b1ae-f3dc-4ffd-b19e-5fcc6a85c568",
+        "originalityDistance": null,
+        "notes": "A tall towering desert sa..."
+      }
+    },
+    {
+      "variantIndex": 4,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_CACTUS-TALL_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "7cb21b0a-271e-4bca-8e2a-251a262e4723",
+        "originalityDistance": null,
+        "notes": "A tall towering desert sa..."
+      }
+    },
+    {
+      "variantIndex": 5,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_CACTUS-TALL_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "1166076f-5fa6-4916-b299-31e8c118928b",
+        "originalityDistance": null,
+        "notes": "A tall towering desert sa..."
+      }
+    },
+    {
+      "variantIndex": 6,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_CACTUS-TALL_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "f3eed78f-1664-4307-9874-ddc6af92245e",
+        "originalityDistance": null,
+        "notes": "A tall towering desert sa..."
+      }
+    },
+    {
+      "variantIndex": 7,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_CACTUS-TALL_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "fd8ed1d9-4603-4f33-a61f-6415f9006a63",
+        "originalityDistance": null,
+        "notes": "A tall towering desert sa..."
+      }
+    }
+  ],
+  "status": "APPROVED",
+  "statusWhy": "Owner-generated on PixelLab Object Creator, inducted with 8 variants"
+}

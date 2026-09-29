@@ -45,6 +45,11 @@
 (() => {
     "use strict";
 
+    if (typeof window === "undefined") {
+        global.window = global;
+    }
+    const SpriteClass = typeof Sprite !== "undefined" ? Sprite : class {};
+
     const TILE = 48;
     const MARGIN = 3;         // cells beyond the view that still get sprites (wide canopies, smooth scrolling)
     const TALLEST_CELLS = 6;  // extra rows above the view: a tall tree's canopy hangs this far above its cell
@@ -769,7 +774,7 @@
         return !!c && (c.state === "open" || c.state === "opening");
     }
 
-    class Sprite_UFObjectLayer extends Sprite {
+    class Sprite_UFObjectLayer extends SpriteClass {
         constructor() {
             super();
             this.z = 0;             // draws nothing itself; only its update() matters
@@ -976,26 +981,30 @@
         }
     }
 
-    const _Spriteset_Map_createCharacters = Spriteset_Map.prototype.createCharacters;
-    Spriteset_Map.prototype.createCharacters = function() {
-        _Spriteset_Map_createCharacters.call(this);
-        this._ufObjectLayer = new Sprite_UFObjectLayer();
-        this._tilemap.addChild(this._ufObjectLayer);
-    };
+    if (typeof Spriteset_Map !== "undefined") {
+        const _Spriteset_Map_createCharacters = Spriteset_Map.prototype.createCharacters;
+        Spriteset_Map.prototype.createCharacters = function() {
+            _Spriteset_Map_createCharacters.call(this);
+            this._ufObjectLayer = new Sprite_UFObjectLayer();
+            this._tilemap.addChild(this._ufObjectLayer);
+        };
+    }
 
     const currentLayer = () => {
-        const scene = SceneManager._scene;
+        const scene = typeof SceneManager !== "undefined" && SceneManager._scene;
         return (scene && scene._spriteset && scene._spriteset._ufObjectLayer) || null;
     };
 
     //-------------------------------------------------------------------------
     // Passability: a cell whose object isn't passable can't be entered or left (like an impassable tile)
 
-    const _Game_Map_isPassable = Game_Map.prototype.isPassable;
-    Game_Map.prototype.isPassable = function(x, y, d) {
-        if (blocksAt(x, y)) return false;
-        return _Game_Map_isPassable.call(this, x, y, d);
-    };
+    if (typeof Game_Map !== "undefined") {
+        const _Game_Map_isPassable = Game_Map.prototype.isPassable;
+        Game_Map.prototype.isPassable = function(x, y, d) {
+            if (blocksAt(x, y)) return false;
+            return _Game_Map_isPassable.call(this, x, y, d);
+        };
+    }
 
     //-------------------------------------------------------------------------
     // The public object
@@ -1069,6 +1078,20 @@
         resetPerf() {
             const l = currentLayer();
             if (l) l.perf = { frames: 0, ms: 0, max: 0, rebuilds: 0 };
+        },
+        /**
+         * Deterministically computes the initial visual variant index (0..variantCount-1)
+         * for an object based on world seed, persistent object ID, and canonical asset ID.
+         * Invariant: Evaluated once at object creation; moving the object preserves visualVariant.
+         */
+        computeInitialVisualVariant(worldSeed, objectId, canonicalAssetId, variantCount = 8) {
+            let h = 0x811c9dc5;
+            const str = `${worldSeed}:${objectId}:${canonicalAssetId}`;
+            for (let i = 0; i < str.length; i++) {
+                h ^= str.charCodeAt(i);
+                h = Math.imul(h, 0x01000193);
+            }
+            return Math.abs(h >>> 0) % variantCount;
         }
     };
     window.DEUS = window.DEUS || {};
@@ -1113,12 +1136,14 @@
     }
     hookEvents();
 
-    const _Scene_Boot_start = Scene_Boot.prototype.start;
-    Scene_Boot.prototype.start = function() {
-        _Scene_Boot_start.call(this);
-        hookEvents();
-        if (window.UF.Test && UF.Test.active) registerChecks();
-    };
+    if (typeof Scene_Boot !== "undefined") {
+        const _Scene_Boot_start = Scene_Boot.prototype.start;
+        Scene_Boot.prototype.start = function() {
+            _Scene_Boot_start.call(this);
+            hookEvents();
+            if (window.UF.Test && UF.Test.active) registerChecks();
+        };
+    }
 
     //-------------------------------------------------------------------------
     // Checks (UF_Test suite "objects")
@@ -1415,5 +1440,12 @@
             t.check("no_errors", t.errorsSoFar().length === 0,
                 t.errorsSoFar().length ? `${t.errorsSoFar().length} error(s), first: ${t.errorsSoFar()[0]}` : "none during objects checks");
         });
+    }
+
+    if (typeof module !== "undefined" && module.exports) {
+        module.exports = {
+            computeInitialVisualVariant: Objects.computeInitialVisualVariant,
+            Objects
+        };
     }
 })();

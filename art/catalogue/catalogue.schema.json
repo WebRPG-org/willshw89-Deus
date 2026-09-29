@@ -68,7 +68,7 @@
       "type": "object", "required": ["sheetId", "kind", "group", "w", "h", "gridPx", "runtimeFile"], "additionalProperties": false,
       "properties": {
         "sheetId": { "type": "string", "pattern": "^(ATLAS|RMMZ)_[A-Z0-9_-]+$" },
-        "kind": { "enum": ["ATLAS", "RMMZ_TILESET", "RMMZ_CHARACTER"] },
+        "kind": { "enum": ["ATLAS", "RMMZ_TILESET", "RMMZ_CHARACTER", "RMMZ_CHARACTER_8"] },
         "group": {
           "type": "object", "required": ["band", "biome", "type"], "additionalProperties": false,
           "properties": { "band": { "type": "string" }, "biome": { "type": "string" }, "type": { "type": "string" } }
@@ -124,7 +124,7 @@
         "runtime": {
           "type": "object", "required": ["kind", "file"], "additionalProperties": false,
           "properties": {
-            "kind": { "enum": ["NONE", "RMMZ_CHARACTER", "RMMZ_TILESET", "RMMZ_FACE"] },
+            "kind": { "enum": ["NONE", "RMMZ_CHARACTER", "RMMZ_TILESET", "RMMZ_FACE", "RMMZ_CHARACTER_8"] },
             "file": { "type": ["string", "null"] },
             "index": { "type": ["integer", "null"] },
             "tileId": { "type": ["integer", "null"] },
@@ -161,7 +161,35 @@
         "ownerOpen": { "const": true },
         "notes": { "type": "string" },
         "promptFile": { "type": ["string", "null"] },
-        "specFile": { "type": ["string", "null"] }
+        "specFile": { "type": ["string", "null"] },
+        "topologyClass": { "enum": ["STATIC_1", "STATIC_VARIANT_8", "STATIC_ORIENTED_4", "STATIC_ORIENTED_8"] },
+        "variantCount": { "type": "integer", "minimum": 1 },
+        "variantSelectionMode": { "enum": ["DETERMINISTIC_HASH", "ORIENTATION_MAPPED", "MANUAL"] },
+        "orientationSemantics": { "type": ["string", "null"] },
+        "sourceVariants": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["variantIndex", "masterFile"],
+            "additionalProperties": false,
+            "properties": {
+              "variantIndex": { "type": "integer", "minimum": 0 },
+              "masterFile": { "type": "string" },
+              "provenance": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "sourceFacing": { "type": ["string", "null"] },
+                  "generator": { "type": ["string", "null"] },
+                  "generationId": { "type": ["string", "null"] },
+                  "originalityDistance": { "type": ["number", "null"] },
+                  "notes": { "type": ["string", "null"] }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "outOfScope": {

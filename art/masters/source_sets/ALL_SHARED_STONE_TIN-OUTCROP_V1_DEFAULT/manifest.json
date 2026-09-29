@@ -1,0 +1,102 @@
+{
+  "topologyClass": "STATIC_VARIANT_8",
+  "variantCount": 8,
+  "variantSelectionMode": "DETERMINISTIC_HASH",
+  "runtime": {
+    "kind": "RMMZ_CHARACTER_8",
+    "file": "img/characters/!UF_TinOutcrop_V8.png",
+    "index": 0
+  },
+  "sourceVariants": [
+    {
+      "variantIndex": 0,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_TIN-OUTCROP_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "081a7cda-b45c-43cb-a238-f2a2ef7bb519",
+        "originalityDistance": null,
+        "notes": "A rugged medium natural s..."
+      }
+    },
+    {
+      "variantIndex": 1,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_TIN-OUTCROP_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "3366e00e-66f0-4ac8-9bef-6b84e47e20c4",
+        "originalityDistance": null,
+        "notes": "A rugged medium natural s..."
+      }
+    },
+    {
+      "variantIndex": 2,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_TIN-OUTCROP_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "005af906-6456-4f1b-a696-9e696c23817e",
+        "originalityDistance": null,
+        "notes": "A rugged medium natural s..."
+      }
+    },
+    {
+      "variantIndex": 3,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_TIN-OUTCROP_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "2971cc28-6f86-4c37-8cfe-ce1e0b007fa9",
+        "originalityDistance": null,
+        "notes": "A rugged medium natural s..."
+      }
+    },
+    {
+      "variantIndex": 4,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_TIN-OUTCROP_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "d827718e-2482-421d-89b7-e2b89aa5a075",
+        "originalityDistance": null,
+        "notes": "A rugged medium natural s..."
+      }
+    },
+    {
+      "variantIndex": 5,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_TIN-OUTCROP_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "4fce6bc1-0e6d-4153-ac96-74e9cb8ddc24",
+        "originalityDistance": null,
+        "notes": "A rugged medium natural s..."
+      }
+    },
+    {
+      "variantIndex": 6,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_TIN-OUTCROP_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "d4818d9f-b488-4db7-b67b-5d056cf8d957",
+        "originalityDistance": null,
+        "notes": "A rugged medium natural s..."
+      }
+    },
+    {
+      "variantIndex": 7,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_TIN-OUTCROP_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "d0fabc25-936a-4499-9649-299b0e3de6f7",
+        "originalityDistance": null,
+        "notes": "A rugged medium natural s..."
+      }
+    }
+  ],
+  "status": "APPROVED",
+  "statusWhy": "Owner-generated on PixelLab Object Creator, inducted with 8 variants"
+}

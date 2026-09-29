@@ -1,0 +1,102 @@
+{
+  "topologyClass": "STATIC_VARIANT_8",
+  "variantCount": 8,
+  "variantSelectionMode": "DETERMINISTIC_HASH",
+  "runtime": {
+    "kind": "RMMZ_CHARACTER_8",
+    "file": "img/characters/!UF_WildRoots_V8.png",
+    "index": 0
+  },
+  "sourceVariants": [
+    {
+      "variantIndex": 0,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_ROOTS-WILD_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "b367d59d-859a-48e5-9bb1-35261991a812",
+        "originalityDistance": null,
+        "notes": "A bushy clump of dark gre..."
+      }
+    },
+    {
+      "variantIndex": 1,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_ROOTS-WILD_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "4488bf11-694a-4248-9288-ab4c76216a83",
+        "originalityDistance": null,
+        "notes": "A bushy clump of dark gre..."
+      }
+    },
+    {
+      "variantIndex": 2,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_ROOTS-WILD_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "716b9471-d047-4a05-aa63-77aea3c048e2",
+        "originalityDistance": null,
+        "notes": "A bushy clump of dark gre..."
+      }
+    },
+    {
+      "variantIndex": 3,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_ROOTS-WILD_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "cda0ded6-51a1-4940-96af-2806a612ad18",
+        "originalityDistance": null,
+        "notes": "A bushy clump of dark gre..."
+      }
+    },
+    {
+      "variantIndex": 4,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_ROOTS-WILD_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "7d083fb4-8cde-4a4b-98c4-313932456355",
+        "originalityDistance": null,
+        "notes": "A bushy clump of dark gre..."
+      }
+    },
+    {
+      "variantIndex": 5,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_ROOTS-WILD_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "502c6e05-01e5-41ee-957b-344cd960ff69",
+        "originalityDistance": null,
+        "notes": "A bushy clump of dark gre..."
+      }
+    },
+    {
+      "variantIndex": 6,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_ROOTS-WILD_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "64d78cc8-6e60-4d36-b1ca-91c968ed3f55",
+        "originalityDistance": null,
+        "notes": "A bushy clump of dark gre..."
+      }
+    },
+    {
+      "variantIndex": 7,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_ROOTS-WILD_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "4622e4a8-efda-4036-b49f-8266427a9051",
+        "originalityDistance": null,
+        "notes": "A bushy clump of dark gre..."
+      }
+    }
+  ],
+  "status": "APPROVED",
+  "statusWhy": "Owner-generated on PixelLab Object Creator, inducted with 8 variants"
+}
