@@ -1,0 +1,141 @@
+{
+  "sheet": "!UF_WildHemp_V8.png",
+  "width": 576,
+  "height": 384,
+  "characterCount": 8,
+  "blockWidth": 144,
+  "blockHeight": 192,
+  "cellWidth": 48,
+  "cellHeight": 48,
+  "cellsPerCharacter": 12,
+  "topologyClass": "STATIC_VARIANT_8",
+  "rmmzConfig": {
+    "isObjectCharacter": true,
+    "shiftY": 0,
+    "directionFix": true,
+    "walkAnime": false,
+    "stepAnime": false
+  },
+  "variants": [
+    {
+      "index": 0,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "variantIndex": 0,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_0.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "3300d869-e4f9-43af-818c-108b7037deea",
+          "originalityDistance": null,
+          "notes": "A cluster of upright wild..."
+        }
+      }
+    },
+    {
+      "index": 1,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "variantIndex": 1,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_1.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "4d29a670-f7dd-47b8-b4b3-ed296cf99978",
+          "originalityDistance": null,
+          "notes": "A cluster of upright wild..."
+        }
+      }
+    },
+    {
+      "index": 2,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "variantIndex": 2,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_2.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "ce681da7-e9a3-4a28-93bb-82c9f8455625",
+          "originalityDistance": null,
+          "notes": "A cluster of upright wild..."
+        }
+      }
+    },
+    {
+      "index": 3,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "variantIndex": 3,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_3.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "51a297e2-d5e0-400e-b2c0-2f76d246e9f9",
+          "originalityDistance": null,
+          "notes": "A cluster of upright wild..."
+        }
+      }
+    },
+    {
+      "index": 4,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "variantIndex": 4,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_4.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "ad5bf9ed-77e4-4d50-b1fd-206592d7230e",
+          "originalityDistance": null,
+          "notes": "A cluster of upright wild..."
+        }
+      }
+    },
+    {
+      "index": 5,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "variantIndex": 5,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_5.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "785c864a-2799-417e-858f-1a0701dbf211",
+          "originalityDistance": null,
+          "notes": "A cluster of upright wild..."
+        }
+      }
+    },
+    {
+      "index": 6,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "variantIndex": 6,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_6.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "8bee01aa-8616-4be4-9fc4-513002cdb609",
+          "originalityDistance": null,
+          "notes": "A cluster of upright wild..."
+        }
+      }
+    },
+    {
+      "index": 7,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "variantIndex": 7,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_HEMP-WILD_V1_DEFAULT/variant_7.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "4a2925e0-313c-4234-aed0-95f891750406",
+          "originalityDistance": null,
+          "notes": "A cluster of upright wild..."
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "sheet": "!UF_LilyPad_V8.png",
+  "width": 576,
+  "height": 384,
+  "characterCount": 8,
+  "blockWidth": 144,
+  "blockHeight": 192,
+  "cellWidth": 48,
+  "cellHeight": 48,
+  "cellsPerCharacter": 12,
+  "topologyClass": "STATIC_VARIANT_8",
+  "rmmzConfig": {
+    "isObjectCharacter": true,
+    "shiftY": 0,
+    "directionFix": true,
+    "walkAnime": false,
+    "stepAnime": false
+  },
+  "variants": [
+    {
+      "index": 0,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "variantIndex": 0,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_0.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "56c9ee68-aa0a-454f-bd76-90ade362b852",
+          "originalityDistance": null,
+          "notes": "A cluster of round floati..."
+        }
+      }
+    },
+    {
+      "index": 1,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "variantIndex": 1,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_1.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "2ed40a09-8f5e-40f0-a29f-f1147b361636",
+          "originalityDistance": null,
+          "notes": "A cluster of round floati..."
+        }
+      }
+    },
+    {
+      "index": 2,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "variantIndex": 2,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_2.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "7f3f91a1-2347-434e-a9fb-d19dbe270c1c",
+          "originalityDistance": null,
+          "notes": "A cluster of round floati..."
+        }
+      }
+    },
+    {
+      "index": 3,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "variantIndex": 3,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_3.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "3f84ef87-4b04-4cb7-be62-4265097e83db",
+          "originalityDistance": null,
+          "notes": "A cluster of round floati..."
+        }
+      }
+    },
+    {
+      "index": 4,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "variantIndex": 4,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_4.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "9988bdf8-d893-4b43-b747-f46217b1ae7c",
+          "originalityDistance": null,
+          "notes": "A cluster of round floati..."
+        }
+      }
+    },
+    {
+      "index": 5,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "variantIndex": 5,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_5.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "bb391a94-b0a4-4858-80f1-1b0185e9a347",
+          "originalityDistance": null,
+          "notes": "A cluster of round floati..."
+        }
+      }
+    },
+    {
+      "index": 6,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "variantIndex": 6,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_6.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "aad13481-28cb-4349-9777-14d4d2d72eea",
+          "originalityDistance": null,
+          "notes": "A cluster of round floati..."
+        }
+      }
+    },
+    {
+      "index": 7,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "variantIndex": 7,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT/variant_7.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "4a2e7e16-9239-49df-887c-1089b653112e",
+          "originalityDistance": null,
+          "notes": "A cluster of round floati..."
+        }
+      }
+    }
+  ]
+}

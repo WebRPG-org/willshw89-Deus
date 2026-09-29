@@ -1,0 +1,70 @@
+# DEUS TASK ASSIGNMENT: GROK INDEPENDENT ADVERSARIAL REVIEW (RE-REVIEW)
+# Task: TOOL.01.02 / lane-cd (Multi-Variant Architecture & 8-Character Sheet Standard)
+# Authority: DEC-034 (Independent Adversarial Review), DEC-035 (Merge Gate Isolation), docs/CANONICAL_ROLES.md
+
+You are Grok acting as the Independent Adversarial Reviewer on Project DEUS.
+DO NOT self-certify. Form an independent verdict from actual git diff, code inspection, and test execution.
+
+TARGET DETAILS:
+- Task ID: TOOL.01.02
+- Lane ID: lane-cd
+- Branch: task/lane-cd
+- Writer: Gemini
+- Reviewer: Grok
+- Target Commit Tip: 0e6d74e4
+- Merge Base: 77a3ea79
+- Worktree: C:\Users\snewt\.deus_worktrees\lane-cd
+
+CONTEXT ON PREVIOUS FINDINGS (Fixed in 0e6d74e4):
+In commit e6036bf3, you identified 5 blocking findings:
+1. Wire variant selection into actual object model: DEUS_Objects.js now computes visualVariant on setIn/spawn, stores in World.state.objectVariants, retrieves via getVariantForCell, passes s._ufVariant to frameFor, and caches frames per ${typeId}_${variant}.
+2. Persist field through save blob: World.state.objectVariants is part of World.state (which is serialized into the ufWorld save blob by RMMZ DataManager/JsonEx).
+3. Point live catalog images at V8 sheets: DEUS_Objects.js V8_REMAP remaps !$UF_GraniteBoulder and !$UF_LooseStones to !UF_GraniteBoulder_V8 and !UF_RocksSmall_V8.
+4. Update validate_art.js and place_art.js: Both now recognize RMMZ_CHARACTER_8 as a first-class runtime kind and export 576x384 8-block character sheets.
+5. Replace tautological tests: test_multi_variant_topology.js now asserts Objects.frameFor calculates distinct frame rectangles across variants 0..7, Objects.setIn populates World.state.objectVariants, Objects.getVariantForCell reads from state, removal clears variant, and JSON roundtrip preserves objectVariants.
+
+REVIEW INSTRUCTIONS:
+
+1. WORKTREE & GIT INTEGRITY:
+   Run:
+     git rev-parse HEAD
+     git merge-base HEAD origin/main
+     git log -1 --oneline
+     git diff --stat 77a3ea79 HEAD
+   Verify that all touched files fall strictly within tasks/TOOL.01.02/lane-cd/lane.json allowedPaths.
+   Verify zero edits to game/js/rmmz_*.js (Rule 9).
+   Verify zero civilization / faction code (DEC-037).
+
+2. EXECUTE GATE TESTS:
+   Run both manifest gate tests in C:\Users\snewt\.deus_worktrees\lane-cd:
+     node tools/art/test_multi_variant_topology.js
+     node tools/art/test_catalogue.js
+   Verify both exit with code 0 and capture test output summaries.
+
+3. ADVERSARIAL INSPECTION OF RESOLVED DEFECTS:
+   - Inspect game/js/plugins/DEUS_Objects.js:
+     - Verify V8_REMAP correctly remaps granite boulder and loose stones to V8 sheets.
+     - Verify setIn populates World.state.objectVariants and getVariantForCell retrieves it.
+     - Verify frameFor calculates blockX and blockY based on variantIndex (0..7).
+     - Verify Sprite_UFObjectLayer._assign sets s._ufVariant and _tryFrame keys by `${type.typeId}_${variant}`.
+   - Inspect tools/art/validate_art.js and place_art.js:
+     - Verify RMMZ_CHARACTER_8 is present in SHEET_KINDS and RUNTIME_KINDS.
+     - Verify character8Target handles 576x384 8-character layout.
+   - Inspect tools/art/test_multi_variant_topology.js:
+     - Verify tests are capable of failing when provoked (testFrameCalculation, testRuntimeVariantLifecycle, testSaveLoadPersistence).
+
+4. RECORD FINDINGS & VERDICT:
+   Write your complete review report to:
+     tasks/TOOL.01.02/lane-cd/review_grok_0e6d74e4.md
+   Following the structure:
+     # Independent Grok Review — TOOL.01.02 / lane-cd (Re-Review)
+     - Writer, Reviewer, Reviewed Commit (0e6d74e4), Merge Base (77a3ea79), Branch, Worktree, Review Date
+     ## 1. Commit & Diff Verification (git status, diffstat, path checks)
+     ## 2. Gate Test Execution & Results (exact command, exit code, test counts)
+     ## 3. Technical Evaluation of Fixes (DEUS_Objects.js, place_art.js, validate_art.js, test suite)
+     ## 4. Verdict (PASS, PASS_WITH_FIXES, or FAIL)
+
+5. COMMIT REVIEW REPORT:
+   Stage only the review file:
+     git add tasks/TOOL.01.02/lane-cd/review_grok_0e6d74e4.md
+     git commit -m "[grok] TOOL.01.02 Independent review of multi-variant topology and V8 sheet runtime (commit 0e6d74e4)"

@@ -1,0 +1,141 @@
+{
+  "sheet": "!UF_Crystal_V8.png",
+  "width": 576,
+  "height": 384,
+  "characterCount": 8,
+  "blockWidth": 144,
+  "blockHeight": 192,
+  "cellWidth": 48,
+  "cellHeight": 48,
+  "cellsPerCharacter": 12,
+  "topologyClass": "STATIC_VARIANT_8",
+  "rmmzConfig": {
+    "isObjectCharacter": true,
+    "shiftY": 0,
+    "directionFix": true,
+    "walkAnime": false,
+    "stepAnime": false
+  },
+  "variants": [
+    {
+      "index": 0,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "variantIndex": 0,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_0.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "53516b45-fe96-4529-a7c6-62e26aedec8f",
+          "originalityDistance": null,
+          "notes": "A cluster of raw natural ..."
+        }
+      }
+    },
+    {
+      "index": 1,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "variantIndex": 1,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_1.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "630429fe-3f84-412e-8b06-69c4a49d74ca",
+          "originalityDistance": null,
+          "notes": "A cluster of raw natural ..."
+        }
+      }
+    },
+    {
+      "index": 2,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "variantIndex": 2,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_2.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "ece4eb5e-bfc0-42f1-8bab-1ad60da7435d",
+          "originalityDistance": null,
+          "notes": "A cluster of raw natural ..."
+        }
+      }
+    },
+    {
+      "index": 3,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "variantIndex": 3,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_3.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "fc809c23-8e30-4ae7-bfa9-a2acb4a2b69a",
+          "originalityDistance": null,
+          "notes": "A cluster of raw natural ..."
+        }
+      }
+    },
+    {
+      "index": 4,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "variantIndex": 4,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_4.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "20820c66-83bb-4aae-baa5-08c3f93f1bad",
+          "originalityDistance": null,
+          "notes": "A cluster of raw natural ..."
+        }
+      }
+    },
+    {
+      "index": 5,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "variantIndex": 5,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_5.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "dd909dbb-6f0b-4b3a-ab3f-e2e60ba83fb3",
+          "originalityDistance": null,
+          "notes": "A cluster of raw natural ..."
+        }
+      }
+    },
+    {
+      "index": 6,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "variantIndex": 6,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_6.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "6b7ae0ce-1ea9-423e-9f5f-5b069859e663",
+          "originalityDistance": null,
+          "notes": "A cluster of raw natural ..."
+        }
+      }
+    },
+    {
+      "index": 7,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "variantIndex": 7,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_STONE_CRYSTAL_V1_DEFAULT/variant_7.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "65a4d716-42be-44b1-9791-a629fa0371c0",
+          "originalityDistance": null,
+          "notes": "A cluster of raw natural ..."
+        }
+      }
+    }
+  ]
+}

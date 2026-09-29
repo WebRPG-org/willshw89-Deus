@@ -1,0 +1,102 @@
+{
+  "topologyClass": "STATIC_VARIANT_8",
+  "variantCount": 8,
+  "variantSelectionMode": "DETERMINISTIC_HASH",
+  "runtime": {
+    "kind": "RMMZ_CHARACTER_8",
+    "file": "img/characters/!UF_FlowersPurple_V8.png",
+    "index": 0
+  },
+  "sourceVariants": [
+    {
+      "variantIndex": 0,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FLOWERS-PURPLE_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "0b16d571-4cee-429f-82cb-44836cec216d",
+        "originalityDistance": null,
+        "notes": "A vibrant clump of wild p..."
+      }
+    },
+    {
+      "variantIndex": 1,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FLOWERS-PURPLE_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "7e384959-5f6a-4107-8321-fbca3bf189b1",
+        "originalityDistance": null,
+        "notes": "A vibrant clump of wild p..."
+      }
+    },
+    {
+      "variantIndex": 2,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FLOWERS-PURPLE_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "89b89ff5-35a7-4141-9106-885b2a48113b",
+        "originalityDistance": null,
+        "notes": "A vibrant clump of wild p..."
+      }
+    },
+    {
+      "variantIndex": 3,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FLOWERS-PURPLE_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "08cedce8-06d2-4af9-a118-0fdfc08d1e0f",
+        "originalityDistance": null,
+        "notes": "A vibrant clump of wild p..."
+      }
+    },
+    {
+      "variantIndex": 4,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FLOWERS-PURPLE_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "0d7f7fee-498a-4909-938c-20e8f87cda90",
+        "originalityDistance": null,
+        "notes": "A vibrant clump of wild p..."
+      }
+    },
+    {
+      "variantIndex": 5,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FLOWERS-PURPLE_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "531ad6d1-0bf3-40e7-ba31-ce89a6241b2a",
+        "originalityDistance": null,
+        "notes": "A vibrant clump of wild p..."
+      }
+    },
+    {
+      "variantIndex": 6,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FLOWERS-PURPLE_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "5dca018f-5aa2-45bf-bd3f-566452fa4a29",
+        "originalityDistance": null,
+        "notes": "A vibrant clump of wild p..."
+      }
+    },
+    {
+      "variantIndex": 7,
+      "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FLOWERS-PURPLE_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "354ee7c3-5ed6-4ac5-b95d-875166d90b31",
+        "originalityDistance": null,
+        "notes": "A vibrant clump of wild p..."
+      }
+    }
+  ],
+  "status": "APPROVED",
+  "statusWhy": "Owner-generated on PixelLab Object Creator, inducted with 8 variants"
+}

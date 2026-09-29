@@ -45,6 +45,11 @@
 (() => {
     "use strict";
 
+    if (typeof window === "undefined") {
+        global.window = global;
+    }
+    const SpriteClass = typeof Sprite !== "undefined" ? Sprite : class {};
+
     const TILE = 48;
     const MARGIN = 3;         // cells beyond the view that still get sprites (wide canopies, smooth scrolling)
     const TALLEST_CELLS = 6;  // extra rows above the view: a tall tree's canopy hangs this far above its cell
@@ -103,11 +108,30 @@
     //-------------------------------------------------------------------------
     // Types: the catalog list with typeId = index + 1 (copies; the catalog itself stays untouched)
 
+    const V8_REMAP = {
+        "!$UF_GraniteBoulder": "!UF_GraniteBoulder_V8",
+        "!$UF_LooseStones": "!UF_RocksSmall_V8",
+        "granite_boulder": "!UF_GraniteBoulder_V8",
+        "rocks_small": "!UF_RocksSmall_V8"
+    };
+
     let typeCache = null;
     function table() {
         const src = (catalog() && catalog().objects) || [];
         const list = src.map((o, i) => {
             const entry = Object.assign({}, o, { typeId: i + 1, tintValue: o.tint ? tintOf(o.tint) : 0xffffff });
+            if (V8_REMAP[entry.image]) {
+                entry.image = V8_REMAP[entry.image];
+                entry.topologyClass = "STATIC_VARIANT_8";
+                entry.isV8 = true;
+            } else if (V8_REMAP[entry.id]) {
+                entry.image = V8_REMAP[entry.id];
+                entry.topologyClass = "STATIC_VARIANT_8";
+                entry.isV8 = true;
+            } else if (typeof entry.image === "string" && entry.image.includes("_V8")) {
+                entry.topologyClass = entry.topologyClass || "STATIC_VARIANT_8";
+                entry.isV8 = true;
+            }
             if (entry.id === "chest_wood" && entry.build && entry.build.items && entry.build.items.bar_iron) {
                 entry.build = Object.assign({}, entry.build, {
                     items: Object.assign({}, entry.build.items, { fiber: entry.build.items.bar_iron })
@@ -343,6 +367,18 @@
         });
         if (before && before.refuse) return false;
         if (!W.setObject(area.x, area.y, x, y, to, z)) return false; // records the diff and patches this level's maps
+        const size = W.state.size || 256;
+        const cellIdx = y * size + x;
+        const lKey = `${area.x},${area.y},${z}`;
+        const variants = (W.state.objectVariants = W.state.objectVariants || {});
+        const lvlVariants = (variants[lKey] = variants[lKey] || {});
+        if (toType) {
+            const worldSeed = W.state.seed || 0;
+            const objKey = `${lKey}:${cellIdx}:${toType.id || toType.typeId}`;
+            lvlVariants[cellIdx] = Objects.computeInitialVisualVariant(worldSeed, objKey, toType.id || "object", 8);
+        } else {
+            delete lvlVariants[cellIdx];
+        }
         scheduleRegrow(area, x, y, toType);
         if (z === 0) emit("objects:changed", { x: area.x, y: area.y }, x, y, fromType ? fromType.id : null, toType ? toType.id : null);
         else emit("objects:levelChanged", levelArea(area), x, y, fromType ? fromType.id : null, toType ? toType.id : null);
@@ -604,7 +640,7 @@
     }
 
     // { sx, sy, w, h, ax, ay } (ax/ay = anchor fractions), or null while the bitmap is still loading.
-    function frameFor(type, bmp) {
+    function frameFor(type, bmp, variantIndex) {
         if (!bmp || !bmp.isReady() || bmp.width === 0) return null;
         if (type.tile) {
             // Same rectangle as Tilemap._addNormalTile: id 0-255 = B sheet, 256-511 = C sheet, 16 columns of 48 px.
@@ -618,7 +654,8 @@
         }
         if (type.gen) return { sx: 0, sy: 0, w: bmp.width, h: bmp.height, ax: 0.5, ay: 1 };
         const sc = Sidecars.get(type.image);
-        const big = ImageManager.isBigCharacter(type.image); // "$": one character per sheet, 3 columns x 4 rows
+        const isV8 = (type.image && (type.image.includes('_V8') || type.image.startsWith('!UF_'))) || type.topologyClass === "STATIC_VARIANT_8" || type.isV8;
+        const big = !isV8 && ImageManager.isBigCharacter(type.image); // "$": one character per sheet, 3 columns x 4 rows
         let fw = big ? Math.floor(bmp.width / 3) : Math.floor(bmp.width / 12);
         let fh = big ? Math.floor(bmp.height / 4) : Math.floor(bmp.height / 8);
         if (sc && sc.frameWidth > 0 && sc.frameHeight > 0) {
@@ -629,13 +666,13 @@
         if (sc && sc.animations && Array.isArray(sc.animations.stand) && sc.animations.stand.length) col = sc.animations.stand[0] | 0;
         let blockX = 0, blockY = 0;
         if (!big) {
-            const index = type.characterIndex | 0;
+            const index = (isV8 && variantIndex !== undefined) ? (variantIndex | 0) : (type.characterIndex | 0);
             blockX = (index % 4) * 3;
             blockY = Math.floor(index / 4) * 4;
         }
         if ((blockX + col + 1) * fw > bmp.width) col = 0; // a single-column sheet
         const anchor = sc && Array.isArray(sc.anchor) && sc.anchor.length === 2 ? [sc.anchor[0] / fw, sc.anchor[1] / fh] : [0.5, 1];
-        return { sx: (blockX + col) * fw, sy: blockY * fh, w: fw, h: fh, ax: anchor[0], ay: anchor[1] };
+        return { sx: (blockX + col) * fw, sy: blockY * fh, w: fw, h: fh, ax: anchor[0], ay: anchor[1], variant: (variantIndex !== undefined ? variantIndex | 0 : (type.characterIndex | 0)) };
     }
 
     function isWallCell(grid, w, h, cx, cy, typeId) {
@@ -769,7 +806,25 @@
         return !!c && (c.state === "open" || c.state === "opening");
     }
 
-    class Sprite_UFObjectLayer extends Sprite {
+    function getVariantForCell(x, y, type) {
+        const W = World();
+        if (!W || !W.state) return 0;
+        const view = typeof W.viewLevel === "function" ? W.viewLevel() : (W.currentArea ? W.currentArea() : { x: 0, y: 0, z: 0 });
+        const vx = (view && view.x) || 0, vy = (view && view.y) || 0, vz = (view && view.z) || 0;
+        const lKey = `${vx},${vy},${vz}`;
+        const size = W.state.size || ($dataMap ? $dataMap.width : 256);
+        const cellIdx = y * size + x;
+        const variants = (W.state.objectVariants = W.state.objectVariants || {});
+        const lvlVariants = (variants[lKey] = variants[lKey] || {});
+        if (lvlVariants[cellIdx] !== undefined) return lvlVariants[cellIdx];
+        const worldSeed = W.state.seed || 0;
+        const objKey = `${lKey}:${cellIdx}:${type.id || type.typeId}`;
+        const v = Objects.computeInitialVisualVariant(worldSeed, objKey, type.id || "object", 8);
+        lvlVariants[cellIdx] = v;
+        return v;
+    }
+
+    class Sprite_UFObjectLayer extends SpriteClass {
         constructor() {
             super();
             this.z = 0;             // draws nothing itself; only its update() matters
@@ -910,6 +965,7 @@
             s._ufBonus = type.under ? UNDER_BONUS : 0;
             s._ufReady = false;
             s.visible = false;
+            s._ufVariant = getVariantForCell(x, y, type);
             if (s.tint !== type.tintValue) s.tint = type.tintValue;
             let bmp = this._bitmaps[type.typeId];
             if (!bmp) bmp = this._bitmaps[type.typeId] = bitmapFor(type);
@@ -925,11 +981,13 @@
                 if (!f) return false;
                 s._ufMask = f.mask;
             } else {
-                f = this._frames[type.typeId];
+                const variant = s._ufVariant !== undefined ? s._ufVariant : getVariantForCell(s._ufX, s._ufY, type);
+                const cacheKey = `${type.typeId}_${variant}`;
+                f = this._frames[cacheKey];
                 if (!f) {
-                    f = frameFor(type, s.bitmap);
+                    f = frameFor(type, s.bitmap, variant);
                     if (!f) return false;
-                    this._frames[type.typeId] = f;
+                    this._frames[cacheKey] = f;
                 }
             }
             s.setFrame(f.sx, f.sy, f.w, f.h);
@@ -976,26 +1034,30 @@
         }
     }
 
-    const _Spriteset_Map_createCharacters = Spriteset_Map.prototype.createCharacters;
-    Spriteset_Map.prototype.createCharacters = function() {
-        _Spriteset_Map_createCharacters.call(this);
-        this._ufObjectLayer = new Sprite_UFObjectLayer();
-        this._tilemap.addChild(this._ufObjectLayer);
-    };
+    if (typeof Spriteset_Map !== "undefined") {
+        const _Spriteset_Map_createCharacters = Spriteset_Map.prototype.createCharacters;
+        Spriteset_Map.prototype.createCharacters = function() {
+            _Spriteset_Map_createCharacters.call(this);
+            this._ufObjectLayer = new Sprite_UFObjectLayer();
+            this._tilemap.addChild(this._ufObjectLayer);
+        };
+    }
 
     const currentLayer = () => {
-        const scene = SceneManager._scene;
+        const scene = typeof SceneManager !== "undefined" && SceneManager._scene;
         return (scene && scene._spriteset && scene._spriteset._ufObjectLayer) || null;
     };
 
     //-------------------------------------------------------------------------
     // Passability: a cell whose object isn't passable can't be entered or left (like an impassable tile)
 
-    const _Game_Map_isPassable = Game_Map.prototype.isPassable;
-    Game_Map.prototype.isPassable = function(x, y, d) {
-        if (blocksAt(x, y)) return false;
-        return _Game_Map_isPassable.call(this, x, y, d);
-    };
+    if (typeof Game_Map !== "undefined") {
+        const _Game_Map_isPassable = Game_Map.prototype.isPassable;
+        Game_Map.prototype.isPassable = function(x, y, d) {
+            if (blocksAt(x, y)) return false;
+            return _Game_Map_isPassable.call(this, x, y, d);
+        };
+    }
 
     //-------------------------------------------------------------------------
     // The public object
@@ -1069,6 +1131,26 @@
         resetPerf() {
             const l = currentLayer();
             if (l) l.perf = { frames: 0, ms: 0, max: 0, rebuilds: 0 };
+        },
+        /**
+         * Deterministically computes the initial visual variant index (0..variantCount-1)
+         * for an object based on world seed, persistent object ID, and canonical asset ID.
+         * Invariant: Evaluated once at object creation; moving the object preserves visualVariant.
+         */
+        computeInitialVisualVariant(worldSeed, objectId, canonicalAssetId, variantCount = 8) {
+            let h = 0x811c9dc5;
+            const str = `${worldSeed}:${objectId}:${canonicalAssetId}`;
+            for (let i = 0; i < str.length; i++) {
+                h ^= str.charCodeAt(i);
+                h = Math.imul(h, 0x01000193);
+            }
+            return Math.abs(h >>> 0) % variantCount;
+        },
+        frameFor(type, bmp, variantIndex) {
+            return frameFor(type, bmp, variantIndex);
+        },
+        getVariantForCell(x, y, type) {
+            return getVariantForCell(x, y, type);
         }
     };
     window.DEUS = window.DEUS || {};
@@ -1081,13 +1163,13 @@
 
     let hooked = false;
     function hookEvents() {
-        if (hooked || !window.UF || !UF.Events) return;
+        if (hooked || !window.UF || !window.UF.Events) return;
         hooked = true;
-        UF.Events.on("world:objectChanged", area => {
+        window.UF.Events.on("world:objectChanged", area => {
             const l = currentLayer();
             if (l && onScreen(area)) l.markDirty();
         });
-        UF.Events.on("world:levelObjectChanged", area => {
+        window.UF.Events.on("world:levelObjectChanged", area => {
             const l = currentLayer();
             if (l && onScreen(area)) l.markDirty();
         });
@@ -1113,12 +1195,14 @@
     }
     hookEvents();
 
-    const _Scene_Boot_start = Scene_Boot.prototype.start;
-    Scene_Boot.prototype.start = function() {
-        _Scene_Boot_start.call(this);
-        hookEvents();
-        if (window.UF.Test && UF.Test.active) registerChecks();
-    };
+    if (typeof Scene_Boot !== "undefined") {
+        const _Scene_Boot_start = Scene_Boot.prototype.start;
+        Scene_Boot.prototype.start = function() {
+            _Scene_Boot_start.call(this);
+            hookEvents();
+            if (window.UF.Test && UF.Test.active) registerChecks();
+        };
+    }
 
     //-------------------------------------------------------------------------
     // Checks (UF_Test suite "objects")
@@ -1415,5 +1499,12 @@
             t.check("no_errors", t.errorsSoFar().length === 0,
                 t.errorsSoFar().length ? `${t.errorsSoFar().length} error(s), first: ${t.errorsSoFar()[0]}` : "none during objects checks");
         });
+    }
+
+    if (typeof module !== "undefined" && module.exports) {
+        module.exports = {
+            computeInitialVisualVariant: Objects.computeInitialVisualVariant,
+            Objects
+        };
     }
 })();

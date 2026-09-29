@@ -66,7 +66,7 @@ const SRC = {
 const STATUS = ['MISSING', 'EXISTING_UNAPPROVED', 'STAND_IN', 'STOCK', 'APPROVED', 'OUT_OF_SCOPE'];
 const ANCHOR_TYPES = ['GROUND', 'CEILING', 'WALL', 'CENTER'];
 const ALPHA_MODES = ['BINARY', 'OWNER_OPEN'];
-const SHEET_KINDS = ['ATLAS', 'RMMZ_TILESET', 'RMMZ_CHARACTER'];
+const SHEET_KINDS = ['ATLAS', 'RMMZ_TILESET', 'RMMZ_CHARACTER', 'RMMZ_CHARACTER_8'];
 const SOURCE_KINDS = ['catalog', 'assetIndex', 'brief', 'ar', 'manifest', 'matrix', 'addendum'];
 const CATEGORY_GROUP = {
     TERRAIN: 'TILE', WATER: 'TILE', TOP: 'TILE', EDGE: 'TILE', RAMP: 'TILE', RAMPSIDE: 'TILE',
@@ -567,7 +567,27 @@ function runtimeFromKey(key, idx, g) {
 function buildEntries(ctx, S) {
     const { g, chart, rowById, raceById, rampIds, mapping, wc, idx, inv, briefs, requests, manifest, rmmz, stats, sizeClasses, creatures } = S;
     const entries = [];
-    const add = e => { entries.push(e); return e; };
+    const add = e => {
+        const sourceSetManifestPath = path.join(ctx.root, 'art', 'masters', 'source_sets', e.id, 'manifest.json');
+        if (fs.existsSync(sourceSetManifestPath)) {
+            try {
+                const sm = JSON.parse(fs.readFileSync(sourceSetManifestPath, 'utf8'));
+                if (sm.topologyClass) e.topologyClass = sm.topologyClass;
+                if (sm.variantCount) e.variantCount = sm.variantCount;
+                if (sm.variantSelectionMode) e.variantSelectionMode = sm.variantSelectionMode;
+                if (sm.orientationSemantics !== undefined) e.orientationSemantics = sm.orientationSemantics;
+                if (sm.sourceVariants) e.sourceVariants = sm.sourceVariants;
+                if (sm.runtime) e.runtime = sm.runtime;
+                if (sm.status) e.status = sm.status;
+                if (sm.statusWhy) e.statusWhy = sm.statusWhy;
+                else if (sm.status === 'APPROVED') e.statusWhy = 'Owner approved source set inducted with 8 variants';
+            } catch (err) {
+                stats.errors.push({ code: 'SOURCE_SET_MANIFEST_ERROR', id: e.id, msg: err.message });
+            }
+        }
+        entries.push(e);
+        return e;
+    };
     const byCatalog = new Map();
     const reg = (key, e) => { if (!byCatalog.has(key)) byCatalog.set(key, []); byCatalog.get(key).push(e); };
     const briefsById = new Map();

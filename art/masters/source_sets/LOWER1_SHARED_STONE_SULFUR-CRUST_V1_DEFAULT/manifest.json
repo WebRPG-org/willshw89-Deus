@@ -1,0 +1,102 @@
+{
+  "topologyClass": "STATIC_VARIANT_8",
+  "variantCount": 8,
+  "variantSelectionMode": "DETERMINISTIC_HASH",
+  "runtime": {
+    "kind": "RMMZ_CHARACTER_8",
+    "file": "img/characters/!UF_SulfurCrust_V8.png",
+    "index": 0
+  },
+  "sourceVariants": [
+    {
+      "variantIndex": 0,
+      "masterFile": "art/masters/source_sets/LOWER1_SHARED_STONE_SULFUR-CRUST_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "11db0e68-1a6f-480b-9b4b-7a47c463cbb8",
+        "originalityDistance": null,
+        "notes": "A jagged geothermal miner..."
+      }
+    },
+    {
+      "variantIndex": 1,
+      "masterFile": "art/masters/source_sets/LOWER1_SHARED_STONE_SULFUR-CRUST_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "7c4f7804-695a-4d08-94fa-af1734ee9aac",
+        "originalityDistance": null,
+        "notes": "A jagged geothermal miner..."
+      }
+    },
+    {
+      "variantIndex": 2,
+      "masterFile": "art/masters/source_sets/LOWER1_SHARED_STONE_SULFUR-CRUST_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "58d918ca-aec9-4cb7-8f05-64dcd2947c41",
+        "originalityDistance": null,
+        "notes": "A jagged geothermal miner..."
+      }
+    },
+    {
+      "variantIndex": 3,
+      "masterFile": "art/masters/source_sets/LOWER1_SHARED_STONE_SULFUR-CRUST_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "fe1ab149-bd49-4151-aa0f-9b4904342447",
+        "originalityDistance": null,
+        "notes": "A jagged geothermal miner..."
+      }
+    },
+    {
+      "variantIndex": 4,
+      "masterFile": "art/masters/source_sets/LOWER1_SHARED_STONE_SULFUR-CRUST_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "88f5ed8a-1d99-4d90-8ab8-17dbe7489610",
+        "originalityDistance": null,
+        "notes": "A jagged geothermal miner..."
+      }
+    },
+    {
+      "variantIndex": 5,
+      "masterFile": "art/masters/source_sets/LOWER1_SHARED_STONE_SULFUR-CRUST_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "2ef9ddc0-24a7-4d63-a4bf-2ee7024d86db",
+        "originalityDistance": null,
+        "notes": "A jagged geothermal miner..."
+      }
+    },
+    {
+      "variantIndex": 6,
+      "masterFile": "art/masters/source_sets/LOWER1_SHARED_STONE_SULFUR-CRUST_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "ca5dd1e2-32cb-4b11-a840-a33cc5249adf",
+        "originalityDistance": null,
+        "notes": "A jagged geothermal miner..."
+      }
+    },
+    {
+      "variantIndex": 7,
+      "masterFile": "art/masters/source_sets/LOWER1_SHARED_STONE_SULFUR-CRUST_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "7849cc8e-ce21-4679-950b-b971e51fdd52",
+        "originalityDistance": null,
+        "notes": "A jagged geothermal miner..."
+      }
+    }
+  ],
+  "status": "APPROVED",
+  "statusWhy": "Owner-generated on PixelLab Object Creator, inducted with 8 variants"
+}

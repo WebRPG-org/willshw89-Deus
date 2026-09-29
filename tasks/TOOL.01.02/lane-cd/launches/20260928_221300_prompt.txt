@@ -1,0 +1,56 @@
+# DEUS TASK ASSIGNMENT: GROK INDEPENDENT ADVERSARIAL REVIEW
+# Task: TOOL.01.02 / lane-cd (Multi-Variant Architecture & 8-Character Sheet Standard)
+# Authority: DEC-034 (Independent Adversarial Review), DEC-035 (Merge Gate Isolation), docs/CANONICAL_ROLES.md
+
+You are Grok acting as the Independent Adversarial Reviewer on Project DEUS.
+DO NOT self-certify. Form an independent verdict from actual git diff, code inspection, and test execution.
+
+TARGET DETAILS:
+- Task ID: TOOL.01.02
+- Lane ID: lane-cd
+- Branch: task/lane-cd
+- Writer: Gemini
+- Reviewer: Grok
+- Target Commit Tip: e6036bf3
+- Merge Base: 77a3ea79
+- Worktree: C:\Users\snewt\.deus_worktrees\lane-cd
+
+REVIEW INSTRUCTIONS:
+
+1. WORKTREE & GIT INTEGRITY:
+   Run:
+     git rev-parse HEAD
+     git merge-base HEAD origin/main
+     git log -1 --oneline
+     git diff --stat 77a3ea79 HEAD
+   Verify that all touched files fall strictly within tasks/TOOL.01.02/lane-cd/lane.json allowedPaths.
+   Verify zero edits to game/js/rmmz_*.js (Rule 9).
+   Verify zero civilization / faction code (DEC-037).
+
+2. EXECUTE GATE TESTS:
+   Run both manifest gate tests in C:\Users\snewt\.deus_worktrees\lane-cd:
+     node tools/art/test_multi_variant_topology.js
+     node tools/art/test_catalogue.js
+   Verify both exit with code 0 and capture test output summaries.
+
+3. ADVERSARIAL INSPECTION OF ARCHITECTURAL INVARIANTS:
+   - Verify catalogue schema additions: STATIC_VARIANT_8 and STATIC_ORIENTED_8 in catalogue.schema.json.
+   - Inspect tools/art/assemble_v8_sheet.js: verify 576x384 px sheet geometry, 144x192 px character blocks, 12 cells per block stamped with identical 48x48 pixels, master palette snapping, ground anchoring y=47, and binary alpha.
+   - Inspect game/js/plugins/DEUS_Objects.js: verify computeInitialVisualVariant(worldSeed, objectId, canonicalAssetId, variantCount) is deterministic and coordinate-independent (immutability under movement), and object.visualVariant roundtrips cleanly in save/load.
+   - Inspect RMMZ integration: verify sheets use "!" prefix (!UF_<Asset>_V8) for flush ground anchoring (no 6px humanoid shift), directionFix: true, walkAnime: false, stepAnime: false.
+
+4. RECORD FINDINGS & VERDICT:
+   Write your complete review report to:
+     tasks/TOOL.01.02/lane-cd/review_grok_e6036bf3.md
+   Following the structure:
+     # Independent Grok Review — TOOL.01.02 / lane-cd
+     - Writer, Reviewer, Reviewed Commit (e6036bf3), Merge Base (77a3ea79), Branch, Worktree, Review Date
+     ## 1. Commit & Diff Verification (git status, diffstat, path checks)
+     ## 2. Gate Test Execution & Results (exact command, exit code, test counts)
+     ## 3. Technical Evaluation & Code Quality (topology invariants, assembly pipeline, runtime resolver, performance)
+     ## 4. Verdict (PASS, PASS_WITH_FIXES, or FAIL)
+
+5. COMMIT REVIEW REPORT:
+   Stage only the review file:
+     git add tasks/TOOL.01.02/lane-cd/review_grok_e6036bf3.md
+     git commit -m "[grok] TOOL.01.02 Independent review of multi-variant topology and V8 sheet runtime"

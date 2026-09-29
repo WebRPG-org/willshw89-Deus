@@ -1,0 +1,141 @@
+{
+  "sheet": "!UF_IronOutcrop_V8.png",
+  "width": 576,
+  "height": 384,
+  "characterCount": 8,
+  "blockWidth": 144,
+  "blockHeight": 192,
+  "cellWidth": 48,
+  "cellHeight": 48,
+  "cellsPerCharacter": 12,
+  "topologyClass": "STATIC_VARIANT_8",
+  "rmmzConfig": {
+    "isObjectCharacter": true,
+    "shiftY": 0,
+    "directionFix": true,
+    "walkAnime": false,
+    "stepAnime": false
+  },
+  "variants": [
+    {
+      "index": 0,
+      "sourceMaster": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "variantIndex": 0,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_0.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "963d95d7-7e9f-4456-93d9-9681f6d53383",
+          "originalityDistance": null,
+          "notes": "Jagged natural mineral ve..."
+        }
+      }
+    },
+    {
+      "index": 1,
+      "sourceMaster": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "variantIndex": 1,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_1.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "b0c3f436-50f8-478b-a202-a27f04a05418",
+          "originalityDistance": null,
+          "notes": "Jagged natural mineral ve..."
+        }
+      }
+    },
+    {
+      "index": 2,
+      "sourceMaster": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "variantIndex": 2,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_2.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "3b0de4bf-1348-473b-b9ad-3bc84efa946c",
+          "originalityDistance": null,
+          "notes": "Jagged natural mineral ve..."
+        }
+      }
+    },
+    {
+      "index": 3,
+      "sourceMaster": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "variantIndex": 3,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_3.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "02d70509-f4f5-4190-961d-970388825ea4",
+          "originalityDistance": null,
+          "notes": "Jagged natural mineral ve..."
+        }
+      }
+    },
+    {
+      "index": 4,
+      "sourceMaster": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "variantIndex": 4,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_4.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "e4dc0f6c-e6b7-4e85-a54c-dcf731043bfe",
+          "originalityDistance": null,
+          "notes": "Jagged natural mineral ve..."
+        }
+      }
+    },
+    {
+      "index": 5,
+      "sourceMaster": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "variantIndex": 5,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_5.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "bda40094-4104-4512-a7eb-11292265ee36",
+          "originalityDistance": null,
+          "notes": "Jagged natural mineral ve..."
+        }
+      }
+    },
+    {
+      "index": 6,
+      "sourceMaster": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "variantIndex": 6,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_6.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "c4f35160-4c02-45b5-a17f-a91a51e1ab90",
+          "originalityDistance": null,
+          "notes": "Jagged natural mineral ve..."
+        }
+      }
+    },
+    {
+      "index": 7,
+      "sourceMaster": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "variantIndex": 7,
+        "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_IRON-OUTCROP_V1_DEFAULT/variant_7.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "31372f21-6dba-4413-bf13-01c676288026",
+          "originalityDistance": null,
+          "notes": "Jagged natural mineral ve..."
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "topologyClass": "STATIC_VARIANT_8",
+  "variantCount": 8,
+  "variantSelectionMode": "DETERMINISTIC_HASH",
+  "runtime": {
+    "kind": "RMMZ_CHARACTER_8",
+    "file": "img/characters/!UF_RocksSmall_V8.png",
+    "index": 0
+  },
+  "sourceVariants": [
+    {
+      "variantIndex": 0,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+        "originalityDistance": null,
+        "notes": null
+      }
+    },
+    {
+      "variantIndex": 1,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "sourceFacing": "south-west",
+        "generator": "pixellab",
+        "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+        "originalityDistance": null,
+        "notes": null
+      }
+    },
+    {
+      "variantIndex": 2,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "sourceFacing": "west",
+        "generator": "pixellab",
+        "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+        "originalityDistance": null,
+        "notes": null
+      }
+    },
+    {
+      "variantIndex": 3,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "sourceFacing": "north-west",
+        "generator": "pixellab",
+        "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+        "originalityDistance": null,
+        "notes": null
+      }
+    },
+    {
+      "variantIndex": 4,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "sourceFacing": "north",
+        "generator": "pixellab",
+        "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+        "originalityDistance": null,
+        "notes": null
+      }
+    },
+    {
+      "variantIndex": 5,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "sourceFacing": "north-east",
+        "generator": "pixellab",
+        "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+        "originalityDistance": null,
+        "notes": null
+      }
+    },
+    {
+      "variantIndex": 6,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "sourceFacing": "east",
+        "generator": "pixellab",
+        "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+        "originalityDistance": null,
+        "notes": null
+      }
+    },
+    {
+      "variantIndex": 7,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "sourceFacing": "south-east",
+        "generator": "pixellab",
+        "generationId": "be10f655-e814-4f82-bfb4-cb0889433f7c",
+        "originalityDistance": null,
+        "notes": null
+      }
+    }
+  ],
+  "status": "APPROVED",
+  "statusWhy": "Owner-generated on PixelLab, ingested as 8-variant V8 sheet (DEC-007 Owner involvement)"
+}

@@ -62,7 +62,7 @@ const LEDGER_COLUMNS = ['Date', 'Decision (YEA/NAY)', 'Entry or slot ids', 'File
     'SHA-256 (64 lowercase hex)', 'Approved derived variants (ids or none)'];
 const ID_RE = /^[A-Za-z0-9_.-]+(:\d{4})?$/;
 const SAFE_NAME_RE = /^[A-Za-z0-9_.-]+$/;
-const SHEET_KINDS = ['ATLAS', 'RMMZ_TILESET', 'RMMZ_CHARACTER'];
+const SHEET_KINDS = ['ATLAS', 'RMMZ_TILESET', 'RMMZ_CHARACTER', 'RMMZ_CHARACTER_8'];
 const ANCHOR_TYPES = ['GROUND', 'CEILING', 'WALL', 'CENTER'];
 // RMMZ character blocks are 3 animation columns x 4 facing rows (docs/RMMZ_ASSET_SPEC.md §2).
 const RMMZ_CHAR_COLS = 3, RMMZ_CHAR_ROWS = 4;

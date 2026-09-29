@@ -1,0 +1,141 @@
+{
+  "sheet": "!UF_Fern_V8.png",
+  "width": 576,
+  "height": 384,
+  "characterCount": 8,
+  "blockWidth": 144,
+  "blockHeight": 192,
+  "cellWidth": 48,
+  "cellHeight": 48,
+  "cellsPerCharacter": 12,
+  "topologyClass": "STATIC_VARIANT_8",
+  "rmmzConfig": {
+    "isObjectCharacter": true,
+    "shiftY": 0,
+    "directionFix": true,
+    "walkAnime": false,
+    "stepAnime": false
+  },
+  "variants": [
+    {
+      "index": 0,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "variantIndex": 0,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_0.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "3d3e954f-0d54-49fc-8e2a-259ddafd81b2",
+          "originalityDistance": null,
+          "notes": "A lush dense woodland fer..."
+        }
+      }
+    },
+    {
+      "index": 1,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "variantIndex": 1,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_1.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "bda8cd79-1e39-43b2-b496-43661496998a",
+          "originalityDistance": null,
+          "notes": "A lush dense woodland fer..."
+        }
+      }
+    },
+    {
+      "index": 2,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "variantIndex": 2,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_2.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "9abf5ab2-e94d-43a1-b7f8-51262b5760ac",
+          "originalityDistance": null,
+          "notes": "A lush dense woodland fer..."
+        }
+      }
+    },
+    {
+      "index": 3,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "variantIndex": 3,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_3.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "c144d1a1-d141-4f60-bf2e-10c36d928873",
+          "originalityDistance": null,
+          "notes": "A lush dense woodland fer..."
+        }
+      }
+    },
+    {
+      "index": 4,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "variantIndex": 4,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_4.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "339a1d93-a77b-412c-8271-24f599e27633",
+          "originalityDistance": null,
+          "notes": "A lush dense woodland fer..."
+        }
+      }
+    },
+    {
+      "index": 5,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "variantIndex": 5,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_5.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "7a6e7f9d-f066-44c1-bf99-0920ef87ab80",
+          "originalityDistance": null,
+          "notes": "A lush dense woodland fer..."
+        }
+      }
+    },
+    {
+      "index": 6,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "variantIndex": 6,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_6.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "9934dfbf-56d0-4aef-9691-faebabe7c553",
+          "originalityDistance": null,
+          "notes": "A lush dense woodland fer..."
+        }
+      }
+    },
+    {
+      "index": 7,
+      "sourceMaster": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "variantIndex": 7,
+        "masterFile": "art/masters/source_sets/SURFACE_SHARED_FLORA_FERN_V1_DEFAULT/variant_7.png",
+        "provenance": {
+          "sourceFacing": "south",
+          "generator": "pixellab",
+          "generationId": "56edcdaf-455d-4b47-ac33-03e9fad35409",
+          "originalityDistance": null,
+          "notes": "A lush dense woodland fer..."
+        }
+      }
+    }
+  ]
+}

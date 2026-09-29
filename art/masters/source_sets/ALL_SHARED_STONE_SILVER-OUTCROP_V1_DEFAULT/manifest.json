@@ -1,0 +1,102 @@
+{
+  "topologyClass": "STATIC_VARIANT_8",
+  "variantCount": 8,
+  "variantSelectionMode": "DETERMINISTIC_HASH",
+  "runtime": {
+    "kind": "RMMZ_CHARACTER_8",
+    "file": "img/characters/!UF_SilverOutcrop_V8.png",
+    "index": 0
+  },
+  "sourceVariants": [
+    {
+      "variantIndex": 0,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_SILVER-OUTCROP_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "4aaade13-7a33-4f2f-8fde-d2c80dd2b1d3",
+        "originalityDistance": null,
+        "notes": "A rugged natural stone ro..."
+      }
+    },
+    {
+      "variantIndex": 1,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_SILVER-OUTCROP_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "2225b74b-0a55-4723-ba6d-06fd50c07478",
+        "originalityDistance": null,
+        "notes": "A rugged natural stone ro..."
+      }
+    },
+    {
+      "variantIndex": 2,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_SILVER-OUTCROP_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "ba3bb2a0-c42b-4345-a61e-5451202d9fd3",
+        "originalityDistance": null,
+        "notes": "A rugged natural stone ro..."
+      }
+    },
+    {
+      "variantIndex": 3,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_SILVER-OUTCROP_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "f0327634-9a20-47a6-8baa-e2a050041f50",
+        "originalityDistance": null,
+        "notes": "A rugged natural stone ro..."
+      }
+    },
+    {
+      "variantIndex": 4,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_SILVER-OUTCROP_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "8a07cd2f-9e56-4b6f-8801-ea8a8b8240f1",
+        "originalityDistance": null,
+        "notes": "A rugged natural stone ro..."
+      }
+    },
+    {
+      "variantIndex": 5,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_SILVER-OUTCROP_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "f3976803-fe63-4df5-b69f-8d74b28754c6",
+        "originalityDistance": null,
+        "notes": "A rugged natural stone ro..."
+      }
+    },
+    {
+      "variantIndex": 6,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_SILVER-OUTCROP_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "71d05753-87f1-4f6a-a9b8-f2131aa7fae5",
+        "originalityDistance": null,
+        "notes": "A rugged natural stone ro..."
+      }
+    },
+    {
+      "variantIndex": 7,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_STONE_SILVER-OUTCROP_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "bed69735-10fc-4ec6-943b-626c50c4e3cb",
+        "originalityDistance": null,
+        "notes": "A rugged natural stone ro..."
+      }
+    }
+  ],
+  "status": "APPROVED",
+  "statusWhy": "Owner-generated on PixelLab Object Creator, inducted with 8 variants"
+}

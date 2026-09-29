@@ -1,0 +1,97 @@
+{
+  "topologyClass": "STATIC_ORIENTED_8",
+  "variantCount": 8,
+  "variantSelectionMode": "ORIENTATION_MAPPED",
+  "orientationSemantics": "EIGHT_FACING",
+  "runtime": {
+    "kind": "RMMZ_CHARACTER_8",
+    "file": "img/characters/!UF_FallenLog_V8.png",
+    "index": 0
+  },
+  "sourceVariants": [
+    {
+      "variantIndex": 0,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_ITEM_LOG_V1_DEFAULT/variant_0.png",
+      "provenance": {
+        "sourceFacing": "south",
+        "generator": "pixellab",
+        "generationId": "8d4189f9-da7a-4d21-8d16-cc53124d1618",
+        "originalityDistance": null
+      }
+    },
+    {
+      "variantIndex": 1,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_ITEM_LOG_V1_DEFAULT/variant_1.png",
+      "provenance": {
+        "sourceFacing": "south-west",
+        "generator": "pixellab",
+        "generationId": "8d4189f9-da7a-4d21-8d16-cc53124d1618",
+        "originalityDistance": null
+      }
+    },
+    {
+      "variantIndex": 2,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_ITEM_LOG_V1_DEFAULT/variant_2.png",
+      "provenance": {
+        "sourceFacing": "west",
+        "generator": "pixellab",
+        "generationId": "8d4189f9-da7a-4d21-8d16-cc53124d1618",
+        "originalityDistance": null
+      }
+    },
+    {
+      "variantIndex": 3,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_ITEM_LOG_V1_DEFAULT/variant_3.png",
+      "provenance": {
+        "sourceFacing": "north-west",
+        "generator": "pixellab",
+        "generationId": "8d4189f9-da7a-4d21-8d16-cc53124d1618",
+        "originalityDistance": null
+      }
+    },
+    {
+      "variantIndex": 4,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_ITEM_LOG_V1_DEFAULT/variant_4.png",
+      "provenance": {
+        "sourceFacing": "north",
+        "generator": "pixellab",
+        "generationId": "8d4189f9-da7a-4d21-8d16-cc53124d1618",
+        "originalityDistance": null
+      }
+    },
+    {
+      "variantIndex": 5,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_ITEM_LOG_V1_DEFAULT/variant_5.png",
+      "provenance": {
+        "sourceFacing": "north-east",
+        "generator": "pixellab",
+        "generationId": "8d4189f9-da7a-4d21-8d16-cc53124d1618",
+        "originalityDistance": null
+      }
+    },
+    {
+      "variantIndex": 6,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_ITEM_LOG_V1_DEFAULT/variant_6.png",
+      "provenance": {
+        "sourceFacing": "east",
+        "generator": "pixellab",
+        "generationId": "8d4189f9-da7a-4d21-8d16-cc53124d1618",
+        "originalityDistance": null
+      }
+    },
+    {
+      "variantIndex": 7,
+      "masterFile": "art/masters/source_sets/ALL_SHARED_ITEM_LOG_V1_DEFAULT/variant_7.png",
+      "provenance": {
+        "sourceFacing": "south-east",
+        "generator": "pixellab",
+        "generationId": "8d4189f9-da7a-4d21-8d16-cc53124d1618",
+        "originalityDistance": null
+      }
+    }
+  ],
+  "status": "APPROVED",
+  "statusWhy": "Owner approved source set inducted with 8 variants",
+  "approvedBy": "Owner",
+  "approvalEvidence": "Owner induction via PixelLab generation"
+}
