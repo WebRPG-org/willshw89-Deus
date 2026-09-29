@@ -648,3 +648,25 @@ Every decision item recorded in this log must provide:
      11. Full region unload and reload reproduces bit-identical state;
      12. Quiescent sleep guarantees zero global full-world per-frame scans.
 
+
+---
+
+### Decision `DEC-042`: Claude Code is the current PM
+- **Date Logged:** 2026-09-29
+- **Status:** `DECIDED` (Owner, in chat with Claude Code, 2026-09-29: "You are the current PM")
+- **Decider:** Owner
+- **Summary:** Claude Code holds the PM role from 2026-09-29: it interprets Owner intent, records Owner decisions in this file, opens and closes lanes (`[pm]` commits to `tasks/<id>/<lane>/lane.json`, which `tools/governance/merge_gate.js` trusts), routes review, and presents QA-passed art to the Owner for sign-off (DEC-007 amendment). Gemini / Antigravity remains the coordinator for its own worker fleet and keeps the integration duties it already has; the merge gate stays the only way into `main` for reviewed code. Where `docs/CANONICAL_ROLES.md` or older briefs say otherwise, this decision governs until the roles document is rewritten. Zero self-certification still applies to the PM: the PM never reviews its own family's code.
+
+---
+
+### Decision `DEC-043`: Construction and crafting model (recorded design; implementation deferred)
+- **Date Logged:** 2026-09-29
+- **Status:** `DECIDED` as design direction (Owner, in chat with Claude Code, 2026-09-29). **Not a lane authorization:** building and crafting are civilization systems and stay frozen under DEC-037 until the Owner opens them.
+- **Decider:** Owner
+- **Summary (Owner's words, lightly trimmed):** "The way building will work, is there will be a 'Ghost model' when there is intent to build. The ghost model will also have a black box inventory like a creature. Once the correct construction items are placed in the ghost model, you can click 'Construct', the model will become 'the under construction model' and then once construction is complete, there will be the final model. Crafting works the same way. Say there's a workbench, there will be a black inventory box on the workbench, and then the opportunity to 'combine', the creature will make a craft attempt. All of this bears in mind skill checks using SRD."
+  1. **Three build states per structure:** ghost (intent), under construction, final. Each is a distinct model.
+  2. **Ghost model inventory:** a ghost holds a black-box inventory like a creature's; construction begins ("Construct") only when the required items are inside it.
+  3. **Crafting is the same pattern at a workbench:** the workbench has a black-box inventory; "Combine" makes the creature attempt the craft.
+  4. **Skill checks:** construction and craft attempts use SRD 5.1 skill checks (DEC-039).
+  5. **Closed mass (DEC-040):** the items placed in a ghost or workbench are the material of the result; nothing is created from nothing.
+- **Art implication (when opened):** every buildable structure needs ghost, under-construction and final art; every workbench needs an interior-inventory presentation. Catalogue records first, per DEC-007.
