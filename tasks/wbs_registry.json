@@ -144,11 +144,13 @@
     "NAT.04.01": {
       "title": "Lean Geomorphology & Soil Kernel",
       "package": "PKG-04",
-      "status": "IN_PROGRESS",
+      "status": "KERNEL_MERGED",
       "lane": "lane-by",
       "branch": "task/lane-by",
-      "writer": "MiniMax M3",
+      "writer": "Claude (Attempt 3)",
       "reviewer": "Grok (grok-4.7-build)",
+      "reviewVerdict": "PASS",
+      "mergedSha": "e1554c63",
       "briefDoc": "tasks/NAT.04.01/lane-by/BRIEF.md",
       "laneManifest": "tasks/NAT.04.01/lane-by/lane.json",
       "gateTests": ["tools/test_soil_geomorphology.js"]
@@ -156,9 +158,14 @@
     "NAT.05.01": {
       "title": "Continuous Climate Engine",
       "package": "PKG-05",
-      "status": "DEPENDENCY_LOCKED",
+      "status": "IN_PROGRESS",
       "lane": "lane-bw",
-      "haltReason": "Blocked by Package 4 (Soil/Geomorphology) upstream completion"
+      "branch": "task/lane-bw",
+      "writer": "gemini",
+      "reviewer": "grok",
+      "briefDoc": "tasks/NAT.05.01/lane-bw/BRIEF.md",
+      "laneManifest": "tasks/NAT.05.01/lane-bw/lane.json",
+      "gateTests": ["tools/test_climate_kernel.js"]
     },
     "SOC.10.01": {
       "title": "Three-Axis Person Identity Schema",
