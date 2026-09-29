@@ -659,8 +659,9 @@
     function gridSlots(list, cfg, equipped) {
         const cap0 = cfg.columns * cfg.rows;
         const slots = new Array(cap0).fill(null);
-        list.slice(0, cap0).forEach((it, i) => { slots[i] = { itemId: it.id, typeId: it.type, count: it.count, equipped: !!equipped && equipped.has(it.id) }; });
-        return { slots, total: list.length, overflow: Math.max(0, list.length - cap0) };
+        const unequipped = equipped ? list.filter(it => !equipped.has(it.id)) : list;
+        unequipped.slice(0, cap0).forEach((it, i) => { slots[i] = { itemId: it.id, typeId: it.type, count: it.count, equipped: false }; });
+        return { slots, total: unequipped.length, overflow: Math.max(0, unequipped.length - cap0) };
     }
     function factionLine(u) {
         const F = Factions(), S = window.UF && UF.Stance;
@@ -1289,11 +1290,13 @@
             const u = this._subject && this._subject.kind === "unit" ? World().unit(this._subject.unitId) : null;
             const I = Items();
             const rawInv = u ? (I ? I.inventoryOf(u.id) : (u.data && u.data.inventory ? u.data.inventory : [])) : [];
+            const eqIds = equippedIds(u);
+            const unequippedInv = rawInv.filter(it => !eqIds.has(it.id));
             const minX = L.bag.x + 6, maxX = L.bag.x + L.bag.w - 38;
             const minY = L.bag.y + 6, maxY = L.bag.y + L.bag.h - 38;
             const cols = Math.max(1, Math.floor((L.bag.w - 12) / 36));
 
-            return rawInv.map((it, i) => {
+            return unequippedInv.map((it, i) => {
                 const col = i % cols;
                 const row = Math.floor(i / cols);
                 let ix, iy;
@@ -1308,7 +1311,7 @@
                     itemId: it.id,
                     typeId: it.type,
                     count: it.count || 1,
-                    equipped: !!it.equipped,
+                    equipped: false,
                     item: it,
                     x: ix,
                     y: iy,
@@ -1385,14 +1388,9 @@
 
             const isEquip = t && (t.slot || tags.includes("weapon") || tags.includes("armor") || tags.includes("shield") || tags.includes("clothes") || tags.includes("wear"));
             if (isEquip) {
-                const slot = t.slot || (tags.includes("weapon") ? "mainHand" : tags.includes("shield") ? "offHand" : tags.includes("armor") ? "body" : tags.includes("head") ? "head" : "mainHand");
-                if (I && typeof I.equip === "function") {
-                    I.equip(u.id, entry.itemId, slot);
-                    SoundManager.playEquip();
-                    this._footer = `${u.name || "Colonist"} equipped ${t ? t.name : entry.typeId}`;
-                    this.redraw();
-                    return;
-                }
+                this._footer = `${t ? t.name : entry.typeId} · Drag into equipment slot to equip`;
+                this.redraw();
+                return;
             }
         }
         unequipSlot(slot) {
@@ -1475,7 +1473,10 @@
                         if (e) {
                             const eqItem = this._model.equipment.find(q => q.slot === e.slot);
                             if (eqItem && eqItem.typeId) {
-                                this.unequipSlot(e.slot);
+                                const I = Items();
+                                const t = I ? I.type(eqItem.typeId) : null;
+                                this._footer = `${t ? t.name : eqItem.typeId} (${e.slot}) · Drag out of slot to unequip`;
+                                this.redraw();
                                 return;
                             }
                         }
@@ -1566,10 +1567,29 @@
                 }
             }
 
-            // Left click on equipment slot
+            // Left click on equipment slot -> select and attach to ItemDrag if holding an item
             if (L.equipment) {
                 const e = L.equipment.slots.find(r => inRect(p, r));
-                if (e) return this.selectEquip(e.slot);
+                if (e) {
+                    this.selectEquip(e.slot);
+                    if (this._model && this._model.readOnly) return;
+                    const eqItem = this._model && this._model.equipment ? this._model.equipment.find(q => q.slot === e.slot) : null;
+                    if (eqItem && (eqItem.itemId || eqItem.typeId) && ItemDrag) {
+                        const u = this._subject && this._subject.kind === "unit" ? World().unit(this._subject.unitId) : null;
+                        const I = Items();
+                        const it = eqItem.itemId ? (I ? I.get(eqItem.itemId) : null) : null;
+                        ItemDrag.attach({
+                            kind: "equipment",
+                            unitId: u ? u.id : null,
+                            slot: e.slot,
+                            itemId: eqItem.itemId,
+                            item: it || { id: eqItem.itemId, type: eqItem.typeId, count: eqItem.count || 1 },
+                            grabOffsetX: TouchInput.x - (this.x + this.padding + e.x),
+                            grabOffsetY: TouchInput.y - (this.y + this.padding + e.y)
+                        }, SceneManager._scene);
+                    }
+                    return;
+                }
             }
 
             if (L.drops) {

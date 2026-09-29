@@ -844,6 +844,19 @@
         if (!u.data) u.data = {};
         if (!u.data.equipment) u.data.equipment = {};
         u.data.equipment[slot] = itemId;
+        // Keep legacy keys in sync so older AI/rendering checks remain consistent
+        if (slot === "mainHand") {
+            u.data.equipment.weapon = itemId;
+            u.data.equipment.tool = itemId;
+        } else if (slot === "offHand") {
+            u.data.equipment.shield = itemId;
+        } else if (slot === "body") {
+            u.data.equipment.clothes = itemId;
+            u.data.equipment.torso = itemId;
+        } else if (slot === "feet") {
+            u.data.equipment.legs = itemId;
+            u.data.equipment.boots = itemId;
+        }
         changed({ id: itemId }, "equipped");
         return true;
     };
@@ -854,8 +867,96 @@
         if (!u || !u.data || !u.data.equipment) return false;
         const itemId = u.data.equipment[slot];
         delete u.data.equipment[slot];
+        // Clean legacy aliases that point to this same unequipped item
+        if (itemId) {
+            for (const k of Object.keys(u.data.equipment)) {
+                if (u.data.equipment[k] === itemId) {
+                    delete u.data.equipment[k];
+                }
+            }
+        }
         if (itemId) changed({ id: itemId }, "unequipped");
         return true;
+    };
+
+    /** Check if an item type is compatible with an equipment slot. */
+    Items.isSlotCompatible = function(itemType, targetSlot) {
+        if (!itemType || !targetSlot) return false;
+        const s = String(targetSlot).toLowerCase();
+        const rawSlot = itemType.slot || (itemType.armor && itemType.armor.slot) || (itemType.wear && itemType.wear.slot) || "";
+        const itemSlot = String(rawSlot).toLowerCase();
+        const tags = Array.isArray(itemType.tags) ? itemType.tags.map(t => String(t).toLowerCase()) : [];
+
+        if (s === "mainhand") {
+            if (itemType.weapon || itemType.tool) return true;
+            if (tags.includes("weapon") || tags.includes("tool") || tags.includes("axe") || tags.includes("pick") || tags.includes("sword") || tags.includes("dagger") || tags.includes("bow") || tags.includes("mace") || tags.includes("spear") || tags.includes("staff")) return true;
+            if (["weapon", "tool", "mainhand"].includes(itemSlot)) return true;
+            return false;
+        }
+
+        if (s === "offhand") {
+            if (itemType.shield || tags.includes("shield") || ["shield", "offhand"].includes(itemSlot)) return true;
+            if (itemType.weapon || itemType.tool || tags.includes("weapon") || tags.includes("tool") || tags.includes("light") || tags.includes("torch")) return true;
+            return false;
+        }
+
+        if (s === "head") {
+            if (["head", "helmet", "hat", "cowl", "circlet", "hood"].includes(itemSlot)) return true;
+            if (tags.includes("head") || tags.includes("helmet") || tags.includes("hat") || tags.includes("cowl") || tags.includes("hood")) return true;
+            return false;
+        }
+
+        if (s === "body") {
+            if (["body", "torso", "armor", "clothes", "robe", "tunic", "cuirass", "mail"].includes(itemSlot)) return true;
+            if (tags.includes("armor") || tags.includes("clothes") || tags.includes("body") || tags.includes("torso") || tags.includes("robe") || tags.includes("cuirass") || tags.includes("mail") || tags.includes("tunic")) return true;
+            if (itemType.armor && (!itemType.armor.slot || itemType.armor.slot === "torso" || itemType.armor.slot === "body")) return true;
+            return false;
+        }
+
+        if (s === "feet") {
+            if (["feet", "legs", "boots", "shoes", "sandals", "greaves"].includes(itemSlot)) return true;
+            if (tags.includes("feet") || tags.includes("boots") || tags.includes("shoes") || tags.includes("legs")) return true;
+            if (itemType.armor && ["legs", "feet", "boots"].includes(itemType.armor.slot)) return true;
+            return false;
+        }
+
+        if (s === "hands") {
+            if (["hands", "gloves", "gauntlets", "mitts"].includes(itemSlot)) return true;
+            if (tags.includes("hands") || tags.includes("gloves") || tags.includes("gauntlets")) return true;
+            return false;
+        }
+
+        if (s === "bracers") {
+            if (["bracers", "arms", "armbands", "vambraces"].includes(itemSlot)) return true;
+            if (tags.includes("bracers") || tags.includes("arms")) return true;
+            return false;
+        }
+
+        if (s === "cloak") {
+            if (["cloak", "cape", "shoulders", "back", "mantle"].includes(itemSlot)) return true;
+            if (tags.includes("cloak") || tags.includes("cape") || tags.includes("shoulders") || tags.includes("back")) return true;
+            return false;
+        }
+
+        if (s === "neck") {
+            if (["neck", "amulet", "necklace", "pendant", "collar"].includes(itemSlot)) return true;
+            if (tags.includes("neck") || tags.includes("amulet") || tags.includes("necklace") || tags.includes("pendant")) return true;
+            return false;
+        }
+
+        if (s === "belt") {
+            if (["belt", "waist", "sash", "girdle"].includes(itemSlot)) return true;
+            if (tags.includes("belt") || tags.includes("waist") || tags.includes("sash")) return true;
+            return false;
+        }
+
+        if (s === "ring1" || s === "ring2") {
+            if (["ring", "ring1", "ring2"].includes(itemSlot)) return true;
+            if (tags.includes("ring")) return true;
+            return false;
+        }
+
+        return false;
     };
 
     /** The item records a unit carries, in pick-up order. */

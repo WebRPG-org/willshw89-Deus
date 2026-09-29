@@ -680,7 +680,22 @@
             // 1. Check if dropped over Container Card
             if (card && card.visible && typeof card.isPointerInsideCoords === "function" && card.isPointerInsideCoords(dropX, dropY)) {
                 const targetSlot = card.slotAtCoords(dropX, dropY);
-                if (src.kind === "inventory" || src.kind === "bag") {
+                if (src.kind === "equipment" && u) {
+                    // Unequip from slot and deposit into container
+                    if (typeof I.unequip === "function") {
+                        I.unequip(u.id, src.slot);
+                    }
+                    const deposited = Containers.putItem(cId, src.item.id);
+                    if (deposited) {
+                        SoundManager.playOk();
+                        card.refresh();
+                        if (sheet) sheet.redraw();
+                        if (scene && scene._ufBagWindow && scene._ufBagWindow.visible) scene._ufBagWindow.refresh();
+                    } else {
+                        SoundManager.playBuzzer();
+                    }
+                    return;
+                } else if (src.kind === "inventory" || src.kind === "bag") {
                     // Transfer from Colonist Inventory / Bag -> Container
                     const deposited = Containers.putItem(cId, src.item.id);
                     if (deposited) {
@@ -712,24 +727,87 @@
                 const inBag = L && L.bag && (p.x >= L.bag.x && p.x < L.bag.x + L.bag.w && p.y >= L.bag.y && p.y < L.bag.y + L.bag.h);
 
                 if (targetEquip && u) {
-                    // Equip item!
-                    if (src.kind === "inventory" || src.kind === "container" || src.kind === "bag" || src.kind === "world") {
-                        if (src.kind === "container") {
-                            Containers.takeItem(src.containerId, src.item.id, u.id);
-                        } else if (src.kind === "world") {
-                            if (typeof I.pickUp === "function") I.pickUp(u.id, src.item.id);
-                        }
-                        if (typeof I.equip === "function") {
-                            I.equip(u.id, src.item.id, targetEquip.slot);
-                        }
-                        SoundManager.playEquip();
-                        if (card) card.refresh();
-                        if (scene && scene._ufBagWindow && scene._ufBagWindow.visible) {
-                            scene._ufBagWindow.refresh();
-                        }
+                    // Cannot modify equipment on read-only entity
+                    if (sheet._model && sheet._model.readOnly) {
+                        SoundManager.playBuzzer();
+                        sheet._footer = `${sheet._model.title || "Subject"} is not under your direct command`;
                         sheet.redraw();
                         return;
                     }
+
+                    const itemType = (I && typeof I.type === "function") ? I.type(src.item.type) : null;
+                    const isComp = (I && typeof I.isSlotCompatible === "function") ? I.isSlotCompatible(itemType, targetEquip.slot) : true;
+                    if (!isComp) {
+                        SoundManager.playBuzzer();
+                        sheet._footer = `Cannot equip ${itemType ? itemType.name : src.item.type} in ${targetEquip.slot}`;
+                        sheet.redraw();
+                        return;
+                    }
+
+                    const existingEquipId = u.data && u.data.equipment ? u.data.equipment[targetEquip.slot] : null;
+
+                    if (src.kind === "equipment") {
+                        if (src.slot === targetEquip.slot) {
+                            // Dropped on same slot
+                            SoundManager.playCursor();
+                            sheet.redraw();
+                            return;
+                        }
+                        if (existingEquipId) {
+                            // Target slot already has an item
+                            const exItem = I.get ? I.get(existingEquipId) : null;
+                            const exType = exItem && I ? I.type(exItem.type) : null;
+                            const canSwap = (I && typeof I.isSlotCompatible === "function") ? I.isSlotCompatible(exType, src.slot) : false;
+                            if (canSwap) {
+                                // Swap slots
+                                u.data.equipment[src.slot] = existingEquipId;
+                                u.data.equipment[targetEquip.slot] = src.item.id;
+                                SoundManager.playEquip();
+                            } else {
+                                // Target item unequipped to bag
+                                I.unequip(u.id, targetEquip.slot);
+                                delete u.data.equipment[src.slot];
+                                I.equip(u.id, src.item.id, targetEquip.slot);
+                                SoundManager.playEquip();
+                            }
+                        } else {
+                            // Move to empty target slot
+                            delete u.data.equipment[src.slot];
+                            I.equip(u.id, src.item.id, targetEquip.slot);
+                            SoundManager.playEquip();
+                        }
+                        sheet._footer = `Equipped ${itemType ? itemType.name : src.item.type} to ${targetEquip.slot}`;
+                        sheet.redraw();
+                        if (card) card.refresh();
+                        if (scene && scene._ufBagWindow && scene._ufBagWindow.visible) scene._ufBagWindow.refresh();
+                        return;
+                    }
+
+                    // Taking from external source
+                    if (src.kind === "container") {
+                        Containers.takeItem(src.containerId, src.item.id, u.id);
+                    } else if (src.kind === "world") {
+                        if (typeof I.pickUp === "function") I.pickUp(u.id, src.item.id);
+                    }
+
+                    // If existing item in slot, unequip it to bag
+                    if (existingEquipId) {
+                        I.unequip(u.id, targetEquip.slot);
+                        const exItem = I.get ? I.get(existingEquipId) : null;
+                        if (exItem && typeof src.item.bagX === "number") {
+                            exItem.bagX = src.item.bagX;
+                            exItem.bagY = src.item.bagY;
+                        }
+                    }
+
+                    // Equip incoming item
+                    I.equip(u.id, src.item.id, targetEquip.slot);
+                    SoundManager.playEquip();
+                    sheet._footer = `Equipped ${itemType ? itemType.name : src.item.type} to ${targetEquip.slot}`;
+                    if (card) card.refresh();
+                    if (scene && scene._ufBagWindow && scene._ufBagWindow.visible) scene._ufBagWindow.refresh();
+                    sheet.redraw();
+                    return;
                 }
 
                 if (inBag && u) {
@@ -737,6 +815,25 @@
                     const gy = typeof src.grabOffsetY === "number" ? src.grabOffsetY : 16;
                     const relX = Math.max(6, Math.min(L.bag.w - 38, p.x - L.bag.x - gx));
                     const relY = Math.max(6, Math.min(L.bag.h - 38, p.y - L.bag.y - gy));
+
+                    if (src.kind === "equipment") {
+                        // DRAGGED OUT OF EQUIPMENT SLOT INTO BAG -> UNEQUIP!
+                        if (typeof I.unequip === "function") {
+                            I.unequip(u.id, src.slot);
+                        }
+                        const it = (I.get ? I.get(src.item.id) : null) || src.item;
+                        if (it) {
+                            it.bagX = relX;
+                            it.bagY = relY;
+                        }
+                        SoundManager.playEquip();
+                        const itemType = I ? I.type(src.item.type) : null;
+                        sheet._footer = `Unequipped ${itemType ? itemType.name : src.item.type} to bag`;
+                        sheet.redraw();
+                        if (card) card.refresh();
+                        if (scene && scene._ufBagWindow && scene._ufBagWindow.visible) scene._ufBagWindow.refresh();
+                        return;
+                    }
 
                     if (src.kind === "world") {
                         // Pick up from world directly into bag
@@ -803,6 +900,20 @@
             const mx = $gameMap ? $gameMap.canvasToMapX(dropX) : (u ? u.x : 0);
             const my = $gameMap ? $gameMap.canvasToMapY(dropY) : (u ? u.y : 0);
             const curArea = (u && u.area) || (W ? W.currentArea() : null);
+
+            if (src.kind === "equipment" && u) {
+                // Dragged out of equipment slot to ground -> unequip and drop
+                if (typeof I.unequip === "function") {
+                    I.unequip(u.id, src.slot);
+                }
+                if (typeof I.putDown === "function") {
+                    this._lastDropResult = I.putDown(src.item.id, curArea, mx, my);
+                    SoundManager.playCursor();
+                    if (sheet) sheet.redraw();
+                    if (scene && scene._ufBagWindow && scene._ufBagWindow.visible) scene._ufBagWindow.refresh();
+                }
+                return;
+            }
 
             if ((src.kind === "inventory" || src.kind === "bag") && u) {
                 // Drop from colonist bag / inventory to ground

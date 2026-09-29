@@ -235,8 +235,10 @@
             this.contents.fontSize = 12;
             this.drawText("✕", this.width - 24, 4, 18, "center");
 
-            // 3. Draw Loose Items inside the dark cavity
-            const inv = I.inventoryOf(u.id) || [];
+            // 3. Draw Loose Items inside the dark cavity (excluding equipped gear)
+            const rawInv = I.inventoryOf(u.id) || [];
+            const eqIds = new Set(Object.values((u && u.data && u.data.equipment) || {}).filter(Boolean));
+            const inv = rawInv.filter(it => !eqIds.has(it.id));
             this._bagItems = [];
 
             // Assign organic loose scatter position for any item without recorded bagX/bagY
@@ -506,6 +508,23 @@
                 return true;
             }
 
+            // Case E: Equipment -> Bag (Unequip from slot into Bag)
+            if (source.kind === "equipment") {
+                if (I && typeof I.unequip === "function") {
+                    I.unequip(u.id, source.slot);
+                }
+                const it = (I && I.get ? I.get(source.item.id) : null) || source.item;
+                if (it) {
+                    it.bagX = targetX;
+                    it.bagY = targetY;
+                }
+                if (typeof SoundManager !== "undefined") SoundManager.playEquip();
+                this.refresh();
+                const sheet = window.UF && UF.Sheet && UF.Sheet.window ? UF.Sheet.window() : null;
+                if (sheet) sheet.redraw();
+                return true;
+            }
+
             return false;
         }
     }
@@ -560,9 +579,7 @@
             this._ufBagWindow = new Window_UFBag();
             this._ufBagWindow.visible = false;
             this.addChild(this._ufBagWindow);
-
-            this._ufBagButton = new Sprite_UFBagButton();
-            this.addChild(this._ufBagButton);
+            // On-screen bag button removed per user directive 2026-09-29
         };
 
         const _Scene_Map_update = Scene_Map.prototype.update;
