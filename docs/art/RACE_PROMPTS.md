@@ -15,7 +15,7 @@ RMMZ sheet layout: 3 columns × 4 rows of the canvas per direction block (walk S
 View **high top-down**. Directions: S, SW, W, NW, N, NE, E, SE. Clips: idle 4 frames, walk 4 frames, the rest 6 (AS-CHMAP-001). Outline: 1 px self-tinted on the figure, none on the ground contact. Detail: medium. Palette: DEUS master (snapped after generation). No text, no weapons, no props in the base; equipment comes as layers.
 
 Style tail, appended to every base prompt:
-`, empty hands, standing relaxed, high top-down view, readable high-contrast fantasy pixel art in the DEUS master palette; world feel: medieval English countryside and old British Isles material culture, in the spirit of Ultima VII and EverQuest`
+`, empty hands, standing relaxed, high top-down view, readable high-contrast fantasy pixel art in the DEUS master palette; world feel: English folklore, in the spirit of Ultima VII and EverQuest`
 
 Motif line: each base prompt also carries its people's motif from `docs/art/RACE_MOTIFS.md` (e.g. `; motif: the hedgerow folk, red cap, acorn, hawthorn bank`) before the style tail.
 
