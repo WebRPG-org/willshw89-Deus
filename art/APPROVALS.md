@@ -38,3 +38,6 @@ Rows dated 2026-09-29 and later are written by the PM (Claude Code, DEC-042) und
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | 2026-09-29 | YEA | `SURFACE_SHARED_FLORA_WILD-GRAIN_V1_DEFAULT` | `game/img/characters/!UF_WildGrain_V8.png` | `a4b2dc0aded38499f85f08b7b48fae66cb58915b4ae3f7e9c4ce53a99527a888` | none |
 | 2026-09-29 | YEA | `ALL_SHARED_STONE_IRONSTONE_V1_DEFAULT` | `game/img/characters/!UF_Ironstone_V8.png` | `7f2bfde5b3c09b45a9ec750d1f9c38ae5cc3a0f24800d0be89909a1385faaaef` | none |
+| 2026-09-29 | YEA | `SURFACE_SHARED_FLORA_BERRY-BUSH-BARE_V1_DEFAULT` | `game/img/characters/!UF_BerryBushBare_V8.png` | `c369c557dae4d817e044c0923cc188412ce5b0300505cb157c4b4bc4dabe7ed7` | none |
+| 2026-09-29 | YEA | `ALL_SHARED_STONE_COAL-OUTCROP_V1_DEFAULT` | `game/img/characters/!UF_CoalOutcrop_V8.png` | `6ed72bd12b042d36c19e92e965a26dcd2dd1a9f9afb9602a52a633cf7d4a7514` | none |
+| 2026-09-29 | YEA | `SURFACE_SHARED_FLORA_CACTUS-TALL_V1_DEFAULT` | `game/img/characters/!UF_CactusTall_V8.png` | `e4a6156fe65e426fc6a3b53108e4231c3b6e6dcca23dadd6bc809fde9e64f2b5` | none |
