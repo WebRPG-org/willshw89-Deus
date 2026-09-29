@@ -1,29 +1,16 @@
-"use strict";
+//=============================================================================
+// index.js - Geomorphology Subsystem Exports
+// Project DEUS - NAT.04.01
+//=============================================================================
 
-/**
- * game/js/sim/geomorphology/index.js
- *
- * Public API for Project DEUS Geomorphology & Soil Kernel (NAT.04.01).
- */
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = require('./soil.js');
+}
 
-const {
-    SoilStratum,
-    GeomorphologyEngine,
-    encodeStratumId,
-    decodeStratumId,
-    canonicalEdgeKey,
-    VOLUME_PER_STRATUM,
-    WATER_DENSITY_CP_PER_CUFT,
-    MAX_WATER_MASS_PER_STRATUM
-} = require("./soil.js");
-
-module.exports = {
-    SoilStratum,
-    GeomorphologyEngine,
-    encodeStratumId,
-    decodeStratumId,
-    canonicalEdgeKey,
-    VOLUME_PER_STRATUM,
-    WATER_DENSITY_CP_PER_CUFT,
-    MAX_WATER_MASS_PER_STRATUM
-};
+if (typeof window !== 'undefined') {
+    window.DEUS = window.DEUS || {};
+    window.DEUS.Sim = window.DEUS.Sim || {};
+    if (window.DEUS.Sim.Soil) {
+        window.DEUS.Sim.Geomorphology = window.DEUS.Sim.Soil;
+    }
+}
