@@ -710,3 +710,16 @@ Every decision item recorded in this log must provide:
   2. **Rule 12 stands:** every motion is sprite frames on the sheets; no procedural motion, tint, scale or shader.
   3. **Art follows the DEC-007 amendment:** one catalogue row per state and per animation (frame count and rate recorded), OBJECTS/MAPS tools only, QA, boards to the Owner, ledger sign-off, then induction. If the allowed PixelLab tools cannot produce a frame sequence for an effect, the PM reports that gap to the Owner rather than substituting a banned tool or code-drawn motion.
   4. **Order (DEC-037):** design and catalogue now; runtime hooks land with each package's engine bridge (soil with lane-cf; collapse indicators with the NAT.02.01 bridge). Water pressure breaking an earth barrier needs a rule that does not exist yet: this decision opens **NAT.02.02 Barrier integrity and breach** (barrier cells carry an integrity value fed by hydraulic head, load and moisture; failure moves the water and the earth with closed mass) and **ART.NAT.01 Natural-phenomena presentation set** (the state ladders, animations and aftermath rows). The PM assigns both.
+
+---
+
+### Decision `DEC-047`: Tripartite Overarching Art Directive (British Countryside / Ultima VII / Classic Everquest)
+- **Date Logged:** 2026-09-29
+- **Status:** `DECIDED` (Owner directive: "I want the prompts to reference the art styles of British / U7 / everquest these are overarching art directives")
+- **Decider:** Owner
+- **Summary:**
+  All prompt generation, style references, environment art, and world prop production across Project DEUS must adhere to the three foundational style pillars:
+  1. **British Rural Countryside Realism & Ecology:** Authentically grounded in British Isles / Northern European flora, geology, and agricultural heritage (e.g. peat bogs, heather moors, granite tors, chalk downlands, hawthorn hedgerows, hazel coppicing, drystone field walls, mossy ancient oaks).
+  2. **Ultima VII (The Black Gate / Serpent Isle) World Density & Tactile Grit:** 90s Western CRPG pixel density, tangible interactable environmental clutter, rich earthy palette midtones with deep organic shadow contour lines, grounded contact shadows, and pure top-down orthographic readability.
+  3. **Classic Everquest (1999 Norrath / Antonica / Faydwer) Nostalgic Wilderness:** Evocative high-fantasy adventure ambiance, untamed frontier wilderness (misty plains, primeval canopy, craggy bandit hills), ancient megalithic ruins/standing stones reclaimed by roots, high-stakes exploration mood.
+
