@@ -486,51 +486,54 @@
     // Universal Item Drag & Drop System (Sprite_UFDragIcon & UF.ItemDrag)
     //-------------------------------------------------------------------------
 
-    class Sprite_UFDragIcon extends Sprite {
+    const SafeSprite = typeof Sprite !== "undefined" ? Sprite : (root.Sprite || class {});
+    const SafeWindow_Base = typeof Window_Base !== "undefined" ? Window_Base : (root.Window_Base || class {});
+
+    class Sprite_UFDragIcon extends SafeSprite {
         initialize() {
             super.initialize();
-            this.bitmap = new Bitmap(44, 44);
-            this.anchor.set(0.5, 0.5);
+            this.bitmap = new Bitmap(48, 48);
+            this.anchor.set(0, 0);
             this.z = 99999;
             this.visible = false;
+            this._grabOffsetX = 16;
+            this._grabOffsetY = 16;
         }
 
         update() {
             super.update();
-            if (this.visible) {
-                this.x = TouchInput.x;
-                this.y = TouchInput.y;
+            if (this.visible && typeof TouchInput !== "undefined") {
+                this.x = TouchInput.x - (this._grabOffsetX || 0);
+                this.y = TouchInput.y - (this._grabOffsetY || 0);
             }
         }
 
-        setItem(it) {
+        setItem(it, grabX, grabY) {
             const b = this.bitmap;
             b.clear();
             if (!it) return;
             const I = Items();
             const t = I ? I.type(it.type) : null;
-            const w = 44, h = 44;
+            const w = 48, h = 48;
 
-            // Translucent glowing dark tile backing
-            b.fillRect(2, 2, w - 4, h - 4, "rgba(10, 18, 30, 0.92)");
-            b.strokeRect(2, 2, w - 4, h - 4, "rgba(56, 189, 248, 0.95)", 2);
-            b.fillRect(3, 3, w - 6, 1, "rgba(186, 230, 253, 0.70)");
+            if (typeof grabX === "number") this._grabOffsetX = grabX;
+            if (typeof grabY === "number") this._grabOffsetY = grabY;
 
-            // Draw item icon/character graphic
+            // Draw loose item icon without rectangular tile/slot backing (pure floating sprite)
             if (window.UF && UF.Sheet && typeof UF.Sheet.drawItemIn === "function") {
-                UF.Sheet.drawItemIn(b, { x: 6, y: 6, w: 32, h: 32 }, it.type, it.count);
-            } else if (t && t.image) {
+                UF.Sheet.drawItemIn(b, { x: 4, y: 4, w: 40, h: 40 }, it.type, it.count);
+            } else if (t && t.image && typeof ImageManager !== "undefined") {
                 const img = ImageManager.loadCharacter(t.image);
                 if (img && img.isReady()) {
                     const fw = Math.floor(img.width / 3), fh = Math.floor(img.height / 4);
-                    b.blt(img, fw, 0, fw, fh, 6, 6, 32, 32);
+                    b.blt(img, fw, 0, fw, fh, 4, 4, 40, 40);
                 }
                 if (it.count > 1) {
                     b.fontSize = 12;
                     b.textColor = "#ffffff";
                     b.outlineColor = "rgba(0,0,0,0.95)";
                     b.outlineWidth = 3;
-                    b.drawText(String(it.count), 4, h - 15, w - 8, 12, "right");
+                    b.drawText(String(it.count), 4, h - 16, w - 8, 12, "right");
                 }
             }
         }
@@ -582,10 +585,12 @@
             this._dragStarted = false;
 
             const spr = this.ensureSprite(scene);
-            spr.setItem(source.item);
+            const gx = typeof source.grabOffsetX === "number" ? source.grabOffsetX : 16;
+            const gy = typeof source.grabOffsetY === "number" ? source.grabOffsetY : 16;
+            spr.setItem(source.item, gx, gy);
             spr.visible = true;
-            spr.x = TouchInput.x;
-            spr.y = TouchInput.y;
+            spr.x = TouchInput.x - gx;
+            spr.y = TouchInput.y - gy;
             SoundManager.playCursor();
         },
 
@@ -698,16 +703,21 @@
                 }
             }
 
-            // 2. Check if dropped over Character Profile Sheet (Inventory / Equipment)
+            // 2. Check if dropped over Character Profile Sheet (Inventory / Equipment / Bag)
             if (sheet && sheet.visible && typeof sheet.isPointerInsideCoords === "function" && sheet.isPointerInsideCoords(dropX, dropY)) {
                 const targetSlot = typeof sheet.inventorySlotAtCoords === "function" ? sheet.inventorySlotAtCoords(dropX, dropY) : -1;
                 const targetEquip = typeof sheet.equipmentSlotAtCoords === "function" ? sheet.equipmentSlotAtCoords(dropX, dropY) : null;
+                const p = typeof sheet.localPointer === "function" ? sheet.localPointer(dropX, dropY) : { x: dropX - sheet.x, y: dropY - sheet.y };
+                const L = sheet._layout;
+                const inBag = L && L.bag && (p.x >= L.bag.x && p.x < L.bag.x + L.bag.w && p.y >= L.bag.y && p.y < L.bag.y + L.bag.h);
 
                 if (targetEquip && u) {
                     // Equip item!
-                    if (src.kind === "inventory" || src.kind === "container" || src.kind === "bag") {
+                    if (src.kind === "inventory" || src.kind === "container" || src.kind === "bag" || src.kind === "world") {
                         if (src.kind === "container") {
                             Containers.takeItem(src.containerId, src.item.id, u.id);
+                        } else if (src.kind === "world") {
+                            if (typeof I.pickUp === "function") I.pickUp(u.id, src.item.id);
                         }
                         if (typeof I.equip === "function") {
                             I.equip(u.id, src.item.id, targetEquip.slot);
@@ -717,6 +727,50 @@
                         if (scene && scene._ufBagWindow && scene._ufBagWindow.visible) {
                             scene._ufBagWindow.refresh();
                         }
+                        sheet.redraw();
+                        return;
+                    }
+                }
+
+                if (inBag && u) {
+                    const gx = typeof src.grabOffsetX === "number" ? src.grabOffsetX : 16;
+                    const gy = typeof src.grabOffsetY === "number" ? src.grabOffsetY : 16;
+                    const relX = Math.max(6, Math.min(L.bag.w - 38, p.x - L.bag.x - gx));
+                    const relY = Math.max(6, Math.min(L.bag.h - 38, p.y - L.bag.y - gy));
+
+                    if (src.kind === "world") {
+                        // Pick up from world directly into bag
+                        if (typeof I.pickUp === "function") {
+                            const res = I.pickUp(u.id, src.item.id);
+                            if (res) {
+                                src.item.bagX = relX;
+                                src.item.bagY = relY;
+                                SoundManager.playOk();
+                                sheet.redraw();
+                                return;
+                            }
+                        }
+                    } else if (src.kind === "container") {
+                        // Transfer from container directly into bag
+                        const transferred = Containers.takeItem(src.containerId, src.item.id, u.id);
+                        if (transferred) {
+                            src.item.bagX = relX;
+                            src.item.bagY = relY;
+                            SoundManager.playOk();
+                            if (card) card.refresh();
+                            sheet.redraw();
+                        } else {
+                            SoundManager.playBuzzer();
+                        }
+                        return;
+                    } else if (src.kind === "inventory" || src.kind === "bag") {
+                        // Freeform repositioning inside bag
+                        src.item.bagX = relX;
+                        src.item.bagY = relY;
+                        if (targetSlot >= 0 && targetSlot !== src.slotIdx && typeof sheet.reorderSlot === "function") {
+                            sheet.reorderSlot(src.slotIdx, targetSlot);
+                        }
+                        SoundManager.playOk();
                         sheet.redraw();
                         return;
                     }
@@ -810,7 +864,7 @@
         return null;
     }
 
-    class Window_UFContainerCard extends Window_Base {
+    class Window_UFContainerCard extends SafeWindow_Base {
         initialize(rect) {
             super.initialize(rect);
             this.backOpacity = 235;
@@ -1322,36 +1376,42 @@
         }
     };
 
-    const _Scene_Map_createAllWindows = Scene_Map.prototype.createAllWindows;
-    Scene_Map.prototype.createAllWindows = function() {
-        _Scene_Map_createAllWindows.call(this);
-        const w = 380;
-        const h = Graphics.boxHeight - 82 - 4;
-        this._ufContainerCard = new Window_UFContainerCard(new Rectangle(44, 82, w, h));
-        this._windowLayer.addChild(this._ufContainerCard);
-    };
+    if (typeof Scene_Map !== "undefined" && Scene_Map.prototype) {
+        const _Scene_Map_createAllWindows = Scene_Map.prototype.createAllWindows;
+        Scene_Map.prototype.createAllWindows = function() {
+            _Scene_Map_createAllWindows.call(this);
+            const w = 380;
+            const h = (typeof Graphics !== "undefined" ? Graphics.boxHeight : 624) - 82 - 4;
+            this._ufContainerCard = new Window_UFContainerCard(new Rectangle(44, 82, w, h));
+            if (this._windowLayer) {
+                this._windowLayer.addChild(this._ufContainerCard);
+            } else {
+                this.addChild(this._ufContainerCard);
+            }
+        };
 
-    const _Scene_Map_update = Scene_Map.prototype.update;
-    Scene_Map.prototype.update = function() {
-        if (ItemDrag && ItemDrag.hasAttached() && (TouchInput.isTriggered() || TouchInput.isCancelled())) {
-            ItemDrag.update(this);
-        }
-        _Scene_Map_update.call(this);
-        if (ItemDrag) {
-            ItemDrag.update(this);
-        }
-    };
+        const _Scene_Map_update = Scene_Map.prototype.update;
+        Scene_Map.prototype.update = function() {
+            if (ItemDrag && ItemDrag.hasAttached() && (TouchInput.isTriggered() || TouchInput.isCancelled())) {
+                ItemDrag.update(this);
+            }
+            _Scene_Map_update.call(this);
+            if (ItemDrag) {
+                ItemDrag.update(this);
+            }
+        };
 
-    const _Scene_Map_isAnyWindowUnderMouse = Scene_Map.prototype.isAnyWindowUnderMouse;
-    Scene_Map.prototype.isAnyWindowUnderMouse = function() {
-        if (_Scene_Map_isAnyWindowUnderMouse && _Scene_Map_isAnyWindowUnderMouse.call(this)) return true;
-        const cc = this._ufContainerCard;
-        if (cc && cc.visible) {
-            if (TouchInput.x >= cc.x && TouchInput.x < cc.x + cc.width &&
-                TouchInput.y >= cc.y && TouchInput.y < cc.y + cc.height) return true;
-        }
-        return false;
-    };
+        const _Scene_Map_isAnyWindowUnderMouse = Scene_Map.prototype.isAnyWindowUnderMouse;
+        Scene_Map.prototype.isAnyWindowUnderMouse = function() {
+            if (_Scene_Map_isAnyWindowUnderMouse && _Scene_Map_isAnyWindowUnderMouse.call(this)) return true;
+            const cc = this._ufContainerCard;
+            if (cc && cc.visible) {
+                if (TouchInput.x >= cc.x && TouchInput.x < cc.x + cc.width &&
+                    TouchInput.y >= cc.y && TouchInput.y < cc.y + cc.height) return true;
+            }
+            return false;
+        };
+    }
 
     if (typeof module !== "undefined") {
         module.exports = Containers;

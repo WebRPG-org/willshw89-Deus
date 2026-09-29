@@ -17,7 +17,7 @@
  *
  * @help
  * Implements the Ultima VII-style graphical inventory bag:
- * - Freeform spatial arrangement of items inside the bag interior.
+ * - Freeform spatial arrangement of items inside the organic sack interior.
  * - Mouse drag-and-drop:
  *     A. World -> Bag: Drag/click accessible loose items into the open bag.
  *     B. Bag -> Bag: Reposition items freely inside the bag interior.
@@ -33,11 +33,12 @@
     const root = typeof window !== "undefined" ? window : (typeof global !== "undefined" ? global : this);
     root.DEUS = root.DEUS || {};
     root.UF = root.UF || root.DEUS;
+    const UF = root.UF;
 
-    const World = () => window.UF && UF.World;
-    const Items = () => window.UF && UF.Items;
-    const Containers = () => window.UF && UF.Containers;
-    const ItemDrag = () => window.UF && (UF.ItemDrag || (UF.Containers && UF.Containers.DragDrop));
+    const World = () => (root.UF && root.UF.World) || (typeof window !== "undefined" && window.UF && window.UF.World);
+    const Items = () => (root.UF && root.UF.Items) || (typeof window !== "undefined" && window.UF && window.UF.Items);
+    const Containers = () => (root.UF && root.UF.Containers) || (typeof window !== "undefined" && window.UF && window.UF.Containers);
+    const ItemDrag = () => (root.UF && (root.UF.ItemDrag || (root.UF.Containers && root.UF.Containers.DragDrop)));
 
     // Register hotkeys 'B' and 'I' with Input
     if (typeof Input !== "undefined" && Input.keyMapper) {
@@ -45,10 +46,16 @@
         if (!Input.keyMapper[73]) Input.keyMapper[73] = "inventory"; // 'I'
     }
 
-    // Default bag interior dimensions
-    const BAG_WIDTH = 340;
-    const BAG_HEIGHT = 380;
-    const ITEM_SIZE = 48;
+    const SafeWindow_Base = typeof Window_Base !== "undefined" ? Window_Base : (root.Window_Base || class {});
+    const SafeSprite = typeof Sprite !== "undefined" ? Sprite : (root.Sprite || class {});
+    const SafeRectangle = typeof Rectangle !== "undefined" ? Rectangle : (root.Rectangle || class {
+        constructor(x, y, w, h) { this.x = x || 0; this.y = y || 0; this.width = w || 0; this.height = h || 0; }
+    });
+
+    // Default dimensions matching native 200x200 16-bit open sack artwork
+    const BAG_WIDTH = 200;
+    const BAG_HEIGHT = 200;
+    const ITEM_SIZE = 28;
 
     // Helper to resolve the active colonist/unit
     function getActiveUnit() {
@@ -80,17 +87,38 @@
     }
 
     //-------------------------------------------------------------------------
-    // Window_UFBag: The Graphical Bag Container
+    // Window_UFBag: The Illustrated Open Sack Interface
     //-------------------------------------------------------------------------
-    class Window_UFBag extends Window_Base {
+    class Window_UFBag extends SafeWindow_Base {
+        constructor(rect) {
+            const r = rect || new SafeRectangle(16, 70, BAG_WIDTH, BAG_HEIGHT);
+            super(r);
+            if (!this._bagInitialized) {
+                this.initialize(r);
+            }
+        }
+
         initialize(rect) {
-            super.initialize(rect || new Rectangle(16, 70, BAG_WIDTH, BAG_HEIGHT));
-            this.backOpacity = 245;
+            const r = rect || new SafeRectangle(16, 70, BAG_WIDTH, BAG_HEIGHT);
+            if (typeof super.initialize === "function") {
+                super.initialize(r);
+            }
+            this.x = r.x;
+            this.y = r.y;
+            this.width = r.width;
+            this.height = r.height;
+            this.opacity = 0;
+            this.padding = 0;
+            if (this._windowFrameSprite) this._windowFrameSprite.visible = false;
+            if (this._windowBackSprite) this._windowBackSprite.visible = false;
             this._unitId = null;
             this._hoveredItem = null;
-            this._itemSprites = [];
-            this._draggingItem = null;
             this._bagItems = [];
+            this._isDraggingSack = false;
+            this._sackGrabX = 0;
+            this._sackGrabY = 0;
+            this._closeHovered = false;
+            this._bagInitialized = true;
             this.hide();
         }
 
@@ -103,26 +131,48 @@
         }
 
         getInteriorRect() {
-            const pad = this.padding;
-            return new Rectangle(pad + 10, pad + 44, this.width - pad * 2 - 20, this.height - pad * 2 - 90);
+            if (this.width <= 220) {
+                return new SafeRectangle(35, 48, 128, 92);
+            }
+            const sx = this.width / 200;
+            const sy = this.height / 200;
+            return new SafeRectangle(Math.round(35 * sx), Math.round(48 * sy), Math.round(128 * sx), Math.round(92 * sy));
+        }
+
+        clampToCavity(x, y, itemW, itemH, interior) {
+            const minX = interior.x + 2;
+            const maxX = interior.x + interior.width - itemW - 2;
+            const minY = interior.y + 2;
+            const maxY = interior.y + interior.height - itemH - 2;
+            return {
+                x: Math.max(minX, Math.min(maxX, x)),
+                y: Math.max(minY, Math.min(maxY, y))
+            };
         }
 
         openFor(unitId) {
-            const u = unitId ? (World() ? World().unit(unitId) : null) : getActiveUnit();
+            let u = null;
+            if (unitId !== undefined && unitId !== null) {
+                const W = World();
+                u = (W && typeof W.unit === "function" ? W.unit(unitId) : null) || { id: unitId };
+            } else {
+                u = getActiveUnit();
+            }
             if (!u) return;
             this._unitId = u.id;
             this.show();
             this.activate();
             this.refresh();
-            SoundManager.playOk();
+            if (typeof SoundManager !== "undefined") SoundManager.playOk();
         }
 
         close() {
             if (this.visible) {
-                SoundManager.playCancel();
+                if (typeof SoundManager !== "undefined") SoundManager.playCancel();
             }
             this.hide();
             this.deactivate();
+            this._isDraggingSack = false;
             const drag = ItemDrag();
             if (drag && drag.hasAttached() && drag.source() && drag.source().kind === "bag") {
                 drag.cancel();
@@ -140,7 +190,8 @@
         calculateCarriedWeight(unit) {
             const I = Items();
             if (!I || !unit) return { current: 0, max: 150 };
-            const inv = I.inventoryOf(unit.id) || [];
+            const uid = unit.id !== undefined ? unit.id : unit;
+            const inv = I.inventoryOf(uid) || [];
             let current = 0;
             for (const it of inv) {
                 const t = I.type(it.type);
@@ -154,86 +205,89 @@
         }
 
         refresh() {
+            if (!this.contents) return;
             this.contents.clear();
             const W = World();
             const I = Items();
-            const u = this._unitId && W ? W.unit(this._unitId) : getActiveUnit();
+            const u = (this._unitId !== null && this._unitId !== undefined && W && typeof W.unit === "function" ? (W.unit(this._unitId) || { id: this._unitId }) : null) || getActiveUnit();
             if (!u || !I) return;
+
+            // 1. Draw Authentic Open Sack Background Graphic
+            if (typeof ImageManager !== "undefined") {
+                const sackBmp = ImageManager.loadSystem("ui_open_sack");
+                if (sackBmp && sackBmp.isReady()) {
+                    this.contents.blt(sackBmp, 0, 0, sackBmp.width, sackBmp.height, 0, 0, this.width, this.height);
+                } else if (sackBmp) {
+                    sackBmp.addLoadListener(() => this.refresh());
+                }
+            }
 
             const interior = this.getInteriorRect();
 
-            // 1. Draw Leather / Suede Bag Interior Background
-            this.contents.fillRect(interior.x, interior.y, interior.width, interior.height, "#22160e");
-            this.contents.strokeRect(interior.x, interior.y, interior.width, interior.height, "#4a3221");
-            this.contents.fillRect(interior.x + 2, interior.y + 2, interior.width - 4, interior.height - 4, "#2e1e13");
-
-            // Subtle stitched seam lines
-            this.contents.strokeRect(interior.x + 6, interior.y + 6, interior.width - 12, interior.height - 12, "#3d2719");
-
-            // 2. Draw Bag Header
-            this.contents.fontSize = 15;
+            // 2. Draw Subtle Title Header (top rim)
+            this.contents.fontSize = 11;
             this.changeTextColor("#f5d78e");
-            const title = `${u.name || "Colonist"}'s Bag`;
-            this.drawText(title, 14, 8, this.width - 50, "left");
+            const title = `${u.name || "Colonist"}'s Sack`;
+            this.drawText(title, 10, 4, this.width - 40, "left");
 
-            // Close button [X]
-            this.changeTextColor("#ff8888");
-            this.drawText("[X]", this.width - 46, 8, 30, "right");
-
-            // 3. Carried Weight & Capacity Bar
-            const wt = this.calculateCarriedWeight(u);
-            const ratio = Math.min(1.0, wt.current / (wt.max || 1));
-            const barW = interior.width;
-            const barY = this.height - this.padding - 36;
-            
-            // Bar background
-            this.contents.fillRect(interior.x, barY, barW, 14, "#15100c");
-            // Fill
-            const fillColor = ratio >= 1.0 ? "#e74c3c" : ratio > 0.8 ? "#f39c12" : "#27ae60";
-            this.contents.fillRect(interior.x + 1, barY + 1, Math.round((barW - 2) * ratio), 12, fillColor);
-            this.contents.strokeRect(interior.x, barY, barW, 14, "#4a3221");
-
-            // Text
+            // Close button [✕] at top right rim
+            this.changeTextColor(this._closeHovered ? "#ff6b6b" : "#e0d0b8");
             this.contents.fontSize = 12;
-            this.changeTextColor("#e0d0b8");
-            this.drawText(`Weight: ${wt.current} / ${wt.max} lbs (${Math.round(ratio * 100)}%)`, interior.x, barY - 16, barW, "center");
+            this.drawText("✕", this.width - 24, 4, 18, "center");
 
-            // 4. Retrieve Inventory Items & Ensure Layout
+            // 3. Draw Loose Items inside the dark cavity
             const inv = I.inventoryOf(u.id) || [];
             this._bagItems = [];
-            
-            // Assign default staggered layout if not yet set
-            const cols = 5;
+
+            // Assign organic loose scatter position for any item without recorded bagX/bagY
             for (let i = 0; i < inv.length; i++) {
                 const it = inv[i];
                 if (typeof it.bagX !== "number" || typeof it.bagY !== "number") {
-                    const col = i % cols;
-                    const row = Math.floor(i / cols);
-                    it.bagX = interior.x + 12 + col * (ITEM_SIZE + 6);
-                    it.bagY = interior.y + 12 + row * (ITEM_SIZE + 6);
+                    // Deterministic loose scatter using item ID hash
+                    let hash = 0;
+                    const sid = String(it.id || i);
+                    for (let c = 0; c < sid.length; c++) hash = (hash * 31 + sid.charCodeAt(c)) >>> 0;
+                    hash += i * 101;
+                    const angle = (hash % 628) / 100;
+                    const radDist = 0.15 + ((hash >> 8) % 55) / 100;
+                    const cx = interior.x + interior.width / 2;
+                    const cy = interior.y + interior.height / 2;
+                    const rx = (interior.width / 2) - 16;
+                    const ry = (interior.height / 2) - 14;
+                    it.bagX = Math.round(cx + Math.cos(angle) * (rx * radDist) - ITEM_SIZE / 2);
+                    it.bagY = Math.round(cy + Math.sin(angle) * (ry * radDist) - ITEM_SIZE / 2);
                 }
-                // Clamp within bag interior
-                it.bagX = Math.max(interior.x + 4, Math.min(interior.x + interior.width - ITEM_SIZE - 4, it.bagX));
-                it.bagY = Math.max(interior.y + 4, Math.min(interior.y + interior.height - ITEM_SIZE - 4, it.bagY));
+
+                // Ensure item stays clamped inside the cavity
+                const clamped = this.clampToCavity(it.bagX, it.bagY, ITEM_SIZE, ITEM_SIZE, interior);
+                it.bagX = clamped.x;
+                it.bagY = clamped.y;
 
                 this._bagItems.push(it);
             }
 
-            // 5. Draw Items Inside the Bag
+            // Draw each loose item in layer order (natural overlap)
             for (const it of this._bagItems) {
                 this.drawBagItem(it);
             }
 
-            // 6. Draw Hovered Tooltip / Status Line
+            // 4. Carried Weight / Capacity readout (bottom rim)
+            const wt = this.calculateCarriedWeight(u);
+            const isOver = wt.current > wt.max;
+            this.contents.fontSize = 10;
+            this.changeTextColor(isOver ? "#ef4444" : "#e0d0b8");
+            this.drawText(`${wt.current} / ${wt.max} lbs`, 0, this.height - 18, this.width, "center");
+
+            // 5. Tooltip on hovered item
             if (this._hoveredItem) {
                 const t = I.type(this._hoveredItem.type);
                 const name = t ? t.name : this._hoveredItem.type;
                 const unitWeight = (t && typeof t.weight === "number") ? t.weight : 1.0;
                 const totalWeight = Math.round(unitWeight * (this._hoveredItem.count || 1) * 10) / 10;
-                const desc = `${name} (x${this._hoveredItem.count || 1}, ${totalWeight} lbs)`;
-                this.contents.fontSize = 12;
-                this.changeTextColor("#f5f0a0");
-                this.drawText(desc, interior.x, interior.y + interior.height - 20, interior.width, "left");
+                const desc = `${name} (${totalWeight} lbs)`;
+                this.contents.fontSize = 11;
+                this.changeTextColor("#fef08a");
+                this.drawText(desc, 6, this.height - 30, this.width - 12, "center");
             }
         }
 
@@ -244,50 +298,48 @@
             const ix = item.bagX;
             const iy = item.bagY;
 
-            // Highlight if hovered
+            // Highlight outline if hovered
             const isHovered = this._hoveredItem && this._hoveredItem.id === item.id;
             if (isHovered) {
-                this.contents.fillRect(ix - 2, iy - 2, ITEM_SIZE + 4, ITEM_SIZE + 4, "rgba(241, 196, 15, 0.25)");
-                this.contents.strokeRect(ix - 2, iy - 2, ITEM_SIZE + 4, ITEM_SIZE + 4, "#f1c40f");
+                this.contents.strokeRect(ix - 1, iy - 1, ITEM_SIZE + 2, ITEM_SIZE + 2, "#f1c40f");
             }
 
-            // Load and draw character sprite
-            if (t && t.image) {
+            // Load and draw character sprite / item icon
+            if (window.UF && UF.Sheet && typeof UF.Sheet.drawItemIn === "function") {
+                UF.Sheet.drawItemIn(this.contents, { x: ix, y: iy, w: ITEM_SIZE, h: ITEM_SIZE }, item.type, item.count);
+            } else if (t && t.image && typeof ImageManager !== "undefined") {
                 const bitmap = ImageManager.loadCharacter(t.image);
                 if (bitmap && bitmap.isReady()) {
-                    // Frame calculation: column 1 (center), row 0
                     const fw = Math.floor(bitmap.width / 3);
                     const fh = Math.floor(bitmap.height / 4);
-                    // Draw source frame into ITEM_SIZE x ITEM_SIZE, preserving aspect ratio
                     const scale = Math.min(ITEM_SIZE / fw, ITEM_SIZE / fh);
                     const dw = Math.round(fw * scale);
                     const dh = Math.round(fh * scale);
                     const dx = ix + Math.round((ITEM_SIZE - dw) / 2);
                     const dy = iy + (ITEM_SIZE - dh);
                     this.contents.blt(bitmap, fw, 0, fw, fh, dx, dy, dw, dh);
-                } else {
-                    // Placeholder box while bitmap loads
-                    this.contents.fillRect(ix + 4, iy + 4, ITEM_SIZE - 8, ITEM_SIZE - 8, "#3e4a3d");
-                    if (bitmap) bitmap.addLoadListener(() => this.refresh());
+                } else if (bitmap) {
+                    bitmap.addLoadListener(() => this.refresh());
                 }
             }
 
             // Stack count badge if count > 1
             if (item.count > 1) {
-                this.contents.fontSize = 11;
+                this.contents.fontSize = 10;
                 this.changeTextColor("#ffffff");
-                this.drawText(`x${item.count}`, ix + ITEM_SIZE - 28, iy + ITEM_SIZE - 16, 26, "right");
+                this.drawText(`x${item.count}`, ix + ITEM_SIZE - 22, iy + ITEM_SIZE - 12, 20, "right");
             }
         }
 
         itemAtCoords(gx, gy) {
             const lx = gx - this.x;
             const ly = gy - this.y;
+            // Iterate in reverse (topmost item first)
             for (let i = this._bagItems.length - 1; i >= 0; i--) {
                 const it = this._bagItems[i];
                 if (lx >= it.bagX && lx <= it.bagX + ITEM_SIZE &&
                     ly >= it.bagY && ly <= it.bagY + ITEM_SIZE) {
-                    return it;
+                    return { item: it, index: i };
                 }
             }
             return null;
@@ -295,42 +347,71 @@
 
         update() {
             super.update();
-            if (!this.visible) return;
+            if (!this.visible || typeof TouchInput === "undefined") return;
 
             const drag = ItemDrag();
 
-            // Hover detection
-            const prevHovered = this._hoveredItem;
-            if (this.isPointerInsideCoords(TouchInput.x, TouchInput.y) && (!drag || !drag.hasAttached())) {
-                this._hoveredItem = this.itemAtCoords(TouchInput.x, TouchInput.y);
-            } else {
-                this._hoveredItem = null;
-            }
-            if (prevHovered !== this._hoveredItem) {
-                this.refresh();
-            }
-
-            // Close button click
-            if (TouchInput.isTriggered()) {
-                const lx = TouchInput.x - this.x;
-                const ly = TouchInput.y - this.y;
-                if (lx >= this.width - 50 && lx <= this.width - 10 && ly >= 4 && ly <= 28) {
-                    this.close();
+            // Dragging the sack window itself by outer rim
+            if (this._isDraggingSack) {
+                if (TouchInput.isPressed()) {
+                    const maxW = (typeof Graphics !== "undefined" ? Graphics.boxWidth : 816) - this.width;
+                    const maxH = (typeof Graphics !== "undefined" ? Graphics.boxHeight : 624) - this.height;
+                    this.x = Math.max(0, Math.min(maxW, TouchInput.x - this._sackGrabX));
+                    this.y = Math.max(0, Math.min(maxH, TouchInput.y - this._sackGrabY));
                     return;
+                } else {
+                    this._isDraggingSack = false;
                 }
             }
 
-            // Mouse pickup from inside the bag
-            if (TouchInput.isTriggered() && this.isPointerInsideCoords(TouchInput.x, TouchInput.y)) {
+            const lx = TouchInput.x - this.x;
+            const ly = TouchInput.y - this.y;
+            const overSack = this.isPointerInsideCoords(TouchInput.x, TouchInput.y);
+
+            // Hover detection
+            const prevCloseHovered = this._closeHovered;
+            this._closeHovered = overSack && lx >= this.width - 26 && lx <= this.width - 6 && ly >= 2 && ly <= 22;
+
+            const prevHovered = this._hoveredItem;
+            if (overSack && (!drag || !drag.hasAttached()) && !this._closeHovered) {
+                const hit = this.itemAtCoords(TouchInput.x, TouchInput.y);
+                this._hoveredItem = hit ? hit.item : null;
+            } else {
+                this._hoveredItem = null;
+            }
+            if (prevHovered !== this._hoveredItem || prevCloseHovered !== this._closeHovered) {
+                this.refresh();
+            }
+
+            // Click handling
+            if (TouchInput.isTriggered() && overSack) {
+                // 1. Close button click
+                if (this._closeHovered) {
+                    TouchInput._currentState.triggered = false;
+                    this.close();
+                    return;
+                }
+
+                // 2. Click on item -> pick up and attach to drag
                 if (!drag || !drag.hasAttached()) {
-                    const it = this.itemAtCoords(TouchInput.x, TouchInput.y);
-                    if (it && drag) {
+                    const hit = this.itemAtCoords(TouchInput.x, TouchInput.y);
+                    if (hit && drag) {
                         TouchInput._currentState.triggered = false;
+                        const it = hit.item;
+                        const grabOffsetX = lx - it.bagX;
+                        const grabOffsetY = ly - it.bagY;
+
+                        // Bring item forward in draw order
+                        this._bagItems.splice(hit.index, 1);
+                        this._bagItems.push(it);
+
                         drag.attach({
                             kind: "bag",
                             unitId: this._unitId,
                             item: it,
                             itemId: it.id,
+                            grabOffsetX: grabOffsetX,
+                            grabOffsetY: grabOffsetY,
                             origBagX: it.bagX,
                             origBagY: it.bagY
                         }, SceneManager._scene);
@@ -338,24 +419,41 @@
                         return;
                     }
                 }
+
+                // 3. Clicked on outer leather rim -> start dragging sack window
+                if (!drag || !drag.hasAttached()) {
+                    this._isDraggingSack = true;
+                    this._sackGrabX = TouchInput.x - this.x;
+                    this._sackGrabY = TouchInput.y - this.y;
+                    TouchInput._currentState.triggered = false;
+                    return;
+                }
             }
         }
 
         handleDrop(source, dropX, dropY) {
             const I = Items();
             const W = World();
-            const u = this._unitId && W ? W.unit(this._unitId) : getActiveUnit();
+            const u = (this._unitId !== null && this._unitId !== undefined && W && typeof W.unit === "function" ? (W.unit(this._unitId) || { id: this._unitId }) : null) || getActiveUnit();
             if (!I || !u) return false;
 
             const interior = this.getInteriorRect();
-            const lx = Math.max(interior.x + 4, Math.min(interior.x + interior.width - ITEM_SIZE - 4, dropX - this.x - Math.floor(ITEM_SIZE / 2)));
-            const ly = Math.max(interior.y + 4, Math.min(interior.y + interior.height - ITEM_SIZE - 4, dropY - this.y - Math.floor(ITEM_SIZE / 2)));
+            const grabX = (source && typeof source.grabOffsetX === "number") ? source.grabOffsetX : 24;
+            const grabY = (source && typeof source.grabOffsetY === "number") ? source.grabOffsetY : 24;
+
+            let targetX = dropX - this.x - grabX;
+            let targetY = dropY - this.y - grabY;
+
+            // Clamp into cavity
+            const clamped = this.clampToCavity(targetX, targetY, ITEM_SIZE, ITEM_SIZE, interior);
+            targetX = clamped.x;
+            targetY = clamped.y;
 
             // Case A: Bag -> Bag (Reposition inside the bag)
             if (source.kind === "bag") {
-                source.item.bagX = lx;
-                source.item.bagY = ly;
-                SoundManager.playCursor();
+                source.item.bagX = targetX;
+                source.item.bagY = targetY;
+                if (typeof SoundManager !== "undefined") SoundManager.playCursor();
                 this.refresh();
                 return true;
             }
@@ -364,16 +462,16 @@
             if (source.kind === "world") {
                 const picked = I.pickUp(source.itemId, u.id);
                 if (picked) {
-                    const it = I.get(source.itemId);
+                    const it = I.get ? I.get(source.itemId) : source.item;
                     if (it) {
-                        it.bagX = lx;
-                        it.bagY = ly;
+                        it.bagX = targetX;
+                        it.bagY = targetY;
                     }
-                    SoundManager.playOk();
+                    if (typeof SoundManager !== "undefined") SoundManager.playOk();
                     this.refresh();
                     return true;
                 } else {
-                    SoundManager.playBuzzer();
+                    if (typeof SoundManager !== "undefined") SoundManager.playBuzzer();
                     return false;
                 }
             }
@@ -384,9 +482,9 @@
                 if (C) {
                     const transferred = C.takeItem(source.containerId, source.item.id, u.id);
                     if (transferred) {
-                        source.item.bagX = lx;
-                        source.item.bagY = ly;
-                        SoundManager.playOk();
+                        source.item.bagX = targetX;
+                        source.item.bagY = targetY;
+                        if (typeof SoundManager !== "undefined") SoundManager.playOk();
                         this.refresh();
                         const scene = SceneManager._scene;
                         if (scene && scene._ufContainerCard && scene._ufContainerCard.visible) {
@@ -395,15 +493,15 @@
                         return true;
                     }
                 }
-                SoundManager.playBuzzer();
+                if (typeof SoundManager !== "undefined") SoundManager.playBuzzer();
                 return false;
             }
 
             // Case D: General Inventory -> Bag
             if (source.kind === "inventory") {
-                source.item.bagX = lx;
-                source.item.bagY = ly;
-                SoundManager.playOk();
+                source.item.bagX = targetX;
+                source.item.bagY = targetY;
+                if (typeof SoundManager !== "undefined") SoundManager.playOk();
                 this.refresh();
                 return true;
             }
@@ -415,10 +513,10 @@
     //-------------------------------------------------------------------------
     // Sprite_UFBagButton: The On-Screen Bag Button
     //-------------------------------------------------------------------------
-    class Sprite_UFBagButton extends Sprite {
+    class Sprite_UFBagButton extends SafeSprite {
         initialize() {
             super.initialize();
-            this.bitmap = new Bitmap(76, 32);
+            this.bitmap = new Bitmap(76, 28);
             this.x = 16;
             this.y = 80;
             this.draw();
@@ -429,26 +527,23 @@
             const b = this.bitmap;
             b.clear();
             // Leather button styling
-            b.fillRect(0, 0, 76, 32, "#3d2719");
-            b.fillRect(2, 2, 72, 28, "#5c3a21");
-            b.strokeRect(0, 0, 76, 32, "#7a4e2c");
-            b.strokeRect(2, 2, 72, 28, "#2e1a0e");
-            b.fontSize = 14;
+            b.fillRect(0, 0, 76, 28, "#3d2719");
+            b.fillRect(2, 2, 72, 24, "#5c3a21");
+            b.strokeRect(0, 0, 76, 28, "#7a4e2c");
+            b.strokeRect(2, 2, 72, 24, "#2e1a0e");
+            b.fontSize = 13;
             b.textColor = "#f5d78e";
-            b.drawText("BAG [B]", 0, 0, 76, 32, "center");
+            b.drawText("BAG [B]", 0, 0, 76, 28, "center");
         }
 
         update() {
             super.update();
-            if (TouchInput.isTriggered()) {
+            if (typeof TouchInput !== "undefined" && TouchInput.isTriggered()) {
                 const mx = TouchInput.x;
                 const my = TouchInput.y;
-                if (mx >= this.x && mx <= this.x + 76 && my >= this.y && my <= this.y + 32) {
-                    const scene = SceneManager._scene;
-                    if (scene && scene._ufBagWindow) {
-                        TouchInput._currentState.triggered = false;
-                        scene._ufBagWindow.toggle();
-                    }
+                if (mx >= this.x && mx <= this.x + 76 && my >= this.y && my <= this.y + 28) {
+                    TouchInput._currentState.triggered = false;
+                    UF.Bag.toggle();
                 }
             }
         }
@@ -457,98 +552,133 @@
     //-------------------------------------------------------------------------
     // Scene_Map Hooks
     //-------------------------------------------------------------------------
-    const _Scene_Map_createAllWindows = Scene_Map.prototype.createAllWindows;
-    Scene_Map.prototype.createAllWindows = function() {
-        _Scene_Map_createAllWindows.call(this);
+    if (typeof Scene_Map !== "undefined" && Scene_Map.prototype) {
+        const _Scene_Map_createAllWindows = Scene_Map.prototype.createAllWindows;
+        Scene_Map.prototype.createAllWindows = function() {
+            _Scene_Map_createAllWindows.call(this);
 
-        this._ufBagWindow = new Window_UFBag();
-        this.addChild(this._ufBagWindow);
+            this._ufBagWindow = new Window_UFBag();
+            this._ufBagWindow.visible = false;
+            this.addChild(this._ufBagWindow);
 
-        this._ufBagButton = new Sprite_UFBagButton();
-        this.addChild(this._ufBagButton);
-    };
+            this._ufBagButton = new Sprite_UFBagButton();
+            this.addChild(this._ufBagButton);
+        };
 
-    const _Scene_Map_update = Scene_Map.prototype.update;
-    Scene_Map.prototype.update = function() {
-        _Scene_Map_update.call(this);
+        const _Scene_Map_update = Scene_Map.prototype.update;
+        Scene_Map.prototype.update = function() {
+            _Scene_Map_update.call(this);
 
-        // Keyboard shortcuts: 'B' or 'I' toggles Bag
-        if (typeof Input !== "undefined" && Input.isTriggered) {
-            if (Input.isTriggered("bag") || Input.isTriggered("inventory")) {
-                if (this._ufBagWindow) this._ufBagWindow.toggle();
-            } else if (Input.isTriggered("escape")) {
-                if (this._ufBagWindow && this._ufBagWindow.visible) {
-                    this._ufBagWindow.close();
-                }
-            }
-        }
-
-        // Hook ItemDrag into Bag Window Drops
-        const drag = ItemDrag();
-        if (drag && drag.hasAttached() && (TouchInput.isTriggered() || !TouchInput.isPressed())) {
-            const dropX = TouchInput.x;
-            const dropY = TouchInput.y;
-
-            if (this._ufBagWindow && this._ufBagWindow.isPointerInsideCoords(dropX, dropY)) {
-                const src = drag.source();
-                if (src) {
-                    const handled = this._ufBagWindow.handleDrop(src, dropX, dropY);
-                    if (handled) {
-                        drag.cancel();
-                        TouchInput._currentState.triggered = false;
-                        return;
+            // Keyboard shortcuts: 'B' or 'I' toggles Creature Inventory (Tab 1 with black rectangle bag)
+            if (typeof Input !== "undefined" && Input.isTriggered) {
+                if (Input.isTriggered("bag") || Input.isTriggered("inventory")) {
+                    UF.Bag.toggle();
+                } else if (Input.isTriggered("escape")) {
+                    if (window.UF && UF.Sheet && UF.Sheet.window && UF.Sheet.window().visible) {
+                        UF.Sheet.close();
+                    }
+                    if (this._ufBagWindow && this._ufBagWindow.visible) {
+                        this._ufBagWindow.close();
                     }
                 }
             }
-        }
-    };
 
-    // Hook World Map Item Pickup: Clicking loose items in world attaches to drag
-    const _Scene_Map_processMapTouch = Scene_Map.prototype.processMapTouch;
-    Scene_Map.prototype.processMapTouch = function() {
-        if (TouchInput.isTriggered()) {
+            // Hook ItemDrag into Bag Window Drops or World Drops
             const drag = ItemDrag();
-            const bagWin = this._ufBagWindow;
+            if (drag && drag.hasAttached() && typeof TouchInput !== "undefined" && (TouchInput.isTriggered() || !TouchInput.isPressed())) {
+                const dropX = TouchInput.x;
+                const dropY = TouchInput.y;
 
-            // If mouse has item attached, don't trigger normal map touch
-            if (drag && drag.hasAttached()) {
-                return;
-            }
-
-            // If clicking on the map while not over any window
-            const overBag = bagWin && bagWin.isPointerInsideCoords(TouchInput.x, TouchInput.y);
-            const overCard = this._ufContainerCard && this._ufContainerCard.isPointerInsideCoords(TouchInput.x, TouchInput.y);
-            const overSheet = window.UF && UF.Sheet && UF.Sheet.window && UF.Sheet.window().isPointerInsideCoords(TouchInput.x, TouchInput.y);
-
-            if (!overBag && !overCard && !overSheet) {
-                const I = Items();
-                const W = World();
-                if (I && W && typeof $gameMap !== "undefined") {
-                    const mx = $gameMap.canvasToMapX(TouchInput.x);
-                    const my = $gameMap.canvasToMapY(TouchInput.y);
-                    const curArea = W.currentArea ? W.currentArea() : null;
-                    const curZ = W.currentLevel ? W.currentLevel() : 0;
-
-                    const itemsHere = typeof I.at === "function" ? I.at(curArea, mx, my, curZ) : [];
-                    if (itemsHere && itemsHere.length > 0) {
-                        const topItem = itemsHere[itemsHere.length - 1];
-                        if (drag) {
+                // 1. Drop into Bag Window
+                if (this._ufBagWindow && this._ufBagWindow.isPointerInsideCoords(dropX, dropY)) {
+                    const src = drag.source();
+                    if (src) {
+                        const handled = this._ufBagWindow.handleDrop(src, dropX, dropY);
+                        if (handled) {
+                            drag.cancel();
                             TouchInput._currentState.triggered = false;
-                            drag.attach({
-                                kind: "world",
-                                item: topItem,
-                                itemId: topItem.id,
-                                mx, my, area: curArea, z: curZ
-                            }, this);
-                            SoundManager.playCursor();
+                            return;
+                        }
+                    }
+                }
+
+                // 2. Drop from Bag into World Map (outside any window)
+                const overCard = this._ufContainerCard && this._ufContainerCard.isPointerInsideCoords(dropX, dropY);
+                const overSheet = window.UF && UF.Sheet && UF.Sheet.window && UF.Sheet.window().isPointerInsideCoords(dropX, dropY);
+                const overBag = this._ufBagWindow && this._ufBagWindow.isPointerInsideCoords(dropX, dropY);
+
+                if (!overCard && !overSheet && !overBag) {
+                    const src = drag.source();
+                    if (src && src.kind === "bag") {
+                        const I = Items();
+                        const W = World();
+                        const u = src.unitId && W ? W.unit(src.unitId) : getActiveUnit();
+                        if (I && u && typeof $gameMap !== "undefined") {
+                            const mx = $gameMap.canvasToMapX(dropX);
+                            const my = $gameMap.canvasToMapY(dropY);
+                            const curArea = W.currentArea ? W.currentArea() : u.area;
+                            const curZ = W.currentLevel ? W.currentLevel() : 0;
+                            I.putDown(src.item.id, curArea, mx, my, curZ);
+                            drag.cancel();
+                            TouchInput._currentState.triggered = false;
+                            if (this._ufBagWindow) this._ufBagWindow.refresh();
+                            if (typeof SoundManager !== "undefined") SoundManager.playOk();
                             return;
                         }
                     }
                 }
             }
-        }
-        _Scene_Map_processMapTouch.call(this);
-    };
+        };
+
+        // Hook World Map Item Pickup: Clicking loose items in world attaches to drag
+        const _Scene_Map_processMapTouch = Scene_Map.prototype.processMapTouch;
+        Scene_Map.prototype.processMapTouch = function() {
+            if (typeof TouchInput !== "undefined" && TouchInput.isTriggered()) {
+                const drag = ItemDrag();
+                const bagWin = this._ufBagWindow;
+
+                // If mouse has item attached, don't trigger normal map touch
+                if (drag && drag.hasAttached()) {
+                    return;
+                }
+
+                // If clicking on the map while not over any window
+                const overBag = bagWin && bagWin.isPointerInsideCoords(TouchInput.x, TouchInput.y);
+                const overCard = this._ufContainerCard && this._ufContainerCard.isPointerInsideCoords(TouchInput.x, TouchInput.y);
+                const overSheet = window.UF && UF.Sheet && UF.Sheet.window && UF.Sheet.window().isPointerInsideCoords(TouchInput.x, TouchInput.y);
+
+                if (!overBag && !overCard && !overSheet) {
+                    const I = Items();
+                    const W = World();
+                    if (I && W && typeof $gameMap !== "undefined") {
+                        const mx = $gameMap.canvasToMapX(TouchInput.x);
+                        const my = $gameMap.canvasToMapY(TouchInput.y);
+                        const curArea = W.currentArea ? W.currentArea() : null;
+                        const curZ = W.currentLevel ? W.currentLevel() : 0;
+
+                        const itemsHere = typeof I.at === "function" ? I.at(curArea, mx, my, curZ) : [];
+                        if (itemsHere && itemsHere.length > 0) {
+                            const topItem = itemsHere[itemsHere.length - 1];
+                            if (drag) {
+                                TouchInput._currentState.triggered = false;
+                                drag.attach({
+                                    kind: "world",
+                                    item: topItem,
+                                    itemId: topItem.id,
+                                    grabOffsetX: 16,
+                                    grabOffsetY: 16,
+                                    mx, my, area: curArea, z: curZ
+                                }, this);
+                                if (typeof SoundManager !== "undefined") SoundManager.playCursor();
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            _Scene_Map_processMapTouch.call(this);
+        };
+    }
 
     // Export API
     root.Window_UFBag = Window_UFBag;
@@ -557,18 +687,35 @@
     UF.Sprite_UFBagButton = Sprite_UFBagButton;
 
     UF.Bag = {
-        window: () => SceneManager._scene && SceneManager._scene._ufBagWindow,
+        window: () => (window.UF && UF.Sheet && UF.Sheet.window ? UF.Sheet.window() : (SceneManager._scene && SceneManager._scene._ufBagWindow)),
         open: (unitId) => {
-            const w = SceneManager._scene && SceneManager._scene._ufBagWindow;
-            if (w) w.openFor(unitId);
+            const u = unitId ? (World() && World().unit(unitId)) : getActiveUnit();
+            if (u && window.UF && UF.Sheet) {
+                UF.Sheet.open(u.id);
+                if (UF.Sheet.window()) UF.Sheet.window().switchTab(1);
+            }
         },
         close: () => {
+            if (window.UF && UF.Sheet && typeof UF.Sheet.close === "function") {
+                UF.Sheet.close();
+            }
             const w = SceneManager._scene && SceneManager._scene._ufBagWindow;
-            if (w) w.close();
+            if (w && w.visible) w.close();
         },
         toggle: (unitId) => {
-            const w = SceneManager._scene && SceneManager._scene._ufBagWindow;
-            if (w) w.toggle(unitId);
+            const sh = window.UF && UF.Sheet;
+            if (!sh) return;
+            const win = sh.window ? sh.window() : null;
+            const curTab = win && typeof win.activeTab === "function" ? win.activeTab() : (win ? win._activeTab : 0);
+            if (win && win.visible && curTab === 1) {
+                sh.close();
+            } else {
+                const u = unitId ? (World() && World().unit(unitId)) : getActiveUnit();
+                if (u) {
+                    sh.open(u.id);
+                    if (sh.window()) sh.window().switchTab(1);
+                }
+            }
         }
     };
 

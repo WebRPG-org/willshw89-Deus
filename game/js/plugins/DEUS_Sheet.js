@@ -1023,6 +1023,7 @@
                 y += 22 + 36 + 36 + 26 + 26 + 64 + 44 + 42 + 10;
             } else if (activeTab === 1) {
                 // PAGE 2: INVENTORY & EQUIPMENT
+                // Keep grid squares for equipped items (User directive 2026-09-29)
                 if (m.equipment) {
                     const cols = 6;
                     const rows = Math.ceil(m.equipment.length / cols);
@@ -1045,17 +1046,19 @@
                     L.equipment = { y, slots };
                     y += 14 + rows * rowH + 4;
                 }
-                if (m.statsShown) {
-                    L.stats = { x: 0, y, w: iw, h: 32 };
-                    y += 34;
-                }
-                if (m.grid) {
-                    const gx = Math.max(0, Math.floor((iw - cfg.columns * s) / 2));
-                    const slots = [];
-                    for (let i = 0; i < cfg.columns * cfg.rows; i++) slots.push({ x: gx + (i % cfg.columns) * s, y: y + 14 + Math.floor(i / cfg.columns) * s, w: s, h: s });
-                    L.grid = { y, x: gx, w: cfg.columns * s, h: 14 + cfg.rows * s, slots };
-                    y += 14 + cfg.rows * s + 4;
-                }
+                // STATS REMOVED on creature inventory screen per User directive 2026-09-29
+
+                // Replace inventory grid squares with a black rectangle that acts as the "bag" for that character
+                const bagMargin = 4;
+                const bagW = iw - 2 * bagMargin;
+                const bagH = 160;
+                L.bag = { x: bagMargin, y: y + 14, w: bagW, h: bagH };
+                y += 14 + bagH + 6;
+
+                // Weight capacity indication at the bottom of the inventory screen
+                L.capacity = { x: bagMargin, y, w: bagW, h: 24 };
+                y += 24 + 6;
+
                 if (m.buttons && m.buttons.length) {
                     L.buttons = [];
                     let bx = 0;
@@ -1100,7 +1103,8 @@
                 L.equipment = { y, slots };
                 y += 14 + rows * rowH + 4;
             }
-            if (m.statsShown) {
+            const isUnit = m.subject && m.subject.kind === "unit";
+            if (!isUnit && m.statsShown) {
                 L.stats = { x: 0, y, w: iw, h: 32 };
                 y += 34;
                 if (m.capabilities && m.capabilities.length) {
@@ -1125,7 +1129,18 @@
                 L.actions = { x: 0, y, w: iw, h: 14 + n * 16 };
                 y += 14 + n * 16 + 4;
             }
-            if (m.grid) {
+            if (isUnit && m.grid) {
+                // Creature inventory: Black rectangle "bag"
+                const bagMargin = 4;
+                const bagW = iw - 2 * bagMargin;
+                const bagH = 160;
+                L.bag = { x: bagMargin, y: y + 14, w: bagW, h: bagH };
+                y += 14 + bagH + 6;
+
+                // Weight capacity indication at bottom
+                L.capacity = { x: bagMargin, y, w: bagW, h: 24 };
+                y += 24 + 6;
+            } else if (m.grid) {
                 const gx = Math.max(0, Math.floor((iw - cfg.columns * s) / 2));
                 const slots = [];
                 for (let i = 0; i < cfg.columns * cfg.rows; i++) slots.push({ x: gx + (i % cfg.columns) * s, y: y + 14 + Math.floor(i / cfg.columns) * s, w: s, h: s });
@@ -1268,10 +1283,55 @@
             const wy = gy - (layer ? layer.y : 0) - this.y;
             return wx >= 0 && wy >= 0 && wx < this.width && wy < this.height;
         }
+        bagItems() {
+            const L = this._layout;
+            if (!L || !L.bag) return [];
+            const u = this._subject && this._subject.kind === "unit" ? World().unit(this._subject.unitId) : null;
+            const I = Items();
+            const rawInv = u ? (I ? I.inventoryOf(u.id) : (u.data && u.data.inventory ? u.data.inventory : [])) : [];
+            const minX = L.bag.x + 6, maxX = L.bag.x + L.bag.w - 38;
+            const minY = L.bag.y + 6, maxY = L.bag.y + L.bag.h - 38;
+            const cols = Math.max(1, Math.floor((L.bag.w - 12) / 36));
+
+            return rawInv.map((it, i) => {
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                let ix, iy;
+                if (typeof it.bagX === "number" && typeof it.bagY === "number") {
+                    ix = Math.max(minX, Math.min(maxX, L.bag.x + it.bagX));
+                    iy = Math.max(minY, Math.min(maxY, L.bag.y + it.bagY));
+                } else {
+                    ix = minX + col * 36;
+                    iy = minY + row * 36;
+                }
+                return {
+                    itemId: it.id,
+                    typeId: it.type,
+                    count: it.count || 1,
+                    equipped: !!it.equipped,
+                    item: it,
+                    x: ix,
+                    y: iy,
+                    w: 32,
+                    h: 32
+                };
+            });
+        }
         inventorySlotAtCoords(gx, gy) {
             const p = this.localPointer(gx, gy), L = this._layout;
-            if (!L || !L.grid || !L.grid.slots) return -1;
-            return L.grid.slots.findIndex(r => inRect(p, r));
+            if (!L) return -1;
+            if (L.bag && inRect(p, L.bag)) {
+                const items = this.bagItems();
+                for (let i = items.length - 1; i >= 0; i--) {
+                    const it = items[i];
+                    if (p.x >= it.x && p.x < it.x + it.w && p.y >= it.y && p.y < it.y + it.h) {
+                        return i;
+                    }
+                }
+                return -2; // inside bag cavity
+            }
+            if (L.grid && L.grid.slots) return L.grid.slots.findIndex(r => inRect(p, r));
+            return -1;
         }
         equipmentSlotAtCoords(gx, gy) {
             const p = this.localPointer(gx, gy), L = this._layout;
@@ -1387,6 +1447,17 @@
 
                 const p = this.localPointer(), L = this._layout;
                 if (L) {
+                    // Check if right clicked an item in the black rectangle bag
+                    if (L.bag && inRect(p, L.bag)) {
+                        const items = this.bagItems();
+                        for (let i = items.length - 1; i >= 0; i--) {
+                            const it = items[i];
+                            if (p.x >= it.x && p.x < it.x + it.w && p.y >= it.y && p.y < it.y + it.h) {
+                                this.useInventoryItem(it);
+                                return;
+                            }
+                        }
+                    }
                     // Check if right clicked an inventory slot
                     if (L.grid && this._model && this._model.grid) {
                         const i = L.grid.slots.findIndex(r => inRect(p, r));
@@ -1438,6 +1509,43 @@
                 return;
             }
 
+            // Left click on black rectangle bag item -> attach to mouse and select
+            if (L.bag && inRect(p, L.bag)) {
+                const items = this.bagItems();
+                let clickedItemIdx = -1;
+                for (let i = items.length - 1; i >= 0; i--) {
+                    const it = items[i];
+                    if (p.x >= it.x && p.x < it.x + it.w && p.y >= it.y && p.y < it.y + it.h) {
+                        clickedItemIdx = i;
+                        break;
+                    }
+                }
+                if (clickedItemIdx >= 0) {
+                    const entry = this.selectSlot(clickedItemIdx);
+                    if (entry && ItemDrag) {
+                        const u = this._subject && this._subject.kind === "unit" ? World().unit(this._subject.unitId) : null;
+                        const I = Items();
+                        const it = I ? I.get(entry.itemId) : null;
+                        ItemDrag.attach({
+                            kind: "inventory",
+                            unitId: u ? u.id : null,
+                            slotIdx: clickedItemIdx,
+                            itemId: entry.itemId,
+                            item: it || entry.item || { id: entry.itemId, type: entry.typeId, count: entry.count },
+                            grabOffsetX: TouchInput.x - (this.x + this.padding + entry.x),
+                            grabOffsetY: TouchInput.y - (this.y + this.padding + entry.y)
+                        }, SceneManager._scene);
+                    }
+                    return;
+                } else {
+                    this._selSlot = -1;
+                    this._selBagItemId = null;
+                    this._footer = "";
+                    this.redraw();
+                    return;
+                }
+            }
+
             // Left click on inventory slot -> attach to mouse and select
             if (L.grid) {
                 const i = L.grid.slots.findIndex(r => inRect(p, r));
@@ -1483,7 +1591,15 @@
         }
         selectSlot(i) {
             const m = this._model;
-            const entry = m && m.grid ? m.grid.slots[i] : null;
+            const items = this.bagItems ? this.bagItems() : [];
+            let entry = null;
+            if (items && items[i]) {
+                entry = items[i];
+                this._selBagItemId = entry.itemId;
+            } else if (m && m.grid && m.grid.slots) {
+                entry = m.grid.slots[i];
+                this._selBagItemId = null;
+            }
             this._selSlot = i;
             this._selEquip = null;
             this._footer = entry ? this.slotText(entry) : "Empty slot";
@@ -1515,6 +1631,10 @@
         }
         selectedEntry() {
             const m = this._model;
+            const items = this.bagItems ? this.bagItems() : [];
+            if (items && this._selSlot >= 0 && items[this._selSlot]) {
+                return items[this._selSlot];
+            }
             return m && m.grid && this._selSlot >= 0 ? m.grid.slots[this._selSlot] : null;
         }
         canDrop() {
@@ -1687,6 +1807,92 @@
             if (!m.actions.length) this.text("None: nothing to do here", 0, r.y + 14, r.w, 16, 12, COLORS.dim);
             m.actions.forEach((a, i) => this.text(a.text, 0, r.y + 14 + i * 16, r.w, 16, 12, COLORS.text));
         }
+        drawBag(m, L) {
+            const r = L.bag;
+            if (!r) return;
+            const c = this.contents;
+            const sys = ColorManager.systemColor();
+            const items = this.bagItems ? this.bagItems() : [];
+
+            // Title above the black rectangle
+            this.text("Bag", r.x, r.y - 14, 120, 14, 11, sys);
+            this.text(`${items.length} stack${items.length === 1 ? "" : "s"} carried`, r.x, r.y - 14, r.w, 14, 11, COLORS.dim, "right");
+
+            // 1. Draw solid black rectangle acting as the "bag" for that character (User directive 2026-09-29)
+            c.fillRect(r.x, r.y, r.w, r.h, "#000000");
+
+            // 2. Draw subtle dark border
+            c.fillRect(r.x, r.y, r.w, 1, "#282838");
+            c.fillRect(r.x, r.y + r.h - 1, r.w, 1, "#282838");
+            c.fillRect(r.x, r.y, 1, r.h, "#282838");
+            c.fillRect(r.x + r.w - 1, r.y, 1, r.h, "#282838");
+
+            // 3. Render items inside the black rectangle
+            if (items.length === 0) {
+                this.text("— Empty Bag —", r.x, r.y + Math.floor(r.h / 2) - 8, r.w, 16, 12, COLORS.dim, "center");
+            } else {
+                items.forEach((it, i) => {
+                    const isSelected = (this._selSlot === i || (this._selBagItemId && this._selBagItemId === it.itemId));
+                    if (isSelected) {
+                        c.fillRect(it.x - 2, it.y - 2, it.w + 4, it.h + 4, "rgba(255, 224, 102, 0.2)");
+                        c.fillRect(it.x - 2, it.y - 2, it.w + 4, 1, COLORS.select);
+                        c.fillRect(it.x - 2, it.y + it.h + 1, it.w + 4, 1, COLORS.select);
+                        c.fillRect(it.x - 2, it.y - 2, 1, it.h + 4, COLORS.select);
+                        c.fillRect(it.x + it.w + 1, it.y - 2, 1, it.h + 4, COLORS.select);
+                    }
+                    this.drawItemIn({ x: it.x, y: it.y, w: it.w, h: it.h }, it.typeId, it.count, it.equipped);
+                });
+            }
+        }
+
+        drawWeightCapacity(m, L) {
+            const r = L.capacity;
+            if (!r) return;
+            const c = this.contents;
+            const u = this._subject && this._subject.kind === "unit" ? World().unit(this._subject.unitId) : null;
+            const I = Items();
+            const curWeight = (u && I && typeof I.carriedWeight === "function") ? I.carriedWeight(u.id) : 0;
+            const maxWeight = (u && I && typeof I.maxWeight === "function") ? I.maxWeight(u.id) : 150;
+
+            let statusText = "UNENCUMBERED";
+            let statusColor = "#86efac"; // light emerald
+            if (curWeight > maxWeight) {
+                statusText = "OVER CAPACITY";
+                statusColor = "#ef4444"; // red
+            } else if (curWeight > maxWeight * 2 / 3) {
+                statusText = "HEAVILY ENCUMBERED";
+                statusColor = "#f97316"; // orange
+            } else if (curWeight > maxWeight / 3) {
+                statusText = "ENCUMBERED";
+                statusColor = "#eab308"; // amber
+            }
+
+            // Weight text indication
+            this.text(`Weight: ${curWeight.toFixed(1)} / ${maxWeight.toFixed(0)} lbs`, r.x, r.y, r.w, 14, 11, COLORS.text);
+            this.text(`[${statusText}]`, r.x, r.y, r.w, 14, 11, statusColor, "right");
+
+            // Horizontal capacity gauge bar below text
+            const barY = r.y + 14;
+            const barH = 6;
+            c.fillRect(r.x, barY, r.w, barH, "rgba(16, 16, 24, 0.95)");
+            c.fillRect(r.x, barY, r.w, 1, "#2a2838");
+            c.fillRect(r.x, barY + barH - 1, r.w, 1, "#2a2838");
+            c.fillRect(r.x, barY, 1, barH, "#2a2838");
+            c.fillRect(r.x + r.w - 1, barY, 1, barH, "#2a2838");
+
+            const pct = Math.max(0, Math.min(1.0, curWeight / Math.max(1, maxWeight)));
+            const fillW = Math.round(pct * (r.w - 2));
+            if (fillW > 0) {
+                c.fillRect(r.x + 1, barY + 1, fillW, barH - 2, statusColor);
+            }
+
+            // Encumbrance threshold markers (1/3 and 2/3)
+            const tick1 = Math.round(r.x + (r.w - 2) / 3);
+            const tick2 = Math.round(r.x + (r.w - 2) * 2 / 3);
+            c.fillRect(tick1, barY, 1, barH, "#4a455a");
+            c.fillRect(tick2, barY, 1, barH, "#4a455a");
+        }
+
         drawGrid(m, L) {
             const g = m.grid;
             const I = Items();
@@ -1850,8 +2056,10 @@
 
         drawPageInventory(m, L) {
             if (L.equipment) this.drawEquipment(m, L);
-            if (L.stats) this.drawStats(m, L);
-            if (L.grid) this.drawGrid(m, L);
+            // STATS REMOVED on creature inventory screen per User directive 2026-09-29
+            if (L.bag) this.drawBag(m, L);
+            else if (L.grid) this.drawGrid(m, L);
+            if (L.capacity) this.drawWeightCapacity(m, L);
             if (L.buttons) this.drawButtons(m, L);
         }
 
@@ -1991,7 +2199,9 @@
                 if (L.drops) this.drawDrops(m, L);
                 if (L.state) this.drawState(m, L);
                 if (L.actions) this.drawActions(m, L);
-                if (L.grid) this.drawGrid(m, L);
+                if (L.bag) this.drawBag(m, L);
+                else if (L.grid) this.drawGrid(m, L);
+                if (L.capacity) this.drawWeightCapacity(m, L);
                 if (L.buttons) this.drawButtons(m, L);
             }
 
@@ -2167,11 +2377,16 @@
             if (!L) return null;
             let r = null;
             if (kind === "slot") {
-                if (!L.grid && typeof w.switchTab === "function") {
+                if (!L.grid && !L.bag && typeof w.switchTab === "function") {
                     w.switchTab(1);
                     L = w.layout();
                 }
-                if (L.grid) r = L.grid.slots[which];
+                if (L.bag) {
+                    const items = w.bagItems ? w.bagItems() : [];
+                    r = items && items[which] ? { x: items[which].x, y: items[which].y, w: items[which].w, h: items[which].h } : null;
+                } else if (L.grid && L.grid.slots) {
+                    r = L.grid.slots[which];
+                }
             }
             else if (kind === "equip") {
                 if (!L.equipment && typeof w.switchTab === "function") {
@@ -2229,6 +2444,7 @@
     window.DEUS = window.DEUS || {};
     window.UF = window.DEUS;
     window.UF.Sheet = Sheet;
+    if (typeof module !== "undefined" && module.exports) module.exports = Sheet;
 
     //-------------------------------------------------------------------------
     // Engine hooks

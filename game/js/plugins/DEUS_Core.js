@@ -70,6 +70,21 @@
             const log = (msg) => fs.appendFileSync('game_runtime.log', `${new Date().toISOString()} ${msg}\n`);
             log("[CORE] UF_Core plugin loaded successfully!");
 
+            // Bridge browser window globals to Node module global in NW.js desktop runtime
+            if (typeof window !== "undefined" && typeof global !== "undefined") {
+                const rmmzGlobals = [
+                    "Window_Base", "Window_Selectable", "Window_Command", "Sprite", "Rectangle", "Bitmap",
+                    "TouchInput", "Input", "SceneManager", "Scene_Base", "Scene_Map", "Scene_Boot",
+                    "ImageManager", "SoundManager", "Graphics", "PluginManager", "DataManager",
+                    "StorageManager", "TextManager", "ColorManager", "Window", "Point"
+                ];
+                for (const k of rmmzGlobals) {
+                    if (window[k] && !global[k]) {
+                        global[k] = window[k];
+                    }
+                }
+            }
+
             // Synchronously ensure all modular plugins are loaded in NW.js desktop runtime
             const companionPlugins = [
                 "DEUS_Containers",
@@ -104,6 +119,13 @@
                 }
                 // A companion that fails to load says so (DEUS-TSK-FABLE-17: the loop used to swallow every error).
                 if (!loaded) log(`[CORE] Companion plugin ${name} NOT loaded: ${lastError && lastError.message ? lastError.message : lastError}`);
+                // Also ensure DOM script injection if PluginManager is active and not already injected
+                if (typeof window !== "undefined" && typeof PluginManager !== "undefined" && typeof PluginManager.loadScript === "function") {
+                    if (!window[`__deus_loaded_${name}`]) {
+                        window[`__deus_loaded_${name}`] = true;
+                        PluginManager.loadScript(name);
+                    }
+                }
             }
 
             let isAutoTest = false;
