@@ -1,0 +1,41 @@
+{
+  "lane": "lane-cd",
+  "taskId": "TOOL.01.02",
+  "branch": "task/lane-cd",
+  "writer": "gemini",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "tasks/TOOL.01.02/lane-cd/**",
+    "art/catalogue/catalogue.schema.json",
+    "art/catalogue/catalogue.json",
+    "art/masters/source_sets/**",
+    "art/masters/SURFACE_SHARED_STONE_GRANITE-BOULDER_V1_DEFAULT.png",
+    "art/masters/ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT.png",
+    "game/img/characters/!UF_GraniteBoulder_V8.png",
+    "game/img/characters/!UF_GraniteBoulder_V8.json",
+    "game/img/characters/!UF_RocksSmall_V8.png",
+    "game/img/characters/!UF_RocksSmall_V8.json",
+    "game/js/plugins/DEUS_Objects.js",
+    "tools/art/assemble_v8_sheet.js",
+    "tools/art/validate_art.js",
+    "tools/art/place_art.js",
+    "tools/art/test_multi_variant_topology.js",
+    "docs/systems/UF_Objects.md"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/art/test_multi_variant_topology.js"
+      ],
+      "timeoutSec": 300
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/art/test_catalogue.js"
+      ],
+      "timeoutSec": 300
+    }
+  ]
+}
