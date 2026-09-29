@@ -31,17 +31,23 @@
 
 # Art staging, sprites scratch, and tileset scratch
 /art/staging/
-/art/sprites/
 /art/tilesets/
 
 # Temporary test harnesses and experimental UI assets
 /game/img/system/ui_open_sack*.png
 /tools/capture_sack_ui_playtest.js
 /tools/test_sack_ui_and_loose_items.js
-/tools/test_shadow_check_wg0041.js
 
 # Temporary task execution outputs and local prompts
 /tasks/*.txt
 
 
 
+
+# Protected local files must stay visible to git status (deus-multiagent-routing.md); never hide them.
+!/tasks/prompt_cline_minimax.txt
+# Secrets never enter the repo.
+**/.pixellab_token
+**/.env
+**/.env.*
+/game/*.log
