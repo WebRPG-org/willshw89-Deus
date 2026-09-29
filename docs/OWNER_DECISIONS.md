@@ -116,6 +116,8 @@ Every decision item recorded in this log must provide:
   - **Every generated asset:** (1) has its record in `art/catalogue/catalogue.json` before generation; (2) is prompted consistent with the SOP (`docs/art/DEUS_ASSET_STANDARD.md`, confirmed as the SOP by the Owner the same day); (3) passes QA vetting before it enters the game: art style, dimensions, camera orientation, and animation working as intended. Anything substandard is rejected.
   - **Variety:** place an object's approved variants across the world for diversity, keeping it readable. (Recorder's note: variants of one object should still read as that object, and different objects should stay easy to tell apart.)
   - **Owner sign-off:** "I am the final QA, and YOU will present assets to me for signoff." After QA vetting, Claude presents each asset to the Owner, and it enters the game only with the Owner's sign-off (AGENTS.md Rule 6, VISION V11). AGENTS.md Rules 11 and 13 stay suspended.
+  - **Camera (Owner, 2026-09-29, "high topdown"):** every PixelLab prompt for every asset class (terrain tiles, objects, props, creatures) uses the PixelLab view setting **high top-down**. This is the one camera; `docs/art/DEUS_ASSET_STANDARD.md` AS-LOOK-001 / AS-PROJ-001 ("RMMZ standard top-down 3/4 view") describe the same camera as the engine presents it. Any note that says low top-down is superseded.
+  - **Ground tile variants (Owner, 2026-09-29, "I want more variants of each type of tile so there's a gradient on the ground"):** each ground kind gets several tile variants, placed so the ground shifts gradually instead of repeating one stamp, while ground kinds stay distinguishable. Counts, format and placement rule to be recorded as their own decision once the design is settled.
 
 ---
 

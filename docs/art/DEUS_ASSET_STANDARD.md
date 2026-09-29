@@ -535,6 +535,8 @@ Manual note. Draw readable high-contrast fantasy at the 48 px scale. Ultima VII 
 
 Manual note. The view is the RMMZ standard top-down 3/4 view. Draw the map by row, then by Z layer. Characters use eight directions. The diagonal walk step is 3 px per axis per frame. Terrain, walls and caves stay on the square grid. SRD 5-5-5 applies to spell areas and ranges only. Cliff and wall pieces are RMMZ-style tiles. Side-wall, side-roof and corner-joint pieces are not added. Tall objects are not split.
 
+**AS-VIEW-002.** Owner, 2026-09-29 ("high topdown"). Every PixelLab prompt, for every asset class (terrain tiles, objects, props, creatures), uses the PixelLab view setting **high top-down**. It is the one camera for the whole game; AS-LOOK-001 and AS-PROJ-001 describe that same camera as the engine presents it. Any earlier note that asks for low top-down, or leaves the object view open, is superseded. Recorded in `docs/OWNER_DECISIONS.md` under the DEC-007 amendment of 2026-09-29.
+
 **AS-FURN-001.** Item 18. Furniture and other placeables have four facings, S, W, E, N. A symmetric object may reuse a view only when `symmetric` is true and `reuse` is `flagged`. An unflagged object has four unique views. Catalogue category `PLACEABLE`. Slot grammar `placeable`, for example `PL.TABLE.D`.
 
 Manual note. Furniture and placeables have four facings. A symmetric object may reuse a view only when its symmetric flag is set.
