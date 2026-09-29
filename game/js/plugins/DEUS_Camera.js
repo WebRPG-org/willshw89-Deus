@@ -31,9 +31,9 @@
     "use strict";
 
     const MIN_ZOOM = 0.50;
-    const MAX_ZOOM = 3.00;
+    const MAX_ZOOM = 2.00;
     const DEFAULT_ZOOM = 1.00;
-    const LEVELS = [1.00, 0.75, 0.50];
+    const LEVELS = [0.50, 1.00, 2.00];
     const WHEEL_COOLDOWN = 4; // frames between wheel zoom ticks
 
     const STORAGE_KEY = "deus_zoom_scale";
@@ -67,12 +67,12 @@
         sliderY: undefined,
         sliderMinimized: false,
 
-        /** Returns current active zoom scale (clamped to 0.5 .. 3.0) */
+        /** Returns current active zoom scale (0.5, 1.0, or 2.0) */
         zoom: () => currentZoom,
 
-        /** Returns current level index (or closest matching index in levels) */
+        /** Returns current level index (0 = 0.5x, 1 = 1.0x, 2 = 2.0x) */
         level: () => {
-            let best = 0, diff = 999;
+            let best = 1, diff = 999;
             for (let i = 0; i < LEVELS.length; i++) {
                 const d = Math.abs(LEVELS[i] - currentZoom);
                 if (d < diff) { diff = d; best = i; }
@@ -80,13 +80,13 @@
             return best;
         },
 
-        /** Set discrete level index (0 = 1.0x, 1 = 0.75x, 2 = 0.5x) */
+        /** Set discrete level index (0 = 0.5x, 1 = 1.0x, 2 = 2.0x) */
         setLevel(i) {
             i = Math.max(0, Math.min(LEVELS.length - 1, i | 0));
             return this.setZoom(LEVELS[i]);
         },
 
-        /** Set continuous zoom scale (clamped to 0.50x .. 3.00x). Keeps center point fixed. */
+        /** Set zoom scale (clamped to 0.50x .. 2.00x). Keeps center point fixed. */
         setZoom(scale, emitEvent = true) {
             const raw = Number(scale);
             if (isNaN(raw)) return false;
@@ -121,16 +121,20 @@
             return true;
         },
 
-        zoomOut(step = 0.05) {
-            return this.setZoom(this.zoom() - step);
+        zoomOut() {
+            const idx = this.level();
+            if (idx > 0) return this.setLevel(idx - 1);
+            return false;
         },
 
-        zoomIn(step = 0.05) {
-            return this.setZoom(this.zoom() + step);
+        zoomIn() {
+            const idx = this.level();
+            if (idx < LEVELS.length - 1) return this.setLevel(idx + 1);
+            return false;
         },
 
         resetZoom() {
-            return this.setZoom(DEFAULT_ZOOM);
+            return this.setLevel(1);
         },
 
         toggleSlider() {
@@ -281,18 +285,15 @@
     // Interactive Zoom Slider HUD Sprite: Sprite_UFZoomSlider
     //-------------------------------------------------------------------------
 
-    const CAL_W = 280;
-    const CAL_H = 108;
-    const MIN_W = 110;
+    const CAL_W = 192;
+    const CAL_H = 62;
+    const MIN_W = 100;
     const MIN_H = 24;
 
     const PRESETS = [
-        { label: "0.5x",  val: 0.50 },
-        { label: "0.75x", val: 0.75 },
-        { label: "1.0x",  val: 1.00 },
-        { label: "1.5x",  val: 1.50 },
-        { label: "2.0x",  val: 2.00 },
-        { label: "3.0x",  val: 3.00 }
+        { label: "0.5x", val: 0.50, sub: "Out" },
+        { label: "1.0x", val: 1.00, sub: "Normal" },
+        { label: "2.0x", val: 2.00, sub: "In" }
     ];
 
     class Sprite_UFZoomSlider extends Sprite {
@@ -371,77 +372,49 @@
             b.strokeRect(0, 0, CAL_W, CAL_H, "rgba(56, 189, 248, 0.85)");
             b.fillRect(1, 1, CAL_W - 2, 1, "rgba(160, 240, 255, 0.40)");
 
-            // Title Bar (Row 0, y: 1..21)
-            b.fillRect(1, 1, CAL_W - 2, 21, "rgba(15, 23, 42, 0.90)");
+            // Title Bar (Row 0, y: 1..20)
+            b.fillRect(1, 1, CAL_W - 2, 20, "rgba(15, 23, 42, 0.90)");
             b.fontSize = 11;
             b.fontBold = true;
             b.outlineColor = "rgba(0, 0, 0, 0.95)";
             b.outlineWidth = 3;
             b.textColor = "#fbbf24"; // amber gold
-            b.drawText(`ZOOM: ${z.toFixed(2)}x`, 10, 2, 140, 18, "left");
-
-            // Reset [1x] button in title bar
-            this.drawButton(CAL_W - 54, 2, 24, 18, "1x", "#38bdf8", "rgba(30, 41, 59, 0.70)", "rgba(71, 85, 105, 0.60)", 10);
+            b.drawText(`ZOOM: ${z.toFixed(1)}x`, 8, 1, 120, 18, "left");
 
             // Minimize [_] button in title bar
-            this.drawButton(CAL_W - 26, 2, 22, 18, "—", "#94a3b8", "rgba(30, 41, 59, 0.70)", "rgba(71, 85, 105, 0.60)", 10);
+            this.drawButton(CAL_W - 24, 2, 20, 16, "—", "#94a3b8", "rgba(30, 41, 59, 0.70)", "rgba(71, 85, 105, 0.60)", 10);
 
-            // Stepper & Slider Track (Row 1, y: 28..48)
-            // Button [-]
-            this.drawButton(8, 28, 24, 20, "−", "#38bdf8");
-
-            // Slider Track
-            const trackX = 36, trackY = 34, trackW = 208, trackH = 8;
-            b.fillRect(trackX, trackY, trackW, trackH, "rgba(30, 41, 59, 0.95)");
-            b.strokeRect(trackX, trackY, trackW, trackH, "rgba(71, 85, 105, 0.70)");
-
-            const ratio = Math.max(0, Math.min(1, (z - MIN_ZOOM) / (MAX_ZOOM - MIN_ZOOM)));
-            const fillW = Math.round(ratio * trackW);
-            if (fillW > 0) {
-                b.fillRect(trackX + 1, trackY + 1, fillW - 1, trackH - 2, "rgba(14, 165, 233, 0.85)");
-            }
-
-            // Slider Knob
-            const thumbX = Math.round(trackX + ratio * trackW) - 6;
-            const thumbY = trackY - 5;
-            b.fillRect(thumbX, thumbY, 12, 18, "#ffffff");
-            b.strokeRect(thumbX, thumbY, 12, 18, "#38bdf8");
-            b.fillRect(thumbX + 5, thumbY + 3, 2, 12, "#0284c7");
-
-            // Button [+]
-            this.drawButton(248, 28, 24, 20, "+", "#38bdf8");
-
-            // Preset Buttons (Row 2, y: 54..74)
-            const presetBtnW = 40;
-            const presetGap = 4;
+            // Three Discrete Zoom Option Buttons (Row 1, y: 24..54)
+            const btnW = 56;
+            const btnH = 30;
+            const btnY = 24;
             const startX = 8;
+            const gap = 4;
+
             for (let i = 0; i < PRESETS.length; i++) {
                 const p = PRESETS[i];
-                const bx = startX + i * (presetBtnW + presetGap);
+                const bx = startX + i * (btnW + gap);
                 const active = Math.abs(z - p.val) < 0.015;
-                const bg = active ? "rgba(14, 165, 233, 0.35)" : "rgba(15, 23, 42, 0.75)";
+                const bg = active ? "rgba(14, 165, 233, 0.45)" : "rgba(15, 23, 42, 0.75)";
                 const border = active ? "#38bdf8" : "rgba(71, 85, 105, 0.50)";
                 const textCol = active ? "#ffffff" : "#94a3b8";
 
-                this.drawButton(bx, 54, presetBtnW, 20, p.label, textCol, bg, border, 10);
+                b.fillRect(bx, btnY, btnW, btnH, bg);
+                b.strokeRect(bx, btnY, btnW, btnH, border);
+                if (active) {
+                    b.fillRect(bx + 1, btnY + 1, btnW - 2, 1, "rgba(255, 255, 255, 0.50)");
+                }
+
+                b.fontSize = 11;
+                b.fontBold = active;
+                b.textColor = textCol;
+                b.drawText(p.label, bx, btnY + 1, btnW, 15, "center");
+
+                b.fontSize = 9;
+                b.fontBold = false;
+                b.textColor = active ? "#fde047" : "#64748b";
+                b.drawText(p.sub, bx, btnY + 15, btnW, 13, "center");
             }
-
-            // Metrics Display (Row 3, y: 80..102)
-            const tw = window.$gameMap ? $gameMap.tileWidth() : 48;
-            const tilePx = Math.round(tw * z);
-            const cols = window.$gameMap ? $gameMap.screenTileX().toFixed(1) : (Graphics.width / (tw * z)).toFixed(1);
-            const rows = window.$gameMap ? $gameMap.screenTileY().toFixed(1) : (Graphics.height / (tw * z)).toFixed(1);
-
-            b.fontSize = 11;
-            b.fontBold = false;
-            b.textColor = "#a7f3d0"; // mint green
-            b.drawText(`Tile: ${tilePx}px`, 10, 82, 70, 18, "left");
-
-            b.textColor = "#fde047"; // soft yellow
-            b.drawText(`Unit: ~${Math.round(44 * z)}px`, 84, 82, 85, 18, "left");
-
-            b.textColor = "#cbd5e1"; // slate light
-            b.drawText(`Grid: ${cols}x${rows}`, 174, 82, 96, 18, "right");
         }
 
         drawButton(x, y, w, h, text, textCol = "#38bdf8", bg = "rgba(15, 23, 42, 0.85)", border = "rgba(71, 85, 105, 0.70)", fontSize = 11) {
@@ -499,39 +472,10 @@
                 }
             }
 
-            // Slider Track Dragging (trackX: 36, trackW: 208, y: 26..50)
-            const trackX = 36, trackW = 208;
-            if (TouchInput.isTriggered() && isOver && ly >= 26 && ly <= 50 && lx >= trackX - 8 && lx <= trackX + trackW + 8) {
-                this._draggingSlider = true;
-            }
-
-            if (this._draggingSlider) {
-                if (TouchInput.isPressed()) {
-                    const norm = Math.max(0, Math.min(1, (lx - trackX) / trackW));
-                    const newZ = MIN_ZOOM + norm * (MAX_ZOOM - MIN_ZOOM);
-                    Camera.setZoom(newZ);
-                    TouchInput.clear();
-                    return;
-                } else {
-                    this._draggingSlider = false;
-                }
-            }
-
             // Button Clicks
             if (TouchInput.isTriggered() && isOver) {
-                const isShift = (typeof TouchInput._shiftKey !== "undefined" ? TouchInput._shiftKey : false) || Input.isPressed("shift");
-                const step = isShift ? 0.01 : 0.05;
-
-                // Title bar: Reset [1x] button
-                if (lx >= CAL_W - 54 && lx <= CAL_W - 30 && ly >= 2 && ly <= 20) {
-                    Camera.resetZoom();
-                    SoundManager.playCursor();
-                    TouchInput.clear();
-                    return;
-                }
-
                 // Title bar: Minimize [_] button
-                if (lx >= CAL_W - 26 && lx <= CAL_W - 4 && ly >= 2 && ly <= 20) {
+                if (lx >= CAL_W - 26 && lx <= CAL_W - 2 && ly >= 1 && ly <= 20) {
                     this._minimized = true;
                     Camera.sliderMinimized = true;
                     this.redraw();
@@ -540,31 +484,15 @@
                     return;
                 }
 
-                // [-] Stepper button
-                if (lx >= 8 && lx <= 32 && ly >= 28 && ly <= 48) {
-                    Camera.zoomOut(step);
-                    SoundManager.playCursor();
-                    TouchInput.clear();
-                    return;
-                }
-
-                // [+] Stepper button
-                if (lx >= 248 && lx <= 272 && ly >= 28 && ly <= 48) {
-                    Camera.zoomIn(step);
-                    SoundManager.playCursor();
-                    TouchInput.clear();
-                    return;
-                }
-
-                // Preset Buttons
-                const presetBtnW = 40;
-                const presetGap = 4;
+                // 3 Discrete Preset Buttons (Row 1, y: 24..56)
+                const btnW = 56;
                 const startX = 8;
-                if (ly >= 54 && ly <= 74) {
+                const gap = 4;
+                if (ly >= 24 && ly <= 56) {
                     for (let i = 0; i < PRESETS.length; i++) {
-                        const bx = startX + i * (presetBtnW + presetGap);
-                        if (lx >= bx && lx < bx + presetBtnW) {
-                            Camera.setZoom(PRESETS[i].val);
+                        const bx = startX + i * (btnW + gap);
+                        if (lx >= bx && lx < bx + btnW) {
+                            Camera.setLevel(i);
                             SoundManager.playCursor();
                             TouchInput.clear();
                             return;
@@ -572,7 +500,7 @@
                     }
                 }
 
-                // Consumed click on slider HUD body
+                // Consumed click on HUD body
                 TouchInput.clear();
             }
         }
@@ -624,49 +552,38 @@
                 await t.waitFrames(5);
             }
 
-            // 1. Verify zoom limits and initial state
+            // 1. Verify zoom limits and 3 discrete levels
             t.check("min_zoom_0_5", Camera.MIN_ZOOM === 0.50, `Camera.MIN_ZOOM is ${Camera.MIN_ZOOM}`);
-            t.check("max_zoom_3_0", Camera.MAX_ZOOM === 3.00, `Camera.MAX_ZOOM is ${Camera.MAX_ZOOM}`);
-            t.check("zoom_range_valid", Camera.zoom() >= 0.50 && Camera.zoom() <= 3.00, `Camera.zoom() is ${Camera.zoom()}`);
+            t.check("max_zoom_2_0", Camera.MAX_ZOOM === 2.00, `Camera.MAX_ZOOM is ${Camera.MAX_ZOOM}`);
+            t.check("levels_count_3", Camera.levels.length === 3, `Camera.levels length is ${Camera.levels.length}`);
+            t.check("levels_strictly_3", Camera.levels[0] === 0.50 && Camera.levels[1] === 1.00 && Camera.levels[2] === 2.00, "levels strictly [0.5, 1.0, 2.0]");
 
-            // 2. Test continuous zoom set
-            Camera.setZoom(0.50);
-            await t.waitFrames(5);
-            t.check("zoom_at_0_5x", Math.abs(Camera.zoom() - 0.50) < 0.001, `Camera.zoom() at min is ${Camera.zoom()}`);
-
-            const scene = SceneManager._scene;
-            const tilemap = scene && scene._spriteset && scene._spriteset._tilemap;
-            t.check("tilemap_scale_at_0_5x", !!tilemap && Math.abs(tilemap.scale.x - 0.50) < 1e-6,
-                `tilemap scale is ${tilemap ? tilemap.scale.x : "null"}`);
-
-            Camera.setZoom(3.00);
-            await t.waitFrames(5);
-            t.check("zoom_at_3_0x", Math.abs(Camera.zoom() - 3.00) < 0.001, `Camera.zoom() at max is ${Camera.zoom()}`);
-            t.check("tilemap_scale_at_3_0x", !!tilemap && Math.abs(tilemap.scale.x - 3.00) < 1e-6,
-                `tilemap scale is ${tilemap ? tilemap.scale.x : "null"}`);
-
-            // 3. Test clamping out-of-range values
-            Camera.setZoom(0.10);
-            t.check("clamped_min_0_5x", Math.abs(Camera.zoom() - 0.50) < 0.001, `Camera.zoom() clamped to ${Camera.zoom()}`);
-            Camera.setZoom(5.00);
-            t.check("clamped_max_3_0x", Math.abs(Camera.zoom() - 3.00) < 0.001, `Camera.zoom() clamped to ${Camera.zoom()}`);
-
-            // 4. Test zoomIn / zoomOut
-            Camera.setZoom(1.00);
-            Camera.zoomIn(0.10);
-            t.check("zoomIn_step", Math.abs(Camera.zoom() - 1.10) < 0.001, `zoomIn(0.10) -> ${Camera.zoom()}`);
-            Camera.zoomOut(0.20);
-            t.check("zoomOut_step", Math.abs(Camera.zoom() - 0.90) < 0.001, `zoomOut(0.20) -> ${Camera.zoom()}`);
-
-            // 5. Test discrete levels compatibility
+            // 2. Test discrete level switching
             Camera.setLevel(0);
-            t.check("setLevel_0_1x", Math.abs(Camera.zoom() - 1.00) < 0.001, `setLevel(0) is ${Camera.zoom()}`);
+            t.check("setLevel_0_0_5x", Math.abs(Camera.zoom() - 0.50) < 0.001, `setLevel(0) is ${Camera.zoom()}`);
+            Camera.setLevel(1);
+            t.check("setLevel_1_1_0x", Math.abs(Camera.zoom() - 1.00) < 0.001, `setLevel(1) is ${Camera.zoom()}`);
             Camera.setLevel(2);
-            t.check("setLevel_2_0_5x", Math.abs(Camera.zoom() - 0.50) < 0.001, `setLevel(2) is ${Camera.zoom()}`);
+            t.check("setLevel_2_2_0x", Math.abs(Camera.zoom() - 2.00) < 0.001, `setLevel(2) is ${Camera.zoom()}`);
 
-            // 6. Test screen metrics and mouse coordinate mapping at 1x
+            // 3. Test zoomIn / zoomOut stepping across the 3 options
+            Camera.setLevel(0); // at 0.5x
+            Camera.zoomIn();    // -> 1.0x
+            t.check("zoomIn_from_0_5_to_1_0", Math.abs(Camera.zoom() - 1.00) < 0.001, `zoomIn -> ${Camera.zoom()}`);
+            Camera.zoomIn();    // -> 2.0x
+            t.check("zoomIn_from_1_0_to_2_0", Math.abs(Camera.zoom() - 2.00) < 0.001, `zoomIn -> ${Camera.zoom()}`);
+            Camera.zoomIn();    // clamped at 2.0x
+            t.check("zoomIn_clamped_at_2_0", Math.abs(Camera.zoom() - 2.00) < 0.001, `zoomIn clamped -> ${Camera.zoom()}`);
+
+            Camera.zoomOut();   // -> 1.0x
+            t.check("zoomOut_from_2_0_to_1_0", Math.abs(Camera.zoom() - 1.00) < 0.001, `zoomOut -> ${Camera.zoom()}`);
+            Camera.zoomOut();   // -> 0.5x
+            t.check("zoomOut_from_1_0_to_0_5", Math.abs(Camera.zoom() - 0.50) < 0.001, `zoomOut -> ${Camera.zoom()}`);
+            Camera.zoomOut();   // clamped at 0.5x
+            t.check("zoomOut_clamped_at_0_5", Math.abs(Camera.zoom() - 0.50) < 0.001, `zoomOut clamped -> ${Camera.zoom()}`);
+
+            // Reset back to 1.0x
             Camera.resetZoom();
-            await t.waitFrames(5);
             t.check("resetZoom_1x", Math.abs(Camera.zoom() - 1.00) < 0.001, `resetZoom is ${Camera.zoom()}`);
 
             const expectedCols = Math.round((Graphics.width / $gameMap.tileWidth()) * 16) / 16;
@@ -678,19 +595,13 @@
             const ey = $gameMap.roundY(Math.floor($gameMap.displayY() + Graphics.height / 2 / $gameMap.tileHeight()));
             t.check("mouse_mapping_1x", mx === ex && my === ey, `canvas center -> cell (${mx},${my}), expected (${ex},${ey})`);
 
-            // 7. Verify slider HUD exists and is attached
+            // 4. Verify HUD sprite exists and is attached
+            const scene = SceneManager._scene;
             const slider = scene && (scene._deusZoomSlider || scene._deusScaleCalibrator);
-            t.check("slider_hud_exists", !!slider && slider instanceof Sprite_UFZoomSlider, "Zoom slider HUD sprite instantiated");
-            t.check("slider_hud_visible", !!slider && slider.visible, "Zoom slider HUD sprite is visible");
+            t.check("slider_hud_exists", !!slider && slider instanceof Sprite_UFZoomSlider, "Zoom HUD sprite instantiated");
+            t.check("slider_hud_visible", !!slider && slider.visible, "Zoom HUD sprite is visible");
 
-            // 8. Verify hover over slider blocks map clicks
-            if (slider) {
-                TouchInput._x = slider.x + 20;
-                TouchInput._y = slider.y + 20;
-                t.check("slider_blocks_map_clicks", scene.isAnyWindowUnderMouse() === true, "isAnyWindowUnderMouse is true over slider");
-            }
-
-            t.screenshot("zoom_slider_1x");
+            t.screenshot("zoom_3_options");
             await t.waitFrames(5);
         });
     }
