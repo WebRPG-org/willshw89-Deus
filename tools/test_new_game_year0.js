@@ -163,7 +163,7 @@ function runSectionA(overrides) {
 
     // A4-A9: keyboard arrows / page keys on the year row
     let w = newWindow(env, true);
-    w.select(1);
+    w.select(2);
     env._cursorSounds = 0;
     w.cursorLeft();
     check("key_left_at_0_stays_0", w.currentYear() === 0 && w._yearInput.value === "0" && env._cursorSounds === 0,
@@ -236,7 +236,7 @@ function runSectionA(overrides) {
     const payload = embark(envP, newWindow(envP, false));
     const keys = Object.keys(payload).sort().join(",");
     check("embark_payload_shape",
-        keys === "faction,fogOfWar,seed,worldSize,year" && typeof payload.year === "number" && Number.isInteger(payload.year) && payload.year === 0
+        (keys === "biome,faction,fogOfWar,seed,worldSize,year" || keys === "faction,fogOfWar,seed,worldSize,year") && typeof payload.year === "number" && Number.isInteger(payload.year) && payload.year === 0
         && payload.faction === "human" && payload.worldSize === 256 && payload.fogOfWar === false
         && Number.isInteger(payload.seed) && payload.seed >= 1 && payload.seed <= SEED_MAX,
         `Untouched payload ${JSON.stringify(payload)} (expected keys faction,fogOfWar,seed,worldSize,year; integer year 0; seed 1..${SEED_MAX})`);
@@ -248,7 +248,7 @@ function runSectionA(overrides) {
     const wT = newWindow(envP, true);
     wT._yearInput.value = "3";
     wT._yearInput.fire("input");
-    wT.select(1);
+    wT.select(2);
     wT.cursorLeft(); wT.cursorLeft(); wT.cursorLeft(); wT.cursorLeft();
     const typedDown = embark(envP, wT);
     check("typed_then_decremented_embarks_0", typedDown.year === 0, `Typed 3, Left x4, Start -> payload year ${JSON.stringify(typedDown.year)} (expected 0)`);
@@ -362,7 +362,7 @@ function runSectionC(payload, overridesByPlugin) {
 
 const MENUS_MUTANTS = [
     { name: "default_year_1", kills: ["window_default_year_is_0", "embark_year_is_0"],
-      edit: { "this._factionIndex = 0;\n            this._year = 0;": "this._factionIndex = 0;\n            this._year = 1;" } },
+      edit: { "this._biomeIndex = 0;\n            this._year = 0;": "this._biomeIndex = 0;\n            this._year = 1;" } },
     { name: "fallback_year_1", kills: ["fallback_embark_year_is_0"],
       edit: { "this._newGameSetupWindow.currentYear() : 0;": "this._newGameSetupWindow.currentYear() : 1;" } },
     { name: "change_year_floor_1", kills: ["key_left_reaches_0_from_1"],

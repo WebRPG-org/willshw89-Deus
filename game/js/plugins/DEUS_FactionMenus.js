@@ -239,11 +239,11 @@
 
     Scene_Title.prototype.newGameSetupWindowRect = function() {
         const ww = 350;
-        const wh = 285;
+        const wh = 320;
         // Center squarely between letter D (x ≈ 243) and letter S (x ≈ 618), centered at x = 431
         const gapCenter = Math.round(Graphics.boxWidth / 2) + 23;
         const wx = Math.round(gapCenter - ww / 2); // 431 - 175 = 256
-        const wy = 235;
+        const wy = 210;
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -277,6 +277,7 @@
             }
         }
         const faction = this._newGameSetupWindow ? this._newGameSetupWindow.currentFaction() : "Human";
+        const biome = this._newGameSetupWindow ? this._newGameSetupWindow.currentBiomeId() : "grassland_temperate";
         const year = this._newGameSetupWindow ? this._newGameSetupWindow.currentYear() : 0;
         const seed = this._newGameSetupWindow ? this._newGameSetupWindow.resolvedSeed() : undefined;
         const worldSize = 256;
@@ -285,6 +286,7 @@
         window.UF = window.DEUS;
         window.UF.NewGameSetup = {
             faction: faction.toLowerCase(),
+            biome: biome,
             year: year,
             seed: seed,
             worldSize: 256,
@@ -344,6 +346,23 @@
                 "Dragonborn", "Half-Elf", "Half-Orc", "Tiefling"
             ];
             this._factionIndex = 0;
+            this._biomeChoices = [
+                { id: "grassland_temperate", label: "Temperate Meadow" },
+                { id: "forest_temperate_broadleaf", label: "Temperate Forest" },
+                { id: "forest_temperate_conifer", label: "Conifer Forest" },
+                { id: "forest_tropical_dry_broadleaf", label: "Tropical Forest" },
+                { id: "forest_tropical_moist_broadleaf", label: "Rainforest" },
+                { id: "taiga", label: "Boreal Taiga" },
+                { id: "tundra", label: "Frozen Tundra" },
+                { id: "glacier", label: "Arctic Glacier" },
+                { id: "savanna_temperate", label: "Temperate Savanna" },
+                { id: "savanna_tropical", label: "Tropical Savanna" },
+                { id: "shrubland_temperate", label: "Temperate Heath" },
+                { id: "shrubland_tropical", label: "Tropical Shrub" },
+                { id: "desert_sand", label: "Sand Desert" },
+                { id: "mountain", label: "Mountain Peaks" }
+            ];
+            this._biomeIndex = 0;
             this._year = 0;
             this._seedInput = "";
             this._seedButtonCol = 0;
@@ -362,7 +381,7 @@
         }
 
         maxItems() {
-            return 6;
+            return 7;
         }
 
         itemHeight() {
@@ -375,13 +394,42 @@
             else if (index === 1) rect.y = 44;
             else if (index === 2) rect.y = 80;
             else if (index === 3) rect.y = 116;
-            else if (index === 4) rect.y = 180;
-            else if (index === 5) rect.y = 216;
+            else if (index === 4) rect.y = 152;
+            else if (index === 5) rect.y = 214;
+            else if (index === 6) rect.y = 250;
             return rect;
         }
 
         currentFaction() {
             return this._factionChoices[this._factionIndex];
+        }
+
+        currentBiome() {
+            return this._biomeChoices[this._biomeIndex].label;
+        }
+
+        currentBiomeId() {
+            return this._biomeChoices[this._biomeIndex].id;
+        }
+
+        setBiome(biomeId) {
+            const idx = this._biomeChoices.findIndex(b => b.id.toLowerCase() === String(biomeId).toLowerCase() || b.label.toLowerCase() === String(biomeId).toLowerCase());
+            if (idx >= 0) {
+                this._biomeIndex = idx;
+                this.redrawItem(1);
+            }
+        }
+
+        nextBiome() {
+            this._biomeIndex = (this._biomeIndex + 1) % this._biomeChoices.length;
+            SoundManager.playCursor();
+            this.redrawItem(1);
+        }
+
+        prevBiome() {
+            this._biomeIndex = (this._biomeIndex - 1 + this._biomeChoices.length) % this._biomeChoices.length;
+            SoundManager.playCursor();
+            this.redrawItem(1);
         }
 
         currentYear() {
@@ -434,8 +482,8 @@
             if (this._htmlInput) {
                 this._htmlInput.value = this._seedInput;
             }
-            this.redrawItem(2);
             this.redrawItem(3);
+            this.redrawItem(4);
         }
 
         randomizeSeed() {
@@ -460,7 +508,7 @@
             }
             this._copiedTimer = 90;
             SoundManager.playOk();
-            this.redrawItem(3);
+            this.redrawItem(4);
         }
 
         resolvedSeed() {
@@ -492,7 +540,7 @@
             if (this._yearInput) {
                 this._yearInput.value = String(this._year);
             }
-            this.redrawItem(1);
+            this.redrawItem(2);
         }
 
         open() {
@@ -540,7 +588,7 @@
                 e.stopPropagation();
                 if (e.key === "Enter") {
                     input.blur();
-                    this.select(4);
+                    this.select(5);
                 } else if (e.key === "Escape") {
                     input.blur();
                     this.processCancel();
@@ -570,12 +618,12 @@
                 }
                 input.value = String(this._year);
                 input.style.color = "transparent";
-                this.redrawItem(1);
+                this.redrawItem(2);
             });
             input.addEventListener("focus", () => {
                 input.style.color = "#a0f0ff";
-                this.select(1);
-                this.redrawItem(1);
+                this.select(2);
+                this.redrawItem(2);
                 try { input.select(); } catch (_) {}
             });
 
@@ -627,7 +675,7 @@
                 e.stopPropagation();
                 if (e.key === "Enter") {
                     input.blur();
-                    this.select(4);
+                    this.select(5);
                 } else if (e.key === "Escape") {
                     input.blur();
                     this.processCancel();
@@ -644,18 +692,18 @@
                 }
                 input.value = clean;
                 this._seedInput = clean;
-                this.redrawItem(2);
                 this.redrawItem(3);
+                this.redrawItem(4);
             });
             input.addEventListener("focus", () => {
                 input.style.color = "#a0f0ff";
-                this.select(2);
-                this.redrawItem(2);
+                this.select(3);
+                this.redrawItem(3);
                 try { input.select(); } catch (_) {}
             });
             input.addEventListener("blur", () => {
                 input.style.color = "transparent";
-                this.redrawItem(2);
+                this.redrawItem(3);
             });
 
             document.body.appendChild(input);
@@ -678,15 +726,15 @@
             const cRect = canvas && canvas.getBoundingClientRect ? canvas.getBoundingClientRect() : { left: 0, top: 0 };
             const isOpen = this.isOpen() && this.visible;
 
-            // Year input position
+            // Year input position (Row 2)
             if (this._yearInput) {
                 if (!isOpen) {
                     this._yearInput.style.display = "none";
                 } else {
                     this._yearInput.style.display = "block";
-                    const r1 = this.itemLineRect(1);
-                    const yInX = this.x + this.padding + r1.x + 154;
-                    const yInY = this.y + this.padding + r1.y + 3;
+                    const r2 = this.itemLineRect(2);
+                    const yInX = this.x + this.padding + r2.x + 154;
+                    const yInY = this.y + this.padding + r2.y + 3;
                     const yInW = 54;
                     const yInH = 26;
                     this._yearInput.style.left = `${cRect.left + yInX * scale}px`;
@@ -697,13 +745,13 @@
                 }
             }
 
-            // Seed input position
+            // Seed input position (Row 3)
             if (this._htmlInput) {
                 if (!isOpen) {
                     this._htmlInput.style.display = "none";
                 } else {
                     this._htmlInput.style.display = "block";
-                    const rect = this.itemLineRect(2);
+                    const rect = this.itemLineRect(3);
                     const labelWidth = 105;
                     const inputX = this.x + this.padding + rect.x + labelWidth;
                     const inputY = this.y + this.padding + rect.y + 3;
@@ -747,7 +795,7 @@
             if (this._copiedTimer > 0) {
                 this._copiedTimer--;
                 if (this._copiedTimer === 0) {
-                    this.redrawItem(3);
+                    this.redrawItem(4);
                 }
             }
             this._updateInputPosition();
@@ -757,10 +805,10 @@
             const prev = this.index();
             super.select(index);
             if (prev !== index) {
-                if (prev === 1 && this._yearInput && typeof document !== "undefined" && document.activeElement === this._yearInput) {
+                if (prev === 2 && this._yearInput && typeof document !== "undefined" && document.activeElement === this._yearInput) {
                     this._yearInput.blur();
                 }
-                if (prev === 2 && this._htmlInput && typeof document !== "undefined" && document.activeElement === this._htmlInput) {
+                if (prev === 3 && this._htmlInput && typeof document !== "undefined" && document.activeElement === this._htmlInput) {
                     this._htmlInput.blur();
                 }
                 if (prev >= 0) this.redrawItem(prev);
@@ -776,7 +824,7 @@
             const w = rect.width - 4;
             const h = rect.height - 4;
 
-            if (index === 2 || index === 3) {
+            if (index === 3 || index === 4) {
                 // Handled specifically in drawItem for custom input box and dual buttons
                 return;
             }
@@ -803,7 +851,7 @@
             this.contents.fontSize = 11;
             this.changeTextColor("#64748b");
             const w = this.innerWidth - 16;
-            this.drawText("— or leave blank for a random world —", 8, 154, w, "center");
+            this.drawText("— or leave blank for a random world —", 8, 190, w, "center");
         }
 
         drawItem(index) {
@@ -825,6 +873,16 @@
                 this.changeTextColor(isSelected ? "#a0f0ff" : "#cbd5e1");
                 this.drawText("►", rect.x + rect.width - 28, rect.y, 24, "center");
             } else if (index === 1) {
+                this.changeTextColor(isSelected ? "#a0f0ff" : "#ffffff");
+                this.drawText("Biome", rect.x + 8, rect.y, 100, "left");
+
+                this.changeTextColor(isSelected ? "#a0f0ff" : "#cbd5e1");
+                this.drawText("◄", rect.x + 105, rect.y, 24, "center");
+                this.changeTextColor(isSelected ? "#ffffff" : "#cbd5e1");
+                this.drawText(this.currentBiome(), rect.x + 130, rect.y, rect.width - 160, "center");
+                this.changeTextColor(isSelected ? "#a0f0ff" : "#cbd5e1");
+                this.drawText("►", rect.x + rect.width - 28, rect.y, 24, "center");
+            } else if (index === 2) {
                 this.changeTextColor(isSelected ? "#a0f0ff" : "#ffffff");
                 this.drawText("Starting Year", rect.x + 8, rect.y, 120, "left");
 
@@ -860,7 +918,7 @@
                 this.contents.fontSize = 14;
                 this.changeTextColor(isSelected ? "#a0f0ff" : "#94a3b8");
                 this.drawText("AD", rect.x + 238, rect.y, 28, "left");
-            } else if (index === 2) {
+            } else if (index === 3) {
                 this.changeTextColor(isSelected ? "#a0f0ff" : "#ffffff");
                 this.drawText("World Seed", rect.x + 8, rect.y, 100, "left");
 
@@ -890,7 +948,7 @@
                     this.changeTextColor("#64748b");
                     this.drawText("Random", boxX, rect.y, boxW, "center");
                 }
-            } else if (index === 3) {
+            } else if (index === 4) {
                 const bWidth = Math.floor((rect.width - 12) / 2);
                 const x1 = rect.x;
                 const w1 = bWidth;
@@ -939,7 +997,7 @@
                     this.changeTextColor(hasSeed ? "#cbd5e1" : "#475569");
                     this.drawText("📋 Copy Seed", x2, rect.y, w2, "center");
                 }
-            } else if (index === 4) {
+            } else if (index === 5) {
                 const x = rect.x + 4, y = rect.y + 2, w = rect.width - 8, h = rect.height - 4;
                 if (isSelected) {
                     this.contentsBack.gradientFillRect(x, y, w, h, "rgba(234, 179, 8, 0.45)", "rgba(161, 98, 7, 0.25)", false);
@@ -953,7 +1011,7 @@
                 }
                 this.contents.fontSize = 16;
                 this.drawText("Start", rect.x, rect.y, rect.width, "center");
-            } else if (index === 5) {
+            } else if (index === 6) {
                 const x = rect.x + 4, y = rect.y + 2, w = rect.width - 8, h = rect.height - 4;
                 if (isSelected) {
                     this.contentsBack.gradientFillRect(x, y, w, h, "rgba(0, 212, 255, 0.25)", "rgba(0, 140, 220, 0.10)", false);
@@ -994,8 +1052,14 @@
                     this.prevFaction();
                 }
             } else if (hitIndex === 1) {
-                const r1 = this.itemLineRect(1);
-                const clickX = localPos.x - this.padding - r1.x;
+                if (localPos.x >= 210) {
+                    this.nextBiome();
+                } else {
+                    this.prevBiome();
+                }
+            } else if (hitIndex === 2) {
+                const r2 = this.itemLineRect(2);
+                const clickX = localPos.x - this.padding - r2.x;
                 if (clickX >= 154 && clickX <= 208) {
                     if (this._yearInput) {
                         this._yearInput.focus();
@@ -1006,12 +1070,12 @@
                 } else {
                     this.changeYear(-1);
                 }
-            } else if (hitIndex === 2) {
+            } else if (hitIndex === 3) {
                 if (this._htmlInput) {
                     this._htmlInput.focus();
                 }
-            } else if (hitIndex === 3) {
-                const rect = this.itemLineRect(3);
+            } else if (hitIndex === 4) {
+                const rect = this.itemLineRect(4);
                 const bWidth = Math.floor((rect.width - 12) / 2);
                 const clickX = localPos.x - rect.x;
                 if (clickX <= bWidth) {
@@ -1021,12 +1085,12 @@
                     this._seedButtonCol = 1;
                     this.copySeed();
                 }
-            } else if (hitIndex === 4) {
+            } else if (hitIndex === 5) {
                 this.playOkSound();
                 this.updateInputData();
                 this.deactivate();
                 this.callHandler("embark");
-            } else if (hitIndex === 5) {
+            } else if (hitIndex === 6) {
                 this.processCancel();
             }
         }
@@ -1035,11 +1099,13 @@
             if (this.index() === 0) {
                 this.nextFaction();
             } else if (this.index() === 1) {
+                this.nextBiome();
+            } else if (this.index() === 2) {
                 this.changeYear(Input.isPressed("shift") ? 10 : 1);
-            } else if (this.index() === 3) {
+            } else if (this.index() === 4) {
                 this._seedButtonCol = 1;
                 SoundManager.playCursor();
-                this.redrawItem(3);
+                this.redrawItem(4);
             } else {
                 super.cursorRight(wrap);
             }
@@ -1049,18 +1115,20 @@
             if (this.index() === 0) {
                 this.prevFaction();
             } else if (this.index() === 1) {
+                this.prevBiome();
+            } else if (this.index() === 2) {
                 this.changeYear(Input.isPressed("shift") ? -10 : -1);
-            } else if (this.index() === 3) {
+            } else if (this.index() === 4) {
                 this._seedButtonCol = 0;
                 SoundManager.playCursor();
-                this.redrawItem(3);
+                this.redrawItem(4);
             } else {
                 super.cursorLeft(wrap);
             }
         }
 
         cursorPageup() {
-            if (this.index() === 1) {
+            if (this.index() === 2) {
                 this.changeYear(10);
             } else {
                 super.cursorPageup();
@@ -1068,7 +1136,7 @@
         }
 
         cursorPagedown() {
-            if (this.index() === 1) {
+            if (this.index() === 2) {
                 this.changeYear(-10);
             } else {
                 super.cursorPagedown();
@@ -1095,7 +1163,7 @@
             }
             if (this._year !== oldYear) {
                 SoundManager.playCursor();
-                this.redrawItem(1);
+                this.redrawItem(2);
             }
         }
 
@@ -1103,25 +1171,27 @@
             if (this.index() === 0) {
                 this.nextFaction();
             } else if (this.index() === 1) {
-                this.changeYear(1);
+                this.nextBiome();
             } else if (this.index() === 2) {
+                this.changeYear(1);
+            } else if (this.index() === 3) {
                 if (this._htmlInput) {
                     this._htmlInput.focus();
                 } else {
                     this.randomizeSeed();
                 }
-            } else if (this.index() === 3) {
+            } else if (this.index() === 4) {
                 if (this._seedButtonCol === 1) {
                     this.copySeed();
                 } else {
                     this.randomizeSeed();
                 }
-            } else if (this.index() === 4) {
+            } else if (this.index() === 5) {
                 this.playOkSound();
                 this.updateInputData();
                 this.deactivate();
                 this.callHandler("embark");
-            } else if (this.index() === 5) {
+            } else if (this.index() === 6) {
                 this.processCancel();
             }
         }
@@ -1603,8 +1673,16 @@
             scene._newGameSetupWindow.onTouchOk();
             t.check("touch_click_decrements_exactly_one", scene._newGameSetupWindow.currentFaction() === "Dwarf", "Clicking left arrow goes back exactly 1 faction");
 
-            // Test Year Adjustment and Clamping on Row 1
+            // Test Biome Carousel on Row 1
+            t.check("default_biome_temperate_meadow", scene._newGameSetupWindow.currentBiomeId() === "grassland_temperate", "Default biome is Temperate Meadow");
             scene._newGameSetupWindow.select(1);
+            scene._newGameSetupWindow.cursorRight();
+            t.check("biome_cycled_to_broadleaf", scene._newGameSetupWindow.currentBiomeId() === "forest_temperate_broadleaf", "Biome cycled to Temperate Forest");
+            scene._newGameSetupWindow.cursorLeft();
+            t.check("biome_cycled_back_to_meadow", scene._newGameSetupWindow.currentBiomeId() === "grassland_temperate", "Biome cycled back to Temperate Meadow");
+
+            // Test Year Adjustment and Clamping on Row 2
+            scene._newGameSetupWindow.select(2);
             scene._newGameSetupWindow.changeYear(50);
             t.check("year_adjusted_to_50", scene._newGameSetupWindow.currentYear() === 50, "Year stepped from 0 to 50 AD");
 
@@ -1624,29 +1702,29 @@
                 t.check("direct_year_input_clamped_999", scene._newGameSetupWindow.currentYear() === 999, "Direct numeric entry clamps to 999 AD");
             }
 
-            // Test touch click into year box (inside [154, 208])
-            const rectRow1 = scene._newGameSetupWindow.itemLineRect(1);
-            TouchInput._x = scene._newGameSetupWindow.x + scene._newGameSetupWindow.padding + rectRow1.x + 180;
-            TouchInput._y = scene._newGameSetupWindow.y + scene._newGameSetupWindow.padding + rectRow1.y + 12;
+            // Test touch click into year box on Row 2 (inside [154, 208])
+            const rectRow2 = scene._newGameSetupWindow.itemLineRect(2);
+            TouchInput._x = scene._newGameSetupWindow.x + scene._newGameSetupWindow.padding + rectRow2.x + 180;
+            TouchInput._y = scene._newGameSetupWindow.y + scene._newGameSetupWindow.padding + rectRow2.y + 12;
             scene._newGameSetupWindow.onTouchOk();
-            t.check("year_row_selected_on_touch", scene._newGameSetupWindow.index() === 1, "Clicking year box selects row 1");
+            t.check("year_row_selected_on_touch", scene._newGameSetupWindow.index() === 2, "Clicking year box selects row 2");
 
             // Verify 9 SRD Factions
             const expectedSrd = ["Human", "Elf", "Dwarf", "Halfling", "Gnome", "Dragonborn", "Half-Elf", "Half-Orc", "Tiefling"];
             t.check("faction_choices_9_srd", JSON.stringify(scene._newGameSetupWindow._factionChoices) === JSON.stringify(expectedSrd), "Faction choices strictly 9 SRD races: " + scene._newGameSetupWindow._factionChoices.join(", "));
 
-            // Verify World Seed Input & Controls
+            // Verify World Seed Input & Controls (Row 3 & Row 4)
             t.check("initial_seed_blank", scene._newGameSetupWindow.currentSeed() === "", "Initial seed is blank");
 
             scene._newGameSetupWindow.randomizeSeed();
             const rSeed = scene._newGameSetupWindow.currentSeed();
             t.check("seed_randomized", /^\d+$/.test(rSeed) && Number(rSeed) > 0, "Seed randomized into field: " + rSeed);
 
-            scene._newGameSetupWindow.select(2);
+            scene._newGameSetupWindow.select(3);
             await t.waitFrames(4);
             t.screenshot("live_deus_new_game_setup_seed_selected");
 
-            scene._newGameSetupWindow.select(3);
+            scene._newGameSetupWindow.select(4);
             await t.waitFrames(4);
             t.screenshot("live_deus_new_game_setup_buttons_selected");
 
@@ -1669,9 +1747,9 @@
             // Verify Fog of War is disabled per user directive
             t.check("default_fog_disabled", scene._newGameSetupWindow.currentFog() === false, "Default Fog of War is Disabled");
 
-            // Test Cancel action: click or trigger Cancel row (index 5)
+            // Test Cancel action: click or trigger Cancel row (index 6)
             TouchInput._x = scene._newGameSetupWindow.x + Math.round(scene._newGameSetupWindow.width / 2);
-            TouchInput._y = scene._newGameSetupWindow.y + 12 + 216 + 16;
+            TouchInput._y = scene._newGameSetupWindow.y + 12 + 250 + 16;
             scene._newGameSetupWindow.onTouchOk();
             await t.waitFrames(15);
             t.check("setup_window_closed_on_cancel", !scene._newGameSetupWindow.isOpen(), "Setup window closed on Cancel");
