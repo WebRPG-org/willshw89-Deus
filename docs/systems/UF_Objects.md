@@ -106,11 +106,13 @@ Project DEUS standardizes environmental objects and directional props on native 
 - **`!` Prefix Convention**: The `!` prefix enforces flush bottom ground anchoring in RMMZ (`ImageManager.isObjectCharacter`), avoiding the default 6-pixel upward shift applied to humanoid actors.
 
 ### Deterministic Variant Selection & Movement Invariance
-- Initial variant calculation is performed exactly once when an object instance is created:
+- Initial variant calculation is performed when an object is placed or spawned:
   ```js
-  object.visualVariant = computeInitialVisualVariant(worldSeed, objectId, canonicalAssetId, 8);
+  variant = computeInitialVisualVariant(worldSeed, `${levelKey}:${cellIdx}:${type.id}`, type.id, 8);
   ```
-- Selection algorithm uses deterministic FNV-1a hashing over `${worldSeed}:${objectId}:${canonicalAssetId}`.
-- **Movement Invariance**: Moving, hauling, or dropping a persistent object never recalculates `visualVariant`. Position `(x, y)` never enters the variant calculation for persistent entities.
-- **Save/Load Preservation**: `object.visualVariant` (and `object.orientation`) is serialized and deserialized across save games with exact byte-for-byte fidelity.
+- Selection algorithm uses deterministic FNV-1a hashing over `${worldSeed}:${objKey}:${canonicalAssetId}`.
+- Variants are stored in `World.state.objectVariants[levelKey][cellIndex]` and retrieved via `Objects.getVariantForCell(x, y, type)`.
+- `Sprite_UFObjectLayer._assign` assigns `s._ufVariant = getVariantForCell(x, y, type)` and caches frames by `${type.typeId}_${variant}` so `frameFor(type, bitmap, variant)` returns the exact variant block.
+- **Movement Invariance**: Persistent entities retain their `visualVariant` independently of movement.
+- **Save/Load Preservation**: `World.state.objectVariants` is automatically serialized and deserialized with `World.state` via standard RMMZ save/load mechanisms (`JsonEx`).
 

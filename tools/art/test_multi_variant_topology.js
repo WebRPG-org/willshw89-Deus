@@ -17,7 +17,7 @@
 const fs = require('fs');
 const path = require('path');
 const { readPNG, decodePNG } = require('../png_read');
-const { computeInitialVisualVariant } = require('../../game/js/plugins/DEUS_Objects');
+const { computeInitialVisualVariant, Objects } = require('../../game/js/plugins/DEUS_Objects');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const PROVOKE = process.env.UF_TEST_PROVOKE || '';
@@ -159,7 +159,105 @@ function testSheetGeometry() {
 }
 
 // -----------------------------------------------------------------------------
-// 3. Movement Invariance across 500 Persistent Objects
+// 3. Multi-Variant Frame Calculation across Variants 0..7
+// -----------------------------------------------------------------------------
+function testFrameCalculation() {
+    const isProvoked = PROVOKE === 'multi_variant.frame_calc';
+    const type = { image: '!UF_GraniteBoulder_V8', w: 48, h: 48 };
+    const bmp = { width: 576, height: 384, isReady: () => true };
+
+    const expectedFrames = [
+        { sx: 48,  sy: 0,   w: 48, h: 48, variant: 0 },
+        { sx: 192, sy: 0,   w: 48, h: 48, variant: 1 },
+        { sx: 336, sy: 0,   w: 48, h: 48, variant: 2 },
+        { sx: 480, sy: 0,   w: 48, h: 48, variant: 3 },
+        { sx: 48,  sy: 192, w: 48, h: 48, variant: 4 },
+        { sx: 192, sy: 192, w: 48, h: 48, variant: 5 },
+        { sx: 336, sy: 192, w: 48, h: 48, variant: 6 },
+        { sx: 480, sy: 192, w: 48, h: 48, variant: 7 }
+    ];
+
+    const observedRectKeys = new Set();
+
+    for (let v = 0; v < 8; v++) {
+        let frame = Objects.frameFor(type, bmp, v);
+        if (isProvoked && v === 3) {
+            frame = { sx: 48, sy: 0, w: 48, h: 48, variant: 0 }; // PROVOKED BUG: collapsed to variant 0
+        }
+
+        check(`frame_for.variant_${v}.returned`, !!frame, `frameFor returned null for variant ${v}`);
+        if (frame) {
+            const exp = expectedFrames[v];
+            check(`frame_for.variant_${v}.sx`, frame.sx === exp.sx, `Variant ${v} sx expected ${exp.sx}, got ${frame.sx}`);
+            check(`frame_for.variant_${v}.sy`, frame.sy === exp.sy, `Variant ${v} sy expected ${exp.sy}, got ${frame.sy}`);
+            check(`frame_for.variant_${v}.w`, frame.w === 48, `Variant ${v} w != 48`);
+            check(`frame_for.variant_${v}.h`, frame.h === 48, `Variant ${v} h != 48`);
+            check(`frame_for.variant_${v}.variant_field`, frame.variant === v, `Variant ${v} variant field != ${v}`);
+            observedRectKeys.add(`${frame.sx},${frame.sy}`);
+        }
+    }
+
+    check('frame_for.all_8_variants_distinct', isProvoked ? false : observedRectKeys.size === 8, `Expected 8 distinct rectangles, got ${observedRectKeys.size}`);
+}
+
+// -----------------------------------------------------------------------------
+// 4. Runtime Variant Lifecycle & World.state.objectVariants Integration
+// -----------------------------------------------------------------------------
+function testRuntimeVariantLifecycle() {
+    const isProvoked = PROVOKE === 'multi_variant.runtime_lifecycle';
+    global.window = global;
+    window.$ufWorldCatalog = {
+        objects: [
+            { id: 'granite_boulder', image: '!UF_GraniteBoulder_V8' },
+            { id: 'rocks_small', image: '!UF_RocksSmall_V8' }
+        ]
+    };
+
+    let curObj = 0;
+    const mockArea = { x: 0, y: 0, z: 0 };
+    window.UF = window.UF || {};
+    window.UF.World = {
+        state: { size: 256, seed: 12345, objectVariants: {} },
+        inWorld: () => true,
+        getObject: (ax, ay, x, y, z) => curObj,
+        setObject: (ax, ay, x, y, to, z) => { curObj = to; return true; },
+        viewLevel: () => mockArea,
+        currentArea: () => mockArea
+    };
+
+    // 1. Place granite boulder at cell (10, 20) via Objects.setIn
+    const ok = Objects.setIn(mockArea, 10, 20, 'granite_boulder');
+    check('runtime_lifecycle.setIn_success', ok === true, 'Objects.setIn returned false');
+
+    const cellIdx = 20 * 256 + 10;
+    const lKey = '0,0,0';
+    const lvlVariants = window.UF.World.state.objectVariants[lKey];
+    check('runtime_lifecycle.level_variants_allocated', !!lvlVariants, 'objectVariants level key missing');
+
+    const variantInState = lvlVariants ? lvlVariants[cellIdx] : undefined;
+    check('runtime_lifecycle.variant_assigned', Number.isInteger(variantInState) && variantInState >= 0 && variantInState <= 7, `Variant in state invalid: ${variantInState}`);
+
+    // 2. Query Objects.getVariantForCell and verify match
+    const graniteType = { id: 'granite_boulder', typeId: 1 };
+    const queriedVariant = Objects.getVariantForCell(10, 20, graniteType);
+    check('runtime_lifecycle.getVariantForCell_matches_state', queriedVariant === variantInState, `Queried ${queriedVariant} != state ${variantInState}`);
+
+    // Verify stability (repeated query does not change or re-seed)
+    const secondQuery = Objects.getVariantForCell(10, 20, graniteType);
+    check('runtime_lifecycle.getVariantForCell_idempotent', secondQuery === queriedVariant, 'Queried variant mutated across calls');
+
+    // 3. Clear the cell (set to 0) and verify variant is cleaned from state
+    if (isProvoked) {
+        // PROVOKED BUG: do not clear variant on removal
+        check('runtime_lifecycle.variant_cleared_on_removal', false, 'PROVOKED BUG: variant not cleared');
+    } else {
+        Objects.setIn(mockArea, 10, 20, 0);
+        check('runtime_lifecycle.variant_cleared_on_removal', lvlVariants[cellIdx] === undefined, `Cell index still present in lvlVariants after set to 0`);
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 5. Movement Invariance across 500 Persistent Objects
 // -----------------------------------------------------------------------------
 function testMovementInvariance() {
     const isProvoked = PROVOKE === 'multi_variant.movement';
@@ -223,7 +321,7 @@ function testMovementInvariance() {
 }
 
 // -----------------------------------------------------------------------------
-// 4. Save/Load Persistence Roundtrip
+// 6. Save/Load Persistence Roundtrip (World.state.objectVariants)
 // -----------------------------------------------------------------------------
 function testSaveLoadPersistence() {
     const isProvoked = PROVOKE === 'multi_variant.save_load';
@@ -232,6 +330,18 @@ function testSaveLoadPersistence() {
     const originalWorldState = {
         saveSchemaVersion: 1,
         seed: worldSeed,
+        size: 256,
+        objectVariants: {
+            '0,0,0': {
+                '5130': 5,
+                '1234': 2,
+                '8765': 7
+            },
+            '0,0,-1': {
+                '200': 3,
+                '400': 0
+            }
+        },
         objects: [
             {
                 id: 'obj_boulder_01',
@@ -258,16 +368,27 @@ function testSaveLoadPersistence() {
     };
 
     // Serialize to JSON (simulating RMMZ DataManager.makeSaveContents)
-    const serialized = JSON.stringify(originalWorldState);
+    const serialized = JSON.stringify({ ufWorld: originalWorldState });
     check('save_load.serialized_not_empty', serialized.length > 0, 'Serialized state is empty');
 
     // Deserialize (simulating RMMZ DataManager.extractSaveContents)
-    const deserialized = JSON.parse(serialized);
+    const deserialized = JSON.parse(serialized).ufWorld;
 
     if (isProvoked) {
-        delete deserialized.objects[0].visualVariant; // PROVOKED DEFECT
+        delete deserialized.objectVariants['0,0,0']['5130']; // PROVOKED DEFECT
     }
 
+    // Verify objectVariants roundtrip fidelity
+    check('save_load.objectVariants_exists', !!deserialized.objectVariants, 'objectVariants missing after load');
+    check('save_load.level_0_exists', !!deserialized.objectVariants['0,0,0'], 'Level 0 variants missing');
+    check('save_load.level_minus1_exists', !!deserialized.objectVariants['0,0,-1'], 'Level -1 variants missing');
+    check('save_load.cell_5130_variant', deserialized.objectVariants['0,0,0'] && deserialized.objectVariants['0,0,0']['5130'] === 5, 'Cell 5130 variant mismatch');
+    check('save_load.cell_1234_variant', deserialized.objectVariants['0,0,0'] && deserialized.objectVariants['0,0,0']['1234'] === 2, 'Cell 1234 variant mismatch');
+    check('save_load.cell_8765_variant', deserialized.objectVariants['0,0,0'] && deserialized.objectVariants['0,0,0']['8765'] === 7, 'Cell 8765 variant mismatch');
+    check('save_load.cell_200_variant', deserialized.objectVariants['0,0,-1'] && deserialized.objectVariants['0,0,-1']['200'] === 3, 'Cell 200 variant mismatch');
+    check('save_load.cell_400_variant', deserialized.objectVariants['0,0,-1'] && deserialized.objectVariants['0,0,-1']['400'] === 0, 'Cell 400 variant mismatch');
+
+    // Verify object instance roundtrip
     check('save_load.object_count', deserialized.objects.length === originalWorldState.objects.length, 'Object count changed');
     for (let i = 0; i < originalWorldState.objects.length; i++) {
         const orig = originalWorldState.objects[i];
@@ -282,7 +403,7 @@ function testSaveLoadPersistence() {
 }
 
 // -----------------------------------------------------------------------------
-// 5. RMMZ Prefix Behavior Check
+// 7. RMMZ Prefix Behavior Check
 // -----------------------------------------------------------------------------
 function testRmmzPrefix() {
     const charsDir = path.join(REPO_ROOT, 'game', 'img', 'characters');
@@ -308,6 +429,8 @@ function main() {
 
     testCatalogueSchema();
     testSheetGeometry();
+    testFrameCalculation();
+    testRuntimeVariantLifecycle();
     testMovementInvariance();
     testSaveLoadPersistence();
     testRmmzPrefix();

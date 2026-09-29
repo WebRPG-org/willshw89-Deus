@@ -129,6 +129,37 @@ function characterTarget(entry, grid, geometry) {
     };
 }
 
+// 8-character multi-variant sheets (576x384 px, 4x2 blocks of 144x192 px, 48x48 cells)
+function character8Target(entry, grid, geometry) {
+    const key = `${grid.fw}x${grid.fh}`;
+    const block = (geometry.rmmzCharacterBlocks || {})[key] || [144, 192];
+    const fileW = block[0] * RMMZ_MULTI_COLS; // 144 * 4 = 576
+    const fileH = block[1] * RMMZ_MULTI_ROWS; // 192 * 2 = 384
+    const rt = entry.runtime;
+    const n = RMMZ_MULTI_COLS * RMMZ_MULTI_ROWS; // 8 blocks
+    const index = (rt.index !== undefined && rt.index !== null) ? rt.index : 0;
+    if (!Number.isInteger(index) || index < 0 || index >= n) {
+        return { error: `character 8 index must be 0..${n - 1}, got ${JSON.stringify(index)}` };
+    }
+    if (entry.slot.w === fileW && entry.slot.h === fileH) {
+        return { type: `CHARACTER_8_SHEET_${key}`, fileW, fileH, x: 0, y: 0, w: fileW, h: fileH };
+    }
+    if (entry.slot.w === block[0] && entry.slot.h === block[1]) {
+        return {
+            type: `CHARACTER_8_BLOCK_${key}`, fileW, fileH,
+            x: (index % RMMZ_MULTI_COLS) * block[0],
+            y: Math.floor(index / RMMZ_MULTI_COLS) * block[1],
+            w: block[0], h: block[1]
+        };
+    }
+    return {
+        type: `CHARACTER_8_CELL_${key}`, fileW, fileH,
+        x: (index % RMMZ_MULTI_COLS) * block[0],
+        y: Math.floor(index / RMMZ_MULTI_COLS) * block[1],
+        w: entry.slot.w, h: entry.slot.h
+    };
+}
+
 // Face sheets: square cells, 4 across and 2 down (Window_Base.drawFace: faceIndex % 4, / 4). The
 // cell size is the entry's frame size, which must match the project's faceSize.
 function faceTarget(entry, grid) {
@@ -158,7 +189,7 @@ function frameGrid(entry) {
     return { cols, rows, fw: entry.slot.w / cols, fh: entry.slot.h / rows };
 }
 
-const RUNTIME_KINDS = ['NONE', 'RMMZ_TILESET', 'RMMZ_CHARACTER', 'RMMZ_FACE'];
+const RUNTIME_KINDS = ['NONE', 'RMMZ_TILESET', 'RMMZ_CHARACTER', 'RMMZ_CHARACTER_8', 'RMMZ_FACE'];
 
 // Maps every filled slot with a runtime target to its runtime file. Returns {errors, pending, files}.
 function runtimePlan(ctx, filled) {
@@ -174,6 +205,7 @@ function runtimePlan(ctx, filled) {
         if (rt.kind === 'RMMZ_TILESET') {
             target = rt.tileId === null || rt.tileId === undefined ? { pending: `no tileId in ${rel}` } : tilesetTarget(rt.tileId, ctx.geometry.tilePx);
         } else if (rt.kind === 'RMMZ_CHARACTER') target = characterTarget(entry, frameGrid(entry), ctx.geometry);
+        else if (rt.kind === 'RMMZ_CHARACTER_8') target = character8Target(entry, frameGrid(entry), ctx.geometry);
         else target = faceTarget(entry, frameGrid(entry));
         if (target.pending) { pending.push({ entryId: entry.id, slotId: entry.slot.slotId, kind: rt.kind, reason: target.pending }); continue; }
         if (target.error) { errors.push(`${entry.id}: ${target.error}`); continue; }
