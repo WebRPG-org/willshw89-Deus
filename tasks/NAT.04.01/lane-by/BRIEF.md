@@ -5,7 +5,7 @@
 - **Package**: Package 4: Geomorphology & Soil (Lean Natural World v1)
 - **Lane**: `lane-by`
 - **Branch**: `task/lane-by`
-- **Writer**: `minimax` (MiniMax M3)
+- **Writer**: `claude` (attempt 3, Owner-approved 2026-09-29 under AGENTS.md Rule 10; attempts 1–2 by `minimax` / `gemini` failed Grok review at `50c08991` and `97432c21`)
 - **Reviewer**: `grok` (Grok 4.7 Independent Reviewer)
 - **Governing Authorities**:
   - `DEC-037`: Natural World Phase Lock (Causal Chain: Physical Space -> Physical Matter -> Water -> Geomorphology/Soil -> Climate -> Flora -> Fauna -> Integrated Proof).
