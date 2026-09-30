@@ -515,3 +515,60 @@ On the pre-repair test file both commands exited 2: `target not found`. After th
 | `node tools/test_strata_cuts_and_caves.js` | 0 | 29 passed, 0 failed, 295.8 s, including `foreign_geometry_checksum`; nested fluid 36 passed; nested foundation 27 passed |
 
 `node tools/test_geology_strata.js --mutant` exits 1 (`surface_strata_valid`; the new outer-substrate check still passes). `node tools/test_geology_strata.js --mutant=no_world` exits 1 (harness: `DEUS_Levels.js` cannot read `Z_RANGES`).
+
+## FIX4 — BB-CODEX-03-R1, BB-CODEX-05, and startArea cache identity
+
+Writer: grok. Base: `bbedd4de` (Codex re-review FAIL). Code commit before this report: `2578d2c9`.
+
+### BB-CODEX-03-R1 — a foreign description's Z range is the volume's range
+
+A saved world stores bounds on `zRange: { zMin, zMax }`. `volumeOf` looked for flat `desc.zMin` / `desc.zMax` and otherwise used the live host `zrSync()`. `generateBaseline` then indexed that volume with the host's `zMin`. A legacy host (-2..+2) asked for a default-range target (-16..+15) threw `Cannot read properties of undefined (reading 'size')` at z=-3 and z=+3.
+
+`resolveDescZRange(desc)` now resolves, in order: flat `zMin`/`zMax`, `World.parseZRange(desc.zRange)`, the legacy range when the description has a seed and area counts but no usable `zRange` (a pre-WG.00.17 world), otherwise the live range. `generateBaseline` indexes with that range (`volumeOf(...)[z - r.zMin]`). `volumeOf` uses the same range for the cache key, `new Array(r.n)`, the level loop, and `materializeCaps`.
+
+`baseline()` copies `zRange: st.zRange` onto the descriptor it builds for a different seed. `checksumOf` does the same when it builds a descriptor from a numeric seed and the loaded world, so that partial descriptor is not read as a pre-WG.00.17 save. An explicit `worldDesc` is unchanged: its own `zRange` wins.
+
+`tools/test_strata_cuts_and_caves.js` check `foreign_z_range_checksum`: two New Games, seed 18, generator 5, size 256. The target vm leaves `DEUS_Z_RANGE` unset (`Z_RANGES.default`, -16..+15). The host vm is `legacy` (-2..+2). The call is `host.UF.Levels.checksum(z, 18, 5, target.UF.World.state)` for z in -3, +2, +3, compared with `target.UF.Levels.checksum(z)`.
+
+Before the repair (plugins at `bbedd4de`, the new check only):
+
+```
+FAIL foreign_z_range_checksum - generator 5, seed 18, size 256; default -16..15 (9422 ms) checksummed inside legacy host -2..2 (9630 ms); -3: 938f9dc5 via host undefined ERROR foreign Cannot read properties of undefined (reading 'size'); 2: 9998ffb2 via host 9998ffb2; 3: 7d1ab9f7 via host undefined ERROR foreign Cannot read properties of undefined (reading 'size')
+RESULT: 0 passed, 1 failed (exit 1)
+```
+
+After:
+
+```
+PASS foreign_z_range_checksum - generator 5, seed 18, size 256; default -16..15 (14357 ms) checksummed inside legacy host -2..2 (14232 ms); -3: 938f9dc5 via host 938f9dc5; 2: 9998ffb2 via host 9998ffb2; 3: 7d1ab9f7 via host 7d1ab9f7
+```
+
+Those three hashes are the ones the re-review recorded for the target's own checksums.
+
+### BB-CODEX-05 — `old_gen_cut` anchor matches the range index
+
+The anchor searched for `volumeOf(seed, gen, ax, ay, size)[z + 2]`. The line is now `volumeOf(seed, gen, ax, ay, size, desc)[z - r.zMin]`. The mutant still rewrites `FEATURE_GEN` to `4`.
+
+`node tools/test_strata_cuts_and_caves.js --mutant=old_gen_cut --quiet` — Node exit 1. 26 passed, 2 failed: `old_generator_unchanged`, `carve_only_removes`. Generator 4's strata differ from the post-WG.00.15 baseline on all five levels and it gains features.
+
+### Cache identity — `startArea`
+
+`kindGrid`, `volumeOf`, and `waterModels` omitted `startArea` even though climate and water sampling use it. Each key now ends with `@x,y`. `dims()` returns `startArea` so the water key can read it. A missing `startArea` on a levels descriptor is `{ x: 0, y: 0 }`.
+
+### Mutants required by the brief
+
+| Command | Node exit | Named failures |
+| --- | --- | --- |
+| `--mutant=old_gen_cut` | 1 | `old_generator_unchanged`, `carve_only_removes` |
+| `--mutant=no_features` | 1 | 16 checks, including `caves_on_all_levels` and `ground_holes` (12 passed) |
+| `--mutant=error_injected` | 1 | `no_errors` (`MUTANT error_injected` three times) and `foreign_z_range_checksum` (those two New Games also carve, so they log the same error) |
+
+### Gate output (this tree)
+
+| Command | Exit | Result |
+| --- | --- | --- |
+| `node tools/check_deus_syntax.js` | 0 | 60 plugin files, 0 errors |
+| `node tools/test_geology_strata.js` | 0 | 10 passed, 0 failed, including `coupled_outer_substrate` |
+| `node tools/test_historical_carrying_capacity.js` | 0 | 23 contracts, 5 packet checks, 8 mutants |
+| `node tools/test_strata_foundation.js` | 0 | 27 passed, 0 failed, 250.3 s, including `flag_absent_volume_cache` and `generation_deterministic` |
+| `node tools/test_strata_cuts_and_caves.js` | 0 | 30 passed, 0 failed, 346.7 s, including `foreign_geometry_checksum` and `foreign_z_range_checksum`; nested fluid 36 passed, 5/5 mutants; nested foundation 27 passed |
