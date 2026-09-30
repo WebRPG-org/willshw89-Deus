@@ -129,7 +129,7 @@ Every decision item recorded in this log must provide:
   - **Camera (Owner, 2026-09-29, "high topdown"):** every PixelLab prompt for every asset class (terrain tiles, objects, props, creatures) uses the PixelLab view setting **high top-down**. This is the one camera; `docs/art/DEUS_ASSET_STANDARD.md` AS-LOOK-001 / AS-PROJ-001 ("RMMZ standard top-down 3/4 view") describe the same camera as the engine presents it. Any note that says low top-down is superseded.
   - **Ground tile variants (Owner, 2026-09-29, "I want more variants of each type of tile so there's a gradient on the ground"):** each ground kind gets several tile variants, placed so the ground shifts gradually instead of repeating one stamp, while ground kinds stay distinguishable. Counts, format and placement rule to be recorded as their own decision once the design is settled.
 
-- **Amendment (2026-09-30, DEC-056): the PM chooses what goes in game.** Owner: "You can choose what goes in game, and if I want to change something I will bring it up". The Owner-YEA gate on art entering the game is replaced by a PM YEA with an Owner veto; see DEC-056.
+- **Amendment (2026-09-30, DEC-056): the PM chooses what art goes in game (art only).** Owner: "You can choose what goes in game, and if I want to change something I will bring it up". The Owner-YEA gate on art entering the game is replaced by a PM YEA with an Owner veto; see DEC-056.
 ---
 
 ### Decision `DEC-008`: Heavy-Job Cap Lifted & Power-Off Concurrency Tripwire
@@ -923,10 +923,10 @@ Every decision item recorded in this log must provide:
 
 ---
 
-### Decision `DEC-056`: The PM chooses what goes in game; the Owner can change it
+### Decision `DEC-056`: The PM chooses what ART goes in game; the Owner can change it
 - **Date:** 2026-09-30
 - **Source:** Owner, 2026-09-30, in chat with Claude Code, right after asking the PM to "fill what you can with the best specimens": "You can choose what goes in game, and if I want to change something I will bring it up".
-- **Ruling:** the PM (Claude) makes the final call on which assets enter the game. The Owner no longer has to sign off each asset first. The Owner may change any choice at any time; when the Owner raises one, the PM changes it.
+- **Ruling:** the PM (Claude) makes the final call on which ART assets enter the game. Clarified by the Owner the same day: "What goes in game in terms of art" and "I only meant art". The delegation covers art only; slices, rulings, designs, code and everything else stay with the Owner. The Owner no longer has to sign off each asset first. The Owner may change any choice at any time; when the Owner raises one, the PM changes it.
 - **How the PM decides:**
   - catalogue row first (DEC-007);
   - machine QA: size, camera, palette, seams, readability;
