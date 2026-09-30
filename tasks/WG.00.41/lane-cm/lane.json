@@ -6,7 +6,8 @@
   "reviewer": "grok",
   "allowedPaths": [
     "game/js/plugins/DEUS_Levels.js",
-    "tasks/WG.00.41/lane-cm/**"
+    "tasks/WG.00.41/lane-cm/**",
+    "tools/test_deep_cuts_and_mountain_cap_wg0041.js"
   ],
   "gateTests": [
     {
@@ -15,6 +16,34 @@
         "tools/check_deus_syntax.js"
       ],
       "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_deep_cuts_and_mountain_cap_wg0041.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_strata_foundation.js"
+      ],
+      "timeoutSec": 1800
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_geology_strata.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_strata_cuts_and_caves.js"
+      ],
+      "timeoutSec": 1800
     }
   ]
 }
