@@ -1,0 +1,52 @@
+You are Grok, the independent adversarial reviewer for Project DEUS.
+Your role: Reviewer on OPS.PRUNE.01 / lane-cq.
+Authority: DEC-034 independent cross-family review; docs/CANONICAL_ROLES.md.
+
+Task:
+Conduct an independent adversarial review of the FINAL tip on branch task/lane-cq (commit 45376e85521a9937be29bb4ba00b7897087b34ea).
+Worktree: C:\Users\snewt\.deus_worktrees\lane-cq
+
+Requirements:
+1. Verify git commit and diff:
+   - Check commit hash (45376e85521a9937be29bb4ba00b7897087b34ea).
+   - Check merge-base with origin/main.
+   - Verify every touched file is within allowedPaths:
+     - docs/STATUS.md
+     - docs/archive/STATUS_LEDGER_20260930.md
+     - tools/ops/gate_tests.json
+     - tools/test_control_board.js
+     - tasks/OPS.PRUNE.01/lane-cq/**
+   - Verify 0 edits to engine core (rmmz_*.js, main.js, libs/**).
+   - Verify 0 edits to art or catalogue.
+   - Verify 0 edits to civilization/factions.
+
+2. Code & Board Inspection:
+   - Inspect docs/STATUS.md: Rebuilt as 5 authoritative lists (Live, Frozen, In Review, Defect/Unproved, Archived).
+   - Inspect tools/test_control_board.js:
+     - Checks all live plugins in game/js/plugins.js and DEUS_Core companions are listed.
+     - Checks all archived files do not exist at original locations.
+     - Checks no unlisted or unregistered plugins are introduced to game/js/plugins/.
+     - Validates all 4 deliberate mutants fail.
+   - Inspect tools/ops/gate_tests.json: tools/test_control_board.js registered as 10th suite.
+
+3. Run Gate Tests in the worktree:
+   - node tools/check_deus_syntax.js
+   - node tools/test_control_board.js
+   - node tools/test_control_board.js --mutate=missing_live_plugin (must fail)
+   - node tools/test_control_board.js --mutate=archived_file_exists (must fail)
+   - node tools/test_control_board.js --mutate=unlisted_plugin_in_dir (must fail)
+   - node tools/test_control_board.js --mutate=missing_task_branch (must fail)
+
+4. Write formal review report to tasks/OPS.PRUNE.01/lane-cq/review_grok_45376e85.md with:
+   - Metadata (Writer: Gemini, Reviewer: Grok, Reviewed Commit: 45376e85521a9937be29bb4ba00b7897087b34ea, Branch: task/lane-cq, Worktree: C:\Users\snewt\.deus_worktrees\lane-cq)
+   - Commit & Diff Verification
+   - Path Boundary Check
+   - Code & Control Board Verification
+   - Gate Test Execution & Results
+   - Final verdict clearly stating: VERDICT: CLEAN PASS
+
+5. Commit and push only the review file:
+   git add tasks/OPS.PRUNE.01/lane-cq/review_grok_45376e85.md
+   git commit -m "[grok] OPS.PRUNE.01: independent review of lane-cq tip 45376e85"
+   git push origin task/lane-cq
+   Your final output line must be exactly: FINAL SHA: <sha> (pasted from git rev-parse HEAD after the push).
