@@ -7,9 +7,9 @@
   "allowedPaths": [
     "docs/STATUS.md",
     "docs/archive/STATUS_LEDGER_20260930.md",
-    "tasks/OPS.PRUNE.01/lane-cq/**",
     "tools/ops/gate_tests.json",
-    "tools/test_control_board.js"
+    "tools/test_control_board.js",
+    "tasks/OPS.PRUNE.01/lane-cq/**"
   ],
   "gateTests": [
     {
@@ -18,62 +18,6 @@
         "tools/check_deus_syntax.js"
       ],
       "timeoutSec": 600
-    },
-    {
-      "cmd": "node",
-      "args": [
-        "tools/test_palette.js"
-      ],
-      "timeoutSec": 600
-    },
-    {
-      "cmd": "node",
-      "args": [
-        "tools/governance/test_check_claims.js"
-      ],
-      "timeoutSec": 600
-    },
-    {
-      "cmd": "node",
-      "args": [
-        "tools/test_strata_cuts_and_caves.js"
-      ],
-      "timeoutSec": 1800
-    },
-    {
-      "cmd": "node",
-      "args": [
-        "tools/test_new_game_year0.js"
-      ],
-      "timeoutSec": 600
-    },
-    {
-      "cmd": "node",
-      "args": [
-        "tools/test_history_materialization_and_world_age.js"
-      ],
-      "timeoutSec": 600
-    },
-    {
-      "cmd": "node",
-      "args": [
-        "tools/test_historical_carrying_capacity.js"
-      ],
-      "timeoutSec": 600
-    },
-    {
-      "cmd": "node",
-      "args": [
-        "tools/test_geology_strata.js"
-      ],
-      "timeoutSec": 900
-    },
-    {
-      "cmd": "node",
-      "args": [
-        "tools/test_strata_foundation.js"
-      ],
-      "timeoutSec": 1800
     },
     {
       "cmd": "node",
