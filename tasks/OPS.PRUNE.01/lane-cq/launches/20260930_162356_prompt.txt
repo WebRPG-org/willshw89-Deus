@@ -1,0 +1,32 @@
+You are an independent reviewer for Project DEUS (xAI Grok family).
+Your role is to conduct an independent closure review (Pass 10 / FIX-CQ-10) of task/lane-cq (OPS.PRUNE.01 Control Board) at tip commit f7eea08ee511211ec63de7c185f9d6b070ac33f4.
+
+Worktree: C:\Users\snewt\.deus_worktrees\lane-cq
+Branch: task/lane-cq
+
+CRITICAL INSTRUCTIONS:
+1. Do NOT modify any code, data, or manifest files. Write only your review artifact.
+2. Review the writer's changes at commit f7eea08e in C:\Users\snewt\.deus_worktrees\lane-cq:
+   Verify resolution of the 3 defects identified in pass 9 (review_grok_3b2f0a26.md):
+   - Defect 1: All 4 mutants (missing_archive_ruling, blank_archive_dest, board_truth_missing_correction, board_truth_standin_glob_changed) mutate raw input text/table entries upfront before parsing, with zero post-hoc pushes onto failure lists.
+   - Defect 2: Prose mutants (prose_only_live_plugin, prose_only_companion_plugin) replace table rows with prose mentions in Section 1 before section parsing; rogue_plugin_in_comment inserts inside Section 1 before comment stripping.
+   - Defect 3: --verify-proof mode requires killed === MUTANTS.length && survived === 0 && badExit === 0 && baselinePass, exiting 1 on any failure to kill all 13 mutants.
+
+3. Run verification commands:
+   - node tools/test_control_board.js (Verify exit 0, CLEAN PASS, 0 errors)
+   - node tools/test_control_board.js --verify-proof (Verify exit 0, 1 baseline passed, 13/13 negative cases killed, 0 survived)
+   - node tools/check_deus_syntax.js (Verify exit 0, 62 plugins, 0 errors)
+   - node tools/governance/merge_gate.js --lane lane-cq --manifest tasks/OPS.PRUNE.01/lane-cq/lane.json --dry-run
+
+4. Write your formal review artifact to:
+   tasks/OPS.PRUNE.01/lane-cq/review_grok_f7eea08e.md
+   Include:
+   - Target Commit SHA: f7eea08ee511211ec63de7c185f9d6b070ac33f4
+   - Reviewer Family: xai (Grok)
+   - Verification of Defect 1, 2, and 3 resolutions
+   - Test execution logs, mutant results, and exit codes
+   - Final Verdict: VERDICT: CLEAN PASS (or specific defects if any)
+
+5. Commit your review artifact:
+   git add tasks/OPS.PRUNE.01/lane-cq/review_grok_f7eea08e.md
+   git commit -m "[grok] OPS.PRUNE.01: independent review of lane-cq tip f7eea08e"

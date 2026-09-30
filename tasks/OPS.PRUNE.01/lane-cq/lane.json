@@ -1,0 +1,31 @@
+{
+  "lane": "lane-cq",
+  "taskId": "OPS.PRUNE.01",
+  "branch": "task/lane-cq",
+  "writer": "gemini",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "docs/STATUS.md",
+    "docs/archive/STATUS_LEDGER_20260930.md",
+    "tools/ops/gate_tests.json",
+    "tools/ops/active_lanes.json",
+    "tools/test_control_board.js",
+    "tasks/OPS.PRUNE.01/lane-cq/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_control_board.js"
+      ],
+      "timeoutSec": 600
+    }
+  ]
+}
