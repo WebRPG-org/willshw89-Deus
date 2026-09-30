@@ -2559,7 +2559,7 @@
         // WG.00.41: DEC-030's 3x3 grid (and later, larger grids) needs every area of the world to fit at once, or
         // ensureWorldLevels and checksumOf (each looping every area for every core level) evict and regenerate the
         // same areas' full volumes over and over. VOLUME_KEEP alone (3) is still the floor for a 1x1/legacy world.
-        const keep = Math.max(VOLUME_KEEP, st && st.areasX ? st.areasX * st.areasY : 1);
+        const keep = Math.max(VOLUME_KEEP, areasX * areasY);
         while (volumes.size > keep) volumes.delete(volumes.keys().next().value);
         return v;
     }
