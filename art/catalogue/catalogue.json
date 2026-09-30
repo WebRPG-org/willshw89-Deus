@@ -19,7 +19,7 @@
   },
   "sources": [
     {"path":"AGENTS.md","sha256":"9bfacc388e5bfac466819407fda67cbc650bee7f51febd589748535383bf2196","role":"CITED"},
-    {"path":"art/APPROVALS.md","sha256":"6f8c0163919e17ec7e28b7e9ad9e1b8687942bcd2ace7c3317a373b7a7a9499b","role":"CITED"},
+    {"path":"art/APPROVALS.md","sha256":"a307299efb86e354567a504edb4e81a1ca06b3af958d1fb3876c46c97d0938e5","role":"CITED"},
     {"path":"art/catalogue/conflict_claims.json","sha256":"40a1b724a174f94035294805bc163850c4c54fb8672f96bc7fbf92892190cf09","role":"CONFLICT_CLAIMS"},
     {"path":"art/catalogue/geometry.json","sha256":"e6160905b50d025e8b8c68d4f38da2be1e9b45fd90560b78781da02cc8be9c6f","role":"CITED+GEOMETRY"},
     {"path":"art/catalogue/mapping.json","sha256":"7731ee1f18bc2cdb284ab958bdb956860e125763a2bbb106089ecf91e4774e7d","role":"MAPPING"},
