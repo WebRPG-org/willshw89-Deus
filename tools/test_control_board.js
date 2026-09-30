@@ -60,7 +60,7 @@ for (const arg of args) {
 }
 
 if (verifyProofMode) {
-    console.log("=== Acceptance Evidence & Proof Verification (FIX-CQ-9 Item 4) ===");
+    console.log("=== Acceptance Evidence & Proof Verification (FIX-CQ-10 Item 4) ===");
     // 1. Run baseline
     let baselinePass = false;
     try {
@@ -68,35 +68,46 @@ if (verifyProofMode) {
         if (out.includes("CONTROL BOARD VALIDATION: CLEAN PASS")) {
             baselinePass = true;
             console.log("  [OK] Baseline check on final tip: PASSED (0 errors)");
+        } else {
+            console.error("  [FAIL] Baseline output did not include clean pass confirmation");
         }
     } catch (err) {
         console.error("  [FAIL] Baseline failed:", err.message);
         process.exit(1);
     }
 
+    if (!baselinePass) {
+        console.error("FAIL: Baseline check failed to pass cleanly.");
+        process.exit(1);
+    }
+
     // 2. Run all negative cases
     let killed = 0;
+    let survived = 0;
+    let badExit = 0;
     for (const mutant of MUTANTS) {
         try {
             execFileSync(process.execPath, [__filename, `--mutant=${mutant}`], { stdio: "pipe" });
             console.error(`  [FAIL] Mutant ${mutant} unexpectedly passed (exit 0)`);
+            survived++;
         } catch (err) {
             if (err.status === 1) {
                 killed++;
                 console.log(`  [OK] Mutant ${mutant} correctly failed with exit 1`);
             } else {
                 console.error(`  [FAIL] Mutant ${mutant} failed with non-1 status (${err.status})`);
+                badExit++;
             }
         }
     }
 
-    if (killed < 4) {
-        console.error(`FAIL: Insufficient negative cases killed (${killed} < 4)`);
+    if (killed !== MUTANTS.length || survived > 0 || badExit > 0) {
+        console.error(`FAIL: Mutant kill requirements not met (${killed}/${MUTANTS.length} killed, ${survived} survived, ${badExit} bad exit)`);
         process.exit(1);
     }
 
     console.log(`-----------------------------------------------------`);
-    console.log(`PROOF VERIFICATION: 1 baseline passed, ${killed}/${MUTANTS.length} negative cases killed, 0 survived.`);
+    console.log(`PROOF VERIFICATION: 1 baseline passed, ${killed}/${MUTANTS.length} negative cases killed, ${survived} survived.`);
     process.exit(0);
 }
 
@@ -116,7 +127,7 @@ function check(desc, ok, details = "") {
     }
 }
 
-console.log("=== Control Board & Anti-Regression Verification (FIX-CQ-9) ===");
+console.log("=== Control Board & Anti-Regression Verification (FIX-CQ-10) ===");
 if (activeMutant) {
     console.log(`[MUTANT MODE ACTIVE: ${activeMutant}]`);
 }
@@ -128,11 +139,46 @@ if (!fs.existsSync(STATUS_PATH)) {
 }
 let rawStatusText = fs.readFileSync(STATUS_PATH, "utf8");
 
+// Mutants that alter STATUS.md content before comment stripping and section parsing:
+if (activeMutant === "missing_live_plugin") {
+    // Remove DEUS_Core table row from Section 1 table
+    rawStatusText = rawStatusText.replace(/\|[^\n]*`DEUS_Core`[^\n]*\n/g, "");
+}
+if (activeMutant === "prose_only_live_plugin") {
+    // Replace DEUS_Core table row with a prose mention only
+    rawStatusText = rawStatusText.replace(/\|[^\n]*`DEUS_Core`[^\n]*\n/g, "\nProse mention: `DEUS_Core.js` is an important engine module.\n");
+}
+if (activeMutant === "prose_only_companion_plugin") {
+    // Replace DEUS_Containers companion table row with a prose mention only
+    rawStatusText = rawStatusText.replace(/\|[^\n]*`DEUS_Containers`[^\n]*\n/g, "\nProse mention: `DEUS_Containers.js` is loaded by DEUS_Core.\n");
+}
 if (activeMutant === "rogue_plugin_in_comment") {
-    // Inject comment-wrapped table and list rows plus prose warning
-    rawStatusText += "\n<!-- | `DEUS_RogueScript.js` | `game/js/plugins/DEUS_RogueScript.js` | live | -->\n";
-    rawStatusText += "\n<!-- - `DEUS_RogueScript.js` -->\n";
-    rawStatusText += "\nWarning: DEUS_RogueScript.js observed in directory.\n";
+    // Inject comment-wrapped table and list rows INSIDE Section 1 before comment stripping
+    rawStatusText = rawStatusText.replace(/(##\s+1\.\s+Live Systems[\s\S]*?\n)/, "$1<!-- | `DEUS_RogueScript` | `game/js/plugins/DEUS_RogueScript.js` | rogue script | -->\n<!-- - `DEUS_RogueScript.js` -->\nWarning: `DEUS_RogueScript.js` observed in directory.\n");
+}
+if (activeMutant === "missing_archive_ruling") {
+    // Inject an invalid ruling into Section 5 table
+    rawStatusText = rawStatusText.replace(/(##\s+5\.\s+Archived Systems[\s\S]*?\|[^\n]*\n\|[^\n]*\n)/, "$1| `game/js/plugins/DEUS_Fake.js` | `archive/plugins/DEUS_Fake.js` | NOT APPROVED |\n");
+}
+if (activeMutant === "blank_archive_dest") {
+    // Inject a blank archive destination into Section 5 table
+    rawStatusText = rawStatusText.replace(/(##\s+5\.\s+Archived Systems[\s\S]*?\|[^\n]*\n\|[^\n]*\n)/, "$1| `game/js/plugins/DEUS_FakeBlank.js` | | Owner 2026-09-30 prune ruling |\n");
+}
+if (activeMutant === "archived_file_exists") {
+    // Inject an existing file into Section 5 table
+    rawStatusText = rawStatusText.replace(/(##\s+5\.\s+Archived Systems[\s\S]*?\|[^\n]*\n\|[^\n]*\n)/, "$1| `game/js/plugins/DEUS_Core.js` | `archive/plugins/DEUS_Core.js` | Owner 2026-09-30 prune ruling |\n");
+}
+if (activeMutant === "missing_in_archive") {
+    // Inject a non-existent archive destination into Section 5 table
+    rawStatusText = rawStatusText.replace(/(##\s+5\.\s+Archived Systems[\s\S]*?\|[^\n]*\n\|[^\n]*\n)/, "$1| `game/js/plugins/non_existent_fake_orig.js` | `archive/plugins/non_existent_fake_arch.js` | Owner 2026-09-30 prune ruling |\n");
+}
+if (activeMutant === "board_truth_missing_correction") {
+    // Remove the legacy unresolved issues row from Section 4 table
+    rawStatusText = rawStatusText.replace(/\|[^\n]*Legacy unresolved issues[^\n]*\n/gi, "");
+}
+if (activeMutant === "board_truth_standin_glob_changed") {
+    // Alter the canonical $U7_* pattern in Stand-ins section
+    rawStatusText = rawStatusText.replace(/\$U7_\*/g, "$U7_CHANGED_NOT_MATCHING");
 }
 
 // Strip HTML comments before parsing sections and tables so comments can NEVER inject authorized entries
@@ -211,22 +257,6 @@ for (const r of sec1Rows) {
         explicitLivePlugins.add(base);
         explicitLivePlugins.add(path.basename(filePath));
     }
-}
-
-// Mutant injections for Check 1
-if (activeMutant === "missing_live_plugin") {
-    explicitLivePlugins.delete("DEUS_Core");
-    explicitLivePlugins.delete("DEUS_Core.js");
-}
-if (activeMutant === "prose_only_live_plugin") {
-    explicitLivePlugins.delete("DEUS_Core");
-    explicitLivePlugins.delete("DEUS_Core.js");
-    sec1Text += "\nProse mention: DEUS_Core is an important engine module.\n";
-}
-if (activeMutant === "prose_only_companion_plugin") {
-    explicitLivePlugins.delete("DEUS_Containers");
-    explicitLivePlugins.delete("DEUS_Containers.js");
-    sec1Text += "\nProse mention: DEUS_Containers is loaded by DEUS_Core.\n";
 }
 
 let missingLive = [];
@@ -347,20 +377,6 @@ for (const parts of sec5Rows) {
     } else {
         archivedRows.push({ orig, arch, ruling });
     }
-}
-
-// Mutants for Check 4
-if (activeMutant === "missing_archive_ruling") {
-    malformedArchivedRows.push({ orig: "game/js/plugins/DEUS_Fake.js", arch: "archive/plugins/DEUS_Fake.js", ruling: "NOT APPROVED" });
-}
-if (activeMutant === "blank_archive_dest") {
-    malformedArchivedRows.push({ orig: "game/js/plugins/DEUS_Agriculture.js", arch: "", ruling: "Owner 2026-09-30 prune ruling" });
-}
-if (activeMutant === "archived_file_exists") {
-    archivedRows.push({ orig: "game/js/plugins/DEUS_Core.js", arch: "archive/plugins/DEUS_Core.js", ruling: "Owner 2026-09-30 prune ruling" });
-}
-if (activeMutant === "missing_in_archive") {
-    archivedRows.push({ orig: "game/js/plugins/non_existent_fake_orig.js", arch: "archive/plugins/non_existent_fake_arch.js", ruling: "Owner 2026-09-30 prune ruling" });
 }
 
 check("Section 5 (Archived Systems) discovery found archived rows (>0)", archivedRows.length > 0, `Count: ${archivedRows.length}`);
@@ -490,18 +506,10 @@ for (const p of requiredStandInPatterns) {
     }
 }
 
-if (activeMutant === "board_truth_standin_glob_changed") {
-    boardTruthErrors.push("Stand-ins section missing canonical token/glob for $U7_* person sheets");
-}
-
 // 6. Section 4 must contain legacy unresolved issues row
 const legacyRow = sec4Rows.find(r => (r[0] || "").toLowerCase().includes("legacy unresolved") || (r[2] || "").toLowerCase().includes("legacy unresolved"));
 if (!legacyRow || !/closure UNVERIFIED/i.test(legacyRow[2] || "")) {
     boardTruthErrors.push("Section 4 missing 'Legacy unresolved issues (ledger section 4): closure UNVERIFIED' row");
-}
-
-if (activeMutant === "board_truth_missing_correction") {
-    boardTruthErrors.push("Mutant injected: missing board truth correction");
 }
 
 check(
