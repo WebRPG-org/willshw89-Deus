@@ -906,3 +906,16 @@ Every decision item recorded in this log must provide:
 - **Kept as written:** Owner quotes and dated decision-log lines that used "Emrys" are records of what was said and stay verbatim. Archived PixelLab prompt records under art/staging keep the text that was actually sent.
 - **Synced now:** VISION V154 row; docs/lore/EMRYS_LORE.md renamed to docs/lore/EMERYS_LORE.md; docs/art/cards/TEMPERATE_BATCH1_PROMPTS.md; DEC-053 and the prompt-structure text in this file.
 - **Synced next:** docs/art/cards/TEMPERATE_BATCH1_GENERATIONS.md, after lane-cs2 (which edits that file) merges, so the two changes do not collide.
+
+---
+
+### Decision `DEC-055`: Organize the assets around what PixelLab produces
+- **Date:** 2026-09-30
+- **Source:** Owner, 2026-09-30, in chat with Claude Code: "Lets organize our assets to make best use of our pixellab outputs instead of trying to conform pixellab into other things".
+- **Ruling:** the asset pipeline, catalogue and engine take PixelLab's outputs in the forms PixelLab makes them, instead of converting them into other formats. Examples include each tool's tile sets, transition sets, object sprites at their generated sizes, and their variants. The engine and the catalogue adapt to the art; the art is not reshaped to fit a format chosen beforehand.
+- **Held now, pending the design:** any work that converts PixelLab output into another shape. That covers:
+  - tool-tiling a ground tile into an RMMZ A2 autotile block;
+  - forcing sprites into fixed cells or repacked sheets for the game;
+  - the lane-cv meadow A2 block board.
+  Owner review boards that show PixelLab output as it is (for example the A2 object contact sheets) continue.
+- **Design:** the braintrust designs the PixelLab-native organization: the tool-by-tool output forms, the catalogue schema, how the engine renders them (ground transitions, object sprites, depth pieces), and what earlier rules change. The Owner approves it. Until then, earlier art rules that assume a conversion (A2 blocks, derived autotiles, fixed cell sizes) are on hold, not deleted.

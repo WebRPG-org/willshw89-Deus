@@ -1,5 +1,7 @@
 # Temperate biome: art still needed (static, no animation)
 
+> **DEC-055 (Owner, 2026-09-30): organize assets around PixelLab's own outputs.** The formats below (A2 autotile blocks, derived tiles, fixed cell sizes) assume conversions that are now on hold. The braintrust is redesigning this list around what each PixelLab tool produces; counts and sizes here will change.
+
 Compiled by Claude (PM) on 2026-09-30 from `art/catalogue/catalogue.json`, the generation cards (`docs/art/cards/TEMPERATE_BATCH1_GENERATIONS.md`, as fixed by CARDS-1), DEC-045 and the DEC-046 static-first amendment. The Owner generates all art (DEC-007); every row here needs a catalogue row before generation and the Owner's YEA before it enters the game.
 
 - **Scope:** the TEMPERATE family's surface (Lowlands) plus the underground floors beneath it.
