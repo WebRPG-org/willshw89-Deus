@@ -35,6 +35,8 @@
  *   save_load_strata_hp           strata and HP survive DataManager save/load
  *   unchanged_terrain_regenerates only changed cells are saved; a fresh new game regenerates the new game; a flag-absent
  *                                 save regenerates the old roll; setting a cell back to its baseline drops the record
+ *   flag_absent_volume_cache      generator 5, same seed: a flag-absent save loaded while a coupled volume is cached
+ *                                 regenerates the uncoupled checksum (the absent flag is not a coupled cache key)
  *   fluid_adapter                 0..7 <-> 0..5 tables, passage bits, FLUID_k_OF_5, deterministic
  *   no_allocation_queries         2,000,000 adapter queries: no garbage collection, heap growth < 1 B per query
  *   query_cost                    ns per shapeCodeAt, pre-strata code vs strata (same cells; reported, bound 2000 ns)
@@ -907,6 +909,56 @@ guard("unchanged_terrain_regenerates", () => {
         `flag-absent save (flag ${st3.verticalBiomeCoupling === undefined ? "absent" : st3.verticalBiomeCoupling}) equals the old roll ${sameOld}` +
         `${mutant === "old_save_as_new_game" ? "; mutant requires that save to equal the new game " + sameBase : ""}; ` +
         `+1 (${r.x},${r.y}) set back to its baseline (5 air): record dropped ${dropped}`);
+});
+// Generator 5 keeps a volume cache keyed by seed and geometry. An absent coupling flag must not reuse a coupled volume.
+guard("flag_absent_volume_cache", () => {
+    const seed = 20260923;
+    const vm = setup(currentSources(), "gen5-cache", "legacy");
+    const Lv = vm.UF.Levels, Wv = vm.UF.World;
+    vm.UF.NewGameSetup = { seed, year: 1, levelsGen: 5 };
+    const make = coupling => {
+        const st = {
+            version: 4,
+            zRange: { zMin: -2, zMax: 2 },
+            seed,
+            areasX: 1,
+            areasY: 1,
+            size: 64,
+            startArea: { x: 0, y: 0 },
+            units: {},
+            nextUnitId: 1,
+            diffs: {},
+            objectDiffs: {},
+            levels: {}
+        };
+        if (coupling !== undefined) st.verticalBiomeCoupling = coupling;
+        Wv.state = st;
+        vm.UF.Events.emit("world:initializing", st);
+        return st;
+    };
+    Lv.discardBaselineCache();
+    make(true);
+    const coupled = Lv.checksum(-1);
+    Lv.discardBaselineCache();
+    make(false);
+    const uncoupled = Lv.checksum(-1);
+    Lv.discardBaselineCache();
+    make(true);
+    const warmed = Lv.checksum(-1);
+    const json = saveJson(vm);
+    const loaded = loadJson(vm, json, w => { delete w.verticalBiomeCoupling; });
+    const warm = Lv.checksum(-1);
+    const flagAbsent = loaded.verticalBiomeCoupling === undefined;
+    const couplingOff = Lv.verticalCouplingOn() === false;
+    const gen5 = !!(loaded.levels && loaded.levels["-1"] && loaded.levels["-1"].gen === 5);
+    Lv.discardBaselineCache();
+    const cold = Lv.checksum(-1);
+    const separated = coupled !== "n/a" && uncoupled !== "n/a" && coupled !== uncoupled;
+    const ok = separated && flagAbsent && couplingOff && gen5 && warmed === coupled && warm === uncoupled && cold === uncoupled;
+    check("flag_absent_volume_cache", ok,
+        `generator 5, seed ${seed}, 64x64, legacy range: coupled ${coupled}, explicit uncoupled ${uncoupled}, coupled again ${warmed}; ` +
+        `flag-absent load while that coupled volume is cached ${warm} (flag ${flagAbsent ? "absent" : loaded.verticalBiomeCoupling}, verticalCouplingOn ${Lv.verticalCouplingOn()}, gen5 ${gen5}), ` +
+        `same load after discardBaselineCache ${cold}`);
 });
 guard("fluid_adapter", () => {
     const f2s = [0, 1, 2, 3, 4, 5, 6, 7].map(L.fluidDepthToStrata), s2f = [0, 1, 2, 3, 4, 5].map(L.strataToFluidDepth);

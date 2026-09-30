@@ -466,3 +466,52 @@ FIX2 widened `allowedPaths` to include `tools/test_strata_foundation.js` and did
 ## PROPOSED-BB-03
 
 Repair `tools/test_strata_cuts_and_caves.js` the same way this lane repaired `tools/test_strata_foundation.js`. On this tip the command exits 1 with seven failures: `deterministic_same_seed`, `old_generator_unchanged`, `cave_overburden`, `roof_breach`, `clearance_4_5_more`, `clearance_stops_at_fluid`, `no_parallel_authority`. The nested `foundation_suite` is green. The file is not in this lane's `allowedPaths`. Detail and the deciding doc lines are in `escalation.md`. Do not weaken those checks.
+
+## FIX3 — Codex findings BB-CODEX-01..04 on 6dd500c3
+
+Writer: grok. Base under review: `6dd500c3`. Each new check was run against the plugins at that commit (fail) and again after the repair (pass). The official gate commands below were run on the repaired tree.
+
+### BB-CODEX-01 — live biome readers pass the world description
+
+`kindGrid` returns null when its fourth argument is missing. `columnBiomeId` and the outer-underground fallback in `biomeCodeAt` now pass the loaded world (`st` / `W.state`).
+
+`tools/test_geology_strata.js` check `coupled_outer_substrate`: seed 18, size 256, 1x1, start area `{0,0}`, coupling on, z range -16..+15, level 0 generator 4. `Levels.columnBiomeId(100, 100, z)` and `Levels.biomeAt` at that cell.
+
+Before the repair the other nine checks passed and this one failed: column and biomeAt were null at -3, -9, and -16. After: Z-3 `rooted_loam`, Z-9 `deep_mine_belt`, Z-16 `deep_mine_belt`. Suite result: 10 passed, 0 failed.
+
+### BB-CODEX-02 — generator-5 volume cache treats an absent coupling flag as uncoupled
+
+`volumeOf` keyed an absent `verticalBiomeCoupling` as coupled (`true`). It now uses `couplingActive(desc)`, so an absent flag is 0, the same rule as the live readers. The fallback object used when no description is passed still sets `verticalBiomeCoupling: true`.
+
+`tools/test_strata_foundation.js` check `flag_absent_volume_cache`: generator 5, seed 20260923, 64x64, legacy range -2..+2, own vm. Coupled Z-1 checksum `57a53a88`. Explicit uncoupled `d5c6326e`. A flag-absent save loaded while the coupled volume is still cached, then the same load after `discardBaselineCache`.
+
+Before the repair the warm load returned `57a53a88` (the coupled volume) and the cold load returned `d5c6326e`. After, both the warm load and the cold load return `d5c6326e`. The flag is absent, `verticalCouplingOn()` is false, and level -1 is generator 5.
+
+### BB-CODEX-03 — a foreign checksum samples that world's areas and ground climate
+
+`checksumOf` now walks `desc.areasX` / `desc.areasY` for the ground lattice, the generator-5 ground strata, and the non-zero levels. Ground cells call `WorldGen.cellInfo(gx, gy, 0, desc)`. When that fourth argument is an object, `cellInfo` resolves climate, water, and size from it and does not read the loaded world's cuts. The hash is still `ground|water|peak`. Walkable is not hashed. `geologyAt` still uses the loaded world and is not part of the hash. `deterministic_same_seed` is unchanged: it still calls `checksum(z, seed, 5)` without a description and still omits Z0.
+
+`tools/test_strata_cuts_and_caves.js` check `foreign_geometry_checksum`: generator 4, size 64, coupling on, legacy range. Wide world seed 20260923, areas 2x1. Host seed 20260930, areas 1x1. Levels -1, 0, and +1, both directions, plain description copies.
+
+Before the repair the two directions disagreed. Z0 swapped (wide native `bef8fc4d` came back as the host's own `fb1dd0ca`, and the reverse). Z-1 wide `6d96e9be` vs foreign `c6e2fc66`; Z+1 wide `d5336e37` vs foreign `f5c1ecfe`. After, each foreign checksum equals that world's own checksum at -1, 0, and +1 (`6d96e9be` / `bef8fc4d` / `d5336e37` for 2x1, `bc3d0827` / `fb1dd0ca` / `3cbb08dd` for 1x1). `generation_deterministic` still has Z0 repeat equal to `checksum(0, seed, gen)` (`e51c7731` on the old generator).
+
+### BB-CODEX-04 — cuts/caves mutant anchors match the 7-argument carve
+
+`no_features` and `error_injected` searched for `carveNaturalFeatures(seed, gen, ax, ay, size, bs)`. The function is `carveNaturalFeatures(seed, gen, ax, ay, size, bs, worldDesc)`. The anchors now include `worldDesc`. The mutant bodies are the same. The signature was not changed again. `old_gen_cut` was left as it was.
+
+On the pre-repair test file both commands exited 2: `target not found`. After the anchor update:
+
+- `node tools/test_strata_cuts_and_caves.js --mutant=no_features` — EXIT 1. 11 passed, 16 failed (no cuts or caves).
+- `node tools/test_strata_cuts_and_caves.js --mutant=error_injected` — EXIT 1. 26 passed, 1 failed (`no_errors`: `MUTANT error_injected`).
+
+### Gate output (repaired tree)
+
+| Command | Exit | Result |
+| --- | --- | --- |
+| `node tools/check_deus_syntax.js` | 0 | 60 plugin files, 0 errors |
+| `node tools/test_geology_strata.js` | 0 | 10 passed, 0 failed, including `coupled_outer_substrate` |
+| `node tools/test_historical_carrying_capacity.js` | 0 | 23 contract, 5 packet, 8 mutants |
+| `node tools/test_strata_foundation.js` | 0 | 27 passed, 0 failed, 277.5 s, including `flag_absent_volume_cache` |
+| `node tools/test_strata_cuts_and_caves.js` | 0 | 29 passed, 0 failed, 295.8 s, including `foreign_geometry_checksum`; nested fluid 36 passed; nested foundation 27 passed |
+
+`node tools/test_geology_strata.js --mutant` exits 1 (`surface_strata_valid`; the new outer-substrate check still passes). `node tools/test_geology_strata.js --mutant=no_world` exits 1 (harness: `DEUS_Levels.js` cannot read `Z_RANGES`).

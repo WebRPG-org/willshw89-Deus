@@ -187,9 +187,11 @@
     function columnBiomeId(gx, gy, z) {
         const band = depthBandOf(z);
         if (!band) return null;
-        const size = (World() && World().state && World().state.size) || 256;
+        const W = World();
+        const st = W && W.state;
+        const size = (st && st.size) || 256;
         const ax = Math.floor(gx / size), ay = Math.floor(gy / size);
-        const grid = kindGrid(ax, ay, size);
+        const grid = kindGrid(ax, ay, size, st);
         if (!grid) return null;
         const lx = gx - ax * size, ly = gy - ay * size;
         return COLUMN_RULES[grid[ly * size + lx]][band.role];
@@ -1063,6 +1065,7 @@
 
     // Checksum of a level's baseline over every area (FNV-1a of shapes then materials). The ground's is a 32x32 lattice
     // of UF_WorldGen's cell info (ground kind, water, peak), which checks its generator without building the map.
+    // A supplied worldDesc is the world being sampled: its area counts, size and climate, not the loaded world's.
     function shapeGrid(z, ax, ay) {
         const W = World(), st = W && W.state;
         if (!st || !isLevel(z) || !W.inWorld(ax, ay, z)) return null;
@@ -1092,19 +1095,21 @@
         if (z === 0) {
             const G = window.UF.WorldGen;
             if (!G || typeof G.cellInfo !== "function") return "n/a";
-            const size = st.size, step = size / 32;
-            const enc = s => Array.from(String(s), ch => ch.charCodeAt(0) & 255);
-            for (let ay = 0; ay < st.areasY; ay++) for (let ax = 0; ax < st.areasX; ax++) {
+            const step = size / 32;
+            const enc = text => Array.from(String(text), ch => ch.charCodeAt(0) & 255);
+            for (let ay = 0; ay < areasY; ay++) for (let ax = 0; ax < areasX; ax++) {
                 for (let j = 0; j < 32; j++) for (let i = 0; i < 32; i++) {
-                    const info = G.cellInfo(ax * size + Math.floor(i * step + step / 2), ay * size + Math.floor(j * step + step / 2));
+                    const gx = ax * size + Math.floor(i * step + step / 2);
+                    const gy = ay * size + Math.floor(j * step + step / 2);
+                    const info = G.cellInfo(gx, gy, 0, desc);
                     h = fnvBytes(h, enc(info ? `${info.ground}|${info.water || ""}|${info.peak ? 1 : 0};` : "-;"));
                 }
             }
             // Generator 5: the ground's strata too (its natural cuts and caves are strata, not climate cells).
-            if (g >= FEATURE_GEN) for (let ay = 0; ay < st.areasY; ay++) for (let ax = 0; ax < st.areasX; ax++) h = strataHash(h, baseOfArea(ax, ay));
+            if (g >= FEATURE_GEN) for (let ay = 0; ay < areasY; ay++) for (let ax = 0; ax < areasX; ax++) h = strataHash(h, baseOfArea(ax, ay));
             return hex(h);
         }
-        for (let ay = 0; ay < st.areasY; ay++) for (let ax = 0; ax < st.areasX; ax++) {
+        for (let ay = 0; ay < areasY; ay++) for (let ax = 0; ax < areasX; ax++) {
             // Generator 5: the strata bytes themselves (partial fills, caves and caps don't show in the legacy codes).
             if (g >= FEATURE_GEN) { h = strataHash(h, baseOfArea(ax, ay)); continue; }
             // The generator's codes, read back from the strata (legacyViews): the same bytes as before the strata, so a
@@ -1724,7 +1729,7 @@
         if (!couplingActive()) return 0;
         const band = depthBandOf(z);
         if (!band) return 0;
-        const grid = kindGrid(ax, ay, W.state.size);
+        const grid = kindGrid(ax, ay, W.state.size, W.state);
         if (!grid) return 0;
         const id = COLUMN_RULES[grid[y * W.state.size + x]][band.role];
         return BIOME_CODE_BY_ID.get(id) || 0;
@@ -2500,7 +2505,9 @@
             : { seed, size: size || 256, areasX: 1, areasY: 1, startArea: { x: 0, y: 0 }, verticalBiomeCoupling: true };
         const r = (desc && desc.zMin !== undefined && desc.zMax !== undefined) ? desc : zrSync();
         const areasX = desc.areasX || 1, areasY = desc.areasY || 1;
-        const vbc = desc.verticalBiomeCoupling !== undefined ? desc.verticalBiomeCoupling : true;
+        // Absent verticalBiomeCoupling is uncoupled, the same rule as couplingActive. Defaulting it to true
+        // made a flag-absent save share a coupled world's volume cache key.
+        const vbc = couplingActive(desc);
         const key = `${seed}:${gen}:${ax},${ay}:${size}:${areasX}x${areasY}:${r.zMin}..${r.zMax}:${vbc ? 1 : 0}`;
         let v = volumes.get(key);
         if (v) return v;

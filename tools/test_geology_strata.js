@@ -6,12 +6,13 @@
 // because Levels reads UF.World.Z_RANGES.legacy and UF.Space at load (WG.00.17, bdf45b4c).
 // The world state is the one this suite was written against (seed 1074124084, 256, one area,
 // no zRange). DEUS_World reads a state with no zRange as the legacy range -2..+2
-// (docs/systems/DEUS_ZRange.md). The nine checks below are unchanged.
+// (docs/systems/DEUS_ZRange.md). Those nine checks are unchanged. A tenth check loads a
+// coupled seed-18 world on the default range and reads substrate biomes below Z-2.
 //
 // Usage: node tools/test_geology_strata.js [--mutant | --mutant=no_world]
 //   --mutant            surface stone diversity must be < 2 (a healthy catalog fails; exit 1)
 //   --mutant=no_world   do not load DEUS_World.js (the load guard must exit 1)
-// Exit: 0 all nine checks passed, 1 a check failed or a plugin failed to load.
+// Exit: 0 all checks passed, 1 a check failed or a plugin failed to load.
 
 const fs = require("fs");
 const path = require("path");
@@ -282,6 +283,39 @@ check("cell_info_contains_geology", !!cellInfo && !!cellInfo.geology && cellInfo
 const levelCell = Levels.cellAt({ area: { x: 0, y: 0 }, x: 64, y: 64, z: -1 });
 check("levels_cell_at_contains_stratum", !!levelCell && !!levelCell.stratum,
     `Levels.cellAt(64,64,-1) includes stratum: stone '${levelCell && levelCell.stratum ? levelCell.stratum.stone : "none"}'`);
+
+// 10. Coupled outer substrate (BB-CODEX-01). kindGrid needs the loaded world. Below the core, the
+// baseline has no biome array, so columnBiomeId and biomeAt both read that grid. Seed 18, (100, 100),
+// default range: shallow rooted_loam at -3, deep_mine_belt at -9 and -16.
+try {
+    sandbox.UF.World.state = {
+        seed: 18,
+        size: 256,
+        areasX: 1,
+        areasY: 1,
+        startArea: { x: 0, y: 0 },
+        version: 4,
+        verticalBiomeCoupling: true,
+        zRange: { zMin: -16, zMax: 15 },
+        levels: { "0": { z: 0, gen: 4, checksum: null, strata: {} } },
+        units: {},
+        diffs: {},
+        objectDiffs: {}
+    };
+    const want = { "-3": "rooted_loam", "-9": "deep_mine_belt", "-16": "deep_mine_belt" };
+    const rows = [];
+    let outerOk = true;
+    for (const z of [-3, -9, -16]) {
+        const id = Levels.columnBiomeId(100, 100, z);
+        const at = Levels.biomeAt({ area: { x: 0, y: 0 }, x: 100, y: 100, z });
+        const got = at && at.id;
+        if (id !== want[z] || got !== want[z]) outerOk = false;
+        rows.push(`Z${z}: columnBiomeId ${id == null ? "null" : id}, biomeAt ${got == null ? "null" : got} (want ${want[z]})`);
+    }
+    check("coupled_outer_substrate", outerOk, `seed 18 (100, 100), coupling on, -16..15; ${rows.join("; ")}`);
+} catch (e) {
+    check("coupled_outer_substrate", false, `threw ${e && e.stack ? e.stack.split("\n").slice(0, 3).join(" | ") : e}`);
+}
 
 console.log(`\nRESULT: ${passed} passed, ${failed} failed (exit ${failed === 0 ? 0 : 1})`);
 process.exit(failed === 0 ? 0 : 1);
