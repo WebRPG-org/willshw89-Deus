@@ -627,6 +627,7 @@ Every decision item recorded in this log must provide:
   - **Out of scope:** plants, creatures and gases are not part of this rule. The Owner, correcting an earlier "lower priority" wording the same day: "I dont care about these. thats not my intent."
   - **Weight, not chemistry:** the ledger counts weight. Material type, volume and density may change along the way; soil weighs more than sand. This is not a chemistry or physics exercise and must not complicate soil.
   - **Blocking defects:** material or water that appears from nothing, or disappears without a destination.
+- **Water never leaves (Owner, 2026-09-29: "One more rule tho: Any water that leaves the world, rains back into the world"):** water is a closed loop. Water that leaves the simulated world by any route (off a map edge, out of the bottom layer, into a drain or sink, evaporated past the modelled air) is not deleted: its mass is held and returns to the world as rain. There is no water deletion sink anywhere (this retires the "sink" wording in INV-FLD-02).
 
 ---
 
