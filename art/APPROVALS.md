@@ -1,6 +1,6 @@
 # ART APPROVALS
 
-Log of approved art assets per `docs/ART_STANDARD.md` §5. Only user-approved assets are recorded here.
+Log of approved art assets per `docs/ART_STANDARD.md` §5. Rows are user-approved assets and, from 2026-09-30, PM YEAs under DEC-056 (Owner: "You can choose what goes in game, and if I want to change something I will bring it up"), marked "PM YEA (DEC-056)" in Review Notes. The Owner can reverse any row.
 
 | Date | Asset ID | Description | Master File | Review Notes |
 | :--- | :--- | :--- | :--- | :--- |

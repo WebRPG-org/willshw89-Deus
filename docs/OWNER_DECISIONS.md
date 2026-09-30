@@ -129,6 +129,7 @@ Every decision item recorded in this log must provide:
   - **Camera (Owner, 2026-09-29, "high topdown"):** every PixelLab prompt for every asset class (terrain tiles, objects, props, creatures) uses the PixelLab view setting **high top-down**. This is the one camera; `docs/art/DEUS_ASSET_STANDARD.md` AS-LOOK-001 / AS-PROJ-001 ("RMMZ standard top-down 3/4 view") describe the same camera as the engine presents it. Any note that says low top-down is superseded.
   - **Ground tile variants (Owner, 2026-09-29, "I want more variants of each type of tile so there's a gradient on the ground"):** each ground kind gets several tile variants, placed so the ground shifts gradually instead of repeating one stamp, while ground kinds stay distinguishable. Counts, format and placement rule to be recorded as their own decision once the design is settled.
 
+- **Amendment (2026-09-30, DEC-056): the PM chooses what goes in game.** Owner: "You can choose what goes in game, and if I want to change something I will bring it up". The Owner-YEA gate on art entering the game is replaced by a PM YEA with an Owner veto; see DEC-056.
 ---
 
 ### Decision `DEC-008`: Heavy-Job Cap Lifted & Power-Off Concurrency Tripwire
@@ -919,3 +920,21 @@ Every decision item recorded in this log must provide:
   - the lane-cv meadow A2 block board.
   Owner review boards that show PixelLab output as it is (for example the A2 object contact sheets) continue.
 - **Design:** the braintrust designs the PixelLab-native organization: the tool-by-tool output forms, the catalogue schema, how the engine renders them (ground transitions, object sprites, depth pieces), and what earlier rules change. The Owner approves it. Until then, earlier art rules that assume a conversion (A2 blocks, derived autotiles, fixed cell sizes) are on hold, not deleted.
+
+---
+
+### Decision `DEC-056`: The PM chooses what goes in game; the Owner can change it
+- **Date:** 2026-09-30
+- **Source:** Owner, 2026-09-30, in chat with Claude Code, right after asking the PM to "fill what you can with the best specimens": "You can choose what goes in game, and if I want to change something I will bring it up".
+- **Ruling:** the PM (Claude) makes the final call on which assets enter the game. The Owner no longer has to sign off each asset first. The Owner may change any choice at any time; when the Owner raises one, the PM changes it.
+- **How the PM decides:**
+  - catalogue row first (DEC-007);
+  - machine QA: size, camera, palette, seams, readability;
+  - the braintrust's pick where there is a choice (DEC-052);
+  - the PM opens every image.
+  Each choice is recorded in art/APPROVALS.md as "PM YEA (DEC-056)" with its reason and source file, so the Owner can see and reverse it.
+- **Unchanged:**
+  - The Owner generates all art; agents generate nothing on their own (DEC-007 addendum).
+  - DEC-055: assets are used in PixelLab's native forms; conversions stay on hold until the design is approved.
+  - The Owner still approves slices, rulings and designs.
+- **Replaces:** "Nothing enters the game without the Owner's YEA" and "The Owner is the final QA" in the DEC-007 banner of AGENTS.md, CLAUDE.md and GEMINI.md, and the art half of AGENTS.md Rule 6.
