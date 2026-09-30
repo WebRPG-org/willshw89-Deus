@@ -344,8 +344,11 @@ function checkCatalogue(cat, g, geoFile, refuse, targetSheetId) {
         }
         const spec = stratumSpec(e.scaleRow, g);
         if (spec && spec.error) refuse('STRATUM_HEIGHT_MISMATCH', `${id}: ${spec.error}`);
-        else if (spec && slot.h !== rows * spec.frameH && slot.h !== rows * Math.ceil(spec.frameH / g.tilePx) * g.tilePx) {
-            refuse('STRATUM_HEIGHT_MISMATCH', `${id}: ${e.scaleRow} needs frame height ${spec.frameH} from stratumPx ${JSON.stringify(g.stratumPx)} (slot height ${rows} x ${spec.frameH} = ${rows * spec.frameH}) but the slot is ${slot.h} high`);
+        else if (spec) {
+            const expectedSlotH = rows * Math.ceil(spec.frameH / g.tilePx) * g.tilePx;
+            if (slot.h !== expectedSlotH) {
+                refuse('STRATUM_HEIGHT_MISMATCH', `${id}: ${e.scaleRow} needs slot height ${expectedSlotH} from stratumPx ${JSON.stringify(g.stratumPx)} (padded to ${g.tilePx}px grid) but the slot is ${slot.h} high`);
+            }
         }
         slotsBySheet.get(slot.sheetId).push({ entry: e, slot, rows, spec: spec && !spec.error ? spec : null });
     }
