@@ -36,6 +36,8 @@ Meadow (`SURFACE_SHARED_TERRAIN_MEADOW_A2_DEFAULT`) is already generated (6 vari
 
 ## 1. Ground surfaces (A2), dryness triplets: damp / base / dry (DEC-045)
 
+> **Tool check (2026-09-29):** ground, water and underground cards go through **Maps → Create Tiles Pro**, never Create Object. The object tool draws a single thing on a transparent background: run on the Rock prompt it returned 16 crack patterns on a see-through background and no rock. A good tile is opaque edge to edge. If Tiles Pro asks for one description per variation, give the numbered form, e.g. `1) rain-wet dark grey rock ground, cracked and weathered 2) grey rock ground, cracked and weathered 3) sun-dried pale grey rock ground, cracked and weathered`, and keep the World and biome paragraphs in the main description.
+
 ### 1.1 Rock — `SURFACE_SHARED_TERRAIN_ROCK_A2_DEFAULT` (do this one first)
 ```text
 Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
@@ -183,6 +185,8 @@ Specs: one seamless 48x48 tile. Opaque, static, flat ground seen from high top-d
 
 ## 2. Surface water (A1): one still tile, then three drawn phases
 
+> **Tool check:** Maps → Create Tiles Pro for the still tile (not Create Object), then Animate for the three phases.
+
 ### 2.1 Fresh water — `SURFACE_SHARED_WATER_FRESH_A1_DEFAULT`
 ```text
 Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
@@ -241,6 +245,8 @@ Specs: one seamless 48x48 water tile, opaque, flat, seen from high top-down. It 
 ---
 
 ## 3. Underground floors and cut tops
+
+> **Tool check:** Maps → Create Tiles Pro (not Create Object); the result must be opaque edge to edge.
 
 ### 3.1 Cave floor — `ALL_SHARED_TERRAIN_CAVE-FLOOR_A2_DEFAULT`
 ```text
