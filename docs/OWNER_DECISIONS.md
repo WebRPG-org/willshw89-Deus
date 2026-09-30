@@ -827,3 +827,26 @@ Every decision item recorded in this log must provide:
      - DEC-013 band ranges vs DEC-030/DEC-038;
      - the "mandatory Nano Banana Pro" and "Gemini makes the non-living art" lines vs DEC-007 (the Owner generates all art);
      - Claude's older role text vs DEC-042 and DEC-048.
+
+---
+
+### Decision `DEC-052`: The system under control: real work only, braintrust-answerable, trackable, traceable, serialized, codified
+- **Date Logged:** 2026-09-30
+- **Status:** `DECIDED` (Owner, in chat with Claude Code, 2026-09-30)
+- **Decider:** Owner
+- **Owner's words:**
+  - "I want the entire project aligned and organized and correct. I want everything synced and prune what doesnt belong"
+  - "The entire system should be under control"
+  - "Trackable, traceable, serialized"
+  - "consistently, and codified"
+  - "I dont want AIs working on bullshit fake work anymore either. Every work assigned should be evaluated and answeredable to the brain trust"
+- **Summary:**
+  1. **Real work only; a braintrust gate before work starts.** No lane, packet or worker is dispatched until its brief has passed a braintrust WORK-GATE, which the PM runs in the chats.
+     - Every brief states: the Owner want or decision it serves (DEC-037 focus first); evidence that the need is real; scope; files; the tests that must fail without it; size; and the writer and reviewer families.
+     - Verdicts: REAL (go), RESCOPE (change it, then go) or NOT-NOW/FAKE (do not start).
+     - Work already in flight is gated retroactively.
+  2. **Answerable at the end.** A finished lane's claims are checked against evidence: tests that can fail, a mass or behaviour check where it applies, and F5 where it applies. A braintrust voice judges whether the result does what the brief promised before the PM merges. Rejected work is reported, not hidden.
+  3. **Trackable and serialized.** Every unit of work, decision, braintrust job, mail and merge has a serial ID and a record: WBS leaf or OPS id, lane, BT-job id, mail id, commit. One registry lists the live items and their state.
+  4. **Traceable.** Every change links back along the chain Owner decision -> WBS leaf -> brief -> gate verdict -> lane -> commits -> review -> merge -> STATUS row. A change without a link is out of control and is flagged.
+  5. **Consistent and codified.** Rules live as machine checks wherever possible, not only as prose: the DEC-048 hooks (CLAMP), the control-board test, the mail v2 validator, a registry/trace checker, and a directive-sync check (DEC-051). A rule that exists only in prose is a gap to close.
+  6. **Aligned and pruned.** An ALIGN program inventories the whole repo and prunes what does not belong, by archive and always reversibly, under the order and gates already set (DEC-048, the prune lanes).
