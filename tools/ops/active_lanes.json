@@ -3,6 +3,8 @@
   "description": "Explicit versioned list of active task branches and reference branches tracked on the Project DEUS Control Board (docs/STATUS.md). Updated by coordinator upon lane launch or retirement.",
   "activeLanes": [
     "task/lane-co",
+    "task/lane-ct",
+    "task/lane-cu",
     "task/art-temperate-induction",
     "task/lane-a",
     "task/lane-bd",

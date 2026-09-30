@@ -117,7 +117,9 @@ Active tasks, open branches, and pending review submissions:
 ### A. Active Lanes in Review / In Flight
 | Branch | Lane / Task | Scope | Status |
 |---|---|---|---|
-| `task/lane-co` | `lane-co` (`OPS.PRUNE.02`) | L2: Archive 41 `UF_*.js` shims & retarget tools | In Flight: brief `90af963f`, Codex writer launched 2026-09-30 after L1 merged |
+| `task/lane-co` | `lane-co` (`OPS.PRUNE.02`) | L2: Archive 41 `UF_*.js` shims & retarget tools | In Review: Grok review `cc3f12d1` CLEAN PASS, 10/10 gates PASS |
+| `task/lane-ct` | `lane-ct` (`OPS.PRUNE.05`) | G05: Rule-4 Test Failure Path Fixes across 16 harnesses | In Review: Grok review `4e3f45ee` CLEAN PASS, merge_gate dry-run PASS |
+| `task/lane-cu` | `lane-cu` (`OPS.PRUNE.06`) | G06: L6 Docs Archival & Canonical Renaming (33 live, 15 archive) | In Review: Grok review `190392c5` CLEAN PASS, 15,175 preservation assertions pass |
 | `task/art-temperate-induction` | Parked Induction | 64 temperate batch 1 assets (Outside_A2, Dungeon_A2, V8 props) | PARKED at `90c82ac5` pending QA & Owner YEA |
 | `task/lane-a` | `lane-a` (`WG.00.08`) | WG.00.08 Exit Criteria | In Review (`16fec107`) |
 | `task/lane-bd` | `lane-bd` (`DEUS-TSK-ZRANGE-HARNESS`) | Z-Range harness verification | In Flight (`3ea1ab69`) |
