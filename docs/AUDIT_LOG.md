@@ -6,6 +6,26 @@ Every finding cites evidence. When a finding is fixed, mark it `FIXED <date> <co
 
 ---
 
+## A11: Braintrust system evaluation (SYSEVAL) of the CORE world systems: what is real (2026-09-30)
+
+**Audited by:** Claude Code (PM), from the braintrust SYSEVAL reviews (Grok Heavy B01/B03/B05; MiniMax M3 B02/B04). Every finding below was checked by the PM against the lines cited.
+**Scope:** `game/js/plugins/DEUS_Levels.js`, `DEUS_Fluid.js`, `game/js/sim/structural`, `geomorphology`, `ledger.js`, `materials.js`; the NAT.02.01 review; the lane-cq control board.
+**Reviews on file:** `C:/Users/snewt/.deus_pm/braintrust/2026-09-30/SYSEVAL-B0*.md` (local, not committed).
+**Native Editor Playtest:** `NOT RUN`. This is a code audit.
+
+### Findings
+| # | Grade | Finding | Evidence | Status |
+|---|---|---|---|---|
+| A11-1 | BLOCKER | The NAT.02.01 structural collapse kernel is a stub. It flips flags on a caller-supplied list, counts "rubble" that never exists, and posts mass through `ledger.transferMass`, which the ledger does not export. The ledger is frozen, so the fallback write cannot post either. Review fdb5c0a0 gave it PASS. | `sim/structural/collapse.js:58-69`; `sim/ledger.js:700-711`; `tasks/NAT.02.01/lane-bv/review_grok_fdb5c0a0.md` | OPEN |
+| A11-2 | MAJOR | DEC-040 closed mass is not closed. There are three mass units (lbs in collapse, centipounds in soil, mu/du in the ledger) with no conversion table. Four code paths write mass: ledger.js, soil journals, collapse transferMass, and the decay hold. | `collapse.js:53`; `geomorphology/soil.js:8-21`; SYSEVAL-B05 | OPEN |
+| A11-3 | MAJOR | The DEC-037 focus is largely unbuilt. Every layer outside the core -2..+2 is uniform stone or air. Lava exists only as `z === -2`. Runtime collapse is absent (`effectiveSupport` is diagnostic). Levels runs a second flood BFS beside UF.Fluid. | `DEUS_Levels.js:1356-1361, 1379, 2333-2340, 3865-4148` | OPEN; designs D1-D3 under DEC-049 |
+| A11-4 | MAJOR | The water engine's doc claims more than the code does. `DEUS_Fluid.md` says "COMPLETED/VERIFIED" and quotes an FPS figure with no measurement. In the code, only the viewed area steps, excess water is deleted without a hydro session, and `walkable` ignores z. | `DEUS_Fluid.js:753, 813-819, 1133-1136`; SYSEVAL-B01 | OPEN; lane-cw fixes the design-independent parts |
+| A11-5 | MAJOR (process) | The coordinator's lane-cq control board listed 10 archive paths that do not exist and dropped 10 that do. Grok's review caught it (FAIL). This was the first draft of the board meant to keep junk out. | `tasks/OPS.PRUNE.01/lane-cq/review_grok_8accbf07.md` (f6120780) | FIX in progress: the Archived section is to be generated from disk and checked |
+
+**Lesson for reviews:** a sim-kernel review must run an end-to-end mass check (`ledger.assertBalanced` across the kernel's real calls), not unit checks alone. A PASS on A11-1 was possible only because nothing exercised the ledger path.
+
+---
+
 ## A10: The FABLE-19A native smoke gate: its record, its tools, and what it found (2026-09-24)
 
 **Audited by:** Fable (Claude Code), building and running the owner's native smoke gate for DEUS-TSK-FABLE-19A (edba004; owner direction "FABLE-19A OWNER REVIEW / INTEGRATION DECISIONS", section 5).
