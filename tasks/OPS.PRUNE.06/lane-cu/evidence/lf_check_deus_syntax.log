@@ -1,0 +1,3 @@
+node tools/check_deus_syntax.js
+{"command":"node tools/check_deus_syntax.js","writerSha":"ca0d00948daff2962c492d72f2d9313e243da404","cwd":"C:\\Users\\snewt\\AppData\\Local\\Temp\\deus-l6-lf-review-XxAwKW","coreAutocrlf":false,"startedAt":"2026-09-30T22:31:30.803Z","finishedAt":"2026-09-30T22:31:36.421Z","exitCode":0,"error":null}
+Checked 62 DEUS plugin files. Errors: 0

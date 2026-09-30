@@ -1,0 +1,25 @@
+node tools/test_control_board.js
+{"command":"node tools/test_control_board.js","writerSha":"ca0d00948daff2962c492d72f2d9313e243da404","cwd":"C:\\Users\\snewt\\AppData\\Local\\Temp\\deus-l6-review-sODJXo","startedAt":"2026-09-30T22:30:05.660Z","finishedAt":"2026-09-30T22:30:05.794Z","exitCode":1,"error":null}
+=== Control Board & Anti-Regression Verification (FIX-CQ-10) ===
+  [OK] STATUS.md contains Section 1 (Live Systems)
+  [OK] STATUS.md contains Section 2 (Frozen Systems)
+  [OK] STATUS.md contains Section 3 (In Review)
+  [OK] STATUS.md contains Section 4 (Defect / Unproved)
+  [OK] STATUS.md contains Section 5 (Archived Systems)
+  [OK] STATUS.md contains Stand-ins Section
+  [OK] plugins.js discovery found enabled plugins (>0)
+  [OK] All enabled plugins in plugins.js are explicitly recorded in Section 1 tables
+  [OK] DEUS_Core companions discovery found items (>0)
+  [OK] active_lanes.json discovery found active lanes (>0)
+  [OK] All declared active task branches (18) are listed in Section 3
+  [OK] All declared reference branches (10) are listed in Section 3
+  [OK] Section 5 (Archived Systems) discovery found archived rows (>0)
+  [OK] All archived rows in Section 5 contain explicit, valid rulings and non-blank destinations
+  [OK] All items declared in Section 5 (51) have been moved off their original paths
+  [OK] All archive destinations declared in Section 5 (51) exist on disk
+  [OK] Anti-Junk Guard: No unlisted or unauthorized .js files in game/js/plugins (Strict table/list authorization; prose/comments/archive excluded)
+  [OK] Board Truth Integrity: all corrections verified (lane-cs reference, historical CQ hash, climate authorities, clean stand-in notes, canonical stand-in tokens, legacy unresolved row)
+-----------------------------------------------------
+  [X] FAIL: All DEUS_Core companion plugins (14) are explicitly recorded in Section 1 tables (Missing from Section 1 table: // Households (partner pairs families their homes) for DEUS_Projects domestic housing, // (DEUS-TSK-FABLE-17): not in plugins.js while the editor holds it; register it there when the editor, // is closed and drop this line.)
+TOTAL FAILURES: 1
+FAIL: All DEUS_Core companion plugins (14) are explicitly recorded in Section 1 tables - Missing from Section 1 table: // Households (partner pairs families their homes) for DEUS_Projects domestic housing, // (DEUS-TSK-FABLE-17): not in plugins.js while the editor holds it; register it there when the editor, // is closed and drop this line.
