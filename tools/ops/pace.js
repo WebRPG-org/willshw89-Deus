@@ -213,7 +213,11 @@ function evaluate(input, history = emptyHistory(), options = {}) {
             report.source = measured.sources.join('; ');
             report.measurement = { from: measured.from, to: measured.to };
         }
-        if (report.measured !== null && report.target > 0) report.ratio = report.measured / report.target;
+        // Remove arithmetic roundoff at decimal quota boundaries (e.g.
+        // 50.9 - 50). Keep classification itself strict for supplied ratios.
+        if (report.measured !== null && report.target > 0) {
+            report.ratio = Number((report.measured / report.target).toPrecision(14));
+        }
         report.action = classify(report.ratio);
         report.surge = hoursLeft <= current.durationHours * 0.1 && current.remainingPct > 10;
         if (report.surge) report.action = 'ACCELERATE-2';

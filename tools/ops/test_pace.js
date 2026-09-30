@@ -62,6 +62,14 @@ function runSuite(api, integration = false, quiet = false) {
         assert.equal(r.action, 'HOLD'); assert.equal(r.surge, false);
         assert.deepEqual(r.measurement, { from: at(-1), to: NOW });
     });
+    for (const [used, action] of [[0.5, 'ACCELERATE-1'], [0.9, 'HOLD'], [1.1, 'HOLD'], [1.5, 'THROTTLE-1']]) {
+        test(`decimal_pipeline_boundary_${used}`, () => {
+            const p = provider(); p.windows[0].resetAt = at(50);
+            const h = history(50 + used, at(-1), { resetAt: at(50) });
+            const r = report(p, h);
+            assert.equal(r.action, action);
+        });
+    }
     for (const [used, action] of [[0, 'ACCELERATE-2'], [6, 'ACCELERATE-1'], [10, 'HOLD'],
         [12, 'THROTTLE-1'], [20, 'THROTTLE-2']]) {
         test(`pipeline_band_${used}`, () => assert.equal(report(ordinary(40), shortHistory(40 + used)).action, action));
