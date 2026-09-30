@@ -959,3 +959,19 @@ Every decision item recorded in this log must provide:
      - Space, matter, water, lava and collapse stay in scope.
 - **Open:** climate is not named in the ruling. Seeded flora placement does not need a climate engine, so the PM treats climate as deferred with flora unless the Owner says otherwise.
 - **Supersedes in part:** DEC-037's upstream order (Geomorphology/Soil, then Climate, Flora and Fauna as simulations) for this phase, and DEC-041 points 6 and 8-10 as exit criteria.
+
+---
+
+### Decision `DEC-058`: Build the natural-world systems we have landed on
+- **Date:** 2026-09-30
+- **Source:** Owner, 2026-09-30, in chat with Claude Code: "You can build the rest of the natural world systems we have landed on".
+- **Ruling:** implementation of the natural world is approved on the designs the braintrust has landed on. This satisfies DEC-049 for these designs:
+  - D1 geology by DEC-030 band, caves and ravines, magma and a finite core reservoir;
+  - D2 one water authority, closed water loop, lava as a fluid, water/lava quench;
+  - D3 collapse, repair-first, dry cave-in first;
+  - D4 nine race starts and the danger field;
+  - the SRD bestiary placement;
+  - the shared mass (centipounds) and Levels write-path foundation;
+  - all within DEC-057 (soil deferred; flora, fauna and monsters placed by seeded random rules).
+- **Who decides what:** the PM settles each design's open questions from the braintrust recommendations and records each choice. The Owner can change any of them.
+- **How it is built:** AG swarms the lanes (writers and reviewers from different families). Each lane has a brief and a merge_gate manifest, and passes the braintrust answerability check (DEC-052) before the PM merges it. F5 evidence is required where the design says so.
