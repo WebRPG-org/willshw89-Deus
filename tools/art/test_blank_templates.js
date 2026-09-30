@@ -394,11 +394,14 @@ function stratumParamCases(toolPath, tag, full, base) {
         const strata = atlas ? atlas.slots.filter(s => /^GEOM_STRATUM_\d+$/.test(s.scaleRow)) : [];
         for (const s of strata) {
             const d = Number(s.scaleRow.split('_').pop());
-            if (s.h !== cumulative(splitA, d)) errs.push(`${s.slotId} ${s.scaleRow} h ${s.h}, want ${cumulative(splitA, d)}`);
+            const expH = baseGeo.tilePx * Math.ceil(cumulative(splitA, d) / baseGeo.tilePx);
+            if (s.h !== expH) errs.push(`${s.slotId} ${s.scaleRow} h ${s.h}, want ${expH}`);
         }
-        const moved = strata.filter(s => s.h !== cumulative(split, Number(s.scaleRow.split('_').pop()))).length;
+        const moved = strata.filter(s => {
+            return JSON.stringify(s.strataTicks) !== JSON.stringify(expectedTicks({ scaleRow: s.scaleRow, frames: { rows: 1 }, slot: { h: s.h } }, baseGeo));
+        }).length;
         if (!strata.length) errs.push('no GEOM_STRATUM slots in the atlas sidecar');
-        else if (!moved) errs.push(`no ramp/strip slot height moved from the base split ${JSON.stringify(split)}`);
+        else if (!moved) errs.push(`no ramp/strip strata ticks moved from the base split ${JSON.stringify(split)}`);
         const face = atlas && atlas.slots.find(s => s.entryId === 'TEST_SURFACE_B1_WALL_FACE_V1_BASE');
         const baseTicks = expectedTicks({ scaleRow: 'GEOM_LAYER_FACE', frames: { rows: 1 }, slot: { h: baseGeo.layerPx } }, baseGeo);
         if (!face) errs.push('wall face slot missing');
@@ -413,10 +416,20 @@ function stratumParamCases(toolPath, tag, full, base) {
     }
 
     // The catalogue built for the base split is refused against the changed geometry.
-    const stale = stage(`stratum-${tag}-stale`, A.geo, () => Object.assign(clone(base.cat), { geometry: { path: A.geoPath, sha256: base.geoSha } }));
+    // Use a split that changes slot height (crossing a tilePx boundary) so STRATUM_HEIGHT_MISMATCH fires.
+    const splitCrossing = [40, 14, 14, 14, 14];
+    const geoCrossing = Object.assign(clone(baseGeo), { stratumPx: splitCrossing });
+    const dirCrossing = path.join(TMP, `stratum-${tag}-crossing`);
+    fs.mkdirSync(dirCrossing, { recursive: true });
+    const geoCrossingPath = path.join(dirCrossing, 'geometry.json');
+    const geoCrossingText = JSON.stringify(geoCrossing, null, 2) + '\n';
+    fs.writeFileSync(geoCrossingPath, geoCrossingText);
+    const geoCrossingSha = sha256(Buffer.from(geoCrossingText, 'utf8'));
+
+    const stale = stage(`stratum-${tag}-stale`, geoCrossing, () => Object.assign(clone(base.cat), { geometry: { path: geoCrossingPath, sha256: base.geoSha } }));
     const rS = runTool(toolPath, stale.catPath, stale.out);
     add('stale_catalogue_refused', rS.status === 2 && rS.codes.join() === 'GEOMETRY_SHA_MISMATCH,STRATUM_HEIGHT_MISMATCH' && !fs.existsSync(stale.out), brief(rS));
-    const staleRects = stage(`stratum-${tag}-stale-rects`, A.geo, (sha, p) => Object.assign(clone(base.cat), { geometry: { path: p, sha256: sha } }));
+    const staleRects = stage(`stratum-${tag}-stale-rects`, geoCrossing, (sha, p) => Object.assign(clone(base.cat), { geometry: { path: p, sha256: sha } }));
     const rR = runTool(toolPath, staleRects.catPath, staleRects.out);
     add('stale_rects_refused', rR.status === 2 && rR.codes.join() === 'STRATUM_HEIGHT_MISMATCH' && /stratumPx/.test(rR.stderr) && !fs.existsSync(staleRects.out), brief(rR));
 
@@ -445,8 +458,9 @@ function stratumParamCases(toolPath, tag, full, base) {
         const rC = runTool(toolPath, C.catPath, C.out);
         const vC = rC.status === 0 ? verifyOutput(C.out, C.cat, C.geo, C.geoSha, 'transparent', false) : null;
         const faceC = vC && vC.sidecars.TEST_ATLAS_SURFACE && vC.sidecars.TEST_ATLAS_SURFACE.slots.find(s => s.entryId === 'TEST_SURFACE_B1_WALL_FACE_V1_BASE');
-        add('layerPx_param', rC.status === 0 && failedChecks(vC).length === 0 && faceC && faceC.h === layerPx,
-            rC.status !== 0 ? brief(rC) : `wall face h ${faceC && faceC.h} (want ${layerPx}); ${failedChecks(vC).map(k => `${k}: ${vC.results[k][0]}`).join('; ')}`);
+        const expFaceH = baseGeo.tilePx * Math.ceil(layerPx / baseGeo.tilePx);
+        add('layerPx_param', rC.status === 0 && failedChecks(vC).length === 0 && faceC && faceC.h === expFaceH,
+            rC.status !== 0 ? brief(rC) : `wall face h ${faceC && faceC.h} (want ${expFaceH}); ${failedChecks(vC).map(k => `${k}: ${vC.results[k][0]}`).join('; ')}`);
     }
     return res;
 }
@@ -488,6 +502,7 @@ function refusalCases(toolPath, tag, base, onlyNames) {
         ['grid_colour_in_palette', ['PALETTE_COLLISION'], c => { c.palette.path = synthPalette('grid', tool.GRID_HEX); }],
         ['label_colour_in_palette', ['PALETTE_COLLISION'], c => { c.palette.path = synthPalette('label', tool.LABEL_HEX); }],
         ['magenta_in_palette', ['PALETTE_COLLISION'], c => { c.palette.path = synthPalette('magenta', tool.MAGENTA_HEX); }, ['--bg', 'magenta']],
+        ['unpadded_stratum_slot', ['STRATUM_HEIGHT_MISMATCH'], c => { find(c, 'TEST_SURFACE_B1_RAMP_RISE1_V1_BASE').slot.h = base.geo.stratumPx[0]; }],
         ['usage_no_out', null, null, null, 1],
         ['usage_bad_bg', null, null, ['--bg', 'TEST_plaid'], 1]
     ];
@@ -618,6 +633,7 @@ const MUTANTS = [
     { name: 'sidecar_xy_swapped', target: 'sidecar', from: 'x: s.x, y: s.y, w: s.w, h: s.h,', to: 'x: s.y, y: s.x, w: s.w, h: s.h,' },
     { name: 'variant_slot_allowed', target: 'refusals', from: 'if (e.variants && e.variants.derivedFrom) {', to: 'if (false) {', refusals: ['variant_has_slot'] },
     { name: 'palette_check_removed', target: 'refusals', from: 'if (pal.has(hex)) refuse(', to: 'if (false) refuse(', refusals: ['grid_colour_in_palette', 'label_colour_in_palette'] },
+    { name: 'unpadded_stratum_allowed', target: 'refusals', from: 'if (slot.h !== expectedSlotH) {', to: 'if (slot.h !== expectedSlotH && slot.h !== rows * spec.frameH) {', refusals: ['unpadded_stratum_slot'] },
     { name: 'timestamp_in_sidecar', target: 'determinism', from: 'format: TEMPLATE_FORMAT, generator: GENERATOR,', to: 'format: TEMPLATE_FORMAT, generator: GENERATOR, at: String(process.hrtime.bigint()),' }
 ];
 
@@ -910,7 +926,8 @@ function main() {
         need(dolls.length >= 2 && new Set(dolls.map(e => e.paperDoll.group)).size === 1, 'a paper-doll group');
         for (const [cat2, what] of [['RAMP', 'ramp cell'], ['EDGE', 'edge strip']]) {
             for (let d = 1; d <= geo.strataPerLayer; d++) {
-                need(slotted.some(e => e.category === cat2 && e.scaleRow === `GEOM_STRATUM_${d}` && e.slot.h === cumulative(geo.stratumPx, d)), `${what} for ${d} strata, height from stratumPx`);
+                const expSlotH = geo.tilePx * Math.ceil(cumulative(geo.stratumPx, d) / geo.tilePx);
+                need(slotted.some(e => e.category === cat2 && e.scaleRow === `GEOM_STRATUM_${d}` && e.slot.h === expSlotH), `${what} for ${d} strata, height from stratumPx (padded to ${geo.tilePx}px grid)`);
             }
         }
         need(slotted.some(e => e.anchor && e.anchor.type === 'CEILING'), 'a CEILING-anchored slot');

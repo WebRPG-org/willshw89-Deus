@@ -136,24 +136,26 @@ function buildCatalogue(geo, geometrySha256, opts) {
     // Row 2: a ramp run of five cells rising 1..5 strata, bottom-aligned in one layer band.
     for (let k = 1; k <= geo.strataPerLayer; k++) {
         const h = cum(k);
+        const slotH = up(h);
         add({ id: `TEST_SURFACE_B1_RAMP_RISE${k}_V1_BASE`, category: 'RAMP', band: 'SURFACE', scaleRow: `GEOM_STRATUM_${k}`, envelope: env(T, T, T, h, h, h),
-            anchor: ground(T, h), slot: slotAt(A, (k - 1) * T, rowY + bandH - h, T, h) });
+            anchor: ground(T, slotH), slot: slotAt(A, (k - 1) * T, rowY + bandH - slotH, T, slotH) });
     }
     rowY += bandH;
 
     // Row 3: edge/cliff strips for stratum differences 1..5, two tiles wide, one cell apart.
     for (let d = 1; d <= geo.strataPerLayer; d++) {
         const h = cum(d);
+        const slotH = up(h);
         add({ id: `TEST_SURFACE_B1_EDGE_STRATA${d}_V1_BASE`, category: 'EDGE', band: 'SURFACE', scaleRow: `GEOM_STRATUM_${d}`, envelope: env(2 * T, 2 * T, 2 * T, h, h, h),
-            anchor: ground(2 * T, h), slot: slotAt(A, (d - 1) * 3 * T, rowY + bandH - h, 2 * T, h) });
+            anchor: ground(2 * T, slotH), slot: slotAt(A, (d - 1) * 3 * T, rowY + bandH - slotH, 2 * T, slotH) });
     }
     rowY += bandH;
 
     // Row 4: one wall face, and a 2 x 2 set of wall faces (ticks repeat per frame row).
     add({ id: 'TEST_SURFACE_B1_WALL_FACE_V1_BASE', category: 'WALL', band: 'SURFACE', scaleRow: 'GEOM_LAYER_FACE', envelope: env(T, T, T, geo.layerPx, geo.layerPx, geo.layerPx),
-        anchor: ground(T, geo.layerPx), slot: slotAt(A, 0, rowY + 2 * bandH - geo.layerPx, T, geo.layerPx) });
+        anchor: ground(T, bandH), slot: slotAt(A, 0, rowY + 2 * bandH - bandH, T, bandH) });
     add({ id: 'TEST_SURFACE_B1_WALL_FACE_V2_SET', category: 'WALL', band: 'SURFACE', scaleRow: 'GEOM_LAYER_FACE', envelope: env(T, T, T, geo.layerPx, geo.layerPx, geo.layerPx),
-        anchor: ground(T, geo.layerPx), frames: { cols: 2, rows: 2, facings: 1, rate: 0 }, slot: slotAt(A, 2 * T, rowY + 2 * bandH - 2 * geo.layerPx, 2 * T, 2 * geo.layerPx) });
+        anchor: ground(T, bandH), frames: { cols: 2, rows: 2, facings: 1, rate: 0 }, slot: slotAt(A, 2 * T, rowY + 2 * bandH - 2 * bandH, 2 * T, 2 * bandH) });
     rowY += 2 * bandH;
 
     // Row 5: a paper-doll group (base body plus two layers), one RMMZ 3x4 block each.

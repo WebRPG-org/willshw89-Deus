@@ -709,7 +709,7 @@
       "anchor": {
         "type": "GROUND",
         "x": 24,
-        "y": 18
+        "y": 47
       },
       "paletteRampIds": [],
       "frames": {
@@ -722,9 +722,9 @@
         "sheetId": "TEST_ATLAS_SURFACE",
         "slotId": "TEST_ATLAS_SURFACE:0008",
         "x": 0,
-        "y": 173,
+        "y": 144,
         "w": 48,
-        "h": 19
+        "h": 48
       },
       "runtime": {
         "kind": "ATLAS",
@@ -782,7 +782,7 @@
       "anchor": {
         "type": "GROUND",
         "x": 24,
-        "y": 37
+        "y": 47
       },
       "paletteRampIds": [],
       "frames": {
@@ -795,9 +795,9 @@
         "sheetId": "TEST_ATLAS_SURFACE",
         "slotId": "TEST_ATLAS_SURFACE:0009",
         "x": 48,
-        "y": 154,
+        "y": 144,
         "w": 48,
-        "h": 38
+        "h": 48
       },
       "runtime": {
         "kind": "ATLAS",
@@ -855,7 +855,7 @@
       "anchor": {
         "type": "GROUND",
         "x": 24,
-        "y": 56
+        "y": 95
       },
       "paletteRampIds": [],
       "frames": {
@@ -868,9 +868,9 @@
         "sheetId": "TEST_ATLAS_SURFACE",
         "slotId": "TEST_ATLAS_SURFACE:0010",
         "x": 96,
-        "y": 135,
+        "y": 96,
         "w": 48,
-        "h": 57
+        "h": 96
       },
       "runtime": {
         "kind": "ATLAS",
@@ -928,7 +928,7 @@
       "anchor": {
         "type": "GROUND",
         "x": 24,
-        "y": 75
+        "y": 95
       },
       "paletteRampIds": [],
       "frames": {
@@ -941,9 +941,9 @@
         "sheetId": "TEST_ATLAS_SURFACE",
         "slotId": "TEST_ATLAS_SURFACE:0011",
         "x": 144,
-        "y": 116,
+        "y": 96,
         "w": 48,
-        "h": 76
+        "h": 96
       },
       "runtime": {
         "kind": "ATLAS",
@@ -1074,7 +1074,7 @@
       "anchor": {
         "type": "GROUND",
         "x": 48,
-        "y": 18
+        "y": 47
       },
       "paletteRampIds": [],
       "frames": {
@@ -1087,9 +1087,9 @@
         "sheetId": "TEST_ATLAS_SURFACE",
         "slotId": "TEST_ATLAS_SURFACE:0013",
         "x": 0,
-        "y": 269,
+        "y": 240,
         "w": 96,
-        "h": 19
+        "h": 48
       },
       "runtime": {
         "kind": "ATLAS",
@@ -1147,7 +1147,7 @@
       "anchor": {
         "type": "GROUND",
         "x": 48,
-        "y": 37
+        "y": 47
       },
       "paletteRampIds": [],
       "frames": {
@@ -1160,9 +1160,9 @@
         "sheetId": "TEST_ATLAS_SURFACE",
         "slotId": "TEST_ATLAS_SURFACE:0014",
         "x": 144,
-        "y": 250,
+        "y": 240,
         "w": 96,
-        "h": 38
+        "h": 48
       },
       "runtime": {
         "kind": "ATLAS",
@@ -1220,7 +1220,7 @@
       "anchor": {
         "type": "GROUND",
         "x": 48,
-        "y": 56
+        "y": 95
       },
       "paletteRampIds": [],
       "frames": {
@@ -1233,9 +1233,9 @@
         "sheetId": "TEST_ATLAS_SURFACE",
         "slotId": "TEST_ATLAS_SURFACE:0015",
         "x": 288,
-        "y": 231,
+        "y": 192,
         "w": 96,
-        "h": 57
+        "h": 96
       },
       "runtime": {
         "kind": "ATLAS",
@@ -1293,7 +1293,7 @@
       "anchor": {
         "type": "GROUND",
         "x": 48,
-        "y": 75
+        "y": 95
       },
       "paletteRampIds": [],
       "frames": {
@@ -1306,9 +1306,9 @@
         "sheetId": "TEST_ATLAS_SURFACE",
         "slotId": "TEST_ATLAS_SURFACE:0016",
         "x": 432,
-        "y": 212,
+        "y": 192,
         "w": 96,
-        "h": 76
+        "h": 96
       },
       "runtime": {
         "kind": "ATLAS",
