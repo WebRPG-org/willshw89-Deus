@@ -2668,7 +2668,7 @@
         const out = { gen, area: { x: ax, y: ay }, cuts: [], caves: [], shafts: [], skylights: [], massifCells: 0, capCells: 0,
             carvedStrata: 0, cutCells: 0, caveCells: 0, rampsAdded: 0, floatingRemoved: 0, ms: 0 };
         bs[4].caps = new Map();
-        bs[0].deepCuts = [];
+        Object.defineProperty(bs[0], "deepCuts", { value: [], writable: true, configurable: true, enumerable: false });
 
         // The column as one elevation scale: stratum e of cell i.
         const getE = (i, e) => M[(e / STRATA) | 0][i * STRATA + (e % STRATA)];
