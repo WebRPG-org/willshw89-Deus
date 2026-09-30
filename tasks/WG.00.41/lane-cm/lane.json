@@ -1,0 +1,20 @@
+{
+  "lane": "lane-cm",
+  "taskId": "WG.00.41",
+  "branch": "task/lane-cm",
+  "writer": "gemini",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "game/js/plugins/DEUS_Levels.js",
+    "tasks/WG.00.41/lane-cm/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 600
+    }
+  ]
+}
