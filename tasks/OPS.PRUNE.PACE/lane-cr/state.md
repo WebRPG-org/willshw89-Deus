@@ -1,0 +1,36 @@
+# OPS.PRUNE.PACE lane-cr state
+
+## FIX-CR-2 claim (2026-09-30)
+
+- Writer: Codex (OpenAI family), branch `task/lane-cr`, starting HEAD `df8a750bed5ffc2bdc5fb6e6e7e3052380d4b273`.
+- Claim: released for independent re-review at handoff; edited `tools/ops/pace.js`, `tools/ops/test_pace.js`, lane-local README/REPORT/state and `evidence/fix-cr-2-*.log` only.
+- Authority: Owner's FIX-CR-2 assignment, MSG-PRUNE-PM-054 and `C:/Users/snewt/.deus_pm/braintrust/2026-09-30/ANSWER-CR-R2_chatgpt_pro.md` (read in this session).
+- Scope: bounded under-target SURGE with separate diagnostic action, effective action and dispatch; matching one-hour regressions and mutation evidence.
+- Preserve pre-existing modified `BRIEF.md` and untracked launch prompts. Shared STATUS/VISION and manifest edits are outside this assignment; this lane-local record supplies the claim.
+- Final checkpoint: syntax gate 62 plugins/0 errors, EXIT=0; PACE 186 passed/0 failed, EXIT=0; mutation run baseline 186/0 and 22 killed/0 survived, EXIT=0. The new mutant fails all three named effective-promotion assertions. Final mutation evidence ended 2026-09-30T21:02:50.199Z. Independent Grok re-review and coordinator fresh-clone/merge-gate integration remain pending; no approval, closure, push or merge claimed.
+- Evidence: `REPORT.md`, `README.md`, `evidence/fix-cr-2-pace.log`, `evidence/fix-cr-2-mutants.log`, `evidence/fix-cr-2-syntax.log`. `evidence/fix-cr-2-initial-pace.log` preserves the initial fixture rounding failure, corrected before the final suites. Tested source blobs are in REPORT; final writer SHA is reported in the chat handoff.
+
+## FIX-CR claim (2026-09-30)
+
+- Writer: Codex, branch `task/lane-cr`, starting HEAD `a53111ac`.
+- Claim: released for independent re-review at handoff; edited `tools/ops/pace.js`, `tools/ops/test_pace.js`, and lane-local FIX-CR documentation/evidence only.
+- Authority: Owner's explicit FIX-CR assignment; exact five corrections from ANSWER-CR (MSG-PRUNE-PM-045).
+- Shared STATUS/VISION edits are excluded by the assignment; this lane-local claim records the scope exception.
+- Preserve existing launch prompts and review artifacts. Independent review and integration remain separate gates.
+- Final checkpoint: five FIX-CR corrections implemented. `node tools/ops/test_pace.js`: 170 passed, 0 failed, EXIT=0. `node tools/ops/test_pace.js --mutants`: baseline 170/0, 21 killed, 0 survived, EXIT=0. Manifest syntax gate: 62 plugins, 0 errors, EXIT=0. All CLI children completed in the foreground.
+- Evidence: `REPORT.md`, updated `README.md`, `evidence/fix-cr-pace.log`, `evidence/fix-cr-mutants.log`, `evidence/fix-cr-syntax.log`. No Owner/independent approval, answerability re-check, WBS closure, push or merge claimed. Final commit SHA will be reported via `git rev-parse HEAD` in the handoff.
+
+## Previous handoff (historical)
+
+- Date: 2026-09-30.
+- Writer: codex; branch: `task/lane-cr`; reviewer: claude (not yet requested or performed).
+- Claim: released for review at handoff; implementation touched only `tools/ops/pace.js`, `tools/ops/test_pace.js`, `tasks/OPS.PRUNE.PACE/lane-cr/**`.
+- Status: implementation and writer evidence ready for independent Claude review. Initial worktree was clean; no existing pace implementation. No approval, integration or WBS closure claimed.
+- The explicit allowedPaths override the general STATUS/VISION edit instructions. Claim and task evidence stay here; shared governance documents remain untouched.
+- Scope: one-shot, account-usage pacing report and local history, with foreground tests and deliberate mutants. No dispatcher, scheduler, provider calls, art, game changes, push, or merge.
+- Source inspection: BRIEF.md, lane.json, PACE-1..10 in MSG-PRUNE-PM-015..018, PACE-11 correction in AG-PRUNE-011, utilization policy section 6. The original MSG-PRUNE-PM-020..024 are absent from this checkout; the brief supplies PACE-11/PACE-14 strict grounding requirements.
+- Binding window: weekly when present; otherwise shortest reported window. Session totals and provider availability alone are not account quota evidence.
+- Planned checks: both lane.json gates, direct syntax checks for the new scripts, CLI persistence/error cases, and deliberate wrong-band/missing-reset/stale/ungrounded mutants.
+- Initial checkpoint: no tests or gameplay verification claimed. Implementation checkpoint: 113 baseline checks passed and nine deliberate mutants were caught. Additional decimal-boundary regression tests exposed two failures (0.9 and 1.1); the first correction rounds derived ratios to 14 significant digits. Foreground retest: 117 passed, 0 failed, EXIT=0. Final gate evidence will cover the committed implementation.
+- Final evidence: tested writer SHA `8560efa6f64306420bfcfd4dc7c66f072bc5af3f`; both manifest gates EXIT=0 (PACE 117/0, syntax 62 plugins/0 errors); 9/9 mutants caught; four required standalone mutants each EXIT=1; new-script syntax checks EXIT=0. Logs and full GAME TRANSLATION are in `REPORT.md` and `evidence/`.
+- All tests/child CLI invocations completed in the foreground. No session-owned background process, push, merge or art work. Remaining gate: independent review and coordinator integration; existing provider snapshot remains insufficient for numeric quota reporting.

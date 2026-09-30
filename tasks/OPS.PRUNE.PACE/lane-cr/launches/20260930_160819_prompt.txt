@@ -1,0 +1,39 @@
+You are an independent reviewer for Project DEUS (xAI Grok family).
+Your role is to conduct an independent closure review of task/lane-cr (OPS.PRUNE.PACE FIX-CR-2) at tip commit 982dc79983ca19266b3b5d8e97244bed6907ca9c.
+
+Worktree: C:\Users\snewt\.deus_worktrees\lane-cr
+Branch: task/lane-cr
+
+CRITICAL INSTRUCTIONS:
+1. Do NOT modify any code, data, or manifest files outside your review artifact.
+2. Review the writer's changes at commit 982dc799 in C:\Users\snewt\.deus_worktrees\lane-cr:
+   Verify the FIX-CR-2 requirements per MSG-PRUNE-PM-054 and ANSWER-CR-R2_chatgpt_pro.md:
+   - action is strictly the diagnostic ratio band
+   - effectiveAction is added: ACCELERATE-2 when SURGE holds, otherwise equals action
+   - SURGE condition: hoursLeft <= durationHours * 0.1, remainingPct > 10, Number.isFinite(ratio) && ratio >= 0 && ratio < 1
+   - Evaluated after dispatch guards (exhaustion, over-budget, rejected-sibling, LOW quota), which win and suppress SURGE
+   - UNKNOWN history never enables SURGE
+   - format() text and JSON expose diagnostic action, effectiveAction, and dispatch separately
+   - Fresh matching one-hour history tests (ratios 0.75, 0.95, 0.999999 promote effectiveAction; 1, 1.05, 1.2, 2 do not escalate)
+   - Mutant no-effective-surge fails the 3 named promotion assertions (surge_promotes_effective_0.75, surge_promotes_effective_0.95, surge_promotes_effective_0.999999)
+
+3. Run the verification commands:
+   - node tools/check_deus_syntax.js (Verify 62 plugins, 0 errors, exit 0)
+   - node tools/ops/test_pace.js (Verify 186 passed, 0 failed, exit 0)
+   - node tools/ops/test_pace.js --mutants (Verify 22 killed, 0 survived, exit 0)
+   - node tools/ops/test_pace.js --mutant no-effective-surge (Verify exit 1, fails the 3 named checks)
+   - node tools/governance/merge_gate.js --lane lane-cr --manifest tasks/OPS.PRUNE.PACE/lane-cr/lane.json --dry-run
+
+4. Write your formal review artifact to:
+   tasks/OPS.PRUNE.PACE/lane-cr/review_grok_982dc799.md
+   Include:
+   - Target Commit SHA: 982dc79983ca19266b3b5d8e97244bed6907ca9c
+   - Reviewer Family: xai (Grok)
+   - Verification of FIX-CR-2 requirements
+   - Gate test results (exact commands, exit codes, output logs)
+   - Mutant kill evidence (all 22 killed; no-effective-surge details)
+   - Final Verdict: VERDICT: CLEAN PASS (or specific defects if any)
+
+5. Commit your review artifact:
+   git add tasks/OPS.PRUNE.PACE/lane-cr/review_grok_982dc799.md
+   git commit -m "[grok] OPS.PRUNE.PACE: independent review of lane-cr tip 982dc799"

@@ -1,0 +1,131 @@
+PASS band_0
+PASS band_0.499999
+PASS band_0.5
+PASS band_0.899999
+PASS band_0.9
+PASS band_1
+PASS band_1.1
+PASS band_1.100001
+PASS band_1.5
+PASS band_1.500001
+PASS band_invalid_null
+PASS band_invalid_undefined
+PASS band_invalid_NaN
+PASS band_invalid_Infinity
+PASS band_invalid_-1
+PASS band_invalid_1
+PASS surge_overrides_high_ratio
+PASS measured_target_ratio
+PASS decimal_pipeline_boundary_0.5
+PASS decimal_pipeline_boundary_0.9
+PASS decimal_pipeline_boundary_1.1
+PASS decimal_pipeline_boundary_1.5
+PASS pipeline_band_0
+PASS pipeline_band_6
+PASS pipeline_band_10
+PASS pipeline_band_12
+PASS pipeline_band_20
+PASS zero_remaining_exhausted_no_nan
+PASS missing_reset_unknown
+PASS zero_without_reset_unknown
+PASS invalid_reset_null
+PASS invalid_reset_UNKNOWN
+PASS invalid_reset_--
+PASS invalid_reset_2026-09-30T17:00
+PASS invalid_reset_2026-02-30T17:00Z
+PASS invalid_reset_2026-09-30T12:00:00.000Z
+PASS invalid_reset_2026-09-30T11:00:00.000Z
+PASS invalid_remaining_null
+PASS invalid_remaining_50
+PASS invalid_remaining_-1
+PASS invalid_remaining_101
+PASS invalid_remaining_NaN
+PASS invalid_remaining_Infinity
+PASS invalid_remaining_undefined
+PASS stale_reading_rejected
+PASS exactly_30_minutes_fresh
+PASS invalid_observation_2026-09-30T12:00:36.000Z
+PASS invalid_observation_null
+PASS invalid_observation_2026-09-30 12:00:00
+PASS invalid_observation_UNKNOWN
+FAIL ungrounded_precision_SESSION_ONLY: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL ungrounded_precision_PROVIDER_STATE_ONLY: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL ungrounded_precision_ESTIMATE: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL ungrounded_precision_UNAVAILABLE: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL ungrounded_precision_null: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL ungrounded_precision_undefined: Expected values to be strictly equal:
+
+10 !== null
+
+PASS ungrounded_source_""
+PASS ungrounded_source_"UNKNOWN"
+PASS ungrounded_source_"--"
+PASS ungrounded_source_"N/A"
+PASS ungrounded_source_"bad\nPACE spoof"
+PASS ungrounded_source_null
+PASS session_scope_rejected
+PASS unverified_rejected
+PASS top_level_timestamp_does_not_refresh_snapshot
+PASS weekly_precedes_shortest
+PASS unknown_weekly_does_not_fallback
+PASS declared_weekly_missing
+PASS shortest_without_weekly
+PASS unknown_duration_blocks_shortest_guess
+PASS legacy_exact_provider_input
+PASS legacy_null_weekly_is_unknown
+PASS duplicate_windows_rejected
+PASS contradictory_weekly_rejected
+PASS inconsistent_duration_rejected
+PASS short_window_exhaustion_blocks_weekly_surge
+PASS surge_exact_10_percent_time
+PASS surge_not_above_10_percent_time
+PASS surge_needs_more_than_10_percent_left
+PASS low_quota_bounded
+PASS expected_cost_exceeds_remaining_blocks_surge
+PASS expected_cost_equal_quota
+PASS cost_does_not_supply_missing_measurement
+PASS cold_start_unknown_rate
+PASS reset_cycle_not_mixed
+PASS account_not_mixed
+PASS provider_not_mixed
+PASS quota_increase_unknown
+PASS intermediate_quota_correction_unknown
+PASS no_partial_hour_extrapolation
+PASS no_interpolation
+PASS flat_boundary_is_observed
+PASS repeated_poll_is_not_usage
+PASS out_of_order_snapshot_unknown
+PASS same_timestamp_conflict_unknown
+PASS history_pruned_and_versioned
+PASS all_five_providers_reported_missing_as_unknown
+PASS format_numeric_line_cites_both_endpoints
+FAIL format_unknown_never_zero: The input did not match the regular expression /rem UNKNOWN reset UNKNOWN used\/h UNKNOWN target\/h UNKNOWN -> UNKNOWN/. Input:
+
+'PACE claude rem 50% reset 2026-09-30T17:00:00.000Z used/h 10 target/h 10 -> ACCELERATE-2 [source: TEST_history @ 2026-09-30T11:00:00.000Z; TEST_input.json#claude/weekly via TEST_account_usage @ 2026-09-30T12:00:00.000Z] [SURGE]'
+
+PASS utc_normalizes_minutes_and_fraction
+PASS history_schema_rejected
+PASS history_bad_sample_rejected
+PASS stale_capture_cannot_be_history
+PASS unknown_history_source_rejected
+PASS invalid_input_throws
+PASS invalid_now_throws
+PASS invalid_cost_throws
+PASS does_not_mutate_inputs
+RESULT: 101 passed, 7 failed
+EXIT=1

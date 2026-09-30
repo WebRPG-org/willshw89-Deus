@@ -1,0 +1,1281 @@
+START_UTC=2026-09-30T21:02:46.945Z
+COMMAND=node tools/ops/test_pace.js --mutants
+PASS band_0
+PASS band_0.499999
+PASS band_0.5
+PASS band_0.899999
+PASS band_0.9
+PASS band_1
+PASS band_1.1
+PASS band_1.100001
+PASS band_1.5
+PASS band_1.500001
+PASS band_invalid_null
+PASS band_invalid_undefined
+PASS band_invalid_NaN
+PASS band_invalid_Infinity
+PASS band_invalid_-1
+PASS band_invalid_1
+PASS surge_cannot_override_high_ratio
+PASS bounded_dispatch_suppresses_surge
+PASS measured_target_ratio
+PASS decimal_pipeline_boundary_0.5
+PASS decimal_pipeline_boundary_0.9
+PASS decimal_pipeline_boundary_1.1
+PASS decimal_pipeline_boundary_1.5
+PASS pipeline_band_0
+PASS pipeline_band_6
+PASS pipeline_band_10
+PASS pipeline_band_12
+PASS pipeline_band_20
+PASS zero_remaining_exhausted_no_nan
+PASS missing_reset_unknown
+PASS zero_without_reset_unknown
+PASS invalid_reset_null
+PASS invalid_reset_UNKNOWN
+PASS invalid_reset_--
+PASS invalid_reset_2026-09-30T17:00
+PASS invalid_reset_2026-02-30T17:00Z
+PASS invalid_reset_2026-09-30T12:00:00.000Z
+PASS invalid_reset_2026-09-30T11:00:00.000Z
+PASS invalid_remaining_null
+PASS invalid_remaining_50
+PASS invalid_remaining_-1
+PASS invalid_remaining_101
+PASS invalid_remaining_NaN
+PASS invalid_remaining_Infinity
+PASS invalid_remaining_undefined
+PASS stale_reading_rejected
+PASS exactly_30_minutes_fresh
+PASS invalid_observation_2026-09-30T12:00:36.000Z
+PASS invalid_observation_null
+PASS invalid_observation_2026-09-30 12:00:00
+PASS invalid_observation_UNKNOWN
+PASS ungrounded_precision_SESSION_ONLY
+PASS ungrounded_precision_PROVIDER_STATE_ONLY
+PASS ungrounded_precision_ESTIMATE
+PASS ungrounded_precision_UNAVAILABLE
+PASS ungrounded_precision_null
+PASS ungrounded_precision_undefined
+PASS ungrounded_source_""
+PASS history_source_""_rejected
+PASS ungrounded_source_"UNKNOWN"
+PASS history_source_"UNKNOWN"_rejected
+PASS ungrounded_source_"unknown"
+PASS history_source_"unknown"_rejected
+PASS ungrounded_source_" UnKnOwN "
+PASS history_source_" UnKnOwN "_rejected
+PASS ungrounded_source_"--"
+PASS history_source_"--"_rejected
+PASS ungrounded_source_" - - "
+PASS history_source_" - - "_rejected
+PASS ungrounded_source_"N/A"
+PASS history_source_"N/A"_rejected
+PASS ungrounded_source_"n/a"
+PASS history_source_"n/a"_rejected
+PASS ungrounded_source_" N / a "
+PASS history_source_" N / a "_rejected
+PASS ungrounded_source_"bad\nPACE spoof"
+PASS history_source_"bad\nPACE spoof"_rejected
+PASS ungrounded_source_null
+PASS history_source_null_rejected
+PASS session_scope_rejected
+PASS unverified_rejected
+PASS verified_boolean_true_accepted
+PASS non_boolean_verified_"false"_rejected
+PASS non_boolean_verified_"true"_rejected
+PASS non_boolean_verified_null_rejected
+PASS non_boolean_verified_0_rejected
+PASS non_boolean_verified_1_rejected
+PASS non_boolean_verified_{}_rejected
+PASS non_boolean_verified_[]_rejected
+PASS non_boolean_verified_undefined_rejected
+PASS top_level_timestamp_does_not_refresh_snapshot
+PASS weekly_precedes_shortest
+PASS unknown_weekly_does_not_fallback
+PASS rejected_sibling_stale_exposed
+PASS rejected_sibling_missing_reset_exposed
+PASS rejected_sibling_missing_quota_exposed
+PASS rejected_sibling_missing_duration_exposed
+PASS rejected_sibling_unverified_exposed
+PASS siblings_exposed_when_binding_selection_fails
+PASS declared_weekly_missing
+PASS shortest_without_weekly
+PASS unknown_duration_blocks_shortest_guess
+PASS legacy_exact_provider_input
+PASS legacy_null_weekly_is_unknown
+PASS duplicate_windows_rejected
+PASS contradictory_weekly_rejected
+PASS inconsistent_duration_rejected
+PASS short_window_exhaustion_blocks_weekly_surge
+PASS surge_exact_10_percent_time
+PASS surge_promotes_effective_0.75
+PASS surge_promotes_effective_0.95
+PASS surge_promotes_effective_0.999999
+PASS surge_no_escalation_1
+PASS surge_no_escalation_1.05
+PASS surge_no_escalation_1.2
+PASS surge_no_escalation_2
+PASS surge_unknown_history_missing
+PASS surge_unknown_history_mismatched_reset
+PASS surge_unknown_history_partial_hour
+PASS surge_unknown_history_quota_correction
+PASS surge_under_target_guard_exhaustion
+PASS surge_under_target_guard_over_budget
+PASS surge_under_target_guard_rejected_sibling
+PASS surge_under_target_guard_low_quota
+PASS surge_not_above_10_percent_time
+PASS surge_needs_more_than_10_percent_left
+PASS low_quota_bounded
+PASS low_quota_band_0
+PASS denied_cost_preserves_band_0
+PASS low_quota_band_0.5
+PASS denied_cost_preserves_band_0.5
+PASS low_quota_band_0.9
+PASS denied_cost_preserves_band_0.9
+PASS low_quota_band_1.1
+PASS denied_cost_preserves_band_1.1
+PASS low_quota_band_1.5
+PASS denied_cost_preserves_band_1.5
+PASS low_quota_band_2
+PASS denied_cost_preserves_band_2
+PASS expected_cost_exceeds_remaining_blocks_surge
+PASS expected_cost_equal_quota
+PASS cost_does_not_supply_missing_measurement
+PASS cold_start_unknown_rate
+PASS reset_cycle_not_mixed
+PASS account_not_mixed
+PASS provider_not_mixed
+PASS quota_increase_unknown
+PASS intermediate_quota_correction_unknown
+PASS no_partial_hour_extrapolation
+PASS no_interpolation
+PASS flat_boundary_is_observed
+PASS repeated_poll_is_not_usage
+PASS out_of_order_snapshot_unknown
+PASS same_timestamp_conflict_unknown
+PASS same_instant_conflict_2026-09-30T11:00:00Z
+PASS same_instant_conflict_2026-09-30T11:00Z
+PASS same_instant_conflict_2026-09-30T06:00:00-05:00
+PASS same_instant_conflict_2026-09-30T13:00:00+02:00
+PASS boundary_conflict_not_hidden_by_duplicate_tail
+PASS equivalent_reset_instant_measures_same_window
+PASS equivalent_instants_deduplicate_and_canonicalize
+PASS canonicalization_preserves_conflicting_values_across_polls
+PASS history_pruned_and_versioned
+PASS all_five_providers_reported_missing_as_unknown
+PASS format_numeric_line_cites_both_endpoints
+PASS format_unknown_never_zero
+PASS utc_normalizes_minutes_and_fraction
+PASS utc_explicit_offsets_only
+PASS history_schema_rejected
+PASS history_bad_sample_rejected
+PASS stale_capture_cannot_be_history
+PASS unknown_history_source_rejected
+PASS invalid_input_throws
+PASS invalid_now_throws
+PASS invalid_cost_throws
+PASS does_not_mutate_inputs
+PASS cli_two_foreground_polls_persist_history
+PASS cli_read_only_preserves_history
+PASS cli_stdin_json
+PASS cli_surge_actions_and_dispatch_separate
+PASS cli_bad_input_fails_preserves_history
+PASS cli_corrupt_history_fails_without_overwrite
+PASS cli_missing_input_fails
+PASS cli_unknown_option_fails
+PASS cli_invalid_expected_cost_fails
+PASS cli_input_history_collision_fails
+RESULT: 186 passed, 0 failed
+MUTANT wrong-band
+FAIL band_0: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+FAIL band_0.499999: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+FAIL pipeline_band_0: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+FAIL rejected_sibling_stale_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+FAIL rejected_sibling_missing_reset_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+FAIL rejected_sibling_missing_quota_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+FAIL rejected_sibling_missing_duration_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+FAIL rejected_sibling_unverified_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+FAIL short_window_exhaustion_blocks_weekly_surge: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+FAIL surge_exact_10_percent_time: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+FAIL low_quota_bounded: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+FAIL low_quota_band_0: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+FAIL denied_cost_preserves_band_0: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+RESULT: 163 passed, 13 failed
+KILLED wrong-band: required failing check band_0
+MUTANT missing-reset
+FAIL missing_reset_unknown: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL zero_without_reset_unknown: Expected values to be strictly equal:
+
+0 !== null
+
+FAIL invalid_reset_null: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL invalid_reset_UNKNOWN: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL invalid_reset_--: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL invalid_reset_2026-09-30T17:00: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL invalid_reset_2026-02-30T17:00Z: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL unknown_weekly_does_not_fallback: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL rejected_sibling_missing_reset_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'WITHIN_BINDING_QUOTA'
+- 'UNKNOWN'
+
+RESULT: 167 passed, 9 failed
+KILLED missing-reset: required failing check missing_reset_unknown
+MUTANT stale-reading
+FAIL stale_reading_rejected: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL top_level_timestamp_does_not_refresh_snapshot: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL rejected_sibling_stale_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'WITHIN_BINDING_QUOTA'
+- 'UNKNOWN'
+
+FAIL surge_under_target_guard_rejected_sibling: Expected values to be strictly equal:
+
+'DENY' !== 'UNKNOWN'
+
+RESULT: 172 passed, 4 failed
+KILLED stale-reading: required failing check stale_reading_rejected
+MUTANT ungrounded-estimate
+FAIL ungrounded_precision_SESSION_ONLY: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL ungrounded_precision_PROVIDER_STATE_ONLY: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL ungrounded_precision_ESTIMATE: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL ungrounded_precision_UNAVAILABLE: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL ungrounded_precision_null: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL ungrounded_precision_undefined: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL format_unknown_never_zero: The input did not match the regular expression /rem UNKNOWN reset UNKNOWN used\/h UNKNOWN target\/h UNKNOWN -> UNKNOWN/. Input:
+
+'PACE claude window weekly rem 50% reset 2026-09-30T17:00:00.000Z used/h 10 target/h 10 -> HOLD [effective: HOLD] [source: TEST_history @ 2026-09-30T11:00:00.000Z; TEST_input.json#claude/weekly via TEST_account_usage @ 2026-09-30T12:00:00.000Z] [scope: binding-window] [dispatch: UNKNOWN]'
+
+RESULT: 169 passed, 7 failed
+KILLED ungrounded-estimate: required failing check ungrounded_precision_SESSION_ONLY
+MUTANT wrong-window
+FAIL weekly_precedes_shortest: Expected values to be strictly equal:
++ actual - expected
+
++ 'five-hour'
+- 'weekly'
+
+FAIL unknown_weekly_does_not_fallback: Expected values to be strictly equal:
+
+40 !== null
+
+FAIL rejected_sibling_stale_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'UNKNOWN'
+- 'ACCELERATE-2'
+
+FAIL rejected_sibling_missing_reset_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'UNKNOWN'
+- 'ACCELERATE-2'
+
+FAIL rejected_sibling_missing_quota_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'UNKNOWN'
+- 'ACCELERATE-2'
+
+FAIL rejected_sibling_missing_duration_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'UNKNOWN'
+- 'ACCELERATE-2'
+
+FAIL rejected_sibling_unverified_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'UNKNOWN'
+- 'ACCELERATE-2'
+
+FAIL legacy_exact_provider_input: Expected values to be strictly equal:
+
+40 !== 10
+
+FAIL legacy_null_weekly_is_unknown: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL short_window_exhaustion_blocks_weekly_surge: Expected values to be strictly equal:
++ actual - expected
+
++ 'UNKNOWN'
+- 'ACCELERATE-2'
+
+RESULT: 166 passed, 10 failed
+KILLED wrong-window: required failing check weekly_precedes_shortest
+MUTANT wrong-target
+FAIL surge_cannot_override_high_ratio: Expected values to be strictly equal:
+
+0.1 !== 10
+
+FAIL bounded_dispatch_suppresses_surge: Expected values to be strictly equal:
+
+120 !== 1.2
+
+FAIL measured_target_ratio: Expected values to be strictly equal:
+
+0.1 !== 10
+
+FAIL pipeline_band_6: Expected values to be strictly equal:
++ actual - expected
+
++ 'THROTTLE-2'
+- 'ACCELERATE-1'
+
+FAIL pipeline_band_10: Expected values to be strictly equal:
++ actual - expected
+
++ 'THROTTLE-2'
+- 'HOLD'
+
+FAIL pipeline_band_12: Expected values to be strictly equal:
++ actual - expected
+
++ 'THROTTLE-2'
+- 'THROTTLE-1'
+            ^
+
+FAIL zero_remaining_exhausted_no_nan: Expected values to be strictly equal:
+
+null !== 0
+
+FAIL exactly_30_minutes_fresh: Expected values to be strictly equal:
+
+0.1 !== 10
+
+FAIL verified_boolean_true_accepted: Expected values to be strictly equal:
+
+0.1 !== 10
+
+FAIL weekly_precedes_shortest: Expected values to be strictly equal:
+
+0.1 !== 10
+
+FAIL legacy_exact_provider_input: Expected values to be strictly equal:
+
+0.1 !== 10
+
+FAIL legacy_null_weekly_is_unknown: Expected values to be strictly equal:
++ actual - expected
+
++ 'THROTTLE-2'
+- 'HOLD'
+
+FAIL surge_exact_10_percent_time: Expected values to be strictly equal:
++ actual - expected
+
++ 0.045454545454545456
+- 22
+
+FAIL surge_promotes_effective_0.75: Expected values to be strictly equal:
++ actual - expected
+
++ 0.045454545454545456
+- 22
+
+FAIL surge_promotes_effective_0.95: Expected values to be strictly equal:
++ actual - expected
+
++ 0.045454545454545456
+- 22
+
+FAIL surge_promotes_effective_0.999999: Expected values to be strictly equal:
++ actual - expected
+
++ 0.045454545454545456
+- 22
+
+FAIL surge_no_escalation_1: Expected values to be strictly equal:
++ actual - expected
+
++ 0.045454545454545456
+- 22
+
+FAIL surge_no_escalation_1.05: Expected values to be strictly equal:
++ actual - expected
+
++ 0.045454545454545456
+- 22
+
+FAIL surge_no_escalation_1.2: Expected values to be strictly equal:
++ actual - expected
+
++ 0.045454545454545456
+- 22
+
+FAIL surge_no_escalation_2: Expected values to be strictly equal:
++ actual - expected
+
++ 0.045454545454545456
+- 22
+
+FAIL surge_unknown_history_missing: Expected values to be strictly equal:
++ actual - expected
+
++ 0.045454545454545456
+- 22
+
+FAIL surge_unknown_history_mismatched_reset: Expected values to be strictly equal:
++ actual - expected
+
++ 0.045454545454545456
+- 22
+
+FAIL surge_unknown_history_partial_hour: Expected values to be strictly equal:
++ actual - expected
+
++ 0.045454545454545456
+- 22
+
+FAIL surge_unknown_history_quota_correction: Expected values to be strictly equal:
++ actual - expected
+
++ 0.045454545454545456
+- 22
+
+FAIL surge_under_target_guard_exhaustion: Expected values to be strictly equal:
+
+363 !== 0.75
+
+FAIL surge_under_target_guard_over_budget: Expected values to be strictly equal:
+
+363 !== 0.75
+
+FAIL surge_under_target_guard_rejected_sibling: Expected values to be strictly equal:
+
+363 !== 0.75
+
+FAIL surge_under_target_guard_low_quota: Expected values to be strictly equal:
+
+300 !== 0.75
+
+FAIL surge_not_above_10_percent_time: Expected values to be strictly equal:
++ actual - expected
+
++ 362.99879000302
+- 0.75
+
+FAIL surge_needs_more_than_10_percent_left: Expected values to be strictly equal:
+
+300 !== 0.75
+
+FAIL low_quota_bounded: Expected values to be strictly equal:
+
+0.5 !== 2
+
+FAIL low_quota_band_0.5: Expected values to be strictly equal:
+
+2 !== 0.5
+
+FAIL denied_cost_preserves_band_0.5: Expected values to be strictly equal:
+
+50 !== 0.5
+
+FAIL low_quota_band_0.9: Expected values to be strictly equal:
+
+3.6 !== 0.9
+
+FAIL denied_cost_preserves_band_0.9: Expected values to be strictly equal:
+
+90 !== 0.9
+
+FAIL low_quota_band_1.1: Expected values to be strictly equal:
+
+4.4 !== 1.1
+
+FAIL denied_cost_preserves_band_1.1: Expected values to be strictly equal:
+
+110 !== 1.1
+
+FAIL low_quota_band_1.5: Expected values to be strictly equal:
+
+6 !== 1.5
+
+FAIL denied_cost_preserves_band_1.5: Expected values to be strictly equal:
+
+150 !== 1.5
+
+FAIL low_quota_band_2: Expected values to be strictly equal:
+
+8 !== 2
+
+FAIL denied_cost_preserves_band_2: Expected values to be strictly equal:
+
+200 !== 2
+
+FAIL expected_cost_exceeds_remaining_blocks_surge: Expected values to be strictly equal:
+
+459.8 !== 0.95
+
+FAIL expected_cost_equal_quota: Expected values to be strictly equal:
++ actual - expected
+
++ 'DENY'
+- 'WITHIN_BINDING_QUOTA'
+
+FAIL cold_start_unknown_rate: Expected values to be strictly equal:
+
+0.1 !== 10
+
+FAIL equivalent_reset_instant_measures_same_window: Expected values to be strictly equal:
++ actual - expected
+
++ 'THROTTLE-2'
+- 'HOLD'
+
+FAIL format_numeric_line_cites_both_endpoints: The input did not match the regular expression /^PACE claude window five-hour rem 40% reset 2026-09-30T16:00:00.000Z used\/h 10 target\/h 10 -> HOLD \[effective: HOLD\] \[source: /. Input:
+
+'PACE claude window five-hour rem 40% reset 2026-09-30T16:00:00.000Z used/h 10 target/h 0.1 -> THROTTLE-2 [effective: THROTTLE-2] [source: TEST_history @ 2026-09-30T11:00:00.000Z; TEST_input.json#claude/five-hour via TEST_account_usage @ 2026-09-30T12:00:00.000Z] [scope: binding-window] [dispatch: DENY]'
+
+RESULT: 130 passed, 46 failed
+KILLED wrong-target: required failing check measured_target_ratio
+MUTANT wrong-measured
+FAIL surge_cannot_override_high_ratio: Expected values to be strictly equal:
+
+0 !== 40
+
+FAIL bounded_dispatch_suppresses_surge: Expected values to be strictly equal:
+
+0 !== 1.2
+
+FAIL measured_target_ratio: Expected values to be strictly equal:
+
+0 !== 10
+
+FAIL decimal_pipeline_boundary_0.5: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'ACCELERATE-1'
+              ^
+
+FAIL decimal_pipeline_boundary_0.9: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'HOLD'
+
+FAIL decimal_pipeline_boundary_1.1: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'HOLD'
+
+FAIL decimal_pipeline_boundary_1.5: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'THROTTLE-1'
+
+FAIL pipeline_band_6: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'ACCELERATE-1'
+              ^
+
+FAIL pipeline_band_10: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'HOLD'
+
+FAIL pipeline_band_12: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'THROTTLE-1'
+
+FAIL pipeline_band_20: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'THROTTLE-2'
+
+FAIL legacy_null_weekly_is_unknown: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'HOLD'
+
+FAIL surge_promotes_effective_0.75: The expression evaluated to a falsy value:
+
+  assert.ok(Math.abs(r.measured - ratio * 22) < 1e-12)
+
+FAIL surge_promotes_effective_0.95: The expression evaluated to a falsy value:
+
+  assert.ok(Math.abs(r.measured - ratio * 22) < 1e-12)
+
+FAIL surge_promotes_effective_0.999999: The expression evaluated to a falsy value:
+
+  assert.ok(Math.abs(r.measured - ratio * 22) < 1e-12)
+
+FAIL surge_no_escalation_1: Expected values to be strictly equal:
+
+0 !== 1
+
+FAIL surge_no_escalation_1.05: Expected values to be strictly equal:
+
+0 !== 1.05
+
+FAIL surge_no_escalation_1.2: Expected values to be strictly equal:
+
+0 !== 1.2
+
+FAIL surge_no_escalation_2: Expected values to be strictly equal:
+
+0 !== 2
+
+FAIL surge_under_target_guard_exhaustion: Expected values to be strictly equal:
+
+0 !== 0.75
+
+FAIL surge_under_target_guard_over_budget: Expected values to be strictly equal:
+
+0 !== 0.75
+
+FAIL surge_under_target_guard_rejected_sibling: Expected values to be strictly equal:
+
+0 !== 0.75
+
+FAIL surge_under_target_guard_low_quota: Expected values to be strictly equal:
+
+0 !== 0.75
+
+FAIL surge_not_above_10_percent_time: Expected values to be strictly equal:
+
+0 !== 0.75
+
+FAIL surge_needs_more_than_10_percent_left: Expected values to be strictly equal:
+
+0 !== 0.75
+
+FAIL low_quota_band_0.5: Expected values to be strictly equal:
+
+0 !== 0.5
+
+FAIL denied_cost_preserves_band_0.5: Expected values to be strictly equal:
+
+0 !== 0.5
+
+FAIL low_quota_band_0.9: Expected values to be strictly equal:
+
+0 !== 0.9
+
+FAIL denied_cost_preserves_band_0.9: Expected values to be strictly equal:
+
+0 !== 0.9
+
+FAIL low_quota_band_1.1: Expected values to be strictly equal:
+
+0 !== 1.1
+
+FAIL denied_cost_preserves_band_1.1: Expected values to be strictly equal:
+
+0 !== 1.1
+
+FAIL low_quota_band_1.5: Expected values to be strictly equal:
+
+0 !== 1.5
+
+FAIL denied_cost_preserves_band_1.5: Expected values to be strictly equal:
+
+0 !== 1.5
+
+FAIL low_quota_band_2: Expected values to be strictly equal:
+
+0 !== 2
+
+FAIL denied_cost_preserves_band_2: Expected values to be strictly equal:
+
+0 !== 2
+
+FAIL expected_cost_exceeds_remaining_blocks_surge: Expected values to be strictly equal:
+
+0 !== 0.95
+
+FAIL flat_boundary_is_observed: Expected values to be strictly equal:
+
+0 !== 20
+
+FAIL repeated_poll_is_not_usage: Expected values to be strictly equal:
+
+0 !== 10
+
+FAIL equivalent_reset_instant_measures_same_window: Expected values to be strictly equal:
+
+0 !== 10
+
+FAIL format_numeric_line_cites_both_endpoints: The input did not match the regular expression /^PACE claude window five-hour rem 40% reset 2026-09-30T16:00:00.000Z used\/h 10 target\/h 10 -> HOLD \[effective: HOLD\] \[source: /. Input:
+
+'PACE claude window five-hour rem 40% reset 2026-09-30T16:00:00.000Z used/h 0 target/h 10 -> ACCELERATE-2 [effective: ACCELERATE-2] [source: TEST_history @ 2026-09-30T11:00:00.000Z; TEST_input.json#claude/five-hour via TEST_account_usage @ 2026-09-30T12:00:00.000Z] [scope: binding-window] [dispatch: UNKNOWN]'
+
+RESULT: 136 passed, 40 failed
+KILLED wrong-measured: required failing check measured_target_ratio
+MUTANT no-surge
+FAIL surge_exact_10_percent_time: Expected values to be strictly equal:
+
+false !== true
+
+FAIL surge_promotes_effective_0.75: Expected values to be strictly equal:
+
+false !== true
+
+FAIL surge_promotes_effective_0.95: Expected values to be strictly equal:
+
+false !== true
+
+FAIL surge_promotes_effective_0.999999: Expected values to be strictly equal:
+
+false !== true
+
+RESULT: 172 passed, 4 failed
+KILLED no-surge: required failing check surge_exact_10_percent_time
+MUTANT no-effective-surge
+FAIL surge_promotes_effective_0.75: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-1'
+- 'ACCELERATE-2'
+              ^
+
+FAIL surge_promotes_effective_0.95: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+FAIL surge_promotes_effective_0.999999: Expected values to be strictly equal:
++ actual - expected
+
++ 'HOLD'
+- 'ACCELERATE-2'
+
+RESULT: 173 passed, 3 failed
+KILLED no-effective-surge: required failing check surge_promotes_effective_0.75, surge_promotes_effective_0.95, surge_promotes_effective_0.999999
+MUTANT mix-reset
+FAIL surge_unknown_history_mismatched_reset: Expected values to be strictly equal:
+
+16.5 !== null
+
+FAIL reset_cycle_not_mixed: Expected values to be strictly equal:
+
+40 !== null
+
+RESULT: 174 passed, 2 failed
+KILLED mix-reset: required failing check reset_cycle_not_mixed
+MUTANT raw-history-times
+FAIL same_instant_conflict_2026-09-30T11:00:00Z: Expected values to be strictly equal:
+
+0 !== null
+
+FAIL same_instant_conflict_2026-09-30T11:00Z: Expected values to be strictly equal:
+
+0 !== null
+
+FAIL same_instant_conflict_2026-09-30T06:00:00-05:00: Expected values to be strictly equal:
+
+0 !== null
+
+FAIL same_instant_conflict_2026-09-30T13:00:00+02:00: Expected values to be strictly equal:
+
+0 !== null
+
+FAIL equivalent_reset_instant_measures_same_window: Expected values to be strictly equal:
+
+null !== 10
+
+FAIL equivalent_instants_deduplicate_and_canonicalize: Expected values to be strictly equal:
+
+3 !== 2
+
+FAIL canonicalization_preserves_conflicting_values_across_polls: Expected values to be strictly deep-equal:
++ actual - expected
+
+  [
+    80,
+-   40
+  ]
+
+RESULT: 169 passed, 7 failed
+KILLED raw-history-times: required failing check same_instant_conflict_2026-09-30T11:00:00Z
+MUTANT hidden-boundary-conflict
+FAIL boundary_conflict_not_hidden_by_duplicate_tail: Expected values to be strictly equal:
+
+0 !== null
+
+RESULT: 175 passed, 1 failed
+KILLED hidden-boundary-conflict: required failing check boundary_conflict_not_hidden_by_duplicate_tail
+MUTANT truthy-verified
+FAIL non_boolean_verified_"false"_rejected: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL non_boolean_verified_"true"_rejected: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL non_boolean_verified_null_rejected: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL non_boolean_verified_0_rejected: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL non_boolean_verified_1_rejected: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL non_boolean_verified_{}_rejected: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL non_boolean_verified_[]_rejected: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL non_boolean_verified_undefined_rejected: Expected values to be strictly equal:
+
+10 !== null
+
+FAIL rejected_sibling_unverified_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'WITHIN_BINDING_QUOTA'
+- 'UNKNOWN'
+
+RESULT: 167 passed, 9 failed
+KILLED truthy-verified: required failing check non_boolean_verified_"false"_rejected
+MUTANT placeholder-history-source
+FAIL history_source_"UNKNOWN"_rejected: Missing expected exception.
+FAIL history_source_"unknown"_rejected: Missing expected exception.
+FAIL history_source_" UnKnOwN "_rejected: Missing expected exception.
+FAIL history_source_"--"_rejected: Missing expected exception.
+FAIL history_source_" - - "_rejected: Missing expected exception.
+FAIL history_source_"N/A"_rejected: Missing expected exception.
+FAIL history_source_"n/a"_rejected: Missing expected exception.
+FAIL history_source_" N / a "_rejected: Missing expected exception.
+FAIL unknown_history_source_rejected: Missing expected exception.
+RESULT: 167 passed, 9 failed
+KILLED placeholder-history-source: required failing check history_source_"n/a"_rejected
+MUTANT low-overrides-band
+FAIL surge_under_target_guard_low_quota: Expected values to be strictly equal:
++ actual - expected
+
++ 'THROTTLE-1'
+- 'ACCELERATE-1'
+
+FAIL surge_needs_more_than_10_percent_left: Expected values to be strictly equal:
++ actual - expected
+
++ 'THROTTLE-1'
+- 'ACCELERATE-1'
+
+FAIL low_quota_bounded: Expected values to be strictly equal:
++ actual - expected
+
++ 'THROTTLE-1'
+- 'ACCELERATE-2'
+
+FAIL low_quota_band_0: Expected values to be strictly equal:
++ actual - expected
+
++ 'THROTTLE-1'
+- 'ACCELERATE-2'
+
+FAIL low_quota_band_0.5: Expected values to be strictly equal:
++ actual - expected
+
++ 'THROTTLE-1'
+- 'ACCELERATE-1'
+
+FAIL low_quota_band_0.9: Expected values to be strictly equal:
++ actual - expected
+
++ 'THROTTLE-1'
+- 'HOLD'
+
+FAIL low_quota_band_1.1: Expected values to be strictly equal:
++ actual - expected
+
++ 'THROTTLE-1'
+- 'HOLD'
+
+FAIL low_quota_band_2: Expected values to be strictly equal:
++ actual - expected
+
++ 'THROTTLE-1'
+- 'THROTTLE-2'
+            ^
+
+RESULT: 168 passed, 8 failed
+KILLED low-overrides-band: required failing check low_quota_bounded
+MUTANT surge-overrides-band
+FAIL surge_cannot_override_high_ratio: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'THROTTLE-2'
+
+FAIL bounded_dispatch_suppresses_surge: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'THROTTLE-1'
+
+FAIL surge_promotes_effective_0.75: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'ACCELERATE-1'
+              ^
+
+FAIL surge_promotes_effective_0.95: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'HOLD'
+
+FAIL surge_promotes_effective_0.999999: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'HOLD'
+
+FAIL surge_no_escalation_1: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'HOLD'
+
+FAIL surge_no_escalation_1.05: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'HOLD'
+
+FAIL surge_no_escalation_1.2: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'THROTTLE-1'
+
+FAIL surge_no_escalation_2: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'THROTTLE-2'
+
+FAIL surge_unknown_history_missing: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'UNKNOWN'
+
+FAIL surge_unknown_history_mismatched_reset: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'UNKNOWN'
+
+FAIL surge_unknown_history_partial_hour: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'UNKNOWN'
+
+FAIL surge_unknown_history_quota_correction: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'UNKNOWN'
+
+FAIL surge_under_target_guard_exhaustion: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'ACCELERATE-1'
+              ^
+
+FAIL surge_under_target_guard_over_budget: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'ACCELERATE-1'
+              ^
+
+FAIL surge_under_target_guard_rejected_sibling: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'ACCELERATE-1'
+              ^
+
+FAIL expected_cost_exceeds_remaining_blocks_surge: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'HOLD'
+
+RESULT: 159 passed, 17 failed
+KILLED surge-overrides-band: required failing check surge_cannot_override_high_ratio
+MUTANT denied-surge
+FAIL rejected_sibling_stale_exposed: Expected values to be strictly equal:
+
+true !== false
+
+FAIL rejected_sibling_missing_reset_exposed: Expected values to be strictly equal:
+
+true !== false
+
+FAIL rejected_sibling_missing_quota_exposed: Expected values to be strictly equal:
+
+true !== false
+
+FAIL rejected_sibling_missing_duration_exposed: Expected values to be strictly equal:
+
+true !== false
+
+FAIL rejected_sibling_unverified_exposed: Expected values to be strictly equal:
+
+true !== false
+
+FAIL short_window_exhaustion_blocks_weekly_surge: Expected values to be strictly equal:
+
+true !== false
+
+FAIL surge_under_target_guard_exhaustion: Expected values to be strictly equal:
+
+true !== false
+
+FAIL surge_under_target_guard_over_budget: Expected values to be strictly equal:
+
+true !== false
+
+FAIL surge_under_target_guard_rejected_sibling: Expected values to be strictly equal:
+
+true !== false
+
+FAIL expected_cost_exceeds_remaining_blocks_surge: Expected values to be strictly equal:
++ actual - expected
+
++ 'ACCELERATE-2'
+- 'HOLD'
+
+RESULT: 166 passed, 10 failed
+KILLED denied-surge: required failing check expected_cost_exceeds_remaining_blocks_surge
+MUTANT ignored-bounded-dispatch
+FAIL bounded_dispatch_suppresses_surge: Expected values to be strictly equal:
++ actual - expected
+
++ 'UNKNOWN'
+- 'BOUNDED_TASKS'
+
+FAIL surge_no_escalation_1.2: Expected values to be strictly equal:
++ actual - expected
+
++ 'WITHIN_BINDING_QUOTA'
+- 'BOUNDED_TASKS'
+
+RESULT: 174 passed, 2 failed
+KILLED ignored-bounded-dispatch: required failing check bounded_dispatch_suppresses_surge
+MUTANT hidden-sibling
+FAIL rejected_sibling_stale_exposed: Expected values to be strictly equal:
+
+'KNOWN' !== 'UNKNOWN'
+
+FAIL rejected_sibling_missing_reset_exposed: Expected values to be strictly equal:
+
+'KNOWN' !== 'UNKNOWN'
+
+FAIL rejected_sibling_missing_quota_exposed: Expected values to be strictly equal:
+
+'KNOWN' !== 'UNKNOWN'
+
+FAIL rejected_sibling_missing_duration_exposed: Expected values to be strictly equal:
+
+'KNOWN' !== 'UNKNOWN'
+
+FAIL rejected_sibling_unverified_exposed: Expected values to be strictly equal:
+
+'KNOWN' !== 'UNKNOWN'
+
+FAIL siblings_exposed_when_binding_selection_fails: Expected values to be strictly equal:
+
+'KNOWN' !== 'UNKNOWN'
+
+RESULT: 170 passed, 6 failed
+KILLED hidden-sibling: required failing check rejected_sibling_stale_exposed
+MUTANT ignore-sibling-restriction
+FAIL rejected_sibling_stale_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'WITHIN_BINDING_QUOTA'
+- 'UNKNOWN'
+
+FAIL rejected_sibling_missing_reset_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'WITHIN_BINDING_QUOTA'
+- 'UNKNOWN'
+
+FAIL rejected_sibling_missing_quota_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'WITHIN_BINDING_QUOTA'
+- 'UNKNOWN'
+
+FAIL rejected_sibling_missing_duration_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'WITHIN_BINDING_QUOTA'
+- 'UNKNOWN'
+
+FAIL rejected_sibling_unverified_exposed: Expected values to be strictly equal:
++ actual - expected
+
++ 'WITHIN_BINDING_QUOTA'
+- 'UNKNOWN'
+
+FAIL surge_under_target_guard_rejected_sibling: Expected values to be strictly equal:
++ actual - expected
+
++ 'WITHIN_BINDING_QUOTA'
+- 'UNKNOWN'
+
+RESULT: 170 passed, 6 failed
+KILLED ignore-sibling-restriction: required failing check rejected_sibling_stale_exposed
+MUTANT cli-accept-unknown-option
+FAIL cli_unknown_option_fails: Expected values to be strictly equal:
+
+0 !== 1
+
+RESULT: 185 passed, 1 failed
+KILLED cli-accept-unknown-option: required failing check cli_unknown_option_fails
+MUTANT cli-accept-invalid-cost
+FAIL cli_invalid_expected_cost_fails: cost "" must fail
+
+0 !== 1
+
+RESULT: 185 passed, 1 failed
+KILLED cli-accept-invalid-cost: required failing check cli_invalid_expected_cost_fails
+MUTANTS: 22 killed, 0 survived
+
+EXIT=0
+END_UTC=2026-09-30T21:02:50.199Z
