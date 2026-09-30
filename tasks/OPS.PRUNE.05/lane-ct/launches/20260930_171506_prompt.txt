@@ -1,0 +1,34 @@
+You are the Codex writer on lane-ct (Task OPS.PRUNE.05).
+Your worktree is at C:\Users\snewt\.deus_worktrees\lane-ct on branch task/lane-ct.
+Read your task brief: tasks/OPS.PRUNE.05/lane-ct/BRIEF.md.
+Follow every instruction strictly:
+1. Scope: Exactly 16 test files listed in BRIEF.md. Do NOT prune, archive, or delete any files. Fix failure paths only.
+   - tools/test_all_animated_objects_live.js
+   - tools/test_all_faction_menus.js
+   - tools/test_creatures_ingame.js
+   - tools/test_dwarves_ingame.js
+   - tools/test_elves_ingame.js
+   - tools/test_golden_art_review_live.js
+   - tools/test_light_wall_occlusion_live.js
+   - tools/test_sack_ui_and_loose_items.js
+   - tools/test_standard_4d_ingame.js
+   - tools/test_standard_8d_ingame.js
+   - tools/test_temperate_arid_transition_live.js
+   - tools/test_tilesets_live.js
+   - tools/test_title_menu.js
+   - tools/test_underground_room.js
+   - tools/test_water_ingame.js
+   - tools/ops/pm_launch/test_top_models_effort.ps1
+2. Rule 4: Tests must be able to fail.
+   - For each file, inspect why it currently swallows errors or hardcodes true assertions.
+   - Make the test assert real criteria, verify child process exits, check screenshot artifact existence, and exit with code 1 if checks fail.
+   - Avoid artificial unconditional exit(1). Failures must be triggered by actual contract violations.
+3. Verification:
+   - Run node tools/check_deus_syntax.js (0 errors).
+   - Run node tools/test_control_board.js (CLEAN PASS, 0 errors).
+   - Run node tools/test_palette.js.
+   - Run node tools/governance/test_check_claims.js.
+   - Create negative verification fixtures in tasks/OPS.PRUNE.05/lane-ct/evidence/ proving each of the 16 tests fails (exit 1) on defect-inducing conditions.
+4. Deliverables:
+   - Commit all changes with prefix "[codex] OPS.PRUNE.05: fix Rule-4 failure paths across 16 test harnesses".
+   - Write completion report in tasks/OPS.PRUNE.05/lane-ct/REPORT.md including the full 10-field GAME TRANSLATION block.
