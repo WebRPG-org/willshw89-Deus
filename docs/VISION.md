@@ -426,3 +426,4 @@ Append only, newest at the bottom.
 - 2026-09-29: The user restarted art generation ("I want to completely restart art generation"): archive all existing generated art and start blank; the look first (style bible and Owner-generated anchors), then one asset proven end to end, then batches. Recorded as a DEC-007 amendment.
 - 2026-09-29: The user set the art prompt structure: World paragraph / Faction or biome paragraph / Item description / Specs (DEC-007 amendment).
 - 2026-09-29: The user set the touchstones for the world's feel and lore: "The feel of the world is arthurian / everquest / U7 as far as feel and lore." Arthurian legend, EverQuest and Ultima VII frame the feel and the lore of Emrys (V154); English folklore (V152) is flavour within that frame.
+- 2026-09-29: The user set the PM’s focus: keep AG on completing WBS tasks, no side-shows, no plugins that program features or states that should emerge from the simulation (DEC-042 amendment).
