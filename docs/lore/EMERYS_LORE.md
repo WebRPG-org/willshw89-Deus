@@ -1,4 +1,4 @@
-# The Lore of Emrys
+# The Lore of Emerys
 
 > **Status: DRAFT v3.1 for the Owner’s sign-off, 2026-09-30.** Written by the braintrust (Astra drafting; Grok critiquing and checking canon) from the Owner’s rulings in `docs/VISION.md` (decision log: V154, the Nine’s names, gods resembling their peoples, the summoned planes, the banner set, and 2026-09-30 “Lets make them elementals”). v3.1 changes only the former star-born people, now the elementals: Astra reworked them, Grok checked the rework (four must-fixes, all applied), and a mechanical canon check passed (names, banner devices, franchise terms, physics phrases). Nothing here is canon until the Owner signs it off; the open choices are in section 12. Sources: `C:\Users\snewt\.deus_pm\braintrust\2026-09-29\` (v1, v2, v3, critiques, research; `trust3/elem_*` for this revision).
 
@@ -36,11 +36,11 @@ Deus raised the mountains. Venge carried pieces of them down the rivers.
 
 Neither worked alone. What endured gave change something to work upon. What changed gave endurance something worth preserving.
 
-They named their world **Emrys**.
+They named their world **Emerys**.
 
 Beneath its deepest stone they kindled the deep fire. Its magma is molten substance already belonging to the world, and everything it raises or hardens remains part of that substance.
 
-Water passes through river, flesh, mist and sea. Whatever water leaves Emrys is held for the returning rain; the world has no last drop.
+Water passes through river, flesh, mist and sea. Whatever water leaves Emerys is held for the returning rain; the world has no last drop.
 
 Stone stands while its bearing holds. When the bearing is gone, that same stone falls, and its weight is the weight it was.
 
@@ -52,7 +52,7 @@ The first forests had no paths. The first beasts knew neither husbandry nor the 
 
 Leaves fell. Flesh returned to earth. Trees burned, and new growth drew upon what their passing left behind. Rivers carried the mountains grain by grain into other beds.
 
-Nothing that belonged to Emrys ceased to belong to it.
+Nothing that belonged to Emerys ceased to belong to it.
 
 Roots fed the darkness beneath living crowns. Water carried leaves and broken wood into caves. Fungi took nourishment from what reached them. Even in places without sunlight, life had a source and hunger had a cause.
 
@@ -62,7 +62,7 @@ The old wild stirred among those places. Wyrms settled into fissures. Giants mov
 
 ### The People Within the World
 
-Late in the Making, the Two prepared another people within Emrys’s own substance.
+Late in the Making, the Two prepared another people within Emerys’s own substance.
 
 Deus gave their beginnings the power to hold together.
 
@@ -80,7 +80,7 @@ A stone does not become a person merely because a face is seen in it. A river do
 
 At the first dawn they remain unawakened. There is no elemental court beneath a mountain, no company keeping a spring, no speaker concealed in the common fire.
 
-Their first waking follows changes in the world: water finding a new bed, a seam opening, heat reaching suitable matter, a current taking a different course. The cause belongs to Emrys. No absent maker returns to call their names.
+Their first waking follows changes in the world: water finding a new bed, a seam opening, heat reaching suitable matter, a current taking a different course. The cause belongs to Emerys. No absent maker returns to call their names.
 
 They inherit no voyages among the stars, no fallen vessels and no instructions waiting in crystal.
 
@@ -126,19 +126,19 @@ They set the binding upon their power, not merely upon their honour.
 
 ### The Withdrawal
 
-The Nine entered the same binding. No lesser god would walk into Emrys, possess a ruler, send a dream naming a king or march behind a mortal banner.
+The Nine entered the same binding. No lesser god would walk into Emerys, possess a ruler, send a dream naming a king or march behind a mortal banner.
 
 Their children would awaken without a maker standing over them.
 
 The gods retained their own planes beyond the thirty-two layers. There, mortals who established a crossing would confront the power whose gift they had inherited. The visitors would enter the god’s house; the god would remain there when they left.
 
-A summons gave mortals the right to address a maker. It gave no maker the right to command Emrys.
+A summons gave mortals the right to address a maker. It gave no maker the right to command Emerys.
 
 The Two withdrew from the world’s affairs. Their absence occupied no summit. There was no palace of Deus above the highest cloud, and no hidden stair by which a petitioner reached him.
 
 Rain continued to fall. The deep fire remained beneath the stone.
 
-Emrys was ready to begin without them.
+Emerys was ready to begin without them.
 
 ## 3. The Nine and Their Summoned Planes
 
@@ -150,21 +150,21 @@ A people’s inheritance begins a relationship with its creator. It does not fin
 
 ### The Ground Beyond the Threshold
 
-A company summons a crossing to a god’s plane. It does not draw the god into Emrys.
+A company summons a crossing to a god’s plane. It does not draw the god into Emerys.
 
 The way begins at a real place made significant by labour and repetition: a hall, a ford, a hearth, a stone recess, a worked threshold. Witnesses hear the undertaking. Supplies are pledged. Companions prepare to cross. Others remain to maintain the passage and the life at home.
 
-The rite establishes a bounded mortal foothold within a realm whose extent belongs to the god. Its traversable ground draws upon matter pledged from Emrys. Beyond it lie splendours that no traveller owns and no pack carries away.
+The rite establishes a bounded mortal foothold within a realm whose extent belongs to the god. Its traversable ground draws upon matter pledged from Emerys. Beyond it lie splendours that no traveller owns and no pack carries away.
 
 Each plane holds one law absolute. The god is that law standing armed before intruders.
 
 Hunger, thirst, wounds and the fuel brought through the threshold still bind the company. The hours at home continue. The plane provides no meal from nothing and no replacement for a person killed.
 
-The living return to the place they left. When the crossing closes, Emrys’s pledged matter returns in its changed forms: possessions, remains, broken tools, ash and spent stores. Escaped water joins the returning rain. Returned remains do not rise and resume their lives.
+The living return to the place they left. When the crossing closes, Emerys’s pledged matter returns in its changed forms: possessions, remains, broken tools, ash and spent stores. Escaped water joins the returning rain. Returned remains do not rise and resume their lives.
 
 A god tempers the blade a challenger brought. The house supplies no second blade.
 
-The elementals live within Emrys. Their springs, seams, hearths and currents belong to its thirty-two layers. They keep no separate realms of earth, water, fire or air beyond the world.
+The elementals live within Emerys. Their springs, seams, hearths and currents belong to its thirty-two layers. They keep no separate realms of earth, water, fire or air beyond the world.
 
 An elemental who joins a company crosses by the same undertaking as its companions. Its body passes as actual substance, with the provisions and protection that body requires. It enters as a visitor with something to lose.
 
@@ -390,7 +390,7 @@ The Hunt and the hills give mortals less certain signs. A loud night proves very
 
 ### The Deus Ending
 
-Venge commits his active power to a presence within Emrys and is defeated there.
+Venge commits his active power to a presence within Emerys and is defeated there.
 
 Those who oppose him have lives, loyalties, losses and reasons of their own. Their strength comes from what the world provides and what they have done with it.
 
@@ -400,7 +400,7 @@ Deus does not descend to finish the struggle. He appoints no victor and puts no 
 
 The ending bears his name because creation has defended the freedom promised by the Covenant.
 
-**Deus had not descended. Emrys had answered.**
+**Deus had not descended. Emerys had answered.**
 
 ### The Venge Ending
 
@@ -412,7 +412,7 @@ The highest natural terrain ends at z+11. The four layers above it contain no se
 
 The surviving peoples make common cause against the power established at z+15. Their communities give free assent through undertakings of their own. Mixed communities carry their actual inheritances. Captured banners speak for no one.
 
-Their ascent is real. They discover the player’s position, prepare a way to reach it and sustain the undertaking with Emrys’s substance and labour. A planar crossing supplies no shortcut to that height.
+Their ascent is real. They discover the player’s position, prepare a way to reach it and sustain the undertaking with Emerys’s substance and labour. A planar crossing supplies no shortcut to that height.
 
 At the highest layer, the united world overthrows the player.
 
@@ -428,7 +428,7 @@ Neither ending is owed to a world.
 
 Venge’s place remains untaken through a whole age of watching. The high air remains empty when no one rises into it. Failed expeditions and broken coalitions become history without becoming an ending.
 
-A loss upon a god’s plane is not the Deus ending, whose defeat occurs within Emrys. It grants no replacement body and no escape from the cost of the loss.
+A loss upon a god’s plane is not the Deus ending, whose defeat occurs within Emerys. It grants no replacement body and no escape from the cost of the loss.
 
 After either named ending, the rain returns. The next meal must be found. Someone repairs what the struggle broke.
 
@@ -727,7 +727,7 @@ They are neighbours of pool-dwelling wyrms, not their offspring or Ormund’s su
 
 ### The Elementals
 
-The elementals are people whose bodies are formed from the substance of Emrys.
+The elementals are people whose bodies are formed from the substance of Emerys.
 
 Their beginnings were prepared during the Making. At Year 0 they remain unawakened within particular portions of the world. Their first lives begin when those beginnings meet the conditions that sustain them.
 
@@ -779,7 +779,7 @@ Their lives end.
 
 A body damaged beyond its power to remain a living whole loses the person it held. Stone falls into fragments. Water loses its gathered form. Burning matter changes into ash and gases. Air disperses into the air around it.
 
-The substance remains in Emrys.
+The substance remains in Emerys.
 
 Their companions mourn the person.
 
@@ -915,7 +915,7 @@ A natural mound is no ancient grave. Barrows begin with actual dead. A horn-shap
 
 ## 8. The Land, from the Deep Fire to the Open Sky
 
-Emrys is one closed body of stone, water, air and life.
+Emerys is one closed body of stone, water, air and life.
 
 Its thirty-two layers extend from z−16 to z+15. Each layer measures ten feet and contains five strata of two feet. Five bands of earth rise beneath four layers reserved as open air.
 
@@ -1165,7 +1165,7 @@ These are words carried in fragments, repeated beside ordinary work. History giv
 
 - **Finite elemental beginnings.** Each first awakening requires a particular beginning prepared by the Two and suitable conditions around it. Suitable matter alone does not generate a person. The supply of prepared beginnings is finite; material returning through the world does not replenish it. Awakenings occur after Year 0 and require no player intervention.
 
-- **Conservation and crossings.** Bodies, food, gases, possessions and court material remain accounted for. A plane’s geography lies outside the normal layer column; its pledged Emrys matter does not leave the conservation account. Return preserves quantities, materials and transformations. Escaped water returns as rain. No corpse return restores life. An elemental joining an expedition carries its actual body through the same accounted crossing.
+- **Conservation and crossings.** Bodies, food, gases, possessions and court material remain accounted for. A plane’s geography lies outside the normal layer column; its pledged Emerys matter does not leave the conservation account. Return preserves quantities, materials and transformations. Escaped water returns as rain. No corpse return restores life. An elemental joining an expedition carries its actual body through the same accounted crossing.
 
 - **Elemental substance and identity.** Awakening, movement, growth, injury, repair and death transfer or transform actual matter without duplicating the terrain or fluid from which it came. Body and surrounding environment remain distinguishable. Dispersal does not create additional persons, and ordinary material circulation does not restore a dead identity. A later awakening from another prepared beginning is another person.
 
@@ -1173,7 +1173,7 @@ These are words carried in fragments, repeated beside ordinary work. History giv
 
 - **Movement and the highest air.** No passage through solid rock, instantaneous transfer between disconnected waters, unlimited lifting or travel outside the world is implied. Air-elemental beginnings and resting places belong to sheltered air among ridges, clefts and turns. The four open layers remain weather, light and the ascent to z+15, with no elemental settlements or natural footing added. Magma remains at the bottom of Deep Earth; elemental identity supplies no heat at the z−2 founding places.
 
-- **The Nine and planar implementation.** Elementals are inhabitants of Emrys, with no additional elemental planes or divine lords. The Nine retain their summoned planes and their absence from Emrys. Crossings, pledged courts, divine combat, persistent concessions and the Nine sensing the breach are future systems. Plane laws must acquire observable causes and consequences; vague moral scoring is not an implementation. Hunger and time continue, and supplies remain finite. A later elemental community is capable of free assent; it is not a required tenth founding banner.
+- **The Nine and planar implementation.** Elementals are inhabitants of Emerys, with no additional elemental planes or divine lords. The Nine retain their summoned planes and their absence from Emerys. Crossings, pledged courts, divine combat, persistent concessions and the Nine sensing the breach are future systems. Plane laws must acquire observable causes and consequences; vague moral scoring is not an implementation. Hunger and time continue, and supplies remain finite. A later elemental community is capable of free assent; it is not a required tenth founding banner.
 
 - **The retired star-faring account.** Primordial voyages, fallen vessels, technological chambers, crystal-stored minds and aloft cargo reserves are removed. Crystal remains a mineral and a possible material for later arts. The retired machinery is not transferred to the gnomes or concealed beneath another name.
 
@@ -1189,7 +1189,7 @@ The Nine’s personal names and all nine banner schemes remain unchanged. This r
 |---:|---|---|---|
 | **1** | **The gods’ drama** | **A:** The drama runs from the first morning; the Nine sense the breach through the binding, then take shifting sides informed by events and mortal accounts. **B:** Keep the independent drama but remove automatic awareness of the breach. | **A — PROPOSAL.** The world and divine response both function without requiring an expedition first. |
 | **2** | **The Nine’s titles and portrayals** | **A:** Adopt the nine titles, appearances, voices, wants and plane laws in v3, including **The Unclaimed Place** and **The Opened Seam**. **B:** Retain the v2 presentations except where they conflict with fixed canon. | **A.** The gods are more distinct and their planes have stronger identities. |
-| **3** | **The Nine’s absence** | **A:** Bind their power against entering or directing Emrys, while preserving mortal-initiated confrontation on their own ground. **B:** Their absence remains a voluntary undertaking. | **A.** A concession informs mortal choices without becoming a divine command on the home map. |
+| **3** | **The Nine’s absence** | **A:** Bind their power against entering or directing Emerys, while preserving mortal-initiated confrontation on their own ground. **B:** Their absence remains a voluntary undertaking. | **A.** A concession informs mortal choices without becoming a divine command on the home map. |
 | **4** | **The planar contract** | **A:** Worked local thresholds, varied preparation, pledged matter returned in changed forms, and defeats that bind lasting concessions while preserving god and people. **B:** Use the same conservation rules but permit permanent divine death. | **A.** Victories remain consequential without consuming the pantheon as a checklist. |
 | **5** | **Remaining secondary names** | **A:** **Manymouth** as a later witness-name for the swarm; undead without a universal epithet. **B:** Use no universal epithet for either. | **A.** Manymouth names an appetite witnessed in play without turning the undead into one faction. Elementals require no additional collective name. |
 | **6** | **The remaining primordial and founding account** | **A:** Retain finite beginnings for goblins, orcs, kobolds and lizardfolk, and partial inherited songs at dawn. **B:** Retain the same dawn but keep those peoples’ first formation unstated. | **A.** It supplies a coherent origin while leaving biological implementation and individual histories unprescribed. The elemental account applied in this revision remains separate. |
