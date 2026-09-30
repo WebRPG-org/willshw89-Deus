@@ -239,6 +239,13 @@ function checkCatalogue(cat, g, geoFile, refuse, targetSheetId) {
     if (!m || Number(m[1]) < MIN_CATALOGUE_MINOR) {
         refuse('CATALOGUE_INVALID', `schemaVersion ${JSON.stringify(cat.schemaVersion)} is not deus-art-catalogue/1.${MIN_CATALOGUE_MINOR}.x or a later 1.x`);
     }
+    if (cat.tileSizePx !== g.tilePx) refuse('CATALOGUE_INVALID', `tileSizePx ${cat.tileSizePx} differs from geometry tilePx ${g.tilePx}`);
+    const recorded = cat.geometry && cat.geometry.sha256;
+    if (!recorded) {
+        refuse('GEOMETRY_SHA_MISMATCH', 'catalogue.geometry.sha256 is missing');
+    } else if (recorded !== geoFile.sha256 && recorded !== geoFile.rawSha256) {
+        refuse('GEOMETRY_SHA_MISMATCH', `catalogue was built from geometry ${recorded} but ${displayPath(geoFile.path)} is ${geoFile.sha256}; rebuild the catalogue`);
+    }
     const catGeo = cat.geometry && cat.geometry.path ? resolveRef(cat.geometry.path) : null;
     if (geoFile && catGeo && path.resolve(geoFile.path) !== path.resolve(catGeo)) {
         refuse('GEOMETRY_MISMATCH', `--geometry ${geoFile.path} does not match catalogue.geometry.path ${cat.geometry.path}`);
@@ -337,11 +344,8 @@ function checkCatalogue(cat, g, geoFile, refuse, targetSheetId) {
         }
         const spec = stratumSpec(e.scaleRow, g);
         if (spec && spec.error) refuse('STRATUM_HEIGHT_MISMATCH', `${id}: ${spec.error}`);
-        else if (spec) {
-            const expectedSlotH = rows * Math.ceil(spec.frameH / g.tilePx) * g.tilePx;
-            if (slot.h !== expectedSlotH) {
-                refuse('STRATUM_HEIGHT_MISMATCH', `${id}: ${e.scaleRow} needs slot height ${expectedSlotH} from stratumPx ${JSON.stringify(g.stratumPx)} (padded to ${g.tilePx}px grid) but the slot is ${slot.h} high`);
-            }
+        else if (spec && slot.h !== rows * spec.frameH && slot.h !== rows * Math.ceil(spec.frameH / g.tilePx) * g.tilePx) {
+            refuse('STRATUM_HEIGHT_MISMATCH', `${id}: ${e.scaleRow} needs frame height ${spec.frameH} from stratumPx ${JSON.stringify(g.stratumPx)} (slot height ${rows} x ${spec.frameH} = ${rows * spec.frameH}) but the slot is ${slot.h} high`);
         }
         slotsBySheet.get(slot.sheetId).push({ entry: e, slot, rows, spec: spec && !spec.error ? spec : null });
     }
