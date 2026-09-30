@@ -1,5 +1,17 @@
 # OPS.PRUNE.PACE lane-cr state
 
+## FIX-CR claim (2026-09-30)
+
+- Writer: Codex, branch `task/lane-cr`, starting HEAD `a53111ac`.
+- Claim: released for independent re-review at handoff; edited `tools/ops/pace.js`, `tools/ops/test_pace.js`, and lane-local FIX-CR documentation/evidence only.
+- Authority: Owner's explicit FIX-CR assignment; exact five corrections from ANSWER-CR (MSG-PRUNE-PM-045).
+- Shared STATUS/VISION edits are excluded by the assignment; this lane-local claim records the scope exception.
+- Preserve existing launch prompts and review artifacts. Independent review and integration remain separate gates.
+- Final checkpoint: five FIX-CR corrections implemented. `node tools/ops/test_pace.js`: 170 passed, 0 failed, EXIT=0. `node tools/ops/test_pace.js --mutants`: baseline 170/0, 21 killed, 0 survived, EXIT=0. Manifest syntax gate: 62 plugins, 0 errors, EXIT=0. All CLI children completed in the foreground.
+- Evidence: `REPORT.md`, updated `README.md`, `evidence/fix-cr-pace.log`, `evidence/fix-cr-mutants.log`, `evidence/fix-cr-syntax.log`. No Owner/independent approval, answerability re-check, WBS closure, push or merge claimed. Final commit SHA will be reported via `git rev-parse HEAD` in the handoff.
+
+## Previous handoff (historical)
+
 - Date: 2026-09-30.
 - Writer: codex; branch: `task/lane-cr`; reviewer: claude (not yet requested or performed).
 - Claim: released for review at handoff; implementation touched only `tools/ops/pace.js`, `tools/ops/test_pace.js`, `tasks/OPS.PRUNE.PACE/lane-cr/**`.

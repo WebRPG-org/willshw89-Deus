@@ -27,7 +27,7 @@ function history(remaining = 60, time = at(-1), overrides = {}) {
         remainingPct: remaining, observedAt: time, capturedAt: time, resetAt: RESET, durationHours: 168,
         source: `TEST_history @ ${time}`, ...overrides }] };
 }
-function runSuite(api, integration = false, quiet = false) {
+function runSuite(api, integration = false, quiet = false, cliSource = null) {
     let passed = 0;
     const failures = [];
     const test = (name, fn) => {
@@ -47,11 +47,18 @@ function runSuite(api, integration = false, quiet = false) {
     for (const value of [null, undefined, NaN, Infinity, -1, '1']) {
         test(`band_invalid_${String(value)}`, () => assert.equal(api.classify(value), 'UNKNOWN'));
     }
-    // A weekly window with > 10% left and five hours to reset is in SURGE.
-    test('surge_overrides_high_ratio', () => {
+    // The ratio remains authoritative even when the clock qualifies for SURGE.
+    test('surge_cannot_override_high_ratio', () => {
         const r = report(provider(), history(90));
         assert.equal(r.target, 10); assert.equal(r.measured, 40);
-        assert.equal(r.ratio, 4); assert.equal(r.action, 'ACCELERATE-2'); assert.equal(r.surge, true);
+        assert.equal(r.ratio, 4); assert.equal(r.action, 'THROTTLE-2'); assert.equal(r.surge, false);
+        assert.equal(r.dispatch, 'DENY'); assert.doesNotMatch(api.format(r), /\[SURGE\]/);
+    });
+    test('bounded_dispatch_suppresses_surge', () => {
+        const r = report(provider(), history(62));
+        assert.equal(r.ratio, 1.2); assert.equal(r.action, 'THROTTLE-1');
+        assert.equal(r.dispatch, 'BOUNDED_TASKS'); assert.equal(r.surge, false);
+        assert.doesNotMatch(api.format(r), /\[SURGE\]/);
     });
     const ordinary = remaining => provider(remaining, { windows: [
         { id: 'five-hour', remainingPct: remaining, resetAt: at(4), durationHours: 5 }] });
@@ -77,7 +84,7 @@ function runSuite(api, integration = false, quiet = false) {
     test('zero_remaining_exhausted_no_nan', () => {
         const r = report(ordinary(0), shortHistory(10));
         assert.equal(r.target, 0); assert.equal(r.ratio, null);
-        assert.equal(r.action, 'EXHAUSTED'); assert.equal(r.dispatch, 'DENY');
+        assert.equal(r.action, 'UNKNOWN'); assert.equal(r.dispatch, 'DENY');
         assert.doesNotMatch(api.format(r), /NaN|Infinity/);
     });
     test('missing_reset_unknown', () => {
@@ -113,11 +120,26 @@ function runSuite(api, integration = false, quiet = false) {
             unknown(r); assert.equal(r.measured, null); assert.equal(r.remainingPct, null);
         });
     }
-    for (const source of ['', 'UNKNOWN', '--', 'N/A', 'bad\nPACE spoof', null]) {
+    const invalidSources = ['', 'UNKNOWN', 'unknown', ' UnKnOwN ', '--', ' - - ', 'N/A', 'n/a', ' N / a ', 'bad\nPACE spoof', null];
+    for (const source of invalidSources) {
         test(`ungrounded_source_${JSON.stringify(source)}`, () => unknown(report(provider(50, { source }))));
+        test(`history_source_${JSON.stringify(source)}_rejected`, () => {
+            const h = history(); h.samples[0].source = source;
+            assert.throws(() => evaluate(provider(), h), /invalid history sample/);
+        });
     }
     test('session_scope_rejected', () => unknown(report(provider(50, { scope: 'session' }))));
     test('unverified_rejected', () => unknown(report(provider(50, { verified: false }))));
+    test('verified_boolean_true_accepted', () => assert.equal(report(provider(50, { verified: true })).target, 10));
+    for (const verified of ['false', 'true', null, 0, 1, {}, [], undefined]) {
+        test(`non_boolean_verified_${JSON.stringify(verified)}_rejected`, () => {
+            unknown(report(provider(50, { verified })));
+            const p = provider(); p.windows[0].verified = verified;
+            unknown(report(p));
+            const h = history(); h.samples[0].verified = verified;
+            assert.throws(() => evaluate(provider(), h), /invalid history sample/);
+        });
+    }
     test('top_level_timestamp_does_not_refresh_snapshot', () => {
         const data = input(provider(50, { lastChecked: at(-1) })); data.generatedAt = NOW;
         unknown(api.evaluate(data, api.emptyHistory(), { now: NOW }).reports.find(item => item.provider === 'claude'));
@@ -130,6 +152,36 @@ function runSuite(api, integration = false, quiet = false) {
         const p = provider(); p.windows[0].resetAt = null;
         p.windows.push({ id: 'five-hour', remainingPct: 80, resetAt: at(2), durationHours: 5 });
         unknown(report(p));
+    });
+    for (const [problem, overrides, reason] of [
+        ['stale', { lastChecked: at(-0.500001) }, /stale reading/],
+        ['missing_reset', { resetAt: null }, /reset UNKNOWN/],
+        ['missing_quota', { remainingPct: null }, /remaining quota UNKNOWN/],
+        ['missing_duration', { durationHours: null }, /window duration UNKNOWN/],
+        ['unverified', { verified: 'false' }, /account evidence UNKNOWN/]
+    ]) {
+        test(`rejected_sibling_${problem}_exposed`, () => {
+            const p = provider(); p.windows.push({ id: 'five-hour', remainingPct: 80,
+                resetAt: at(2), durationHours: 5, ...overrides });
+            const result = evaluate(p, history(50), { expectedCostPct: 1 });
+            const r = result.reports.find(item => item.provider === 'claude');
+            assert.equal(r.action, 'ACCELERATE-2'); assert.equal(r.window, 'weekly');
+            assert.equal(r.scope, 'binding-window'); assert.equal(r.dispatch, 'UNKNOWN');
+            assert.equal(r.surge, false);
+            const sibling = r.windows.find(item => item.window === 'five-hour');
+            assert.equal(sibling.status, 'UNKNOWN'); assert.match(sibling.reason, reason);
+            assert.ok(!result.history.samples.some(item => item.window === 'five-hour'));
+            const line = api.format(r);
+            assert.match(line, /^PACE claude window weekly /);
+            assert.match(line, /five-hour UNKNOWN/); assert.match(line, reason);
+            assert.match(line, /provider-wide advice UNKNOWN/); assert.doesNotMatch(line, /\[SURGE\]/);
+        });
+    }
+    test('siblings_exposed_when_binding_selection_fails', () => {
+        const p = ordinary(40); p.windows.push({ id: 'daily', remainingPct: 90, resetAt: at(20) });
+        const r = report(p, shortHistory(40)); unknown(r);
+        assert.equal(r.windows.find(item => item.window === 'daily').status, 'UNKNOWN');
+        assert.match(api.format(r), /daily UNKNOWN \(window duration UNKNOWN/);
     });
     test('declared_weekly_missing', () => unknown(report({ ...ordinary(40), hasWeeklyWindow: true })));
     test('shortest_without_weekly', () => {
@@ -160,25 +212,52 @@ function runSuite(api, integration = false, quiet = false) {
     });
     test('short_window_exhaustion_blocks_weekly_surge', () => {
         const p = provider(); p.windows.push({ id: 'five-hour', remainingPct: 0, resetAt: at(2), durationHours: 5 });
-        const r = report(p); assert.equal(r.action, 'EXHAUSTED'); assert.equal(r.dispatch, 'DENY');
-        assert.match(r.source, /five-hour/);
+        const r = report(p, history(50)); assert.equal(r.action, 'ACCELERATE-2'); assert.equal(r.dispatch, 'DENY');
+        assert.equal(r.surge, false); assert.doesNotMatch(api.format(r), /\[SURGE\]/);
+        assert.match(r.source, /five-hour/); assert.match(r.reasons.join('; '), /five-hour quota exhausted/);
     });
     test('surge_exact_10_percent_time', () => {
         const p = ordinary(11); p.windows[0].resetAt = at(0.5);
-        assert.equal(report(p, api.emptyHistory()).action, 'ACCELERATE-2');
+        const r = report(p, shortHistory(11));
+        assert.equal(r.action, 'UNKNOWN'); assert.equal(r.surge, true);
+        assert.match(api.format(r), /\[SURGE\]/);
+        const h = shortHistory(11); h.samples[0].resetAt = at(0.5);
+        assert.equal(report(p, h).action, 'ACCELERATE-2');
+        assert.equal(report(p, h).surge, true);
     });
     test('surge_not_above_10_percent_time', () => {
         const p = ordinary(11); p.windows[0].resetAt = at(0.500001);
         assert.equal(report(p, api.emptyHistory()).action, 'UNKNOWN');
+        assert.equal(report(p, api.emptyHistory()).surge, false);
     });
     test('surge_needs_more_than_10_percent_left', () => {
         const p = ordinary(10); p.windows[0].resetAt = at(0.5);
         assert.equal(report(p, api.emptyHistory()).surge, false);
     });
-    test('low_quota_bounded', () => assert.equal(report(ordinary(8), shortHistory(8)).action, 'THROTTLE-1'));
+    test('low_quota_bounded', () => {
+        const r = report(ordinary(8), shortHistory(8));
+        assert.equal(r.remainingPct, 8); assert.equal(r.target, 2); assert.equal(r.measured, 0);
+        assert.equal(r.ratio, 0); assert.equal(r.action, 'ACCELERATE-2');
+        assert.equal(r.dispatch, 'BOUNDED_TASKS'); assert.equal(r.surge, false);
+        assert.match(api.format(r), /-> ACCELERATE-2.*dispatch: BOUNDED_TASKS/);
+    });
+    for (const [ratio, action] of [[0, 'ACCELERATE-2'], [0.5, 'ACCELERATE-1'], [0.9, 'HOLD'],
+        [1.1, 'HOLD'], [1.5, 'THROTTLE-1'], [2, 'THROTTLE-2']]) {
+        test(`low_quota_band_${ratio}`, () => {
+            const r = report(ordinary(8), shortHistory(8 + ratio * 2));
+            assert.equal(r.ratio, ratio); assert.equal(r.action, action);
+            assert.equal(r.dispatch, ratio > 1.5 ? 'DENY' : 'BOUNDED_TASKS');
+        });
+        test(`denied_cost_preserves_band_${ratio}`, () => {
+            const r = report(ordinary(40), shortHistory(40 + ratio * 10), { expectedCostPct: 41 });
+            assert.equal(r.ratio, ratio); assert.equal(r.action, action);
+            assert.equal(r.dispatch, 'DENY'); assert.equal(r.surge, false);
+        });
+    }
     test('expected_cost_exceeds_remaining_blocks_surge', () => {
         const r = report(provider(), history(), { expectedCostPct: 51 });
-        assert.equal(r.action, 'THROTTLE-2'); assert.equal(r.dispatch, 'DENY');
+        assert.equal(r.action, 'HOLD'); assert.equal(r.dispatch, 'DENY');
+        assert.equal(r.surge, false); assert.doesNotMatch(api.format(r), /\[SURGE\]/);
     });
     test('expected_cost_equal_quota', () => assert.equal(report(provider(), history(), { expectedCostPct: 50 }).dispatch, 'WITHIN_BINDING_QUOTA'));
     test('cost_does_not_supply_missing_measurement', () => assert.equal(report(ordinary(40), api.emptyHistory(), { expectedCostPct: 10 }).action, 'UNKNOWN'));
@@ -232,6 +311,45 @@ function runSuite(api, integration = false, quiet = false) {
         const h = shortHistory(50); h.samples.push({ ...h.samples[0], remainingPct: 49 });
         assert.equal(report(ordinary(40), h).measured, null);
     });
+    for (const spelling of ['2026-09-30T11:00:00Z', '2026-09-30T11:00Z', '2026-09-30T06:00:00-05:00',
+        '2026-09-30T13:00:00+02:00']) {
+        test(`same_instant_conflict_${spelling}`, () => {
+            const h = shortHistory(80);
+            h.samples[0].observedAt = spelling; h.samples[0].capturedAt = spelling;
+            h.samples.push({ ...h.samples[0], remainingPct: 40, observedAt: at(-1), capturedAt: at(-1) });
+            const r = report(ordinary(40), h);
+            assert.equal(r.measured, null); assert.equal(r.ratio, null); assert.equal(r.action, 'UNKNOWN');
+            assert.match(r.reasons.join('; '), /conflicting history/);
+        });
+    }
+    test('boundary_conflict_not_hidden_by_duplicate_tail', () => {
+        const h = shortHistory(80);
+        h.samples.push({ ...h.samples[0], remainingPct: 40 }, { ...h.samples[0], remainingPct: 40 });
+        assert.equal(report(ordinary(40), h).measured, null);
+    });
+    test('equivalent_reset_instant_measures_same_window', () => {
+        const h = shortHistory(50); h.samples[0].resetAt = '2026-09-30T11:00:00-05:00';
+        const r = report(ordinary(40), h); assert.equal(r.measured, 10); assert.equal(r.action, 'HOLD');
+    });
+    test('equivalent_instants_deduplicate_and_canonicalize', () => {
+        const h = shortHistory(50);
+        h.samples.push({ ...h.samples[0], observedAt: '2026-09-30T06:00:00-05:00',
+            capturedAt: '2026-09-30T11:00Z', resetAt: '2026-09-30T16:00:00Z' });
+        const result = evaluate(ordinary(40), h);
+        assert.equal(result.history.samples.length, 2);
+        assert.equal(result.history.samples[0].observedAt, at(-1));
+        assert.equal(result.history.samples[0].capturedAt, at(-1));
+        assert.equal(result.history.samples[0].resetAt, at(4));
+        const repeated = evaluate(ordinary(40), result.history);
+        assert.deepEqual(repeated.history, result.history);
+    });
+    test('canonicalization_preserves_conflicting_values_across_polls', () => {
+        const h = shortHistory(80);
+        h.samples.push({ ...h.samples[0], remainingPct: 40, observedAt: '2026-09-30T11:00:00Z' });
+        const first = evaluate(ordinary(40), h);
+        assert.deepEqual(first.history.samples.filter(item => item.observedAt === at(-1)).map(item => item.remainingPct), [80, 40]);
+        assert.equal(report(ordinary(40), first.history).measured, null);
+    });
     test('history_pruned_and_versioned', () => {
         const h = history(70, at(-3)); const result = evaluate(provider(), h);
         assert.equal(result.history.version, 1); assert.equal(result.history.samples.length, 1);
@@ -246,7 +364,7 @@ function runSuite(api, integration = false, quiet = false) {
     });
     test('format_numeric_line_cites_both_endpoints', () => {
         const line = api.format(report(ordinary(40), shortHistory(50)));
-        assert.match(line, /^PACE claude rem 40% reset 2026-09-30T16:00:00.000Z used\/h 10 target\/h 10 -> HOLD \[source: /);
+        assert.match(line, /^PACE claude window five-hour rem 40% reset 2026-09-30T16:00:00.000Z used\/h 10 target\/h 10 -> HOLD \[source: /);
         assert.match(line, /TEST_history @ 2026-09-30T11:00:00.000Z/);
         assert.match(line, /TEST_account_usage @ 2026-09-30T12:00:00.000Z/);
     });
@@ -257,6 +375,12 @@ function runSuite(api, integration = false, quiet = false) {
     test('utc_normalizes_minutes_and_fraction', () => {
         assert.equal(api.utc('2026-09-30T12:00Z'), Date.parse(NOW));
         assert.equal(api.utc('2026-09-30T12:00:00.1Z'), Date.parse(NOW) + 100);
+    });
+    test('utc_explicit_offsets_only', () => {
+        assert.equal(api.utc('2026-09-30T07:00:00-05:00'), Date.parse(NOW));
+        assert.equal(api.utc('2026-09-30T14:00:00+02:00'), Date.parse(NOW));
+        for (const invalid of ['2026-02-30T07:00:00-05:00', '2026-09-30T12:00:00',
+            '2026-09-30T12:00:00+24:00', '2026-09-30T12:00:00+00:60']) assert.equal(api.utc(invalid), null);
     });
     test('history_schema_rejected', () => assert.throws(() => evaluate(provider(), { version: 2, samples: [] }), /history/));
     test('history_bad_sample_rejected', () => {
@@ -282,13 +406,15 @@ function runSuite(api, integration = false, quiet = false) {
         const scratch = fs.mkdtempSync(path.join(scratchRoot, 'test-'));
         const usagePath = path.join(scratch, 'usage.json');
         const historyPath = path.join(scratch, 'history.json');
+        const cliFile = cliSource === null ? PACE_FILE : path.join(scratch, 'pace-mutant.js');
         const write = (file, data) => fs.writeFileSync(file, JSON.stringify(data));
-        const cli = (args = [], stdin) => spawnSync(process.execPath, [PACE_FILE, '--input', usagePath,
+        const cli = (args = [], stdin) => spawnSync(process.execPath, [cliFile, '--input', usagePath,
             '--history', historyPath, '--now', NOW, ...args], { encoding: 'utf8', timeout: 10000, input: stdin, windowsHide: true });
         try {
+            if (cliSource !== null) fs.writeFileSync(cliFile, cliSource);
             test('cli_two_foreground_polls_persist_history', () => {
                 const p = ordinary(50); p.lastChecked = at(-1); write(usagePath, input(p));
-                const first = spawnSync(process.execPath, [PACE_FILE, '--input', usagePath, '--history', historyPath,
+                const first = spawnSync(process.execPath, [cliFile, '--input', usagePath, '--history', historyPath,
                     '--now', at(-1)], { encoding: 'utf8', timeout: 10000, windowsHide: true });
                 assert.equal(first.status, 0, first.stderr);
                 write(usagePath, input(ordinary(40)));
@@ -301,10 +427,10 @@ function runSuite(api, integration = false, quiet = false) {
                 const before = fs.readFileSync(historyPath, 'utf8');
                 const result = cli(['--read-only']); assert.equal(result.status, 0, result.stderr);
                 assert.equal(fs.readFileSync(historyPath, 'utf8'), before);
-                assert.match(result.stdout, /PACE minimax rem UNKNOWN/);
+                assert.match(result.stdout, /PACE minimax window UNKNOWN rem UNKNOWN/);
             });
             test('cli_stdin_json', () => {
-                const result = spawnSync(process.execPath, [PACE_FILE, '--input', '-', '--history', historyPath,
+                const result = spawnSync(process.execPath, [cliFile, '--input', '-', '--history', historyPath,
                     '--now', NOW, '--read-only'], { encoding: 'utf8', input: JSON.stringify(input(ordinary(40))), timeout: 10000, windowsHide: true });
                 assert.equal(result.status, 0, result.stderr); assert.match(result.stdout, /source:.*stdin#/);
             });
@@ -321,10 +447,28 @@ function runSuite(api, integration = false, quiet = false) {
             test('cli_missing_input_fails', () => {
                 fs.unlinkSync(usagePath); const result = cli(); assert.equal(result.status, 1); assert.match(result.stderr, /ENOENT/);
             });
-            test('cli_unknown_option_fails', () => assert.equal(cli(['--mutant', 'wrong-band']).status, 1));
-            test('cli_invalid_expected_cost_fails', () => assert.equal(cli(['--expected-cost-pct', 'NaN']).status, 1));
+            test('cli_unknown_option_fails', () => {
+                write(usagePath, input(ordinary(40))); write(historyPath, shortHistory(50));
+                const valid = cli(['--read-only']); assert.equal(valid.status, 0, valid.stderr);
+                const result = cli(['--read-only', '--mutant', 'wrong-band']);
+                assert.equal(result.status, 1);
+                assert.equal(result.stderr.trim(), 'PACE ERROR: unknown option or missing value: --mutant');
+                assert.equal(result.stdout, '');
+            });
+            test('cli_invalid_expected_cost_fails', () => {
+                write(usagePath, input(ordinary(40))); write(historyPath, shortHistory(50));
+                const valid = cli(['--read-only', '--expected-cost-pct', '1']); assert.equal(valid.status, 0, valid.stderr);
+                // Blank/hex/exponent spellings would coerce to valid numbers if
+                // lexical rejection disappeared; NaN alone has a second guard.
+                for (const cost of ['NaN', '', '0x10', '1e1', '-1', '101']) {
+                    const result = cli(['--read-only', '--expected-cost-pct', cost]);
+                    assert.equal(result.status, 1, `cost ${JSON.stringify(cost)} must fail`);
+                    assert.equal(result.stderr.trim(), 'PACE ERROR: invalid expected cost percent');
+                    assert.equal(result.stdout, '');
+                }
+            });
             test('cli_input_history_collision_fails', () => {
-                const result = spawnSync(process.execPath, [PACE_FILE, '--input', historyPath, '--history', historyPath],
+                const result = spawnSync(process.execPath, [cliFile, '--input', historyPath, '--history', historyPath],
                     { encoding: 'utf8', timeout: 10000, windowsHide: true });
                 assert.equal(result.status, 1); assert.match(result.stderr, /separate files/);
             });
@@ -340,8 +484,8 @@ function runSuite(api, integration = false, quiet = false) {
     return { passed, failures };
 }
 
-// Mutants are injected into an in-memory module. The production CLI has no
-// mutant switches, and no source file is rewritten by this suite.
+// Mutants use an in-memory module, plus a lane-local scratch copy for CLI
+// mutants. The production CLI has no mutant switches or source rewrites.
 const MUTANTS = {
     'wrong-band': { from: "if (ratio < 0.5) return 'ACCELERATE-2';", to: "if (ratio < 0.5) return 'HOLD';", check: 'band_0' },
     'missing-reset': { from: 'const resetAt = utc(raw.resetAt);', to: 'const resetAt = utc(raw.resetAt) ?? now + 5 * HOUR;', check: 'missing_reset_unknown' },
@@ -350,18 +494,46 @@ const MUTANTS = {
     'wrong-window': { from: 'if (weekly) return weekly;', to: 'if (weekly && windows.length === 1) return weekly;', check: 'weekly_precedes_shortest' },
     'wrong-target': { from: 'current.remainingPct / hoursLeft', to: 'hoursLeft / current.remainingPct', check: 'measured_target_ratio' },
     'wrong-measured': { from: 'base.remainingPct - current.remainingPct', to: '0', check: 'measured_target_ratio' },
-    'no-surge': { from: "if (report.surge) report.action = 'ACCELERATE-2';", to: '/* surge deliberately removed */', check: 'surge_overrides_high_ratio' },
-    'mix-reset': { from: 'a.resetAt === b.resetAt && a.durationHours === b.durationHours', to: 'a.durationHours === b.durationHours', check: 'reset_cycle_not_mixed' }
+    'no-surge': { from: 'report.surge = hoursLeft <= current.durationHours * 0.1 && current.remainingPct > 10;',
+        to: 'report.surge = false;', check: 'surge_exact_10_percent_time' },
+    'mix-reset': { from: 'a.resetAt === b.resetAt && a.durationHours === b.durationHours', to: 'a.durationHours === b.durationHours', check: 'reset_cycle_not_mixed' },
+    'raw-history-times': { from: 'history = validateHistory(history);', to: 'validateHistory(history);',
+        check: 'same_instant_conflict_2026-09-30T11:00:00Z' },
+    'hidden-boundary-conflict': { from: 'while (first > 0 && ordered[first - 1].observedAt === ordered[first].observedAt) first--;',
+        to: '/* do not expand same-time group */', check: 'boundary_conflict_not_hidden_by_duplicate_tail' },
+    'truthy-verified': { from: "!('verified' in value) || value.verified === true", to: 'value.verified !== false',
+        check: 'non_boolean_verified_"false"_rejected' },
+    'placeholder-history-source': { from: '!sourceLabel(sample.source)', to: '!label(sample.source)',
+        check: 'history_source_"n/a"_rejected' },
+    'low-overrides-band': { from: "report.dispatch = 'BOUNDED_TASKS';", to: "report.dispatch = 'BOUNDED_TASKS'; report.action = 'THROTTLE-1';",
+        check: 'low_quota_bounded' },
+    'surge-overrides-band': { from: 'report.action = classify(report.ratio);',
+        to: "report.action = hoursLeft <= current.durationHours * 0.1 && current.remainingPct > 10 ? 'ACCELERATE-2' : classify(report.ratio);",
+        check: 'surge_cannot_override_high_ratio' },
+    'denied-surge': { from: "if (report.dispatch === 'DENY' || report.dispatch === 'BOUNDED_TASKS' || rejectedSiblings.length) report.surge = false;",
+        to: '/* leave SURGE unqualified */', check: 'expected_cost_exceeds_remaining_blocks_surge' },
+    'ignored-bounded-dispatch': { from: "lowQuota || report.action === 'THROTTLE-1'", to: 'lowQuota', check: 'bounded_dispatch_suppresses_surge' },
+    'hidden-sibling': { from: "status: item.reason ? 'UNKNOWN' : 'KNOWN'", to: "status: 'KNOWN'", check: 'rejected_sibling_stale_exposed' },
+    'ignore-sibling-restriction': { from: "if ((report.action === 'UNKNOWN' || rejectedSiblings.length) && report.dispatch !== 'DENY') report.dispatch = 'UNKNOWN';",
+        to: "if (report.action === 'UNKNOWN' && report.dispatch !== 'DENY') report.dispatch = 'UNKNOWN';", check: 'rejected_sibling_stale_exposed' },
+    'cli-accept-unknown-option': { from: 'else throw new Error(`unknown option or missing value: ${arg}`);',
+        to: 'else { /* silently ignore unsupported options */ }', check: 'cli_unknown_option_fails', cli: true },
+    'cli-accept-invalid-cost': { from: "if (!/^(?:\\d+(?:\\.\\d+)?|\\.\\d+)$/.test(options.expectedCostPct)) throw new Error('invalid expected cost percent');",
+        to: '/* omit CLI cost spelling validation */', check: 'cli_invalid_expected_cost_fails', cli: true }
 };
 
-function mutantApi(name) {
+function mutantSource(name) {
     const mutant = MUTANTS[name];
     if (!mutant) throw new Error(`unknown mutant: ${name}`);
     const source = fs.readFileSync(PACE_FILE, 'utf8');
     assert.equal(source.split(mutant.from).length, 2, `mutant ${name} must replace exactly one site`);
+    return source.replace(mutant.from, mutant.to);
+}
+
+function mutantApi(name) {
     const sandbox = { module: { exports: {} }, require: createRequire(PACE_FILE), __dirname,
         process, console, Date, Set, Map, Buffer };
-    vm.runInNewContext(source.replace(mutant.from, mutant.to), sandbox, { filename: PACE_FILE, timeout: 1000 });
+    vm.runInNewContext(mutantSource(name), sandbox, { filename: PACE_FILE, timeout: 1000 });
     // Return objects across the VM boundary as ordinary host objects for strict
     // deep equality checks; the implementation functions still run in the VM.
     const api = sandbox.module.exports;
@@ -371,7 +543,8 @@ function mutantApi(name) {
 function main() {
     const args = process.argv.slice(2);
     if (args.length === 2 && args[0] === '--mutant') {
-        process.exitCode = runSuite(mutantApi(args[1])).failures.length ? 1 : 0;
+        const api = mutantApi(args[1]);
+        process.exitCode = runSuite(api, !!MUTANTS[args[1]].cli, false, MUTANTS[args[1]].cli ? mutantSource(args[1]) : null).failures.length ? 1 : 0;
         return;
     }
     if (args.length > 1 || (args.length === 1 && args[0] !== '--mutants')) throw new Error('Usage: test_pace.js [--mutants | --mutant NAME]');
@@ -380,7 +553,7 @@ function main() {
     if (args[0] === '--mutants') {
         for (const [name, spec] of Object.entries(MUTANTS)) {
             console.log(`MUTANT ${name}`);
-            const result = runSuite(mutantApi(name), false, true);
+            const result = runSuite(mutantApi(name), !!spec.cli, true, spec.cli ? mutantSource(name) : null);
             const killed = result.failures.includes(spec.check);
             console.log(`${killed ? 'KILLED' : 'SURVIVED'} ${name}: required failing check ${spec.check}`);
             if (!killed) survivors++;

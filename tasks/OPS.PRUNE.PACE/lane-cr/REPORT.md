@@ -1,4 +1,90 @@
-# OPS.PRUNE.PACE lane-cr implementation handoff
+# OPS.PRUNE.PACE lane-cr FIX-CR handoff
+
+Date: 2026-09-30. Final foreground suites completed by 2026-09-30T20:01:57Z.
+Writer: Codex, OpenAI/GPT-6 family, implementer. Exact runtime variant/effort is not exposed. No subagents used.
+Branch: `task/lane-cr`; starting HEAD: `a53111ac`. Authority: Owner's FIX-CR assignment and ANSWER-CR / MSG-PRUNE-PM-045.
+Status: writer implementation and tests ready for independent re-review; no closure or integration verdict claimed.
+The final commit SHA is reported by `git rev-parse HEAD` in the chat handoff. Tested source Git blobs: `pace.js` = `4f691674f82a9349e98498f33f340adc99f262b9`; `test_pace.js` = `63ee377f218789f49523f9f3773e31dc8971a343`.
+
+## What changed
+
+- `tools/ops/pace.js`: normalizes history observation/capture/reset timestamps before comparisons and deduplication, including explicit offsets. Conflicting same-instant readings remain distinct and invalidate measurement, including conflicts hidden behind repeated boundary samples.
+- `tools/ops/pace.js`: shares source/verification validation between current readings and history. Non-boolean verification values and placeholder sources in any case/spacing fail closed. Invalid history retains the existing error/no-advice contract.
+- `tools/ops/pace.js`: keeps action strictly tied to the ratio; LOW, cost, exhaustion and SURGE cannot overwrite the band. Dispatch restrictions and SURGE suppression are separate. The requested 8%-remaining/target-2/measured-0 case yields ACCELERATE-2 with BOUNDED_TASKS.
+- `tools/ops/pace.js`: names the binding window and scope in text/JSON; exposes rejected sibling windows as UNKNOWN with reasons. Missing sibling evidence suppresses SURGE and leaves provider-wide advice/dispatch UNKNOWN unless a known denial applies.
+- `tools/ops/test_pace.js`: expands to 170 checks and 21 implementation mutants. CLI rejection tests restore valid input/history, verify a valid invocation succeeds, and assert exact stderr. CLI mutants execute scratch copies of the changed implementation and must fail the named tests.
+- Lane-local README, state and `evidence/fix-cr-*.log`: updated contract, scoped claim and actual foreground evidence. Existing launch prompts/review artifacts are preserved.
+
+## How I tested it
+
+All commands ran in the assigned worktree with Node v24.19.0. Results are writer checks, not an independent review or fresh-clone integration gate.
+
+| Command | Observed result | Evidence |
+|---|---|---|
+| `node tools/ops/test_pace.js` | 170 passed, 0 failed, EXIT=0 | `evidence/fix-cr-pace.log` |
+| `node tools/ops/test_pace.js --mutants` | Baseline 170/0; 21 mutants killed, 0 survived, EXIT=0 | `evidence/fix-cr-mutants.log` |
+| `node tools/check_deus_syntax.js` | 62 plugins checked, 0 errors, EXIT=0 | `evidence/fix-cr-syntax.log` |
+| `node --check tools/ops/pace.js` / `node --check tools/ops/test_pace.js` | EXIT=0; final files also loaded by both final suites | Foreground command output |
+| `git diff --check` | EXIT=0 | Foreground command output |
+
+Both manifest gates passed. The final test runs followed the explicit THROTTLE-1 bounded-dispatch/SURGE regression. Earlier FIX-CR runs passed 169 checks and 20 mutants; the final logs supersede them.
+
+## Evidence
+
+No screenshots produced: this is operations tooling without visual/gameplay acceptance criteria. Excerpts from real output:
+
+```text
+RESULT: 170 passed, 0 failed
+EXIT=0
+KILLED raw-history-times: required failing check same_instant_conflict_2026-09-30T11:00:00Z
+KILLED low-overrides-band: required failing check low_quota_bounded
+KILLED hidden-sibling: required failing check rejected_sibling_stale_exposed
+KILLED cli-accept-unknown-option: required failing check cli_unknown_option_fails
+KILLED cli-accept-invalid-cost: required failing check cli_invalid_expected_cost_fails
+MUTANTS: 21 killed, 0 survived
+EXIT=0
+```
+
+The CLI mutants each returned success where rejection was expected, causing the named assertions to fail (`0 !== 1`). The invalid-cost mutant was caught by the empty-string input; testing NaN alone would miss removal of lexical validation because numeric validation also rejects NaN.
+
+## Not done / known problems
+
+- Independent review, the requested answerability re-check, and coordinator fresh-clone/merge-gate integration remain pending. No push or merge performed.
+- Text output now includes window/scope/dispatch and JSON includes per-window statuses; consumers must use the updated contract. `action` no longer carries EXHAUSTED or SURGE overrides; dispatch/reasons carry exhaustion and SURGE is a separate signal.
+- Provider evidence cannot be authenticated by this local report; omitted verification remains compatible with legacy EXACT_PROVIDER telemetry. Invalid existing history emits an error and no advice, rather than silently discarding evidence.
+- Rate warmup, missing exact/flat boundary evidence, conflicts and reset rollover can leave rate UNKNOWN. Concurrent writers to one history file remain unsupported. Expected cost covers the binding window only.
+- No RMMZ F5/F8, gameplay screenshot, game-save check or live provider refresh was performed. Shared STATUS/VISION edits are excluded by the explicit path allowlist; current state is recorded locally.
+
+## Try it in RMMZ
+
+Inapplicable: this change has no game-runtime consumer. Run `node tools/ops/test_pace.js` from the repository root to exercise the synthetic quota regressions; expected result: `170 passed, 0 failed`. `node tools/ops/pace.js --read-only` inspects existing local telemetry without updating history; no live quota values are claimed by this handoff.
+
+## Decisions needed
+
+No additional implementation decision requested. Next gate: independent re-review/answerability check followed by authorized coordinator integration.
+
+## GAME TRANSLATION
+
+Class C, foundational/indirect operations tooling. **CONSUMED BY GAME SYSTEMS: none.** Named consumer: existing coordinator's usage-aware reporting/dispatch workflow.
+
+| Required field | Result |
+|---|---|
+| Player / World Effect | Indirect assurance for authorized game work; no game behavior added. |
+| Trigger | Operator invokes the PACE CLI with exact account telemetry/history. |
+| Runtime Authority | `tools/ops/pace.js`: `utc`, `validateHistory`, `evaluate`, `measure`, `classify`, `format`. |
+| Simulation Path | Inapplicable; no game simulation state read or changed. |
+| Engine Bridge | Inapplicable; operations-only CLI. |
+| Visible Result | Sourced text/JSON with binding-window band, dispatch guard and UNKNOWN sibling reasons. |
+| Persistence | Canonical UTC timestamps and preserved conflict evidence in version-1 local history; no game saves. |
+| Failure Without This Lane | Conflicting/unsupported data can invent numeric rates, LOW can replace the directed band, siblings can disappear, and CLI tests can falsely pass. |
+| Automated Proof | 170 baseline checks; 21 mutants killed; both manifest gates pass. Source blobs and logs above identify the tested implementation. Final writer SHA is in the chat handoff. |
+| In-Game Proof | Not performed; inapplicable to operations tooling. |
+
+Simulation implemented: NO (inapplicable). Engine bridge implemented: NO (inapplicable). Presentation implemented: NO (game presentation inapplicable; CLI output tested). Input/player interaction implemented: NO (inapplicable). Save/load implemented: NO (game saves inapplicable; local history tested). Playable verification performed: NO (inapplicable).
+
+---
+
+# Historical pre-FIX-CR implementation handoff (superseded by the report above)
 
 Date: 2026-09-30. Evidence recorded by 2026-09-30T18:11:50Z.
 Writer: codex (OpenAI family); actual underlying model identifier/effort not exposed by this session. No subagents used. Reviewer: claude, pending independent review.

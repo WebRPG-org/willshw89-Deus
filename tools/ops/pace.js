@@ -17,15 +17,23 @@ const object = value => value !== null && typeof value === 'object' && !Array.is
 const pct = value => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 100;
 const positive = value => typeof value === 'number' && Number.isFinite(value) && value > 0;
 const label = value => typeof value === 'string' && value.trim() && !/[\x00-\x1f\x7f\[\]]/.test(value);
+const sourceLabel = value => label(value) && !/^(UNKNOWN|--|N\/A)$/i.test(value.replace(/\s/g, ''));
+// Older exact telemetry omits verified; a supplied value must be boolean true.
+const verifiedEvidence = value => !('verified' in value) || value.verified === true;
 
-// UTC only: reject local times and Date.parse's normalization of impossible dates.
+// Absolute ISO times only. Validate the wall date before applying an explicit
+// offset, so Date.parse cannot normalize an impossible date into valid evidence.
 function utc(value) {
     if (typeof value !== 'string') return null;
-    const m = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})(?::(\d{2})(?:\.(\d{1,3}))?)?Z$/.exec(value);
+    const m = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})(?::(\d{2})(?:\.(\d{1,3}))?)?(Z|([+-])(\d{2}):(\d{2}))$/.exec(value);
     if (!m) return null;
     const canonical = `${m[1]}:${m[2] || '00'}.${(m[3] || '').padEnd(3, '0')}Z`;
     const time = Date.parse(canonical);
-    return Number.isFinite(time) && new Date(time).toISOString() === canonical ? time : null;
+    if (!Number.isFinite(time) || new Date(time).toISOString() !== canonical) return null;
+    if (m[4] === 'Z') return time;
+    if (Number(m[6]) > 23 || Number(m[7]) > 59) return null;
+    const offset = (Number(m[6]) * 60 + Number(m[7])) * 60000;
+    return time - (m[5] === '+' ? offset : -offset);
 }
 
 function classify(ratio) {
@@ -77,9 +85,8 @@ function reading(providerId, provider, window, now, inputSource) {
     const raw = { ...provider, ...window };
     const observedAt = utc(raw.lastChecked);
     const resetAt = utc(raw.resetAt);
-    const trusted = raw.precision === 'EXACT_PROVIDER' && label(raw.source) &&
-        !/^(UNKNOWN|--|N\/A)$/i.test(raw.source.trim()) &&
-        (raw.scope === undefined || raw.scope === 'account') && raw.verified !== false;
+    const trusted = raw.precision === 'EXACT_PROVIDER' && sourceLabel(raw.source) &&
+        (raw.scope === undefined || raw.scope === 'account') && verifiedEvidence(raw);
     let reason = null;
     if (!trusted) reason = 'account evidence UNKNOWN';
     else if (observedAt === null || observedAt > now) reason = 'observation time UNKNOWN/future';
@@ -111,7 +118,7 @@ function validateHistory(history) {
     }
     for (const sample of history.samples) {
         if (!object(sample) || !label(sample.provider) || !label(sample.accountId) || !label(sample.window) ||
-            !pct(sample.remainingPct) || !positive(sample.durationHours) || !label(sample.source) || sample.source === 'UNKNOWN' ||
+            !pct(sample.remainingPct) || !positive(sample.durationHours) || !sourceLabel(sample.source) || !verifiedEvidence(sample) ||
             utc(sample.observedAt) === null || utc(sample.resetAt) === null || utc(sample.capturedAt) === null ||
             utc(sample.capturedAt) < utc(sample.observedAt) || utc(sample.capturedAt) - utc(sample.observedAt) > MAX_AGE ||
             utc(sample.resetAt) <= utc(sample.capturedAt) ||
@@ -119,7 +126,13 @@ function validateHistory(history) {
             throw new Error('invalid history sample; preserve file and collect a new history');
         }
     }
-    return history;
+    // Canonicalize before identity checks, collision detection and deduplication.
+    // Keep conflicting values as distinct samples; never let last-write win.
+    return { ...history, samples: history.samples.map(sample => ({ ...sample,
+        observedAt: new Date(utc(sample.observedAt)).toISOString(),
+        capturedAt: new Date(utc(sample.capturedAt)).toISOString(),
+        resetAt: new Date(utc(sample.resetAt)).toISOString()
+    })) };
 }
 
 function sameWindow(a, b) {
@@ -138,7 +151,9 @@ function measure(current, samples) {
     let boundary = -1;
     for (let i = 0; i < ordered.length; i++) if (utc(ordered[i].observedAt) <= start) boundary = i;
     if (boundary < 0) return { measured: null, reason: '60-minute history UNKNOWN' };
-    const relevant = ordered.slice(Math.max(0, boundary - 1));
+    let first = Math.max(0, boundary - 1);
+    while (first > 0 && ordered[first - 1].observedAt === ordered[first].observedAt) first--;
+    const relevant = ordered.slice(first);
     for (let i = 1; i < relevant.length; i++) {
         const before = relevant[i - 1], after = relevant[i];
         if (after.remainingPct > before.remainingPct ||
@@ -163,7 +178,7 @@ function evaluate(input, history = emptyHistory(), options = {}) {
     const now = options.now === undefined ? Date.now() : utc(options.now);
     if (now === null || !Number.isFinite(now)) throw new Error('now must be a valid UTC timestamp');
     if (!object(input) || !object(input.providers)) throw new Error('input must contain a providers object');
-    validateHistory(history);
+    history = validateHistory(history);
     if (options.expectedCostPct !== undefined && !pct(options.expectedCostPct)) throw new Error('invalid expected cost percent');
     const inputSource = options.inputSource || 'JSON input';
     if (!label(inputSource)) throw new Error('invalid input source label');
@@ -173,7 +188,7 @@ function evaluate(input, history = emptyHistory(), options = {}) {
         if (!/^[a-z][a-z0-9_-]*$/i.test(id)) throw new Error('invalid provider identifier');
         const report = { provider: id, window: null, remainingPct: null, resetAt: null,
             measured: null, target: null, ratio: null, action: 'UNKNOWN', surge: false,
-            dispatch: 'UNKNOWN', source: 'UNKNOWN', reasons: [] };
+            dispatch: 'UNKNOWN', scope: 'binding-window', windows: [], source: 'UNKNOWN', reasons: [] };
         const provider = input.providers[id];
         if (!object(provider)) {
             report.reasons.push('provider account reading UNKNOWN');
@@ -183,8 +198,11 @@ function evaluate(input, history = emptyHistory(), options = {}) {
         let windows, current, readings;
         try {
             windows = windowsFor(provider);
-            const binding = bindingWindow(windows, provider);
             readings = windows.map(window => reading(id, provider, window, now, inputSource));
+            report.windows = readings.map(item => ({ window: item.window,
+                status: item.reason ? 'UNKNOWN' : 'KNOWN', reason: item.reason,
+                remainingPct: item.remainingPct, resetAt: item.resetAt, source: item.source }));
+            const binding = bindingWindow(windows, provider);
             current = readings.find(item => item.window === binding.id);
         } catch (error) {
             report.reasons.push(error.message);
@@ -193,6 +211,8 @@ function evaluate(input, history = emptyHistory(), options = {}) {
         }
         Object.assign(report, { window: current.window, remainingPct: current.remainingPct,
             resetAt: current.resetAt, source: current.source });
+        const rejectedSiblings = readings.filter(item => item.window !== current.window && item.reason);
+        if (rejectedSiblings.length) report.reasons.push('provider-wide advice UNKNOWN: rejected sibling windows');
         for (const item of readings) {
             if (!item.reason) {
                 const { reason, ...sample } = item;
@@ -220,10 +240,10 @@ function evaluate(input, history = emptyHistory(), options = {}) {
         }
         report.action = classify(report.ratio);
         report.surge = hoursLeft <= current.durationHours * 0.1 && current.remainingPct > 10;
-        if (report.surge) report.action = 'ACCELERATE-2';
+        // The action is strictly the binding-window ratio band. Dispatch guards
+        // and the time-based SURGE signal cannot replace that measurement.
         const exhausted = readings.find(item => !item.reason && item.remainingPct === 0);
         if (exhausted) {
-            report.action = 'EXHAUSTED';
             report.dispatch = 'DENY';
             report.source = [...new Set([report.source, exhausted.source])].join('; ');
             report.reasons.push(`${exhausted.window} quota exhausted`);
@@ -232,18 +252,18 @@ function evaluate(input, history = emptyHistory(), options = {}) {
             // points. It is a guard, never a replacement for measured usage.
             report.dispatch = options.expectedCostPct > current.remainingPct ? 'DENY' : 'WITHIN_BINDING_QUOTA';
             if (report.dispatch === 'DENY') {
-                report.action = 'THROTTLE-2';
                 report.reasons.push('expected cost exceeds binding quota');
             }
         }
-        // LOW means bounded packets even if the rate alone calls for more work.
-        if (current.remainingPct > 0 && current.remainingPct <= 10 &&
-            ['ACCELERATE-2', 'ACCELERATE-1', 'HOLD'].includes(report.action)) {
-            report.action = 'THROTTLE-1';
-            report.reasons.push('LOW quota: bounded tasks only');
+        // LOW restricts dispatch, not the ratio band.
+        const lowQuota = current.remainingPct > 0 && current.remainingPct <= 10;
+        if (lowQuota) report.reasons.push('LOW quota: bounded tasks only');
+        if ((lowQuota || report.action === 'THROTTLE-1') && report.dispatch !== 'DENY') {
+            report.dispatch = 'BOUNDED_TASKS';
         }
         if (report.action === 'THROTTLE-2') report.dispatch = 'DENY';
-        if (report.action === 'UNKNOWN') report.dispatch = 'UNKNOWN';
+        if ((report.action === 'UNKNOWN' || rejectedSiblings.length) && report.dispatch !== 'DENY') report.dispatch = 'UNKNOWN';
+        if (report.dispatch === 'DENY' || report.dispatch === 'BOUNDED_TASKS' || rejectedSiblings.length) report.surge = false;
         reports.push(report);
     }
     // Keep two hours, preserving duplicate conflicts rather than silently
@@ -262,9 +282,12 @@ function evaluate(input, history = emptyHistory(), options = {}) {
 
 function format(report) {
     const number = value => value === null ? 'UNKNOWN' : String(Number(value.toFixed(6)));
-    return `PACE ${report.provider} rem ${report.remainingPct === null ? 'UNKNOWN' : number(report.remainingPct) + '%'} ` +
+    const rejected = report.windows.filter(item => item.status === 'UNKNOWN');
+    return `PACE ${report.provider} window ${report.window || 'UNKNOWN'} rem ${report.remainingPct === null ? 'UNKNOWN' : number(report.remainingPct) + '%'} ` +
         `reset ${report.resetAt || 'UNKNOWN'} used/h ${number(report.measured)} target/h ${number(report.target)} ` +
         `-> ${report.action} [source: ${report.source}]` +
+        ` [scope: ${report.scope}] [dispatch: ${report.dispatch}]` +
+        (rejected.length ? ` [windows: ${rejected.map(item => `${item.window} UNKNOWN (${item.reason})`).join('; ')}]` : '') +
         (report.reasons.length ? ` [reason: ${report.reasons.join('; ')}]` : '') + (report.surge ? ' [SURGE]' : '');
 }
 
