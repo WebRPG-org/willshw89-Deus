@@ -938,3 +938,24 @@ Every decision item recorded in this log must provide:
   - DEC-055: assets are used in PixelLab's native forms; conversions stay on hold until the design is approved.
   - The Owner still approves slices, rulings and designs.
 - **Replaces:** "Nothing enters the game without the Owner's YEA" and "The Owner is the final QA" in the DEC-007 banner of AGENTS.md, CLAUDE.md and GEMINI.md, and the art half of AGENTS.md Rule 6.
+
+---
+
+### Decision `DEC-057`: Natural world re-scoped: soil deferred; monsters, flora and fauna placed by seeded random rules for now
+- **Date:** 2026-09-30
+- **Source:** Owner, 2026-09-30, in chat with Claude Code, after the PM listed what remains before the natural world is complete: "We can nix soil for now. We can RNG monsters and flora and fauna into the world for now and refine systems later."
+- **Ruling:**
+  1. **Soil is deferred.**
+     - No soil runtime, soil bridge, soil moisture or erosion work in this phase.
+     - The NAT.04.01 kernel stays on main, unbridged.
+     - lane-cf (the DEUS_SimBridge soil bridge, three Grok FAILs) stops; its branch is kept.
+     - Collapse produces rubble and stops there; there is no rubble-to-sediment transfer.
+  2. **Monsters, flora and fauna are placed into the world by seeded random rules for now.**
+     - Placement is deterministic from the world seed and follows the biome cell (DEC-030), the danger field (DEC-050) and the bestiary assignment (DEC-053).
+     - Physical growth, biomass carrying capacity, breeding and food webs are refined later.
+  3. **The natural-world exit gate (DEC-041 item 7) changes to match.**
+     - The points about soil moisture, flora germination and growth, biomass carrying capacity and persistent breeding wildlife are deferred.
+     - Seeded random placement of flora, fauna and monsters by biome cell and danger tier stands in for them.
+     - Space, matter, water, lava and collapse stay in scope.
+- **Open:** climate is not named in the ruling. Seeded flora placement does not need a climate engine, so the PM treats climate as deferred with flora unless the Owner says otherwise.
+- **Supersedes in part:** DEC-037's upstream order (Geomorphology/Soil, then Climate, Flora and Fauna as simulations) for this phase, and DEC-041 points 6 and 8-10 as exit criteria.

@@ -1,3 +1,5 @@
+> **DEC-057 (Owner, 2026-09-30): "We can nix soil for now. We can RNG monsters and flora and fauna into the world for now and refine systems later."** Soil is deferred (no soil runtime or bridge; lane-cf stops). Monsters, flora and fauna are placed by seeded random rules by biome cell and danger tier; their simulation systems come later. Space, matter, water, lava and collapse stay in scope. The upstream order below is amended accordingly.
+
 ---
 trigger: always_on
 description: "DEC-037 Natural World phase lock and the lean upstream-first critical path."
