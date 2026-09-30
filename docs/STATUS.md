@@ -119,6 +119,7 @@ Active tasks, open branches, and pending review submissions:
 | `task/lane-co` | `lane-co` (`OPS.PRUNE.02`) | L2: Archive 41 `UF_*.js` shims & retarget tools | FROZEN at `b9acaa14` pending L1 merge |
 | `task/lane-cr` | `lane-cr` (`OPS.PRUNE.PACE`) | PACE telemetry & budget rate governor (`tools/ops/pace.js`) | In Flight (`409e085c`, Codex writer) |
 | `task/lane-cs` | `lane-cs` (`WG.20.02`) | CARDS-1 fixes & DEC-045 catalogue moisture rows | In Flight (`26099959`, Codex writer) |
+| `task/lane-cw` | `lane-cw` (`NAT.03.01`) | DEUS_Fluid & sim/hydro correctness (items a-h) | In Flight (`ab15c1f9`, Codex writer) |
 | `task/art-temperate-induction` | Parked Induction | 64 temperate batch 1 assets (Outside_A2, Dungeon_A2, V8 props) | PARKED at `90c82ac5` pending QA & Owner YEA |
 | `task/lane-a` | `lane-a` (`WG.00.08`) | WG.00.08 Exit Criteria | In Review (`16fec107`) |
 | `task/lane-b` | `lane-b` (`WG.00.11`) | ATK-YEAR0-001 Hardening | Integrated / Reference (`ed757456`) |
@@ -151,6 +152,7 @@ Tracked defects, unverified contracts, and quarantined checks:
 | Rule 14 Multi-Domain Time | `game/js/plugins/DEUS_Core.js` | AGENTS.md Rule 14 multi-domain time tags are not implemented by the running clock. | KNOWN DEFECT (Reported, preserved) |
 | Z-2 Cut Proof Quarantine | `tools/test_generated_z2_cut_proof.js` | Quarantined in `gate_tests.json`: exits 1 on main; Lane H rework in progress. | QUARANTINED |
 | ATK-YEAR0-001 | `tasks/WG.00.08/defects.jsonl` | Year 0 world age materialization edge cases. | OPEN |
+| `NAT.02.01` | `tasks/NAT.02.01/lane-bv` | Matter kernel is a stub; review `fdb5c0a0` missed it. | OPEN |
 
 ---
 
