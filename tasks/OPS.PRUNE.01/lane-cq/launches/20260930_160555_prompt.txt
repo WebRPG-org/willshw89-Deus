@@ -1,0 +1,44 @@
+You are an independent reviewer for Project DEUS (xAI Grok family).
+Your role is to conduct an independent closure review (Pass 9 / FIX-CQ-9) of task/lane-cq (OPS.PRUNE.01 Control Board) at tip commit 3b2f0a26fe6e7be4a95ed8f750b0d84358357772.
+
+Worktree: C:\Users\snewt\.deus_worktrees\lane-cq
+Branch: task/lane-cq
+
+CRITICAL INSTRUCTIONS:
+1. Do NOT modify any code, data, or manifest files.
+2. Review the writer's changes at commit 3b2f0a26 in C:\Users\snewt\.deus_worktrees\lane-cq:
+   Verify the four REQUIRED items of FIX-CQ-9 per MSG-PRUNE-PM-054:
+   A. Board Truth:
+      - task/lane-cs moved to References in both docs/STATUS.md and tools/ops/active_lanes.json
+      - CQ review hash labeled historical in Section 3
+      - Climate Hold row in Section 4 restores pending upstream water/soil authorities per DEC-037 (NAT.03.01 / NAT.04.01)
+      - "never committed" completely removed from docs/STATUS.md
+      - Stand-ins usage notes labeled "historical usage notes"
+      - Section 4 contains "Legacy unresolved issues (ledger section 4): closure UNVERIFIED; migration grants no cleanup permission"
+   B. Actual Listings:
+      - Explicit Live records and Frozen file lists in tools/test_control_board.js
+      - Prose, comments, and Archived entries can never authorize a plugin-directory file
+      - Discovery stays fail-closed
+   C. Archive Integrity:
+      - Rejects malformed rows (requires non-empty original path, non-empty destination, and exact ruling "Owner 2026-09-30 prune ruling")
+      - Verifies original paths do not exist and archive destinations exist on disk
+   D. Genuine Proof:
+      - Final-tip baseline passes: node tools/test_control_board.js
+      - Multi-mutant proof verification: node tools/test_control_board.js --verify-proof (1 baseline pass, 13 negative cases killed with exit 1, 0 survived)
+      - Syntax check: node tools/check_deus_syntax.js (62 plugins, 0 errors)
+      - Asset inventory check: node tools/generate_asset_inventory.js
+      - Dry-run merge gate: node tools/governance/merge_gate.js --lane lane-cq --manifest tasks/OPS.PRUNE.01/lane-cq/lane.json --dry-run
+
+3. Write your formal review artifact to:
+   tasks/OPS.PRUNE.01/lane-cq/review_grok_3b2f0a26.md
+   Include:
+   - Target Commit SHA: 3b2f0a26fe6e7be4a95ed8f750b0d84358357772
+   - Reviewer Family: xai (Grok)
+   - Detailed item-by-item verification of the 4 FIX-CQ-9 requirements
+   - Test execution logs and exit codes
+   - Verification of all negative mutant cases
+   - Final Verdict: VERDICT: CLEAN PASS (or specific defects if any)
+
+4. Commit your review artifact:
+   git add tasks/OPS.PRUNE.01/lane-cq/review_grok_3b2f0a26.md
+   git commit -m "[grok] OPS.PRUNE.01: independent review of lane-cq tip 3b2f0a26"
