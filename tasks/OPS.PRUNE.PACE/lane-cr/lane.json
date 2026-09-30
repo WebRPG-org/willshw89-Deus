@@ -3,7 +3,7 @@
   "taskId": "OPS.PRUNE.PACE",
   "branch": "task/lane-cr",
   "writer": "codex",
-  "reviewer": "claude",
+  "reviewer": "grok",
   "allowedPaths": [
     "tools/ops/pace.js",
     "tools/ops/test_pace.js",
