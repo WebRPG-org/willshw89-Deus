@@ -70,7 +70,7 @@ Materials name the crosswalk §6 profiles. "Archetype" is the SRD item the state
 | ROBE | Robes | The greenwood mantle: a long grey-green over-robe open at the front over tunic or dress, wide sleeves, a hood that hangs still, one line of pale braided rush at the hem; dusk-lavender lining shows only inside the hood. | WOOL, rush | as above | tall column; nothing glows |
 | LIGHT | Leather | A moss-dyed deerskin jerkin laced at the front, deerskin bracers, hood up. Studded = horn studs, never brass; Padded = a quilted grey-green jack. | LEATHER, HORN | leather `#6F5F34`, horn studs v8 | slim; belt line visible |
 | MEDIUM | Scale mail, dark patinated bronze | Plain fish-scale rows (never leaf shapes) over the grey-green gambeson, no pauldrons, a pale rush hem band. Chain shirt = blackened mail; Breastplate and Half plate = blackened iron. | BRONZE (patinated), IRON, WOOL | bronze `#6F5F34` with v7 edges | shoulders +2; the dark scale block is the tell |
-| HEAVY | Chain mail, blackened | Blackened mail and coif under a grey-green surcoat with the white hart on the chest; a plain conical helm with no visor (ears show). Plate = blackened plate, slim, no bright steel anywhere. | IRON (blackened), WOOL | surcoat grey-green, hart `#E2EFF8` | the one slim, dark heavy on the Medium canvas |
+| HEAVY | Chain mail, blackened | Blackened mail and coif under a grey-green surcoat with the silver crescent moon and leaf on the chest; a plain conical helm with no visor (ears show). Plate = blackened plate, slim, no bright steel anywhere. | IRON (blackened), WOOL | surcoat grey-green, hart `#E2EFF8` | the one slim, dark heavy on the Medium canvas |
 | Never | | glowing runes, leaf-shaped armour, silver filigree, bright mithral shine, crystal | | | |
 
 ### Half-Elf — the border people
@@ -80,7 +80,7 @@ Materials name the crosswalk §6 profiles. "Archetype" is the SRD item the state
 | ROBE | Robes | The traveller's robe: ankle-length russet robe split front and back for walking, a satchel strap across the chest, the pale hood; boots show in the walk. | WOOL, LEATHER | as above | column with a strap line |
 | LIGHT | Studded leather | A human leather jack with brass studs and elven deerskin bracers; hood up. | LEATHER, BRONZE (studs) | leather v5 | fitted; the mixed kit is the motif |
 | MEDIUM | Chain shirt under a russet jerkin | Mail shows only at collar and sleeves (the scout hides the shine), leather bracers, the pale hood. Hide = a russet hide jerkin with a fur collar; Breastplate = blackened iron under the jerkin. | STEEL, LEATHER, HIDE | mail v9 at the edges only | shoulders +2 |
-| HEAVY | Splint | Iron strips riveted on russet leather, a kettle hat, the pale hood over the shoulders, the leaf-and-spearhead in pale on the chest strip. Plate = human bright plate with a russet tabard. Ring and Chain mail = russet-backed. | IRON, LEATHER | strips `#5A5D63`, device `#91B3CD` | the only strip-on-leather heavy on the Medium canvas |
+| HEAVY | Splint | Iron strips riveted on russet leather, a kettle hat, the pale hood over the shoulders, the clasped hands beneath a star in pale on the chest strip. Plate = human bright plate with a russet tabard. Ring and Chain mail = russet-backed. | IRON, LEATHER | strips `#5A5D63`, device `#91B3CD` | the only strip-on-leather heavy on the Medium canvas |
 | Never | | a third invented style; anything neither human nor elf would make | | | |
 
 ### Dwarf — the smiths of the northern isles
@@ -90,7 +90,7 @@ Materials name the crosswalk §6 profiles. "Archetype" is the SRD item the state
 | ROBE | Robes | The priest-smith's gown: heavy blue-grey wool, square-cut, a hood, an apron front, bronze clasps. | WOOL, BRONZE | as above | short and broad; still a column |
 | LIGHT | Leather | The smith's heavy leather doublet with bronze rivets, leather cap, bracers. Studded = the rivets; Padded = quilted wool under the apron. | LEATHER, BRONZE | leather `#583224` | broad; belt line |
 | MEDIUM | Scale mail, bronze | Bronze lamellar rows over the blue-grey tunic, an iron nasal helm. Breastplate = bronze; Chain shirt = iron mail; Hide = a sealskin jerkin. | BRONZE, IRON | scale `#A2713F` with `#D0995C` edges | shoulders +1 (Small canvas) |
-| HEAVY | Splint | Vertical iron strips with bronze edging, an iron spangenhelm with a nasal, the beard out over the chest; the hammer in bronze on a cobalt square. Plate = iron plate with bronze edging, blocky. Chain mail = iron mail (beard into the coif). | IRON, BRONZE | strips `#5A5D63`, edging bronze, device on `#356182` | the beard on the chest is the tell; never a horned helm |
+| HEAVY | Splint | Vertical iron strips with bronze edging, an iron spangenhelm with a nasal, the beard out over the chest; the hammer and pick above a mountain in bronze on a cobalt square. Plate = iron plate with bronze edging, blocky. Chain mail = iron mail (beard into the coif). | IRON, BRONZE | strips `#5A5D63`, edging bronze, device on `#356182` | the beard on the chest is the tell; never a horned helm |
 | Never | | gold-and-gem opulence, tartan, horned helms, a short human | | | |
 
 ### Gnome — the hedgerow folk
@@ -100,7 +100,7 @@ Materials name the crosswalk §6 profiles. "Archetype" is the SRD item the state
 | ROBE | Robes | The hedge-wise gown: brown or moss wool gown patched at the hem, a collar (no hood: it would hide the cap), dried herbs at the belt. | WOOL | as above | tiny column |
 | LIGHT | Padded | A quilted jack of patched cloth, quilting lines showing, leather bracers, the red cap. Leather = a small leather jerkin; Studded = iron nail-heads. | LINEN, LEATHER, IRON | quilt brown, lines v3 | fitted; belt line |
 | MEDIUM | Chain shirt, traded | A mail shirt a size too big, sleeves rolled, over the patched jack; the red cap. Hide = a badger-pelt jerkin; Breastplate = a dull iron plate strapped over. | IRON, HIDE | dull iron `#59594F` | shoulders +1; the badger stripe is a value tell for hide |
-| HEAVY | Ring mail | Iron rings sewn on leather, a small iron kettle hat with a red band, the gold acorn on brown at the chest. Plate = small dull iron plate, blocky. Chain and Splint = ringed or stripped over the same leather. | IRON, LEATHER, GOLD (device) | rings v5 on leather v4, band `#B5280D` | the red band keeps the identity under the helm |
+| HEAVY | Ring mail | Iron rings sewn on leather, a small iron kettle hat with a red band, the brass cogwheel with its gem at the chest. Plate = small dull iron plate, blocky. Chain and Splint = ringed or stripped over the same leather. | IRON, LEATHER, GOLD (device) | rings v5 on leather v4, band `#B5280D` | the red band keeps the identity under the helm |
 | Never | | gears, goggles, clockwork, garden-gnome kitsch | | | |
 
 ### Halfling — the village at harvest
@@ -120,7 +120,7 @@ Materials name the crosswalk §6 profiles. "Archetype" is the SRD item the state
 | ROBE | Robes | The marcher hermit's robe: heavy charcoal wool, a hide mantle at the shoulders, bone toggles, hood back so the tusks show. | WOOL, HIDE, BONE | as above | wide column |
 | LIGHT | Leather | A thick boiled-leather cuirass, sleeveless, arms bare, raw-leather bracers. Studded = bone studs; Padded = a quilted charcoal jack. | LEATHER, BONE | leather `#4E2E23` | belt line; bare arms |
 | MEDIUM | Hide | The boar-hide harness: thick pelt over shoulders and chest, raw-leather straps, a bone-plate chest piece. Chain shirt = under the hide; Breastplate = blackened iron; Scale = iron. | HIDE, LEATHER, BONE, IRON | fur v4–v5, bone plate v11 | shoulders +2; fur texture is the tell |
-| HEAVY | Ring mail | Iron rings on charcoal leather, an iron spangenhelm with a boar-tusk decal and no visor, bone-white edging, the boar's head in bone on the chest. Plate = blackened iron plate, square and wide. | IRON (blackened), LEATHER, BONE | rings `#212325`, edging `#C8C3B7` | the widest dark heavy; tusks always visible |
+| HEAVY | Ring mail | Iron rings on charcoal leather, an iron spangenhelm with a boar-tusk decal and no visor, bone-white edging, the fist between tusks in bone on the chest. Plate = blackened iron plate, square and wide. | IRON (blackened), LEATHER, BONE | rings `#212325`, edging `#C8C3B7` | the widest dark heavy; tusks always visible |
 | Never | | skull piles, spikes, scrap-metal chaos (goblin), the green-skinned savage | | | |
 
 ### Dragonborn — the heraldic wyrm made flesh
@@ -130,7 +130,7 @@ Materials name the crosswalk §6 profiles. "Archetype" is the SRD item the state
 | ROBE | Robes | The hall robe: long terracotta robe with a bronze-and-gold border at hem and cuffs, a high collar behind the neck, no hood (horns), open at the tail. | WOOL, BRONZE, GOLD | as above | tall column |
 | LIGHT | Studded leather | Dark terracotta leather cut for the tail, bronze studs in rows, bronze bracers. Leather = plain; Padded = quilted terracotta. | LEATHER, BRONZE | leather `#4E2E23`, studs bronze | slim and tall |
 | MEDIUM | Scale mail, bronze | Plain bronze rows echoing the body's own scales over terracotta, a bronze gorget on the long neck. Chain shirt = blackened; Breastplate and Half plate = bronze with a gold rim. | BRONZE, GOLD, WOOL | scale `#A2713F` | shoulders +2 |
-| HEAVY | Plate | A black-iron harness with bronze edging, segmented tail armour, a helm shaped to the wedge head with horn cut-outs, the gold dragon on the chest. Splint = iron splints with bronze rivets; Chain and Ring mail = blackened with a terracotta tabard. | IRON (black), BRONZE, GOLD | plate `#212325`, edging `#A2713F`, device `#BE891B` | the tall black-and-bronze heavy; tail and horns are the tell |
+| HEAVY | Plate | A black-iron harness with bronze edging, segmented tail armour, a helm shaped to the wedge head with horn cut-outs, the coiled winged dragon in gold on the chest. Splint = iron splints with bronze rivets; Chain and Ring mail = blackened with a terracotta tabard. | IRON (black), BRONZE, GOLD | plate `#212325`, edging `#A2713F`, device `#BE891B` | the tall black-and-bronze heavy; tail and horns are the tell |
 | Never | | the broad-chested western dragon-man, feathers, neon, a human helm | | | |
 
 ### Tiefling — the devil on the church wall
@@ -140,7 +140,7 @@ Materials name the crosswalk §6 profiles. "Archetype" is the SRD item the state
 | ROBE | Robes | The chantry robe: long black robe, a deep hood cut for the horns, ember lining at hood and sleeve ends, a dull-gold clasp, the tail from the slit. | WOOL, GOLD (dull) | as above | column; the ember edge reads at 1× |
 | LIGHT | Leather | A black leather hooded jack with ember stitching and horn cut-outs. Studded = dull-gold studs; Padded = black quilt with ember lining. | LEATHER, GOLD | leather `#312820` | slim; belt line |
 | MEDIUM | Chain shirt, blackened | Under a black surcoat with an ember hem band, an ash-grey coif cut around the horns. Breastplate = blackened steel with an ember rim; Scale = blackened. | STEEL (blackened), WOOL | mail `#3E3E44`, band `#F26018` | shoulders +2 |
-| HEAVY | Plate, blackened | Blackened steel with ember-orange edging, a helm with horn cut-outs, the crossed horns over flame in dull gold on the chest. Chain mail = black mail, black surcoat, ember band. | STEEL (blackened), GOLD (dull `#9C8449`) | plate `#3E3E44`, edging `#F26018` | the dark heavy with the warm edge; horns are the tell |
+| HEAVY | Plate, blackened | Blackened steel with ember-orange edging, a helm with horn cut-outs, the flame within a ring of horns in dull gold on the chest. Chain mail = black mail, black surcoat, ember band. | STEEL (blackened), GOLD (dull `#9C8449`) | plate `#3E3E44`, edging `#F26018` | the dark heavy with the warm edge; horns are the tell |
 | Never | | purple skin, glamour, neon magic, spikes | | | |
 
 ## 5. The nine heavies at a glance
@@ -149,12 +149,12 @@ Materials name the crosswalk §6 profiles. "Archetype" is the SRD item the state
 |---|---|---|---|---|
 | Human | Medium | bright steel | woad tabard, gold lion | kettle hat or great helm |
 | Halfling | Small | bright steel | green tabard, gold sheaf | small and round; the only shod halfling |
-| Elf | Medium | blackened | grey-green surcoat, white hart | slim; ears out of a plain helm |
-| Tiefling | Medium | blackened steel | ember edging, dull-gold horns device | horns through the helm |
+| Elf | Medium | blackened | grey-green surcoat, crescent moon and leaf | slim; ears out of a plain helm |
+| Tiefling | Medium | blackened steel | ember edging, dull-gold flame-in-horns device | horns through the helm |
 | Half-Elf | Medium | iron strips on russet leather | pale hood | strip texture, no full metal |
-| Dwarf | Small | iron splint | bronze edging, hammer on cobalt | the beard on the chest |
-| Gnome | Small | ring mail | red helm band, gold acorn | tiny; rings on leather |
-| Half-Orc | Large | blackened iron rings | bone edging, boar's head | widest; tusks |
+| Dwarf | Small | iron splint | bronze edging, hammer and pick on cobalt | the beard on the chest |
+| Gnome | Small | ring mail | red helm band, brass cogwheel | tiny; rings on leather |
+| Half-Orc | Large | blackened iron rings | bone edging, fist between tusks | widest; tusks |
 | Dragonborn | Large | black iron plate | bronze edging, gold dragon | tail armour, horn cut-outs |
 
 ## 6. Prompt lines
