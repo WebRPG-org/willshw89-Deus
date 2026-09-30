@@ -2,7 +2,7 @@
     "lane": "lane-bb",
     "taskId": "DEUS-TSK-GEOLOGY-GATE",
     "branch": "task/lane-bb",
-    "writer": "gemini",
+    "writer": "grok",
     "reviewer": "codex",
     "push": true,
     "allowedPaths": [
