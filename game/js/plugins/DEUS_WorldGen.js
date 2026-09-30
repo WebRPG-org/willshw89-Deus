@@ -251,6 +251,7 @@
         const start = st ? st.startArea : { x: 0, y: 0 };
         return {
             seed: st ? st.seed : 0, size, areasX, areasY, width: areasX * size, height: areasY * size,
+            startArea: { x: start.x, y: start.y },
             startX: start.x * size + Math.floor(size / 2), startY: start.y * size + Math.floor(size / 2)
         };
     }
@@ -472,11 +473,11 @@
         return { cx, cy, rx, ry, isWater };
     };
 
-    // Rivers and pond are built once per world (seed and size) and reused by every cell lookup.
+    // Rivers and pond are built once per world (seed, size and start area) and reused by every cell lookup.
     let waterCache = null;
     function waterModels(state) {
         const d = dims(state);
-        const key = `${d.seed}:${d.areasX}x${d.areasY}x${d.size}`;
+        const key = `${d.seed}:${d.areasX}x${d.areasY}x${d.size}@${d.startArea.x},${d.startArea.y}`;
         if (waterCache && waterCache.key === key) return waterCache;
         const rivers = WorldGen.riverModels(state), pond = WorldGen.pondModel(state);
         const cat = catalog();

@@ -166,7 +166,9 @@
         if (!desc) return null;
         const seed = desc.seed !== undefined ? desc.seed : 0;
         const areasX = desc.areasX || 1, areasY = desc.areasY || 1;
-        const key = `${seed}:${ax},${ay}:${size}:${areasX}x${areasY}`;
+        // startArea moves the climate sample (WorldGen dims). Two descriptions that differ only there are different grids.
+        const sa = desc.startArea || { x: 0, y: 0 };
+        const key = `${seed}:${ax},${ay}:${size}:${areasX}x${areasY}@${sa.x},${sa.y}`;
         const hit = kindGrids.get(key);
         if (hit) return hit;
         const pack = G.columnFieldGrid(ax, ay, size, desc);
@@ -844,6 +846,28 @@
         return selected;
     }
 
+    // The Z range a description names. A save stores it as zRange { zMin, zMax }, not as flat fields. Flat zMin/zMax
+    // still win when a caller passes them. A description that has a seed and area counts but no usable zRange is a
+    // pre-WG.00.17 world: the legacy range. No description at all means the live world's range.
+    function resolveDescZRange(desc) {
+        if (!desc) return zrSync();
+        if (desc.zMin !== undefined && desc.zMax !== undefined) {
+            const zMin = desc.zMin | 0, zMax = desc.zMax | 0;
+            return { zMin, zMax, n: zMax - zMin + 1 };
+        }
+        if (desc.zRange !== undefined) {
+            const W = World();
+            const p = W && typeof W.parseZRange === "function" ? W.parseZRange(desc.zRange) : null;
+            if (p) return { zMin: p.zMin, zMax: p.zMax, n: p.zMax - p.zMin + 1 };
+        }
+        const W = World();
+        if (desc.seed !== undefined && desc.areasX !== undefined && W && W.Z_RANGES && W.Z_RANGES.legacy) {
+            const L = W.Z_RANGES.legacy;
+            return { zMin: L.zMin, zMax: L.zMax, n: L.zMax - L.zMin + 1 };
+        }
+        return zrSync();
+    }
+
     // One level's baseline. Generator 5 and later generate the levels of the area together (volumeOf: the natural cuts
     // and caves span the core) and hand out this level's. Older generators make each core level on its own; a level
     // outside the core is solid rock below it and open air above it (outerBaseline), the same for every generator.
@@ -851,7 +875,8 @@
         const desc = (typeof worldDesc === "object" && worldDesc !== null)
             ? worldDesc
             : { seed, size: size || 256, areasX: 1, areasY: 1, startArea: { x: 0, y: 0 }, verticalBiomeCoupling: true };
-        if (gen >= FEATURE_GEN) return volumeOf(seed, gen, ax, ay, size, desc)[z - zrSync().zMin];
+        const r = resolveDescZRange(desc);
+        if (gen >= FEATURE_GEN) return volumeOf(seed, gen, ax, ay, size, desc)[z - r.zMin];
         if (z < CORE.zMin || z > CORE.zMax) return outerBaseline(z, size);
         const t0 = performance.now();
         const b = finishBaseline(levelArrays(seed, gen, z, ax, ay, size, desc), z, gen, size);
@@ -1055,7 +1080,7 @@
         if (!b) {
             const desc = (seed === undefined || seed === st.seed)
                 ? st
-                : { seed: s, size: st.size, areasX: st.areasX, areasY: st.areasY, startArea: st.startArea || { x: 0, y: 0 }, verticalBiomeCoupling: st.verticalBiomeCoupling };
+                : { seed: s, size: st.size, areasX: st.areasX, areasY: st.areasY, startArea: st.startArea || { x: 0, y: 0 }, verticalBiomeCoupling: st.verticalBiomeCoupling, zRange: st.zRange };
             b = generateBaseline(s, g, z, ax, ay, st.size, desc);
             baselines.set(key, b);
             while (baselines.size > 12) baselines.delete(baselines.keys().next().value);
@@ -1083,7 +1108,7 @@
             : ((typeof seed === "object" && seed !== null)
                 ? seed
                 : (seed !== undefined
-                    ? { seed, size: (st && st.size) || 256, areasX: (st && st.areasX) || 1, areasY: (st && st.areasY) || 1, startArea: (st && st.startArea) || { x: 0, y: 0 }, verticalBiomeCoupling: st ? st.verticalBiomeCoupling : true }
+                    ? { seed, size: (st && st.size) || 256, areasX: (st && st.areasX) || 1, areasY: (st && st.areasY) || 1, startArea: (st && st.startArea) || { x: 0, y: 0 }, verticalBiomeCoupling: st ? st.verticalBiomeCoupling : true, zRange: st ? st.zRange : undefined }
                     : st));
         if (!desc) return "n/a";
         const s = desc.seed !== undefined ? desc.seed : (typeof seed === "number" ? seed : 0);
@@ -2503,12 +2528,14 @@
         const desc = (typeof worldDesc === "object" && worldDesc !== null)
             ? worldDesc
             : { seed, size: size || 256, areasX: 1, areasY: 1, startArea: { x: 0, y: 0 }, verticalBiomeCoupling: true };
-        const r = (desc && desc.zMin !== undefined && desc.zMax !== undefined) ? desc : zrSync();
+        const r = resolveDescZRange(desc);
         const areasX = desc.areasX || 1, areasY = desc.areasY || 1;
         // Absent verticalBiomeCoupling is uncoupled, the same rule as couplingActive. Defaulting it to true
         // made a flag-absent save share a coupled world's volume cache key.
         const vbc = couplingActive(desc);
-        const key = `${seed}:${gen}:${ax},${ay}:${size}:${areasX}x${areasY}:${r.zMin}..${r.zMax}:${vbc ? 1 : 0}`;
+        // startArea is a generation input (climate blend, rivers). It belongs in the key with the Z range.
+        const sa = desc.startArea || { x: 0, y: 0 };
+        const key = `${seed}:${gen}:${ax},${ay}:${size}:${areasX}x${areasY}:${r.zMin}..${r.zMax}:${vbc ? 1 : 0}@${sa.x},${sa.y}`;
         let v = volumes.get(key);
         if (v) return v;
         const t0 = performance.now();

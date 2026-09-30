@@ -18,6 +18,8 @@
  *                                    same checksums when another seed's world regenerates them (no live-state input)
  *   foreign_geometry_checksum       a 2x1 world and a 1x1 world: each one's checksums, including Z0, match when the other
  *                                    world regenerates them from the first world's own description
+ *   foreign_z_range_checksum        seed 18, generator 5, size 256: a legacy host (-2..+2) checksums a default-range
+ *                                    target (-16..+15) from that target's own state at z -3, +2 and +3, and matches it
  *   different_seeds_differ      [B] a second seed carves a different layout (column sets overlap < 25 %) and is valid too
  *   old_generator_unchanged         generator 4 (every save made before 19B/WG.00.15) regenerates byte for byte as
  *                                    post-WG.00.15 (2026-09-27, commit 42c3bc9a); the Owner accepts (2026-09-29) that worlds
@@ -100,7 +102,7 @@ const MUTANTS = {
     no_features: [[L_, "    function carveNaturalFeatures(seed, gen, ax, ay, size, bs, worldDesc) {\n", "    function carveNaturalFeatures(seed, gen, ax, ay, size, bs, worldDesc) {\n        bs[2].features = { cuts: [], caves: [], shafts: [], skylights: [] }; return bs[2].features; /* MUTANT */\n"]],
     nondeterministic: [[L_, "const rnd = (...p) => hash32(seed, salt, ax, ay, ...p) / 4294967296;", "const rnd = (...p) => p[0] === 204 || p[0] === 101 ? Math.random() : hash32(seed, salt, ax, ay, ...p) / 4294967296; /* MUTANT: the depth classes and the cave rolls drawn at random */"]],
     seed_ignored: [[L_, "const rnd = (...p) => hash32(seed, salt, ax, ay, ...p) / 4294967296;", "const rnd = (...p) => hash32(salt, ax, ay, ...p) / 4294967296; /* MUTANT */"]],
-    old_gen_cut: [[L_, "        if (gen >= FEATURE_GEN) return volumeOf(seed, gen, ax, ay, size)[z + 2];", "        if (gen >= 4) return volumeOf(seed, gen, ax, ay, size)[z + 2]; /* MUTANT: generator 4 gets the cuts */"]],
+    old_gen_cut: [[L_, "        if (gen >= FEATURE_GEN) return volumeOf(seed, gen, ax, ay, size, desc)[z - r.zMin];", "        if (gen >= 4) return volumeOf(seed, gen, ax, ay, size, desc)[z - r.zMin]; /* MUTANT: generator 4 gets the cuts */"]],
     adds_mass: [[L_, "            for (let e = F; e < C; e++) setE(i, e, M_AIR);\n            clearConn(i, F, C - 1);\n            touched[i] |= 2;",
         "            for (let e = F; e < C; e++) setE(i, e, M_AIR);\n            if (C < E_TOP && !SOLID_B[getE(i, C)]) setE(i, C, M_STONE); /* MUTANT */\n            clearConn(i, F, C - 1);\n            touched[i] |= 2;"]],
     flat_cuts: [[L_, "                let Fw = T - Math.round((T - F) * wt[i]);", "                let Fw = T - Math.round((T - F) * wt[i]); Fw = Math.ceil(Fw / STRATA) * STRATA; /* MUTANT: whole levels only */"]],
@@ -439,7 +441,36 @@ if (!noSuites) {
     }
 }
 
+// A legacy host must honour a default-range target's saved zRange, including levels outside the host.
+// The third argument null leaves DEUS_Z_RANGE unset, so that vm's New Game takes Z_RANGES.default.
+function foreignZRangeChecksum() {
+    const target = setup(src, "zrange-default", null);
+    const host = setup(src, "zrange-legacy", "legacy");
+    extraEnvs.push(target, host);
+    const tMs = newWorld(target, 18);
+    const hMs = newWorld(host, 18);
+    const tr = target.UF.World.zRange(), hr = host.UF.World.zRange();
+    const tState = target.UF.World.state;
+    const rows = [];
+    let ok = tr.zMin === -16 && tr.zMax === 15 && hr.zMin === -2 && hr.zMax === 2
+        && tState.seed === 18 && host.UF.World.state.seed === 18
+        && tState.size === 256 && tState.levels["0"] && tState.levels["0"].gen === 5;
+    for (const z of [-3, 2, 3]) {
+        let own, foreign, err = "";
+        try { own = target.UF.Levels.checksum(z); }
+        catch (e) { err = `own ${e && e.message ? e.message : e}`; }
+        try { foreign = host.UF.Levels.checksum(z, 18, 5, tState); }
+        catch (e) { err += `${err ? "; " : ""}foreign ${e && e.message ? e.message : e}`; }
+        if (err || !own || own === "n/a" || own !== foreign) ok = false;
+        rows.push(`${z}: ${own} via host ${foreign}${err ? ` ERROR ${err}` : ""}`);
+    }
+    const errs = target.__errors.length + host.__errors.length;
+    check("foreign_z_range_checksum", ok && errs === 0,
+        `generator 5, seed 18, size 256; default ${tr.zMin}..${tr.zMax} (${tMs.toFixed(0)} ms) checksummed inside legacy host ${hr.zMin}..${hr.zMax} (${hMs.toFixed(0)} ms); ${rows.join("; ")}${errs ? `; console.error ${errs}` : ""}`);
+}
+
 const src = currentSources();
+const extraEnvs = [];
 const envA = setup(src, "g5");
 const tNew5 = newWorld(envA, SEED);
 const V5 = volume(envA);
@@ -472,7 +503,6 @@ info(`seed set built: ${set.map(r => r.seed).join(", ")} (${((performance.now() 
 
 const evidence = [];
 const envErrors = [];
-const extraEnvs = [];
 const ev = (k, text) => evidence.push(`${k}. ${text}`);
 
 //---------------------------------------------------------------- [A] deterministic_same_seed
@@ -544,6 +574,9 @@ guard("foreign_geometry_checksum", () => {
     check("foreign_geometry_checksum", ok && errs === 0,
         `generator 4, size 64, coupling on, legacy range; ${rows.join("; ")}${errs ? `; console.error ${errs}` : ""}`);
 });
+
+//---------------------------------------------------------------- foreign_z_range_checksum
+guard("foreign_z_range_checksum", foreignZRangeChecksum);
 
 //---------------------------------------------------------------- [B] different_seeds_differ
 guard("different_seeds_differ", () => {
