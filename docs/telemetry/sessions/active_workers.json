@@ -3322,7 +3322,7 @@
     "provider": "grok",
     "role": "reviewer",
     "taskId": "NAT.03.01",
-    "state": "RUNNING",
+    "state": "ORPHANED-CHILDREN",
     "pid": 31888,
     "processStartedAt": "2026-09-30T20:05:33Z",
     "launcherPid": 35796,
@@ -3340,13 +3340,73 @@
     "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-cw2\\lane-cw2_20260930_150531.log",
     "launchTimeCT": "2026-09-30 15:05:31 CT",
     "startedAt": "2026-09-30T20:05:31Z",
-    "endedAt": null,
-    "exitCode": null,
+    "endedAt": "2026-09-30T20:23:02Z",
+    "exitCode": 0,
     "timeoutMinutes": 30,
     "baseCommit": "99d6e7480ca38e2a2cb9428a875236a66ea1f60e",
     "resumeFromSha": null,
     "pushGuardHooksPath": null,
-    "gitIdentity": "deus-grok"
+    "gitIdentity": "deus-grok",
+    "flags": [
+      "ORPHANED-CHILDREN"
+    ],
+    "timedOut": false,
+    "startError": null,
+    "logBytes": 2463,
+    "outputDrained": true,
+    "headCommit": "a2c63332c74548ba143a0173befc3d915ab1625f",
+    "branchAfter": "task/lane-cw2",
+    "newCommits": 1,
+    "dirtyFiles": [
+      "tasks/NAT.03.01/lane-cw2/launches/20260930_145604_prompt.txt",
+      "tasks/NAT.03.01/lane-cw2/launches/20260930_review_prompt.txt"
+    ],
+    "outOfScope": [],
+    "orphans": [
+      {
+        "pid": 32296,
+        "name": "bash.exe",
+        "commandLine": "\"C:\\Program Files\\Git\\bin\\..\\usr\\bin\\bash.exe\" -c \"source /c/Users/snewt/.claude/shell-snapshots/snapshot-bash-1790716439332-bimsel.sh 2>/dev/null || true && export TEMP='C:\\Users\\snewt\\AppData\\Local\\Temp' TMP='C:\\Users\\snewt\\AppData\\Local\\Temp' && shopt -u extglob 2>/dev/null || true && { \\builtin "
+      },
+      {
+        "pid": 3280,
+        "name": "msedge.exe",
+        "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\" --no-startup-window /prefetch:5"
+      },
+      {
+        "pid": 37904,
+        "name": "node.exe",
+        "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" C:/Users/snewt/AppData/Local/Temp/claude/C--Users-snewt-OneDrive-Desktop-UF/b3b32680-c2a3-489e-bb25-c1573152defd/scratchpad/watch_mail.js 10"
+      },
+      {
+        "pid": 34224,
+        "name": "msedge.exe",
+        "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\" --type=crashpad-handler \"--user-data-dir=C:\\Users\\snewt\\AppData\\Local\\Microsoft\\Edge\\User Data\" /prefetch:4 --monitor-self-annotation=ptype=crashpad-handler \"--database=C:\\Users\\snewt\\AppData\\Local\\Microsoft\\Edge\\User Data\\Crashpad\" --an"
+      },
+      {
+        "pid": 38340,
+        "name": "msedge.exe",
+        "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\" --type=renderer --extension-process --renderer-sub-type=extension --pdf-upsell-enabled --video-capture-use-gpu-memory-buffer --lang=en-US --js-flags --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --r"
+      },
+      {
+        "pid": 2068,
+        "name": "msedge.exe",
+        "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\" --type=gpu-process --gpu-recent-crash-count=0 --gpu-preferences=WAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAAEAAAAAIAAAABAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= "
+      },
+      {
+        "pid": 21648,
+        "name": "msedge.exe",
+        "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\" --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=service --startup-read-main-dll --metrics-shmem-handle=2808,i,11220146675831074857,12836485871164006554,524288 --field-trial-handle=2312,i"
+      },
+      {
+        "pid": 10060,
+        "name": "msedge.exe",
+        "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --startup-read-main-dll --metrics-shmem-handle=2400,i,9000585137937591996,6063642504954575958,524288 --field-trial-handle=2312,i,6106"
+      }
+    ],
+    "orphansKilled": false,
+    "usage": null,
+    "resumeHeadMismatch": false
   },
   {
     "runId": "lane-cr_20260930_150603",
@@ -3354,7 +3414,7 @@
     "provider": "grok",
     "role": "reviewer",
     "taskId": "OPS.PRUNE.PACE",
-    "state": "RUNNING",
+    "state": "COMPLETED",
     "pid": 26544,
     "processStartedAt": "2026-09-30T20:06:04Z",
     "launcherPid": 37744,
@@ -3372,13 +3432,32 @@
     "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-cr\\lane-cr_20260930_150603.log",
     "launchTimeCT": "2026-09-30 15:06:03 CT",
     "startedAt": "2026-09-30T20:06:03Z",
-    "endedAt": null,
-    "exitCode": null,
+    "endedAt": "2026-09-30T20:19:38Z",
+    "exitCode": 0,
     "timeoutMinutes": 30,
     "baseCommit": "e7be7dd535503c95681fa65ce47c44ec1064f295",
     "resumeFromSha": null,
     "pushGuardHooksPath": null,
-    "gitIdentity": "deus-grok"
+    "gitIdentity": "deus-grok",
+    "flags": [],
+    "timedOut": false,
+    "startError": null,
+    "logBytes": 2481,
+    "outputDrained": true,
+    "headCommit": "77269e24bd9d2558d83ca27faa92edf4e9eb55e2",
+    "branchAfter": "task/lane-cr",
+    "newCommits": 1,
+    "dirtyFiles": [
+      "tasks/OPS.PRUNE.PACE/lane-cr/launches/20260930_142248_prompt.txt",
+      "tasks/OPS.PRUNE.PACE/lane-cr/launches/20260930_145308_prompt.txt",
+      "tasks/OPS.PRUNE.PACE/lane-cr/launches/20260930_FIX_CR_prompt.txt",
+      "tasks/OPS.PRUNE.PACE/lane-cr/launches/20260930_review_prompt.txt"
+    ],
+    "outOfScope": [],
+    "orphans": [],
+    "orphansKilled": false,
+    "usage": null,
+    "resumeHeadMismatch": false
   },
   {
     "runId": "lane-cs2_20260930_150616",
@@ -3436,7 +3515,7 @@
     "provider": "grok",
     "role": "reviewer",
     "taskId": "OPS.PRUNE.01",
-    "state": "RUNNING",
+    "state": "COMPLETED",
     "pid": 17132,
     "processStartedAt": "2026-09-30T20:07:51Z",
     "launcherPid": 15224,
@@ -3454,13 +3533,34 @@
     "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-cq\\lane-cq_20260930_150749.log",
     "launchTimeCT": "2026-09-30 15:07:49 CT",
     "startedAt": "2026-09-30T20:07:49Z",
-    "endedAt": null,
-    "exitCode": null,
+    "endedAt": "2026-09-30T20:22:16Z",
+    "exitCode": 0,
     "timeoutMinutes": 30,
     "baseCommit": "65c0c0762077188e641de2f4b14a95c6fb761701",
     "resumeFromSha": null,
     "pushGuardHooksPath": null,
-    "gitIdentity": "deus-grok"
+    "gitIdentity": "deus-grok",
+    "flags": [],
+    "timedOut": false,
+    "startError": null,
+    "logBytes": 2297,
+    "outputDrained": true,
+    "headCommit": "6f53ca64c0ec163b976f94757e3d016384d8a276",
+    "branchAfter": "task/lane-cq",
+    "newCommits": 1,
+    "dirtyFiles": [
+      "tasks/OPS.PRUNE.01/lane-cq/launches/20260930_135832_prompt.txt",
+      "tasks/OPS.PRUNE.01/lane-cq/launches/20260930_141239_prompt.txt",
+      "tasks/OPS.PRUNE.01/lane-cq/launches/20260930_142140_prompt.txt",
+      "tasks/OPS.PRUNE.01/lane-cq/launches/20260930_145210_prompt.txt",
+      "tasks/OPS.PRUNE.01/lane-cq/launches/20260930_FIX_CQ_7_prompt.txt",
+      "tasks/OPS.PRUNE.01/lane-cq/launches/20260930_FIX_CQ_8_prompt.txt"
+    ],
+    "outOfScope": [],
+    "orphans": [],
+    "orphansKilled": false,
+    "usage": null,
+    "resumeHeadMismatch": false
   },
   {
     "runId": "lane-cx_20260930_151006",
@@ -3468,7 +3568,7 @@
     "provider": "codex",
     "role": "writer",
     "taskId": "WG.00.42",
-    "state": "RUNNING",
+    "state": "COMPLETED",
     "pid": 18592,
     "processStartedAt": "2026-09-30T20:10:07Z",
     "launcherPid": 31148,
@@ -3486,12 +3586,60 @@
     "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-cx\\lane-cx_20260930_151006.log",
     "launchTimeCT": "2026-09-30 15:10:06 CT",
     "startedAt": "2026-09-30T20:10:06Z",
-    "endedAt": null,
-    "exitCode": null,
+    "endedAt": "2026-09-30T20:20:27Z",
+    "exitCode": 0,
     "timeoutMinutes": 45,
     "baseCommit": "7172f0e25f73c55d7e0b88fe2f90d071c28b2031",
     "resumeFromSha": null,
     "pushGuardHooksPath": null,
-    "gitIdentity": "deus-codex"
+    "gitIdentity": "deus-codex",
+    "flags": [],
+    "timedOut": false,
+    "startError": null,
+    "logBytes": 696991,
+    "outputDrained": true,
+    "headCommit": "36930194e7d1a72407907e83ce85fce59782a664",
+    "branchAfter": "task/lane-cx",
+    "newCommits": 1,
+    "dirtyFiles": [
+      "tasks/WG.00.42/lane-cx/launches/20260930_writer_prompt.txt"
+    ],
+    "outOfScope": [],
+    "orphans": [],
+    "orphansKilled": false,
+    "usage": null,
+    "resumeHeadMismatch": false
+  },
+  {
+    "runId": "lane-cx_20260930_152211",
+    "lane": "lane-cx",
+    "provider": "grok",
+    "role": "reviewer",
+    "taskId": "WG.00.42",
+    "state": "RUNNING",
+    "pid": 6220,
+    "processStartedAt": "2026-09-30T20:22:13Z",
+    "launcherPid": 25584,
+    "launcherStartedAt": "2026-09-30T20:22:10Z",
+    "worktree": "C:\\Users\\snewt\\.deus_worktrees\\lane-cx",
+    "branch": "task/lane-cx",
+    "briefPath": "C:\\Users\\snewt\\.deus_worktrees\\lane-cx\\tasks\\WG.00.42\\lane-cx\\BRIEF.md",
+    "launchPromptPath": "C:\\Users\\snewt\\.deus_worktrees\\lane-cx\\tasks\\WG.00.42\\lane-cx\\launches\\20260930_152211_prompt.txt",
+    "promptFile": "C:\\Users\\snewt\\.deus_worktrees\\lane-cx\\tasks\\WG.00.42\\lane-cx\\launches\\20260930_review_prompt.txt",
+    "promptSource": "file",
+    "promptFrom": "-PromptFile",
+    "promptCandidatesSkipped": [],
+    "pushRule": "no-push",
+    "pushRuleSource": "default",
+    "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-cx\\lane-cx_20260930_152211.log",
+    "launchTimeCT": "2026-09-30 15:22:11 CT",
+    "startedAt": "2026-09-30T20:22:11Z",
+    "endedAt": null,
+    "exitCode": null,
+    "timeoutMinutes": 30,
+    "baseCommit": "36930194e7d1a72407907e83ce85fce59782a664",
+    "resumeFromSha": null,
+    "pushGuardHooksPath": null,
+    "gitIdentity": "deus-grok"
   }
 ]
