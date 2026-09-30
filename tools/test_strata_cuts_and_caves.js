@@ -10,7 +10,7 @@
  * (docs/handoffs/HANDOFF_DEUS_TSK_FABLE_19B_CUTS_CAVES.md, docs/systems/UF_Levels.md section "Natural cuts and caves").
  * Runs the real plugins (DEUS_World, DEUS_WorldGen, DEUS_Tiles, DEUS_Objects, DEUS_Levels, DEUS_Floors) in a Node vm and
  * makes New Game worlds. Truth comes from the strata of the baselines, compared with generator 4 of the same seed (a New
- * Game with UF.NewGameSetup.levelsGen = 4) and with the levels code from before 19B (commit PRE_19B, read with git): the
+ * Game with UF.NewGameSetup.levelsGen = 4) and with the post-WG.00.15 baseline (commit POST_WG0015, read with git): the
  * natural-feature descriptors are used only to name what the strata show.
  *
  * Checks (handoff section 18 letters in brackets; each can print FAIL, the mutants below prove it):
@@ -80,7 +80,7 @@ if (typeof global.gc !== "function") {
 
 const ROOT = path.resolve(__dirname, "..");
 const PLUGINS = path.join(ROOT, "game", "js", "plugins");
-const PRE_19B = "42c3bc9a";     // post-WG.00.15 baseline (2026-09-27, Owner accepted)
+const POST_WG0015 = "42c3bc9a"; // post-WG.00.15 baseline (2026-09-27, Owner accepted)
 const arg = (name, fallback) => {
     const a = process.argv.find(x => x.startsWith(`--${name}=`));
     return a ? a.slice(name.length + 3) : fallback;
@@ -207,11 +207,11 @@ function currentSources() {
     }
     return s;
 }
-function pre19bSources() {
+function postWG0015Sources() {
     const s = {};
     for (const f of FILES) {
-        try { s[f] = execFileSync("git", ["show", `${PRE_19B}:game/js/plugins/${f}`], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 << 20 }); }
-        catch (e) { harnessProblem(`can't read ${f} at ${PRE_19B} with git: ${e.message}`); }
+        try { s[f] = execFileSync("git", ["show", `${POST_WG0015}:game/js/plugins/${f}`], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 << 20 }); }
+        catch (e) { harnessProblem(`can't read ${f} at ${POST_WG0015} with git: ${e.message}`); }
     }
     return s;
 }
@@ -448,7 +448,7 @@ const V5b = volume(envB);
 const env4 = setup(src, "g4");
 const tNew4 = newWorld(env4, SEED, 4);
 const V4 = volume(env4);
-const envH = setup(pre19bSources(), "pre19B");
+const envH = setup(postWG0015Sources(), "postWG0015");
 const tNewH = newWorld(envH, SEED, 4);
 const VH = volume(envH);
 info(`newWorld seed ${SEED}: generator ${V5.gen} ${tNew5.toFixed(0)} ms, generator ${V4.gen} (same code, levelsGen 4) ${tNew4.toFixed(0)} ms, post-WG.00.15 baseline ${tNewH.toFixed(0)} ms; natural features ${envA.UF.Levels.stats().featureMs.toFixed(0)} ms`);
@@ -518,7 +518,7 @@ guard("old_generator_unchanged", () => {
     const migratedGen = LEVELS.map(z => st.levels[String(z)].gen);
     st.levels = saved.levels; st.version = saved.version;
     check("old_generator_unchanged", same.every(Boolean) && sumsSame && noFeatures && migratedGen.every(g => g === 4),
-        `generator 4 (levelsGen 4) vs post-WG.00.15 baseline (${PRE_19B}, 2026-09-27), seed ${SEED}: strata per level ${LEVELS.map((z, k) => `${z}:${same[k] ? "same" : "DIFFERENT"}`).join(" ")}; ` +
+        `generator 4 (levelsGen 4) vs post-WG.00.15 baseline (${POST_WG0015}, 2026-09-27), seed ${SEED}: strata per level ${LEVELS.map((z, k) => `${z}:${same[k] ? "same" : "DIFFERENT"}`).join(" ")}; ` +
         `checksums ${sums.map(s => `${s.z}:${s.now}${s.now === s.before ? "" : `/${s.before}`}`).join(" ")}; no features or caps ${noFeatures}; a pre-V80 migration's generators [${migratedGen}]`);
 });
 

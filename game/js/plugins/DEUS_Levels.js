@@ -132,10 +132,10 @@
     }
     function couplingActive(worldDesc) {
         if (typeof worldDesc === "object" && worldDesc !== null) {
-            return worldDesc.verticalBiomeCoupling !== undefined ? !!worldDesc.verticalBiomeCoupling : true;
+            return !!worldDesc.verticalBiomeCoupling;
         }
         const st = World() && World().state;
-        return st ? !!st.verticalBiomeCoupling : true;
+        return !!(st && st.verticalBiomeCoupling);
     }
     // mutant anchor: nondeterminism
     function kindIndexFromFields(e, r, t, d, v, water, mtn) {
@@ -4565,7 +4565,7 @@
         for (const z of CORE_LEVELS) {
             const L = st.levels[String(z)];
             if (!L) { bad.push(`${z}: missing`); continue; }
-            const now = checksumOf(z);
+            const now = checksumOf(z, undefined, undefined, st);
             if (L.checksum && now !== "n/a" && L.checksum !== "n/a" && now !== L.checksum) {
                 L.checksumMismatch = true;
                 bad.push(`${z}: saved ${L.checksum}, regenerated ${now}`);
