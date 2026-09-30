@@ -57,7 +57,7 @@ Band pages: [ALL](BAND_ALL.md), [LOWER2](BAND_LOWER2.md), [LOWER1](BAND_LOWER1.m
 | EDGE | §15 | docs/OWNER_DECISIONS.md:302 | 696 | 696 | 696 | 696 | 696 |
 | SHADE | §15 | docs/OWNER_DECISIONS.md:302 | 5 | 5 | 5 | 5 | 5 |
 | TOP | §15 | docs/OWNER_DECISIONS.md:302 | 29 | 29 | 29 | 29 | 29 |
-| RAMP | §16 | docs/OWNER_DECISIONS.md:313 | 580 | 580 | 580 | 580 | 580 |
+| RAMP | §16 | docs/OWNER_DECISIONS.md:324 | 580 | 580 | 580 | 580 | 580 |
 | RAMPSIDE | §16 | tasks/WG.20.02/lane-s/BRIEF.md:51 | 580 | 580 | 580 | 580 | 580 |
 | CONNECTOR | §16 | tasks/WG.20.02/lane-s/BRIEF.md:51 | 7 | 7 | 7 | 7 | 7 |
 | DECAY | §7 | docs/VISION.md:132 | 20 | 20 | 20 | 20 | 20 |
