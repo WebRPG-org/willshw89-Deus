@@ -5,7 +5,6 @@
     "task/lane-cq",
     "task/lane-co",
     "task/lane-cr",
-    "task/lane-cs",
     "task/lane-cs2",
     "task/lane-cw",
     "task/art-temperate-induction",
@@ -22,6 +21,7 @@
     "task/lane-pm-streamline"
   ],
   "referenceBranches": [
+    "task/lane-cs",
     "task/lane-b",
     "task/lane-bb",
     "task/lane-bt",
