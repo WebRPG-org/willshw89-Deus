@@ -114,11 +114,12 @@ The following 41 sixteen-line `PluginManager.loadScript` forwarders remain in `g
 Active tasks, open branches, and pending review submissions:
 
 ### A. Active Lanes in Review / In Flight
+
 | Branch | Lane / Task | Scope | Status |
 |---|---|---|---|
 | `task/lane-cq` | `lane-cq` (`OPS.PRUNE.01`) | L1: Rebuild STATUS.md control board + `tools/test_control_board.js` | Historical reviews at 4a5fc62a / 6f53ca64 / 4f92e516; in closure review (FIX-CQ-10) |
 | `task/lane-co` | `lane-co` (`OPS.PRUNE.02`) | L2: Archive 41 `UF_*.js` shims & retarget tools | In Flight (`90af963f`) |
-| `task/lane-ct` | `lane-ct` (`OPS.PRUNE.05`) | G05: Rule-4 failure path fixes for 16 test harnesses | In Flight |
+| `task/lane-ct` | `lane-ct` (`OPS.PRUNE.05`) | G05: Rule-4 failure path fixes for 16 test harnesses | Writer submitted 78da5333; Grok review pending; 246 fixture cases pass, NW.js/F5 not run ([report](../tasks/OPS.PRUNE.05/lane-ct/REPORT.md)) |
 | `task/lane-cr` | `lane-cr` (`OPS.PRUNE.PACE`) | PACE telemetry & budget rate governor (`tools/ops/pace.js`) | Grok CLEAN PASS at f78c554b; MERGE-READY |
 | `task/lane-cs2` | `lane-cs2` (`WG.20.02`) | FIX-CS: Clean manifest & review for CARDS-1 / DEC-045 rows | Grok CLEAN PASS at aa47b74f; awaiting PM answerability |
 | `task/lane-cw` | `lane-cw` (`NAT.03.01`) | DEUS_Fluid & sim/hydro correctness (items a-h) | Grok CLEAN PASS at 28fe2614; awaiting PM answerability |
