@@ -119,6 +119,7 @@ Active tasks, open branches, and pending review submissions:
 | `task/lane-co` | `lane-co` (`OPS.PRUNE.02`) | L2: Archive 41 `UF_*.js` shims & retarget tools | FROZEN at `b9acaa14` pending L1 merge |
 | `task/lane-cr` | `lane-cr` (`OPS.PRUNE.PACE`) | PACE telemetry & budget rate governor (`tools/ops/pace.js`) | In Flight (`409e085c`, Codex writer) |
 | `task/lane-cs` | `lane-cs` (`WG.20.02`) | CARDS-1 fixes & DEC-045 catalogue moisture rows | In Flight (`26099959`, Codex writer) |
+| `task/lane-cs2` | `lane-cs2` (`WG.20.02`) | FIX-CS: Clean manifest & review for CARDS-1 / DEC-045 rows | In Flight (`cd6624b2`, Grok Reviewer) |
 | `task/lane-cw` | `lane-cw` (`NAT.03.01`) | DEUS_Fluid & sim/hydro correctness (items a-h) | In Flight (`ab15c1f9`, Codex writer) |
 | `task/art-temperate-induction` | Parked Induction | 64 temperate batch 1 assets (Outside_A2, Dungeon_A2, V8 props) | PARKED at `90c82ac5` pending QA & Owner YEA |
 | `task/lane-a` | `lane-a` (`WG.00.08`) | WG.00.08 Exit Criteria | In Review (`16fec107`) |
