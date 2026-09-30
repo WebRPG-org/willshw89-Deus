@@ -850,3 +850,29 @@ Every decision item recorded in this log must provide:
   4. **Traceable.** Every change links back along the chain Owner decision -> WBS leaf -> brief -> gate verdict -> lane -> commits -> review -> merge -> STATUS row. A change without a link is out of control and is flagged.
   5. **Consistent and codified.** Rules live as machine checks wherever possible, not only as prose: the DEC-048 hooks (CLAMP), the control-board test, the mail v2 validator, a registry/trace checker, and a directive-sync check (DEC-051). A rule that exists only in prose is a gap to close.
   6. **Aligned and pruned.** An ALIGN program inventories the whole repo and prunes what does not belong, by archive and always reversibly, under the order and gates already set (DEC-048, the prune lanes).
+
+---
+
+### Decision `DEC-053`: All SRD 5.1 content is in Emrys
+- **Date Logged:** 2026-09-30
+- **Status:** `DECIDED` (Owner, in chat with Claude Code, 2026-09-30)
+- **Decider:** Owner
+- **Owner's words:** "Catalogue all of the items, enemies, etc in SRD, include anything in SRD in our world. Thats free content."
+- **Summary:**
+  1. **Everything in `game/data/srd51` (1,325 records) is included in the world of Emrys:**
+     - 317 creatures;
+     - 226 equipment items (armor, weapons, gear, tools, vehicles, mounts, trade goods);
+     - 240 magic items;
+     - 319 spells;
+     - 39 character options (the nine races, which are the SRD races; 12 classes; subclasses; background; feat);
+     - 176 rules, including 28 hazards and 15 conditions.
+
+     SRD 5.1 has no product-identity creatures; any found are flagged and renamed.
+  2. **Each record gets a DEUS adaptation row in a DEUS-owned layer keyed by its `srd:` id.** `srd51` itself is never edited. The row places the record in the world:
+     - creatures: DEC-050 biome-depth cell and danger tier;
+     - items: where found (loot tier, lair hoard, merchant, crafted by which peoples), materials and mass (DEC-040), rarity;
+     - spells: who casts them and their physical effect (the SIM.60.01 audit);
+     - hazards: which biome cells and which physics system owns them;
+     - character options: the nine peoples' cultures and classes (civilization stays frozen for runtime; the catalogue work is allowed).
+  3. **This updates the SRD readiness policy of 2026-09-22.** The catalogue is no longer dormant: every record is selected for adaptation. Verification still means comparing a record with the rendered source page (`tools/srd_extract/verification/mark_verified.js`, hash-bound). It is done record by record as each adaptation row is written, and never by marking in bulk without checking. Activation into runtime gameplay follows the DEC-037 physics-first order unless the Owner brings it forward.
+  4. **The work runs through the braintrust (the thinking) and gated lanes (the data), per DEC-052,** with the CC-BY-4.0 attribution kept in the game credits.
