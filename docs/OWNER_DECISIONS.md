@@ -975,3 +975,23 @@ Every decision item recorded in this log must provide:
   - all within DEC-057 (soil deferred; flora, fauna and monsters placed by seeded random rules).
 - **Who decides what:** the PM settles each design's open questions from the braintrust recommendations and records each choice. The Owner can change any of them.
 - **How it is built:** AG swarms the lanes (writers and reviewers from different families). Each lane has a brief and a merge_gate manifest, and passes the braintrust answerability check (DEC-052) before the PM merges it. F5 evidence is required where the design says so.
+
+---
+
+### Decision `DEC-059`: No authority blocks on the natural-world build
+- **Date:** 2026-09-30
+- **Source:** Owner, 2026-09-30. The Owner asked: "So now there are no more authority blocks between now and world completion?" The PM listed the remaining Owner gates and asked four questions; the Owner chose the recommended option each time:
+  1. "Yes, build straight through";
+  2. "Yes, keep it closed";
+  3. "Yes, you decide both";
+  4. "Defer them all".
+- **Ruling:**
+  1. **Build straight through.** For the natural world, the hard Owner gate after each package (DEC-041, .agents/rules/deus-natural-world.md) and the slice gate of AGENTS.md Rule 6 are waived. The PM builds package to package. The Owner gets progress reports and can stop or change anything at any time. The Owner's final Natural World v1 sign-off stays.
+  2. **The RMMZ editor stays closed for the build.** The PM may change game/js/plugins.js and game/data/*.json without asking each time. The PM tells the Owner when it is safe to reopen the editor, and before any F5 check the Owner needs to run.
+  3. **The PM decides the PixelLab-native art layout (DEC-055) and signs ADR-003** (the sim/render split and LOD), from the braintrust recommendations, recording each choice. The Owner can change them.
+  4. **Optional extras are deferred for this phase:** fire, seasons and weather, animal migration, rare geological events (quakes, sinkholes, eruptions) and structure decay. Climate is deferred with flora (DEC-057).
+- **Still with the Owner:**
+  - the final Natural World v1 sign-off;
+  - Rule 10 escalations (two failed fixes);
+  - any change to the read-only engine core (Rule 9);
+  - generating all art.

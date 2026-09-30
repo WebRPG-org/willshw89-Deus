@@ -38,7 +38,7 @@ The practical procedure and launch templates are in `tools/ops/ANTIGRAVITY.md`. 
 3. **Never claim what you didn't observe.** "Verified", "working", "0 errors", "60 FPS" need evidence you produced and looked at in this session. If you didn't check, write "not checked".
 4. **Tests must be able to fail.** No hardcoded success messages. A check that can never print FAIL is not a check. See `docs/ENGINE_RULES.md` §6.
 5. **Look at every screenshot you produce.** Open the image, describe what's actually in it, and compare it to the acceptance criteria before the user sees anything. If it's wrong, fix it or report it as wrong.
-6. **The user approves every slice; the PM chooses the art that goes in game (DEC-056, 2026-09-30), and the user can change any choice.** Stop at the slice gate. Don't start the next slice without an explicit "approved".
+6. **The user approves every slice; the PM chooses the art that goes in game (DEC-056, 2026-09-30), and the user can change any choice.** Stop at the slice gate. Don't start the next slice without an explicit "approved". Exception (DEC-059, 2026-09-30): natural-world slices and packages are built straight through without a gate; the user gets reports and can stop anything.
 7. **Don't invent the game.** No new lore, place names, races, factions, or named characters unless they're approved in `docs/VISION.md`. Placeholder names start with `TEST_`.
 8. **Ultima VII art may be used as examples, stand-ins, style references and training data for our art generators; everything that ships is our own original work.** (User decisions 2026-09-18 and 2026-09-19; the user accepted the risk of training on it.) No shipped asset may be a copy, trace, recolour, crop or near-copy of a U7 image: every delivered asset passes `tools/originality_check.js` against the U7 shape library before it goes into `game/`. Stand-in files in `game/` must start with `U7_` (`$U7_Man.png`), use exactly 3× scale, and be listed in `docs/STATUS.md` → Stand-ins. They all get replaced with original art before any release. See `docs/GUIDE_25D.md` §2 and "Reference vs. shipped content" below.
 9. **The engine core is read-only.** Never edit `game/js/rmmz_*.js`, `game/js/main.js`, or `game/js/libs/`. All behavior goes in `game/js/plugins/UF_*.js`.
@@ -139,6 +139,7 @@ Rules:
 - Before starting, read the latest audit entry. Open findings in your area come before new work.
 
 ## RMMZ editor safety
+- DEC-059 standing permission (2026-09-30): during the natural-world build the editor stays closed. The PM may change `game/data/*.json` and `game/js/plugins.js` without asking each time, and tells the user when to reopen.
 The RMMZ editor keeps the database and plugin list in memory and overwrites the files when it saves.
 - Before changing `game/data/*.json` or `game/js/plugins.js`, confirm with the user that the editor is closed.
 - After changing them, tell the user to reopen the project.

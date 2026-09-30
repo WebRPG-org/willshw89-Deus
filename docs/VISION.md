@@ -442,3 +442,9 @@ Append only, newest at the bottom.
 - 2026-09-30: The user delegated the in-game art call: "You can choose what goes in game, and if I want to change something I will bring it up". The PM gives the final YEA on what ART enters the game, recorded in art/APPROVALS.md; the user can change any choice. Clarified: "I only meant art" (DEC-056).
 - 2026-09-30: The user re-scoped the natural world: "We can nix soil for now. We can RNG monsters and flora and fauna into the world for now and refine systems later." Soil is deferred; flora, fauna and monsters are placed by seeded random rules by biome cell and danger tier for now (DEC-057).
 - 2026-09-30: The user approved building the natural world: "You can build the rest of the natural world systems we have landed on" (DEC-058).
+- 2026-09-30: The user removed the authority blocks on the natural-world build (DEC-059):
+  - build straight through, with no per-package or slice gate;
+  - the editor stays closed during the build;
+  - the PM decides the DEC-055 art layout and ADR-003;
+  - fire, seasons/weather, migration, rare geological events and structure decay are deferred.
+  The final NW v1 sign-off stays with the user.
