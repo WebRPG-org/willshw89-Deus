@@ -1,0 +1,19 @@
+WG.00.42 WorldGen quick fixes; seed=20260930, size=64; headless VM
+PASS baseline.start_in_middle: tagged/untagged/mixed/empty/absent pair and Colonists paths pass; five corrupt starts rejected
+PASS baseline.ground_timeout: stale view rejected; identical timeout propagated before builds; successful switch and Ground fast path pass
+PASS baseline.level_keys: 10 area/level records isolated; counts and placements match grids; JSON rebuild and real suite readers pass
+RESULT: 3 passed, 0 failed
+FAIL M1_pair_requires_colonist_tags.start_in_middle: untagged catalog pair: Zoric = event 1 at (31,32); Merwen = event 2 at (33,32); note "<glade>"
+PASS M1_pair_requires_colonist_tags.ground_timeout: stale view rejected; identical timeout propagated before builds; successful switch and Ground fast path pass
+PASS M1_pair_requires_colonist_tags.level_keys: 10 area/level records isolated; counts and placements match grids; JSON rebuild and real suite readers pass
+KILLED M1_pair_requires_colonist_tags: expected only start_in_middle; failed=start_in_middle
+PASS M2_ground_timeout_swallowed.start_in_middle: tagged/untagged/mixed/empty/absent pair and Colonists paths pass; five corrupt starts rejected
+FAIL M2_ground_timeout_swallowed.ground_timeout: Missing expected rejection: original timeout must bubble to the suite runner
+PASS M2_ground_timeout_swallowed.level_keys: 10 area/level records isolated; counts and placements match grids; JSON rebuild and real suite readers pass
+KILLED M2_ground_timeout_swallowed: expected only ground_timeout; failed=ground_timeout
+PASS M3_surface_keys_omit_z.start_in_middle: tagged/untagged/mixed/empty/absent pair and Colonists paths pass; five corrupt starts rejected
+PASS M3_surface_keys_omit_z.ground_timeout: stale view rejected; identical timeout propagated before builds; successful switch and Ground fast path pass
+FAIL M3_surface_keys_omit_z.level_keys: kit log missing at 1,1,1
+KILLED M3_surface_keys_omit_z: expected only level_keys; failed=level_keys
+MUTANTS: 3/3 killed only by targeted checks
+EXIT=0
