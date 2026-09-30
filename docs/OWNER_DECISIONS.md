@@ -850,6 +850,11 @@ Every decision item recorded in this log must provide:
   4. **Traceable.** Every change links back along the chain Owner decision -> WBS leaf -> brief -> gate verdict -> lane -> commits -> review -> merge -> STATUS row. A change without a link is out of control and is flagged.
   5. **Consistent and codified.** Rules live as machine checks wherever possible, not only as prose: the DEC-048 hooks (CLAMP), the control-board test, the mail v2 validator, a registry/trace checker, and a directive-sync check (DEC-051). A rule that exists only in prose is a gap to close.
   6. **Aligned and pruned.** An ALIGN program inventories the whole repo and prunes what does not belong, by archive and always reversibly, under the order and gates already set (DEC-048, the prune lanes).
+  7. **Self-improving (Owner amendment, 2026-09-30: “Also I want every process refined and improved over time. our deus ecosystem should be self improving”):**
+     - Every finished lane, braintrust job and merge leaves a short after-action record: what went wrong, what rule or check would have caught it, and the cost.
+     - The PM tracks the process metrics: idle chat minutes, quota unused at reset, claim-mismatch rate, review misses, gate verdicts, and cycle time from brief to merge.
+     - At a regular cadence, a braintrust PROCESS-IMPROVE job reviews the after-action log and the metrics and proposes changes. The PM codifies the accepted ones as checks or tools first and prose second. Governance changes go to the Owner.
+     - Each improvement is serialized and traced like any other work.
 
 ---
 
