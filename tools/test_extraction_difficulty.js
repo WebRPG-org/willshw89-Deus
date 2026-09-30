@@ -11,12 +11,12 @@ const isMutant = process.argv.includes("--mutant");
 const catalogPath = path.resolve(__dirname, "..", "game", "data", "UF_WorldCatalog.json");
 const catalogData = JSON.parse(fs.readFileSync(catalogPath, "utf8"));
 
-const worldGenSrc = fs.readFileSync(path.resolve(__dirname, "..", "game", "js", "plugins", "UF_WorldGen.js"), "utf8");
-const levelsSrc = fs.readFileSync(path.resolve(__dirname, "..", "game", "js", "plugins", "UF_Levels.js"), "utf8");
-const itemsSrc = fs.readFileSync(path.resolve(__dirname, "..", "game", "js", "plugins", "UF_Items.js"), "utf8");
-const objectsSrc = fs.readFileSync(path.resolve(__dirname, "..", "game", "js", "plugins", "UF_Objects.js"), "utf8");
+const worldGenSrc = fs.readFileSync(path.resolve(__dirname, "..", "game", "js", "plugins", "DEUS_WorldGen.js"), "utf8");
+const levelsSrc = fs.readFileSync(path.resolve(__dirname, "..", "game", "js", "plugins", "DEUS_Levels.js"), "utf8");
+const itemsSrc = fs.readFileSync(path.resolve(__dirname, "..", "game", "js", "plugins", "DEUS_Items.js"), "utf8");
+const objectsSrc = fs.readFileSync(path.resolve(__dirname, "..", "game", "js", "plugins", "DEUS_Objects.js"), "utf8");
 const skillsSrc = fs.readFileSync(path.resolve(__dirname, "..", "game", "js", "plugins", "UF_Skills.js"), "utf8");
-const jobsSrc = fs.readFileSync(path.resolve(__dirname, "..", "game", "js", "plugins", "UF_Jobs.js"), "utf8");
+const jobsSrc = fs.readFileSync(path.resolve(__dirname, "..", "game", "js", "plugins", "DEUS_Jobs.js"), "utf8");
 
 let passed = 0, failed = 0;
 function check(name, condition, detail = "") {

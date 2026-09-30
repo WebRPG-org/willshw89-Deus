@@ -5,8 +5,8 @@ const path = require("path");
 const vm = require("vm");
 const assert = require("assert");
 
-const factionsSource = fs.readFileSync(path.join(__dirname, "../game/js/plugins/UF_Factions.js"), "utf8");
-const colonistsSource = fs.readFileSync(path.join(__dirname, "../game/js/plugins/UF_Colonists.js"), "utf8");
+const factionsSource = fs.readFileSync(path.join(__dirname, "../game/js/plugins/DEUS_Factions.js"), "utf8");
+const colonistsSource = fs.readFileSync(path.join(__dirname, "../game/js/plugins/DEUS_Colonists.js"), "utf8");
 
 let passed = 0;
 let failed = 0;

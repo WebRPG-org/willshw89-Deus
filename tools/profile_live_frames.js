@@ -224,21 +224,21 @@ rmmzSpritesCode = rmmzSpritesCode.replace(
 );
 fs.writeFileSync(rmmzSpritesPath, rmmzSpritesCode, 'utf8');
 
-// 1. Initialize timings in UF_Core.js
-instrumentPlugin('UF_Core.js',
+// 1. Initialize timings in DEUS_Core.js
+instrumentPlugin('DEUS_Core.js',
     '(() => {',
     '(() => { if (!window.__TIMINGS__) window.__TIMINGS__ = {}; Object.assign(window.__TIMINGS__, { Colonists_scan: [], Colonists_total: [], Jobs: [], Wildlife: [], Combat: [], Fire: [], Fog: [], Environment: [], CoreMapEvents: [] });'
 );
 
-// 2. UF_Colonists.js
-instrumentPlugin('UF_Colonists.js',
+// 2. DEUS_Colonists.js
+instrumentPlugin('DEUS_Colonists.js',
     'function scan() {',
     `function scan() {
         const _scanT0 = performance.now();
         let _tBeforeLoop = 0, _tSimUnits = 0, _tJob0 = 0, _tInJob = 0, _tInDecide = 0;
         const _t0A = performance.now();`
 );
-instrumentPlugin('UF_Colonists.js',
+instrumentPlugin('DEUS_Colonists.js',
     'let decideCount = 0;\n        let lowPriorityPreempted = false;\n        const MAX_DECIDE_PER_SCAN = localTicks <= 30 ? 2 : 1;\n        for (const u of simulationUnits()) {',
     `_tBeforeLoop = performance.now() - _t0A;
         let decideCount = 0;
@@ -258,15 +258,15 @@ instrumentPlugin('UF_Colonists.js',
         const _tLoop0 = performance.now();
         for (const u of _simUnits) {`
 );
-instrumentPlugin('UF_Colonists.js',
+instrumentPlugin('DEUS_Colonists.js',
     'decisionAt.set(u.id, t);\n            }\n        }\n    }',
     `decisionAt.set(u.id, t);\n            }\n        }\n        if (window.__TIMINGS__) {\n            if (!window.__TIMINGS__.scan_loop) window.__TIMINGS__.scan_loop = [];\n            window.__TIMINGS__.scan_loop.push(performance.now() - _tLoop0);\n        }\n    }`
 );
-instrumentPlugin('UF_Colonists.js',
+instrumentPlugin('DEUS_Colonists.js',
     'if (job) {',
     'if (job) { _tJob0 = performance.now();'
 );
-instrumentPlugin('UF_Colonists.js',
+instrumentPlugin('DEUS_Colonists.js',
     'const lastDecide = decisionAt.get(u.id) || -Infinity;',
     `if (job && window.__TIMINGS__) {
                 if (!window.__TIMINGS__.scan_jobBranch) window.__TIMINGS__.scan_jobBranch = [];
@@ -274,7 +274,7 @@ instrumentPlugin('UF_Colonists.js',
             }
             const lastDecide = decisionAt.get(u.id) || -Infinity;`
 );
-instrumentPlugin('UF_Colonists.js',
+instrumentPlugin('DEUS_Colonists.js',
     'const res = decide(u);',
     `const _tDecide0 = performance.now();
                 const res = decide(u);
@@ -283,7 +283,7 @@ instrumentPlugin('UF_Colonists.js',
                     window.__TIMINGS__.scan_decideCall.push(performance.now() - _tDecide0);
                 }`
 );
-instrumentPlugin('UF_Colonists.js',
+instrumentPlugin('DEUS_Colonists.js',
     'return designationJob(u) || getPlanSpec() || (hauler ? constructionHaulingJob(u) : null) || footprintClearingJob(u) || (!hauler ? constructionHaulingJob(u) : null) || tidyStockpileJob(u) || tryMakeBed() || autonomousCallingJob(u) || autonomousFrontierProgression(u) || idleJob(u);',
     `const _t1 = performance.now();
         const j1 = designationJob(u);
@@ -321,51 +321,51 @@ instrumentPlugin('UF_Colonists.js',
         return jFrontier || idleJob(u);`
 );
 
-instrumentPlugin('UF_Colonists.js',
+instrumentPlugin('DEUS_Colonists.js',
     'if (localTicks % SCAN_EVERY === 0) scan();',
     'if (localTicks % SCAN_EVERY === 0) { const _st0 = performance.now(); scan(); if (window.__TIMINGS__) window.__TIMINGS__.Colonists_scan.push(performance.now() - _st0); }'
 );
-instrumentPlugin('UF_Colonists.js',
+instrumentPlugin('DEUS_Colonists.js',
     'localTicks++;\n\n        if (localTicks === 1 || localTicks % 300 === 5) ensureColonistsGeneticsAndAging();',
     'const _ct0 = performance.now(); localTicks++;\n\n        if (localTicks === 1 || localTicks % 300 === 5) ensureColonistsGeneticsAndAging();'
 );
-instrumentPlugin('UF_Colonists.js',
+instrumentPlugin('DEUS_Colonists.js',
     'stepMerchantCaravan();\n        }\n\n        // Scan runs every SCAN_EVERY (5) ticks',
     'stepMerchantCaravan();\n        }\n        if (window.__TIMINGS__) window.__TIMINGS__.Colonists_total.push(performance.now() - _ct0);\n\n        // Scan runs every SCAN_EVERY (5) ticks'
 );
 
-// 3. UF_Jobs.js
-instrumentPlugin('UF_Jobs.js',
+// 3. DEUS_Jobs.js
+instrumentPlugin('DEUS_Jobs.js',
     '_Game_Map_update.call(this, sceneActive); // UF_World moved the units first (its alias is below ours)\n        update();',
     '_Game_Map_update.call(this, sceneActive);\n        const _jt0 = performance.now();\n        update();\n        if (window.__TIMINGS__) window.__TIMINGS__.Jobs.push(performance.now() - _jt0);'
 );
 
-// 4. UF_Wildlife.js
-instrumentPlugin('UF_Wildlife.js',
+// 4. DEUS_Wildlife.js
+instrumentPlugin('DEUS_Wildlife.js',
     '_Game_Map_update.call(this, sceneActive);\n        tick();',
     '_Game_Map_update.call(this, sceneActive);\n        const _wt0 = performance.now();\n        tick();\n        if (window.__TIMINGS__) window.__TIMINGS__.Wildlife.push(performance.now() - _wt0);'
 );
 
-// 5. UF_Combat.js
-instrumentPlugin('UF_Combat.js',
+// 5. DEUS_Combat.js
+instrumentPlugin('DEUS_Combat.js',
     'const t0 = performance.now();\n        try {\n            step();\n        } catch (e) {\n            report("step", e);\n        }',
     'const t0 = performance.now();\n        try {\n            step();\n        } catch (e) {\n            report("step", e);\n        }\n        if (window.__TIMINGS__) window.__TIMINGS__.Combat.push(performance.now() - t0);'
 );
 
-// 6. UF_Fog.js
-instrumentPlugin('UF_Fog.js',
+// 6. DEUS_Fog.js
+instrumentPlugin('DEUS_Fog.js',
     '_Game_Map_update.call(this, sceneActive);\n        if (++frame % UPDATE_FRAMES === 0) Fog.refresh();',
     '_Game_Map_update.call(this, sceneActive);\n        const _ft0 = performance.now();\n        if (++frame % UPDATE_FRAMES === 0) Fog.refresh();\n        if (window.__TIMINGS__) window.__TIMINGS__.Fog.push(performance.now() - _ft0);'
 );
 
-// 7. UF_Environment.js
-instrumentPlugin('UF_Environment.js',
+// 7. DEUS_Environment.js
+instrumentPlugin('DEUS_Environment.js',
     'Game_Map.prototype.update = function(sceneActive) {\n        _Game_Map_update.call(this, sceneActive);\n        frameCount++;\n        updateEnvironment();\n    };',
     'Game_Map.prototype.update = function(sceneActive) {\n        _Game_Map_update.call(this, sceneActive);\n        const _et0 = performance.now();\n        frameCount++;\n        updateEnvironment();\n        if (window.__TIMINGS__) window.__TIMINGS__.Environment.push(performance.now() - _et0);\n    };'
 );
 
-// 8. UF_Perspective25D.js
-instrumentPlugin('UF_Perspective25D.js',
+// 8. DEUS_Perspective25D.js
+instrumentPlugin('DEUS_Perspective25D.js',
     'Sprite_Character.prototype.update = function() {\n        _Sprite_Character_update.call(this);\n        this.update2DShadow();\n        this.updateOcclusion();\n    };',
     `Sprite_Character.prototype.update = function() {
         _Sprite_Character_update.call(this);
@@ -384,8 +384,8 @@ instrumentPlugin('UF_Perspective25D.js',
     };`
 );
 
-// 9. UF_Interact.js
-instrumentPlugin('UF_Interact.js',
+// 9. DEUS_Interact.js
+instrumentPlugin('DEUS_Interact.js',
     'Spriteset_Map.prototype.update = function() {\n        _Spriteset_Map_update.call(this);\n        if (this._ufDesignations) this._ufDesignations.sync();\n    };',
     `Spriteset_Map.prototype.update = function() {
         _Spriteset_Map_update.call(this);
@@ -399,7 +399,7 @@ instrumentPlugin('UF_Interact.js',
     };`
 );
 
-const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Test.js');
+const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js');
 let testCode = fs.readFileSync(testJsPath, 'utf8');
 
 const targetHook = 't.screenshot("map");';

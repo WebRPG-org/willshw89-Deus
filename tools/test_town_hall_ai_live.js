@@ -45,9 +45,7 @@ try {
 } catch (e) {}
 
 // 2. Inject Town Hall live test verification into DEUS_Test.js in snapshot
-const testJsPath = fs.existsSync(path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js'))
-    ? path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js')
-    : path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Test.js');
+const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js');
 let testCode = fs.readFileSync(testJsPath, 'utf8');
 
 const targetHook = 't.screenshot("map");';

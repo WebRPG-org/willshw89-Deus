@@ -47,8 +47,8 @@ if (fox) {
 fs.writeFileSync(catalogPath, JSON.stringify(catalog, null, 2) + '\n');
 console.log('Updated catalog in snapshot: boar -> $UF_Boar, hare -> $UF_Hare, wolf -> $UF_Wolf, fox -> $UF_Fox');
 
-// Add a high-visibility in-game showcase step to UF_Wildlife.js test in the snapshot
-const wildlifeJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Wildlife.js');
+// Add a high-visibility in-game showcase step to DEUS_Wildlife.js test in the snapshot
+const wildlifeJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Wildlife.js');
 let wildlifeJs = fs.readFileSync(wildlifeJsPath, 'utf8');
 
 const targetHook = 't.screenshot("df_behaviors");';

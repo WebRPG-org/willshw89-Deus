@@ -19,8 +19,8 @@ try {
     // Robocopy exit code 1 means files copied successfully
 }
 
-// Modify UF_Anim.js in snapshot to inject a live scene of all animated object categories
-const animJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Anim.js');
+// Modify DEUS_Anim.js in snapshot to inject a live scene of all animated object categories
+const animJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Anim.js');
 let animJs = fs.readFileSync(animJsPath, 'utf8');
 
 const hookPoint = 'const objectsBefore = cat.objects;';

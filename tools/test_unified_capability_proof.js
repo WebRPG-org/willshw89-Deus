@@ -92,11 +92,11 @@ global.PluginManager = {
 };
 
 // Load core plugins in order
-require("../game/js/plugins/UF_World.js");
-require("../game/js/plugins/UF_Objects.js");
-require("../game/js/plugins/UF_Items.js");
+require("../game/js/plugins/DEUS_World.js");
+require("../game/js/plugins/DEUS_Objects.js");
+require("../game/js/plugins/DEUS_Items.js");
 require("../game/js/plugins/UF_Proficiency.js");
-require("../game/js/plugins/UF_Jobs.js");
+require("../game/js/plugins/DEUS_Jobs.js");
 
 const World = UF.World;
 const Items = UF.Items;

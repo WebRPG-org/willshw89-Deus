@@ -240,16 +240,16 @@ function loadPlugins(harness) {
     const ctx = vm.createContext(harness);
 
     const mutant = process.argv.find(a => a.startsWith("--mutant="));
-    const floorsSrc = fs.readFileSync(path.join(root, "game/js/plugins/UF_Floors.js"), "utf8");
+    const floorsSrc = fs.readFileSync(path.join(root, "game/js/plugins/DEUS_Floors.js"), "utf8");
     vm.runInContext(floorsSrc, ctx);
 
-    let objectsSrc = fs.readFileSync(path.join(root, "game/js/plugins/UF_Objects.js"), "utf8");
+    let objectsSrc = fs.readFileSync(path.join(root, "game/js/plugins/DEUS_Objects.js"), "utf8");
     if (mutant && mutant.endsWith("=bypass-guard")) {
         objectsSrc = objectsSrc.replace(/function isConstructedOrPaved\([^{]+\{/g, "function isConstructedOrPaved() { return false;");
     }
     vm.runInContext(objectsSrc, ctx);
 
-    let ecologySrc = fs.readFileSync(path.join(root, "game/js/plugins/UF_Ecology.js"), "utf8");
+    let ecologySrc = fs.readFileSync(path.join(root, "game/js/plugins/DEUS_Ecology.js"), "utf8");
     if (mutant && mutant.endsWith("=bypass-guard")) {
         ecologySrc = ecologySrc.replace(/function isConstructedOrPaved\([^{]+\{/g, "function isConstructedOrPaved() { return false;");
     }

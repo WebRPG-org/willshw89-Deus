@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
 const assert = require("assert/strict");
-const source = fs.readFileSync(path.join(__dirname, "../game/js/plugins/UF_Fire.js"), "utf8");
+const source = fs.readFileSync(path.join(__dirname, "../game/js/plugins/DEUS_Fire.js"), "utf8");
 let passed = 0, failed = 0;
 function check(name, fn) {
     try { fn(); passed++; console.log(`PASS z_fire.${name}`); }
@@ -68,7 +68,7 @@ function harness(levels, code = source) {
         }
     };
     context.window = context;
-    vm.runInNewContext(code, context, { filename: "UF_Fire.js" });
+    vm.runInNewContext(code, context, { filename: "DEUS_Fire.js" });
     return { F: context.UF.Fire, W, O, J, context, objects, items, units, events, goals, writes, handlers, setView: z => { view = { x: 0, y: 0, z }; },
         put: (z, x = 4, y = 4, type = "wood") => objects.set(key({ x: 0, y: 0, z }, x, y), type),
         at: (z, x = 4, y = 4) => O.atIn({ x: 0, y: 0, z }, x, y),

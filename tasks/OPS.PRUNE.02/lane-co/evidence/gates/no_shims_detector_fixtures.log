@@ -1,0 +1,2 @@
+PASS detector fixtures: 60 cases (synthetic clean inventory, missing archives, protected plugins, import forms, retained parameters).
+EXIT=0

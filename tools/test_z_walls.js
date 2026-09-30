@@ -1,7 +1,7 @@
 "use strict";
 // --mutate-z drops the requested level before object inspection: must fail.
 const fs = require("fs"), path = require("path"), vm = require("vm"), assert = require("assert");
-let source = fs.readFileSync(path.join(__dirname, "../game/js/plugins/UF_Walls.js"), "utf8");
+let source = fs.readFileSync(path.join(__dirname, "../game/js/plugins/DEUS_Walls.js"), "utf8");
 if (process.argv.includes("--mutate-z")) {
     const target = "const same = O.atIn(area, x, y);";
     assert(source.includes(target), "mutation target missing");
@@ -20,7 +20,7 @@ function fixture(levels) {
     const ctx = { console, Scene_Boot, UF: { World: W, Objects: {
         type: n => types[n], atIn(a, x, y) { reads.push(a); return cells.get(`${levels ? a.z || 0 : 0}:${x},${y}`) || null; }
     } } };
-    ctx.window = ctx; vm.runInNewContext(source, ctx, { filename: "UF_Walls.js" });
+    ctx.window = ctx; vm.runInNewContext(source, ctx, { filename: "DEUS_Walls.js" });
     cells.set("0:5,5", types[1]); cells.set("-1:5,5", types[2]);
     return { walls: ctx.UF.Walls, cells, types, reads };
 }

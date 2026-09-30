@@ -2,9 +2,9 @@
 // Real Colonists + Households sources, engine doubles. Room geometry is supplied
 // explicitly for core guard checks; tools/test_households.js tests actual rooms.
 const fs = require("fs"), path = require("path"), vm = require("vm"), assert = require("assert");
-let source = fs.readFileSync(path.join(__dirname, "../game/js/plugins/UF_Colonists.js"), "utf8");
+let source = fs.readFileSync(path.join(__dirname, "../game/js/plugins/DEUS_Colonists.js"), "utf8");
 const houseSource = fs.readFileSync(path.join(__dirname, "../game/js/plugins/UF_Households.js"), "utf8");
-const ownershipSource = fs.readFileSync(path.join(__dirname, "../game/js/plugins/UF_Ownership.js"), "utf8");
+const ownershipSource = fs.readFileSync(path.join(__dirname, "../game/js/plugins/DEUS_Ownership.js"), "utf8");
 const safetySource = fs.readFileSync(path.join(__dirname, "../game/js/plugins/UF_FireSafety.js"), "utf8");
 function mutate(flag, from, to) { if (process.argv.includes(flag)) { assert(source.includes(from), `${flag} target missing`); source = source.replace(from, to); } }
 mutate("--mutate-adapters", "const extra = u ?", "const extra = false ?");
@@ -83,8 +83,8 @@ function fixture(opts = {}) {
             Ownership: { ownerOf: () => null, assignBed: () => null, bedOf: u => u.data.bed || null },
             Events: { on: (n, f) => (events[n] || (events[n] = [])).push(f), emit: (n, ...args) => (events[n] || []).forEach(f => f(...args)) },
             Goals: { planSteps: () => gSteps, choosePlan(u, cs) { seenCandidates.push(...cs); return cs.slice().sort((a, b) => (b.step.household ? 2 : b.step.goalOwner ? 1 : 0) - (a.step.household ? 2 : a.step.goalOwner ? 1 : 0)); } } } };
-    ctx.window = ctx; vm.createContext(ctx); vm.runInContext(source, ctx, { filename: "UF_Colonists.js" }); vm.runInContext(houseSource, ctx, { filename: "UF_Households.js" });
-    if (opts.ownership) vm.runInContext(ownershipSource, ctx, { filename: "UF_Ownership.js" });
+    ctx.window = ctx; vm.createContext(ctx); vm.runInContext(source, ctx, { filename: "DEUS_Colonists.js" }); vm.runInContext(houseSource, ctx, { filename: "UF_Households.js" });
+    if (opts.ownership) vm.runInContext(ownershipSource, ctx, { filename: "DEUS_Ownership.js" });
     new ctx.Scene_Boot().start();
     const C = ctx.UF.Colonists, H = ctx.UF.Households;
     H.planSteps = () => hSteps; // The actual household layout has its own source tests.

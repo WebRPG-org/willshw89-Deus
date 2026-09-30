@@ -84,43 +84,8 @@
     const Items = () => (window.UF && UF.Items) || null;
     const Objects = () => (window.UF && UF.Objects) || null;
     const Combat = () => (window.UF && UF.Combat) || null;
-    if (typeof require === "function" && (!window.UF || !UF.SettlementPillars)) {
-        try {
-            require("./UF_SettlementPillars.js");
-        } catch (_) {}
-    }
     const Pillars = () => (window.UF && UF.SettlementPillars) || null;
-    if (typeof require === "function" && (!window.UF || !UF.Sanitation)) {
-        try {
-            require("./UF_Sanitation.js");
-        } catch (_) {}
-    }
     const Sanitation = () => (window.UF && UF.Sanitation) || null;
-    if (!window.UF || !UF.Generator) {
-        if (typeof require === "function") {
-            const candidates = [
-                "./game/js/plugins/UF_Generator.js",
-                "./js/plugins/UF_Generator.js",
-                "./UF_Generator.js",
-                "game/js/plugins/UF_Generator.js",
-                "js/plugins/UF_Generator.js"
-            ];
-            for (const c of candidates) {
-                try {
-                    require(c);
-                    if (window.UF && UF.Generator) break;
-                } catch (_) {}
-            }
-            if (!window.UF || !UF.Generator) {
-                try {
-                    const path = require("path");
-                    const p1 = path.resolve("game/js/plugins/UF_Generator.js");
-                    const p2 = path.resolve("js/plugins/UF_Generator.js");
-                    try { require(p1); } catch (_) { require(p2); }
-                } catch (_) {}
-            }
-        }
-    }
     const Generator = () => (window.UF && UF.Generator) || null;
 
     // Headless suites eval this file in a vm that has no require. The host console

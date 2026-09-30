@@ -1,0 +1,74 @@
+[
+  {
+    "command": "node tools/check_deus_syntax.js",
+    "exit": 0,
+    "started": "2026-09-30T16:59:34.4580043-05:00",
+    "finished": "2026-09-30T16:59:37.7486818-05:00",
+    "log": "tasks\\OPS.PRUNE.02\\lane-co\\evidence\\gates\\check_deus_syntax.log"
+  },
+  {
+    "command": "node tools/test_palette.js",
+    "exit": 0,
+    "started": "2026-09-30T16:59:37.7709972-05:00",
+    "finished": "2026-09-30T16:59:37.8132078-05:00",
+    "log": "tasks\\OPS.PRUNE.02\\lane-co\\evidence\\gates\\test_palette.log"
+  },
+  {
+    "command": "node tools/governance/test_check_claims.js",
+    "exit": 0,
+    "started": "2026-09-30T16:59:37.8163153-05:00",
+    "finished": "2026-09-30T17:02:23.4582796-05:00",
+    "log": "tasks\\OPS.PRUNE.02\\lane-co\\evidence\\gates\\test_check_claims.log"
+  },
+  {
+    "command": "node tools/test_strata_cuts_and_caves.js",
+    "exit": 0,
+    "started": "2026-09-30T17:02:23.4602785-05:00",
+    "finished": "2026-09-30T17:09:42.0334760-05:00",
+    "log": "tasks\\OPS.PRUNE.02\\lane-co\\evidence\\gates\\test_strata_cuts_and_caves.log"
+  },
+  {
+    "command": "node tools/test_new_game_year0.js",
+    "exit": 0,
+    "started": "2026-09-30T17:09:42.0441102-05:00",
+    "finished": "2026-09-30T17:10:00.9296284-05:00",
+    "log": "tasks\\OPS.PRUNE.02\\lane-co\\evidence\\gates\\test_new_game_year0.log"
+  },
+  {
+    "command": "node tools/test_history_materialization_and_world_age.js",
+    "exit": 0,
+    "started": "2026-09-30T17:10:00.9316356-05:00",
+    "finished": "2026-09-30T17:11:53.6097976-05:00",
+    "log": "tasks\\OPS.PRUNE.02\\lane-co\\evidence\\gates\\test_history_materialization_and_world_age.log"
+  },
+  {
+    "command": "node tools/test_historical_carrying_capacity.js",
+    "exit": 0,
+    "started": "2026-09-30T17:11:53.6118998-05:00",
+    "finished": "2026-09-30T17:12:12.8716985-05:00",
+    "log": "tasks\\OPS.PRUNE.02\\lane-co\\evidence\\gates\\test_historical_carrying_capacity.log"
+  },
+  {
+    "command": "node tools/test_geology_strata.js",
+    "exit": 0,
+    "started": "2026-09-30T17:12:12.8726994-05:00",
+    "finished": "2026-09-30T17:12:27.8356615-05:00",
+    "log": "tasks\\OPS.PRUNE.02\\lane-co\\evidence\\gates\\test_geology_strata.log"
+  },
+  {
+    "command": "node tools/test_strata_foundation.js",
+    "exit": 0,
+    "started": "2026-09-30T17:12:27.8366639-05:00",
+    "finished": "2026-09-30T17:19:13.5051634-05:00",
+    "log": "tasks\\OPS.PRUNE.02\\lane-co\\evidence\\gates\\test_strata_foundation.log"
+  },
+  {
+    "command": "node tools/test_no_loadscript_shims.js",
+    "execution": "node tools/TEST_PruneWriterGate.js; byte-identical staged source, same tools directory and repository root; temporary file removed afterward",
+    "sourceBlob": "46be83287643df9970887db5f84e66b6ba62efaa",
+    "exit": 1,
+    "started": "2026-09-30T22:21:40.276Z",
+    "finished": "2026-09-30T22:21:40.511Z",
+    "log": "tasks/OPS.PRUNE.02/lane-co/evidence/gates/test_no_loadscript_shims.log"
+  }
+]

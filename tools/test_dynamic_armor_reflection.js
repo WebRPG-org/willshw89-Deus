@@ -61,8 +61,8 @@ global.ImageManager = {
     loadFace: (fn) => ({ isReady: () => true })
 };
 
-// Evaluate UF_Generator.js
-const genCode = fs.readFileSync(path.join(ROOT, 'game', 'js', 'plugins', 'UF_Generator.js'), 'utf8');
+// Evaluate DEUS_Generator.js
+const genCode = fs.readFileSync(path.join(ROOT, 'game', 'js', 'plugins', 'DEUS_Generator.js'), 'utf8');
 eval(genCode);
 
 check('generator_helpers_present', 

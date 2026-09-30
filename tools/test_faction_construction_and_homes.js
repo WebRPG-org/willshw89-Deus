@@ -10,7 +10,7 @@ const readPlugin = name => fs.readFileSync(path.join(root, "game/js/plugins", na
 const catalog = JSON.parse(fs.readFileSync(path.join(root, "game/data/UF_WorldCatalog.json"), "utf8"));
 
 const mutant = (process.argv.find(a => a.startsWith("--mutant=")) || "").slice(9);
-let colonistsCode = readPlugin("UF_Colonists");
+let colonistsCode = readPlugin("DEUS_Colonists");
 let householdsCode = readPlugin("UF_Households");
 
 if (mutant === "no_obstacle_clearance") {
@@ -227,10 +227,10 @@ function createHarness() {
     vm.createContext(ctx);
 
     // Load plugins in order
-    const plugins = ["UF_Factions", "UF_History", "UF_Households", "UF_Colonists"];
+    const plugins = ["DEUS_Factions", "DEUS_History", "UF_Households", "DEUS_Colonists"];
     for (const p of plugins) {
         let code = readPlugin(p);
-        if (p === "UF_Colonists") code = colonistsCode;
+        if (p === "DEUS_Colonists") code = colonistsCode;
         if (p === "UF_Households") code = householdsCode;
         vm.runInContext(code, ctx);
     }

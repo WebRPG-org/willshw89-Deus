@@ -1,7 +1,7 @@
 "use strict";
 // Contract harness for Doors against legacy and documented level-capable cores.
 const fs = require("fs"), path = require("path"), vm = require("vm"), assert = require("assert");
-let source = fs.readFileSync(path.join(__dirname, "../game/js/plugins/UF_Doors.js"), "utf8");
+let source = fs.readFileSync(path.join(__dirname, "../game/js/plugins/DEUS_Doors.js"), "utf8");
 if (process.argv.includes("--provoke")) {
     const needle = "original.call(this, ax, ay, x, y, ignoreUnitId, z)";
     assert(source.includes(needle), "z-forwarding mutation target exists");
@@ -46,7 +46,7 @@ function fixture(levels) {
         $gamePlayer: new Character()
     };
     context.window = context;
-    vm.runInNewContext(source, context, { filename: "UF_Doors.js" });
+    vm.runInNewContext(source, context, { filename: "DEUS_Doors.js" });
     return { W, O, D: context.UF.Doors, events, units, objects, calls, sprites, Character,
         setView: a => { view = a; }, setTerrain: value => { terrain = value; },
         addUnit(id, level, x, y) { const u = { id, area: { x: 0, y: 0 }, z: level, x, y, data: { faction: "home" } }; units.push(u); W.state.units[id] = u; return u; }

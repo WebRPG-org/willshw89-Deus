@@ -37,10 +37,10 @@ global.Bitmap = class {
     }
 };
 
-eval(fs.readFileSync('game/js/plugins/UF_Core.js', 'utf8'));
-eval(fs.readFileSync('game/js/plugins/UF_WorldGen.js', 'utf8'));
-eval(fs.readFileSync('game/js/plugins/UF_World.js', 'utf8'));
-eval(fs.readFileSync('game/js/plugins/UF_Tiles.js', 'utf8'));
+eval(fs.readFileSync('game/js/plugins/DEUS_Core.js', 'utf8'));
+eval(fs.readFileSync('game/js/plugins/DEUS_WorldGen.js', 'utf8'));
+eval(fs.readFileSync('game/js/plugins/DEUS_World.js', 'utf8'));
+eval(fs.readFileSync('game/js/plugins/DEUS_Tiles.js', 'utf8'));
 const cat = JSON.parse(fs.readFileSync('game/data/UF_WorldCatalog.json', 'utf8'));
 global.window.$ufWorldCatalog = cat;
 

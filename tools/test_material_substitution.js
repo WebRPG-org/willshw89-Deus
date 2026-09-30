@@ -62,7 +62,7 @@ global.UF = {
 };
 
 // Load plugin
-require(path.resolve(__dirname, "..", "game", "js", "plugins", "UF_Items.js"));
+require(path.resolve(__dirname, "..", "game", "js", "plugins", "DEUS_Items.js"));
 
 const isMutant = process.argv.includes("--mutant");
 console.log(`Running test_material_substitution.js${isMutant ? " (MUTANT MODE)" : ""}`);

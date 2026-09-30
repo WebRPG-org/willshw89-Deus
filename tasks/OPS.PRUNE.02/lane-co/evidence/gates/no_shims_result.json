@@ -1,0 +1,9 @@
+{
+  "command": "node tools/test_no_loadscript_shims.js",
+  "execution": "node tools/TEST_PruneWriterGate.js; byte-identical staged source, same tools directory and repository root; temporary file removed afterward",
+  "sourceBlob": "46be83287643df9970887db5f84e66b6ba62efaa",
+  "exit": 1,
+  "started": "2026-09-30T22:21:40.276Z",
+  "finished": "2026-09-30T22:21:40.511Z",
+  "log": "tasks/OPS.PRUNE.02/lane-co/evidence/gates/test_no_loadscript_shims.log"
+}
