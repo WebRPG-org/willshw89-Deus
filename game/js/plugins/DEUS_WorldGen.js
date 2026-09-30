@@ -537,10 +537,14 @@
         const top = a + (b - a) * tx;
         return top + (c0 + (d0 - c0) * tx - top) * row.ty;
     }
-    WorldGen.columnFieldGrid = function(ax, ay, size) {
+    WorldGen.columnFieldGrid = function(ax, ay, size, worldDesc) {
         const cat = catalog();
         const cl = cat && cat.climate;
-        const st = window.UF && UF.World && UF.World.state;
+        const st = (typeof worldDesc === "object" && worldDesc !== null)
+            ? worldDesc
+            : (typeof worldDesc === "number"
+                ? { seed: worldDesc, size, areasX: 1, areasY: 1, startArea: { x: 0, y: 0 } }
+                : null);
         if (!cl || !st || !cl.scale) return null;
         const d = dims(st);
         const sc = cl.scale, ww = d.width, wh = d.height, n = size * size;

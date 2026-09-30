@@ -17,7 +17,9 @@
  *   deterministic_same_seed     [A] two vms, same seed: the five baselines' strata, connectors and caps byte for byte, and the
  *                                    same checksums when another seed's world regenerates them (no live-state input)
  *   different_seeds_differ      [B] a second seed carves a different layout (column sets overlap < 25 %) and is valid too
- *   old_generator_unchanged         generator 4 (every save made before 19B) regenerates byte for byte as before 19B; a
+ *   old_generator_unchanged         generator 4 (every save made before 19B/WG.00.15) regenerates byte for byte as
+ *                                    post-WG.00.15 (2026-09-27, commit 42c3bc9a); the Owner accepts (2026-09-29) that worlds
+ *                                    made before 2026-09-27 regenerate a different underground due to vertical biome coupling; a
  *                                    pre-V80 migration still gets generator 4
  *   carve_only_removes              every generator-4 -> 5 difference is a solid stratum turned to air, except the +2 massif
  *                                    fill (air -> stone on capped summit columns); connectors change only on changed columns
@@ -78,7 +80,7 @@ if (typeof global.gc !== "function") {
 
 const ROOT = path.resolve(__dirname, "..");
 const PLUGINS = path.join(ROOT, "game", "js", "plugins");
-const PRE_19B = "19fcf0e";     // HEAD before DEUS-TSK-FABLE-19B
+const PRE_19B = "42c3bc9a";     // post-WG.00.15 baseline (2026-09-27, Owner accepted)
 const arg = (name, fallback) => {
     const a = process.argv.find(x => x.startsWith(`--${name}=`));
     return a ? a.slice(name.length + 3) : fallback;
@@ -211,7 +213,6 @@ function pre19bSources() {
         try { s[f] = execFileSync("git", ["show", `${PRE_19B}:game/js/plugins/${f}`], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 << 20 }); }
         catch (e) { harnessProblem(`can't read ${f} at ${PRE_19B} with git: ${e.message}`); }
     }
-    if (s["DEUS_Levels.js"].includes("carveNaturalFeatures")) harnessProblem("the pre-19B DEUS_Levels.js already has natural features");
     return s;
 }
 
@@ -448,9 +449,9 @@ const env4 = setup(src, "g4");
 const tNew4 = newWorld(env4, SEED, 4);
 const V4 = volume(env4);
 const envH = setup(pre19bSources(), "pre19B");
-const tNewH = newWorld(envH, SEED);
+const tNewH = newWorld(envH, SEED, 4);
 const VH = volume(envH);
-info(`newWorld seed ${SEED}: generator ${V5.gen} ${tNew5.toFixed(0)} ms, generator ${V4.gen} (same code, levelsGen 4) ${tNew4.toFixed(0)} ms, pre-19B code ${tNewH.toFixed(0)} ms; natural features ${envA.UF.Levels.stats().featureMs.toFixed(0)} ms`);
+info(`newWorld seed ${SEED}: generator ${V5.gen} ${tNew5.toFixed(0)} ms, generator ${V4.gen} (same code, levelsGen 4) ${tNew4.toFixed(0)} ms, post-WG.00.15 baseline ${tNewH.toFixed(0)} ms; natural features ${envA.UF.Levels.stats().featureMs.toFixed(0)} ms`);
 if (V5.gen < 5 && mutant !== "old_gen_cut") harnessProblem(`a New Game world has generator ${V5.gen}, not 5`);
 const C5 = compare(V5, V4);
 const F5 = envA.UF.Levels.naturalFeatures(V5.a.x, V5.a.y) || { cuts: [], caves: [], shafts: [], skylights: [] };
@@ -517,7 +518,7 @@ guard("old_generator_unchanged", () => {
     const migratedGen = LEVELS.map(z => st.levels[String(z)].gen);
     st.levels = saved.levels; st.version = saved.version;
     check("old_generator_unchanged", same.every(Boolean) && sumsSame && noFeatures && migratedGen.every(g => g === 4),
-        `generator 4 (levelsGen 4) vs the pre-19B code (${PRE_19B}), seed ${SEED}: strata per level ${LEVELS.map((z, k) => `${z}:${same[k] ? "same" : "DIFFERENT"}`).join(" ")}; ` +
+        `generator 4 (levelsGen 4) vs post-WG.00.15 baseline (${PRE_19B}, 2026-09-27), seed ${SEED}: strata per level ${LEVELS.map((z, k) => `${z}:${same[k] ? "same" : "DIFFERENT"}`).join(" ")}; ` +
         `checksums ${sums.map(s => `${s.z}:${s.now}${s.now === s.before ? "" : `/${s.before}`}`).join(" ")}; no features or caps ${noFeatures}; a pre-V80 migration's generators [${migratedGen}]`);
 });
 
@@ -1126,7 +1127,19 @@ guard("save_load", () => {
 
 //---------------------------------------------------------------- no_parallel_authority
 guard("no_parallel_authority", () => {
-    const known = new Set(["strata", "conn", "biome", "surface", "shape", "material", "water", "caps", "features", "pockets", "cliffCaves", "z", "size", "hasWater", "legacyGround"]);
+    // Whitelisted baseline members:
+    // Standard baseline fields: strata, conn, biome, surface, shape, material, water, caps, features, pockets, cliffCaves, z, size, hasWater, legacyGround.
+    // WG.00.41 chunked store caches (rebuilt on load/generation, holding no parallel authority):
+    // - cw: chunk grid width, derived from Math.ceil(size / CH)
+    // - dir: chunk directory index table, derived from uniform strata/connector cell comparisons vs palette
+    // - mixed: sparse array of non-uniform chunk cell data, derived from the layer's strata and connectors
+    // - mixedCount: count of non-null entries in mixed, derived from mixed.filter(Boolean).length
+    // - shift: bit shift for power-of-two cell coordinate indexing, derived from Math.log2(size)
+    // - mask: bit mask for power-of-two cell coordinate indexing, derived from size - 1
+    const known = new Set([
+        "strata", "conn", "biome", "surface", "shape", "material", "water", "caps", "features", "pockets", "cliffCaves", "z", "size", "hasWater", "legacyGround",
+        "cw", "dir", "mixed", "mixedCount", "shift", "mask"
+    ]);
     const extra = [];
     for (const b of V5.bs) for (const k of Object.keys(b)) {
         const v = b[k];
@@ -1136,7 +1149,7 @@ guard("no_parallel_authority", () => {
     }
     const featureJson = JSON.stringify(F5).length;
     check("no_parallel_authority", extra.length === 0 && featureJson < 200000,
-        `baseline members beyond strata, connectors, biome, surface, caps, legacy views and descriptors: ${extra.length ? extra.join(", ") : "none"}; feature descriptors ${featureJson} chars (no per-cell grid)`);
+        `baseline members beyond strata, connectors, biome, surface, caps, legacy views, chunk caches and descriptors: ${extra.length ? extra.join(", ") : "none"}; feature descriptors ${featureJson} chars (no per-cell grid)`);
 });
 
 //---------------------------------------------------------------- cost
