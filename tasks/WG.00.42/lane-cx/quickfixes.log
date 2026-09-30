@@ -1,0 +1,6 @@
+WG.00.42 WorldGen quick fixes; seed=20260930, size=64; headless VM
+PASS baseline.start_in_middle: tagged/untagged/mixed/empty/absent pair and Colonists paths pass; five corrupt starts rejected
+PASS baseline.ground_timeout: stale view rejected; identical timeout propagated before builds; successful switch and Ground fast path pass
+PASS baseline.level_keys: 10 area/level records isolated; counts and placements match grids; JSON rebuild and real suite readers pass
+RESULT: 3 passed, 0 failed
+EXIT=0

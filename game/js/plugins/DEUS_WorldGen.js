@@ -232,7 +232,7 @@
             return shapeLookup.size;
         },
         PEAK_REGION,
-        stats: {},      // "ax,ay" -> { objectId: count } from the last build of each area
+        stats: {},      // World.levelKey(ax, ay, z) -> { objectId: count } from the last build of each level
         lastBuild: null, // { area: {x, y}, ms, objects, biomes: { id: cells } } of the last build
         fieldsFor: (seed, d, cl, gx, gy) => fieldsFor(seed, d, cl, gx, gy),
         dims: st => dims(st)
@@ -1062,7 +1062,7 @@
         return { founders, steps: steps.slice(), meals, byCulture, needs, other };
     };
     WorldGen.KIT_RESOURCES = KIT_RESOURCES;
-    /** The objects the kit placed in each built area: kitLog["ax,ay"] = [{ c (centre index), faction, id, x, y }]. */
+    /** Kit placements by World.levelKey(ax, ay, z): [{ c (centre index), faction, id, x, y }]. */
     WorldGen.kitLog = {};
 
     // Sites of an area from UF_History, if it's installed. Its errors never break the world build.
@@ -1218,7 +1218,7 @@
         const cat = catalog(), m = compiled();
         if (!cat || !m || !window.UF.World || !UF.World.state) return;
         const started = now();
-        const state = UF.World.state, seed = state.seed;
+        const W = UF.World, state = W.state, seed = state.seed;
         const d = dims(state);
         const size = ctx.width, cells = size * size;
         const gx0 = ctx.areaX * size, gy0 = ctx.areaY * size;
@@ -1466,11 +1466,12 @@
                 }
             }
         });
-        WorldGen.kitLog[`${ctx.areaX},${ctx.areaY}`] = kitLog;
+        const key = W.levelKey(ctx.areaX, ctx.areaY, z);
+        WorldGen.kitLog[key] = kitLog;
 
         let total = 0;
         for (let i = 0; i < cells; i++) if (objects[i]) total++;
-        WorldGen.stats[`${ctx.areaX},${ctx.areaY}`] = counts;
+        WorldGen.stats[key] = counts;
         if (z === 0) WorldGen.volumeStats[`${ctx.areaX},${ctx.areaY}`] = Object.assign({ columns: !!col }, volume);
         WorldGen.lastBuild = { area: { x: ctx.areaX, y: ctx.areaY }, ms: now() - started, objects: total, biomes: biomeCells, sites: sites.length };
     }
@@ -2003,9 +2004,11 @@
             const W = UF.World;
             if (window.UF && UF.Levels && typeof UF.Levels.view === "function" && UF.Levels.view() !== 0) {
                 UF.Levels.setView(0);
-                await t.waitUntil(() => !!(W && W.currentArea && W.currentArea()), 10000, "Ground view for worldgen checks").catch(() => {});
+                // A current area alone may still be the outgoing level. Let a timeout reach UF.Test's suite failure.
+                await t.waitUntil(() => UF.Levels.view() === 0 && !!W.currentArea(), 10000, "Ground view for worldgen checks");
             }
             const st = W.state, a = st.startArea, size = st.size, mid = Math.floor(size / 2);
+            const startKey = W.levelKey(a.x, a.y, 0);
             const here = W.buildArea(a.x, a.y);
             const build = WorldGen.lastBuild;
             t.check("tileset_id", !!UF.Tiles && here.tilesetId === UF.Tiles.TILESET_ID && $gameMap.tilesetId() === UF.Tiles.TILESET_ID,
@@ -2013,15 +2016,17 @@
 
             // The start: a man and a woman with seed-generated names as events 1 and 2, only until UF_Colonists exists.
             const names = WorldGen.startNames(st.seed);
-            const fill = s => s.replace(/\{male\}/g, names.male).replace(/\{female\}/g, names.female);
+            const fill = s => String(s || "").replace(/\{male\}/g, names.male).replace(/\{female\}/g, names.female);
             const colonistEvents = here.events.filter(e => e && /<colonist/.test(e.note));
             if (window.UF.Colonists) {
                 t.check("start_in_middle", colonistEvents.length === 0 && here.note.includes("<glade>"),
                     `UF_Colonists installed: ${colonistEvents.length} generator start events (want 0); note "${here.note}"`);
             } else {
-                const expected = cat.start.pair.map((e, i) => ({ id: i + 1, name: fill(e.name), x: mid + (e.dx || 0), y: mid + (e.dy || 0) }));
-                const wrong = expected.filter(e => !here.events[e.id] || here.events[e.id].name !== e.name || here.events[e.id].x !== e.x || here.events[e.id].y !== e.y);
-                t.check("start_in_middle", wrong.length === 0 && here.note.includes("<glade>") && colonistEvents.length === expected.length,
+                const expected = (cat.start.pair || []).map((e, i) => ({ id: i + 1, name: fill(e.name), note: fill(e.note), x: mid + (e.dx || 0), y: mid + (e.dy || 0) }));
+                const wrong = expected.filter(e => !here.events[e.id] || here.events[e.id].name !== e.name || here.events[e.id].note !== e.note || here.events[e.id].x !== e.x || here.events[e.id].y !== e.y);
+                // Pair notes are catalog data: an untagged pair must not be required to contain colonist tags.
+                const expectedColonists = expected.filter(e => /<colonist/.test(e.note)).length;
+                t.check("start_in_middle", wrong.length === 0 && here.note.includes("<glade>") && colonistEvents.length === expectedColonists,
                     wrong.length ? `not as expected: ${wrong.map(e => `${e.name} (event ${e.id} at ${e.x},${e.y})`).join(", ")}` : `${expected.map(e => `${e.name} = event ${e.id} at (${e.x},${e.y})`).join("; ")}; note "${here.note}"`);
             }
             const other = WorldGen.startNames(st.seed + 1);
@@ -2073,8 +2078,8 @@
             // from the first second, so the build with diffs never matched the generator's own counts.
             const pristineStart = pristineBuild(a.x, a.y);
             const total = countObjects(pristineStart);
-            const statTotal = Object.values(WorldGen.stats[`${a.x},${a.y}`] || {}).reduce((s, n) => s + n, 0);
-            const top = Object.entries(WorldGen.stats[`${a.x},${a.y}`] || {}).sort((p, q) => q[1] - p[1]).slice(0, 8).map(([k, v]) => `${k} ${v}`).join(", ");
+            const statTotal = Object.values(WorldGen.stats[startKey] || {}).reduce((s, n) => s + n, 0);
+            const top = Object.entries(WorldGen.stats[startKey] || {}).sort((p, q) => q[1] - p[1]).slice(0, 8).map(([k, v]) => `${k} ${v}`).join(", ");
             const objectEvents = here.events.filter(e => e && /<ufObject:/.test(e.note)).length;
             t.check("objects_placed", total > 0 && statTotal === total && objectEvents === 0,
                 `${total} objects in map.ufObjects of the start area (stats sum ${statTotal}, ${objectEvents} object events); most common: ${top}`);
@@ -2149,9 +2154,9 @@
             // next seed (a synthetic world: its factions, its year-1 camps, its build).
             const kitSig = log => JSON.stringify((log || []).map(e => [e.c, e.id, e.x, e.y]));
             pristineBuild(a.x, a.y);
-            const log1 = kitSig(WorldGen.kitLog[`${a.x},${a.y}`]);
+            const log1 = kitSig(WorldGen.kitLog[startKey]);
             pristineBuild(a.x, a.y);
-            const log2 = kitSig(WorldGen.kitLog[`${a.x},${a.y}`]);
+            const log2 = kitSig(WorldGen.kitLog[startKey]);
             let log3 = null, seed3 = st.seed + 1, oreKinds3 = "";
             if (window.UF.Factions && window.UF.History) {
                 const s3 = { zRange: st.zRange, seed: seed3, size: st.size, areasX: st.areasX, areasY: st.areasY, startArea: { x: a.x, y: a.y }, units: {}, nextUnitId: 1, diffs: {}, objectDiffs: {} };
@@ -2161,8 +2166,8 @@
                     UF.Factions.generate(s3);
                     UF.History.generate(s3);
                     W.buildArea(a.x, a.y);
-                    log3 = kitSig(WorldGen.kitLog[`${a.x},${a.y}`]);
-                    oreKinds3 = (WorldGen.kitLog[`${a.x},${a.y}`] || []).filter(e => kitCfg.ore && kitCfg.ore.ids.includes(e.id)).map(e => e.id).join("/");
+                    log3 = kitSig(WorldGen.kitLog[startKey]);
+                    oreKinds3 = (WorldGen.kitLog[startKey] || []).filter(e => kitCfg.ore && kitCfg.ore.ids.includes(e.id)).map(e => e.id).join("/");
                 } finally {
                     W.state = saved;
                 }
