@@ -1,5 +1,7 @@
 # Generation queue — Temperate, first cards
 
+> **Superseded 2026-09-29** by `docs/art/cards/TEMPERATE_BATCH1_PROMPTS.md` (art restart; the Owner's four-part prompt structure; Tiles Pro for ground). Kept for history.
+
 The Owner generates all the art (DEC-007 amendment, 2026-09-29: "I will generate all the art"). This is the Owner's first queue for the temperate biomes, asked for the same day: "Give me a list of items to start generating for temperate". It holds only items that are needed in the game now: every card fills a slot that the running game already draws, and needs no ruling that is still open. The complete 32-layer queue comes with the PM's art plan.
 
 Temperate here means the biomes the live world generator places (`game/data/DEUS_WorldCatalog.json` → `biomes`):
