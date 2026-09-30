@@ -1,0 +1,16 @@
+You are the primary implementer for lane-bb (Task DEUS-TSK-GEOLOGY-GATE), running as grok.
+Read tasks/DEUS-TSK-GEOLOGY-GATE/lane-bb/BRIEF_FIX3.md carefully and follow all instructions within it.
+Your allowed paths are:
+- game/js/plugins/DEUS_Levels.js
+- game/js/plugins/DEUS_WorldGen.js
+- tools/test_strata_cuts_and_caves.js
+- tools/test_historical_carrying_capacity.js
+- tools/test_geology_strata.js
+- tools/test_strata_foundation.js
+- tasks/DEUS-TSK-GEOLOGY-GATE/**
+
+Standing rules:
+1. NO ART (DEC-007). Never generate, request or integrate art, and never tell anyone to.
+2. Run tests in the FOREGROUND. Never end your turn while background jobs or child processes are running. Commit early (WIP commits allowed on your branch). When finished, commit and push your own branch only: git push origin task/lane-bb. Never push main or any other branch, never force-push, never set DEUS_INTEGRATOR; if the push is refused, say so and stop. Do not merge. Write only inside allowedPaths.
+Commit messages start with '[grok] DEUS-TSK-GEOLOGY-GATE'.
+Your final output line must be exactly: FINAL SHA: <sha> (pasted from git rev-parse HEAD after the push).
