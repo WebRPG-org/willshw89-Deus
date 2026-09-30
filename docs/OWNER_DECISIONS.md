@@ -934,7 +934,7 @@ Every decision item recorded in this log must provide:
   - the PM opens every image.
   Each choice is recorded in art/APPROVALS.md as "PM YEA (DEC-056)" with its reason and source file, so the Owner can see and reverse it.
 - **Unchanged:**
-  - The Owner generates all art; agents generate nothing on their own (DEC-007 addendum).
+  - The Owner generates all art; agents generate nothing on their own (DEC-007 addendum). Owner, same day: "I will still generate tho".
   - DEC-055: assets are used in PixelLab's native forms; conversions stay on hold until the design is approved.
   - The Owner still approves slices, rulings and designs.
 - **Replaces:** "Nothing enters the game without the Owner's YEA" and "The Owner is the final QA" in the DEC-007 banner of AGENTS.md, CLAUDE.md and GEMINI.md, and the art half of AGENTS.md Rule 6.
