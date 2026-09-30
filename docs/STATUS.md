@@ -152,7 +152,7 @@ Tracked defects, unverified contracts, and quarantined checks:
 | Rule 14 Multi-Domain Time | `game/js/plugins/DEUS_Core.js` | AGENTS.md Rule 14 multi-domain time tags are not implemented by the running clock. | KNOWN DEFECT (Reported, preserved) |
 | Z-2 Cut Proof Quarantine | `tools/test_generated_z2_cut_proof.js` | Quarantined in `gate_tests.json`: exits 1 on main; Lane H rework in progress. | QUARANTINED |
 | ATK-YEAR0-001 | `tasks/WG.00.08/defects.jsonl` | Year 0 world age materialization edge cases. | OPEN |
-| `NAT.02.01` | `tasks/NAT.02.01/lane-bv` | Matter kernel is a stub; review `fdb5c0a0` missed it. | OPEN |
+| `NAT.02.01` | `tasks/NAT.02.01/lane-bv` | kernel is a stub (no rubble, no ledger posting); review `fdb5c0a0` missed it | NOT DONE |
 
 ---
 
