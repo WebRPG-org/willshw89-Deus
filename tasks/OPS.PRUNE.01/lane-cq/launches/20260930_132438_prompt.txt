@@ -1,0 +1,36 @@
+Independent adversarial review: OPS.PRUNE.01 / lane-cq (pass 3)
+Reviewer role: Grok (independent cross-family reviewer; zero self-certification).
+Reviewed tip: 21020c733355a2979268f74a8a071c6bc1209b55
+Worktree: C:\Users\snewt\.deus_worktrees\lane-cq
+Branch: task/lane-cq
+
+Context:
+In your prior review (f6120780), you verified that Findings 1..3 from 4bf8549f were fully resolved:
+1. Worktree '+' branches are parsed and all 25 local task/* branches match section 3.
+2. Both mutant flags (--mutant= and --mutate=) alter the inputs read by real predicates, and all mutant commands exit 1.
+3. companionPlugins is parsed from DEUS_Core.js, and all eleven companions are listed in section 1.B.
+4. Scope, plugin order, shim line counts, and syntax gate hold.
+
+You identified one defect in f6120780:
+Section 5 Archived table had dropped 10 real archive/plugins files and listed 10 phantom rows whose files did not exist on disk, and test_control_board.js only verified !existsSync(orig) without verifying existsSync(archive).
+
+Remediation in tip 21020c73:
+1. docs/STATUS.md: Section 5 Archived Systems table has been reconciled to disk truth. All 51 rows point to files that genuinely exist on disk in archive/plugins/ and are absent from game/js/plugins/. Zero phantom rows.
+2. tools/test_control_board.js: Check 4 now explicitly verifies BOTH:
+   - !existsSync(fullOrig) (original file is moved off original path)
+   - existsSync(fullArch) (archive destination exists on disk)
+3. tools/test_control_board.js: Added mutant 'missing_archive_file' to MUTANTS array and mutant handler.
+   - node tools/test_control_board.js --mutant=missing_archive_file -> exits 1 (KILLED)
+   - node tools/test_control_board.js --mutate=missing_archive_file -> exits 1 (KILLED)
+   All 5 mutant modes killed across both flags:
+   missing_live_plugin, archived_file_exists, missing_archive_file, unlisted_plugin_in_dir, missing_task_branch.
+4. Happy path:
+   node tools/test_control_board.js -> CLEAN PASS (0 errors, exit 0).
+5. Syntax gate:
+   node tools/check_deus_syntax.js -> 0 errors (exit 0).
+
+Your task:
+Independently inspect commit 21020c733355a2979268f74a8a071c6bc1209b55.
+Verify the diff, run the happy-path and mutant commands, verify the section 5 archived table against disk, and write your independent review report to tasks/OPS.PRUNE.01/lane-cq/review_grok_21020c73.md.
+Commit as [grok] OPS.PRUNE.01: independent review of lane-cq tip 21020c73.
+If clean, deliver VERDICT: CLEAN PASS.
