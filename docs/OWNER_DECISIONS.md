@@ -806,3 +806,24 @@ Every decision item recorded in this log must provide:
   2. **Danger gradient:** creature difficulty is low near every starting area and rises in the pockets between them. Challenge rating is driven by a world danger field that is derived from the starts, deterministic from the seed.
   3. **Bestiary per biome:** all 317 SRD 5.1 creatures (`game/data/srd51/creatures.json`) and the wildlife species are catalogued and assigned to the 30 biome-depth cells of DEC-030: 6 families (VOLCANIC, WET, ARID, TEMPERATE, COLD, WILD) x 5 vertical varieties (Deep Earth, Caverns, Lowlands, Uplands, Highlands). The Owner confirmed this the same day: "There should be 6 biome families, with 5 varieties vertically each." Each creature carries a danger tier from CR. The assignment lives in a DEUS-owned layer keyed by `srd:` ids. `srd51` records are never edited. A record is verified when it is activated for gameplay (SRD policy, 2026-09-22).
   4. **Order (PM default; the Owner may change it):** the layout design (D4) and the bestiary run through the braintrust now. Placement of starts is part of world generation, so it joins D1. Runtime creature spawning follows the physics work (DEC-037 chain) unless the Owner brings it forward.
+
+---
+
+### Decision `DEC-051`: One set of directives, kept in sync as we go
+- **Date Logged:** 2026-09-30
+- **Status:** `DECIDED` (Owner, in chat with Claude Code, 2026-09-30)
+- **Decider:** Owner
+- **Owner's words:** "Sync and correct files in the repo / markdowns, etc as we progress. Everyhting should be synced up so there arent different directives about"
+- **Summary:**
+  1. **Every ruling lands everywhere it applies, in the same change.** When the Owner rules, the PM updates every file that states the old directive:
+     - AGENTS.md, CLAUDE.md, GEMINI.md and `.agents/rules/*`;
+     - VISION, STATUS, the WBS and design docs;
+     - registries and catalogues.
+     Governance and decision docs are PM edits on main. Data, code and tooling changes go to a reviewed lane (DEC-048).
+  2. **Superseded text is marked, not left standing:** it points to the decision that replaced it. Deleting history is not required; contradicting it is not allowed.
+  3. **Precedence while syncing:** the Owner's latest explicit ruling wins, then OWNER_DECISIONS in date order, then AGENTS.md, then everything else.
+  4. **A sweep now:** the braintrust lists every live contradiction across the directive docs. The PM applies the governance fixes and dispatches the data and tooling fixes. Examples already found:
+     - the 5-family art biome registry vs DEC-030's 6 families;
+     - DEC-013 band ranges vs DEC-030/DEC-038;
+     - the "mandatory Nano Banana Pro" and "Gemini makes the non-living art" lines vs DEC-007 (the Owner generates all art);
+     - Claude's older role text vs DEC-042 and DEC-048.
