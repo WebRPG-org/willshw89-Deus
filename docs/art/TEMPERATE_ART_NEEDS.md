@@ -35,17 +35,22 @@ The 48x96 wall's top half is a black cap drawn by code. Only the lower face need
 | Rock strata, solid (TERRAIN_ROCK-STRATA-SOLID) | 96x120 | MISSING |
 | Natural cave wall (TERRAIN_CAVE-WALL-NATURAL) | 96x120 | MISSING |
 
-## 4. Edges, slopes and ramp sides (the full depth look, DEC-019/020): 1,088 pieces as catalogued
-Per terrain, drawn once in the surface band; the other bands are automatic recolours:
-| Family | Pieces per terrain | Sizes | 17 terrains |
+## 4. Edges, slopes and ramp sides: 112 pieces (DECIDED 2026-09-30, faces by material)
+Owner: "yeah" to faces by material. Per face material (SOIL, ROCK, SAND, MUD), drawn once in the surface band; the other bands are automatic recolours; heights H1-H4 are cut from the full face by tool.
+| Family | Drawn per material | Sizes | 4 materials |
 |---|---|---|---|
-| EDGE (cliff faces): facings N/E/S/W x heights H1-H5 + FULL | 24 | 48x19, 48x38, 48x57, 48x76, 48x96 (H5 and FULL) | 408 |
-| RAMP (slope cells): rise N/E/S/W x cells C1-C5 | 20 | 48x67, 48x86, 48x105, 48x124, 48x144 | 340 |
-| RAMPSIDE (the side faces of a slope): facings x H1-H5 | 20 | 48x19 ... 48x96 | 340 |
+| EDGE full faces (N/E/S/W) | 4 | 48x96 | 16 |
+| RAMP cells (rise N/E/S/W x C1-C5) | 20 | 48x67, 48x86, 48x105, 48x124, 48x144 | 80 |
+| RAMPSIDE full faces (N/E/S/W) | 4 | 48x96 | 16 |
+| **Total** | 28 | | **112** |
 
-**Decision for the Owner, the big lever.** The catalogue says each height is painted. Two ways to cut the count:
-- **Cut the heights from the full face:** H1-H4 are windows of the full face (the catalogue's STRATA_WINDOW rule). Per terrain you then draw 4 full faces, 20 ramp cells and 4 full ramp sides: 28 pieces, 476 in total.
-- **Faces by material, not by terrain:** a cliff shows what's underneath, not the grass on top. Soil, rock, sand and mud faces would cover all 17 terrains, with the top tile carrying the kind: about 4 x 28 = 112 pieces.
+Material mapping (PM, Owner may adjust):
+- SOIL: meadow, dirt, forest floor, needle floor, shrub soil, dry grass, road, mined soil.
+- ROCK: rock, stony, scree, peak rock, cave floor, mined stone.
+- SAND: sand.
+- MUD: mud, swamp mud.
+
+The catalogue still holds the old per-terrain placeholder rows until the gated catalogue lane replaces them.
 
 ## 5. Shared depth pieces (surface band): 28
 | Piece | Count | Size | Status |

@@ -301,6 +301,17 @@ Every decision item recorded in this log must provide:
   3. **3D Height Mechanics:** Falling damage, melee reach, and line-of-sight elevation advantage use real 3D vertical height differences.
   4. **Art Preparation:** Catalogue requires one top-surface tile per terrain plus auto-placed edge/cliff-face strips per height difference (1 to 5 strata) and height shading; NOT a full tile set per height. Catalogue placeholders only; no art generation (DEC-007).
 
+- **Amendment (2026-09-30): edge art by face material.** Owner, 2026-09-30, answering Claude's option "Faces by material, not by terrain: a cliff shows what's underneath, not the grass on top, so soil, rock, sand and mud faces cover all 17 terrains, about 112 pieces. The top tile shows which terrain it is.": "yeah".
+  - **Faces by material, not by terrain.** Cliff and edge faces, ramp cells and ramp side faces are drawn per face material: SOIL, ROCK, SAND or MUD. The terrain's own top tile shows which terrain it is.
+  - PM mapping, Owner may adjust:
+    - SOIL: meadow, dirt, forest floor, needle floor, shrub soil, dry grass, road, mined soil;
+    - ROCK: rock, stony, scree, peak rock, cave floor, mined stone;
+    - SAND: sand;
+    - MUD: mud, swamp mud.
+  - **Heights are cut, not drawn.** The shorter heights H1-H4 are cut from the full face by the catalogue tool (the STRATA_WINDOW rule). Only the full faces are drawn.
+  - **Count.** For the temperate biome that is about 112 drawn pieces: 4 materials x (4 full edge faces + 20 ramp cells + 4 full ramp sides). The per-terrain plan was 1,088.
+  - The running game's natural walls already use this model (rock and soil A4 faces).
+  - The catalogue restructure is a gated data lane (DEC-052); the per-terrain placeholder rows are replaced, not duplicated.
 ---
 
 ### Decision `DEC-020`: Seamless Inter-Layer Ramps and Camera-Follow Behavior
@@ -313,6 +324,7 @@ Every decision item recorded in this log must provide:
   3. **Pathfinding & Construction:** Multi-Z pathfinding treats ramps, stairs, and ladders as traversable layer connectors. Colonists can build ramps. Art catalogue adds ramp/slope pieces per terrain (placeholders only; DEC-007).
 - **DEC-020 Amendment Note (Owner requirement 2026-09-26 12:12 CT, Directive 0090-CM):** A hill can span several Z layers, and units walk straight up it with no stairs, no transfer, and no loading. Terrain rises continuously across layer boundaries (multi-layer hills, not only single 5-cell ramps) via slope and ramp tiles between Z layers. Pathfinding across Z treats walkable slopes as ordinary path edges between layers. The camera follows the controlled unit's layer while it walks across slopes (no fade, pause, or load). Selected units and group orders keep working while crossing layers on slopes (selection is not dropped at a layer change).
 
+- **Amendment (2026-09-30): ramp and slope art by face material.** Owner, 2026-09-30, answering Claude's option "Faces by material, not by terrain: a cliff shows what's underneath, not the grass on top, so soil, rock, sand and mud faces cover all 17 terrains, about 112 pieces. The top tile shows which terrain it is.": "yeah". See the DEC-019 amendment of the same date: ramp cells and ramp side faces are drawn per material (SOIL, ROCK, SAND, MUD), not per terrain.
 ---
 
 ### Decision `DEC-021`: Occlusion Rule for Layer Rendering (Zero-Cost Solid Cover)

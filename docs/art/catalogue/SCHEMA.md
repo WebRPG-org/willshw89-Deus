@@ -150,6 +150,8 @@ Status comes from `docs/ASSET_INVENTORY.md` (and `game/data/UF_AssetIndex.json`;
 
 Every family appears in every geometry band ([INDEX.md](INDEX.md) prints the family x band table). No source rules a family out of a band, so none is dropped; the Owner may prune (conflicts.md questions).
 
+> **Superseded in part (Owner, 2026-09-30; DEC-019 and DEC-020 amendments):** the EDGE, RAMP and RAMPSIDE rows below say "per terrain" and "painted per height". Art is now drawn per face material (SOIL, ROCK, SAND, MUD), and heights H1-H4 are cut from the full face (STRATA_WINDOW). The catalogue build is being changed in a gated lane; until it lands, the rows below describe the old placeholders.
+
 | Family | Source | Entries | Size row | Anchor |
 |---|---|---|---|---|
 | TOP | §15, DEC-019 | one top-surface tile per terrain, painted in the terrain's home band | GEOM_TILE | CENTER |
