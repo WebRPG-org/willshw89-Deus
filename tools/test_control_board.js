@@ -7,11 +7,11 @@
  * Anti-regression control board validator (OPS.PRUNE.01 / L1).
  * Validates docs/STATUS.md against live repository state:
  *   1. Every enabled plugin in game/js/plugins.js must be listed in Live Systems.
- *   2. Every DEUS_Core live companion (UF_Households.js) must be listed.
+ *   2. Every DEUS_Core companion plugin must be listed in Live Companions.
  *   3. Every active local task/* branch must be listed in In Review.
  *   4. Every row in Archived Systems must NOT exist at its original path on disk.
  *   5. Every file in game/js/plugins must be either enabled in plugins.js or named on the board.
- *   6. Supports mutant modes (--mutant=<name>) to prove ability to fail.
+ *   6. Supports mutant modes (--mutate=<name> or --mutant=<name>) to prove ability to fail.
  */
 
 const fs = require("fs");
@@ -34,8 +34,9 @@ const MUTANTS = [
 const args = process.argv.slice(2);
 let activeMutant = null;
 for (const arg of args) {
-    if (arg.startsWith("--mutant=")) {
-        activeMutant = arg.split("=")[1];
+    const m = arg.match(/^--(?:mutant|mutate)=([a-z_]+)$/);
+    if (m) {
+        activeMutant = m[1];
     } else if (arg === "--list-mutants") {
         console.log(MUTANTS.join("\n"));
         process.exit(0);
@@ -58,6 +59,12 @@ function check(desc, ok, details = "") {
     }
 }
 
+function hasToken(text, token) {
+    const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const re = new RegExp(`(?:^|[^a-zA-Z0-9_-])${escaped}(?:$|[^a-zA-Z0-9_-])`);
+    return re.test(text);
+}
+
 console.log("=== Control Board & Anti-Regression Verification ===");
 if (activeMutant) {
     console.log(`[MUTANT MODE ACTIVE: ${activeMutant}]`);
@@ -70,6 +77,12 @@ if (!fs.existsSync(STATUS_PATH)) {
 }
 let statusText = fs.readFileSync(STATUS_PATH, "utf8");
 
+// Apply data mutation if mutant mode requests it
+if (activeMutant === "missing_live_plugin") {
+    // Deliberately strip all mentions of DEUS_Core from the board to prove failure detection
+    statusText = statusText.replace(/DEUS_Core/g, "DEUS_Core_MUTATED_OUT");
+}
+
 // 2. Read game/js/plugins.js
 let sandbox = {};
 vm.createContext(sandbox);
@@ -80,15 +93,11 @@ const enabledPlugins = plugins.filter(p => p.status === true).map(p => p.name);
 console.log(`Found ${enabledPlugins.length} enabled plugins in plugins.js.`);
 
 // Check 1: All enabled plugins in plugins.js must be in STATUS.md
-let liveBoardCheck = true;
 let missingLive = [];
 for (const p of enabledPlugins) {
-    if (!statusText.includes(p)) {
+    if (!hasToken(statusText, p)) {
         missingLive.push(p);
     }
-}
-if (activeMutant === "missing_live_plugin") {
-    missingLive.push("TEST_Mutant_Nonexistent_Plugin");
 }
 check(
     "All enabled plugins in plugins.js are listed on the control board",
@@ -96,11 +105,31 @@ check(
     missingLive.length ? `Missing: ${missingLive.join(", ")}` : ""
 );
 
-// Check 2: Core companion UF_Households.js must be listed
-let hasHouseholds = statusText.includes("UF_Households.js") || statusText.includes("UF_Households");
+// Check 2: Core companions in DEUS_Core.js must all be listed
+const corePath = path.join(PLUGINS_DIR, "DEUS_Core.js");
+let companionPlugins = [];
+if (fs.existsSync(corePath)) {
+    const coreJs = fs.readFileSync(corePath, "utf8");
+    const companionMatch = coreJs.match(/const companionPlugins\s*=\s*\[([\s\S]*?)\];/);
+    if (companionMatch) {
+        companionPlugins = companionMatch[1].split("\n")
+            .map(l => l.replace(/\/\/.*$/, "").trim())
+            .filter(Boolean)
+            .map(l => l.replace(/["',]/g, "").trim())
+            .filter(Boolean);
+    }
+}
+
+let missingCompanions = [];
+for (const comp of companionPlugins) {
+    if (!hasToken(statusText, comp)) {
+        missingCompanions.push(comp);
+    }
+}
 check(
-    "DEUS_Core companion (UF_Households.js) is listed on the control board",
-    hasHouseholds
+    `All DEUS_Core companion plugins (${companionPlugins.length}) are listed on the control board`,
+    missingCompanions.length === 0,
+    missingCompanions.length ? `Missing: ${missingCompanions.join(", ")}` : ""
 );
 
 // Check 3: Active task/* branches listed in In Review
@@ -108,30 +137,31 @@ let taskBranches = [];
 try {
     const rawBranches = execSync("git branch --list task/*", { cwd: ROOT }).toString();
     taskBranches = rawBranches.split("\n")
-        .map(b => b.replace(/^\*?\s+/, "").trim())
+        .map(b => b.replace(/^[*+\s]+/, "").trim())
         .filter(b => b.startsWith("task/"));
 } catch (e) {
     console.warn("Could not read local git branches:", e.message);
 }
 
+if (activeMutant === "missing_task_branch") {
+    // Inject a non-existent task branch into the checked set
+    taskBranches.push("task/mutant-unlisted-lane");
+}
+
 let missingBranches = [];
 for (const b of taskBranches) {
     const laneName = b.replace("task/", "");
-    if (!statusText.includes(b) && !statusText.includes(laneName)) {
+    if (!hasToken(statusText, b) && !hasToken(statusText, laneName)) {
         missingBranches.push(b);
     }
 }
-if (activeMutant === "missing_task_branch") {
-    missingBranches.push("task/mutant-missing-lane");
-}
 check(
-    "All open task/* branches are accounted for in In Review",
+    `All open task/* branches (${taskBranches.length}) are accounted for in In Review`,
     missingBranches.length === 0,
     missingBranches.length ? `Missing: ${missingBranches.join(", ")}` : ""
 );
 
 // Check 4: Parse Archived Systems table; original paths must NOT exist
-// Match markdown table rows in ## 5. Archived Systems
 const lines = statusText.split("\n");
 let inArchivedSection = false;
 let archivedRows = [];
@@ -156,6 +186,11 @@ for (const line of lines) {
     }
 }
 
+if (activeMutant === "archived_file_exists") {
+    // Inject a file that genuinely exists on disk into the archived list
+    archivedRows.push({ orig: "game/js/plugins/DEUS_Core.js", arch: "archive/plugins/DEUS_Core.js" });
+}
+
 let existingArchived = [];
 for (const row of archivedRows) {
     const fullOrig = path.join(ROOT, row.orig);
@@ -163,29 +198,27 @@ for (const row of archivedRows) {
         existingArchived.push(row.orig);
     }
 }
-if (activeMutant === "archived_file_exists") {
-    existingArchived.push("game/js/plugins/DEUS_Core.js");
-}
 check(
-    "All items declared in Archived Systems have been moved off their original paths",
+    `All items declared in Archived Systems (${archivedRows.length}) have been moved off their original paths`,
     existingArchived.length === 0,
     existingArchived.length ? `Still exists on disk: ${existingArchived.join(", ")}` : ""
 );
 
 // Check 5: Anti-Junk Guard — every .js in game/js/plugins must be accounted for
 const allPluginFiles = fs.readdirSync(PLUGINS_DIR).filter(f => f.endsWith(".js"));
-let unlistedFiles = [];
+if (activeMutant === "unlisted_plugin_in_dir") {
+    // Inject an unlisted rogue plugin into the scanned directory list
+    allPluginFiles.push("unauthorized_rogue_script.js");
+}
 
+let unlistedFiles = [];
 for (const f of allPluginFiles) {
     const baseName = f.replace(/\.js$/, "");
     const isEnabled = enabledPlugins.includes(baseName);
-    const isNamedOnBoard = statusText.includes(f) || statusText.includes(baseName);
+    const isNamedOnBoard = hasToken(statusText, f) || hasToken(statusText, baseName);
     if (!isEnabled && !isNamedOnBoard) {
         unlistedFiles.push(f);
     }
-}
-if (activeMutant === "unlisted_plugin_in_dir") {
-    unlistedFiles.push("unauthorized_rogue_script.js");
 }
 check(
     "Anti-Junk Guard: No unlisted or unauthorized .js files in game/js/plugins",

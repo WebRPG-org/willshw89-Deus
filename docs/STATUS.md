@@ -57,12 +57,25 @@ The following subsystems are actively loaded by `game/js/plugins.js` (42 plugins
 | `DEUS_Test` | `game/js/plugins/DEUS_Test.js` | In-engine diagnostic suite, headless validation harnesses |
 
 ### B. Core Companions & Live Simulation Modules
+The following 11 companion plugins are loaded synchronously by `DEUS_Core.js:89-104` in the desktop runtime, along with live simulation modules:
+
 | Subsystem | Canonical Path | Description |
 |---|---|---|
+| `DEUS_Containers` | `game/js/plugins/DEUS_Containers.js` | Chests, sacks, stockpiles, and item storage authority (loaded by `DEUS_Core.js:90`) |
+| `DEUS_Bag` | `game/js/plugins/DEUS_Bag.js` | Mobile containers, inventory sacks, worn pouches (loaded by `DEUS_Core.js:91`) |
+| `DEUS_Stockpiles` | `game/js/plugins/DEUS_Stockpiles.js` | Ground storage zones, bulk material piles (loaded by `DEUS_Core.js:92`) |
+| `DEUS_Fluid` | `game/js/plugins/DEUS_Fluid.js` | Hydrostatic pressure, surface water flow, aquifer simulation (loaded by `DEUS_Core.js:93`) |
+| `DEUS_Conditions` | `game/js/plugins/DEUS_Conditions.js` | Status conditions, bodily fatigue, environmental exposures (loaded by `DEUS_Core.js:94`) |
+| `DEUS_Select` | `game/js/plugins/DEUS_Select.js` | Multi-unit drag selection, squad designations (loaded by `DEUS_Core.js:95`) |
+| `DEUS_Dnd5e` | `game/js/plugins/DEUS_Dnd5e.js` | SRD 5.1 ability score rolling, class hit dice, proficiency math (loaded by `DEUS_Core.js:96`) |
+| `DEUS_Callings` | `game/js/plugins/DEUS_Callings.js` | Labor vocational specializations, builder/harvester assignments (loaded by `DEUS_Core.js:97`) |
+| `DEUS_HistoricalDemographics` | `game/js/plugins/DEUS_HistoricalDemographics.js` | Colonist demographic cohorts, age distribution, lineage data (loaded by `DEUS_Core.js:98`) |
+| `DEUS_DeathForensics` | `game/js/plugins/DEUS_DeathForensics.js` | Cause of death analysis, fatal wound logging (loaded by `DEUS_Core.js:99`) |
 | `UF_Households` | `game/js/plugins/UF_Households.js` | Kinship, family groupings, domestic dwelling allocation (loaded by `DEUS_Core.js:103`) |
+| `DEUS_Minimap` | `game/js/plugins/DEUS_Minimap.js` | Overhead radar map rendering (loaded dynamically by `DEUS_Camera.js:624`) |
 | `sim/hydro` | `game/js/sim/hydro/` | Deep aquifer and hydraulic simulation modules (required by `DEUS_Fluid.js:984`) |
 | `sim/rules` | `game/js/sim/rules/` | SRD 5.1 mechanics and ability score resolution (required by `DEUS_Combat.js`) |
-| `sim/ledger` | `game/js/sim/ledger.js` | Closed-mass matter conservation ledger (DEC-040) |
+| `sim/ledger` | `game/js/sim/ledger.js` | Closed-mass matter conservation ledger (DEC-040; verified by gate suites) |
 
 ---
 
@@ -77,7 +90,7 @@ Subsystems preserved in the repository whose runtime expansion or feature additi
 | Economy & Coinage | `DEUS_Mint.js` | DEC-040 / DEC-037 | Candidate for lifecycle weight ledger when economy unfreezes |
 
 ### B. Unwired Plugins (Scheduled for Archival in L4)
-The following plugins in `game/js/plugins/` are not loaded in `plugins.js`:
+The following 9 plugins in `game/js/plugins/` are not loaded in `plugins.js` and have no active runtime imports:
 - `DEUS_Move8.js`
 - `DEUS_DepthCues.js`
 - `DEUS_DepthDemo.js`
@@ -88,25 +101,11 @@ The following plugins in `game/js/plugins/` are not loaded in `plugins.js`:
 - `DEUS_Taming.js`
 - `DEUS_WorldItems.js`
 
-### C. Unwired Core & Candidate Modules (Pending Triage / Archival)
-The following candidate or legacy plugins remain in `game/js/plugins/`:
-- `DEUS_Bag.js`
-- `DEUS_Callings.js`
-- `DEUS_Conditions.js`
-- `DEUS_Containers.js`
-- `DEUS_DeathForensics.js`
-- `DEUS_Dnd5e.js`
-- `DEUS_Fluid.js`
-- `DEUS_HistoricalDemographics.js`
-- `DEUS_Minimap.js` (loaded dynamically by `DEUS_Camera.js:623`)
-- `DEUS_Select.js`
-- `DEUS_Stockpiles.js`
-
-### D. Secondary Clock (Scheduled for Archival in L3)
+### C. Secondary Clock (Scheduled for Archival in L3)
 - `UF_Time.js` (`game/js/plugins/UF_Time.js`): Unloaded second clock; scheduled for L3 archival.
 
-### E. Shims / Forwarders (41 Files Scheduled for Archival in L2)
-The following 41 single-line `PluginManager.loadScript` forwarders remain in `game/js/plugins/` until L2 archival:
+### D. Shims / Forwarders (41 Files Scheduled for Archival in L2)
+The following 41 sixteen-line `PluginManager.loadScript` forwarders remain in `game/js/plugins/` until L2 archival:
 `UF_Anim.js`, `UF_Camera.js`, `UF_Colonists.js`, `UF_ColonyOverseer.js`, `UF_Combat.js`, `UF_Core.js`, `UF_DayNight.js`, `UF_Doors.js`, `UF_Ecology.js`, `UF_Environment.js`, `UF_FactionMenus.js`, `UF_Factions.js`, `UF_Fire.js`, `UF_Floors.js`, `UF_Fog.js`, `UF_Generator.js`, `UF_History.js`, `UF_Interact.js`, `UF_Items.js`, `UF_Jobs.js`, `UF_Levels.js`, `UF_Look.js`, `UF_Minimap.js`, `UF_Movement8D.js`, `UF_NaturalConnections.js`, `UF_Objects.js`, `UF_Ownership.js`, `UF_Perspective25D.js`, `UF_Select.js`, `UF_Sheet.js`, `UF_Speech.js`, `UF_Stance.js`, `UF_Talk.js`, `UF_Test.js`, `UF_Tiles.js`, `UF_TimeSpeed.js`, `UF_Visuals.js`, `UF_Walls.js`, `UF_Wildlife.js`, `UF_World.js`, `UF_WorldGen.js`.
 
 ---
@@ -118,6 +117,8 @@ Active tasks, open branches, and pending review submissions:
 |---|---|---|---|
 | `task/lane-cq` | `lane-cq` (`OPS.PRUNE.01`) | L1: Rebuild STATUS.md control board + `tools/test_control_board.js` | ACTIVE WRITER (Gemini) / Grok Reviewer |
 | `task/lane-co` | `lane-co` (`OPS.PRUNE.02`) | L2: Archive 41 `UF_*.js` shims & retarget tools | FROZEN at `b9acaa14` pending L1 merge |
+| `task/lane-cr` | `lane-cr` (`OPS.PRUNE.PACE`) | PACE telemetry & budget rate governor (`tools/ops/pace.js`) | In Flight (`409e085c`, Codex writer) |
+| `task/lane-cs` | `lane-cs` (`WG.20.02`) | CARDS-1 fixes & DEC-045 catalogue moisture rows | In Flight (`26099959`, Codex writer) |
 | `task/art-temperate-induction` | Parked Induction | 64 temperate batch 1 assets (Outside_A2, Dungeon_A2, V8 props) | PARKED at `90c82ac5` pending QA & Owner YEA |
 | `task/lane-a` | `lane-a` (`WG.00.08`) | WG.00.08 Exit Criteria | In Review (`16fec107`) |
 | `task/lane-b` | `lane-b` (`WG.00.11`) | ATK-YEAR0-001 Hardening | Integrated / Reference (`ed757456`) |
@@ -181,31 +182,31 @@ Files moved to `archive/` per Owner prune rulings (verified absent from `game/`)
 | `game/js/plugins/DEUS_Sanitation.js` | `archive/plugins/DEUS_Sanitation.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/DEUS_SettlementPillars.js` | `archive/plugins/DEUS_SettlementPillars.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/DEUS_Skills.js` | `archive/plugins/DEUS_Skills.js` | Owner 2026-09-30 prune ruling |
-| `game/js/plugins/DEUS_Time.js` | `archive/plugins/DEUS_Time.js` | Owner 2026-09-30 prune ruling |
-| `game/js/plugins/UF_Agriculture.js` | `archive/plugins/UF_Agriculture.js` | Owner 2026-09-30 prune ruling |
-| `game/js/plugins/UF_BootstrapData.js` | `archive/plugins/UF_BootstrapData.js` | Owner 2026-09-30 prune ruling |
+| `game/js/plugins/DEUS_Tech.js` | `archive/plugins/DEUS_Tech.js` | Owner 2026-09-30 prune ruling |
+| `game/js/plugins/UF_AssetInventory.js` | `archive/plugins/UF_AssetInventory.js` | Owner 2026-09-30 prune ruling |
+| `game/js/plugins/UF_AutoTiling.js` | `archive/plugins/UF_AutoTiling.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_Callings.js` | `archive/plugins/UF_Callings.js` | Owner 2026-09-30 prune ruling |
-| `game/js/plugins/UF_Conditions.js` | `archive/plugins/UF_Conditions.js` | Owner 2026-09-30 prune ruling |
+| `game/js/plugins/UF_Caravan.js` | `archive/plugins/UF_Caravan.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_Construction.js` | `archive/plugins/UF_Construction.js` | Owner 2026-09-30 prune ruling |
-| `game/js/plugins/UF_Containers.js` | `archive/plugins/UF_Containers.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_Crafting.js` | `archive/plugins/UF_Crafting.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_CultureGrowth.js` | `archive/plugins/UF_CultureGrowth.js` | Owner 2026-09-30 prune ruling |
-| `game/js/plugins/UF_DFCombat.js` | `archive/plugins/UF_DFCombat.js` | Owner 2026-09-30 prune ruling |
-| `game/js/plugins/UF_DFWorld.js` | `archive/plugins/UF_DFWorld.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_Dialogue.js` | `archive/plugins/UF_Dialogue.js` | Owner 2026-09-30 prune ruling |
+| `game/js/plugins/UF_Extraction.js` | `archive/plugins/UF_Extraction.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_FarmView.js` | `archive/plugins/UF_FarmView.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_FireSafety.js` | `archive/plugins/UF_FireSafety.js` | Owner 2026-09-30 prune ruling |
-| `game/js/plugins/UF_FogOfWar.js` | `archive/plugins/UF_FogOfWar.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_Goals.js` | `archive/plugins/UF_Goals.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_Gumps.js` | `archive/plugins/UF_Gumps.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_NPCSchedules.js` | `archive/plugins/UF_NPCSchedules.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_Outposts.js` | `archive/plugins/UF_Outposts.js` | Owner 2026-09-30 prune ruling |
-| `game/js/plugins/UF_ProcGen.js` | `archive/plugins/UF_ProcGen.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_Proficiency.js` | `archive/plugins/UF_Proficiency.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_ProfileTabs.js` | `archive/plugins/UF_ProfileTabs.js` | Owner 2026-09-30 prune ruling |
+| `game/js/plugins/UF_Quality.js` | `archive/plugins/UF_Quality.js` | Owner 2026-09-30 prune ruling |
+| `game/js/plugins/UF_Reclamation.js` | `archive/plugins/UF_Reclamation.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_Resources.js` | `archive/plugins/UF_Resources.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_Roads.js` | `archive/plugins/UF_Roads.js` | Owner 2026-09-30 prune ruling |
-| `game/js/plugins/UF_Rules.js` | `archive/plugins/UF_Rules.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_Sanitation.js` | `archive/plugins/UF_Sanitation.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_SettlementPillars.js` | `archive/plugins/UF_SettlementPillars.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_Skills.js` | `archive/plugins/UF_Skills.js` | Owner 2026-09-30 prune ruling |
+| `game/js/plugins/UF_Tech.js` | `archive/plugins/UF_Tech.js` | Owner 2026-09-30 prune ruling |
+| `game/js/plugins/UF_TimeDomains.js` | `archive/plugins/UF_TimeDomains.js` | Owner 2026-09-30 prune ruling |
+| `game/js/plugins/UF_Weights.js` | `archive/plugins/UF_Weights.js` | Owner 2026-09-30 prune ruling |
