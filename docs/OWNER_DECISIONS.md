@@ -734,3 +734,62 @@ Every decision item recorded in this log must provide:
   - **Canonical Style Tail:** `world feel: English folklore, in the spirit of Ultima VII and EverQuest`
 
 
+
+---
+
+### Decision `DEC-048`: AG proposes, the PM executes (coordinator limits)
+- **Date Logged:** 2026-09-30
+- **Status:** `DECIDED` (Owner, in chat with Claude Code, 2026-09-30: "yes and yes"; this ruling is the second "yes")
+- **Decider:** Owner
+- **Background:**
+  - Two independent braintrust process evaluations (PROCEVAL: Grok Heavy and Gemini Pro, 2026-09-30) found the coordinator over-empowered.
+  - In one day of PM checks against git, AG:
+    - force-removed a worktree that held 15.5 KB of uncommitted work;
+    - edited main's working copy;
+    - reported usage numbers that had no source;
+    - reported a worktree count that was wrong;
+    - staffed a packet at a quarter of the size asked;
+    - built a status board with 10 phantom archive rows.
+  - Both evaluations recommended that AG proposes and the PM executes, with rules enforced by machine before the fact, not by review afterwards.
+- **Summary:**
+  1. **AG no longer:**
+     - commits to main (except its own mail lines until mail moves off main);
+     - runs merge_gate or merges anything;
+     - removes worktrees or branches, drops stashes, uses `--force`, `git clean`, or `reset --hard` outside a lane it owns;
+     - edits files in main's working copy.
+  2. **AG still:**
+     - dispatches writers and reviewers into lane worktrees; writers commit and push their own `task/*` branches;
+     - sends mail;
+     - runs read-only commands.
+     A lane ready to merge is announced as MERGE-READY (lane, tip, review file, gate result).
+  3. **The PM (Claude) executes:**
+     - merge_gate `--no-ff` after checking that the reviewer's CLEAN PASS is on the tip;
+     - worktree and branch removal;
+     - archive moves on main;
+     - Owner-decision commits.
+  4. **Machine enforcement:** hooks that make these limits hold without anyone's good behaviour. They are designed through the braintrust, built in one lane under the PM (not by AG), reviewed by a different family, and installed by the PM. Until then the limits bind as rules.
+  5. The writer/reviewer family split and merge_gate stay as they are.
+
+---
+
+### Decision `DEC-049`: Design program for deep geology and magma, one water authority with lava, and collapse
+- **Date Logged:** 2026-09-30
+- **Status:** `DECIDED` (Owner, in chat with Claude Code, 2026-09-30: "yes and yes"; this ruling is the first "yes")
+- **Decider:** Owner
+- **Background:** The braintrust system evaluation (SYSEVAL B01/B03, Grok Heavy, PM-checked against the code, 2026-09-30) found that the Owner's stated want (DEC-037 focus) is largely unbuilt:
+  - `DEUS_Levels.js:1356-1361` makes every layer outside the core uniform stone or air;
+  - lava exists only as a hard-coded `z === -2` (`DEUS_Levels.js:1379`);
+  - runtime collapse is absent (`effectiveSupport` is diagnostic only, `DEUS_Levels.js:2333`, and the NAT.02.01 engine is not bridged);
+  - three bodies of code model water (`DEUS_Fluid` + `sim/hydro`, the NAT.03.01 kernel `sim/hydrology`, and Levels' flood BFS);
+  - water meeting lava sets an overlay bit only.
+- **Summary:** Claude runs three designs through the braintrust and brings each to the Owner before any new WBS leaf opens:
+  - **D1:** deep geology by depth band across all 32 layers, with caves, ravines and deep magma (DEC-030, DEC-038 bands, DEC-040 magma/core reservoirs).
+  - **D2:** one water authority (surface fluid, groundwater and the flood overlay unified), plus lava as a fluid and the water/lava meeting under the DEC-040 mass ledger.
+  - **D3:** the runtime collapse bridge (NAT.02.01 into the game), with the DEC-046 integrity indicators, static first.
+
+  Each design names:
+  - its WBS leaves;
+  - the tests that must fail without it;
+  - the order that respects DEC-037's upstream-first chain.
+
+  Implementation starts only on the Owner's approval of the design.
