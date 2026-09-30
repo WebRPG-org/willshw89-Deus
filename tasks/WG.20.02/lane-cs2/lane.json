@@ -12,26 +12,35 @@
     "tools/art/test_catalogue.js",
     "tasks/WG.20.02/lane-cs2/**"
   ],
-  "gates": [
+  "gateTests": [
     {
-      "name": "syntax",
-      "command": "node tools/check_deus_syntax.js",
-      "exitCode": 0
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
     },
     {
-      "name": "palette",
-      "command": "node tools/test_palette.js",
-      "exitCode": 0
+      "cmd": "node",
+      "args": [
+        "tools/test_palette.js"
+      ],
+      "timeoutSec": 900
     },
     {
-      "name": "catalogue",
-      "command": "node tools/art/test_catalogue.js",
-      "exitCode": 0
+      "cmd": "node",
+      "args": [
+        "tools/art/test_catalogue.js"
+      ],
+      "timeoutSec": 900
     },
     {
-      "name": "cards1_validation",
-      "command": "node tasks/WG.20.02/lane-cs2/check_cards1.cjs --self-test",
-      "exitCode": 0
+      "cmd": "node",
+      "args": [
+        "tasks/WG.20.02/lane-cs2/check_cards1.cjs",
+        "--self-test"
+      ],
+      "timeoutSec": 900
     }
   ]
 }
