@@ -4,6 +4,8 @@
 /**
  * tools/test_strata_cuts_and_caves.js
  *
+ * NOTE: Roof breach in a 32-layer world belongs to the Matter bridge.
+ *
  * DEUS-TSK-FABLE-19B / WG.00.08: natural cuts and all-Z cave networks carved into the five-strata geometry
  * (docs/handoffs/HANDOFF_DEUS_TSK_FABLE_19B_CUTS_CAVES.md, docs/systems/UF_Levels.md section "Natural cuts and caves").
  * Runs the real plugins (DEUS_World, DEUS_WorldGen, DEUS_Tiles, DEUS_Objects, DEUS_Levels, DEUS_Floors) in a Node vm and
@@ -216,7 +218,7 @@ function pre19bSources() {
 //-----------------------------------------------------------------------------
 // The vm: RMMZ stubs only where the plugins touch the engine (as tools/test_strata_foundation.js).
 
-function setup(sources, tag) {
+function setup(sources, tag, zRange = "legacy") {
     const list = {};
     vm.runInNewContext(fs.readFileSync(path.join(ROOT, "game/js/plugins.js"), "utf8"), list);
     const ns = {}, warnings = [], errors = [];
@@ -245,6 +247,8 @@ function setup(sources, tag) {
         $gameSystem: {}, $gameScreen: { weatherType: () => "none", weatherPower: () => 0, changeWeather() {} },
         $gameTimer: {}, $gameSwitches: {}, $gameVariables: {}, $gameSelfSwitches: {}, $gameActors: {}, $gameParty: {}
     };
+    // Only a requested range is visible. The host environment is not copied, so an ambient DEUS_Z_RANGE cannot move the default world.
+    if (zRange) env.process = { env: { DEUS_Z_RANGE: String(zRange) } };
     env.window = env;
     env.$deusWorldCatalog = env.$ufWorldCatalog;
     env.Tilemap.TILE_ID_A1 = 2048;
