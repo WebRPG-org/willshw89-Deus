@@ -1,50 +1,60 @@
 # OPS.PRUNE.02 lane-co writer state
 
 - Date: 2026-09-30
-- Authority: Owner task, MSG-PRUNE-PM-059, BRIEF.md and lane.json.
-- Writer: Codex; branch task/lane-co; base 6a6a5f1b.
-- Claim released at writer handoff: archive/game/js/plugins/**; the 41 explicitly listed UF forwarders;
-  DEUS_Colonists.js, DEUS_Combat.js, DEUS_History.js; tool/test path retargets
-  and tools/test_no_loadscript_shims.js; tasks/OPS.PRUNE.02/lane-co/**.
+- Authority: Owner confirmation to keep and commit the five canonical
+  companion-loader exceptions; MSG-PRUNE-PM-059, BRIEF.md and lane.json.
+- Writer: Codex; branch task/lane-co; initial writer commit e12e9e72
+  (base 6a6a5f1b); follow-up starts at 5d319406.
+- Follow-up claim released at handoff: tools/test_no_loadscript_shims.js,
+  REPORT.md, STATE.md and evidence/gates/ under tasks/OPS.PRUNE.02/lane-co/.
 - Excluded: tools/test_time_domains_proof.js (lane-cp), both protected plugins,
   coordinator-owned docs/STATUS.md and docs/VISION.md, pre-existing launch files.
-- Status: archival and retargeting implemented; nine manifest gates pass and
-  the strict new gate fails on five existing canonical callers. Writer handoff;
-  acceptance remains unmet. No independent review or playable claim.
-- Reconciliation: 43 live UF files, 41 forwarders, 2 protected implementations.
+- Status: archival and retargeting implemented; authorized gate alignment ready
+  for independent review. All 10/10 manifest gate records show exit 0. No
+  independent review, WBS closure or playable claim.
+- Reconciliation: 43 original live UF files, 41 archived forwarders,
+  2 protected implementations retained in game/js/plugins/.
 - Cross-lane dependency: the untouched L3 test imports ../game/js/plugins/UF_World.js.
-  The new gate will report this exact deferred reference explicitly; other stale
-  imports remain failures. L3 must retarget it before integration closure.
+  The gate reports this exact deferred reference explicitly; other stale imports
+  remain failures. L3 must retarget it before integration closure.
 - Historical tools: old-save fixture hashes and the pre-rename archive repair
   refer to historical implementations, not the 41 forwarders; retain those paths.
-- Required proof: all 10 manifest gates; all three new mutant names killed;
-  protected-file and L3-test byte identity; all 41 git moves retain original bytes.
-- Remaining integration gates: independent Grok review, coordinator merge gate,
-  RMMZ editor F5/F8 boot proof and Owner approval. No merge or push authorized here.
+- Remaining integration gates: independent Grok review, coordinator fresh-clone
+  gates and merge gate, RMMZ editor F5/F8 boot proof and Owner acceptance.
+  No merge or push authorized here.
 
-## Acceptance conflict discovered 2026-09-30
+## Gate-definition resolution, 2026-09-30
 
-The Owner message says zero files calling PluginManager.loadScript. BRIEF.md says
-zero loadScript forwarder shims. After the 41 moves, five canonical implementations
-still call it: DEUS_Camera.js:624, DEUS_ColonyOverseer.js:51, DEUS_Core.js:126,
-DEUS_History.js:220 and DEUS_Items.js:44/47 (line numbers before the History edit).
-Four of these files are outside the lane whitelist. Their dependency-loading logic
-has not been changed. An Owner clarification is pending; until answered, the new
-gate enforces the stricter literal requirement and exits 1 on these five files.
-Passing the strict gate would require an authorized runtime change outside L2.
+The Owner explicitly authorized keeping and including CANONICAL_COMPANION_LOADERS
+in the lane commit. L2 requires archiving the 41 loadScript forwarder shims.
+DEUS_Camera.js, DEUS_ColonyOverseer.js, DEUS_Core.js, DEUS_History.js and
+DEUS_Items.js are canonical companion loaders assigned to L9
+(game/js/plugins.js reordering), not forwarder shims. The five-file exception
+list and its skip are included in this follow-up; runtime loader behavior is
+unchanged. No authorization question remains for this commit.
 
-The three named mutants are detected (four scenarios, testing each protected file
-separately). The --mutants aggregate also exits 1 while the strict baseline fails;
-it does not turn existing failures into a passing result. A synthetic clean
-inventory exercises the detector separately from these known live violations.
+## Observed follow-up verification
 
-## Concurrent edit and commit boundary
+- node tools/test_no_loadscript_shims.js: exit 0; 41 required archives,
+  2 protected plugins, 0 violations, 1 L3 deferral.
+- node tools/test_no_loadscript_shims.js --mutants: exit 0; 4/4 scenarios killed
+  across three named mutants (both protected plugins tested separately).
+- node tasks/OPS.PRUNE.02/lane-co/evidence/test_detector.js: exit 0;
+  60 synthetic fixture cases passed.
+- evidence/gates/results.json contains 10/10 passing manifest records. The other
+  nine results retain their original timestamps and logs from e12e9e72 and were
+  not rerun in this follow-up. Exact commands, source blob/SHA-256, pre-commit HEAD
+  and follow-up timestamps are in evidence/gates/authorized_alignment.json.
+- Prior protected-file/L3 byte identity, 41 archive byte comparisons, tool syntax
+  and registration checks remain recorded in the initial writer evidence.
+  They were not rerun in this follow-up.
 
-An unknown concurrent writer added CANONICAL_COMPANION_LOADERS and a skip for
-these five files to tools/test_no_loadscript_shims.js while this writer was
-running verification. Authorization was requested and has not been supplied.
-Only this writer's strict source is staged/committed. The concurrent exceptions
-are preserved in the working copy as an unstaged change. The strict staged source
-was rerun using a byte-identical temporary tool in the same tools directory;
-baseline exit 1, all four mutant scenarios detected. See REPORT.md and
-evidence/concurrent_edit.json. Do not blanket-stage the remaining edit.
+## Historical provenance
+
+evidence/concurrent_edit.json, evidence/gates/concurrent_allowlist_* and the
+individual no_shims_mutant_*.log files preserve the initial pre-authorization
+record. Their pending-authorization and strict-gate failures are historical;
+current acceptance uses results.json and authorized_alignment.json with the
+fresh baseline, aggregate-mutant and fixture logs. The earlier strict baseline
+is also preserved in Git at e12e9e72. See REPORT.md for game translation and
+the remaining review/playtest steps.

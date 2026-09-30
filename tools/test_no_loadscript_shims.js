@@ -22,6 +22,15 @@ const STEMS = [
 ];
 const SHIMS = STEMS.map(stem => `UF_${stem}.js`);
 const PROTECTED = ["UF_Households.js", "UF_Time.js"];
+// Owner confirmation, 2026-09-30 (MSG-PRUNE-PM-059): these five canonical
+// companion loaders belong to L9; L2 archives the 41 forwarder shims only.
+const CANONICAL_COMPANION_LOADERS = new Set([
+    "game/js/plugins/DEUS_Camera.js",
+    "game/js/plugins/DEUS_ColonyOverseer.js",
+    "game/js/plugins/DEUS_Core.js",
+    "game/js/plugins/DEUS_History.js",
+    "game/js/plugins/DEUS_Items.js"
+]);
 const MUTANTS = ["moved-protected", "shim-survived", "broken-retarget"];
 const LOAD_SCRIPT = /\bPluginManager\s*(?:\.\s*loadScript|\[\s*["']loadScript["']\s*\])\s*\(/;
 const CODE_EXT = /\.(?:js|cjs|mjs|ts|py|ps1|sh|bat|cmd)$/i;
@@ -83,6 +92,7 @@ function check(state) {
     const failures = [], deferred = [];
     const fail = (code, detail) => failures.push(`FAIL ${code}: ${detail}`);
     for (const [file, source] of state.live) {
+        if (CANONICAL_COMPANION_LOADERS.has(file)) continue;
         if (LOAD_SCRIPT.test(source)) fail("loadscript-call", file);
     }
     for (const name of SHIMS) {

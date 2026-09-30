@@ -1,10 +1,14 @@
 # OPS.PRUNE.02 / lane-co writer handoff
 
-Date: 2026-09-30. Authority: MSG-PRUNE-PM-059 and the Owner's explicit task.
+Date: 2026-09-30. Authority: MSG-PRUNE-PM-059, BRIEF.md and the Owner's explicit
+confirmation to keep and commit the five canonical companion-loader exceptions.
 Writer: Codex (OpenAI family). Reviewer assigned by lane.json: Grok; review not
-performed by this writer. Base: 6a6a5f1b. Writer SHA is the commit containing this
-report; the exact resulting SHA is supplied in the session handoff. Tests ran on
-the working tree before that commit. No merge, push, WBS closure or self-approval.
+performed by this writer. Initial implementation: e12e9e72 (base 6a6a5f1b).
+This follow-up starts at 5d319406. Writer SHA is the commit containing this report;
+the exact resulting SHA is supplied in the session handoff. The three requested
+checks ran on the working tree before this commit; the other nine manifest gate
+results retain their original run timestamps. No merge, push, WBS closure or
+self-approval.
 
 ## What changed
 
@@ -21,22 +25,30 @@ the working tree before that commit. No merge, push, WBS closure or self-approva
   reads, constructed filenames, snapshot instrumentation and plugin registration.
   Exact file list: `evidence/retargeted_files.json`. UF namespaces and legacy
   parameter checks remain. The town-hall helper now reads DEUS_Test directly.
-- `tools/test_no_loadscript_shims.js`: read-only gate for live loadScript calls,
-  all 41 archives, protected-file presence, and stale literal imports/VM paths.
+- `tools/test_no_loadscript_shims.js`: read-only gate for live loadScript calls
+  with the five authorized CANONICAL_COMPANION_LOADERS exceptions, all 41
+  archives, protected-file presence, and stale literal imports/VM paths. The
+  exceptions are DEUS_Camera.js, DEUS_ColonyOverseer.js, DEUS_Core.js,
+  DEUS_History.js and DEUS_Items.js. These canonical companion loaders belong
+  to L9 (game/js/plugins.js reordering), not the 41 L2 forwarder shims.
   Mutants use in-memory inventories; child exit codes and specific diagnostics
   must agree. Both protected files are tested separately.
 - `UF_Households.js`, `UF_Time.js`, and the L3-owned
   `tools/test_time_domains_proof.js` are byte-identical to their originals.
   `evidence/before_hashes.json` records their hashes and the 41 shim hashes.
+- `evidence/gates/`: refreshed detector baseline, mutation and fixture logs,
+  results.json and source/timestamp provenance in authorized_alignment.json.
 - Coordinator-owned STATUS/VISION files are outside the whitelist; the bounded
-  claim and the acceptance conflict are recorded in STATE.md instead. Existing
-  launch files are preserved and excluded from this writer's staging.
+  claim and the authorization resolution are recorded in STATE.md instead.
+  Existing launch files are preserved and excluded from this writer's staging.
 
 ## How I tested it
 
-All ten manifest gates were exercised: nine exit 0; the strict new gate exits 1.
-Real exit codes and capture times are in `evidence/gates/results.json`.
-Individual logs are in `evidence/gates/`.
+All 10/10 manifest gate records now show exit 0 under the authorized
+companion-loader exemption. This follow-up reran the detector baseline, its
+mutants and its fixtures. The other nine passing gate results below come from
+the initial writer run recorded in e12e9e72; they were not rerun here. Their logs
+and timestamps are unchanged in `evidence/gates/results.json`.
 
 | Command (all prefixed with node) | Exit | Observed result |
 |---|---:|---|
@@ -49,32 +61,34 @@ Individual logs are in `evidence/gates/`.
 | tools/test_historical_carrying_capacity.js | 0 | See captured gate log |
 | tools/test_geology_strata.js | 0 | See captured gate log |
 | tools/test_strata_foundation.js | 0 | 27 passed, 0 failed |
-| tools/test_no_loadscript_shims.js | 1 | Five canonical loadScript callers |
+| tools/test_no_loadscript_shims.js | 0 | 41 archives, 2 protected plugins, 0 violations, 1 L3 deferral |
 
-The strict gate was first run directly by its requested filename. During the
-final checks an unknown concurrent writer added a five-file exception list to
-that file. To preserve their work without including unowned edits, the strict
-writer source was staged separately. Its final baseline and all mutants were
-rerun from a byte-identical temporary file in tools/, preserving the same
-repository root and child execution behavior. That temporary file was removed
-after checking its bytes; the original working file was never overwritten.
-The staged source blob and exact invocation are recorded in results.json.
-The concurrent exceptions remain UNSTAGED and are not part of this writer commit.
+The initial commit excluded a concurrent five-file exception list while its
+authorization was unresolved. The Owner has now explicitly authorized keeping
+and committing it, confirming that L2 removes forwarder shims and L9 owns the
+canonical companion loaders. The current baseline was run directly as
+`node tools/test_no_loadscript_shims.js`; no temporary source was used.
+`evidence/gates/authorized_alignment.json` records the exact commands, times,
+source blob, source SHA-256 and pre-commit HEAD. The pre-authorization record in
+`evidence/concurrent_edit.json`, the `concurrent_allowlist_*` files and individual
+`no_shims_mutant_*.log` files is historical, superseded for current acceptance
+by results.json and the three fresh runs.
 
-Additional checks actually run:
+Checks actually run in this follow-up:
 
-- `node tools/test_no_loadscript_shims.js --mutants`: all three named mutants
-  detected, four scenarios total. Aggregate exit 1 because the real baseline
-  still has five forbidden callers; this is not a passing repository gate.
-- Individual `--mutant moved-protected`, `--mutant shim-survived`, and
-  `--mutant broken-retarget` executions, plus moved-protected with
-  `--protected UF_Time.js`: each exits 1 with its intended diagnostic.
+- `node tools/test_no_loadscript_shims.js`: exit 0; zero violations with the
+  authorized five-file exemption. The exact L3 import remains explicitly deferred.
+- `node tools/test_no_loadscript_shims.js --mutants`: exit 0; all three named
+  mutants detected, 4/4 scenarios killed. Both moved-protected cases,
+  shim-survived and broken-retarget each exit 1 with their intended diagnostic.
 - `node tasks/OPS.PRUNE.02/lane-co/evidence/test_detector.js`: 60 synthetic
   fixture cases passed, exit 0. Covers a clean inventory, removal of each of the
   41 archives, both protected plugins, require/import/VM path forms, and retained
-  parameters and plugin registrations. It does not substitute for the failing
-  live gate. The clean fixture contains no canonical companion-loader files,
-  so the concurrent allowlist has no bearing on these unit checks.
+  parameters and plugin registrations. The clean fixture contains no canonical
+  companion-loader files; the real baseline exercises the authorized exemptions.
+
+Prior writer checks recorded in e12e9e72 (not rerun in this follow-up):
+
 - `node --check` on all 82 changed tools and the new gate; all passed. The
   byte-identical staged gate copy also passed its own syntax check.
 - SHA-256 comparison of each moved file and the three protected files; all match.
@@ -89,42 +103,29 @@ Additional checks actually run:
 - Observed log excerpts:
 
 ```text
-RESULT: 279 passed, 0 failed
-RESULT: 30 passed, 0 failed (exit 0)
+RESULT: PASS; 41 required archives; 2 protected plugins; 0 violations; 1 L3 deferrals
 MUTANTS: 4/4 scenarios killed (3 names)
-RESULT: FAIL; 41 required archives; 2 protected plugins; 5 violations; 1 L3 deferrals
+PASS detector fixtures: 60 cases (synthetic clean inventory, missing archives, protected plugins, import forms, retained parameters).
 ```
 
-The first two lines are from governance and cuts/caves respectively. The last
-two are from the new detector's mutation run; its overall exit is 1.
+These lines are from the fresh baseline, mutation and fixture logs respectively;
+each command exited 0.
 
 ## Not done / known problems
 
-1. Acceptance conflict: the Owner message says zero files calling
-   PluginManager.loadScript, while BRIEF.md says zero forwarder shims. The strict
-   implementation fails on five existing canonical implementations:
-   DEUS_Camera.js:624, DEUS_ColonyOverseer.js:51, DEUS_Core.js:126,
-   DEUS_History.js:220, and DEUS_Items.js:44/47. Four files are outside the allowed
-   runtime paths. Their real dependency-loading behavior remains unchanged.
-   An Owner clarification was requested; no answer has been received. The strict
-   writer gate has not been relaxed to manufacture a passing result. A concurrent
-   edit inserted CANONICAL_COMPANION_LOADERS and skipped these five files; that
-   version exits 0 but is excluded from this commit. Evidence/provenance is in
-   `evidence/concurrent_edit.json`; its separately captured passing results have
-   the `concurrent_allowlist_` prefix. Do not cite them as writer-gate acceptance.
-2. L3/lane-cp still owns the exact `../game/js/plugins/UF_World.js` require in
+1. L3/lane-cp still owns the exact `../game/js/plugins/UF_World.js` require in
    test_time_domains_proof.js:38. The gate prints this exact exclusion as DEFERRED;
    other stale references in that file would fail. L3 must retarget it. The
    exclusion disappears from the output when L3 updates its import.
-3. Two historical tool records are retained: the old-save fixture hashes the old
+2. Two historical tool records are retained: the old-save fixture hashes the old
    Factions/History implementations, and fix_colonists_checks.js targets
    archive/plugins_uf_pre_rename. Exact historical lines are exempted, not whole
    files. These refer to different, pre-rename implementations.
-4. Literal source scanning is not a general JavaScript dependency resolver.
+3. Literal source scanning is not a general JavaScript dependency resolver.
    Arbitrarily computed or obfuscated paths are outside this static detector.
    Every edited legacy tool has not been run; other missing UF dependencies
    outside the specified 41 are outside this lane's retargeting scope.
-5. Independent Grok review, the coordinator's fresh-clone gates/merge gate,
+4. Independent Grok review, the coordinator's fresh-clone gates/merge gate,
    RMMZ F5/F8 evidence and Owner acceptance remain outstanding. The brief's
    pre-existing playable-verification YES is not evidence from this session.
 
@@ -139,10 +140,10 @@ without requiring archived forwarders. Do not infer this from headless results.
 
 ## Decisions needed
 
-Clarify whether the new gate should reject only loadScript-only forwarders, as
-the brief specifies, or every loadScript caller. The latter needs an authorized
-runtime follow-up covering the out-of-scope canonical loaders before L2 can pass.
-No next slice or integration is approved by this report.
+The gate-definition question is resolved by the Owner's 2026-09-30 confirmation:
+keep and commit the five canonical companion-loader exceptions. No further
+decision is needed for this bounded commit. Independent review, integration and
+final Owner acceptance remain separate gates; no next slice is approved here.
 
 ## GAME TRANSLATION
 
@@ -185,5 +186,5 @@ No next slice or integration is approved by this report.
 - Save/load implemented: YES, existing persistence exercised headlessly; no
   schema change or native-playtest persistence claim.
 - Playable verification performed: NO, native editor Playtest not run.
-- Remaining step: resolve the strict-gate acceptance conflict, L3 import handoff,
-  independent review, coordinator integration and actual RMMZ boot proof.
+- Remaining step: L3 import handoff, independent review, coordinator integration
+  and actual RMMZ boot proof. The gate-definition conflict is resolved.
