@@ -2553,12 +2553,13 @@
         for (let z = r.zMin; z <= r.zMax; z++) v[z - r.zMin] = z >= CORE.zMin && z <= CORE.zMax ? core[z - CORE.zMin] : outerBaseline(z, size);
         const topCaps = materializeCaps(v, core[core.length - 1], r, size);
         if (topCaps && topCaps.size) v[r.n - 1].topCaps = topCaps;
+        materializeDeepCuts(v, core, r, size);
         stats.sealMs = performance.now() - t1;
         volumes.set(key, v);
         // WG.00.41: DEC-030's 3x3 grid (and later, larger grids) needs every area of the world to fit at once, or
         // ensureWorldLevels and checksumOf (each looping every area for every core level) evict and regenerate the
         // same areas' full volumes over and over. VOLUME_KEEP alone (3) is still the floor for a 1x1/legacy world.
-        const keep = Math.max(VOLUME_KEEP, st && st.areasX ? st.areasX * st.areasY : 1);
+        const keep = Math.max(VOLUME_KEEP, areasX * areasY);
         while (volumes.size > keep) volumes.delete(volumes.keys().next().value);
         return v;
     }
@@ -2572,18 +2573,74 @@
         const caps = b2.caps || new Map();
         if (!caps.size) return null;
         const rest = new Map();
+        const maxRockLevel = Math.min(r.zMax, 11);
+        const maxAvailable = Math.max(0, (maxRockLevel - CORE.zMax) * STRATA);
         for (const [i, code] of caps) {
-            const mat = code & 0xff, t = (code >> 8) & 0xff, x = i % size, y = (i - x) / size;
+            const mat = code & 0xff, t0 = (code >> 8) & 0xff, x = i % size, y = (i - x) / size;
+            const t = maxAvailable > 12 ? Math.min(maxAvailable, Math.round(t0 + (t0 / 12) * (maxAvailable - 12))) : t0;
             let k = 0;
             for (; k < t; k++) {
                 const z = CORE.zMax + 1 + ((k / STRATA) | 0);
-                if (z > r.zMax) break;
+                if (z > maxRockLevel) break;
                 storeSetStratum(v[z - r.zMin], x, y, k % STRATA, mat);
             }
-            if (k < t) rest.set(i, mat | ((t - k) << 8));
+            if (k < t && maxRockLevel === r.zMax) rest.set(i, mat | ((t - k) << 8));
             stats.capStrataMaterialized = (stats.capStrataMaterialized || 0) + k;
         }
         return rest;
+    }
+
+    // Natural cuts reaching the bottom layer: when the world extends below the core (r.zMin < CORE.zMin,
+    // e.g. -16..+15), abyssal vertical cuts plunge sheerly down through subterranean levels Z = -3..r.zMin.
+    // Bedrock floor S0 at r.zMin is preserved with 4 ft of headroom (S1..S4 as M_AIR).
+    function materializeDeepCuts(v, core, r, size) {
+        if (r.zMin >= CORE.zMin) return;
+        const bMinus2 = core[0];
+        const deepCuts = bMinus2.deepCuts;
+        if (!deepCuts || !deepCuts.length) return;
+        const zBedrock = r.zMin;
+        for (const entry of deepCuts) {
+            const i = entry.i, fromE = entry.fromE;
+            const x = i % size, y = (i - x) / size;
+
+            // Guard: if any core level has fluid in this column, preserve it (DEC-001)
+            let fluid = false;
+            for (let li = 0; li < 5; li++) {
+                storeLocate(core[li], i);
+                for (let s = 0; s < STRATA; s++) {
+                    if (FLUID_B[rdM[rdO + s]] === 1) { fluid = true; break; }
+                }
+                if (fluid) break;
+            }
+            if (fluid) continue;
+
+            // 1. In the core: clear remaining solid strata from fromE - 1 down to elevation 0 (Level -2 S0)
+            for (let e = fromE - 1; e >= 0; e--) {
+                const li = (e / STRATA) | 0, b = core[li], s = e % STRATA;
+                storeSetStratum(b, x, y, s, M_AIR);
+                if (b.strata && b.strata.m) b.strata.m[i * STRATA + s] = M_AIR;
+                if (b.conn) b.conn[i >> 1] &= ~(15 << ((i & 1) << 2));
+            }
+
+            // 2. On subterranean levels Z = -3 down to zBedrock + 1 (e.g. Z = -3..-15): all 5 strata to M_AIR
+            for (let z = CORE.zMin - 1; z > zBedrock; z--) {
+                const b = v[z - r.zMin];
+                for (let s = 0; s < STRATA; s++) {
+                    storeSetStratum(b, x, y, s, M_AIR);
+                    if (b.strata && b.strata.m) b.strata.m[i * STRATA + s] = M_AIR;
+                }
+            }
+
+            // 3. On bedrock level zBedrock (e.g. Z = -16):
+            // S0 remains solid bedrock/stone (M_STONE).
+            // S1..S4 (4 ft headroom) are cleared to M_AIR so derivePacked derives shape: "floor".
+            const bBed = v[zBedrock - r.zMin];
+            for (let s = 1; s < STRATA; s++) {
+                storeSetStratum(bBed, x, y, s, M_AIR);
+                if (bBed.strata && bBed.strata.m) bBed.strata.m[i * STRATA + s] = M_AIR;
+            }
+            stats.deepCutStrataMaterialized = (stats.deepCutStrataMaterialized || 0) + (CORE.zMin - zBedrock) * STRATA;
+        }
     }
 
     /**
@@ -2611,6 +2668,7 @@
         const out = { gen, area: { x: ax, y: ay }, cuts: [], caves: [], shafts: [], skylights: [], massifCells: 0, capCells: 0,
             carvedStrata: 0, cutCells: 0, caveCells: 0, rampsAdded: 0, floatingRemoved: 0, ms: 0 };
         bs[4].caps = new Map();
+        Object.defineProperty(bs[0], "deepCuts", { value: [], writable: true, configurable: true, enumerable: false });
 
         // The column as one elevation scale: stratum e of cell i.
         const getE = (i, e) => M[(e / STRATA) | 0][i * STRATA + (e % STRATA)];
@@ -3137,6 +3195,8 @@
                 if (depth > f.maxDepth) f.maxDepth = depth;
                 if (F < f.minFloor) { f.minFloor = F; f.deepest = { x: i % size, y: (i / size) | 0 }; }
             }
+            const isAbyssal = f && (f.profile === "vertical" || f.profile === "throat") && (f.depthClass === "deep" || f.depthClass === "z2");
+            if (isAbyssal && F <= f.bed + 1) bs[0].deepCuts.push({ i, fromE: F });
             top[i] = topOf(i);
             touched[i] |= 1;
         }
