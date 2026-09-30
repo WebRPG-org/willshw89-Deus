@@ -1,0 +1,39 @@
+{
+  "lane": "lane-cw2",
+  "taskId": "NAT.03.01",
+  "branch": "task/lane-cw2",
+  "writer": "codex",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "game/js/plugins/DEUS_Fluid.js",
+    "game/js/sim/hydro/**",
+    "docs/systems/DEUS_Fluid.md",
+    "tools/test_fluid*.js",
+    "tools/test_strata_fluid_reconciliation.js",
+    "tasks/NAT.03.01/lane-cw/**",
+    "tasks/NAT.03.01/lane-cw2/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_fluid_correctness_lane_cw.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_strata_fluid_reconciliation.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}
