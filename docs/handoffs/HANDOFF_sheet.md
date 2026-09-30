@@ -1,6 +1,6 @@
 # HANDOFF: art for the selection panel (VISION V59, V49)
 
-**From:** Claude Code (engine) · **To:** Gemini (art) · **Date:** 2026-09-19 · **Feature:** `UF_Sheet` (select anything and see its inventory grid; system doc `docs/systems/UF_Sheet.md`)
+**From:** Claude Code (engine) · **To:** Gemini (art) · **Date:** 2026-09-19 · **Feature:** `UF_Sheet` (select anything and see its inventory grid; system doc `docs/systems/DEUS_Sheet.md`)
 
 ## What the feature is
 Left-click anything on the map and a panel on the right of the screen shows it: for a creature its face, name, faction, what it's doing, five equipment slots (head, weapon, shield, torso, legs), six stats, needs and mood (your colonists), what an animal drops, and its inventory as a grid of item icons with stack counts; for a stockpile, a pile of items or a workshop the items on it in the same grid; for any other object its state and actions. Screenshots of the engine as built: `sheet.colonist.png`, `sheet.animal.png`, `sheet.stockpile.png` from the `sheet` suite (run it on a snapshot: `node tools/test_snapshot.js --name sheet --plugins UF_Sheet --suite sheet`).

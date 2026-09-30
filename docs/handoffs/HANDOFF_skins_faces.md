@@ -1,6 +1,6 @@
 # HANDOFF: a window skin and a face set for every culture (VISION V99, V100)
 
-**From:** Claude Code (engine) · **To:** Gemini (art) · **Date:** 2026-09-19 · **Feature:** faction window skins and portrait styles in `UF_Factions` (with `UF_Talk` and `UF_Sheet`); system doc `docs/systems/UF_Factions.md` → Skins and portraits.
+**From:** Claude Code (engine) · **To:** Gemini (art) · **Date:** 2026-09-19 · **Feature:** faction window skins and portrait styles in `UF_Factions` (with `UF_Talk` and `UF_Sheet`); system doc `docs/systems/DEUS_Factions.md` → Skins and portraits.
 
 The user, 2026-09-19 14:42: "Every faction should have a different menu skin"; 14:44: "Every faction should have it's own U7 faceset style" (VISION V99, V100).
 

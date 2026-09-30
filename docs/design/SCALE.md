@@ -207,12 +207,12 @@ Why this encoding: every existing "is anything on this cell" test treats a nonze
 
 ### 7.9 UF_Anim
 - Ghosts and remains already copy the unit's own frame (bitmap and frame rectangle). With frames of any size they are at the unit's scale, provided the rectangle comes from the sidecar's `frameWidth`/`frameHeight`, which is already the rule for sheet columns.
-- The code collapse rotates the whole 48×48 frame about its centre (known limit in `docs/systems/UF_Anim.md`). It must pivot on the body's ground centre (the sidecar anchor). Its 6 px drop and the 6 px lunge scale with the body: `6 × body height in cells`. A horse's fall should not look like a hare's.
+- The code collapse rotates the whole 48×48 frame about its centre (known limit in `docs/systems/DEUS_Anim.md`). It must pivot on the body's ground centre (the sidecar anchor). Its 6 px drop and the 6 px lunge scale with the body: `6 × body height in cells`. A horse's fall should not look like a hare's.
 - Placeholders: the ghost and the remains apply the same integer `placeholderScale` as the live sprite.
 - View culling margin and the `perf` budget (0.3 ms) are re-measured with 112 px frames.
 
 ### 7.10 UF_Camera: zoom levels
-Today: levels `[1, 2/3, 1/3]`, start ⅔. Those steps were chosen for 3× art (`docs/systems/UF_Camera.md`: 1 = 3×, ⅔ = 2×, ⅓ = 1×). With one art pixel per screen pixel (U2), no zoom-out step can be exact: ⅔ and ⅓ drop art pixels unevenly (the "sampled" panels). The engine draws character and object bitmaps bilinear (RMMZ's default `Bitmap.smooth = true`). PIXI 5.3's default (`MIPMAP_TEXTURES: 1`, POW2) builds mipmaps only for power-of-two textures, which RMMZ sheets rarely are, so at ⅓ it samples, close to the sampled panel. The ground tilemap renders NEAREST.
+Today: levels `[1, 2/3, 1/3]`, start ⅔. Those steps were chosen for 3× art (`docs/systems/DEUS_Camera.md`: 1 = 3×, ⅔ = 2×, ⅓ = 1×). With one art pixel per screen pixel (U2), no zoom-out step can be exact: ⅔ and ⅓ drop art pixels unevenly (the "sampled" panels). The engine draws character and object bitmaps bilinear (RMMZ's default `Bitmap.smooth = true`). PIXI 5.3's default (`MIPMAP_TEXTURES: 1`, POW2) builds mipmaps only for power-of-two textures, which RMMZ sheets rarely are, so at ⅓ it samples, close to the sampled panel. The ground tilemap renders NEAREST.
 
 Recommended for B: **levels `[2, 1, 1/2, 1/4]`, start 1.**
 - 2 is a zoom-in: exact (every pixel doubled), for reading faces, poses and wounds up close. The `zoom2_exact` check proves the 2× view keeps the art exact. On screen a person is 100 px tall.

@@ -71,7 +71,7 @@ Furthermore, three mutants survived `--no-suites`:
    - Z-2 S0 stone, S1–S4 lava, -1 solid -> `continuousAirHeight` returns `0`.
    - `airRunAt` produces identical results on the same fixture.
 2. Add explicit check or mutant asserting that cave voids with `C - F < 3` are rejected.
-3. Update `docs/systems/UF_Levels.md` to clarify that `continuousAirHeight` measures continuous **air** above the floor (stopping on solid OR fluid), aligning with the specification.
+3. Update `docs/systems/DEUS_Levels.md` to clarify that `continuousAirHeight` measures continuous **air** above the floor (stopping on solid OR fluid), aligning with the specification.
 
 ---
 

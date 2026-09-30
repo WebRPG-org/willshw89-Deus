@@ -567,7 +567,7 @@ Events emitted: `personality:rolled(unit)`, `personality:interaction({ kind, a, 
 ---
 
 ## 11. Checks (suite `personality`, on request: `node tools/run_tests.js personality --game <snapshot>`)
-Fixed seed; run on a snapshot (docs/systems/UF_Test.md). Each check must be seen failing once; the plugin parameter `TestProvoke` (honoured only in `--uf-test` runs, set only in a snapshot's `plugins.js`, `all` or a comma list) breaks what the check guards:
+Fixed seed; run on a snapshot (docs/systems/DEUS_Test.md). Each check must be seen failing once; the plugin parameter `TestProvoke` (honoured only in `--uf-test` runs, set only in a snapshot's `plugins.js`, `all` or a comma list) breaks what the check guards:
 
 | Check | FAILs when | Provoked by |
 |---|---|---|

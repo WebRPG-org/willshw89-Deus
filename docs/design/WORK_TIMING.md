@@ -49,8 +49,8 @@ Sources read on 2026-09-19: the vanilla reaction and building raws in `data/vani
 | Other job types hard-code map updates: drink and eat 60, talk 180, mate 120, sleep 600 or `params.frames` (UF_Colonists passes hours × 3600), hunt 60 by default, dismantle 60, dig 80, fish 200 with its own seeded 2-in-3 catch roll | `UF_Jobs.js` lines 54–56, 463, 528, 568; `UF_Colonists.js` line 949; `UF_Interact.js` lines 50–54, 182–183 |
 | UF_Fire already converts: douse work = beats × 60 (fill 1, douse 3) | `UF_Fire.js` line 654, catalog `fire.douse` |
 | UF_Floors' `FLOOR_WORK = 4` is meant as beats and is read as 4 map updates | `UF_Floors.js` lines 30, 242 |
-| Skill speed: `UF.Skills.rate = 1 + 0.01 × (level − 1)` (1.98 at 99), applied per map update to every job type, gathering included | `UF_Skills.js` line 594; UF_Skills.md → Effects |
-| Experience per job = `base + perWork × min(progress, 600)`. `perWork` is 0.1 for tick-valued skills and 1 for beat-valued ones. So building a furnace pays 5.8 building xp against 17 for a campfire | `UF_Skills.js` lines 516–522; UF_Skills.md → Known limits |
+| Skill speed: `UF.Skills.rate = 1 + 0.01 × (level − 1)` (1.98 at 99), applied per map update to every job type, gathering included | `UF_Skills.js` line 594; docs/archive/systems/UF_Skills.md → Effects |
+| Experience per job = `base + perWork × min(progress, 600)`. `perWork` is 0.1 for tick-valued skills and 1 for beat-valued ones. So building a furnace pays 5.8 building xp against 17 for a campfire | `UF_Skills.js` lines 516–522; docs/archive/systems/UF_Skills.md → Known limits |
 | Nothing fails: every craft makes its outputs, and every object action changes the object when its work is done | `UF_Jobs.js` lines 237–241, 393–406 |
 | Combat has its own tick: 36 map updates (0.6 s at ×1) | `UF_Combat.js` lines 21, 63 |
 
@@ -556,7 +556,7 @@ The required level is **not** written here. It belongs to `skills.unlocks` (the 
 - **`onJobDone`** returns without experience when `job.result.outcome` is `burnt` or `wasted` (the extra-yield roll is skipped too).
 - **`rate()` is unchanged.** UF_Jobs no longer calls it for attempt actions (W1) or for construction jobs, which use f(B) × g(T).
 - **`jobXp`** is unchanged in code: it reads `job.progress`, which now holds nominal beats. The catalog's `perWork` and `workCap` change (§6.7).
-- **UF_Skills.md:** its Effects and Known limits change (the "mix ticks and beats" limit goes).
+- **docs/archive/systems/UF_Skills.md:** its Effects and Known limits change (the "mix ticks and beats" limit goes).
 
 ### 10.3 The smallest edits to other files (each listed in the build's report)
 | File (owner, claim on 2026-09-19) | Line(s) | Change |

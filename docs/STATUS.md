@@ -133,7 +133,7 @@ Active tasks, open branches, and pending review submissions:
 | `task/lane-e` | `lane-e` (`WG.00.09`) | Pre-attack on depth rendering | PAUSED at 05948e9c |
 | `task/lane-h` | `lane-h` (`WG.00.08`) | Z-2 cut proof & fluid hardening | In Review (`e3af4cfa`) |
 | `task/lane-pm-streamline` | `lane-pm-streamline` | PM tooling streamlining | In Flight (`472de247`) |
-| `task/lane-cu` | `lane-cu` (`OPS.PRUNE.06`) | L6: Documentation archival (15 safe docs) & renaming 33 live-system specs | Staged / Manifest initialized |
+| `task/lane-cu` | `lane-cu` (`OPS.PRUNE.06`) | L6: Documentation archival (15 safe docs), 33 canonical live specs, Colonists reconciliation, repository references & preservation test | Codex writer implementation 2026-09-30; independent Grok review and PM integration pending. [Documentation index](systems/README.md) |
 
 ### B. Merged or Reference Branches
 | Branch | Lane / Task | Scope | Status |
@@ -235,4 +235,3 @@ The U7 files below stay on disk and nothing in the catalog draws them. The inven
 - Ground: `game/img/tilesets/U7_Ground_A1.png`, `U7_Ground_A2.png`, `U7_Outside_A1.png`, `U7_Outside_A2.png`, `U7_Dungeon_A1.png`, `U7_Dungeon_A2.png`, `U7_Fortress_B.png`, `U7_Glade_B.png` | SHAPES.VGA flat shapes 4, 23, 5 and others, 3× (AR-001) | nothing (the catalog's tileset is the code-drawn UF_GenGround_A2 with stock Outside_A1, Outside_B and Outside_C)
 - UI still drawn in play: `game/img/faces/U7_Faces.png` (8 portraits), `game/img/system/u7_gump_*.png` (container gumps; `gump_test.png`, `gump_backpack.png`, `gump_barrel.png`, `gump_sack.png` below are byte copies) | FACES.VGA and GUMPS.VGA shapes 0, 1, 2, 5, by tools/extract_u7_assets.ps1 (lines 83–180) | drawn in play: UF_Dialogue 271 and UF_Gumps 215 (faces), UF_Gumps 104–108 (gumps); RMMZ editor data: Actors.json faces of actors 2–9. Not swapped: a code change, see above
 - UI and other extractions, unused: `game/img/system/U7_Window.png`, `U7_Cursor.png`, `U7_Select.png`, `U7_Pointer.png`, `U7_HandPointer.png`, `game/img/system/u7_gumps/`, `gump_*.png`, `paperdoll_*.png`, `game/img/faces/face_*.png`, `actor_*.png`, `monster_*.png`, `test_shape*.png` | earlier extraction, sources not recorded | nothing
-

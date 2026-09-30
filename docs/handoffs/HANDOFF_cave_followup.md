@@ -9,7 +9,7 @@ Natural two-square wall rendering in UF_Levels and constant underground night in
 ## Prepared, uncommitted flora work
 
 - `game/js/plugins/UF_WorldGen.js`: `start.undergroundKit[z]` schema; natural plants across dry pockets; no surface-plant fallback; existing finite mineral pass unchanged.
-- `docs/systems/UF_WorldGen.md`: schema and integration notes.
+- `docs/systems/DEUS_WorldGen.md`: schema and integration notes.
 - `tools/test_z_flora.js`: actual-source WorldGen/Objects VM harness.
 - `tools/fixtures/UF_ZFlora.js`: disposable runtime suite `underground_flora`, not registered live.
 

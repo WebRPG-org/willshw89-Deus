@@ -100,7 +100,7 @@ Counts: 9 done, 29 partial, 27 none (65 rows).
 - **UF:** `UF_WorldGen.js` classifies every cell from eight seeded fields into every DF land and water biome, with three savagery tiers and three alignment tiers, rivers, lakes, an ocean rim and dense plant and stone objects; `UF_Tiles.js` draws the catalog's ground kinds (26 entries on 2026-09-19, the three floor kinds included).
 - **Proof:** `worldgen` 22/22, `biomes` 12/12 (`all_biomes_reachable`, `world_variety`, `region_tiers_exist`, `lakes_or_rivers`), `tiles` 11/11.
 - **Governs:** V27, V30, V67 (the start kit: `worldgen.kit_per_area`, `kit_covers_plan`, `kit_fair`).
-- **Missing:** the upper-earth and deep biome tables of V82 (`RESOURCE_ATLAS.md` §3.2–3.4); a biome-appropriate kit (the kit places oaks and grass tufts on tundra too: `docs/systems/UF_WorldGen.md`, Known limits).
+- **Missing:** the upper-earth and deep biome tables of V82 (`RESOURCE_ATLAS.md` §3.2–3.4); a biome-appropriate kit (the kit places oaks and grass tufts on tundra too: `docs/systems/DEUS_WorldGen.md`, Known limits).
 
 ### 2.2 Materials and geology: partial
 - **DF:** every stone, ore, gem, metal and soil is a material with physical properties (density, hardness, value, and heat properties: counting tag occurrences in the material raws, 114 give a heat capacity and 170 a melting point), laid in soil, sedimentary, igneous and metamorphic layers with veins and clusters.
@@ -191,7 +191,7 @@ Counts: 9 done, 29 partial, 27 none (65 rows).
 - **DF:** hunters track and shoot wild animals, which flee.
 - **UF:** `hunt` jobs (`UF_Jobs.js`) re-plan every 30 ticks as the prey moves; prey flee; colonists hunt when hungry or for the plan; hunting gains experience.
 - **Proof:** `jobs.hunt`, `colonists.hunts`, `wildlife.flees_hunter`, `skills.xp_by_doing` (§11).
-- **Missing:** the kill is work, not combat (`docs/systems/UF_Combat.md`, "Hunting isn't combat"); ranged hunting with ammunition.
+- **Missing:** the kill is work, not combat (`docs/systems/DEUS_Combat.md`, "Hunting isn't combat"); ranged hunting with ammunition.
 
 ### 3.7 Taming, husbandry, breeding and pets: none
 - **DF:** tame animals are kept in pastures, bred, milked (16 tag occurrences in the creature raws), shorn, and their eggs gathered (84 occurrences); some are trained for war or hunting; pack animals and mounts; pets adopt owners.
@@ -256,7 +256,7 @@ Counts: 9 done, 29 partial, 27 none (65 rows).
 - **DF:** skills rise with use, raise speed and quality; teaching and demonstrations since 0.47.01.
 - **UF:** `UF_Skills.js`: 22 skills from 1 to 99 on the OSRS-style curve, experience from jobs and hits, work speed, extra yield, quality rolls, level requirements, a chronicle line when a skilled person dies.
 - **Proof:** `skills` 14/14 (`curve`, `xp_by_doing`, `rate`, `extra_yield`, `death_chronicle`, `saved`).
-- **Missing (V84, claimed by the DF-mechanics run):** unlocks of recipes, resources and abilities by level; the faction Building level; nothing trains farming or healing; `qualityRoll` and `meets` are called by nothing yet (`docs/systems/UF_Skills.md`, Known limits).
+- **Missing (V84, claimed by the DF-mechanics run):** unlocks of recipes, resources and abilities by level; the faction Building level; nothing trains farming or healing; `qualityRoll` and `meets` are called by nothing yet (`docs/archive/systems/UF_Skills.md`, Known limits).
 
 ### 4.8 Work time and difficulty per action (V85, the user's request of 13:40): partial
 - **DF:** every job has its own duration; the worker's skill shortens it; tools and materials matter (harder stone digs slower).
@@ -292,7 +292,7 @@ Counts: 9 done, 29 partial, 27 none (65 rows).
 ### 5.1 Jobs, designations and labors: partial
 - **DF:** designations become jobs; each person has labors switched on or off; a job goes to an idle person with the labor.
 - **UF:** every act is a `UF_Jobs.js` job with a target cell; right-click any cell for designations (`UF_Interact.js`); colonists choose needs, then designations, then the society plan. The catalog has 9 labors for the combat chains, read only for starting-skill weights.
-- **Proof:** `jobs` 17/17, `look.menu_creates_designation`, `look.designation_done_by_colonist`, `colonists.plan_starts_immediately` (§11). **FAIL this run:** `colonists.every_job_is_physical`: "185 colonist jobs finished in the run … 1 changed NOTHING; … first with no change: dig #178", and `look.saved`: "dig #14 after a JsonEx round-trip: missing" (a designation lost in the save; it failed the same way before, `docs/systems/UF_World.md` §6).
+- **Proof:** `jobs` 17/17, `look.menu_creates_designation`, `look.designation_done_by_colonist`, `colonists.plan_starts_immediately` (§11). **FAIL this run:** `colonists.every_job_is_physical`: "185 colonist jobs finished in the run … 1 changed NOTHING; … first with no change: dig #178", and `look.saved`: "dig #14 after a JsonEx round-trip: missing" (a designation lost in the save; it failed the same way before, `docs/systems/DEUS_World.md` §6).
 - **Missing:** per-person labor switches (V43), the faction menu of V49.
 - **Governs:** V5, V17, V34, V35, V43, V49.
 
@@ -311,7 +311,7 @@ Counts: 9 done, 29 partial, 27 none (65 rows).
 - **DF:** walls, floors, stairs, ramps, roofs, bridges, doors, hatches, fortifications, supports; built from delivered materials; deconstruction returns them; unsupported building collapses.
 - **UF:** one object per cell built from items on the cell (`UF_Jobs` `build`), walls drawn two squares tall (`UF_Walls.js`), doors (`UF_Doors.js`), floors (`UF_Floors.js`), dismantling (`UF_Interact`).
 - **Proof:** `jobs.build`, `look.dismantle`, `walls` 7/7, `doors` 12/12, `floors` 11/11 (§11).
-- **Missing:** roofs, stairs, ramps, bridges built in play, supports and collapse (VERTICAL_WORLD §5); a build refused because a unit stands on the site still uses up the items (`docs/systems/UF_World.md` §6, `UF_Jobs.js` line 351, found by reading).
+- **Missing:** roofs, stairs, ramps, bridges built in play, supports and collapse (VERTICAL_WORLD §5); a build refused because a unit stands on the site still uses up the items (`docs/systems/DEUS_World.md` §6, `UF_Jobs.js` line 351, found by reading).
 - **Governs:** V21, V56, V57, V73, V80.
 
 ### 5.5 Mining and digging: partial (surface outcrops)
@@ -327,7 +327,7 @@ Counts: 9 done, 29 partial, 27 none (65 rows).
 
 ### 5.7 Farming: none
 - **DF:** tilled plots, crops by season and ground, planting, harvesting, seeds, fertilising, underground crops.
-- **UF:** `UF_Roads.js` places farm-plot objects beside living sites at generation (`roads.farms_and_wells`); the object has no actions. No sow, tend or harvest job exists, so the farming skill cannot train (`docs/systems/UF_Skills.md`).
+- **UF:** `UF_Roads.js` places farm-plot objects beside living sites at generation (`roads.farms_and_wells`); the object has no actions. No sow, tend or harvest job exists, so the farming skill cannot train (`docs/archive/systems/UF_Skills.md`).
 - **Governs:** V43. **Needs first:** 2.5 (seasons) for crop timing; `CRAFTING.md` §1.7 has a design, not approved.
 
 ### 5.8 Cooking, brewing, food quality and spoilage: partial (cooking only)
@@ -339,8 +339,8 @@ Counts: 9 done, 29 partial, 27 none (65 rows).
 ### 5.9 Stockpiles and hauling: partial
 - **DF:** stockpiles by category, bins and barrels, haulers, wheelbarrows and carts.
 - **UF:** a stockpile object with `stores` tags; the plan's larder step hauls food; `haul` jobs move a stack; designations to haul.
-- **Proof:** `jobs.haul` (§11). **FAIL this run:** `look.hunt_and_haul_options`: `"MISSING" -> no job item null to (null,null)` (the haul designation made no job; the same check failed without other changes before, `docs/systems/UF_World.md` §6).
-- **Missing:** categories, containers, carry limits (`docs/systems/UF_Items.md`), hauling of everything to where it belongs.
+- **Proof:** `jobs.haul` (§11). **FAIL this run:** `look.hunt_and_haul_options`: `"MISSING" -> no job item null to (null,null)` (the haul designation made no job; the same check failed without other changes before, `docs/systems/DEUS_World.md` §6).
+- **Missing:** categories, containers, carry limits (`docs/systems/DEUS_Items.md`), hauling of everything to where it belongs.
 
 ### 5.10 Development and technology: none
 - **DF:** there is no builder tech tree. Each civilization's entity file lists which jobs, buildings and reactions it may use (202 job and 313 reaction permission tags in the entity file), and a civilization's development rises by progress triggers (population, production, trade, wealth); noble positions appear as a fortress grows.
@@ -511,7 +511,7 @@ The order follows three rules: what blocks other rows first, what the user asked
 | tiles | 11/11 | |
 | objects | 17/17 | |
 | items | 15/15 | |
-| jobs | 17/17 | `hunt`, `open_job_taken` and `saved`, which earlier runs failed (`docs/systems/UF_World.md` §6), passed |
+| jobs | 17/17 | `hunt`, `open_job_taken` and `saved`, which earlier runs failed (`docs/systems/DEUS_World.md` §6), passed |
 | colonists | 20/21 | `FAIL colonists.every_job_is_physical - 185 colonist jobs finished in the run: … 1 changed NOTHING; without a target cell: 0; first with no change: dig #178` |
 | overseer | 6/6 | |
 | wildlife | 22/22 | on the 13:29 `UF_Wildlife.js` (B1); also 22/22 on the live file of 13:46 in `gapmap_live2`, with `smoke` 13/13 there |

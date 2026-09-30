@@ -40,7 +40,7 @@ These are the current authorities. Tests recompute them from `Levels.strataAt` b
 - Stratum diff `featureBytes !== hostBytes` is the set of cells 19B actually carved. Existence tests run on that diff. A missing seam exits **2**. An empty diff fails every existence assertion.
 - Surgical fixtures call `Levels.setStrata` on a third vm and never satisfy "generated feature" assertions. `strataAt().changed === false` is required on scanner hits.
 - Checksums cover the 25 material bytes of every column, plus connector nibbles. Shape-grid checksums stay in the 19A suite. A roofed void and an open floor both derive as `floor`.
-- Oracle functions live in the test file. They read `strataAt().bytes` and the frozen tables above. `Levels.continuousAirHeight` (documented alias allowed only if `docs/systems/UF_Levels.md` names exactly one) must return the oracle's integer. A missing function fails the clearance block.
+- Oracle functions live in the test file. They read `strataAt().bytes` and the frozen tables above. `Levels.continuousAirHeight` (documented alias allowed only if `docs/systems/DEUS_Levels.md` names exactly one) must return the oracle's integer. A missing function fails the clearance block.
 - Exit codes: `0` pass, `1` assertion failed, `2` harness or missing mutant anchor.
 - Invocation: `node tools/test_strata_cuts_and_caves.js [--seed=20260923] [--mutant=<name>] [--sweep] [--quiet]`.
 

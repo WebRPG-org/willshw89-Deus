@@ -154,7 +154,7 @@ The checklist item numbers are those of `review_checklist.md` as the Rev 2 revie
 - Probe (Appendix B): 600,000 calls gave 60,000 minutes, each exactly 10 calls apart. There is no float drift, but the clock counts calls, not time.
 - The clock runs from `Scene_Map.update` (`DEUS_Core.js:505-510`) and, explicitly, on TimeSpeed sub-ticks (`DEUS_TimeSpeed.js:236`).
 - It stops while a message is busy (`DEUS_Core.js:305`).
-- The year advances once per game day (`DEUS_Core.js:321-325`). But `docs/systems/UF_History.md:1161` says a year "takes over 100 real hours at ×1". See Q12.
+- The year advances once per game day (`DEUS_Core.js:321-325`). But `docs/systems/DEUS_History.md:1161` says a year "takes over 100 real hours at ×1". See Q12.
 
 **The code disagrees about what a tick is.**
 - `DEUS_Colonists.js:48`: `NEEDS_EVERY = 60; // ticks per needs tick (one game minute)`.
@@ -881,7 +881,7 @@ These are the aggregate representations for L2 regions. "Tracked" and "anonymous
 
 A unit is **tracked**, meaning it is never aggregated, if **any** of these hold:
 - its kind is `person` or `colonist`;
-- it has `data.historicalPersonId` (`docs/systems/UF_History.md:102`);
+- it has `data.historicalPersonId` (`docs/systems/DEUS_History.md:102`);
 - it has a household or ownership record;
 - it is owned or tamed;
 - it has a personal name: one that is neither its species label nor the default `TEST_unit_<id>`;
@@ -1246,13 +1246,13 @@ contents.deusView = { viewLevel, camera, select, plans, fog, minimapDiscovery, a
 | Q3 | Owner | Keep 16x and 32x? | Keep them as best-effort, with the effective rate shown |
 | Q4 | Owner | In `lod` mode, may watching a region change anonymous micro-state (camera as a focus, per DEC-012), or should the camera never change fidelity (`cameraFocus: false`)? | DEC-012 as written (`true`), with the G1-G3 and G5 guarantees |
 | Q5 | Owner | Is "energy" in DEC-012 = fuel + food/drink, with temperature as a boundary condition? | Yes |
-| Q6 | Owner | Deep-history physical traces vs INV-SIM-01 / V134 and `UF_History.md:106` (§14.3) | An "aged world" option; the standard New Game stays at Year 0 |
+| Q6 | Owner | Deep-history physical traces vs INV-SIM-01 / V134 and `docs/systems/DEUS_History.md:106` (§14.3) | An "aged world" option; the standard New Game stays at Year 0 |
 | Q7 | Owner | Ecology ore sprouts (`DEUS_Ecology.js:736-752`) break INV-SIM-03: remove them, or ledger them as an approved source? | Remove the ore outcomes |
 | Q8 | PM | `tools/bench_history_sim.js` exits 1 at `ebeec892` (§14.1). The WBS row SIM.10.01 cites it as meeting its budget | Fix it under the SIM.10.01 retro |
 | Q9 | Coordinator | `docs/ARCHITECTURE.md:18` ("Engine (20 Hz)") contradicts DEC-012. The file is outside Lane M's write set | Update to 10 Hz, citing ADR-003 |
 | Q10 | PM | Region size 32 (chosen) or 16 | 32; SIM.30.04's bench confirms |
 | Q11 | PM | Fog-of-war memory: presentation (`deusView`) until a gameplay rule reads it? | Yes |
-| Q12 | Owner/PM | What is a game year? The code has 1 per game day (`DEUS_Core.js:321-325`); `UF_History.md:1161` says over 100 real hours at 1x | The calendar owner settles it before SIM.30.05 |
+| Q12 | Owner/PM | What is a game year? The code has 1 per game day (`DEUS_Core.js:321-325`); `docs/systems/DEUS_History.md:1161` says over 100 real hours at 1x | The calendar owner settles it before SIM.30.05 |
 | Q13 | PM | Regions per 2-layer slab (Rev 3, §5.1) rather than per DEC-013 band (Rev 2) or full-height column (Rev 1)? | Slabs; SIM.30.04's bench may change `SLAB_SHIFT` |
 | Q14 | Owner | Crowd LOD for people (DEC-014, `docs/OWNER_DECISIONS.md:199-208`, OPEN with PM defaults): no population cap; a budget of fully simulated individuals; the rest as counts that keep the three identity axes (craft, civic office, class) and an obligation level (`docs/OWNER_DECISIONS.md:206`). §7.5 keeps every person tracked by default. If the Owner adopts crowd LOD, persons with no history record, household role or reference could be bucketed under those axes, plus this ADR's own bucket keys (species, age band, sex) and faction and settlement, and promotion would rebuild them. History persons always stay individual | Keep persons tracked until the post-split benchmark sizes the budget |
 | Q15 | PM | SIM.40 (§16, §17, §18) runs in the core, so it needs the terrain sub-lane of SIM.00.05 first. Should that dependency be added to SIM.40.01 and .05 (WBS Rev 24 lists WG.00.17 and SIM.00.01, and SIM.40.01 and SIM.00.01: `docs/worldgen/DEUS_WORLDGEN_WBS.md:533`, `:537`)? | Yes |
@@ -1373,7 +1373,7 @@ On 2026-09-26 at 00:08 CT the Owner said: "that will let us generate worlds with
 **It leaves no physical traces:**
 - `materialize` places only camps and living units (`DEUS_History.js:428-557`).
 - A site's `isRuined` is created false (`DEUS_HistoricalDemographics.js:319`) and validated as false (`:397`). So `site.ruined` (`DEUS_History.js:547`) never gets set.
-- The docs confirm it: the graveyard is "not evidence of a physical grave" (`docs/systems/UF_History.md:93`), and no automatic grave, crypt or ruin placement is authorized (`:106`).
+- The docs confirm it: the graveyard is "not evidence of a physical grave" (`docs/systems/DEUS_History.md:93`), and no automatic grave, crypt or ruin placement is authorized (`:106`).
 
 **Code that places traces exists but can't be reached:**
 - `History.iterateWorldHistory` (`DEUS_History.js:1665-2732`; doc comment `:1658-1664`) writes objects and diffs (`:1704-1712`) and road tiles (`:1845-1862`), and saves `history.roads` and `history.structures` (`:2725-2726`).
@@ -1382,8 +1382,8 @@ On 2026-09-26 at 00:08 CT the Owner said: "that will let us generate worlds with
 - Catalog kinds for traces already exist: `ruin` and `lair` (`UF_WorldCatalog.json:6128-6146`).
 
 **Documented timings** (from the ASTRA runs; not measured by this lane):
-- 500-year demographic trajectories took 8.9–10.6 s of simulation, with the worst year at 66–91 ms (`docs/systems/UF_History.md:192-201`). Both repeats of each seed matched byte for byte (`docs/systems/UF_History.md:207`).
-- In the integration matrix, whose worker times include generation and materialization, a worker took 2.7–3.1 s at age 0 and 10.3–13.5 s at age 500, with about 5 MB world states (`docs/systems/UF_History.md:27`, `:31-44`).
+- 500-year demographic trajectories took 8.9–10.6 s of simulation, with the worst year at 66–91 ms (`docs/systems/DEUS_History.md:192-201`). Both repeats of each seed matched byte for byte (`docs/systems/DEUS_History.md:207`).
+- In the integration matrix, whose worker times include generation and materialization, a worker took 2.7–3.1 s at age 0 and 10.3–13.5 s at age 500, with about 5 MB world states (`docs/systems/DEUS_History.md:27`, `:31-44`).
 
 **Harnesses:**
 - The live headless path runs through `tools/test_history_materialization_and_world_age.js`, `tools/bench_species_biology.js` and `tools/bench_history_demographics.js`.
@@ -1396,15 +1396,15 @@ On 2026-09-26 at 00:08 CT the Owner said: "that will let us generate worlds with
    - the camera is not a focus source, because there is no camera.
 2. **Event bubbles.** The history scheduler's focus sources are *events*, not the camera: a battle at a site, a construction project, a mine being worked, a collapse. When such an event is due, the regions it touches are promoted to L1 (or L0, for a battle's resolution) for a bounded number of ticks, then demoted.
    - Everything else advances with coarse L2 rules at a history cadence. For example, one coarse step per game day in quiet periods is a schedule parameter.
-3. **Traces are ordinary sim data, not flavour text.** A ruin is its `objectDiffs` (rubble, ruin variants, `bones_pile`); a road is its tile diffs; a mine is its strata diffs, plus the items it produced; a grave is an object with an anchor record (`personId`, site, xyz). HIST-11 already requires that anchor schema (`UF_History.md:106`).
+3. **Traces are ordinary sim data, not flavour text.** A ruin is its `objectDiffs` (rubble, ruin variants, `bones_pile`); a road is its tile diffs; a mine is its strata diffs, plus the items it produced; a grave is an object with an anchor record (`personId`, site, xyz). HIST-11 already requires that anchor schema (`docs/systems/DEUS_History.md:106`).
    - Abandoned crafted items are item records with provenance.
    - Battle remains are items and objects.
    - Because they are normal state, they save, render and are conserved like anything else.
 4. **Materials are conserved.** Every stone in a ruin was quarried from strata, and every ingot came from ore that the ledger accounted for (§7.9). The live world *starts from the history run's final state*. There is no second "trace generator" that could invent material. The ledger totals and the checksum at hand-off are recorded, and they must equal the live world's totals at tick 0.
-5. **Deterministic.** The run is a pure function of `(seed, setup parameters)`. Its output checksum is tested twice per seed, as the history harnesses already do with repeat runs (`docs/systems/UF_History.md:194-201`, byte-identical repeats `:207`).
+5. **Deterministic.** The run is a pure function of `(seed, setup parameters)`. Its output checksum is tested twice per seed, as the history harnesses already do with repeat runs (`docs/systems/DEUS_History.md:194-201`, byte-identical repeats `:207`).
 6. **Time budget** (a ceiling; PENDING measurement):
    - world creation with 500 years of deep history on the reference laptop ≤ 60 s, with progress shown;
-   - today's age-500 world takes 10.3–13.5 s per worker, generation and materialization included (`docs/systems/UF_History.md:27`, `:31-44`), and the traces must fit in the rest.
+   - today's age-500 world takes 10.3–13.5 s per worker, generation and materialization included (`docs/systems/DEUS_History.md:27`, `:31-44`), and the traces must fit in the rest.
    - A new bench, a SIM.10 leaf, measures it. Budgets per event bubble come from `lod.promote_ms` / `lod.demote_ms` (§9.2).
    - Event bubbles promote the slabs an event touches (§5.1), so a battle on the surface doesn't promote the deep layers, at any layer count.
 7. **When.** After SIM.30.03 (promotion and demotion), and only after the Owner's decision on §14.3.
@@ -1412,7 +1412,7 @@ On 2026-09-26 at 00:08 CT the Owner said: "that will let us generate worlds with
 ### 14.3 A conflict the Owner must resolve
 
 - INV-SIM-01 (`docs/INVARIANT_REGISTRY.md:51`) says: "Standard New Game begins strictly at World Year 0 (V134). No pre-generated centuries of roads, ruined cities, or exhausted mines."
-- `UF_History.md:106` does not authorize automatic ruin or grave placement.
+- `docs/systems/DEUS_History.md:106` does not authorize automatic ruin or grave placement.
 - The New Game setup already has a year selector, `UF.NewGameSetup.year` (`DEUS_FactionMenus.js:280-292`).
 - **Recommendation (Q6):** keep the *standard* New Game at Year 0. Offer deep history only for a world created with a setup year above 0 (an "aged world"). That needs an Owner amendment of INV-SIM-01 / V134, recorded in `docs/VISION.md` and `docs/OWNER_DECISIONS.md` (neither is in Lane M's write set).
 
@@ -1932,7 +1932,7 @@ Run on 2026-09-26 in the lane-m worktree (`task/lane-m`), in the foreground. Raw
 | `git diff --stat ebeec892 b612bc72 -- game` | empty | 0 |
 | `git diff --name-only ebeec892 b612bc72 -- tools`, excluding `tools/governance/` and `tools/ops/` | 0 files | 0 |
 | `git show b612bc72:docs/OWNER_DECISIONS.md`, `:docs/VISION.md`, `:docs/worldgen/DEUS_WORLDGEN_WBS.md`, `:docs/RISK_REGISTER.md`, `:docs/INVARIANT_REGISTRY.md` | read: DEC-010 to DEC-022, V133 to V151, WBS Rev 24 rows, LIFE-001 to LIFE-004, INV-SIM-01 to 03 | 0 |
-| `git diff --stat b612bc72 e27e8be5 -- game docs/OWNER_DECISIONS.md docs/VISION.md docs/worldgen docs/RISK_REGISTER.md docs/INVARIANT_REGISTRY.md docs/systems/UF_History.md` (`main` after the Lane N merge) | `DEUS_Levels.js` and `DEUS_World.js` only | 0 |
+| `git diff --stat b612bc72 e27e8be5 -- game docs/OWNER_DECISIONS.md docs/VISION.md docs/worldgen docs/RISK_REGISTER.md docs/INVARIANT_REGISTRY.md docs/systems/DEUS_History.md` (`main` after the Lane N merge) | `DEUS_Levels.js` and `DEUS_World.js` only | 0 |
 | `git -C <lane-k worktree> rev-parse HEAD` | `86bf49a9`, which descends from `4da2e734` (`merge-base --is-ancestor`, EXIT 0) | 0 |
 | `git ls-remote origin refs/heads/task/lane-k` | `983a9e46`: the K3 commits are not on `origin` | 0 |
 | `git -C <lane-k worktree> ls-files tasks/WG.00.09b/lane-k/perf` | 3 normal and 3 stress baseline JSON files, plus 2 scripts | 0 |

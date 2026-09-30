@@ -662,7 +662,7 @@ calling(u, k) = clamp( Σ_f k.leaning[f] × (facet_f − 50) / 50  +  k.ethos[fa
   - `tend` (herb);
   - `nest` (clutch);
   - the trade itself (smith, mason, delve, salvage).
-- Study, drill and practice are new experience sources. They are listed here, in ABILITIES §6.2's table for magic (added in this review), and must be added to UF_Skills' contract (`docs/systems/UF_Skills.md`) at the build (§11.2).
+- Study, drill and practice are new experience sources. They are listed here, in ABILITIES §6.2's table for magic (added in this review), and must be added to UF_Skills' contract (`docs/archive/systems/UF_Skills.md`) at the build (§11.2).
 - **Commanders' duty orders:** a commander may also give a `duty` order (weight 40) when the band isn't short of food.
 
 ### 8.5 Orders to class members
@@ -899,7 +899,7 @@ Every file named here is Claude Code's. Before editing one, the build checks `do
   - UF_Abilities registers the one provider that applies `xpMul` (ABILITIES §11.1).
   - Because `add(person, "building", xp)` routes to the faction pool (TECH_TREE §2.1), the same registry carries the mason's `factionXpMul.building`, as long as the modifier runs before the routing.
 - **`addRateModifier` and `addYieldModifier`** are built by the TECH_TREE work (TECH_TREE §7.2; not in `UF_Skills.js` yet). UF_Abilities registers providers for `perkSpeed` and `yieldChance` there, until V85's `perk()` path replaces the rate path.
-- **New experience sources:** `study` (magic), `drill` (the style skill) and `practice` (ranged), paid through `UF.Skills.add`, capped at `trainMaxLevel`. Map them with `UF.Skills.mapJob(...)` to no automatic job experience, because UF_Classes pays them. They are listed in `docs/systems/UF_Skills.md` and ABILITIES §6.2.
+- **New experience sources:** `study` (magic), `drill` (the style skill) and `practice` (ranged), paid through `UF.Skills.add`, capped at `trainMaxLevel`. Map them with `UF.Skills.mapJob(...)` to no automatic job experience, because UF_Classes pays them. They are listed in `docs/archive/systems/UF_Skills.md` and ABILITIES §6.2.
 - **`mapJob("induct", null)`.**
 - The combat level and devotion: ABILITIES A2 (not decided here).
 
@@ -949,7 +949,7 @@ Every file named here is Claude Code's. Before editing one, the build checks `do
 ---
 
 ## 12. Checks (suite `classes`)
-Run on a snapshot of `game/` (docs/systems/UF_Test.md), at ×8 where a check says so. **Every check must be seen failing once** against a sabotaged copy in its own snapshot (the last column), and the FAIL line is quoted in the build report. Test people and seats are `TEST_`-named and placed by the test (`UF.Objects.setIn`, walls, floors) on free land beside the player's camp. The checks read units and objects themselves, so a bug in a summary can't hide a broken rule.
+Run on a snapshot of `game/` (docs/systems/DEUS_Test.md), at ×8 where a check says so. **Every check must be seen failing once** against a sabotaged copy in its own snapshot (the last column), and the FAIL line is quoted in the build report. Test people and seats are `TEST_`-named and placed by the test (`UF.Objects.setIn`, walls, floors) on free land beside the player's camp. The checks read units and objects themselves, so a bug in a summary can't hide a broken rule.
 
 | Check | FAILs when | Provoked by |
 |---|---|---|
@@ -1196,7 +1196,7 @@ Both drafts were written before `PEOPLES.md` and `TECH_TREE.md` existed (both ch
   - ABILITIES AD1 asks for one truth; the owners should pick one list.
   - More than names: TECH_TREE line 210 says class abilities use TECH_TREE's record shape through `UF.Skills.abilities(unit)` and `perk()`, while ABILITIES AD1 and this file put every class ability in `abilities.list`. That is the user's decision CL29.
 - **F4 (PEOPLES.md and ABILITIES.md):** PEOPLES' raise (magic 10, makes a member) and ABILITIES' `wake_the_bones` (magic 15, a bound summon) are different acts. This file keeps both (§4.10) and asks CL21. **Resolved in part by the review:** `wake_the_bones`' summons now take bonds from PEOPLES' one cap (1 + floor(magic / 10)), so a raiser can't hold a full set of risen and a full set of summons at once.
-- **F5 (ABILITIES.md): resolved in the review.** Its records now use this file's class ids, `modify.value` accepts `{ base, perTier }`, `study` is in its magic-experience table, and `source.seat`, `factionXpMul`, `noSeek` and `calm` are in its tables. UF_Skills' contract (`docs/systems/UF_Skills.md`) still needs `study`, `drill` and `practice` at the build.
+- **F5 (ABILITIES.md): resolved in the review.** Its records now use this file's class ids, `modify.value` accepts `{ base, perTier }`, `study` is in its magic-experience table, and `source.seat`, `factionXpMul`, `noSeek` and `calm` are in its tables. UF_Skills' contract (`docs/archive/systems/UF_Skills.md`) still needs `study`, `drill` and `practice` at the build.
 - **F6 (names):** both drafts collided with rank names, THEME T11's ladder, a culture label and OSRS or MMO ability names (§15.3). The `catalog` check here tests equality with all four lists.
 - **F7 (CHAIN_OF_COMMAND.md):** `rankAge` 18 is one age for every people. PEOPLES' stages make kobolds grown at 5 (they live 20–30) and star-born children until 30, so ranks, like classes (D13), should read each people's stages.
 - **F8 (CHAIN_OF_COMMAND.md):** this file needs `UF.Command.addReviewStep` and `UF.Command.addScoreFactor`, neither of which that design has yet (§11.4).
@@ -1207,7 +1207,7 @@ Both drafts were written before `PEOPLES.md` and `TECH_TREE.md` existed (both ch
 
 ## 18. Known limits and not in the first build
 - **Every number is ours and unmeasured:** tiers, traits, duty rates, beats, caps, grade tests and node levels. The checks prove the rules, not the balance. A balance pass belongs to seeded long runs and UF_Combat's review (CRAFTING D12).
-- **Room detection is on the critical path:** the UF_Floors fix, rooms with z (V80), and the uncached room-scan budget problem noted in `docs/systems/UF_Floors.md`.
+- **Room detection is on the critical path:** the UF_Floors fix, rooms with z (V80), and the uncached room-scan budget problem noted in `docs/systems/DEUS_Floors.md`.
 - **Towers, Lens halls, pitheads and crypts need the five levels.** Until upward building exists, towers and Lens halls stop at grade 1, and Wizards and Lens-keepers at tier II.
 - **Four classes wait for mechanics that don't exist yet:** eggs, the mound, raising and constructs. They ship as locked data with honest reasons.
 - **Faith needs** (a worship need, as in DF) are THEME T21's "later"; Comfort waits for V94's thoughts.

@@ -1,6 +1,6 @@
 # HANDOFF: ground cliffs and ground ramps (AR-2100 to AR-2102)
 
-**From:** Claude Code (engine) · **To:** Gemini (art) · **Date:** 2026-09-24 · **Feature:** DEUS-TSK-FABLE-16 part 3, the hard volumetric terrain invariant (owner directive 2026-09-24) · **Requests:** AR-2100, AR-2101, AR-2102 in `docs/ASSET_REQUESTS.md` · **Engine docs:** `docs/systems/UF_Levels.md` → "The ground's column and its cliffs", `docs/systems/UF_WorldGen.md`
+**From:** Claude Code (engine) · **To:** Gemini (art) · **Date:** 2026-09-24 · **Feature:** DEUS-TSK-FABLE-16 part 3, the hard volumetric terrain invariant (owner directive 2026-09-24) · **Requests:** AR-2100, AR-2101, AR-2102 in `docs/ASSET_REQUESTS.md` · **Engine docs:** `docs/systems/DEUS_Levels.md` → "The ground's column and its cliffs", `docs/systems/DEUS_WorldGen.md`
 
 ## 1. What the feature does, and what is built today
 Every hill is now solid all the way down. Where the surface is at +1 or +2, the ground cell under it (z 0) is solid rock, and at +2 the +1 cell is solid too. Seen from the ground level, a hill is a block of impassable rock face with a cliff along its edge:
@@ -45,7 +45,7 @@ Also drawn on the ground from the same B sheet: **stairs down** at the back of e
 1. Put the sheets in `game/img/tilesets/` with the names above; write a note under "Notes for Claude Code" in `docs/ASSET_REQUESTS.md`.
 2. Claude Code checks them (ART_STANDARD §8) and adds the catalog's `levels.look` entries in `game/data/UF_WorldCatalog.json` (with the RMMZ editor closed): `"rock": { "sheet": "UF_Levels_A4", "slot": "A4", "kind": 0 }`, `"soil": { "sheet": "UF_Levels_A4", "slot": "A4", "kind": 1 }`, `"ramp_up": { "sheet": "UF_Levels_B", "slot": "B", "tile": 4 }` (no tints). Today the catalog has no `levels` section and the engine uses its built-in placeholders.
 3. At the next boot UF_Levels composes its runtime sheets from those entries; the ground cliffs, the cave walls on -1/-2 and the ground ramps all switch at once. World generation is untouched: where the hills are comes from the seed (UF_Levels' surface heights), not from `UF_WorldCatalog.json`, so no worldgen entry changes.
-4. Check in context: `node tools/test_volumetric_terrain_column.js` (the frame contract: 48 × 96, cap colours) and the in-game suite `natural_walls` (`ground_cliff_render`, screenshot `natural_walls.ground_cliff_z0.png`, run on a snapshot copy, `docs/systems/UF_Test.md`).
+4. Check in context: `node tools/test_volumetric_terrain_column.js` (the frame contract: 48 × 96, cap colours) and the in-game suite `natural_walls` (`ground_cliff_render`, screenshot `natural_walls.ground_cliff_z0.png`, run on a snapshot copy, `docs/systems/DEUS_Test.md`).
 
 ## 7. Nano Banana Pro prompt (AR-2100 and AR-2101 on one canvas)
 ```

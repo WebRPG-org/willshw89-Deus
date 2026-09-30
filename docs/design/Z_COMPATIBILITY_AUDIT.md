@@ -8,7 +8,7 @@ Exactly five persistent **256x256 maps** at z=-2, -1, 0, +1, +2, aligned at the 
 
 ## What is actually installed
 
-Read-only audit on 2026-09-19 found no `game/js/plugins/UF_Levels.js` and no git history for that file. The live World remains the 2D version-3 implementation. `docs/systems/UF_Levels.md` describes a **snapshot**, not installed gameplay; `docs/handoffs/RESUME_claude.md` records that copy-back never happened. Do not register Levels alone: it depends on the coherent World/Objects/Items/Jobs/Look seam.
+Read-only audit on 2026-09-19 found no `game/js/plugins/UF_Levels.js` and no git history for that file. The live World remains the 2D version-3 implementation. `docs/systems/DEUS_Levels.md` describes a **snapshot**, not installed gameplay; `docs/handoffs/RESUME_claude.md` records that copy-back never happened. Do not register Levels alone: it depends on the coherent World/Objects/Items/Jobs/Look seam.
 
 Recoverable source exists in:
 
