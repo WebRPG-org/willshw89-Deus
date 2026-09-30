@@ -41,3 +41,65 @@ Rows dated 2026-09-29 and later are written by the PM (Claude Code, DEC-042) und
 | 2026-09-29 | YEA | `SURFACE_SHARED_FLORA_BERRY-BUSH-BARE_V1_DEFAULT` | `game/img/characters/!UF_BerryBushBare_V8.png` | `c369c557dae4d817e044c0923cc188412ce5b0300505cb157c4b4bc4dabe7ed7` | none |
 | 2026-09-29 | YEA | `ALL_SHARED_STONE_COAL-OUTCROP_V1_DEFAULT` | `game/img/characters/!UF_CoalOutcrop_V8.png` | `6ed72bd12b042d36c19e92e965a26dcd2dd1a9f9afb9602a52a633cf7d4a7514` | none |
 | 2026-09-29 | YEA | `SURFACE_SHARED_FLORA_CACTUS-TALL_V1_DEFAULT` | `game/img/characters/!UF_CactusTall_V8.png` | `e4a6156fe65e426fc6a3b53108e4231c3b6e6dcca23dadd6bc809fde9e64f2b5` | none |
+
+
+## PM YEAs for existing PixelLab specimens (DEC-056), 2026-09-30
+
+Owner, 2026-09-30: "Yeah, go ahead and fill what you can with the best specimens" and "You can choose what goes in game, and if I want to change something I will bring it up" (DEC-056, art only). These are the Owner's own PixelLab generations (backups in `C:/Users/snewt/DEUS_backups/pixellab_2026-09-30`), kept in their native form (DEC-055). Each pick went through the catalogue slot, machine QA and the braintrust's DESIGN-DEC055-MERGE, then the PM looked at the image (boards: the "Emerys Temperate Art List" artifact, https://claude.ai/artifact/9EoxBwTghf65N6isEcGLau). A YEA here means the specimen fills its slot in game once its placement lane lands; nothing is in `game/` yet, so there is no file hash to ledger. When a specimen lands in `game/`, it also gets a row in the SHA-256 ledger above. "Stand-in" means in game until a better one passes. The Owner can reverse any row.
+
+| Date | Slot | PixelLab id | Use | Decision | Reason |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 2026-09-30 | Dirt, base | `58e1a2c9-7ad0-48ad-bd6f-c0b2a79d1ebd` | full set (fill tile 15) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Dirt, damp | `3c317e00-fa5f-4c22-a6bd-69ac241eb9f4` | full set (fill tile 0) | PM YEA (DEC-056), stand-in | stand-in until run 1.12 passes: its crack network reads as dry earth. |
+| 2026-09-30 | Forest floor, base | `4d156d7e-973e-44dc-a089-6c86a6838d12` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Forest floor, dry | `642ca861-8590-4b13-af31-bfe4f173cf8c` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Dry grass, base | `a7bfcf27-55e9-4cab-9ff3-2992cfd89f59` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Dry grass, dry | `c0c35c89-e749-4753-9394-9c22a952632e` | fill tile 0 only; failed set not used | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Rock, base | `cf0ca97a-5e7f-40c8-8fd6-95fc0b2fc810` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Rock, dry | `a7a14675-e27d-4849-b5c8-6b36a9c4c9dd` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Stony, base | `1338d7b1-5d11-4b4d-b0f3-1d3c6a5d1e21` | full set (fill tile 0) | PM YEA (DEC-056), stand-in | stand-in: rust-orange, while its damp partner 6bc632da is brown (hue should change by value only). |
+| 2026-09-30 | Stony, damp | `6bc632da-4279-48c1-b89c-93f6bc9e88aa` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Shrub soil, base | `6ea85489-36ca-42b4-bf41-8989522c7d26` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Shrub soil, damp | `ff01c30d-0b53-420c-ba4e-6c442d2f4a8a` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Shrub soil, dry | `390a16e7-e983-4b79-89ec-85f1d99bb3f5` | full set (fill tile 0) | PM YEA (DEC-056), stand-in | stand-in: cream, reads close to sand 74e8c5ec. |
+| 2026-09-30 | Needle floor, base | `373f6cd2-32d8-4a47-8b05-ed0b6291a059` | full set (fill tile 0); partner end is brown soil, not meadow | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Needle floor, dry | `61c027fe-5383-4010-8945-6b060c139166` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Mud, damp | `ac1027ec-caad-4235-85fe-0602a8e82226` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Swamp mud, base | `11a039a0-4f88-47d2-b064-6f93fab50747` | fill tile 0 only; failed set not used | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Swamp mud, damp | `28056291-1771-4c24-b202-27521267d219` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Swamp mud, dry | `11d057da-3b41-4c9a-8ad8-09c9b22f7091` | fill tile 0 only; failed set not used | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Sand, base | `74e8c5ec-3c41-4c4f-bc0f-8f0953e1c13f` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Scree, base | `12c2a349-cb4f-4dab-a537-063272c2e35e` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Scree, damp | `50c160d0-65c8-478d-83bb-2d074785f4c0` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Scree, dry | `9b14146b-62b6-4122-8c84-042e74f619e8` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Peak rock | `38ff1be9-a415-484e-a89c-c2e8a78c5e6f` | full set (fill tile 0) | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Mined soil (dug earth) | `a32533f0-187a-4c2a-a477-433f2fd43212` | fill tile 15 only; failed set not used | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Oak | `6eeca76f-f35c-47f6-80e5-fe2995307553` | object, native 96x96 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Birch | `7d7be924-9b6b-44e7-87c8-f322bb7c6945` | object, native 144x144 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Pine | `4cd3b737-1e0b-4b1b-9884-cdb6f70c937a` | object, native 144x144 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Fruit tree | `a5442972-19ed-4772-9484-4094cc5ef854` | object, native 96x96 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Fruit tree, picked | `663ece92-756d-471b-8873-5bb2bee3dd30` | object, native 96x96 canvas | PM YEA (DEC-056), stand-in | stand-in: trunk and silhouette differ from the fruiting tree a5442972, so the tree changes shape when picked. |
+| 2026-09-30 | Swamp tree | `90f150d3-df0a-4771-bc24-7de7df5586a6` | object, native 96x96 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Dead tree | `395e4c60-f8dd-45a8-bc43-b5f95abd82d0` | object, native 96x96 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Sapling | `7c94663a-4513-456b-82eb-0ad7e96d1237` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Bush | `c8db4709-bf20-4414-bfcf-8f88266cdfd7` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Grass tuft | `e342b86d-28f4-40ff-becc-7d7d3a0fdbdf` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Wildflowers | `834e8ca2-0084-4844-8989-5143b0cd8306` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Lichen | `cec037f1-4754-45a7-be8e-8c52c98c63b1` | object, native 48x48 canvas | PM YEA (DEC-056), stand-in | stand-in: reads like a cracked stone disk more than a lichen crust. |
+| 2026-09-30 | Reeds (pool member) | `6a3ecd6a-8f58-49cf-ae9d-810ca4156223` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Cave moss | `6e8f2723-d543-4fd6-8fb1-eee78f244ad0` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Glow-caps | `448014da-3fe0-48f8-a389-c0726d5ec509` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Spore reeds | `7b5e6f18-0a28-4010-80d5-ee444386b178` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Ironstone | `c78965e6-cdd0-4c77-9940-022052a3a6fc` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Small crystal | `9eac5c7d-b1f3-4bcc-a8f8-93a9fbc1b9af` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Crystal spire | `25cde6e1-3646-49fc-bcb0-d970551da853` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Stalagmite | `541c9b5d-ba42-4009-bec2-7ebdc2420e85` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Sand deposit | `392bb956-bc82-404a-8525-0b0d788050ee` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Rubble (aftermath) | `c590fadf-5646-46ec-aed1-958730a498ad` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Copper vein | `67f56676-b0d6-4438-a096-f8d9a6e02b88` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Iron vein | `b1d9edda-1a80-4fd0-8455-4f8cf80b6198` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Gold vein | `9d55e8a9-dab5-44cb-8251-97acb9250778` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Gem vein | `3c5c922a-a5f7-45e0-84a4-a0f104de157e` | object, native 48x48 canvas | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Pond (still water ↔ meadow) | `eeeb0231-f5dd-478e-be50-30cb0e8c4d11` | full Tiles Pro set; also the stand-in underground pool | PM YEA (DEC-056) | Clean read at 1x; matches its slot and neighbours. |
+| 2026-09-30 | Dirt, dry | `deb74b6c-92d9-41fe-a518-2ca4d09c78d4` | full set | PM NAY (DEC-056) | Pink and smooth: reads as a different material, not dry dirt. The dirt base stands in until run 1.11 passes. |
+| 2026-09-30 | Fresh water | `b95d8185-9a04-453b-8007-7caa7889bc42` | full set | PM NAY (DEC-056) | Its grass half is saturated noise that clashes with meadow. Run 5.01 covers fresh water. |
