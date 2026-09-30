@@ -1,11 +1,10 @@
 # The Lore of Emrys
 
-> **Status: DRAFT v3 for the Owner’s sign-off, 2026-09-29.** Written overnight by the braintrust (Astra drafting; Grok critiquing and checking canon) from the Owner’s rulings in `docs/VISION.md` (decision log, 2026-09-29: V154, the Nine’s names, gods resembling their peoples, the summoned planes, the banner set). Nothing here is canon until the Owner signs it off; the open choices are in section 12. Sources: `C:\Users\snewt\.deus_pm\braintrust\2026-09-29\` (v1, v2, critiques, research).
-
+> **Status: DRAFT v3.1 for the Owner’s sign-off, 2026-09-30.** Written by the braintrust (Astra drafting; Grok critiquing and checking canon) from the Owner’s rulings in `docs/VISION.md` (decision log: V154, the Nine’s names, gods resembling their peoples, the summoned planes, the banner set, and 2026-09-30 “Lets make them elementals”). v3.1 changes only the former star-born people, now the elementals: Astra reworked them, Grok checked the rework (four must-fixes, all applied), and a mechanical canon check passed (names, banner devices, franchise terms, physics phrases). Nothing here is canon until the Owner signs it off; the open choices are in section 12. Sources: `C:\Users\snewt\.deus_pm\braintrust\2026-09-29\` (v1, v2, v3, critiques, research; `trust3/elem_*` for this revision).
 
 *The Making, the Nine, and the history yet to come.*
 
-*Complete world-lore draft • 2026-09-29*
+*Complete world-lore draft • 2026-09-30*
 
 *The Owner’s fixed canon governs this text. Divine titles and the combined drama remain marked proposals. The remaining choices are gathered in the decision sheet; the prose states the proposed world plainly.*
 
@@ -61,21 +60,31 @@ Volcanic country, wet country, arid country, temperate country, cold country and
 
 The old wild stirred among those places. Wyrms settled into fissures. Giants moved across the heights. Behind certain hills lay music that no creature on the outer slope had begun.
 
-### The People of the Far Lanterns
+### The People Within the World
 
-Late in the Making, Deus and Venge made a people of crystal and light.
+Late in the Making, the Two prepared another people within Emrys’s own substance.
 
-They were the **Farwrought**.
+Deus gave their beginnings the power to hold together.
 
-Their pale bodies carried living seams of crystal. Light passed through those seams as thought passes through a speaking face. They recognised one another, disagreed, undertook journeys and remembered what they had chosen. They were people before they were voyagers.
+Venge gave them the power to answer.
 
-They fashioned vessels from Emrys’s own substance and travelled the road then open beyond the clouds. They raised no mortal kingdom upon the ground the seventy-two would inherit. Their voyaging left no human dynasty, elven war or ancestral claim upon a valley.
+Some lay in stone, where a grain joined another grain. Some lay in water gathered within its bed. Others lay among the substances that fed a flame, or in air held within the turns of a sheltered place.
 
-Some vessels failed. Others returned broken. Their falls put unfamiliar metal and crystal into the earth. Water entered the seams. Stone settled around the hulls. Roots found cracks that no hand had opened.
+These were the beginnings of the elementals.
 
-The Covenant ended the makers’ road among the stars. By the first mortal dawn, the falls were over. The surviving Farwrought lay sealed within their fallen works.
+Their bodies belong to the same world as every root, river and breathing creature. Stone bears their weight. Water carries their substance. Fire changes what it consumes. Air moves through openings and meets resistance.
 
-The night owed the waking world no further cargo.
+Where a prepared beginning has awakened, that particular body has a will of its own.
+
+A stone does not become a person merely because a face is seen in it. A river does not awaken from mouth to source. The beginnings are particular and finite. Beyond them, the world continues its ordinary work.
+
+At the first dawn they remain unawakened. There is no elemental court beneath a mountain, no company keeping a spring, no speaker concealed in the common fire.
+
+Their first waking follows changes in the world: water finding a new bed, a seam opening, heat reaching suitable matter, a current taking a different course. The cause belongs to Emrys. No absent maker returns to call their names.
+
+They inherit no voyages among the stars, no fallen vessels and no instructions waiting in crystal.
+
+Their beginning is older than the mortal count. Their lives, meetings and quarrels enter the history that follows it.
 
 ### The Kindling of the Nine
 
@@ -154,6 +163,12 @@ Hunger, thirst, wounds and the fuel brought through the threshold still bind the
 The living return to the place they left. When the crossing closes, Emrys’s pledged matter returns in its changed forms: possessions, remains, broken tools, ash and spent stores. Escaped water joins the returning rain. Returned remains do not rise and resume their lives.
 
 A god tempers the blade a challenger brought. The house supplies no second blade.
+
+The elementals live within Emrys. Their springs, seams, hearths and currents belong to its thirty-two layers. They keep no separate realms of earth, water, fire or air beyond the world.
+
+An elemental who joins a company crosses by the same undertaking as its companions. Its body passes as actual substance, with the provisions and protection that body requires. It enters as a visitor with something to lose.
+
+The Nine keep the summoned planes. The elementals share the country to which the company returns.
 
 ### Aldram — Humans
 
@@ -547,7 +562,7 @@ Coppet’s gift is the conviction that a difficult thing has workings. A worksho
 
 Their wiry figures, narrow caps and busy hands belong among bank dwellings, root passages, fitted timber and small, well-used tools. Ingenuity starts with a latch, a knot and a diverted trickle.
 
-They know the cogwheel’s sign. They do not remember building its machine. The gem in its centre is not a Farwrought mind, and the gnomes are not the forgotten builders of the fallen vessels.
+They know the cogwheel’s sign. They do not remember building its machine. The gem at its centre carries no imprisoned mind. Coppet’s people learn their craft through the workings they encounter. When an elemental later answers from a seam, they meet a neighbour whose body is the world’s own stone.
 
 **Origin song**
 
@@ -710,25 +725,65 @@ They keep routes through wet country that other peoples overlook. Their lives gi
 
 They are neighbours of pool-dwelling wyrms, not their offspring or Ormund’s subjects.
 
-### The Farwrought
+### The Elementals
 
-The Farwrought are the ancient people of crystal and light made by the Two before mortal years.
+The elementals are people whose bodies are formed from the substance of Emrys.
 
-Pale stone bodies carry living seams of brightness. The seams differ from person to person; a damaged pattern is an injury, not an interchangeable broken component. Their forms have their own dignity and no place among the nine founding banners.
+Their beginnings were prepared during the Making. At Year 0 they remain unawakened within particular portions of the world. Their first lives begin when those beginnings meet the conditions that sustain them.
 
-Their past contains journeys, friendships, undertakings and failures. It supplies no ancient mortal empire for the first chronicle to inherit.
+A new elemental takes no body from another realm. The matter that rises, gathers or begins to answer was already there.
 
-At Year 0 their fallen vessels are sealed. No door is tended. No weapon is laid out for a visitor. No awakened keeper occupies a room beside the founders’ fire.
+They recognise one another across four forms.
 
-Erosion, water, collapse or excavation exposes what lies within. Then an old intention encounters a new world.
+**Stone.** Stone elementals have broad, weight-bearing bodies, with joined masses and visible grain. Their voices travel through the chest before they reach the air. A pale seam, a worn edge or an old repair distinguishes one from another. They rest upon ground that bears them and mend with suitable substance taken from somewhere real. They move their bodies through the world; they do not pass through an unbroken wall as though neither body nor wall had weight.
 
-A treatment bench understands a wound and does not understand whether the patient wishes to stay. A sleeper resumes keeping a door whose purpose has been lost. A listening pattern repeats an old report, including the error preserved within it.
+**Water.** Water elementals gather into coherent bodies with rounded shoulders, flowing limbs and a lower edge that returns continually into the whole. Sediment, bubbles and reflected light reveal their movement. Their voices carry the sounds of pouring, shallow ripples and water meeting a hollow stone. They require enough water to remain themselves. Injury spills part of that body; replenishment draws from an actual supply. A water elemental standing in a spring is a person within the spring, not every drop in the valley.
 
-The Farwrought themselves are more than those works. An awakened person recognises an instruction, disputes it, remembers a companion and forms a new intention. Ancient memory and new experience meet in the same hour.
+**Fire.** Fire elementals hold burning matter, ember, ash and hot gases together in a living shape. Their outline rises from a low, substantial bed into tongues of flame. Their voices crackle, draw breath and fall suddenly quiet. They consume fuel and change it into other forms. Their heat has a source. A fire elemental far from a supply grows weak; its presence neither opens a bottomless furnace nor draws warmth through untouched stone from the deep magma.
 
-Mortals call a hull in a cliff a castle fallen from heaven. A sleeper becomes an enchanted knight in the telling; a healing chamber becomes a cauldron. The names reveal the witnesses as much as the things witnessed.
+**Air.** Air elementals have bodies of moving air, visible through gathered mist, dust or other light matter caught within their turning shape. Their outline is open and curved, with a centre around which the body continually moves. They speak through pressure and vibration. Shelter gives them a place to rest; violent disturbance threatens their coherence. Their passage follows the world’s openings. Their beginnings and resting places lie in sheltered air among ridges, clefts and turns in the ground.
 
-Nothing restocks itself from absence. Broken crystal remains broken substance. No fresh command arrives from Deus or Venge.
+The forms are easy to distinguish. Their dispositions are not so neatly divided.
+
+A being of stone grows impatient. A being of fire keeps a careful promise. Two water elementals disagree about the same dam, because one has found refuge above it and another has lost passage below.
+
+They know individuals through characteristic voice, movement and remembered conduct. A change of substance does not by itself supply a new name. Neither does resemblance make two people the same.
+
+Their first concern when meeting a stranger is what the stranger needs in order to remain.
+
+Hospitality therefore takes different forms. A stone bed is cleared and tested. A basin receives clean water. A sheltered recess admits a moving current without tearing it apart. Fuel is set aside upon ground that will not carry the burning into a neighbour’s home.
+
+A host asks where the guest wishes to rest. The answer matters more than the host’s pride in the accommodation.
+
+Their gatherings form where different needs meet: beside a sheltered spring, around a fire upon sound stone, along a cleft through which water and air both pass. They bring stories, warnings and small possessions that survive their handling. They learn one another’s songs through rhythm as well as words.
+
+Kinship grows through such meetings. The person who helped hold a damaged body together becomes kin. So does the one who kept a resting place through a difficult season. Their communities contain several forms, several opinions and more than one understanding of obligation.
+
+They argue over the right to remain and the right to leave.
+
+One elemental treats the place of its waking as a trust. Another treats it as an inheritance. A third departs and resents being called faithless. Age supplies experience; it does not settle the argument.
+
+Their relationship with the other peoples is equally particular.
+
+A miller asks for water through a channel in which someone has made a home. A quarry worker discovers that a disputed stone is part of a living body. A household shelters a fire elemental through rain and then finds the promised fuel difficult to spare.
+
+Neither party acquires the whole country by declaring a need.
+
+The elementals make agreements, demand payment, give help, refuse it and sometimes take more than was offered. A material likeness grants no moral innocence. A frightening body proves no guilt.
+
+They receive no fresh commands from the Two. They are not servants assigned to keep the world’s waters moving or its mountains standing. Rivers flow and stone bears weight without their attention.
+
+Nor are they portions of the Nine. Gleed does not own the people of fire. Quern does not own the people of stone.
+
+Their lives end.
+
+A body damaged beyond its power to remain a living whole loses the person it held. Stone falls into fragments. Water loses its gathered form. Burning matter changes into ash and gases. Air disperses into the air around it.
+
+The substance remains in Emrys.
+
+Their companions mourn the person.
+
+Rain returns water to the world. It does not return every voice that water once carried. A later awakening, from another beginning the Two prepared, is another person. Mourning keeps its meaning.
 
 ### The Breeding Swarm
 
@@ -765,6 +820,10 @@ A farmer returning with the implement used each morning is an ordinary horror. A
 The Old Wild belongs to the Making before mortal names.
 
 It is not the Nine wearing masks, and it carries no hidden chronicle of mortal kingdoms.
+
+The elementals share its places without explaining every presence within them. An elemental has a particular living body and a life of its own. The music behind a shut hill, the black dog at a boundary and the Hunt upon the heights have other beginnings.
+
+A speaking pool introduces a person. It does not prove that every pool contains one.
 
 ### The Fair Folk and the Hollow Hills
 
@@ -846,6 +905,10 @@ Leaves and bark make faces. In later carvings those faces become the Green Man. 
 
 A holy well begins with water arriving where stone permits it. Its lip falls still when a passage is choked or its flow is turned elsewhere. The water has not been exhausted or destroyed.
 
+An elemental living there has a body within that water and needs of its own. The well also supplies roots, beasts and people beyond its lip. A bargain at the well therefore has more lives around it than the two speakers.
+
+The departure or death of its elemental does not repeal the spring’s physical course. Water continues where the ground carries it. The place loses a neighbour.
+
 The world’s returning rain does not promise that the next drink arrives at the same place or hour.
 
 A natural mound is no ancient grave. Barrows begin with actual dead. A horn-shaped fracture is no ruined church. The first church-wall devil is carved by someone who has already seen a tiefling’s face.
@@ -865,6 +928,10 @@ Deep Earth carries the oldest foundations. Magma gathers at the bottom: molten s
 It presses into fractures and rises where a passage and force carry it. Volcanic ground appears where that substance reaches and changes the land. It is not placed beneath a people because their songs contain fire.
 
 Water meeting molten rock drives steam and hardens a crust. Neither the water nor the stone loses its place in the world’s reckoning.
+
+Elemental beginnings lie within some of this substance. Their awakening follows the conditions around them. An opened seam exposes actual stone; an altered passage admits actual water or air. Heat sustains life only where heat reaches.
+
+An elemental at a volcanic margin is neither the source of the world’s magma nor its appointed keeper.
 
 The deep fire offers heat and danger together. Its warmth is not a welcoming draught under the founders at z−2.
 
@@ -922,7 +989,9 @@ The uppermost summit reaches z+11. Above it, natural ground ends.
 
 The four upper layers contain air, weather and light.
 
-They contain no hidden floor, makers’ palace or vessel conveniently riding at anchor. The old road among the stars is shut.
+They contain no hidden floor, makers’ palace or vessel riding at anchor. No ancient road among the stars waits to be restored.
+
+Air elementals move in the same atmosphere as cloud and falling rain, among ridges, clefts and sheltered turns. Their bodies give nearby air a local purpose. Their beginnings and resting places belong to that sheltered air. The four open layers remain weather, light and the climb to z+15.
 
 A footing raised into this height draws its matter from below. Its load must be carried through supports to ground that bears it. Empty air does not become a foundation because a throne stands above it.
 
@@ -932,15 +1001,21 @@ The united world’s ascent to Venge passes through this real height. The same l
 
 ### What Lies Buried
 
-Farwrought wrecks occupy the ground into which impact, settling and later geological change have placed them. A curved mass beneath turf, a sealed surface in a cliff and crystal within fractured rock are remains of the same primordial voyaging.
+The earth holds forms whose beginnings belong to the Making.
 
-They begin closed.
+A folded mineral seam, a water-filled hollow, a pocket of enclosed air or substance beside a buried source of heat holds the unawakened beginning of an elemental where the Two prepared one. Most stone is only stone. Most water passes without becoming a person.
 
-Swarm cysts occupy finite protected pockets. A fracture made by a fallen vessel joins two histories of the Making without becoming a battlefield.
+Crystal belongs to the land’s minerals. Its clarity promises neither a stored mind nor an ancient machine.
 
-Deep roots, a sealed vessel and a living cyst stand in different relations to the land: one belongs to a current tree, one preserves an older people, and one holds a hunger awaiting its conditions.
+Erosion, flowing water, collapse and excavation alter these places. The same opening that admits the conditions for an awakening also changes the country around it. A new passage drains one hollow into another. A cut bearing lets weight fall. The elemental enters a world already changed by the event that brought it to life.
 
-They are not interchangeable reasons to dig.
+Swarm cysts occupy finite protected pockets of their own. Fractures and settling bring them close to other buried things without supplying an ancient war between them.
+
+Deep roots, an elemental beginning and a living cyst stand in different relations to the land. One belongs to a current tree. One holds the beginning of a person. One preserves a hunger awaiting its conditions.
+
+No fallen hull lies beneath them. No treatment chamber waits behind the next wall.
+
+The wonder under the ground is made from the ground itself.
 
 ## 9. The Shape of History after Year 0
 
@@ -972,11 +1047,15 @@ A witness stone gains authority through undertakings made there and what the spe
 
 A well acquires names and vows because its water sustained actual lives. Keeping its throat clear is useful devotion. Concealing a diversion behind a tale of divine displeasure is useful deceit.
 
+An elemental who lives beside that well adds another voice to its history. People remember an agreement, a warning, a kindness or an injury. The elemental remembers those things differently.
+
 A hollow hill accumulates mortal bargains around an older presence.
 
 A barrow is raised over a particular person. Its name belongs to that life. The shame omitted from the inscription survives in another telling.
 
-A fallen vessel becomes a place of labour, worship, imprisonment or danger after someone opens it. Its primordial purpose and its later uses form different parts of the same place.
+An opened seam becomes a place of meeting when someone answers from it. Later work gives that meeting its consequence: a quarry altered, a passage preserved, a body injured, a household supplied through winter.
+
+A shrine raised there records a relationship. Its stones do not prove that either party was always right.
 
 ### Rites Before Offices
 
@@ -1014,7 +1093,11 @@ One congregation praises the company that challenged a god. Another calls its re
 
 The Nine do not appear to settle which institution speaks correctly.
 
-Standing stones, charged crystal, fey bargains and hauntings remain distinct traditions of wonder. A luminous mechanism explains neither a black dog nor a promise. A disputed account of the Covenant explains neither every crystal nor every illness.
+Standing stones, worked crystal, fey bargains and hauntings remain distinct traditions of wonder. The elementals enter those traditions as people encountered in particular places, with agreements of their own.
+
+A crystal used in an art is material worked for that purpose. Its brightness alone contains no elemental. A spring with a resident does not make every well a dwelling. A stone elemental does not settle whether a distant standing stone is a nail of the Covenant.
+
+A household honours a neighbour, a memory and a god in different ways, even when all three are spoken of beside the same water.
 
 ### What the Peoples Argue About
 
@@ -1027,6 +1110,14 @@ They argue over the person welcomed into a house and the person injured by that 
 They argue over when memory becomes imprisonment, when loyalty becomes obedience and when a promise becomes an excuse for refusing to change.
 
 They argue over the new verse brought back from a plane. The people who crossed remember the danger. Those who stayed remember the missing labour and dwindling stores.
+
+They argue with the elementals over the difference between a body, a home and a claim upon the surrounding country.
+
+A water elemental objects to a channel that supplies a hungry settlement. Another helps clear it. A being of stone offers labour to a quarry whose cutting a companion condemns. The disagreement belongs to their lives as much as to the lives of their neighbours.
+
+They argue over the host who offered fuel and then ran short, the guest who stayed beyond the agreement, and the person who called injury mere damage to useful material.
+
+They also argue over elemental claims that become too broad. Speaking from a spring gives a person a voice. It does not give that person every field the spring supplies.
 
 No people owns the correct answer by birth.
 
@@ -1059,22 +1150,40 @@ These are words carried in fragments, repeated beside ordinary work. History giv
 - Of the Nine: “They keep their houses. We keep this one.”
 - Of an opened wonder: “Ask what it does before asking what it is worth.”
 - Beside the first fire: “Eight and eight and eight, and the fire makes none of us the same.”
+- At a place that answers: “Ask who is there before asking what it yields.”
+- Mourning an elemental: “The rain brings water home. It does not bring back every name.”
 
 ## 11. Design Notes
 
-- **Canon and proposals.** The makers, Nine’s names and peoples, banners, founding population and layers, two endings, physical bounds and material laws remain fixed. Titles, divine presentations, specific plane laws, origin details, secondary names and the combined drama remain proposals until ratified.
-- **Narrative voice.** Indicative descriptions establish the proposed setting’s character. They do not schedule later halls, faiths, wars or expeditions. A world that reaches neither ending, or contains no planar crossing, remains valid.
+- **Canon and proposals.** The makers, Nine’s names and peoples, banners, founding population and layers, two endings, physical bounds and material laws remain fixed. The Owner’s ruling of **2026-09-30** makes the former star-born people elemental and supersedes V87 where the two conflict. This revision applies one native people in four bodily forms, uses **elementals** without an additional collective name, and retires the star-faring past. Titles, divine presentations, specific plane laws, other unratified origin details, secondary names and the combined drama remain proposals until ratified.
+
+- **Narrative voice.** Indicative descriptions establish the proposed setting’s character. They do not schedule later halls, faiths, wars or expeditions. A world that reaches neither ending, or contains no planar crossing, remains valid. Elementals develop histories through the world’s events; their bodily forms do not impose a single faction, temperament or allegiance.
+
 - **Year-0 generation.** Preserve one actual fire, five start layers, natural connectivity and necessities reachable by autonomous founders. Terrain varies by seed. Do not repair an inaccessible start by adding fires, furnishing a settlement or requiring player rescue.
-- **No pre-generated mortal history.** The Making is a fixed cosmological account. Fallen Farwrought works are its sealed material remains, not generated dynastic ruins. Goblins, orcs, kobolds and lizardfolk begin without camps, sleeping populations or inherited feuds.
-- **Conservation and crossings.** Bodies, food, gases, possessions and court material remain accounted for. A plane’s geography lies outside the normal layer column; its pledged Emrys matter does not leave the conservation account. Return preserves quantities, materials and transformations. Escaped water returns as rain. No corpse return restores life.
-- **Planar implementation.** Crossings, pledged courts, divine combat, persistent concessions and the Nine sensing the breach are future systems. Plane laws must acquire observable causes and consequences; vague moral scoring is not an implementation. Hunger and time continue, and supplies remain finite.
-- **No new celestial stock.** This version introduces no aloft wreck reserve and no later falling cargo. Adding such falls would require an explicit, finite pre-existing stock and a conservation-preserving transfer.
-- **Life and the Old Wild.** No new lifespans, fertility rules, clutch sizes, flight abilities or temperature requirements are assigned. A banner does not grant anatomy. An unburied corpse or grieving household does not automatically produce undead. Knockers do not turn into kobolds. Literal explanations for disputed stones and omens remain unconfirmed.
-- **Current engineering scope.** This document authorises no new implementation lane. World generation and physics remain the focus. Autonomous culture, faith, expeditions, divine alliances, Farwrought activity, swarm ecology, undeath and the named endings require later work. Their implementation status was not checked for this writing task.
+
+- **No pre-generated mortal history.** The Making is a fixed cosmological account. Elemental beginnings belong to that Making, without an earlier elemental civilization, active population or stored personal histories at dawn. Goblins, orcs, kobolds and lizardfolk begin without camps, sleeping populations or inherited feuds.
+
+- **Finite elemental beginnings.** Each first awakening requires a particular beginning prepared by the Two and suitable conditions around it. Suitable matter alone does not generate a person. The supply of prepared beginnings is finite; material returning through the world does not replenish it. Awakenings occur after Year 0 and require no player intervention.
+
+- **Conservation and crossings.** Bodies, food, gases, possessions and court material remain accounted for. A plane’s geography lies outside the normal layer column; its pledged Emrys matter does not leave the conservation account. Return preserves quantities, materials and transformations. Escaped water returns as rain. No corpse return restores life. An elemental joining an expedition carries its actual body through the same accounted crossing.
+
+- **Elemental substance and identity.** Awakening, movement, growth, injury, repair and death transfer or transform actual matter without duplicating the terrain or fluid from which it came. Body and surrounding environment remain distinguishable. Dispersal does not create additional persons, and ordinary material circulation does not restore a dead identity. A later awakening from another prepared beginning is another person.
+
+- **Fire, air and returning water.** Fire is sustained combustion and heated substance, not a stock of solid “fire material” or an endless fuel source. Air is physical matter, not an exemption from conservation. Water leaving the world returns through the rain rule, including water formerly belonging to an elemental. That rule supplies no automatic resurrection or immediate local replenishment. The exact sustaining costs of each form require later design.
+
+- **Movement and the highest air.** No passage through solid rock, instantaneous transfer between disconnected waters, unlimited lifting or travel outside the world is implied. Air-elemental beginnings and resting places belong to sheltered air among ridges, clefts and turns. The four open layers remain weather, light and the ascent to z+15, with no elemental settlements or natural footing added. Magma remains at the bottom of Deep Earth; elemental identity supplies no heat at the z−2 founding places.
+
+- **The Nine and planar implementation.** Elementals are inhabitants of Emrys, with no additional elemental planes or divine lords. The Nine retain their summoned planes and their absence from Emrys. Crossings, pledged courts, divine combat, persistent concessions and the Nine sensing the breach are future systems. Plane laws must acquire observable causes and consequences; vague moral scoring is not an implementation. Hunger and time continue, and supplies remain finite. A later elemental community is capable of free assent; it is not a required tenth founding banner.
+
+- **The retired star-faring account.** Primordial voyages, fallen vessels, technological chambers, crystal-stored minds and aloft cargo reserves are removed. Crystal remains a mineral and a possible material for later arts. The retired machinery is not transferred to the gnomes or concealed beneath another name.
+
+- **Life and the Old Wild.** No new lifespans, fertility rules, clutch sizes, flight abilities or temperature requirements are assigned to the Nine’s peoples or the other previously described peoples. A banner does not grant anatomy. Elemental dormancy, sustenance, repair and irreversible death require later design within the finite-beginnings rule; four forms do not imply unrestricted transformation between them. An unburied corpse or grieving household does not automatically produce undead. Knockers do not turn into kobolds. Giants, fair folk, hobs, knockers and wandering lights are not all reclassified as elementals. Literal explanations for disputed stones and omens remain unconfirmed.
+
+- **Current engineering scope.** This document authorises no new implementation lane. World generation and physics remain the focus. Autonomous culture, faith, expeditions, divine alliances, elemental activity, swarm ecology, undeath and the named endings require later work. Their implementation status was not checked for this writing task.
 
 ## 12. Decision Sheet for the Owner
 
-The Nine’s personal names and all nine banner schemes remain unchanged.
+The Nine’s personal names and all nine banner schemes remain unchanged. This revision applies one native elemental people in four bodily forms, first awakenings after Year 0 from finite prepared beginnings, retirement of the star-faring past, and **elementals** as the ordinary name.
 
 | # | Decision still open | Options | Recommendation |
 |---:|---|---|---|
@@ -1082,25 +1191,19 @@ The Nine’s personal names and all nine banner schemes remain unchanged.
 | **2** | **The Nine’s titles and portrayals** | **A:** Adopt the nine titles, appearances, voices, wants and plane laws in v3, including **The Unclaimed Place** and **The Opened Seam**. **B:** Retain the v2 presentations except where they conflict with fixed canon. | **A.** The gods are more distinct and their planes have stronger identities. |
 | **3** | **The Nine’s absence** | **A:** Bind their power against entering or directing Emrys, while preserving mortal-initiated confrontation on their own ground. **B:** Their absence remains a voluntary undertaking. | **A.** A concession informs mortal choices without becoming a divine command on the home map. |
 | **4** | **The planar contract** | **A:** Worked local thresholds, varied preparation, pledged matter returned in changed forms, and defeats that bind lasting concessions while preserving god and people. **B:** Use the same conservation rules but permit permanent divine death. | **A.** Victories remain consequential without consuming the pantheon as a checklist. |
-| **5** | **Secondary names** | **A:** **Farwrought** for the star-born people; **Manymouth** as a later witness-name for the swarm; undead without a universal epithet. **B:** Retain Star-born and the earlier collective epithets. | **A.** The three categories remain distinct in speech and appearance. |
-| **6** | **The primordial and founding account** | **A:** Adopt v3’s Farwrought people and sealed falls, no aloft cargo reserve, finite beginnings for the other mortal peoples, and partial inherited songs at dawn. **B:** Retain the same dawn but keep the causes of the falls and other peoples’ first formation unstated. | **A.** It supplies a coherent origin while leaving biological implementation and individual histories unprescribed. |
+| **5** | **Remaining secondary names** | **A:** **Manymouth** as a later witness-name for the swarm; undead without a universal epithet. **B:** Use no universal epithet for either. | **A.** Manymouth names an appetite witnessed in play without turning the undead into one faction. Elementals require no additional collective name. |
+| **6** | **The remaining primordial and founding account** | **A:** Retain finite beginnings for goblins, orcs, kobolds and lizardfolk, and partial inherited songs at dawn. **B:** Retain the same dawn but keep those peoples’ first formation unstated. | **A.** It supplies a coherent origin while leaving biological implementation and individual histories unprescribed. The elemental account applied in this revision remains separate. |
 | **7** | **Venge’s commitment and aftermath** | **A:** One deliberate, irreversible commitment of active power is genuinely defeatable; either named ending ends intervention while observation and the world continue. **B:** Allow several linked commitments, all requiring defeat before intervention ends. | **A.** A single answerable presence gives the endings a clear stake. Neither option changes their fixed locations and outcomes. |
 | **8** | **The united world** | **A:** Surviving self-governing peoples unite freely through their actual communities and living traditions. **B:** Every original founding people must survive and assent. | **A.** Extinction remains history; no people is recreated to fill a prophetic roster. Captured standards never substitute for assent. |
 
-## 13. What Changed from v2
+## 13. What changed from v3
 
-- Rebuilt the document into all thirteen requested sections, with complete chapters for the peoples, Old Wild, land and faith.
-- Established the Farwrought as a self-directed crystal-and-light people before describing their vessels and works.
-- Sealed the fallen vessels at Year 0 and removed active keepers, prepared rewards and accessible staffed chambers from the founding.
-- Clarified that the other mortal peoples begin without camps, rows of sleeping bodies or pre-existing feuds.
-- Made the Nine sense the Trespass through their own binding; mortal accounts now supply context rather than unlock divine awareness.
-- Changed Nelian to an unsettling female fair-folk presentation and Gleed to a distinct church-carving silhouette.
-- Replaced Pessum’s and Coppet’s titles with **The Unclaimed Place** and **The Opened Seam**, both still proposals.
-- Expanded each plane into a distinct realm governed by an absolute law, with physical confrontation and a persistent concession.
-- Expanded all nine cultures, waking scenes and origin songs while preserving every locked layer, colour and device.
-- Gave the Old Wild a separate account without inserting ancient fey kingdoms, mortal rulers or battles at dawn.
-- Added the full physical geography, including finite ore, aquifers, lava and water, linked roots and crowns, sealed cysts and unsupported open air.
-- Expanded rites and institutions around actual work, contested memory, hospitality and responsibility.
-- **Disagreement with Grok:** omitted an aloft wreck reserve. Sealed primordial falls already satisfy the fallen star-faring past; later cargo would add an unnecessary new world stock.
-- **Disagreement with Grok:** retained limits on new biology and supernatural causation. Heraldic wings grant no flight, grief does not automatically raise the dead, and unexplained knocks do not become a mortal people.
-- **Disagreement with Grok:** kept stone-origins contested and faith morally varied. Neither every tor is a confirmed transformed giant nor every institution an invention of fraud.
+- Applied **Option 1**, recommended by both advisors: one native elemental people in four bodily forms, with finite beginnings prepared during the Making and first lives after Year 0.
+- Accepted **Grok’s naming recommendation**: use **elementals** in ordinary speech. Retired Farwrought and the proposed Landkin name; “elementals” describes stone, water, fire and air equally clearly.
+- Removed the star-faring past, fallen vessels, technological chambers, stored machine instructions and celestial cargo.
+- Restricted elemental will to the particular body whose prepared beginning has awakened; ordinary stone, water, fire and air remain ordinary.
+- Made every later awakening depend on another finite beginning prepared by the Two. Returning matter supplies neither spontaneous new people nor resurrection.
+- Corrected the gnome passage to place its elemental encounter later in history, with a neighbour whose body is the world’s own stone.
+- Located air-elemental beginnings and resting places in sheltered air among ridges, clefts and turns; preserved the four open layers as weather, light and the climb to z+15.
+- Established elemental individuality, hospitality, disagreement, material needs and mourning while keeping the Nine’s summoned planes and the Old Wild’s other presences distinct.
+- Replaced the affected buried-remains and sacred-place passages, added two elemental sayings, and updated the design notes and decision sheet.
