@@ -5,13 +5,14 @@
 # A lane.json this host cannot parse (invalid JSON, empty file) is not mechanical.
 # Get-Content | ConvertFrom-Json accepts a UTF-8 BOM here, so a BOM file follows the same rules.
 # $PmWorktreeRoot is assigned by the library at dot-source; this test overrides it afterwards.
+param([string]$LibraryPath = (Join-Path $PSScriptRoot 'top_models.ps1'))
 $ErrorActionPreference = 'Stop'
 $script:failCount = 0
 
 function Assert-Eq([string]$Name, $Got, $Want) {
     $g = ([string]$Got) -replace '[\r\n]+', ' '
     $w = ([string]$Want) -replace '[\r\n]+', ' '
-    if ($g -eq $w) { Write-Output "PASS $Name" }
+    if ($g -ceq $w) { Write-Output "PASS $Name" }
     else { Write-Output "FAIL $Name got=$g want=$w"; $script:failCount++ }
 }
 
@@ -30,7 +31,7 @@ function Get-SpecFields($Spec) {
 }
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
-$lib = Join-Path $PSScriptRoot 'top_models.ps1'
+$lib = $LibraryPath
 $temp = Join-Path $env:TEMP ('pm_effort_policy_' + [guid]::NewGuid().ToString('n'))
 $root = Join-Path $temp 'worktrees'
 $pwsh = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
@@ -179,12 +180,22 @@ exit 0
             if (Test-Path -LiteralPath $log) { $detail = [System.IO.File]::ReadAllText($log) }
             throw "child exit $LASTEXITCODE $detail"
         }
+        if (-not (Test-Path -LiteralPath $outPath -PathType Leaf) -or (Get-Item -LiteralPath $outPath).Length -eq 0) {
+            throw 'child result artifact missing or empty'
+        }
         $parsed = Get-Content -LiteralPath $outPath -Raw -Encoding UTF8 | ConvertFrom-Json
-        return @($parsed.rows)
+        $resultRows = @($parsed.rows)
+        if ($resultRows.Count -ne @($CaseList).Count) { throw 'child result row count mismatch' }
+        for ($rowIndex = 0; $rowIndex -lt $resultRows.Count; $rowIndex++) {
+            if ($resultRows[$rowIndex].name -cne $CaseList[$rowIndex].name -or
+                $resultRows[$rowIndex].passed -isnot [bool]) { throw 'child result identity/status missing or invalid' }
+        }
+        return $resultRows
     }
     function Assert-SameRow([string]$Name, $Parent, $Old) {
         if (-not $Parent.passed -or -not $Old.passed) {
-            if (-not $Parent.passed -and -not $Old.passed -and ([string]$Parent.error) -eq ([string]$Old.error)) {
+            if ($Name -eq 'eq bad tasktype' -and -not $Parent.passed -and -not $Old.passed -and
+                ([string]$Parent.error).Length -gt 0 -and ([string]$Parent.error) -ceq ([string]$Old.error)) {
                 Assert-Eq $Name 'both-threw' 'both-threw'
                 return
             }
@@ -384,7 +395,8 @@ catch {
 }
 finally {
     if ($temp -and (Test-Path -LiteralPath $temp)) {
-        Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue
+        # Keep the unique run directory as evidence; this lane never deletes files.
+        Write-Output "Evidence directory: $temp"
     }
 }
 $code = 0

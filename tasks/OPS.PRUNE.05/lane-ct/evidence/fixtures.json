@@ -1,0 +1,18 @@
+[
+  {"file":"tools/test_all_animated_objects_live.js","suite":"anim","shots":["live_animated_objects_scene"]},
+  {"file":"tools/test_all_faction_menus.js","suite":"faction_menus","shots":["menu_clean_default","menu_clean_deus","menu_clean_human","menu_clean_elf","menu_clean_dwarf","menu_clean_halfling","menu_clean_gnome","menu_clean_dragonborn","menu_clean_half-elf","menu_clean_half-orc","menu_clean_tiefling"]},
+  {"file":"tools/test_creatures_ingame.js","suite":"wildlife","shots":["creatures_live_ingame_closeup","creatures_live_ingame"]},
+  {"file":"tools/test_dwarves_ingame.js","suite":"smoke","shots":["dwarf_faction_live_ingame_closeup","dwarf_faction_live_ingame","dwarf_faction_live_ingame_wide"]},
+  {"file":"tools/test_elves_ingame.js","suite":"smoke","shots":["elf_faction_live_ingame_closeup","elf_faction_live_ingame","elf_faction_live_ingame_wide"]},
+  {"file":"tools/test_golden_art_review_live.js","suite":"golden_art_review_grass","shots":["live_temperate_grass_batch1_1x"]},
+  {"file":"tools/test_light_wall_occlusion_live.js","suite":"smoke","shots":["wall_occlusion_closed_door","wall_occlusion_open_doorway"]},
+  {"file":"tools/test_standard_4d_ingame.js","suite":"smoke","shots":["elf_male_live_closeup","elf_male_live_normal"]},
+  {"file":"tools/test_standard_8d_ingame.js","suite":"smoke","shots":["standard_8d_live_normal","standard_8d_live_closeup","standard_8d_live_wide"]},
+  {"file":"tools/test_temperate_arid_transition_live.js","suite":"temperate_arid_live","shots":["live_temperate_arid_gameplay_1x","live_temperate_arid_ecotone_focus"]},
+  {"file":"tools/test_tilesets_live.js","suite":"smoke","shots":["live_tilesets_ground_v2","live_tilesets_underground_v2"]},
+  {"file":"tools/test_title_menu.js","suite":"title","shots":["title_menu_default"]},
+  {"file":"tools/test_underground_room.js","suite":"smoke","shots":["underground_noon_room"]},
+  {"file":"tools/test_water_ingame.js","suite":"smoke","shots":["live_water_pond_surface"]},
+  {"file":"tools/test_sack_ui_and_loose_items.js","fault":"bag-pickup-bypass"},
+  {"file":"tools/ops/pm_launch/test_top_models_effort.ps1","fault":"codex-effort-floor-low"}
+]

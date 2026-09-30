@@ -1,64 +1,55 @@
-'use strict';
-
+"use strict";
 const fs = require('fs');
 const path = require('path');
 const childProcess = require('child_process');
+const { runMain, createSnapshot, replaceOnce, checkChild, verifyArtifacts } = require('./test_all_animated_objects_live');
 
-const ROOT = path.resolve(__dirname, '..');
-const TEST_OUT = path.join(ROOT, 'game', 'test_output');
-const REVIEW_OUT = path.join(ROOT, 'art', 'review', 'menus');
-
-fs.mkdirSync(REVIEW_OUT, { recursive: true });
-
-// We can add a temporary test to UF_FactionMenus or run a script that captures Scene_Title
-const testScript = `
+runMain(() => {
+    const root = path.resolve(__dirname, '..');
+    const snapshot = createSnapshot(root, 'title_menu');
+    const output = path.join(snapshot, 'test_output');
+    fs.mkdirSync(output, { recursive: true });
+    // Install the capture only in this run's snapshot. Never edit the live plugin list.
+    const testScript = `
 (() => {
-    const _Scene_Title_start = Scene_Title.prototype.start;
+    const start = Scene_Title.prototype.start;
     Scene_Title.prototype.start = function() {
-        _Scene_Title_start.call(this);
+        start.call(this);
         setTimeout(() => {
-            const snap = Graphics.app.renderer.plugins.extract.canvas(Graphics.app.stage);
-            const dataUrl = snap.toDataURL('image/png');
-            const base64Data = dataUrl.replace(/^data:image\\/png;base64,/, '');
             const fs = require('fs');
-            fs.writeFileSync('test_output/title_menu_default.png', base64Data, 'base64');
-            console.log('CAPTURED_TITLE_MENU');
-            setTimeout(() => {
-                if (typeof nw !== 'undefined' && nw.App) nw.App.quit();
-            }, 500);
+            try {
+                const menu = this._commandWindow;
+                if (SceneManager._scene !== this || !menu || !menu.visible || menu.openness <= 0 ||
+                    !Array.isArray(menu._list) || menu._list.length === 0) {
+                    throw new Error('title command menu is not visible or has no commands');
+                }
+                const data = SceneManager.snap().canvas.toDataURL('image/png').split(',')[1];
+                fs.writeFileSync('test_output/title.title_menu_default.png', data, 'base64');
+                fs.writeFileSync('test_output/results.txt', 'PASS title.menu_visible\\nRESULT: 1 passed, 0 failed (exit 0)\\n');
+                process.exit(0);
+            } catch (error) {
+                fs.writeFileSync('test_output/results.txt', 'FAIL title.menu_visible - ' + error.message + '\\nRESULT: 0 passed, 1 failed (exit 1)\\n');
+                process.exit(1);
+            }
         }, 800);
     };
 })();
 `;
-
-const fixturePath = path.join(ROOT, 'game', 'js', 'plugins', 'UF_TempTitleCapture.js');
-fs.writeFileSync(fixturePath, testScript);
-
-// Enable in plugins.js
-const pluginsJsPath = path.join(ROOT, 'game', 'js', 'plugins.js');
-const origPluginsJs = fs.readFileSync(pluginsJsPath, 'utf8');
-const modifiedPluginsJs = origPluginsJs.replace(
-    'var $plugins =',
-    'var $plugins = [\n{"name":"UF_TempTitleCapture","status":true,"description":"","parameters":{}},'
-);
-fs.writeFileSync(pluginsJsPath, modifiedPluginsJs);
-
-console.log('Running title menu capture in NW.js...');
-try {
-    childProcess.execSync('nw.exe game', { cwd: ROOT, timeout: 15000 });
-} catch (e) {
-    // NW process exit is expected
-}
-
-// Restore plugins.js and delete fixture
-fs.writeFileSync(pluginsJsPath, origPluginsJs);
-try { fs.unlinkSync(fixturePath); } catch (e) {}
-
-const shotSrc = path.join(TEST_OUT, 'title_menu_default.png');
-if (fs.existsSync(shotSrc)) {
-    const shotDst = path.join(REVIEW_OUT, 'title_menu_default.png');
-    fs.copyFileSync(shotSrc, shotDst);
-    console.log(`Successfully preserved title menu capture: ${shotDst}`);
-} else {
-    console.log('Title screenshot not found in test_output.');
-}
+    fs.writeFileSync(path.join(snapshot, 'js', 'plugins', 'UF_TempTitleCapture.js'), testScript);
+    const pluginsPath = path.join(snapshot, 'js', 'plugins.js');
+    const plugins = fs.readFileSync(pluginsPath, 'utf8');
+    const match = plugins.match(/var\s+\$plugins\s*=\s*\[/);
+    if (!match) throw new Error('plugins.js array declaration missing');
+    fs.writeFileSync(pluginsPath, replaceOnce(plugins, match[0], match[0] +
+        '\n{"name":"UF_TempTitleCapture","status":true,"description":"Test capture","parameters":{}},'));
+    const rmmz = process.env.RMMZ_DIR || 'C:\\Program Files (x86)\\Steam\\steamapps\\common\\RPG Maker MZ';
+    const child = childProcess.spawnSync(path.join(rmmz, 'nwjs-win', 'nw.exe'),
+        [snapshot, '--user-data-dir=' + path.join(snapshot, 'profile'), '--disable-background-timer-throttling'],
+        { cwd: snapshot, encoding: 'utf8', timeout: 30000, windowsHide: true });
+    checkChild(child, 'title capture');
+    verifyArtifacts(snapshot, 'title', ['title_menu_default']);
+    const review = path.join(root, 'art', 'review', 'menus');
+    fs.mkdirSync(review, { recursive: true });
+    fs.copyFileSync(path.join(output, 'title.title_menu_default.png'), path.join(review, 'title_menu_default.png'));
+    console.log('PASS title capture: visible commands and nonempty PNG');
+});

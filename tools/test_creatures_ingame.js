@@ -1,20 +1,13 @@
 const fs = require('fs');
 const path = require('path');
-const childProcess = require('child_process');
-const os = require('os');
 
+const { runMain, createSnapshot, replaceOnce, runSuite } = require('./test_all_animated_objects_live');
+
+runMain(() => {
 const ROOT = path.resolve(__dirname, '..');
-const SNAPSHOT_DIR = path.join(os.tmpdir(), 'uf_snapshots', 'creatures_live');
+const SNAPSHOT_DIR = createSnapshot(ROOT, 'creatures_live');
 
 console.log(`Setting up in-game test snapshot at: ${SNAPSHOT_DIR}`);
-fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
-
-// Sync game/ to snapshot using robocopy (fast and preserves files)
-try {
-    childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
-} catch (e) {
-    // Robocopy returns exit code 1 on success when files are copied
-}
 
 // Update UF_WorldCatalog.json in snapshot ONLY
 const catalogPath = path.join(SNAPSHOT_DIR, 'data', 'UF_WorldCatalog.json');
@@ -47,8 +40,8 @@ if (fox) {
 fs.writeFileSync(catalogPath, JSON.stringify(catalog, null, 2) + '\n');
 console.log('Updated catalog in snapshot: boar -> $UF_Boar, hare -> $UF_Hare, wolf -> $UF_Wolf, fox -> $UF_Fox');
 
-// Add a high-visibility in-game showcase step to UF_Wildlife.js test in the snapshot
-const wildlifeJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Wildlife.js');
+// Add a high-visibility in-game showcase step to DEUS_Wildlife.js test in the snapshot
+const wildlifeJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Wildlife.js');
 let wildlifeJs = fs.readFileSync(wildlifeJsPath, 'utf8');
 
 const targetHook = 't.screenshot("df_behaviors");';
@@ -71,22 +64,16 @@ const customShowcase = `
             if (UF.Camera) UF.Camera.setLevel(1);
             await t.waitFrames(15);
             t.screenshot("creatures_live_ingame");
-            \${targetHook}
+            ${targetHook}
 `;
 
-wildlifeJs = wildlifeJs.replace(targetHook, customShowcase);
+wildlifeJs = replaceOnce(wildlifeJs, targetHook, customShowcase);
 fs.writeFileSync(wildlifeJsPath, wildlifeJs);
 console.log('Injected in-game creature camera showcase into snapshot test suite.');
 
 // Run the snapshot test
 console.log('Launching NW.js test harness on snapshot...');
-try {
-    const out = childProcess.execSync(`"${process.execPath}" tools/run_tests.js wildlife --game "${SNAPSHOT_DIR}"`, { cwd: ROOT, encoding: 'utf8' });
-    console.log(out);
-} catch (err) {
-    console.error('Test harness output:', err.stdout);
-    console.error('Error:', err.message);
-}
+runSuite(ROOT, SNAPSHOT_DIR, "wildlife", ["creatures_live_ingame_closeup","creatures_live_ingame"]);
 
 // Copy screenshots back to game/test_output/ for inspection
 const outDir = path.join(ROOT, 'game', 'test_output');
@@ -101,3 +88,5 @@ if (fs.existsSync(snapOutDir)) {
         }
     }
 }
+
+});

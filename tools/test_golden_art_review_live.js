@@ -15,25 +15,19 @@
 
 const fs = require('fs');
 const path = require('path');
-const childProcess = require('child_process');
-const os = require('os');
 
+const { runMain, createSnapshot, replaceOnce, runSuite } = require('./test_all_animated_objects_live');
+
+runMain(() => {
 const ROOT = path.resolve(__dirname, '..');
-const SNAPSHOT_DIR = path.join(os.tmpdir(), 'uf_snapshots', 'golden_art_review');
+const SNAPSHOT_DIR = createSnapshot(ROOT, 'golden_art_review');
 const REVIEW_DIR = path.join(ROOT, 'art', 'review');
 const BRAIN_DIR = 'C:/Users/snewt/.gemini/antigravity/brain/7d7882c9-e557-404d-b5c5-5f27d0d37964';
 
 console.log(`Setting up Golden Art Review snapshot at: ${SNAPSHOT_DIR}`);
-try {
-    fs.rmSync(SNAPSHOT_DIR, { recursive: true, force: true });
-} catch (e) {}
-fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
 
 // 1. Sync game/ to snapshot using robocopy
 console.log('Syncing game directory to snapshot...');
-try {
-    childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
-} catch (e) {}
 
 // Explicitly copy fresh tileset images into snapshot to guarantee synchronization
 const tilesetSrcDir = path.join(ROOT, 'game', 'img', 'tilesets');
@@ -220,8 +214,10 @@ const suiteCode = `
         await t.waitFrames(20);
 
         // Snap live in-engine screenshot
-        t.screenshot("live_temperate_grass_batch1_1x");
-        t.check("grass_batch1_rendered", true, "In-engine RMMZ Batch 1 Grass rendered at locked 1.00x camera");
+        const grassShot = t.screenshot("live_temperate_grass_batch1_1x");
+        const shotFs = require('fs');
+        t.check("grass_batch1_rendered", typeof grassShot === 'string' && shotFs.existsSync(grassShot) &&
+            shotFs.statSync(grassShot).size > 0, "Batch 1 screenshot must exist and contain image data");
 
         // Restore layer visibility
         if (scene && scene._windowLayer) scene._windowLayer.visible = true;
@@ -232,20 +228,13 @@ const suiteCode = `
     });
 `;
 
-testCode = testCode.replace('Test.suite("smoke",', `${suiteCode}\n    Test.suite("smoke",`);
+testCode = replaceOnce(testCode, 'Test.suite("smoke",', `${suiteCode}\n    Test.suite("smoke",`);
 fs.writeFileSync(testJsPath, testCode, 'utf8');
 console.log('Injected golden_art_review_grass suite into DEUS_Test.js in snapshot.');
 
 // 4. Run NW.js headless playtest
 console.log('Running in-engine test suite via run_tests.js...');
-const nodePath = process.execPath;
-try {
-    const out = childProcess.execSync(`"${nodePath}" tools/run_tests.js golden_art_review_grass --game "${SNAPSHOT_DIR}"`, { cwd: ROOT, encoding: 'utf8' });
-    console.log(out);
-} catch (err) {
-    console.error('Harness output:', err.stdout || err.message);
-    if (err.stderr) console.error('Harness stderr:', err.stderr);
-}
+runSuite(ROOT, SNAPSHOT_DIR, "golden_art_review_grass", ["live_temperate_grass_batch1_1x"]);
 
 // 5. Copy captured screenshot to art/review/ and brain directory
 fs.mkdirSync(REVIEW_DIR, { recursive: true });
@@ -256,8 +245,10 @@ if (fs.existsSync(snapshotShot)) {
     const reviewShot = path.join(REVIEW_DIR, 'live_temperate_grass_batch1_1x.png');
     const brainShot = path.join(BRAIN_DIR, 'live_temperate_grass_batch1_1x.png');
     fs.copyFileSync(snapshotShot, reviewShot);
-    fs.copyFileSync(snapshotShot, brainShot);
+    if (fs.existsSync(BRAIN_DIR)) fs.copyFileSync(snapshotShot, brainShot);
     console.log(`SUCCESS: Captured live in-engine screenshot: ${reviewShot}`);
 } else {
     console.error(`ERROR: Screenshot not found at ${snapshotShot}`);
 }
+
+});
