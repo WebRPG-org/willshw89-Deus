@@ -31,9 +31,9 @@ Runs 26 and 27 were removed because peak rock is uniform. Runs 51 and 52 are out
 `SURFACE_SHARED_TERRAIN_ROCK_V2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your Meadow tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of grey rock ground, cracked and weathered, with quiet mineral grain.
 
@@ -45,9 +45,9 @@ Specs: one seamless 48x48 tile, the ordinary state of this ground; match the gra
 `SURFACE_SHARED_TERRAIN_ROCK_V1_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Rock base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of rain-wet, darker grey rock ground, cracked and weathered, with quiet mineral grain.
 
@@ -59,9 +59,9 @@ Specs: one seamless 48x48 tile, the damp state of this ground; match the grain s
 `SURFACE_SHARED_TERRAIN_ROCK_V3_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Rock base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of sun-dried, paler grey rock ground, cracked and weathered, with quiet mineral grain.
 
@@ -73,9 +73,9 @@ Specs: one seamless 48x48 tile, the dry state of this ground; match the grain sc
 `SURFACE_SHARED_TERRAIN_DIRT_V2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your Meadow tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of bare brown loam with an even fine crumb and a few tiny pebbles.
 
@@ -87,9 +87,9 @@ Specs: one seamless 48x48 tile, the ordinary state of this ground; match the gra
 `SURFACE_SHARED_TERRAIN_DIRT_V1_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Dirt base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of damp, dark bare brown loam with an even fine crumb and a few tiny pebbles.
 
@@ -101,9 +101,9 @@ Specs: one seamless 48x48 tile, the damp state of this ground; match the grain s
 `SURFACE_SHARED_TERRAIN_DIRT_V3_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Dirt base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of dry, pale bare brown loam with an even fine crumb and a few tiny pebbles.
 
@@ -115,9 +115,9 @@ Specs: one seamless 48x48 tile, the dry state of this ground; match the grain sc
 `SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your Meadow tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of leaf litter of fallen oak and ash leaves with a few small twigs over dark humus.
 
@@ -129,9 +129,9 @@ Specs: one seamless 48x48 tile, the ordinary state of this ground; match the gra
 `SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V1_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Forest floor base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of damp, dark leaf litter of fallen oak and ash leaves with a few small twigs over dark humus.
 
@@ -143,9 +143,9 @@ Specs: one seamless 48x48 tile, the damp state of this ground; match the grain s
 `SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V3_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Forest floor base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of dry, paler leaf litter of fallen oak and ash leaves with a few small twigs over dark humus.
 
@@ -157,9 +157,9 @@ Specs: one seamless 48x48 tile, the dry state of this ground; match the grain sc
 `SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your Meadow tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of fine rusty-brown pine needles over dark earth, even grain, no cones or large twigs.
 
@@ -171,9 +171,9 @@ Specs: one seamless 48x48 tile, the ordinary state of this ground; match the gra
 `SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V1_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Needle floor base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of damp, dark fine rusty-brown pine needles over dark earth, even grain, no cones or large twigs.
 
@@ -185,9 +185,9 @@ Specs: one seamless 48x48 tile, the damp state of this ground; match the grain s
 `SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V3_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Needle floor base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of dry, paler fine rusty-brown pine needles over dark earth, even grain, no cones or large twigs.
 
@@ -199,9 +199,9 @@ Specs: one seamless 48x48 tile, the dry state of this ground; match the grain sc
 `SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your Meadow tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of gritty light-brown scrubland soil with small stones, no grass tufts, no bush.
 
@@ -213,9 +213,9 @@ Specs: one seamless 48x48 tile, the ordinary state of this ground; match the gra
 `SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V1_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Shrub soil base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of damp gritty light-brown scrubland soil with small stones, no grass tufts, no bush.
 
@@ -227,9 +227,9 @@ Specs: one seamless 48x48 tile, the damp state of this ground; match the grain s
 `SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V3_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Shrub soil base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of dry, pale gritty light-brown scrubland soil with small stones, no grass tufts, no bush.
 
@@ -241,9 +241,9 @@ Specs: one seamless 48x48 tile, the dry state of this ground; match the grain sc
 `SURFACE_SHARED_TERRAIN_DRY-GRASS_V2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your Meadow tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of dry golden-brown grass with sparse blades over soil.
 
@@ -255,9 +255,9 @@ Specs: one seamless 48x48 tile, the ordinary state of this ground; match the gra
 `SURFACE_SHARED_TERRAIN_DRY-GRASS_V1_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Dry grass base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of rain-damp golden-brown grass with sparse blades over soil, same hue as the base, one value-step darker.
 
@@ -269,9 +269,9 @@ Specs: one seamless 48x48 tile, the damp state of this ground; match the grain s
 `SURFACE_SHARED_TERRAIN_DRY-GRASS_V3_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Dry grass base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of parched, pale dry golden-brown grass with sparse blades over soil.
 
@@ -283,9 +283,9 @@ Specs: one seamless 48x48 tile, the dry state of this ground; match the grain sc
 `SURFACE_SHARED_TERRAIN_MUD_V2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your Meadow tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of soft brown marsh mud with broad compressed patches and a little reed stubble, no open puddles.
 
@@ -297,9 +297,9 @@ Specs: one seamless 48x48 tile, the ordinary state of this ground; match the gra
 `SURFACE_SHARED_TERRAIN_MUD_V1_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Mud base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of damp, darker soft brown marsh mud with broad compressed patches and a little reed stubble, no open puddles, no specular highlight.
 
@@ -311,9 +311,9 @@ Specs: one seamless 48x48 tile, the damp state of this ground; match the grain s
 `SURFACE_SHARED_TERRAIN_MUD_V3_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Mud base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of dry, paler soft brown marsh mud with broad compressed patches and a little reed stubble, no open puddles, no cracked crust.
 
@@ -325,9 +325,9 @@ Specs: one seamless 48x48 tile, the dry state of this ground; match the grain sc
 `SURFACE_SHARED_TERRAIN_SWAMP-MUD_V2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your Meadow tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of black peaty swamp mud with coarse organic texture and small flecks of moss, no open water.
 
@@ -339,9 +339,9 @@ Specs: one seamless 48x48 tile, the ordinary state of this ground; match the gra
 `SURFACE_SHARED_TERRAIN_SWAMP-MUD_V1_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Swamp mud base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of damp, darker black peaty swamp mud with coarse organic texture and small flecks of moss, no open water, no specular highlight.
 
@@ -353,9 +353,9 @@ Specs: one seamless 48x48 tile, the damp state of this ground; match the grain s
 `SURFACE_SHARED_TERRAIN_SWAMP-MUD_V3_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Swamp mud base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of dry, paler black peaty swamp mud with coarse organic texture and small flecks of moss, no open water, no cracked crust.
 
@@ -367,9 +367,9 @@ Specs: one seamless 48x48 tile, the dry state of this ground; match the grain sc
 `SURFACE_SHARED_TERRAIN_PEAK-ROCK_A2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Rock base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of rough dark-grey crag rock with hard fractures, darker than ordinary rock, not loose scree.
 
@@ -381,9 +381,9 @@ Specs: one seamless 48x48 tile, the single uniform state of this ground; no damp
 `SURFACE_SHARED_TERRAIN_STONY_V2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Dirt base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of packed brown earth with small, evenly scattered weathered grey stones, sparser than scree.
 
@@ -395,9 +395,9 @@ Specs: one seamless 48x48 tile, the ordinary state of this ground; match the gra
 `SURFACE_SHARED_TERRAIN_STONY_V1_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Stony base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of damp packed brown earth with small, evenly scattered weathered grey stones, sparser than scree.
 
@@ -409,9 +409,9 @@ Specs: one seamless 48x48 tile, the damp state of this ground; match the grain s
 `SURFACE_SHARED_TERRAIN_STONY_V3_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Stony base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of dry, pale packed brown earth with small, evenly scattered weathered grey stones, sparser than scree.
 
@@ -423,9 +423,9 @@ Specs: one seamless 48x48 tile, the dry state of this ground; match the grain sc
 `SURFACE_SHARED_TERRAIN_SCREE_V2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Rock base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of grey scree of tight-packed angular broken stones, fully opaque, no intact slab, no holes.
 
@@ -437,9 +437,9 @@ Specs: one seamless 48x48 tile, the ordinary state of this ground; match the gra
 `SURFACE_SHARED_TERRAIN_SCREE_V1_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Scree base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of damp, darker grey scree of tight-packed angular broken stones, fully opaque, no intact slab, no holes.
 
@@ -451,9 +451,9 @@ Specs: one seamless 48x48 tile, the damp state of this ground; match the grain s
 `SURFACE_SHARED_TERRAIN_SCREE_V3_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Scree base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of dry, paler grey scree of tight-packed angular broken stones, fully opaque, no intact slab, no holes.
 
@@ -465,9 +465,9 @@ Specs: one seamless 48x48 tile, the dry state of this ground; match the grain sc
 `SURFACE_SHARED_TERRAIN_SAND_V2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your Meadow tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of fine pale lake-shore sand with even grain and faint shallow ripples.
 
@@ -479,9 +479,9 @@ Specs: one seamless 48x48 tile, the ordinary state of this ground; match the gra
 `SURFACE_SHARED_TERRAIN_SAND_V1_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Sand base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of wet, darker fine pale lake-shore sand with even grain and faint shallow ripples.
 
@@ -493,9 +493,9 @@ Specs: one seamless 48x48 tile, the damp state of this ground; match the grain s
 `SURFACE_SHARED_TERRAIN_SAND_V3_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Sand base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One seamless tile of dry, palest fine pale lake-shore sand with even grain and faint shallow ripples.
 
@@ -507,9 +507,9 @@ Specs: one seamless 48x48 tile, the dry state of this ground; match the grain sc
 `SURFACE_SHARED_TERRAIN_ROAD_A2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Dirt base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Ground stays quiet enough for figures and resources to read clearly.
 
 A compacted packed-earth cart track with subdued wheel wear, lighter and smoother than bare dirt, no painted border.
 
@@ -523,9 +523,9 @@ Specs: one seamless 48x48 tile. Opaque edge to edge, static, flat ground seen fr
 `SURFACE_SHARED_WATER_FRESH_A1_DEFAULT` · Maps → Create Tiles Pro · square top-down · 48 px · view high top-down · segmentation on · one tile · no style reference
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 Clear fresh river water, cool blue-green, with small restrained groups of ripples.
 
@@ -547,9 +547,9 @@ Small ripple groups drift gently across the water in the direction of the curren
 `SURFACE_SHARED_WATER_POND_A1_DEFAULT` · Maps → Create Tiles Pro · square top-down · 48 px · view high top-down · segmentation on · one tile · no style reference
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 Sheltered still pond water, slightly greener and calmer than river water, with gentle local ripples and no foam.
 
@@ -571,9 +571,9 @@ Faint local ripples swell and fade in place; three frames; seamless loop; every 
 `SURFACE_SHARED_WATER_MARSH_A1_DEFAULT` · Maps → Create Tiles Pro · square top-down · 48 px · view high top-down · segmentation on · one tile · no style reference
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 Shallow, sediment-rich marsh water, murky olive-green, with small scattered specks of duckweed and no reeds in the fill.
 
@@ -595,9 +595,9 @@ The duckweed specks shift a pixel or two as the shallow water barely moves; thre
 `SURFACE_SHARED_WATER_SWAMP_A1_DEFAULT` · Maps → Create Tiles Pro · square top-down · 48 px · view high top-down · segmentation on · one tile · no style reference
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 Dark peaty swamp water, tea-brown to near black, with sparse floating leaf debris, clearly wetter and glossier than swamp mud.
 
@@ -619,9 +619,9 @@ Slow dull glints move across the dark water and the floating debris drifts sligh
 `SURFACE_SHARED_WATER_DEEP_A1_DEFAULT` · Maps → Create Tiles Pro · square top-down · 48 px · view high top-down · segmentation on · one tile · no style reference
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 Deep open water, a darker blue clearly lower in value than shallow water, with broad quiet internal wave marks.
 
@@ -645,7 +645,7 @@ Broad slow wave marks roll across the deep water; three frames; seamless loop; e
 `ALL_SHARED_TERRAIN_CAVE-FLOOR_A2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Rock base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
 The Lowlands, just below the surface: shallow underground spaces where soil, rock, water and roots meet. Exposed material layers, modest relief, weathered surfaces. Floors show honest stone and earth with a little settled sediment; do not make them uniformly black or carpet them with growth.
 
@@ -659,7 +659,7 @@ Specs: one seamless 48x48 floor tile, opaque edge to edge, static, flat, seen fr
 `ALL_SHARED_TERRAIN_MINED-STONE_A2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Rock base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
 The Lowlands, just below the surface: shallow underground spaces where soil, rock, water and roots meet. Exposed material layers, modest relief, weathered surfaces. Floors show honest stone and earth with a little settled sediment; do not make them uniformly black or carpet them with growth.
 
@@ -673,7 +673,7 @@ Specs: one seamless 48x48 floor tile, opaque edge to edge, static, flat, seen fr
 `ALL_SHARED_TERRAIN_MINED-SOIL_A2_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Dirt base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
 The Lowlands, just below the surface: shallow underground spaces where soil, rock, water and roots meet. Exposed material layers, modest relief, weathered surfaces. Floors show honest stone and earth with a little settled sediment; do not make them uniformly black or carpet them with growth.
 
@@ -689,7 +689,7 @@ Outside the CARDS-1 terrain job; retained as reference metadata only.
 `ALL_SHARED_TERRAIN_ROCK-SOLID_TOP_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Rock base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
 The Lowlands, just below the surface: shallow underground spaces where soil, rock, water and roots meet. Exposed material layers, modest relief, weathered surfaces. Floors show honest stone and earth with a little settled sediment; do not make them uniformly black or carpet them with growth.
 
@@ -705,7 +705,7 @@ Outside the CARDS-1 terrain job; retained as reference metadata only.
 `ALL_SHARED_TERRAIN_SOIL-SOLID_TOP_DEFAULT` · Maps -> Create Tiles Pro · square top-down · 48 px · view high top-down · outline off · segmentation off · tile thickness 0 · one tile · style reference: your accepted Dirt base tile
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
 The Lowlands, just below the surface: shallow underground spaces where soil, rock, water and roots meet. Exposed material layers, modest relief, weathered surfaces. Floors show honest stone and earth with a little settled sediment; do not make them uniformly black or carpet them with growth.
 
@@ -721,9 +721,9 @@ Specs: one seamless 48x48 tile showing the flat top of a solid mass from directl
 `SURFACE_SHARED_FLORA_GRASS-TUFT_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → keep the 8 most different
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One compact upright tuft of mid-green grass, separate from the ground.
 
@@ -735,9 +735,9 @@ Specs: a single object on a transparent background, sized for a 48x48 tile, seen
 `SURFACE_SHARED_FLORA_FLOWERS_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → keep the 8 most different
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A small mixed cluster of meadow wildflowers, a few tiny red, yellow and white blooms among green leaves, quiet enough to stay background vegetation.
 
@@ -749,9 +749,9 @@ Specs: a single object on a transparent background, sized for a 48x48 tile, seen
 `SURFACE_SHARED_FLORA_FLOWERS-BLUE_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → keep the 8 most different
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A small cluster of nodding bluebells with one readable blue-violet bloom mass over strap leaves.
 
@@ -763,9 +763,9 @@ Specs: a single object on a transparent background, sized for a 48x48 tile, seen
 `SURFACE_SHARED_FLORA_FLOWERS-WHITE_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → keep the 8 most different
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A low cluster of small white woodland flowers with restrained bright petals over dark leaves.
 
@@ -777,9 +777,9 @@ Specs: a single object on a transparent background, sized for a 48x48 tile, seen
 `SURFACE_SHARED_FLORA_FERN_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → keep the 8 most different
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A few broad divided bracken fronds spread in a clear fan.
 
@@ -791,9 +791,9 @@ Specs: a single object on a transparent background, sized for a 48x48 tile, seen
 `SURFACE_SHARED_FLORA_BUSH_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → keep the 8 most different
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A quiet non-fruiting hedgerow bush with a clear rounded silhouette.
 
@@ -805,9 +805,9 @@ Specs: a single object on a transparent background, sized for a 48x48 tile, seen
 `SURFACE_SHARED_FLORA_BERRY-BUSH_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → keep the 8 most different
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A low broad bramble bush with a few conspicuous dark berry clusters.
 
@@ -819,9 +819,9 @@ Specs: a single object on a transparent background, sized for a 48x48 tile, seen
 `SURFACE_SHARED_FLORA_REEDS_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → keep the 8 most different
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A bundle of slender wetland reed stems with brown seed heads.
 
@@ -835,9 +835,9 @@ CARDS-1 follow-up: binary-alpha wording correction remains deferred; this card i
 `SURFACE_SHARED_FLORA_LILY-PAD_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → keep the 8 most different
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A small group of broad round floating lily leaves with transparent gaps where the water shows through.
 
@@ -849,9 +849,9 @@ Specs: a single object on a transparent background, sized for a 48x48 tile, seen
 `SURFACE_SHARED_FLORA_LICHEN_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → keep the 8 most different
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A flat crust-like patch of pale grey-green lichen, shaped as if growing on exposed rock.
 
@@ -863,9 +863,9 @@ Specs: a single object on a transparent background, sized for a 48x48 tile, seen
 `SURFACE_SHARED_STONE_GRAVEL_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → keep the 8 most different
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A small loose deposit of angular grey gravel in discrete pieces.
 
@@ -877,9 +877,9 @@ Specs: a single object on a transparent background, sized for a 48x48 tile, seen
 `SURFACE_SHARED_FLORA_BERRY-BUSH-BARE_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → one per accepted berry bush · reference image: that accepted berry bush
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 The same bramble bush after its berries are gathered: same shape and leaves, no fruit.
 
@@ -891,9 +891,9 @@ Specs: a single object on a transparent background, sized for a 48x48 tile, seen
 `ALL_SHARED_STONE_ROCKS-SMALL_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → keep the 8 most different
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A loose group of a few separate weathered grey stones.
 
@@ -905,9 +905,9 @@ Specs: a single object on a transparent background, sized for a 48x48 tile, seen
 `SURFACE_SHARED_STONE_GRANITE-BOULDER_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · 48 px · 16 candidates → keep the 8 most different
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 One heavy blocky speckled-grey granite boulder with a clear ground contact.
 
@@ -921,9 +921,9 @@ Specs: a single object on a transparent background, sized for a 48x48 tile, seen
 `SURFACE_SHARED_TREE_OAK_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · native size 96x96 · pick the best one
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A broad sturdy oak with a broken rounded crown and a substantial trunk.
 
@@ -935,9 +935,9 @@ Specs: a single tree on a transparent background at native size 96x96, seen from
 `SURFACE_SHARED_TREE_BIRCH_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · native size 96x144 · pick the best one
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A slender white-barked birch with dark bark marks and a light, airy, irregular crown.
 
@@ -949,9 +949,9 @@ Specs: a single tree on a transparent background at native size 96x144, seen fro
 `SURFACE_SHARED_TREE_PINE_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · native size 96x144 · pick the best one
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A tall pine with tiered dark-green foliage masses and a visible reddish trunk base.
 
@@ -963,9 +963,9 @@ Specs: a single tree on a transparent background at native size 96x144, seen fro
 `SURFACE_SHARED_TREE_FRUIT-TREE_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · native size 96x96 · pick the best one
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A modest spreading apple tree with a few readable clusters of red fruit.
 
@@ -977,9 +977,9 @@ Specs: a single tree on a transparent background at native size 96x96, seen from
 `SURFACE_SHARED_TREE_FRUIT-TREE-BARE_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · native size 96x96 · pick the best one · reference image: your accepted fruit tree
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 The same apple tree after harvest: same trunk and crown, no fruit.
 
@@ -991,9 +991,9 @@ Specs: a single tree on a transparent background at native size 96x96, seen from
 `SURFACE_SHARED_TREE_TREE-SWAMP_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · native size 96x96 · pick the best one
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A damp-ground alder with exposed arching roots and an irregular crown.
 
@@ -1005,9 +1005,9 @@ Specs: a single tree on a transparent background at native size 96x96, seen from
 `SURFACE_SHARED_TREE_STUMP_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · native size 48x48 · pick the best one
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A cut oak stump with a readable pale cut face and rings.
 
@@ -1019,9 +1019,9 @@ Specs: a single tree on a transparent background at native size 48x48, seen from
 `SURFACE_SHARED_TREE_DEAD-TREE_V1_DEFAULT` · Objects → Create 1-direction object · high top-down · selective outline · medium detail · native size 96x96 · pick the best one
 
 ```text
-Emrys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
+Emerys is a tangible fantasy world of old stone, living woodland and dangerous depths, shaped by oaths, hospitality and the nearness of the uncanny. Create original, readable pixel art with English folklore character and a lived-in medieval feel. Use high top-down view, crisp pixel clusters and consistent upper-left light. Establish silhouette first, value second and restrained colour third. Keep terrain calmer than actors, materials believable and details legible at native game size. World feel: English folklore, in the spirit of Ultima VII and EverQuest.
 
-Temperate Emrys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
+Temperate Emerys: meadow, broadleaf woodland, hedged clearings, streams and weathered stone. Calm greens, loam brown, grey rock and restrained straw tones: grass a mid green, soil a mid brown, fieldstone a mid grey, flowers only small accents. Do not paint roads, fences or ruins into natural things. Ground stays quiet enough for figures and resources to read clearly.
 
 A leafless weathered dead tree with grey bark and broken branch ends.
 
