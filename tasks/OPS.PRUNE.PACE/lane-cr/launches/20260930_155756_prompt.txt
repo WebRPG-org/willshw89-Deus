@@ -1,0 +1,49 @@
+You are CODEX (OpenAI family), acting as the primary writer for Project DEUS.
+Lane: lane-cr (OPS.PRUNE.PACE: Pacing Telemetry & Rate Governor).
+Worktree: C:\Users\snewt\.deus_worktrees\lane-cr
+Branch: task/lane-cr
+
+TASK: FIX-CR-2 (bounded SURGE correction per MSG-PRUNE-PM-054 and ANSWER-CR-R2_chatgpt_pro.md)
+
+OBJECTIVES:
+1. In tools/ops/pace.js:
+   - Keep 'action' as the diagnostic band (from classify(ratio)).
+   - Add 'effectiveAction = ACCELERATE-2' when surge holds; otherwise 'effectiveAction = action'.
+   - surge condition:
+     In the last 10% of the window (hoursLeft <= current.durationHours * 0.1),
+     more than 10% remaining (current.remainingPct > 10),
+     ratio finite and 0 <= ratio < 1 (Number.isFinite(report.ratio) && report.ratio >= 0 && report.ratio < 1).
+   - Apply surge AFTER the existing dispatch guards (exhaustion, over-budget, rejected-siblings, DENY, BOUNDED_TASKS), which still win and suppress surge (report.surge = false).
+   - UNKNOWN history (or measured === null or ratio === null) never enables SURGE (report.surge === false, effectiveAction === 'UNKNOWN').
+   - Show action, effectiveAction, and dispatch separately in the text formatting (format()) and JSON output.
+     In format(report):
+     PACE <provider> window <w> rem <p>% reset <t> used/h <u> target/h <tg> -> <action> [effective: <effectiveAction>] [source: <s>] [scope: <scope>] [dispatch: <dispatch>] ...
+     (Ensure format string satisfies existing format tests and regexes, such as /->\s*([A-Z0-9-]+)/).
+   - In evaluate(): report includes `effectiveAction: report.surge ? 'ACCELERATE-2' : report.action`.
+
+2. In tools/ops/test_pace.js:
+   - Tests use fresh, matching one-hour history: 5 h window, 11% remaining, 30 min to reset (at(0.5)), target 22/h, cost 1.
+     - Ratios 0.75, 0.95, and 0.999999: effectiveAction === 'ACCELERATE-2', action bands kept.
+     - Ratios 1, 1.05, 1.2, and 2: no escalation (effectiveAction === action).
+     - UNKNOWN history never enables SURGE (report.surge === false, effectiveAction === 'UNKNOWN').
+     - Each guard with an under-target ratio (exhaustion, over-budget, rejected siblings, LOW quota) keeps its restriction and suppresses SURGE.
+     - Update the contrary assertion.
+   - Add mutant 'no-effective-surge' (effectiveAction = action) and ensure it fails the named promotion assertions.
+   - Verify all mutants pass (--mutants).
+
+3. Verify:
+   - node tools/check_deus_syntax.js exits 0
+   - node tools/ops/test_pace.js exits 0 (all assertions pass)
+   - node tools/ops/test_pace.js --mutants exits 0 (all mutants killed)
+
+4. Update documentation & evidence:
+   - tasks/OPS.PRUNE.PACE/lane-cr/README.md
+   - tasks/OPS.PRUNE.PACE/lane-cr/REPORT.md
+   - tasks/OPS.PRUNE.PACE/lane-cr/state.md
+   - tasks/OPS.PRUNE.PACE/lane-cr/evidence/fix-cr-*.log
+
+5. Commit:
+   Stage and commit ONLY allowed paths in lane.json:
+   git add tools/ops/pace.js tools/ops/test_pace.js tasks/OPS.PRUNE.PACE/lane-cr/
+   git commit -m "[codex] OPS.PRUNE.PACE FIX-CR-2: bounded SURGE correction with separate effectiveAction"
+   Do NOT touch or commit any files outside allowedPaths.
