@@ -27,6 +27,7 @@ const PLUGINS_DIR = path.join(ROOT, "game", "js", "plugins");
 const MUTANTS = [
     "missing_live_plugin",
     "archived_file_exists",
+    "missing_archive_file",
     "unlisted_plugin_in_dir",
     "missing_task_branch"
 ];
@@ -190,18 +191,32 @@ if (activeMutant === "archived_file_exists") {
     // Inject a file that genuinely exists on disk into the archived list
     archivedRows.push({ orig: "game/js/plugins/DEUS_Core.js", arch: "archive/plugins/DEUS_Core.js" });
 }
+if (activeMutant === "missing_archive_file" || activeMutant === "missing_in_archive") {
+    // Inject a file whose archive destination does not exist on disk
+    archivedRows.push({ orig: "game/js/plugins/non_existent_fake_orig.js", arch: "archive/plugins/non_existent_fake_arch.js" });
+}
 
 let existingArchived = [];
+let missingInArchive = [];
 for (const row of archivedRows) {
     const fullOrig = path.join(ROOT, row.orig);
     if (fs.existsSync(fullOrig)) {
         existingArchived.push(row.orig);
+    }
+    const fullArch = path.join(ROOT, row.arch);
+    if (!fs.existsSync(fullArch)) {
+        missingInArchive.push(row.arch);
     }
 }
 check(
     `All items declared in Archived Systems (${archivedRows.length}) have been moved off their original paths`,
     existingArchived.length === 0,
     existingArchived.length ? `Still exists on disk: ${existingArchived.join(", ")}` : ""
+);
+check(
+    `All archive destinations declared in Archived Systems (${archivedRows.length}) exist on disk`,
+    missingInArchive.length === 0,
+    missingInArchive.length ? `Missing from archive on disk: ${missingInArchive.join(", ")}` : ""
 );
 
 // Check 5: Anti-Junk Guard — every .js in game/js/plugins must be accounted for
