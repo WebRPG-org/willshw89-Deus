@@ -1,0 +1,28 @@
+{
+  "lane": "lane-cx",
+  "taskId": "WG.00.42",
+  "branch": "task/lane-cx",
+  "writer": "codex",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "game/js/plugins/DEUS_WorldGen.js",
+    "tools/test_worldgen_quickfixes.js",
+    "tasks/WG.00.42/lane-cx/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_worldgen_quickfixes.js"
+      ],
+      "timeoutSec": 600
+    }
+  ]
+}
