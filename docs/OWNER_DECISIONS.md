@@ -793,3 +793,16 @@ Every decision item recorded in this log must provide:
   - the order that respects DEC-037's upstream-first chain.
 
   Implementation starts only on the Owner's approval of the design.
+
+---
+
+### Decision `DEC-050`: Nine race starts spread across the layers, a danger gradient between them, and an SRD bestiary per biome
+- **Date Logged:** 2026-09-30
+- **Status:** `DECIDED` (Owner, in chat with Claude Code, 2026-09-30)
+- **Decider:** Owner
+- **Owner's words:** "The way I want world generation to work is the 9 races start relatively equidistant from eqach other across the layers. Monsters are easier near the starting areas and more dangerous in the pockets between. I want the SRD monsters catalogued and assigned to each biome. Same with wildlife. That way we can flesh out the entire biome"
+- **Summary:**
+  1. **Race starts:** world generation places the nine races' starting areas (DEC-013) relatively equidistant from one another in three dimensions, across the 32 layers, not only across the surface. This gives the spacing rule for DEC-013's open race-to-layer question. The per-race home ranges come from the braintrust design (D4) and need Owner approval.
+  2. **Danger gradient:** creature difficulty is low near every starting area and rises in the pockets between them. Challenge rating is driven by a world danger field that is derived from the starts, deterministic from the seed.
+  3. **Bestiary per biome:** all 317 SRD 5.1 creatures (`game/data/srd51/creatures.json`) and the wildlife species are catalogued and assigned to biomes (the live generator's 33 surface and 8 underground biomes, the five canonical families, and the DEC-038 depth bands), with a danger tier from CR. The assignment lives in a DEUS-owned layer keyed by `srd:` ids. `srd51` records are never edited. A record is verified when it is activated for gameplay (SRD policy, 2026-09-22).
+  4. **Order (PM default; the Owner may change it):** the layout design (D4) and the bestiary run through the braintrust now. Placement of starts is part of world generation, so it joins D1. Runtime creature spawning follows the physics work (DEC-037 chain) unless the Owner brings it forward.
