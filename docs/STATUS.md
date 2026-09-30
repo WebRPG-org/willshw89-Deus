@@ -133,6 +133,7 @@ Active tasks, open branches, and pending review submissions:
 | `task/lane-e` | `lane-e` (`WG.00.09`) | Pre-attack on depth rendering | PAUSED at 05948e9c |
 | `task/lane-h` | `lane-h` (`WG.00.08`) | Z-2 cut proof & fluid hardening | In Review (`e3af4cfa`) |
 | `task/lane-pm-streamline` | `lane-pm-streamline` | PM tooling streamlining | In Flight (`472de247`) |
+| `task/lane-cu` | `lane-cu` (`OPS.PRUNE.06`) | L6: Documentation archival (15 safe docs) & renaming 33 live-system specs | Staged / Manifest initialized |
 
 ### B. Merged or Reference Branches
 | Branch | Lane / Task | Scope | Status |

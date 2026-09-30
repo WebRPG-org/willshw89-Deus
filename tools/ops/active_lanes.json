@@ -18,7 +18,8 @@
     "task/lane-cl",
     "task/lane-e",
     "task/lane-h",
-    "task/lane-pm-streamline"
+    "task/lane-pm-streamline",
+    "task/lane-cu"
   ],
   "referenceBranches": [
     "task/lane-cs",

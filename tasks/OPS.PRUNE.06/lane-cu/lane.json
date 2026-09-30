@@ -1,0 +1,45 @@
+{
+  "lane": "lane-cu",
+  "taskId": "OPS.PRUNE.06",
+  "branch": "task/lane-cu",
+  "writer": "codex",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "docs/STATUS.md",
+    "docs/archive/systems/**",
+    "docs/systems/**",
+    "tasks/OPS.PRUNE.06/lane-cu/**",
+    "tools/ops/active_lanes.json",
+    "tools/test_l6_docs_preservation.js"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_control_board.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_palette.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/governance/test_check_claims.js"
+      ],
+      "timeoutSec": 600
+    }
+  ]
+}
