@@ -542,6 +542,7 @@ Every decision item recorded in this log must provide:
      - **PRESENTATION:** Wait unless needed for verification, within existing approvals and DEC-007.
      - **CIVILIZATION:** Frozen. No civilization, farming, faction, or society implementation under this phase.
      - **CUT / superseded:** Allocate no new work.
+- **Focus (Owner, 2026-09-29: "All I want is the solid world generation and physics, water physics, lava, etc"):** engineering work narrows to two things: (1) world generation that fills all 32 layers with real geology by depth band (DEC-030), caves, ravines and the deep magma, and (2) the physics that runs on it: water (one water authority, flow across layers, aquifers, springs), lava (magma, flow, lava meeting water), matter (collapse when support is removed) and soil/sediment movement, each bridged into the running game and visible in F5. Climate, flora, fauna, UI features, society and the art pipeline wait; placeholder art only as far as the physics must be readable.
 
 ---
 
