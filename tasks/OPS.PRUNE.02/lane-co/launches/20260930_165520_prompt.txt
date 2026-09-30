@@ -1,0 +1,90 @@
+Task: OPS.PRUNE.02 (L2) - Archive the 41 loadScript-only forwarders and retarget tool/test imports.
+
+Authority: MSG-PRUNE-PM-059 and tasks/OPS.PRUNE.02/lane-co/BRIEF.md.
+
+Instructions:
+1. Reconciliation (41 vs 38):
+   - In game/js/plugins/, exactly 43 UF_*.js files exist.
+   - PROTECTED (DO NOT MOVE): UF_Households.js and UF_Time.js are real active plugins. They MUST REMAIN in game/js/plugins/.
+   - EXPLICIT MOVE LIST: Move the remaining 41 loadScript forwarder shims via git mv to archive/game/js/plugins/:
+     git mv game/js/plugins/UF_Anim.js archive/game/js/plugins/UF_Anim.js
+     git mv game/js/plugins/UF_Camera.js archive/game/js/plugins/UF_Camera.js
+     git mv game/js/plugins/UF_Colonists.js archive/game/js/plugins/UF_Colonists.js
+     git mv game/js/plugins/UF_ColonyOverseer.js archive/game/js/plugins/UF_ColonyOverseer.js
+     git mv game/js/plugins/UF_Combat.js archive/game/js/plugins/UF_Combat.js
+     git mv game/js/plugins/UF_Core.js archive/game/js/plugins/UF_Core.js
+     git mv game/js/plugins/UF_DayNight.js archive/game/js/plugins/UF_DayNight.js
+     git mv game/js/plugins/UF_Doors.js archive/game/js/plugins/UF_Doors.js
+     git mv game/js/plugins/UF_Ecology.js archive/game/js/plugins/UF_Ecology.js
+     git mv game/js/plugins/UF_Environment.js archive/game/js/plugins/UF_Environment.js
+     git mv game/js/plugins/UF_FactionMenus.js archive/game/js/plugins/UF_FactionMenus.js
+     git mv game/js/plugins/UF_Factions.js archive/game/js/plugins/UF_Factions.js
+     git mv game/js/plugins/UF_Fire.js archive/game/js/plugins/UF_Fire.js
+     git mv game/js/plugins/UF_Floors.js archive/game/js/plugins/UF_Floors.js
+     git mv game/js/plugins/UF_Fog.js archive/game/js/plugins/UF_Fog.js
+     git mv game/js/plugins/UF_Generator.js archive/game/js/plugins/UF_Generator.js
+     git mv game/js/plugins/UF_History.js archive/game/js/plugins/UF_History.js
+     git mv game/js/plugins/UF_Interact.js archive/game/js/plugins/UF_Interact.js
+     git mv game/js/plugins/UF_Items.js archive/game/js/plugins/UF_Items.js
+     git mv game/js/plugins/UF_Jobs.js archive/game/js/plugins/UF_Jobs.js
+     git mv game/js/plugins/UF_Levels.js archive/game/js/plugins/UF_Levels.js
+     git mv game/js/plugins/UF_Look.js archive/game/js/plugins/UF_Look.js
+     git mv game/js/plugins/UF_Minimap.js archive/game/js/plugins/UF_Minimap.js
+     git mv game/js/plugins/UF_Movement8D.js archive/game/js/plugins/UF_Movement8D.js
+     git mv game/js/plugins/UF_NaturalConnections.js archive/game/js/plugins/UF_NaturalConnections.js
+     git mv game/js/plugins/UF_Objects.js archive/game/js/plugins/UF_Objects.js
+     git mv game/js/plugins/UF_Ownership.js archive/game/js/plugins/UF_Ownership.js
+     git mv game/js/plugins/UF_Perspective25D.js archive/game/js/plugins/UF_Perspective25D.js
+     git mv game/js/plugins/UF_Select.js archive/game/js/plugins/UF_Select.js
+     git mv game/js/plugins/UF_Sheet.js archive/game/js/plugins/UF_Sheet.js
+     git mv game/js/plugins/UF_Speech.js archive/game/js/plugins/UF_Speech.js
+     git mv game/js/plugins/UF_Stance.js archive/game/js/plugins/UF_Stance.js
+     git mv game/js/plugins/UF_Talk.js archive/game/js/plugins/UF_Talk.js
+     git mv game/js/plugins/UF_Test.js archive/game/js/plugins/UF_Test.js
+     git mv game/js/plugins/UF_Tiles.js archive/game/js/plugins/UF_Tiles.js
+     git mv game/js/plugins/UF_TimeSpeed.js archive/game/js/plugins/UF_TimeSpeed.js
+     git mv game/js/plugins/UF_Visuals.js archive/game/js/plugins/UF_Visuals.js
+     git mv game/js/plugins/UF_Walls.js archive/game/js/plugins/UF_Walls.js
+     git mv game/js/plugins/UF_Wildlife.js archive/game/js/plugins/UF_Wildlife.js
+     git mv game/js/plugins/UF_World.js archive/game/js/plugins/UF_World.js
+     git mv game/js/plugins/UF_WorldGen.js archive/game/js/plugins/UF_WorldGen.js
+   (Create archive/game/js/plugins/ if it does not exist. Never delete tracked files).
+
+2. Conditional Fallbacks & Dead Requires:
+   - game/js/plugins/DEUS_Colonists.js: Remove dead require statements for UF_SettlementPillars and UF_Sanitation (lines 87-98). Drop UF_Generator fallback from candidates list (lines 101-122).
+   - game/js/plugins/DEUS_History.js: Drop ./UF_Items.js fallback candidate (line 171).
+   - game/js/plugins/DEUS_Combat.js: Drop UF_Combat.js fallback candidate (lines 3169-3176).
+
+3. Retarget Tool / Test Imports:
+   - Search tools/ for any require or import referencing the 41 moved UF_*.js paths, and retarget each to require the canonical DEUS_*.js twin.
+   - Retain UF.* namespaces and legacy parameter-name fallbacks.
+   - CRITICAL: DO NOT TOUCH tools/test_time_domains_proof.js (owned exclusively by L3 / lane-cp).
+
+4. Create tools/test_no_loadscript_shims.js:
+   - Verifies that game/js/plugins/ contains 0 files calling PluginManager.loadScript.
+   - Verifies that all 41 moved shims exist in archive/game/js/plugins/.
+   - Verifies that UF_Households.js and UF_Time.js still exist in game/js/plugins/.
+   - Must support mutants via --mutant <name> and --mutants:
+     - 'moved-protected': checks detection if UF_Households.js or UF_Time.js was moved.
+     - 'shim-survived': checks detection if a loadScript forwarder was left in game/js/plugins/.
+     - 'broken-retarget': checks detection if an archived shim is still required by a test/tool.
+     - '--mutants' flag runs all mutants and asserts all are killed with non-zero exit.
+
+5. Gate Tests & Verification:
+   Run all 10 gate tests declared in tasks/OPS.PRUNE.02/lane-co/lane.json:
+   - node tools/check_deus_syntax.js
+   - node tools/test_palette.js
+   - node tools/governance/test_check_claims.js
+   - node tools/test_strata_cuts_and_caves.js
+   - node tools/test_new_game_year0.js
+   - node tools/test_history_materialization_and_world_age.js
+   - node tools/test_historical_carrying_capacity.js
+   - node tools/test_geology_strata.js
+   - node tools/test_strata_foundation.js
+   - node tools/test_no_loadscript_shims.js
+   All 10 must pass with exit 0.
+
+6. Allowed Paths:
+   archive/game/js/plugins/**, game/js/plugins/DEUS_Colonists.js, game/js/plugins/DEUS_Combat.js, game/js/plugins/DEUS_History.js, game/js/plugins/UF_*.js, tasks/OPS.PRUNE.02/lane-co/**, tools/**
+   Commit with message:
+   [codex] OPS.PRUNE.02: archive 41 loadScript shims, retarget tools/tests, add test_no_loadscript_shims
