@@ -130,7 +130,10 @@
         const cl = cat && cat.climate;
         return (cl && cl.mountainLevel) || 0.74;
     }
-    function couplingActive() {
+    function couplingActive(worldDesc) {
+        if (typeof worldDesc === "object" && worldDesc !== null) {
+            return !!worldDesc.verticalBiomeCoupling;
+        }
         const st = World() && World().state;
         return !!(st && st.verticalBiomeCoupling);
     }
@@ -152,21 +155,30 @@
         return kindIndexFromFields(col.e, col.r, col.t, col.d, col.v, col.water ? 1 : 0, mountainLevel());
     }
     const kindGrids = new Map();
-    function kindGrid(ax, ay, size) {
-        const W = World(), st = W && W.state;
+    function kindGrid(ax, ay, size, worldDesc) {
         const G = window.UF && UF.WorldGen;
-        if (!st || !G || typeof G.columnFieldGrid !== "function") return null;
-        const key = `${st.seed}:${ax},${ay}:${size}:${st.areasX}x${st.areasY}`;
+        if (!G || typeof G.columnFieldGrid !== "function") return null;
+        const desc = (typeof worldDesc === "object" && worldDesc !== null)
+            ? worldDesc
+            : (typeof worldDesc === "number"
+                ? { seed: worldDesc, size, areasX: 1, areasY: 1, startArea: { x: 0, y: 0 } }
+                : null);
+        if (!desc) return null;
+        const seed = desc.seed !== undefined ? desc.seed : 0;
+        const areasX = desc.areasX || 1, areasY = desc.areasY || 1;
+        // startArea moves the climate sample (WorldGen dims). Two descriptions that differ only there are different grids.
+        const sa = desc.startArea || { x: 0, y: 0 };
+        const key = `${seed}:${ax},${ay}:${size}:${areasX}x${areasY}@${sa.x},${sa.y}`;
         const hit = kindGrids.get(key);
         if (hit) return hit;
-        const pack = G.columnFieldGrid(ax, ay, size);
+        const pack = G.columnFieldGrid(ax, ay, size, desc);
         const grid = new Uint8Array(size * size);
         if (pack) {
             const mtn = mountainLevel();
             for (let i = 0; i < grid.length; i++) grid[i] = kindIndexFromFields(pack.e[i], pack.r[i], pack.t[i], pack.d[i], pack.v[i], pack.water[i], mtn);
         } else grid.fill(7);
         kindGrids.set(key, grid);
-        while (kindGrids.size > 4) kindGrids.delete(kindGrids.keys().next().value);
+        while (kindGrids.size > 8) kindGrids.delete(kindGrids.keys().next().value);
         return grid;
     }
     function discardBaselineCache() {
@@ -177,9 +189,11 @@
     function columnBiomeId(gx, gy, z) {
         const band = depthBandOf(z);
         if (!band) return null;
-        const size = (World() && World().state && World().state.size) || 256;
+        const W = World();
+        const st = W && W.state;
+        const size = (st && st.size) || 256;
         const ax = Math.floor(gx / size), ay = Math.floor(gy / size);
-        const grid = kindGrid(ax, ay, size);
+        const grid = kindGrid(ax, ay, size, st);
         if (!grid) return null;
         const lx = gx - ax * size, ly = gy - ay * size;
         return COLUMN_RULES[grid[ly * size + lx]][band.role];
@@ -209,9 +223,9 @@
             material[i] = BIOMES[nearest.code].material;
         }
     }
-    function paintColumnBiomes(z, ax, ay, size, biome, material) {
+    function paintColumnBiomes(seed, z, ax, ay, size, biome, material, worldDesc) {
         const band = depthBandOf(z);
-        const grid = kindGrid(ax, ay, size);
+        const grid = kindGrid(ax, ay, size, worldDesc || seed);
         for (let i = 0; i < biome.length; i++) {
             const kind = grid ? grid[i] : 7;
             const id = COLUMN_RULES[kind][band && band.role === "deep" ? "deep" : "shallow"];
@@ -221,9 +235,9 @@
         }
     }
     // mutant anchor: independent roll
-    function paintSubstrate(seed, gen, z, ax, ay, size, biome, material) {
-        const useColumn = couplingActive();
-        if (useColumn) paintColumnBiomes(z, ax, ay, size, biome, material);
+    function paintSubstrate(seed, gen, z, ax, ay, size, biome, material, worldDesc) {
+        const useColumn = couplingActive(worldDesc);
+        if (useColumn) paintColumnBiomes(seed, z, ax, ay, size, biome, material, worldDesc);
         else paintProvinceBiomes(seed, gen, z, ax, ay, size, biome, material);
     }
 
@@ -596,13 +610,13 @@
         return L && L.gen ? L.gen : GEN;
     }
 
-    function generateUnderground(seed, gen, z, ax, ay, size, shape, material) {
+    function generateUnderground(seed, gen, z, ax, ay, size, shape, material, worldDesc) {
         const biome = new Uint8Array(size * size), water = new Uint8Array(size * size), pockets = [];
         if (gen === 2) {
             const salt = hashString(`uf.levels.v2.${z}`);
             const rand = (...p) => hash32(seed, salt, ax, ay, ...p) / 4294967296;
             shape.fill(SOLID);
-            paintSubstrate(seed, gen, z, ax, ay, size, biome, material);
+            paintSubstrate(seed, gen, z, ax, ay, size, biome, material, worldDesc);
             const divisions = z === -1 ? 6 : 4, span = size / divisions;
             for (let py = 0; py < divisions; py++) for (let px = 0; px < divisions; px++) {
                 const id = py * divisions + px + 1;
@@ -633,7 +647,7 @@
         // GEN >= 3: Continuous rolling cavern network with interconnected halls, corridors, and natural pillars
         const salt = hashString(`uf.levels.v3.${z}`);
         shape.fill(SOLID);
-        paintSubstrate(seed, gen, z, ax, ay, size, biome, material);
+        paintSubstrate(seed, gen, z, ax, ay, size, biome, material, worldDesc);
 
         for (let y = BORDER; y < size - BORDER; y++) {
             for (let x = BORDER; x < size - BORDER; x++) {
@@ -832,14 +846,40 @@
         return selected;
     }
 
+    // The Z range a description names. A save stores it as zRange { zMin, zMax }, not as flat fields. Flat zMin/zMax
+    // still win when a caller passes them. A description that has a seed and area counts but no usable zRange is a
+    // pre-WG.00.17 world: the legacy range. No description at all means the live world's range.
+    function resolveDescZRange(desc) {
+        if (!desc) return zrSync();
+        if (desc.zMin !== undefined && desc.zMax !== undefined) {
+            const zMin = desc.zMin | 0, zMax = desc.zMax | 0;
+            return { zMin, zMax, n: zMax - zMin + 1 };
+        }
+        if (desc.zRange !== undefined) {
+            const W = World();
+            const p = W && typeof W.parseZRange === "function" ? W.parseZRange(desc.zRange) : null;
+            if (p) return { zMin: p.zMin, zMax: p.zMax, n: p.zMax - p.zMin + 1 };
+        }
+        const W = World();
+        if (desc.seed !== undefined && desc.areasX !== undefined && W && W.Z_RANGES && W.Z_RANGES.legacy) {
+            const L = W.Z_RANGES.legacy;
+            return { zMin: L.zMin, zMax: L.zMax, n: L.zMax - L.zMin + 1 };
+        }
+        return zrSync();
+    }
+
     // One level's baseline. Generator 5 and later generate the levels of the area together (volumeOf: the natural cuts
     // and caves span the core) and hand out this level's. Older generators make each core level on its own; a level
     // outside the core is solid rock below it and open air above it (outerBaseline), the same for every generator.
-    function generateBaseline(seed, gen, z, ax, ay, size) {
-        if (gen >= FEATURE_GEN) return volumeOf(seed, gen, ax, ay, size)[z - zrSync().zMin];
+    function generateBaseline(seed, gen, z, ax, ay, size, worldDesc) {
+        const desc = (typeof worldDesc === "object" && worldDesc !== null)
+            ? worldDesc
+            : { seed, size: size || 256, areasX: 1, areasY: 1, startArea: { x: 0, y: 0 }, verticalBiomeCoupling: true };
+        const r = resolveDescZRange(desc);
+        if (gen >= FEATURE_GEN) return volumeOf(seed, gen, ax, ay, size, desc)[z - r.zMin];
         if (z < CORE.zMin || z > CORE.zMax) return outerBaseline(z, size);
         const t0 = performance.now();
-        const b = finishBaseline(levelArrays(seed, gen, z, ax, ay, size), z, gen, size);
+        const b = finishBaseline(levelArrays(seed, gen, z, ax, ay, size, desc), z, gen, size);
         seal(b);
         const ms = performance.now() - t0;
         stats.generated++;
@@ -849,17 +889,19 @@
     }
 
     // The generator's working arrays of one level (one shape, material and water code per cell, and its extras).
-    function levelArrays(seed, gen, z, ax, ay, size) {
+    function levelArrays(seed, gen, z, ax, ay, size, worldDesc) {
         const n = size * size;
         const shape = new Uint8Array(n), material = new Uint8Array(n);
         let extra = null;
+        const desc = (typeof worldDesc === "object" && worldDesc !== null)
+            ? worldDesc
+            : { seed, size: size || 256, areasX: 1, areasY: 1, startArea: { x: 0, y: 0 }, verticalBiomeCoupling: true };
         if (gen >= 4) {
-            const W = World(), st = W && W.state;
-            const d = (st && st.areasX) ? { width: st.areasX * size, height: st.areasY * size, seed } : { width: size, height: size, seed };
+            const d = { width: (desc.areasX || 1) * size, height: (desc.areasY || 1) * size, seed };
             const cat = catalog(), cl = (cat && cat.climate) || { continentRim: 0.15, seaLevel: 0.2, scale: { elevation: 64, rainfall: 48, temperature: 96, detail: 16 } };
 
             if (z < 0) {
-                extra = generateUnderground(seed, gen, z, ax, ay, size, shape, material) || {};
+                extra = generateUnderground(seed, gen, z, ax, ay, size, shape, material, desc) || {};
                 if (z === -1) {
                     const cliffMouths = cliffCaveMouthsForArea(seed, ax, ay, size, d, cl);
                     extra.cliffCaves = cliffMouths;
@@ -983,12 +1025,12 @@
         } else if (z > 0) {
             shape.fill(OPEN);
         } else if (z < 0) {
-            if (gen >= 2) extra = generateUnderground(seed, gen, z, ax, ay, size, shape, material);
+            if (gen >= 2) extra = generateUnderground(seed, gen, z, ax, ay, size, shape, material, desc);
             else {
             const P = GEN_PARAMS[1][String(z)];
             const saltCave = hashString(`uf.levels.cave.${z}`), saltSoil = hashString(`uf.levels.soil.${z}`);
-            const d = World().state || { areasX: 1, areasY: 1 };
-            const W = d.areasX * size, H = d.areasY * size;
+            const d = desc || { areasX: 1, areasY: 1 };
+            const W = (d.areasX || 1) * size, H = (d.areasY || 1) * size;
             for (let y = 0; y < size; y++) {
                 for (let x = 0; x < size; x++) {
                     const i = y * size + x, gx = ax * size + x, gy = ay * size + y;
@@ -1036,7 +1078,10 @@
         const r = zrSync(), key = `${s}:${g}:${z}:${ax},${ay}:${st.size}:${st.areasX},${st.areasY}:${r.zMin}..${r.zMax}:${st.verticalBiomeCoupling ? 1 : 0}`;
         let b = baselines.get(key);
         if (!b) {
-            b = generateBaseline(s, g, z, ax, ay, st.size);
+            const desc = (seed === undefined || seed === st.seed)
+                ? st
+                : { seed: s, size: st.size, areasX: st.areasX, areasY: st.areasY, startArea: st.startArea || { x: 0, y: 0 }, verticalBiomeCoupling: st.verticalBiomeCoupling, zRange: st.zRange };
+            b = generateBaseline(s, g, z, ax, ay, st.size, desc);
             baselines.set(key, b);
             while (baselines.size > 12) baselines.delete(baselines.keys().next().value);
         }
@@ -1045,6 +1090,7 @@
 
     // Checksum of a level's baseline over every area (FNV-1a of shapes then materials). The ground's is a 32x32 lattice
     // of UF_WorldGen's cell info (ground kind, water, peak), which checks its generator without building the map.
+    // A supplied worldDesc is the world being sampled: its area counts, size and climate, not the loaded world's.
     function shapeGrid(z, ax, ay) {
         const W = World(), st = W && W.state;
         if (!st || !isLevel(z) || !W.inWorld(ax, ay, z)) return null;
@@ -1055,27 +1101,40 @@
         return grid;
     }
 
-    function checksumOf(z, seed, gen) {
-        const W = World(), st = W.state;
-        const g = gen || (seed === undefined ? levelGen(st, z) : GEN);
-        const baseOfArea = (ax, ay) => seed === undefined ? baseline(z, ax, ay, undefined, gen) : generateBaseline(seed, gen || GEN, z, ax, ay, st.size);
+    function checksumOf(z, seed, gen, worldDesc) {
+        const W = World(), st = W && W.state;
+        const desc = (typeof worldDesc === "object" && worldDesc !== null)
+            ? worldDesc
+            : ((typeof seed === "object" && seed !== null)
+                ? seed
+                : (seed !== undefined
+                    ? { seed, size: (st && st.size) || 256, areasX: (st && st.areasX) || 1, areasY: (st && st.areasY) || 1, startArea: (st && st.startArea) || { x: 0, y: 0 }, verticalBiomeCoupling: st ? st.verticalBiomeCoupling : true, zRange: st ? st.zRange : undefined }
+                    : st));
+        if (!desc) return "n/a";
+        const s = desc.seed !== undefined ? desc.seed : (typeof seed === "number" ? seed : 0);
+        const g = gen || (desc.levels && levelGen(desc, z)) || GEN;
+        const size = desc.size || (st && st.size) || 256;
+        const areasX = desc.areasX || 1, areasY = desc.areasY || 1;
+        const baseOfArea = (ax, ay) => generateBaseline(s, g, z, ax, ay, size, desc);
         let h = 2166136261 >>> 0;
         if (z === 0) {
             const G = window.UF.WorldGen;
             if (!G || typeof G.cellInfo !== "function") return "n/a";
-            const size = st.size, step = size / 32;
-            const enc = s => Array.from(String(s), ch => ch.charCodeAt(0) & 255);
-            for (let ay = 0; ay < st.areasY; ay++) for (let ax = 0; ax < st.areasX; ax++) {
+            const step = size / 32;
+            const enc = text => Array.from(String(text), ch => ch.charCodeAt(0) & 255);
+            for (let ay = 0; ay < areasY; ay++) for (let ax = 0; ax < areasX; ax++) {
                 for (let j = 0; j < 32; j++) for (let i = 0; i < 32; i++) {
-                    const info = G.cellInfo(ax * size + Math.floor(i * step + step / 2), ay * size + Math.floor(j * step + step / 2));
+                    const gx = ax * size + Math.floor(i * step + step / 2);
+                    const gy = ay * size + Math.floor(j * step + step / 2);
+                    const info = G.cellInfo(gx, gy, 0, desc);
                     h = fnvBytes(h, enc(info ? `${info.ground}|${info.water || ""}|${info.peak ? 1 : 0};` : "-;"));
                 }
             }
             // Generator 5: the ground's strata too (its natural cuts and caves are strata, not climate cells).
-            if (g >= FEATURE_GEN) for (let ay = 0; ay < st.areasY; ay++) for (let ax = 0; ax < st.areasX; ax++) h = strataHash(h, baseOfArea(ax, ay));
+            if (g >= FEATURE_GEN) for (let ay = 0; ay < areasY; ay++) for (let ax = 0; ax < areasX; ax++) h = strataHash(h, baseOfArea(ax, ay));
             return hex(h);
         }
-        for (let ay = 0; ay < st.areasY; ay++) for (let ax = 0; ax < st.areasX; ax++) {
+        for (let ay = 0; ay < areasY; ay++) for (let ax = 0; ax < areasX; ax++) {
             // Generator 5: the strata bytes themselves (partial fills, caves and caps don't show in the legacy codes).
             if (g >= FEATURE_GEN) { h = strataHash(h, baseOfArea(ax, ay)); continue; }
             // The generator's codes, read back from the strata (legacyViews): the same bytes as before the strata, so a
@@ -1695,7 +1754,7 @@
         if (!couplingActive()) return 0;
         const band = depthBandOf(z);
         if (!band) return 0;
-        const grid = kindGrid(ax, ay, W.state.size);
+        const grid = kindGrid(ax, ay, W.state.size, W.state);
         if (!grid) return 0;
         const id = COLUMN_RULES[grid[y * W.state.size + x]][band.role];
         return BIOME_CODE_BY_ID.get(id) || 0;
@@ -2465,15 +2524,24 @@
     // are outerBaseline's (rock below, air above), with the rock of the core's ceiling caps materialized above +2
     // (materializeCaps). The last VOLUME_KEEP areas are kept: a pure function of the key (the range included), so a
     // dropped one regenerates identically.
-    function volumeOf(seed, gen, ax, ay, size) {
-        const W = World(), st = W && W.state, r = zrSync();
-        const key = `${seed}:${gen}:${ax},${ay}:${size}:${st && st.areasX ? `${st.areasX}x${st.areasY}` : "1x1"}:${r.zMin}..${r.zMax}:${st && st.verticalBiomeCoupling ? 1 : 0}`;
+    function volumeOf(seed, gen, ax, ay, size, worldDesc) {
+        const desc = (typeof worldDesc === "object" && worldDesc !== null)
+            ? worldDesc
+            : { seed, size: size || 256, areasX: 1, areasY: 1, startArea: { x: 0, y: 0 }, verticalBiomeCoupling: true };
+        const r = resolveDescZRange(desc);
+        const areasX = desc.areasX || 1, areasY = desc.areasY || 1;
+        // Absent verticalBiomeCoupling is uncoupled, the same rule as couplingActive. Defaulting it to true
+        // made a flag-absent save share a coupled world's volume cache key.
+        const vbc = couplingActive(desc);
+        // startArea is a generation input (climate blend, rivers). It belongs in the key with the Z range.
+        const sa = desc.startArea || { x: 0, y: 0 };
+        const key = `${seed}:${gen}:${ax},${ay}:${size}:${areasX}x${areasY}:${r.zMin}..${r.zMax}:${vbc ? 1 : 0}@${sa.x},${sa.y}`;
         let v = volumes.get(key);
         if (v) return v;
         const t0 = performance.now();
-        const core = CORE_LEVELS.map(z => finishBaseline(levelArrays(seed, gen, z, ax, ay, size), z, gen, size));
+        const core = CORE_LEVELS.map(z => finishBaseline(levelArrays(seed, gen, z, ax, ay, size, desc), z, gen, size));
         const tBase = performance.now() - t0;
-        carveNaturalFeatures(seed, gen, ax, ay, size, core);
+        carveNaturalFeatures(seed, gen, ax, ay, size, core, desc);
         const ms = performance.now() - t0;
         stats.generated += core.length;
         stats.genMs += ms;
@@ -2483,7 +2551,8 @@
         for (const b of core) seal(b);
         v = new Array(r.n);
         for (let z = r.zMin; z <= r.zMax; z++) v[z - r.zMin] = z >= CORE.zMin && z <= CORE.zMax ? core[z - CORE.zMin] : outerBaseline(z, size);
-        v[r.n - 1].topCaps = materializeCaps(v, core[core.length - 1], r, size);
+        const topCaps = materializeCaps(v, core[core.length - 1], r, size);
+        if (topCaps && topCaps.size) v[r.n - 1].topCaps = topCaps;
         stats.sealMs = performance.now() - t1;
         volumes.set(key, v);
         // WG.00.41: DEC-030's 3x3 grid (and later, larger grids) needs every area of the world to fit at once, or
@@ -2499,8 +2568,9 @@
     // a cap above the top level (returned: the top baseline's topCaps, read by capCode). At the legacy range nothing is
     // above +2, so every cap stays one; at -16..+15 every cap fits (thickness 3..12 strata).
     function materializeCaps(v, b2, r, size) {
+        if (r.zMax === CORE.zMax) return null;
         const caps = b2.caps || new Map();
-        if (r.zMax === CORE.zMax || !caps.size) return caps;
+        if (!caps.size) return null;
         const rest = new Map();
         for (const [i, code] of caps) {
             const mat = code & 0xff, t = (code >> 8) & 0xff, x = i % size, y = (i - x) / size;
@@ -2523,14 +2593,16 @@
      * carved slope meets the next level, removal of any natural solid no longer connected to bedrock. Keeps the feature
      * descriptors on the ground baseline (bs[2].features) and the caps on +2's (bs[4].caps).
      */
-    function carveNaturalFeatures(seed, gen, ax, ay, size, bs) {
+    function carveNaturalFeatures(seed, gen, ax, ay, size, bs, worldDesc) {
         const t0 = performance.now();
         const P = FEATURE_PARAMS[gen] || FEATURE_PARAMS[FEATURE_GEN];
         const n = size * size, mid = Math.floor(size / 2);
         const M = bs.map(b => b.strata.m), CONN = bs.map(b => b.conn);
         const S = bs[2].surface;                                   // the natural surface heights (0, 1, 2)
-        const W = World(), st = W && W.state;
-        const areasX = st && st.areasX ? st.areasX : 1, areasY = st && st.areasY ? st.areasY : 1;
+        const desc = (typeof worldDesc === "object" && worldDesc !== null)
+            ? worldDesc
+            : { seed, size: size || 256, areasX: 1, areasY: 1, startArea: { x: 0, y: 0 }, verticalBiomeCoupling: true };
+        const areasX = desc.areasX || 1, areasY = desc.areasY || 1;
         const G = window.UF && UF.WorldGen, cat = catalog(), cl = (cat && cat.climate) || DEFAULT_CLIMATE;
         const salt = hashString(`deus.levels.features.v${gen}`);
         const rnd = (...p) => hash32(seed, salt, ax, ay, ...p) / 4294967296;
@@ -3187,9 +3259,11 @@
     function capCode(st, ax, ay, i) {
         const cd = capDeltas(st).get(ax + ay * AREA_STRIDE);
         if (cd !== undefined) { const v = cd.get(i); if (v !== undefined) return v; }
-        const b = baseOf(st, zrSync().zMax, ax, ay);
-        if (!b || !b.topCaps) return 0;
-        const c = b.topCaps.get(i);
+        const top = zrSync().zMax;
+        const b = baseOf(st, top, ax, ay);
+        const caps = b ? (b.topCaps || (top === CORE.zMax ? b.caps : null)) : null;
+        if (!caps) return 0;
+        const c = caps.get(i);
         return c === undefined ? 0 : c | (255 << 16);
     }
     function capInfo(code) {
@@ -3204,7 +3278,9 @@
         const i = y * st.size + x, before = capCode(st, ax, ay, i), top = zrSync().zMax;
         if (before === code) return false;
         const from = derivePacked(st, ax, ay, i, top);
-        const b = baseOf(st, top, ax, ay), base = b && b.topCaps && b.topCaps.has(i) ? b.topCaps.get(i) | (255 << 16) : 0;
+        const b = baseOf(st, top, ax, ay);
+        const caps = b ? (b.topCaps || (top === CORE.zMax ? b.caps : null)) : null;
+        const base = caps && caps.has(i) ? caps.get(i) | (255 << 16) : 0;
         const ai = ax + ay * AREA_STRIDE, key = areaKey(ax, ay), L = code === base ? st.levels[String(top)] : levelEntry(st, top);
         let am = capDeltas(st).get(ai);
         if (code === base) {
@@ -4528,7 +4604,7 @@
         for (const z of CORE_LEVELS) {
             const L = st.levels[String(z)];
             if (!L) { bad.push(`${z}: missing`); continue; }
-            const now = checksumOf(z);
+            const now = checksumOf(z, undefined, undefined, st);
             if (L.checksum && now !== "n/a" && L.checksum !== "n/a" && now !== L.checksum) {
                 L.checksumMismatch = true;
                 bad.push(`${z}: saved ${L.checksum}, regenerated ${now}`);
@@ -5108,7 +5184,7 @@
         exposedFacesAround,
         notifyWorldCellChanged,
         /** Checksum of a level's baseline: the save's world by default; seed/gen regenerate another one (tests). */
-        checksum: (z, seed, gen) => checksumOf(z, seed, gen),
+        checksum: (z, seed, gen, worldDesc) => checksumOf(z, seed, gen, worldDesc),
         migrate,
         verifyLevels,
         /** The level on screen (a level of the world Z range), or null off the world maps. */

@@ -13,9 +13,10 @@ const { performance } = require("perf_hooks");
 const { spawnSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "..");
 const PLUGIN = "game/js/plugins/DEUS_HistoricalDemographics.js";
-const CANDIDATE = "0859ed3c6e3ea475abad9e00353f8961cfcec2cc";
-const CANDIDATE_SHA256 = "fca4a15abc45a88bff836d97ab77936581e4679fe104e17b2596d079f9015cdc";
-const CANDIDATE_BYTES = 52898;
+// Re-pinned to WG.00.17 (18a0db6eab08f6bd7826c238b02c6a7edc1f2d4c): DEUS_HistoricalDemographics reads worldZRange()
+const CANDIDATE = "18a0db6eab08f6bd7826c238b02c6a7edc1f2d4c";
+const CANDIDATE_SHA256 = "b446f3c13e1632a74c4716f7f6e665bb9ffacd46adb2f062c8b4400c8e4d8d55";
+const CANDIDATE_BYTES = 53278;
 // Directive 001-F re-freeze (ATK-YEAR0-002): only the plugin comes from CANDIDATE. The Year-1 founding world
 // stays at the HIST-09 bootstrap; later History refuses to generate before HistoricalDemographics is loaded.
 const BOOTSTRAP = "4af58ddd486b8e5d97d24877fd1b826131724c1d";

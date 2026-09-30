@@ -1,0 +1,54 @@
+{
+    "lane": "lane-bb",
+    "taskId": "DEUS-TSK-GEOLOGY-GATE",
+    "branch": "task/lane-bb",
+    "writer": "grok",
+    "reviewer": "codex",
+    "push": true,
+    "allowedPaths": [
+        "game/js/plugins/DEUS_Levels.js",
+        "game/js/plugins/DEUS_WorldGen.js",
+        "tools/test_strata_cuts_and_caves.js",
+        "tools/test_historical_carrying_capacity.js",
+        "tools/test_geology_strata.js",
+        "tools/test_strata_foundation.js",
+        "tasks/DEUS-TSK-GEOLOGY-GATE/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": [
+                "tools/test_strata_foundation.js"
+            ],
+            "timeoutSec": 1800
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/test_geology_strata.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/test_strata_cuts_and_caves.js"
+            ],
+            "timeoutSec": 1800
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/check_deus_syntax.js"
+            ],
+            "timeoutSec": 900
+        },
+        {
+            "cmd": "node",
+            "args": [
+                "tools/test_historical_carrying_capacity.js"
+            ],
+            "timeoutSec": 900
+        }
+    ]
+}

@@ -251,6 +251,7 @@
         const start = st ? st.startArea : { x: 0, y: 0 };
         return {
             seed: st ? st.seed : 0, size, areasX, areasY, width: areasX * size, height: areasY * size,
+            startArea: { x: start.x, y: start.y },
             startX: start.x * size + Math.floor(size / 2), startY: start.y * size + Math.floor(size / 2)
         };
     }
@@ -472,11 +473,11 @@
         return { cx, cy, rx, ry, isWater };
     };
 
-    // Rivers and pond are built once per world (seed and size) and reused by every cell lookup.
+    // Rivers and pond are built once per world (seed, size and start area) and reused by every cell lookup.
     let waterCache = null;
     function waterModels(state) {
         const d = dims(state);
-        const key = `${d.seed}:${d.areasX}x${d.areasY}x${d.size}`;
+        const key = `${d.seed}:${d.areasX}x${d.areasY}x${d.size}@${d.startArea.x},${d.startArea.y}`;
         if (waterCache && waterCache.key === key) return waterCache;
         const rivers = WorldGen.riverModels(state), pond = WorldGen.pondModel(state);
         const cat = catalog();
@@ -537,10 +538,14 @@
         const top = a + (b - a) * tx;
         return top + (c0 + (d0 - c0) * tx - top) * row.ty;
     }
-    WorldGen.columnFieldGrid = function(ax, ay, size) {
+    WorldGen.columnFieldGrid = function(ax, ay, size, worldDesc) {
         const cat = catalog();
         const cl = cat && cat.climate;
-        const st = window.UF && UF.World && UF.World.state;
+        const st = (typeof worldDesc === "object" && worldDesc !== null)
+            ? worldDesc
+            : (typeof worldDesc === "number"
+                ? { seed: worldDesc, size, areasX: 1, areasY: 1, startArea: { x: 0, y: 0 } }
+                : null);
         if (!cl || !st || !cl.scale) return null;
         const d = dims(st);
         const sc = cl.scale, ww = d.width, wh = d.height, n = size * size;
@@ -825,18 +830,22 @@
         };
     };
 
-    /** { biomeId, biome, ground, water, walkable, region: {savagery, alignment}, fields, lake, peak, geology } for a world cell. */
-    WorldGen.cellInfo = function(gx, gy, z = 0) {
+    /** { biomeId, biome, ground, water, walkable, region: {savagery, alignment}, fields, lake, peak, geology } for a world cell.
+     *  worldDesc, when passed, is the world whose ground climate is sampled (a foreign checksum). The loaded world is not. */
+    WorldGen.cellInfo = function(gx, gy, z = 0, worldDesc) {
         const m = compiled();
-        const st = UF.World.state;
+        const explicit = typeof worldDesc === "object" && worldDesc !== null;
+        const st = explicit ? worldDesc : UF.World.state;
         if (!m || !st) return null;
         if (!Number.isInteger(z) || !UF.World.isLevel(z)) return null;   // the world's Z range (WG.00.17)
         const geology = WorldGen.geologyAt(gx, gy, z);
         if (z !== 0) {
             const L = window.UF.Levels;
             if (!L) return null;
-            const ax = Math.floor(gx / st.size), ay = Math.floor(gy / st.size);
-            const ref = { area: { x: ax, y: ay }, x: gx - ax * st.size, y: gy - ay * st.size, z };
+            const live = UF.World.state;
+            const size = (live && live.size) || 256;
+            const ax = Math.floor(gx / size), ay = Math.floor(gy / size);
+            const ref = { area: { x: ax, y: ay }, x: gx - ax * size, y: gy - ay * size, z };
             const c = L.cellAt(ref);
             if (!c) return null;
             const biome = typeof L.biomeAt === "function" ? L.biomeAt(ref) : null;
@@ -849,9 +858,10 @@
         const c = resolve(st.seed, dims(st), m, waterModels(st), gx, gy, {});
         // 19B: a ground cell with nothing to stand on (a natural cut or a dig down to a lower level) is not walkable land.
         // Only a ground with its column has shapes of its own (without it, UF_Levels reads the ground from this function).
-        const L0 = window.UF.Levels, ax0 = Math.floor(gx / st.size), ay0 = Math.floor(gy / st.size);
-        const hole = !!L0 && typeof L0.groundVolumetric === "function" && L0.groundVolumetric()
-            && L0.shapeCodeAt(ax0, ay0, gx - ax0 * st.size, gy - ay0 * st.size, 0) === 3;
+        // A foreign description does not consult the loaded world's cuts.
+        const L0 = window.UF.Levels, size0 = st.size || 256, ax0 = Math.floor(gx / size0), ay0 = Math.floor(gy / size0);
+        const hole = !explicit && !!L0 && typeof L0.groundVolumetric === "function" && L0.groundVolumetric()
+            && L0.shapeCodeAt(ax0, ay0, gx - ax0 * size0, gy - ay0 * size0, 0) === 3;
         return {
             biomeId: c.biomeId, biome: m.biomes[c.b], ground: c.groundId, water: c.waterKey,
             walkable: !c.waterKey && !(c.flags & FLAG_PEAK) && !hole,

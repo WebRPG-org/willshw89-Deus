@@ -4,18 +4,26 @@
 /**
  * tools/test_strata_cuts_and_caves.js
  *
+ * NOTE: Roof breach in a 32-layer world belongs to the Matter bridge.
+ *
  * DEUS-TSK-FABLE-19B / WG.00.08: natural cuts and all-Z cave networks carved into the five-strata geometry
  * (docs/handoffs/HANDOFF_DEUS_TSK_FABLE_19B_CUTS_CAVES.md, docs/systems/UF_Levels.md section "Natural cuts and caves").
  * Runs the real plugins (DEUS_World, DEUS_WorldGen, DEUS_Tiles, DEUS_Objects, DEUS_Levels, DEUS_Floors) in a Node vm and
  * makes New Game worlds. Truth comes from the strata of the baselines, compared with generator 4 of the same seed (a New
- * Game with UF.NewGameSetup.levelsGen = 4) and with the levels code from before 19B (commit PRE_19B, read with git): the
+ * Game with UF.NewGameSetup.levelsGen = 4) and with the post-WG.00.15 baseline (commit POST_WG0015, read with git): the
  * natural-feature descriptors are used only to name what the strata show.
  *
  * Checks (handoff section 18 letters in brackets; each can print FAIL, the mutants below prove it):
  *   deterministic_same_seed     [A] two vms, same seed: the five baselines' strata, connectors and caps byte for byte, and the
  *                                    same checksums when another seed's world regenerates them (no live-state input)
+ *   foreign_geometry_checksum       a 2x1 world and a 1x1 world: each one's checksums, including Z0, match when the other
+ *                                    world regenerates them from the first world's own description
+ *   foreign_z_range_checksum        seed 18, generator 5, size 256: a legacy host (-2..+2) checksums a default-range
+ *                                    target (-16..+15) from that target's own state at z -3, +2 and +3, and matches it
  *   different_seeds_differ      [B] a second seed carves a different layout (column sets overlap < 25 %) and is valid too
- *   old_generator_unchanged         generator 4 (every save made before 19B) regenerates byte for byte as before 19B; a
+ *   old_generator_unchanged         generator 4 (every save made before 19B/WG.00.15) regenerates byte for byte as
+ *                                    post-WG.00.15 (2026-09-27, commit 42c3bc9a); the Owner accepts (2026-09-29) that worlds
+ *                                    made before 2026-09-27 regenerate a different underground due to vertical biome coupling; a
  *                                    pre-V80 migration still gets generator 4
  *   carve_only_removes              every generator-4 -> 5 difference is a solid stratum turned to air, except the +2 massif
  *                                    fill (air -> stone on capped summit columns); connectors change only on changed columns
@@ -76,7 +84,7 @@ if (typeof global.gc !== "function") {
 
 const ROOT = path.resolve(__dirname, "..");
 const PLUGINS = path.join(ROOT, "game", "js", "plugins");
-const PRE_19B = "19fcf0e";     // HEAD before DEUS-TSK-FABLE-19B
+const POST_WG0015 = "42c3bc9a"; // post-WG.00.15 baseline (2026-09-27, Owner accepted)
 const arg = (name, fallback) => {
     const a = process.argv.find(x => x.startsWith(`--${name}=`));
     return a ? a.slice(name.length + 3) : fallback;
@@ -91,10 +99,10 @@ const noSuites = process.argv.includes("--no-suites") || !!mutant;
 // Mutants (Rule 4): exact source edits, applied in memory. A missing target is a harness problem (exit 2).
 const L_ = "DEUS_Levels.js", G_ = "DEUS_WorldGen.js";
 const MUTANTS = {
-    no_features: [[L_, "    function carveNaturalFeatures(seed, gen, ax, ay, size, bs) {\n", "    function carveNaturalFeatures(seed, gen, ax, ay, size, bs) {\n        bs[2].features = { cuts: [], caves: [], shafts: [], skylights: [] }; return bs[2].features; /* MUTANT */\n"]],
+    no_features: [[L_, "    function carveNaturalFeatures(seed, gen, ax, ay, size, bs, worldDesc) {\n", "    function carveNaturalFeatures(seed, gen, ax, ay, size, bs, worldDesc) {\n        bs[2].features = { cuts: [], caves: [], shafts: [], skylights: [] }; return bs[2].features; /* MUTANT */\n"]],
     nondeterministic: [[L_, "const rnd = (...p) => hash32(seed, salt, ax, ay, ...p) / 4294967296;", "const rnd = (...p) => p[0] === 204 || p[0] === 101 ? Math.random() : hash32(seed, salt, ax, ay, ...p) / 4294967296; /* MUTANT: the depth classes and the cave rolls drawn at random */"]],
     seed_ignored: [[L_, "const rnd = (...p) => hash32(seed, salt, ax, ay, ...p) / 4294967296;", "const rnd = (...p) => hash32(salt, ax, ay, ...p) / 4294967296; /* MUTANT */"]],
-    old_gen_cut: [[L_, "        if (gen >= FEATURE_GEN) return volumeOf(seed, gen, ax, ay, size)[z + 2];", "        if (gen >= 4) return volumeOf(seed, gen, ax, ay, size)[z + 2]; /* MUTANT: generator 4 gets the cuts */"]],
+    old_gen_cut: [[L_, "        if (gen >= FEATURE_GEN) return volumeOf(seed, gen, ax, ay, size, desc)[z - r.zMin];", "        if (gen >= 4) return volumeOf(seed, gen, ax, ay, size, desc)[z - r.zMin]; /* MUTANT: generator 4 gets the cuts */"]],
     adds_mass: [[L_, "            for (let e = F; e < C; e++) setE(i, e, M_AIR);\n            clearConn(i, F, C - 1);\n            touched[i] |= 2;",
         "            for (let e = F; e < C; e++) setE(i, e, M_AIR);\n            if (C < E_TOP && !SOLID_B[getE(i, C)]) setE(i, C, M_STONE); /* MUTANT */\n            clearConn(i, F, C - 1);\n            touched[i] |= 2;"]],
     flat_cuts: [[L_, "                let Fw = T - Math.round((T - F) * wt[i]);", "                let Fw = T - Math.round((T - F) * wt[i]); Fw = Math.ceil(Fw / STRATA) * STRATA; /* MUTANT: whole levels only */"]],
@@ -128,7 +136,7 @@ const MUTANTS = {
     open_ground_grass: [[G_, "if (i < 0) return surfaceOut(x, y) >= 1; const c = col.code(i); return c === 1 || c === 3; }", "if (i < 0) return surfaceOut(x, y) >= 1; const c = col.code(i); return c === 1; } /* MUTANT */"]],
     plants_in_cuts: [[G_, "                if (L && typeof L.shapeCodeAt === \"function\" && L.shapeCodeAt(ctx.areaX, ctx.areaY, x, y, z) !== 2) continue;\n", "                /* MUTANT plants_in_cuts */\n"]],
     feature_grid_kept: [[L_, "        out.ms = performance.now() - t0;\n        bs[2].features = out;", "        out.ms = performance.now() - t0;\n        bs[2].cutTop = cutTop; /* MUTANT */\n        bs[2].features = out;"]],
-    error_injected: [[L_, "    function carveNaturalFeatures(seed, gen, ax, ay, size, bs) {\n", "    function carveNaturalFeatures(seed, gen, ax, ay, size, bs) {\n        console.error(\"MUTANT error_injected\");\n"]]
+    error_injected: [[L_, "    function carveNaturalFeatures(seed, gen, ax, ay, size, bs, worldDesc) {\n", "    function carveNaturalFeatures(seed, gen, ax, ay, size, bs, worldDesc) {\n        console.error(\"MUTANT error_injected\");\n"]]
 };
 if (process.argv.includes("--mutants")) {
     // Every mutant in its own process (6 at a time); each must exit 1.
@@ -203,20 +211,19 @@ function currentSources() {
     }
     return s;
 }
-function pre19bSources() {
+function postWG0015Sources() {
     const s = {};
     for (const f of FILES) {
-        try { s[f] = execFileSync("git", ["show", `${PRE_19B}:game/js/plugins/${f}`], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 << 20 }); }
-        catch (e) { harnessProblem(`can't read ${f} at ${PRE_19B} with git: ${e.message}`); }
+        try { s[f] = execFileSync("git", ["show", `${POST_WG0015}:game/js/plugins/${f}`], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 << 20 }); }
+        catch (e) { harnessProblem(`can't read ${f} at ${POST_WG0015} with git: ${e.message}`); }
     }
-    if (s["DEUS_Levels.js"].includes("carveNaturalFeatures")) harnessProblem("the pre-19B DEUS_Levels.js already has natural features");
     return s;
 }
 
 //-----------------------------------------------------------------------------
 // The vm: RMMZ stubs only where the plugins touch the engine (as tools/test_strata_foundation.js).
 
-function setup(sources, tag) {
+function setup(sources, tag, zRange = "legacy") {
     const list = {};
     vm.runInNewContext(fs.readFileSync(path.join(ROOT, "game/js/plugins.js"), "utf8"), list);
     const ns = {}, warnings = [], errors = [];
@@ -245,6 +252,8 @@ function setup(sources, tag) {
         $gameSystem: {}, $gameScreen: { weatherType: () => "none", weatherPower: () => 0, changeWeather() {} },
         $gameTimer: {}, $gameSwitches: {}, $gameVariables: {}, $gameSelfSwitches: {}, $gameActors: {}, $gameParty: {}
     };
+    // Only a requested range is visible. The host environment is not copied, so an ambient DEUS_Z_RANGE cannot move the default world.
+    if (zRange) env.process = { env: { DEUS_Z_RANGE: String(zRange) } };
     env.window = env;
     env.$deusWorldCatalog = env.$ufWorldCatalog;
     env.Tilemap.TILE_ID_A1 = 2048;
@@ -432,7 +441,36 @@ if (!noSuites) {
     }
 }
 
+// A legacy host must honour a default-range target's saved zRange, including levels outside the host.
+// The third argument null leaves DEUS_Z_RANGE unset, so that vm's New Game takes Z_RANGES.default.
+function foreignZRangeChecksum() {
+    const target = setup(src, "zrange-default", null);
+    const host = setup(src, "zrange-legacy", "legacy");
+    extraEnvs.push(target, host);
+    const tMs = newWorld(target, 18);
+    const hMs = newWorld(host, 18);
+    const tr = target.UF.World.zRange(), hr = host.UF.World.zRange();
+    const tState = target.UF.World.state;
+    const rows = [];
+    let ok = tr.zMin === -16 && tr.zMax === 15 && hr.zMin === -2 && hr.zMax === 2
+        && tState.seed === 18 && host.UF.World.state.seed === 18
+        && tState.size === 256 && tState.levels["0"] && tState.levels["0"].gen === 5;
+    for (const z of [-3, 2, 3]) {
+        let own, foreign, err = "";
+        try { own = target.UF.Levels.checksum(z); }
+        catch (e) { err = `own ${e && e.message ? e.message : e}`; }
+        try { foreign = host.UF.Levels.checksum(z, 18, 5, tState); }
+        catch (e) { err += `${err ? "; " : ""}foreign ${e && e.message ? e.message : e}`; }
+        if (err || !own || own === "n/a" || own !== foreign) ok = false;
+        rows.push(`${z}: ${own} via host ${foreign}${err ? ` ERROR ${err}` : ""}`);
+    }
+    const errs = target.__errors.length + host.__errors.length;
+    check("foreign_z_range_checksum", ok && errs === 0,
+        `generator 5, seed 18, size 256; default ${tr.zMin}..${tr.zMax} (${tMs.toFixed(0)} ms) checksummed inside legacy host ${hr.zMin}..${hr.zMax} (${hMs.toFixed(0)} ms); ${rows.join("; ")}${errs ? `; console.error ${errs}` : ""}`);
+}
+
 const src = currentSources();
+const extraEnvs = [];
 const envA = setup(src, "g5");
 const tNew5 = newWorld(envA, SEED);
 const V5 = volume(envA);
@@ -443,10 +481,10 @@ const V5b = volume(envB);
 const env4 = setup(src, "g4");
 const tNew4 = newWorld(env4, SEED, 4);
 const V4 = volume(env4);
-const envH = setup(pre19bSources(), "pre19B");
-const tNewH = newWorld(envH, SEED);
+const envH = setup(postWG0015Sources(), "postWG0015");
+const tNewH = newWorld(envH, SEED, 4);
 const VH = volume(envH);
-info(`newWorld seed ${SEED}: generator ${V5.gen} ${tNew5.toFixed(0)} ms, generator ${V4.gen} (same code, levelsGen 4) ${tNew4.toFixed(0)} ms, pre-19B code ${tNewH.toFixed(0)} ms; natural features ${envA.UF.Levels.stats().featureMs.toFixed(0)} ms`);
+info(`newWorld seed ${SEED}: generator ${V5.gen} ${tNew5.toFixed(0)} ms, generator ${V4.gen} (same code, levelsGen 4) ${tNew4.toFixed(0)} ms, post-WG.00.15 baseline ${tNewH.toFixed(0)} ms; natural features ${envA.UF.Levels.stats().featureMs.toFixed(0)} ms`);
 if (V5.gen < 5 && mutant !== "old_gen_cut") harnessProblem(`a New Game world has generator ${V5.gen}, not 5`);
 const C5 = compare(V5, V4);
 const F5 = envA.UF.Levels.naturalFeatures(V5.a.x, V5.a.y) || { cuts: [], caves: [], shafts: [], skylights: [] };
@@ -481,6 +519,65 @@ guard("deterministic_same_seed", () => {
         `regenerated inside seed ${SEED2}'s world: ${sums.map(s => `${s.z}: ${s.own}${s.own === s.there ? "" : `/${s.there} DIFFERENT`}`).join(", ")}`);
 });
 
+//---------------------------------------------------------------- foreign_geometry_checksum
+// Host and target differ in area count (and seed). The description passed to checksum is the target's, so the
+// host's loaded areas and its ground lattice must not be sampled.
+guard("foreign_geometry_checksum", () => {
+    const build = (tag, spec) => {
+        const e = setup(src, tag, "legacy");
+        const st = {
+            version: 4,
+            zRange: { zMin: -2, zMax: 2 },
+            seed: spec.seed,
+            areasX: spec.areasX,
+            areasY: spec.areasY,
+            size: 64,
+            startArea: { x: Math.floor(spec.areasX / 2), y: Math.floor(spec.areasY / 2) },
+            verticalBiomeCoupling: true,
+            units: {},
+            nextUnitId: 1,
+            diffs: {},
+            objectDiffs: {},
+            levels: {}
+        };
+        for (const z of LEVELS) st.levels[String(z)] = { z, gen: 4, checksum: null, strata: {} };
+        e.UF.NewGameSetup = { seed: spec.seed, year: 1, levelsGen: 4 };
+        e.UF.World.state = st;
+        e.UF.Events.emit("world:initializing", st);
+        extraEnvs.push(e);
+        return e;
+    };
+    const descOf = st => ({
+        seed: st.seed,
+        size: st.size,
+        areasX: st.areasX,
+        areasY: st.areasY,
+        startArea: { x: st.startArea.x, y: st.startArea.y },
+        verticalBiomeCoupling: true,
+        levels: Object.fromEntries(LEVELS.map(z => [String(z), { z, gen: 4 }]))
+    });
+    const wide = build("geo-2x1", { seed: 20260923, areasX: 2, areasY: 1 });
+    const host = build("geo-1x1", { seed: 20260930, areasX: 1, areasY: 1 });
+    const wideDesc = descOf(wide.UF.World.state);
+    const hostDesc = descOf(host.UF.World.state);
+    const rows = [];
+    let ok = wideDesc.areasX === 2 && hostDesc.areasX === 1;
+    for (const z of [-1, 0, 1]) {
+        const nativeWide = wide.UF.Levels.checksum(z);
+        const foreignWide = host.UF.Levels.checksum(z, wideDesc.seed, 4, wideDesc);
+        const nativeHost = host.UF.Levels.checksum(z);
+        const foreignHost = wide.UF.Levels.checksum(z, hostDesc.seed, 4, hostDesc);
+        if (nativeWide === "n/a" || nativeHost === "n/a" || foreignWide !== nativeWide || foreignHost !== nativeHost) ok = false;
+        rows.push(`${z}: 2x1 ${nativeWide} via 1x1 ${foreignWide}; 1x1 ${nativeHost} via 2x1 ${foreignHost}`);
+    }
+    const errs = extraEnvs.reduce((n, e) => n + e.__errors.length, 0);
+    check("foreign_geometry_checksum", ok && errs === 0,
+        `generator 4, size 64, coupling on, legacy range; ${rows.join("; ")}${errs ? `; console.error ${errs}` : ""}`);
+});
+
+//---------------------------------------------------------------- foreign_z_range_checksum
+guard("foreign_z_range_checksum", foreignZRangeChecksum);
+
 //---------------------------------------------------------------- [B] different_seeds_differ
 guard("different_seeds_differ", () => {
     const r2 = set[1];
@@ -513,7 +610,7 @@ guard("old_generator_unchanged", () => {
     const migratedGen = LEVELS.map(z => st.levels[String(z)].gen);
     st.levels = saved.levels; st.version = saved.version;
     check("old_generator_unchanged", same.every(Boolean) && sumsSame && noFeatures && migratedGen.every(g => g === 4),
-        `generator 4 (levelsGen 4) vs the pre-19B code (${PRE_19B}), seed ${SEED}: strata per level ${LEVELS.map((z, k) => `${z}:${same[k] ? "same" : "DIFFERENT"}`).join(" ")}; ` +
+        `generator 4 (levelsGen 4) vs post-WG.00.15 baseline (${POST_WG0015}, 2026-09-27), seed ${SEED}: strata per level ${LEVELS.map((z, k) => `${z}:${same[k] ? "same" : "DIFFERENT"}`).join(" ")}; ` +
         `checksums ${sums.map(s => `${s.z}:${s.now}${s.now === s.before ? "" : `/${s.before}`}`).join(" ")}; no features or caps ${noFeatures}; a pre-V80 migration's generators [${migratedGen}]`);
 });
 
@@ -1122,7 +1219,19 @@ guard("save_load", () => {
 
 //---------------------------------------------------------------- no_parallel_authority
 guard("no_parallel_authority", () => {
-    const known = new Set(["strata", "conn", "biome", "surface", "shape", "material", "water", "caps", "features", "pockets", "cliffCaves", "z", "size", "hasWater", "legacyGround"]);
+    // Whitelisted baseline members:
+    // Standard baseline fields: strata, conn, biome, surface, shape, material, water, caps, features, pockets, cliffCaves, z, size, hasWater, legacyGround.
+    // WG.00.41 chunked store caches (rebuilt on load/generation, holding no parallel authority):
+    // - cw: chunk grid width, derived from Math.ceil(size / CH)
+    // - dir: chunk directory index table, derived from uniform strata/connector cell comparisons vs palette
+    // - mixed: sparse array of non-uniform chunk cell data, derived from the layer's strata and connectors
+    // - mixedCount: count of non-null entries in mixed, derived from mixed.filter(Boolean).length
+    // - shift: bit shift for power-of-two cell coordinate indexing, derived from Math.log2(size)
+    // - mask: bit mask for power-of-two cell coordinate indexing, derived from size - 1
+    const known = new Set([
+        "strata", "conn", "biome", "surface", "shape", "material", "water", "caps", "features", "pockets", "cliffCaves", "z", "size", "hasWater", "legacyGround",
+        "cw", "dir", "mixed", "mixedCount", "shift", "mask"
+    ]);
     const extra = [];
     for (const b of V5.bs) for (const k of Object.keys(b)) {
         const v = b[k];
@@ -1132,7 +1241,7 @@ guard("no_parallel_authority", () => {
     }
     const featureJson = JSON.stringify(F5).length;
     check("no_parallel_authority", extra.length === 0 && featureJson < 200000,
-        `baseline members beyond strata, connectors, biome, surface, caps, legacy views and descriptors: ${extra.length ? extra.join(", ") : "none"}; feature descriptors ${featureJson} chars (no per-cell grid)`);
+        `baseline members beyond strata, connectors, biome, surface, caps, legacy views, chunk caches and descriptors: ${extra.length ? extra.join(", ") : "none"}; feature descriptors ${featureJson} chars (no per-cell grid)`);
 });
 
 //---------------------------------------------------------------- cost
@@ -1153,7 +1262,7 @@ async function finish() {
         const tail = (r.text.match(/(RESULT:.*|MUTANT VERIFICATION:.*|PASSED: \d+|FAILED: \d+)/g) || []).join("; ");
         check(key, r.code === 0, `node ${r.file}: exit ${r.code} in ${r.s.toFixed(0)} s; ${tail}`);
     }
-    const unexpected = [envA, envB, env4, ...set.slice(1).map(r => r.env)].flatMap(e => e ? e.__errors : []).concat(envErrors);
+    const unexpected = [envA, envB, env4, ...set.slice(1).map(r => r.env), ...extraEnvs].flatMap(e => e ? e.__errors : []).concat(envErrors);
     check("no_errors", unexpected.length === 0, unexpected.length ? unexpected.slice(0, 3).join(" | ") : "none");
     if (!quiet) {
         console.log("EVIDENCE (generated worlds; x,y in the start area; levels -2..+2; heights in ft = strata):");
