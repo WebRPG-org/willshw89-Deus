@@ -1,5 +1,15 @@
 # OPS.PRUNE.PACE lane-cr state
 
+## FIX-CR-2 claim (2026-09-30)
+
+- Writer: Codex (OpenAI family), branch `task/lane-cr`, starting HEAD `df8a750bed5ffc2bdc5fb6e6e7e3052380d4b273`.
+- Claim: released for independent re-review at handoff; edited `tools/ops/pace.js`, `tools/ops/test_pace.js`, lane-local README/REPORT/state and `evidence/fix-cr-2-*.log` only.
+- Authority: Owner's FIX-CR-2 assignment, MSG-PRUNE-PM-054 and `C:/Users/snewt/.deus_pm/braintrust/2026-09-30/ANSWER-CR-R2_chatgpt_pro.md` (read in this session).
+- Scope: bounded under-target SURGE with separate diagnostic action, effective action and dispatch; matching one-hour regressions and mutation evidence.
+- Preserve pre-existing modified `BRIEF.md` and untracked launch prompts. Shared STATUS/VISION and manifest edits are outside this assignment; this lane-local record supplies the claim.
+- Final checkpoint: syntax gate 62 plugins/0 errors, EXIT=0; PACE 186 passed/0 failed, EXIT=0; mutation run baseline 186/0 and 22 killed/0 survived, EXIT=0. The new mutant fails all three named effective-promotion assertions. Final mutation evidence ended 2026-09-30T21:02:50.199Z. Independent Grok re-review and coordinator fresh-clone/merge-gate integration remain pending; no approval, closure, push or merge claimed.
+- Evidence: `REPORT.md`, `README.md`, `evidence/fix-cr-2-pace.log`, `evidence/fix-cr-2-mutants.log`, `evidence/fix-cr-2-syntax.log`. `evidence/fix-cr-2-initial-pace.log` preserves the initial fixture rounding failure, corrected before the final suites. Tested source blobs are in REPORT; final writer SHA is reported in the chat handoff.
+
 ## FIX-CR claim (2026-09-30)
 
 - Writer: Codex, branch `task/lane-cr`, starting HEAD `a53111ac`.

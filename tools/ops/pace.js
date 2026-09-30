@@ -187,7 +187,7 @@ function evaluate(input, history = emptyHistory(), options = {}) {
     for (const id of [...new Set([...PROVIDERS, ...Object.keys(input.providers)])]) {
         if (!/^[a-z][a-z0-9_-]*$/i.test(id)) throw new Error('invalid provider identifier');
         const report = { provider: id, window: null, remainingPct: null, resetAt: null,
-            measured: null, target: null, ratio: null, action: 'UNKNOWN', surge: false,
+            measured: null, target: null, ratio: null, action: 'UNKNOWN', effectiveAction: 'UNKNOWN', surge: false,
             dispatch: 'UNKNOWN', scope: 'binding-window', windows: [], source: 'UNKNOWN', reasons: [] };
         const provider = input.providers[id];
         if (!object(provider)) {
@@ -239,9 +239,8 @@ function evaluate(input, history = emptyHistory(), options = {}) {
             report.ratio = Number((report.measured / report.target).toPrecision(14));
         }
         report.action = classify(report.ratio);
-        report.surge = hoursLeft <= current.durationHours * 0.1 && current.remainingPct > 10;
         // The action is strictly the binding-window ratio band. Dispatch guards
-        // and the time-based SURGE signal cannot replace that measurement.
+        // cannot replace that measurement and take priority over SURGE.
         const exhausted = readings.find(item => !item.reason && item.remainingPct === 0);
         if (exhausted) {
             report.dispatch = 'DENY';
@@ -263,7 +262,12 @@ function evaluate(input, history = emptyHistory(), options = {}) {
         }
         if (report.action === 'THROTTLE-2') report.dispatch = 'DENY';
         if ((report.action === 'UNKNOWN' || rejectedSiblings.length) && report.dispatch !== 'DENY') report.dispatch = 'UNKNOWN';
+        // Promote only measured, under-target use near reset, after dispatch
+        // restrictions are known. Keep the diagnostic band separately visible.
+        report.surge = hoursLeft <= current.durationHours * 0.1 && current.remainingPct > 10 &&
+            Number.isFinite(report.ratio) && report.ratio >= 0 && report.ratio < 1;
         if (report.dispatch === 'DENY' || report.dispatch === 'BOUNDED_TASKS' || rejectedSiblings.length) report.surge = false;
+        report.effectiveAction = report.surge ? 'ACCELERATE-2' : report.action;
         reports.push(report);
     }
     // Keep two hours, preserving duplicate conflicts rather than silently
@@ -285,7 +289,7 @@ function format(report) {
     const rejected = report.windows.filter(item => item.status === 'UNKNOWN');
     return `PACE ${report.provider} window ${report.window || 'UNKNOWN'} rem ${report.remainingPct === null ? 'UNKNOWN' : number(report.remainingPct) + '%'} ` +
         `reset ${report.resetAt || 'UNKNOWN'} used/h ${number(report.measured)} target/h ${number(report.target)} ` +
-        `-> ${report.action} [source: ${report.source}]` +
+        `-> ${report.action} [effective: ${report.effectiveAction}] [source: ${report.source}]` +
         ` [scope: ${report.scope}] [dispatch: ${report.dispatch}]` +
         (rejected.length ? ` [windows: ${rejected.map(item => `${item.window} UNKNOWN (${item.reason})`).join('; ')}]` : '') +
         (report.reasons.length ? ` [reason: ${report.reasons.join('; ')}]` : '') + (report.surge ? ' [SURGE]' : '');

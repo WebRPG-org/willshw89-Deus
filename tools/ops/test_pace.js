@@ -27,6 +27,14 @@ function history(remaining = 60, time = at(-1), overrides = {}) {
         remainingPct: remaining, observedAt: time, capturedAt: time, resetAt: RESET, durationHours: 168,
         source: `TEST_history @ ${time}`, ...overrides }] };
 }
+function surgeFixture(ratio, remaining = 11, resetHours = 0.5) {
+    const window = { id: 'five-hour', remainingPct: remaining, resetAt: at(resetHours), durationHours: 5 };
+    const hoursLeft = (Date.parse(window.resetAt) - Date.parse(NOW)) / HOUR;
+    return { p: provider(remaining, { windows: [window] }),
+        h: history(remaining + ratio * remaining / hoursLeft, at(-1), {
+            window: window.id, resetAt: window.resetAt, durationHours: window.durationHours }),
+        options: { expectedCostPct: 1 } };
+}
 function runSuite(api, integration = false, quiet = false, cliSource = null) {
     let passed = 0;
     const failures = [];
@@ -37,7 +45,10 @@ function runSuite(api, integration = false, quiet = false, cliSource = null) {
     const evaluate = (p = provider(), h = history(), options = {}) =>
         api.evaluate(input(p), h, { now: NOW, inputSource: 'TEST_input.json', ...options });
     const report = (...args) => evaluate(...args).reports.find(item => item.provider === 'claude');
-    const unknown = r => { assert.equal(r.target, null); assert.equal(r.action, 'UNKNOWN'); };
+    const unknown = r => {
+        assert.equal(r.target, null); assert.equal(r.action, 'UNKNOWN');
+        assert.equal(r.effectiveAction, 'UNKNOWN'); assert.equal(r.surge, false);
+    };
 
     for (const [ratio, action] of [[0, 'ACCELERATE-2'], [0.499999, 'ACCELERATE-2'],
         [0.5, 'ACCELERATE-1'], [0.899999, 'ACCELERATE-1'], [0.9, 'HOLD'], [1, 'HOLD'],
@@ -85,6 +96,7 @@ function runSuite(api, integration = false, quiet = false, cliSource = null) {
         const r = report(ordinary(0), shortHistory(10));
         assert.equal(r.target, 0); assert.equal(r.ratio, null);
         assert.equal(r.action, 'UNKNOWN'); assert.equal(r.dispatch, 'DENY');
+        assert.equal(r.effectiveAction, 'UNKNOWN'); assert.equal(r.surge, false);
         assert.doesNotMatch(api.format(r), /NaN|Infinity/);
     });
     test('missing_reset_unknown', () => {
@@ -217,22 +229,80 @@ function runSuite(api, integration = false, quiet = false, cliSource = null) {
         assert.match(r.source, /five-hour/); assert.match(r.reasons.join('; '), /five-hour quota exhausted/);
     });
     test('surge_exact_10_percent_time', () => {
-        const p = ordinary(11); p.windows[0].resetAt = at(0.5);
-        const r = report(p, shortHistory(11));
-        assert.equal(r.action, 'UNKNOWN'); assert.equal(r.surge, true);
+        const { p, h, options } = surgeFixture(0);
+        const r = report(p, h, options);
+        assert.equal(r.target, 22); assert.equal(r.measured, 0); assert.equal(r.ratio, 0);
+        assert.equal(r.action, 'ACCELERATE-2'); assert.equal(r.effectiveAction, 'ACCELERATE-2');
+        assert.equal(r.surge, true); assert.equal(r.dispatch, 'WITHIN_BINDING_QUOTA');
         assert.match(api.format(r), /\[SURGE\]/);
-        const h = shortHistory(11); h.samples[0].resetAt = at(0.5);
-        assert.equal(report(p, h).action, 'ACCELERATE-2');
-        assert.equal(report(p, h).surge, true);
     });
+    for (const [ratio, action] of [[0.75, 'ACCELERATE-1'], [0.95, 'HOLD'], [0.999999, 'HOLD']]) {
+        test(`surge_promotes_effective_${ratio}`, () => {
+            const { p, h, options } = surgeFixture(ratio);
+            const r = report(p, h, options);
+            assert.equal(r.target, 22); assert.ok(Math.abs(r.measured - ratio * 22) < 1e-12);
+            assert.equal(r.ratio, ratio); assert.equal(r.action, action);
+            assert.deepEqual(r.measurement, { from: at(-1), to: NOW });
+            assert.equal(r.surge, true); assert.equal(r.effectiveAction, 'ACCELERATE-2');
+            assert.equal(r.dispatch, 'WITHIN_BINDING_QUOTA');
+            const line = api.format(r);
+            assert.equal(/->\s*([A-Z0-9-]+)/.exec(line)[1], action);
+            assert.ok(line.includes(`-> ${action} [effective: ACCELERATE-2] [source: `));
+            assert.match(line, /\[scope: binding-window\] \[dispatch: WITHIN_BINDING_QUOTA\]/);
+            assert.match(line, /\[SURGE\]/);
+        });
+    }
+    for (const [ratio, action, dispatch] of [[1, 'HOLD', 'WITHIN_BINDING_QUOTA'],
+        [1.05, 'HOLD', 'WITHIN_BINDING_QUOTA'], [1.2, 'THROTTLE-1', 'BOUNDED_TASKS'], [2, 'THROTTLE-2', 'DENY']]) {
+        test(`surge_no_escalation_${ratio}`, () => {
+            const { p, h, options } = surgeFixture(ratio);
+            const r = report(p, h, options);
+            assert.equal(r.target, 22); assert.equal(r.ratio, ratio); assert.equal(r.action, action);
+            assert.equal(r.surge, false); assert.equal(r.effectiveAction, action); assert.equal(r.dispatch, dispatch);
+            assert.doesNotMatch(api.format(r), /\[SURGE\]/);
+        });
+    }
+    for (const kind of ['missing', 'mismatched_reset', 'partial_hour', 'quota_correction']) {
+        test(`surge_unknown_history_${kind}`, () => {
+            const { p, h, options } = surgeFixture(0.75);
+            if (kind === 'missing') h.samples = [];
+            if (kind === 'mismatched_reset') h.samples[0].resetAt = at(4);
+            if (kind === 'partial_hour') h.samples[0].observedAt = h.samples[0].capturedAt = at(-0.5);
+            if (kind === 'quota_correction') h.samples[0].remainingPct = 10;
+            const r = report(p, h, options);
+            assert.equal(r.target, 22); assert.equal(r.measured, null); assert.equal(r.ratio, null);
+            assert.equal(r.action, 'UNKNOWN'); assert.equal(r.effectiveAction, 'UNKNOWN');
+            assert.equal(r.surge, false); assert.equal(r.dispatch, 'UNKNOWN');
+            assert.doesNotMatch(api.format(r), /\[SURGE\]/);
+        });
+    }
+    for (const [guard, dispatch] of [['exhaustion', 'DENY'], ['over_budget', 'DENY'],
+        ['rejected_sibling', 'UNKNOWN'], ['low_quota', 'BOUNDED_TASKS']]) {
+        test(`surge_under_target_guard_${guard}`, () => {
+            const { p, h, options } = surgeFixture(0.75, guard === 'low_quota' ? 10 : 11);
+            if (guard === 'exhaustion' || guard === 'rejected_sibling') {
+                p.windows.push({ id: 'daily', remainingPct: 0, resetAt: at(2), durationHours: 24,
+                    ...(guard === 'rejected_sibling' ? { lastChecked: at(-0.500001) } : {}) });
+            }
+            if (guard === 'over_budget') options.expectedCostPct = 12;
+            const r = report(p, h, options);
+            assert.equal(r.window, 'five-hour'); assert.equal(r.ratio, 0.75);
+            assert.equal(r.action, 'ACCELERATE-1'); assert.equal(r.dispatch, dispatch);
+            assert.equal(r.surge, false); assert.equal(r.effectiveAction, 'ACCELERATE-1');
+            assert.doesNotMatch(api.format(r), /\[SURGE\]/);
+        });
+    }
     test('surge_not_above_10_percent_time', () => {
-        const p = ordinary(11); p.windows[0].resetAt = at(0.500001);
-        assert.equal(report(p, api.emptyHistory()).action, 'UNKNOWN');
-        assert.equal(report(p, api.emptyHistory()).surge, false);
+        const { p, h, options } = surgeFixture(0.75, 11, 0.500001);
+        const r = report(p, h, options);
+        assert.equal(r.ratio, 0.75); assert.equal(r.action, 'ACCELERATE-1');
+        assert.equal(r.effectiveAction, 'ACCELERATE-1'); assert.equal(r.surge, false);
     });
     test('surge_needs_more_than_10_percent_left', () => {
-        const p = ordinary(10); p.windows[0].resetAt = at(0.5);
-        assert.equal(report(p, api.emptyHistory()).surge, false);
+        const { p, h, options } = surgeFixture(0.75, 10);
+        const r = report(p, h, options);
+        assert.equal(r.ratio, 0.75); assert.equal(r.action, 'ACCELERATE-1');
+        assert.equal(r.effectiveAction, 'ACCELERATE-1'); assert.equal(r.surge, false);
     });
     test('low_quota_bounded', () => {
         const r = report(ordinary(8), shortHistory(8));
@@ -255,8 +325,10 @@ function runSuite(api, integration = false, quiet = false, cliSource = null) {
         });
     }
     test('expected_cost_exceeds_remaining_blocks_surge', () => {
-        const r = report(provider(), history(), { expectedCostPct: 51 });
-        assert.equal(r.action, 'HOLD'); assert.equal(r.dispatch, 'DENY');
+        const { p, h } = surgeFixture(0.95);
+        const r = report(p, h, { expectedCostPct: 12 });
+        assert.equal(r.ratio, 0.95); assert.equal(r.action, 'HOLD'); assert.equal(r.dispatch, 'DENY');
+        assert.equal(r.effectiveAction, 'HOLD');
         assert.equal(r.surge, false); assert.doesNotMatch(api.format(r), /\[SURGE\]/);
     });
     test('expected_cost_equal_quota', () => assert.equal(report(provider(), history(), { expectedCostPct: 50 }).dispatch, 'WITHIN_BINDING_QUOTA'));
@@ -364,13 +436,14 @@ function runSuite(api, integration = false, quiet = false, cliSource = null) {
     });
     test('format_numeric_line_cites_both_endpoints', () => {
         const line = api.format(report(ordinary(40), shortHistory(50)));
-        assert.match(line, /^PACE claude window five-hour rem 40% reset 2026-09-30T16:00:00.000Z used\/h 10 target\/h 10 -> HOLD \[source: /);
+        assert.match(line, /^PACE claude window five-hour rem 40% reset 2026-09-30T16:00:00.000Z used\/h 10 target\/h 10 -> HOLD \[effective: HOLD\] \[source: /);
         assert.match(line, /TEST_history @ 2026-09-30T11:00:00.000Z/);
         assert.match(line, /TEST_account_usage @ 2026-09-30T12:00:00.000Z/);
     });
     test('format_unknown_never_zero', () => {
         const line = api.format(report(provider(50, { precision: 'SESSION_ONLY' })));
         assert.match(line, /rem UNKNOWN reset UNKNOWN used\/h UNKNOWN target\/h UNKNOWN -> UNKNOWN/);
+        assert.match(line, /\[effective: UNKNOWN\]/);
     });
     test('utc_normalizes_minutes_and_fraction', () => {
         assert.equal(api.utc('2026-09-30T12:00Z'), Date.parse(NOW));
@@ -434,6 +507,20 @@ function runSuite(api, integration = false, quiet = false, cliSource = null) {
                     '--now', NOW, '--read-only'], { encoding: 'utf8', input: JSON.stringify(input(ordinary(40))), timeout: 10000, windowsHide: true });
                 assert.equal(result.status, 0, result.stderr); assert.match(result.stdout, /source:.*stdin#/);
             });
+            test('cli_surge_actions_and_dispatch_separate', () => {
+                const { p, h } = surgeFixture(0.95);
+                write(usagePath, input(p)); write(historyPath, h);
+                const result = cli(['--json', '--read-only', '--expected-cost-pct', '1']);
+                assert.equal(result.status, 0, result.stderr);
+                const reports = JSON.parse(result.stdout).reports;
+                const r = reports.find(item => item.provider === 'claude');
+                assert.equal(r.action, 'HOLD'); assert.equal(r.effectiveAction, 'ACCELERATE-2');
+                assert.equal(r.dispatch, 'WITHIN_BINDING_QUOTA'); assert.equal(r.surge, true);
+                for (const missing of reports.filter(item => item.provider !== 'claude')) unknown(missing);
+                const text = cli(['--read-only', '--expected-cost-pct', '1']);
+                assert.equal(text.status, 0, text.stderr);
+                assert.match(text.stdout, /-> HOLD \[effective: ACCELERATE-2\] \[source: .*\[scope: binding-window\] \[dispatch: WITHIN_BINDING_QUOTA\].*\[SURGE\]/);
+            });
             test('cli_bad_input_fails_preserves_history', () => {
                 const before = fs.readFileSync(historyPath, 'utf8'); fs.writeFileSync(usagePath, 'broken JSON');
                 const result = cli(); assert.equal(result.status, 1); assert.match(result.stderr, /PACE ERROR/);
@@ -494,8 +581,11 @@ const MUTANTS = {
     'wrong-window': { from: 'if (weekly) return weekly;', to: 'if (weekly && windows.length === 1) return weekly;', check: 'weekly_precedes_shortest' },
     'wrong-target': { from: 'current.remainingPct / hoursLeft', to: 'hoursLeft / current.remainingPct', check: 'measured_target_ratio' },
     'wrong-measured': { from: 'base.remainingPct - current.remainingPct', to: '0', check: 'measured_target_ratio' },
-    'no-surge': { from: 'report.surge = hoursLeft <= current.durationHours * 0.1 && current.remainingPct > 10;',
-        to: 'report.surge = false;', check: 'surge_exact_10_percent_time' },
+    'no-surge': { from: 'report.surge = hoursLeft <= current.durationHours * 0.1 && current.remainingPct > 10 &&',
+        to: 'report.surge = false &&', check: 'surge_exact_10_percent_time' },
+    'no-effective-surge': { from: "report.effectiveAction = report.surge ? 'ACCELERATE-2' : report.action;",
+        to: 'report.effectiveAction = report.action;',
+        check: ['surge_promotes_effective_0.75', 'surge_promotes_effective_0.95', 'surge_promotes_effective_0.999999'] },
     'mix-reset': { from: 'a.resetAt === b.resetAt && a.durationHours === b.durationHours', to: 'a.durationHours === b.durationHours', check: 'reset_cycle_not_mixed' },
     'raw-history-times': { from: 'history = validateHistory(history);', to: 'validateHistory(history);',
         check: 'same_instant_conflict_2026-09-30T11:00:00Z' },
@@ -554,8 +644,9 @@ function main() {
         for (const [name, spec] of Object.entries(MUTANTS)) {
             console.log(`MUTANT ${name}`);
             const result = runSuite(mutantApi(name), !!spec.cli, true, spec.cli ? mutantSource(name) : null);
-            const killed = result.failures.includes(spec.check);
-            console.log(`${killed ? 'KILLED' : 'SURVIVED'} ${name}: required failing check ${spec.check}`);
+            const checks = Array.isArray(spec.check) ? spec.check : [spec.check];
+            const killed = checks.every(check => result.failures.includes(check));
+            console.log(`${killed ? 'KILLED' : 'SURVIVED'} ${name}: required failing check ${checks.join(', ')}`);
             if (!killed) survivors++;
         }
         console.log(`MUTANTS: ${Object.keys(MUTANTS).length - survivors} killed, ${survivors} survived`);

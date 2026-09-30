@@ -1,4 +1,86 @@
-# OPS.PRUNE.PACE lane-cr FIX-CR handoff
+# OPS.PRUNE.PACE lane-cr FIX-CR-2 handoff
+
+Date: 2026-09-30. Final suite/mutation evidence completed by 2026-09-30T21:02:50.199Z.
+Writer: Codex (OpenAI/GPT-6 family), implementer. Exact runtime variant/effort not exposed; no subagents used.
+Branch: `task/lane-cr`; starting HEAD: `df8a750bed5ffc2bdc5fb6e6e7e3052380d4b273`.
+Authority: Owner's FIX-CR-2 assignment, MSG-PRUNE-PM-054 and the read local `C:/Users/snewt/.deus_pm/braintrust/2026-09-30/ANSWER-CR-R2_chatgpt_pro.md` clarification.
+Status: writer correction and evidence ready for independent Grok re-review; no closure, approval or integration verdict claimed.
+
+Tested source Git blobs: `pace.js` = `b57374abd99a9fddb1f25f7d95cc742a81a30e97`; `test_pace.js` = `3ae10230084c2df7ad4f319e160f7bb8f7942dee`. The final writer commit SHA is reported from `git rev-parse HEAD` in the chat handoff; the source and this report are committed together.
+
+## What changed
+
+- `tools/ops/pace.js`: keeps `action = classify(ratio)` as the diagnostic band and adds `effectiveAction`, initialized to UNKNOWN for early rejection paths. After dispatch guards, SURGE requires the last 10% of the window, more than 10% remaining and a finite ratio in `[0, 1)`. DENY, BOUNDED_TASKS and rejected siblings suppress it. Effective action is ACCELERATE-2 only for surviving SURGE; otherwise it equals the diagnostic band.
+- `tools/ops/pace.js`: text now emits `-> <action> [effective: <effectiveAction>] [source: ...] [scope: ...] [dispatch: ...]`. JSON exposes all three fields separately. UNKNOWN history never enables SURGE.
+- `tools/ops/test_pace.js`: uses fresh matching one-hour history for the five-hour/11%-remaining/30-minute-reset/target-22/cost-1 cases. Ratios 0.75, 0.95 and 0.999999 promote only effectiveAction; 1, 1.05, 1.2 and 2 do not escalate. Under-target exhaustion, cost, rejected-sibling and LOW guards retain their restrictions. Missing/mismatched/partial/corrected history stays UNKNOWN. The prior contrary UNKNOWN-plus-SURGE assertion is replaced.
+- `tools/ops/test_pace.js`: adds the `no-effective-surge` mutant and requires all three named promotion assertions to fail. Existing format and SURGE mutant fixtures are updated; CLI text/JSON separation is checked.
+- Lane README, state and `evidence/fix-cr-2-*.log`: record the updated contract, bounded claim and actual foreground test results. Pre-existing modified BRIEF and untracked launch prompts are preserved and excluded from this commit.
+
+## How I tested it
+
+Commands ran in the assigned writer worktree with Node v24.19.0. These are writer checks, not independent review or fresh-clone integration checks.
+
+| Command | Observed result | Evidence |
+|---|---|---|
+| `node tools/check_deus_syntax.js` | 62 plugins checked, 0 errors; EXIT=0 | `evidence/fix-cr-2-syntax.log` |
+| `node tools/ops/test_pace.js` | 186 passed, 0 failed; EXIT=0 | `evidence/fix-cr-2-pace.log` |
+| `node tools/ops/test_pace.js --mutants` | Baseline 186/0; 22 killed, 0 survived; EXIT=0 | `evidence/fix-cr-2-mutants.log` |
+| `node --check tools/ops/pace.js` and `node --check tools/ops/test_pace.js` | Both exited 0 | Foreground command output |
+| `git diff --check` | EXIT=0 | Foreground command output |
+
+The initial test run returned 185 passed, 1 failed (`evidence/fix-cr-2-initial-pace.log`). Its just-outside-the-time-boundary fixture computed consumption from fractional milliseconds dropped by ISO timestamp serialization, so the observed ratio was 0.7499997500005 instead of 0.75. The fixture now computes its target from the actual serialized reset. Final suites pass without changing production ratio handling or weakening the assertion. Logs are UTF-8; the first run's mixed PowerShell append encodings were decoded without changing their output.
+
+## Evidence
+
+No screenshots produced: operations tooling has no visual/gameplay acceptance criterion. Excerpts copied from the final logs:
+
+```text
+Checked 62 DEUS plugin files. Errors: 0
+RESULT: 186 passed, 0 failed
+KILLED no-effective-surge: required failing check surge_promotes_effective_0.75, surge_promotes_effective_0.95, surge_promotes_effective_0.999999
+MUTANTS: 22 killed, 0 survived
+EXIT=0
+```
+
+The deliberate `no-effective-surge` mutant fails all three requested promotion checks, with ACCELERATE-1 or HOLD where ACCELERATE-2 was expected. Its diagnostic actions and SURGE booleans remain unchanged; the failures specifically establish effective promotion. The aggregate run also kills the existing exhaustion/cost/sibling/dispatch-related mutants at their named checks.
+
+## Not done / known problems
+
+- Independent re-review of this correction and the coordinator's fresh-clone/merge-gate integration remain pending. Existing reviews cover earlier source blobs. No push, merge, WBS closure or Owner sign-off is claimed.
+- Consumers should read effectiveAction for the recommendation, action for the measured band, and dispatch for restrictions. UNKNOWN dispatch caused solely by omitted cost is still possible with SURGE; a recommendation is not dispatch authorization.
+- Local provenance metadata cannot authenticate provider evidence. Rate warmup, corrections, reset changes and missing matching history can leave both actions UNKNOWN. Expected cost covers only the binding window; concurrent history writers remain unsupported.
+- No live provider refresh, RMMZ F5/F8, gameplay screenshot or game-save check was performed. Shared STATUS/VISION are outside allowedPaths; task status is recorded in lane-local state.
+
+## Try it in RMMZ
+
+Inapplicable: this operations-only change has no game-runtime consumer. From the repository root run `node tools/ops/test_pace.js`; expected: `186 passed, 0 failed`. Run `node tools/ops/test_pace.js --mutants`; expected: `22 killed, 0 survived`, EXIT=0. The cases use synthetic quota evidence and make no live-account claims.
+
+## Decisions needed
+
+No additional implementation decision requested. Next gate: independent Grok re-review of the final writer commit, then authorized coordinator integration through the merge gate.
+
+## GAME TRANSLATION
+
+Class C, foundational/indirect operations tooling. **CONSUMED BY GAME SYSTEMS: none.** Named consumer: the existing coordinator's usage-aware reporting/dispatch workflow; no automatic dispatcher integration is added.
+
+| Required field | Result |
+|---|---|
+| Player / World Effect | Indirect assurance for pacing authorized game work; no game behavior added. |
+| Trigger | Operator invokes the PACE CLI with account telemetry and local history. |
+| Runtime Authority | `tools/ops/pace.js`: `evaluate`, `classify`, `measure`, `format`; source snapshots own quota evidence. |
+| Simulation Path | Inapplicable; no simulation state is read or changed. |
+| Engine Bridge | Inapplicable; operations CLI only. |
+| Visible Result | Text/JSON with diagnostic band, effective recommendation and dispatch restrictions separated. |
+| Persistence | Existing version-1 local history; effectiveAction is derived per evaluation, not saved in game state. |
+| Failure Without This Lane | Near-reset under-target usage is not promoted, while UNKNOWN history can display a misleading SURGE flag. |
+| Automated Proof | 186 assertions pass; 22 mutants killed; syntax gate exits 0. Tested source blobs and exact evidence paths above; final writer SHA in chat handoff. |
+| In-Game Proof | Not performed; inapplicable to operations tooling. |
+
+Simulation implemented: NO (inapplicable). Engine bridge implemented: NO (inapplicable). Presentation implemented: NO (game presentation inapplicable; CLI output tested). Input/player interaction implemented: NO (inapplicable). Save/load implemented: NO (game saves inapplicable; existing local history CLI tests pass). Playable verification performed: NO (inapplicable).
+
+---
+
+# Historical FIX-CR handoff (superseded by FIX-CR-2 above)
 
 Date: 2026-09-30. Final foreground suites completed by 2026-09-30T20:01:57Z.
 Writer: Codex, OpenAI/GPT-6 family, implementer. Exact runtime variant/effort is not exposed. No subagents used.
