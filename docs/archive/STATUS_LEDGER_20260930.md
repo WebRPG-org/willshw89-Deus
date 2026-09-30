@@ -3,7 +3,7 @@
 **Last Updated:** 2026-09-28 15:12 CT (Directive DEC-041)  
 **Coordinator & Integration Authority:** Gemini / Antigravity  
 **Reporting Policy:** Immediate notification on commits, failures, defects, crashes, or power events; routine pulse every 15 minutes.  
-**Historical Ledger:** All completed historical records prior to 2026-09-25 are archived in [`docs/archive/STATUS_LEDGER_20260925.md`](archive/STATUS_LEDGER_20260925.md).  
+**Historical Ledger:** All completed historical records prior to 2026-09-25 are archived in [`docs/archive/STATUS_LEDGER_20260925.md`](STATUS_LEDGER_20260925.md).  
 **Canonical Defect Ledger:** `tasks/WG.00.08/defects.jsonl` (Note: `docs/telemetry/defects.jsonl` cited in protocol docs does not exist).
 
 ---

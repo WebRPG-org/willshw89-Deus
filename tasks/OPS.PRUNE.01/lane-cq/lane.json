@@ -8,6 +8,7 @@
     "docs/STATUS.md",
     "docs/archive/STATUS_LEDGER_20260930.md",
     "tools/ops/gate_tests.json",
+    "tools/ops/active_lanes.json",
     "tools/test_control_board.js",
     "tasks/OPS.PRUNE.01/lane-cq/**"
   ],

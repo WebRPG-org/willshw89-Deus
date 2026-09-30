@@ -2,7 +2,7 @@
 
 **Project Formal Name:** DEUS  
 **Last Updated:** 2026-09-30 (Owner Prune Ruling)  
-**Coordinator & Integration Authority:** Gemini / Antigravity  
+**PM & Integration Authority:** Claude; **Coordinator / Proposer:** Gemini / Antigravity (DEC-042/DEC-048)  
 **Historical Ledger:** Pre-prune operational history is archived in [`docs/archive/STATUS_LEDGER_20260930.md`](archive/STATUS_LEDGER_20260930.md) (and [`docs/archive/STATUS_LEDGER_20260925.md`](archive/STATUS_LEDGER_20260925.md)).
 
 ---
@@ -13,7 +13,7 @@ The following subsystems are actively loaded by `game/js/plugins.js` (42 plugins
 ### A. Active Plugins (in exact `plugins.js` load order)
 | Plugin | Canonical File | System Authority / Role |
 |---|---|---|
-| `DEUS_Core` | `game/js/plugins/DEUS_Core.js` | Foundation systems, time domains, deterministic RNG, spatial queries, and engine hooks |
+| `DEUS_Core` | `game/js/plugins/DEUS_Core.js` | Foundation systems; Rule 14 time tags NOT IMPLEMENTED; see section 4; deterministic RNG, spatial queries, and engine hooks |
 | `DEUS_Visuals` | `game/js/plugins/DEUS_Visuals.js` | High-DPI scaling, viewport rendering, 2D foot-Y sorting, pixel-crisp display |
 | `DEUS_Movement8D` | `game/js/plugins/DEUS_Movement8D.js` | 8-directional movement, Octile A* pathfinding, corner collision, diagonal slide |
 | `DEUS_Perspective25D` | `game/js/plugins/DEUS_Perspective25D.js` | 2D foot-Y depth sorting, canopy occlusion |
@@ -113,35 +113,40 @@ The following 41 sixteen-line `PluginManager.loadScript` forwarders remain in `g
 ## 3. In Review
 Active tasks, open branches, and pending review submissions:
 
+### A. Active Lanes in Review / In Flight
 | Branch | Lane / Task | Scope | Status |
 |---|---|---|---|
-| `task/lane-cq` | `lane-cq` (`OPS.PRUNE.01`) | L1: Rebuild STATUS.md control board + `tools/test_control_board.js` | ACTIVE WRITER (Gemini) / Grok Reviewer |
+| `task/lane-cq` | `lane-cq` (`OPS.PRUNE.01`) | L1: Rebuild STATUS.md control board + `tools/test_control_board.js` | Grok CLEAN PASS at 4a5fc62a; DEC-052 PARTIAL / PM MERGE HELD |
 | `task/lane-co` | `lane-co` (`OPS.PRUNE.02`) | L2: Archive 41 `UF_*.js` shims & retarget tools | FROZEN at `b9acaa14` pending L1 merge |
-| `task/lane-cr` | `lane-cr` (`OPS.PRUNE.PACE`) | PACE telemetry & budget rate governor (`tools/ops/pace.js`) | In Flight (`409e085c`, Codex writer) |
-| `task/lane-cs` | `lane-cs` (`WG.20.02`) | CARDS-1 fixes & DEC-045 catalogue moisture rows | In Flight (`26099959`, Codex writer) |
-| `task/lane-cs2` | `lane-cs2` (`WG.20.02`) | FIX-CS: Clean manifest & review for CARDS-1 / DEC-045 rows | In Flight (`cd6624b2`, Grok Reviewer) |
-| `task/lane-cw` | `lane-cw` (`NAT.03.01`) | DEUS_Fluid & sim/hydro correctness (items a-h) | In Flight (`ab15c1f9`, Codex writer) |
+| `task/lane-cr` | `lane-cr` (`OPS.PRUNE.PACE`) | PACE telemetry & budget rate governor (`tools/ops/pace.js`) | Grok CLEAN PASS at 12d7b0d4; DEC-052 PARTIAL (FIX-CR) |
+| `task/lane-cs` | `lane-cs` (`WG.20.02`) | CARDS-1 fixes & DEC-045 catalogue moisture rows | Superseded by `lane-cs2` |
+| `task/lane-cs2` | `lane-cs2` (`WG.20.02`) | FIX-CS: Clean manifest & review for CARDS-1 / DEC-045 rows | Grok CLEAN PASS at aa47b74f; awaiting PM answerability |
+| `task/lane-cw` | `lane-cw` (`NAT.03.01`) | DEUS_Fluid & sim/hydro correctness (items a-h) | Grok CLEAN PASS at 28fe2614; awaiting PM answerability |
 | `task/art-temperate-induction` | Parked Induction | 64 temperate batch 1 assets (Outside_A2, Dungeon_A2, V8 props) | PARKED at `90c82ac5` pending QA & Owner YEA |
 | `task/lane-a` | `lane-a` (`WG.00.08`) | WG.00.08 Exit Criteria | In Review (`16fec107`) |
+| `task/lane-bd` | `lane-bd` (`DEUS-TSK-ZRANGE-HARNESS`) | Z-Range harness verification | In Flight (`3ea1ab69`) |
+| `task/lane-bj` | `lane-bj` | WG.84.01 20-seed procedural worldgen QA | AUDIT DELIVERED / DEFECT EVIDENCE (d134315d) |
+| `task/lane-bp` | `lane-bp` | Fluid boundary review | In Flight (`79bf40be`) |
+| `task/lane-ca` | `lane-ca` | Strata boundary review | In Flight (`000341d8`) |
+| `task/lane-ce` | `lane-ce` | World generation test harness | In Flight (`7d7bba11`) |
+| `task/lane-cf` | `lane-cf` | Natural connections verification | In Flight (`5e60e59b`) |
+| `task/lane-cl` | `lane-cl` | Autotile seam testing | In Flight (`b7d22aaf`) |
+| `task/lane-e` | `lane-e` (`WG.00.09`) | Pre-attack on depth rendering | PAUSED at 05948e9c |
+| `task/lane-h` | `lane-h` (`WG.00.08`) | Z-2 cut proof & fluid hardening | In Review (`e3af4cfa`) |
+| `task/lane-pm-streamline` | `lane-pm-streamline` | PM tooling streamlining | In Flight (`472de247`) |
+
+### B. Merged or Reference Branches
+| Branch | Lane / Task | Scope | Status |
+|---|---|---|---|
 | `task/lane-b` | `lane-b` (`WG.00.11`) | ATK-YEAR0-001 Hardening | Integrated / Reference (`ed757456`) |
 | `task/lane-bb` | `lane-bb` | Subterranean volume review | Merged to main; worktree pruned |
-| `task/lane-bd` | `lane-bd` (`DEUS-TSK-ZRANGE-HARNESS`) | Z-Range harness verification | In Flight (`3ea1ab69`) |
-| `task/lane-bj` | `lane-bj` | Subterranean volume review | In Flight (`d134315d`) |
-| `task/lane-bp` | `lane-bp` | Fluid boundary review | In Flight (`79bf40be`) |
 | `task/lane-bt` | `lane-bt` | Strata boundary review | Merged to main; worktree pruned |
 | `task/lane-bu` | `lane-bu` | Worldgen review & QA tests | Merged to main; worktree pruned |
 | `task/lane-bv` | `lane-bv` | Physical space review | Merged to main; worktree pruned |
 | `task/lane-bw` | `lane-bw` | Climate review | Merged to main; worktree pruned |
 | `task/lane-by` | `lane-by` | Matter review | Merged to main; worktree pruned |
 | `task/lane-bz` | `lane-bz` | Tooling & blank templates | Merged to main; worktree pruned |
-| `task/lane-ca` | `lane-ca` | Strata boundary review | In Flight (`000341d8`) |
-| `task/lane-ce` | `lane-ce` | World generation test harness | In Flight (`7d7bba11`) |
-| `task/lane-cf` | `lane-cf` | Natural connections verification | In Flight (`5e60e59b`) |
-| `task/lane-cl` | `lane-cl` | Autotile seam testing | In Flight (`b7d22aaf`) |
 | `task/lane-cm` | `lane-cm` (`WG.00.41`) | Deep cuts & DEC-030 mountain cap ceiling (+11) | Merged to main (`7bbe7f6c`) |
-| `task/lane-e` | `lane-e` (`WG.00.09`) | Pre-attack on depth rendering | In Review (`05948e9c`) |
-| `task/lane-h` | `lane-h` (`WG.00.08`) | Z-2 cut proof & fluid hardening | In Review (`e3af4cfa`) |
-| `task/lane-pm-streamline` | `lane-pm-streamline` | PM tooling streamlining | In Flight (`472de247`) |
 
 ---
 
@@ -154,6 +159,8 @@ Tracked defects, unverified contracts, and quarantined checks:
 | Z-2 Cut Proof Quarantine | `tools/test_generated_z2_cut_proof.js` | Quarantined in `gate_tests.json`: exits 1 on main; Lane H rework in progress. | QUARANTINED |
 | ATK-YEAR0-001 | `tasks/WG.00.08/defects.jsonl` | Year 0 world age materialization edge cases. | OPEN |
 | `NAT.02.01` | `tasks/NAT.02.01/lane-bv` | kernel is a stub (no rubble, no ledger posting); review `fdb5c0a0` missed it | NOT DONE |
+| `L8 loose files on main` | PM check 2026-09-30 | cited commit does not exist in any repo; AG records NOT DONE | UNPROVED / NOT DONE |
+| Climate Hold Disposition | `tasks/NAT.05.01/lane-bw` | DEC-037 Natural World phase lock: climate deferred pending physical strata/hydrology gates | FROZEN / PENDING GATES |
 
 ---
 
@@ -213,3 +220,14 @@ Files moved to `archive/` per Owner prune rulings (verified absent from `game/`)
 | `game/js/plugins/UF_Sanitation.js` | `archive/plugins/UF_Sanitation.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_SettlementPillars.js` | `archive/plugins/UF_SettlementPillars.js` | Owner 2026-09-30 prune ruling |
 | `game/js/plugins/UF_Skills.js` | `archive/plugins/UF_Skills.js` | Owner 2026-09-30 prune ruling |
+
+---
+
+## Stand-ins
+The U7 files below stay on disk (never committed) and nothing in the catalog draws them. The inventory tool reads this list: every backticked file on a bullet line counts as a U7 stand-in wherever it is used, so U7-derived files without the prefix must be named here. Format: `- <files> | source | what still names them`.
+- People: every `$U7_*` person sheet (`$U7_Adam*`, `$U7_Eve*`, `$U7_Townsman.png`, `$U7_Townswoman.png`, `$U7_Guard.png`, `$U7_Ranger.png`, `$U7_Goblin.png`, `$U7_Orc.png`, `$U7_Gnome.png`, `$U7_DwarfGuard.png`, `$U7_Miner.png`, `$U7_Blacksmith.png`, `$U7_Fighter*`, `$U7_Automaton.png` and the rest), and without the prefix `$Adam.u7bak.png`, `$Eve.u7bak.png` (the U7 files that were $Adam.png and $Eve.png, byte-identical to each other) and `$People1.png` | SHAPES.VGA 458 / 452 (Adam, Eve, tiers 0–2), 462 / 463 (tier 3), 720 (guard), 265 (townsman, `$People1.png`), 460 (ranger); 3×, E/W transposed | RMMZ editor data (not drawn in play, see above): `$U7_Miner`, `$U7_DwarfGuard`, `$U7_Blacksmith` (Actors.json actors 2, 5, 8 and Map001 events), `$U7_Goblin` (a Map001 event); test suites (grep of game/js/plugins at 11:20): `$U7_Townsman`, `$U7_Ranger`, `$U7_Guard`, `$U7_Goblin` (UF_Factions, UF_Fire, UF_Interact, UF_Items, UF_Jobs, UF_Look, UF_Objects, UF_Roads, UF_Skills, UF_Stance, UF_Talk fallback, UF_TimeSpeed, UF_Wildlife, UF_World), `$People1` (UF_Floors 457)
+- Creatures: every `$U7_*` creature sheet (`$U7_Deer.png`, `$U7_Wolf.png`, `$U7_Dog.png`, `$U7_Hare.png`, `$U7_Fox.png`, `$U7_Horse.png`, `$U7_Sheep.png`, `$U7_Ox.png`, `$U7_Aurochs.png`, `$U7_Chicken.png`, `$U7_WildBird.png`, `$U7_Hawk.png`, `$U7_Rat.png`, `$U7_Bat.png`, `$U7_CaveBat.png`, `$U7_Serpent.png`, `$U7_Snake.png`, `$U7_Cat.png`, `$U7_Spider.png`, `$U7_CaveSpider.png`, `$U7_CaveCrawler.png`, `$U7_CaveLurker.png`, `$U7_Troll.png`, `$U7_BogHorror.png`, `$U7_Skeleton.png`) | SHAPES.VGA 811, 498, 716, 523, 970, 537, 510, 496, 495, 555, 865, 493, 530, 502, 500, 727 and others, 3×, E/W transposed (AR-401 to AR-403) | test suites only: `$U7_Hare` (UF_Colonists, UF_Doors, UF_Interact, UF_Jobs, UF_Stance, UF_Talk fallback), `$U7_Troll` (UF_Stance). The combat rewrite of 2026-09-19 (UF_Combat.js, 10:59) draws spawned hostiles from the catalog species image, no longer `$U7_Wolf` / `$U7_CaveSpider`
+- Objects without the prefix: `!$TimberOak.png`, `!$PineTree.png`, `!$FruitTree.png`, `!$BirchTree.png`, `!$SwampTree.png`, `!$DeadTree.png`, `!$TreeStump.png`, `!$BerryBush.png`, `!$WildShrub.png`, `!$TallGrass.png`, `!$Reeds.png`, `!$Wildflowers.png`, `!$GraniteBoulder.png`, `!$IronstoneDeposit.png`, `!$CaveBoulder.png`, `!$LooseStones.png`, `!$CrystalCluster.png`, `!$IronOreVein.png`, `!$CaveMouth.png`, `!$CaveLadder.png`, `!$FallenPillar.png`, `!$OldBones.png`, `!$StrawBed.png`, `!$WallStone.png`, `!$WallWood.png`, `!$Campfire.png` | SHAPES.VGA shapes 181, 306, 328, 310, 332, 325, 313, 672, 619, 321, 323, 314, 342, 341, 343, 353, 747, 916, 389, 705, 360, 650, 683, 365, 362, 739 (each file's sidecar `standInSource`), 3× | RMMZ editor data (not drawn in play, see above): Map002 events, 336 pages (`!$GraniteBoulder` 85, `!$PineTree` 82, `!$IronstoneDeposit` 64, `!$BerryBush` 57, `!$TimberOak` 46, `!$FruitTree` 1, `!$Campfire` 1); test suites: `!$TimberOak` (UF_Look 546, 562–566)
+- Objects with the prefix: every `!$U7_*` object sheet (`!$U7_TimberOak.png`, `!$U7_PineTree.png`, `!$U7_FruitTree.png`, `!$U7_Flat-toptree.png`, `!$U7_Broadleafgiant.png`, `!$U7_Swamptree.png`, `!$U7_Deadtree.png`, `!$U7_TreeStump.png`, `!$U7_Shrub.png`, `!$U7_TallGrass.png`, `!$U7_Reeds.png`, `!$U7_Wildflowers.png`, `!$U7_LooseStones.png`, `!$U7_Gravel.png`, `!$U7_GraniteBoulder.png`, `!$U7_CaveBoulder.png`, `!$U7_MalachiteOutcrop.png`, `!$U7_GoldVeinOutcrop.png`, `!$U7_IronOreVein.png`, `!$U7_CrystalSpire.png`, `!$U7_SmallCrystals.png`, `!$U7_OldBones.png`, `!$U7_FallenPillar.png`, `!$U7_StrawBed.png`, `!$U7_WallStone.png`, `!$U7_WallWood.png`, `!$U7_CaveMouth.png`, `!$U7_CaveLadder.png`) | SHAPES.VGA, 3×, collision-aligned anchors (AR-021 to AR-023, AR-044, AR-102, AR-103) | test suites only: `!$U7_Flat-toptree` (UF_Look 555, 560), `!$U7_Shrub` (UF_Look 564)
+- Items: the 23 `!$U7_Item_*.png` sheets (WoodLog, Firewood, RoughStone, IronOre, LeadOre, Blackrock, GoldNugget, MetalBar, RoughGem, CutGem, PlantFiber, WoolFleece, StrawBundle, SeedPouch, WildBerries, TreeFruit, CaveMushroom, RootVegetable, RawMeat, HaunchMeat, RiverFish, AnimalBone, LeatherHide), and without the prefix `!$UF_Item_Firewood.png`, `!$UF_Item_Fish.png` (byte-identical to U7 item sheets) | SHAPES.VGA item shapes, 3× (AR-200) | nothing
+- Ground: `game/img/tilesets/U7_Ground_A1.png`, `U7_Ground_A2.png`, `U7_Outside_A1.png`, `U7_Outside_A2.png`, `U7_Dungeon_A1.png`, `U7_Dungeon_A2.png`, `U7_Fortress_B.png`, `U7_Glade_B.png` | SHAPES.VGA flat shapes 4, 23, 5 and others, 3× (AR-001) | nothing (the catalog's tileset is the code-drawn UF_GenGround_A2 with stock Outside_A1, Outside_B and Outside_C)
