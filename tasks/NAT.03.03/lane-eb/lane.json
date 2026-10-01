@@ -1,0 +1,45 @@
+{
+  "lane": "lane-eb",
+  "taskId": "NAT.03.03",
+  "branch": "task/lane-eb",
+  "writer": "claude",
+  "reviewer": "gemini",
+  "allowedPaths": [
+    "game/js/sim/hydrology/cycle.js",
+    "game/js/sim/hydrology/index.js",
+    "game/data/sim/hydrology.json",
+    "tools/sim/test_water_cycle.js",
+    "docs/systems/DEUS_WaterAuthority.md",
+    "tasks/NAT.03.03/lane-eb/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_water_cycle.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_water_open_cp.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_aquifer_seepage.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}
