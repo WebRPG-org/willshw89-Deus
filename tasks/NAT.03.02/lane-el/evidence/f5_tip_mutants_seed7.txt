@@ -1,0 +1,8 @@
+## snapshot-only mutant mint_into_fluid (seed 7 via the snapshot's DEUS_World Seed parameter)
+PASS natural_connections.liquid_present_at_entrance - UF.Fluid depth +6 at the upper entrance (136,132,0); isWater true
+FAIL natural_connections.liquid_flow_through_connection - 400 UF.Fluid steps: Ground debit 0, lower-level credit 0; landing (136,132,-1) before {"isWater":false,"depth":0}, after steps {"isWater":false,"depth":0}, after 61 frames and both screenshots {"isWater":true,"depth":1}; level sums [0,0,0] -> [6,0,0] -> [6,0,0] -> [6,1,1]; landing shot at view -1
+RESULT: 10 passed, 5 failed (exit 1)
+## snapshot-only mutant isWater_ignores_levels (seed 7 via the snapshot's DEUS_World Seed parameter)
+FAIL natural_connections.liquid_present_at_entrance - UF.Fluid depth +6 at the upper entrance (136,132,0); isWater false
+PASS natural_connections.liquid_flow_through_connection - 400 UF.Fluid steps: Ground debit 0, lower-level credit 0; landing (136,132,-1) before {"isWater":false,"depth":0}, after steps {"isWater":false,"depth":0}, after 61 frames and both screenshots {"isWater":false,"depth":0}; level sums [0,0,0] -> [6,0,0] -> [6,0,0] -> [6,0,0]; landing shot at view -1
+RESULT: 10 passed, 5 failed (exit 1)

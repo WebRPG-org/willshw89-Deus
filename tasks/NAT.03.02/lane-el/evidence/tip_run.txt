@@ -1,0 +1,10 @@
+# node tools/test_natural_connections_no_mint.js  (tip 941b2052, 2026-10-01T09:15:30Z, node v24.19.0)
+PASS natural_connections_no_mint.authoritative_flow_conserved: 27/27 floored passages: upper debit 0, lower credit 0; open-column control: upper debit 6 = lower credit 6 (seed 20260919, 27 links {"cliff_cave_passage":27}, 6 water by UF.Fluid.setCell, UF.Fluid.step x400 (budget 512) alone, hydro absent)
+PASS natural_connections_no_mint.floored_passage_is_not_a_drain: landing 0, upper level 6 at every link: seed 20260919: 27/27 {"cliff_cave_passage":27}; seed 7: 28/28 {"natural_passage":4,"cliff_cave_passage":24} (6 water by UF.Fluid.setCell, UF.Fluid.step x400 (budget 512) alone, hydro absent)
+PASS natural_connections_no_mint.creatures_still_stepped: seed 7 natural_0_0_1_upper: creature on (136,132,0) moved to the landing z=-1 by one frame-30 Scene_Map.update (frame 30)
+PASS natural_connections_no_mint.link_does_not_mint: after a frame-30 Scene_Map.update no landing gained water by isWater, Levels.waterAt or UF.Fluid, and no Fluid total, baseline water cell or private record changed (seed 20260919: 27 upper entrances wet, 0 landings dry before; seed 7: 28 upper entrances wet, 2 landings dry before)
+PASS natural_connections_no_mint.waterAt_not_wrapped: UF.Levels.waterAt is DEUS_Levels' own function after Scene_Boot.start
+PASS natural_connections_no_mint.private_store_gone: no private store API; a frame-30 Scene_Map.update with water at 27 upper entrances changed no fluid state and emitted no fluid-flow event
+PASS natural_connections_no_mint.legacy_payload_round_trip: payload of 2 cells loaded and saved unchanged, read as water by none of isWater/Levels.waterAt/UF.Fluid; Fluid totals and baseline water unchanged
+RESULT: 7 passed, 0 failed
+exit 0
