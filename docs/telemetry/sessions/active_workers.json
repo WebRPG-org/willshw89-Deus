@@ -4704,7 +4704,7 @@
     "provider": "grok",
     "role": "writer",
     "taskId": "WG.CELL-WRITE",
-    "state": "RUNNING",
+    "state": "ORPHANED-CHILDREN",
     "pid": 36884,
     "processStartedAt": "2026-10-01T07:45:42Z",
     "launcherPid": 29760,
@@ -4722,13 +4722,50 @@
     "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-da\\lane-da_20261001_024540.log",
     "launchTimeCT": "2026-10-01 02:45:41 CT",
     "startedAt": "2026-10-01T07:45:41Z",
-    "endedAt": null,
-    "exitCode": null,
+    "endedAt": "2026-10-01T08:29:45Z",
+    "exitCode": 0,
     "timeoutMinutes": 120,
     "baseCommit": "4a5d7d877e590141dfba2e44bee7f591f77f78e3",
     "resumeFromSha": null,
     "pushGuardHooksPath": null,
-    "gitIdentity": "deus-grok"
+    "gitIdentity": "deus-grok",
+    "flags": [
+      "ORPHANED-CHILDREN"
+    ],
+    "timedOut": false,
+    "startError": null,
+    "logBytes": 9788,
+    "outputDrained": true,
+    "headCommit": "a51e079fa37c06f048f4a5af56a25ad6732287e0",
+    "branchAfter": "task/lane-da",
+    "newCommits": 4,
+    "dirtyFiles": [],
+    "outOfScope": [],
+    "orphans": [
+      {
+        "pid": 41824,
+        "name": "git.exe",
+        "commandLine": "\"C:\\Program Files\\Git\\mingw64\\bin\\git.exe\" grep -l -I -F -w SIM.00.02a refs/heads/astra/DEUS-TSK-ASTRA-01 refs/heads/main refs/heads/salvage/wt13-2026-09-25 refs/heads/salvage/wt14-2026-09-25 refs/heads/salvage/wt16-2026-09-25 refs/heads/salvage/wt18-2026-09-25 refs/heads/salvage/wt19b-2026-09-25 re"
+      },
+      {
+        "pid": 39028,
+        "name": "bash.exe",
+        "commandLine": "\"C:\\Program Files\\Git\\bin\\..\\usr\\bin\\bash.exe\" -c \"source /c/Users/snewt/.claude/shell-snapshots/snapshot-bash-1790716439332-bimsel.sh 2>/dev/null || true && export TEMP='C:\\Users\\snewt\\AppData\\Local\\Temp' TMP='C:\\Users\\snewt\\AppData\\Local\\Temp' && shopt -u extglob 2>/dev/null || true && { \\builtin "
+      },
+      {
+        "pid": 15672,
+        "name": "bash.exe",
+        "commandLine": "\"C:\\Program Files\\Git\\usr\\bin\\bash.exe\" /c/Users/snewt/AppData/Local/Temp/claude/C--Users-snewt-OneDrive-Desktop-UF/b3b32680-c2a3-489e-bb25-c1573152defd/scratchpad/program/work/d1rec/collide.sh"
+      },
+      {
+        "pid": 34160,
+        "name": "bash.exe",
+        "commandLine": "\"C:\\Program Files\\Git\\usr\\bin\\bash.exe\" /c/Users/snewt/AppData/Local/Temp/claude/C--Users-snewt-OneDrive-Desktop-UF/b3b32680-c2a3-489e-bb25-c1573152defd/scratchpad/program/work/d1rec/collide.sh"
+      }
+    ],
+    "orphansKilled": false,
+    "usage": null,
+    "resumeHeadMismatch": false
   },
   {
     "runId": "lane-dn_20261001_024559",
@@ -4882,7 +4919,7 @@
     "provider": "grok",
     "role": "writer",
     "taskId": "WG.62.02",
-    "state": "RUNNING",
+    "state": "COMPLETED",
     "pid": 6208,
     "processStartedAt": "2026-10-01T07:46:49Z",
     "launcherPid": 19312,
@@ -4900,13 +4937,27 @@
     "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-ez\\lane-ez_20261001_024646.log",
     "launchTimeCT": "2026-10-01 02:46:47 CT",
     "startedAt": "2026-10-01T07:46:47Z",
-    "endedAt": null,
-    "exitCode": null,
+    "endedAt": "2026-10-01T08:26:56Z",
+    "exitCode": 0,
     "timeoutMinutes": 120,
     "baseCommit": "5ca2e0f7e15aa027961fa517606a79a2dbffa33b",
     "resumeFromSha": null,
     "pushGuardHooksPath": null,
-    "gitIdentity": "deus-grok"
+    "gitIdentity": "deus-grok",
+    "flags": [],
+    "timedOut": false,
+    "startError": null,
+    "logBytes": 2777,
+    "outputDrained": true,
+    "headCommit": "20ac70382a31d7cf78849dbe46effcae1d36c4d3",
+    "branchAfter": "task/lane-ez",
+    "newCommits": 1,
+    "dirtyFiles": [],
+    "outOfScope": [],
+    "orphans": [],
+    "orphansKilled": false,
+    "usage": null,
+    "resumeHeadMismatch": false
   },
   {
     "runId": "lane-el_20261001_024658",
@@ -5022,7 +5073,7 @@
     "provider": "grok",
     "role": "reviewer",
     "taskId": "OPS.PRUNE.05",
-    "state": "RUNNING",
+    "state": "ORPHANED-CHILDREN",
     "pid": 10604,
     "processStartedAt": "2026-10-01T08:14:59Z",
     "launcherPid": 8108,
@@ -5040,13 +5091,61 @@
     "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-ct\\lane-ct_20261001_031453.log",
     "launchTimeCT": "2026-10-01 03:14:53 CT",
     "startedAt": "2026-10-01T08:14:53Z",
-    "endedAt": null,
-    "exitCode": null,
+    "endedAt": "2026-10-01T08:25:53Z",
+    "exitCode": 0,
     "timeoutMinutes": 60,
     "baseCommit": "87380985668da7ea4f34a4650628c68910555184",
     "resumeFromSha": null,
     "pushGuardHooksPath": null,
-    "gitIdentity": "deus-grok"
+    "gitIdentity": "deus-grok",
+    "flags": [
+      "ORPHANED-CHILDREN"
+    ],
+    "timedOut": false,
+    "startError": null,
+    "logBytes": 1770,
+    "outputDrained": true,
+    "headCommit": "2936c031fcaec29daf7da4c4b4ce261701aa6a4c",
+    "branchAfter": "task/lane-ct",
+    "newCommits": 1,
+    "dirtyFiles": [
+      "tasks/OPS.PRUNE.05/lane-ct/launches/20260930_173514_prompt.txt",
+      "tasks/OPS.PRUNE.05/lane-ct/launches/20260930_codex_lane_ct.txt",
+      "tasks/OPS.PRUNE.05/lane-ct/launches/20260930_review_prompt_3d51c91b.txt",
+      "tasks/OPS.PRUNE.05/lane-ct/launches/20261001_023027_prompt.txt",
+      "tasks/OPS.PRUNE.05/lane-ct/launches/20261001_031244_prompt.txt"
+    ],
+    "outOfScope": [],
+    "orphans": [
+      {
+        "pid": 36576,
+        "name": "sed.exe",
+        "commandLine": "\"C:\\Program Files\\Git\\usr\\bin\\sed.exe\" s#^refs/[^:]*/##"
+      },
+      {
+        "pid": 19924,
+        "name": "git.exe",
+        "commandLine": "\"C:\\Program Files\\Git\\mingw64\\bin\\git.exe\" grep -l -I -F -w WG.00.46 refs/heads/astra/DEUS-TSK-ASTRA-01 refs/heads/main refs/heads/salvage/wt13-2026-09-25 refs/heads/salvage/wt14-2026-09-25 refs/heads/salvage/wt16-2026-09-25 refs/heads/salvage/wt18-2026-09-25 refs/heads/salvage/wt19b-2026-09-25 refs"
+      },
+      {
+        "pid": 35376,
+        "name": "node.exe",
+        "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" tools/governance/test_check_claims.js"
+      },
+      {
+        "pid": 40640,
+        "name": "bash.exe",
+        "commandLine": "\"C:\\Program Files\\Git\\usr\\bin\\bash.exe\" /c/Users/snewt/AppData/Local/Temp/claude/C--Users-snewt-OneDrive-Desktop-UF/b3b32680-c2a3-489e-bb25-c1573152defd/scratchpad/program/work/d1rec/collide.sh"
+      },
+      {
+        "pid": 22160,
+        "name": "bash.exe",
+        "commandLine": "\"C:\\Program Files\\Git\\bin\\..\\usr\\bin\\bash.exe\" -c \"source /c/Users/snewt/.claude/shell-snapshots/snapshot-bash-1790716439332-bimsel.sh 2>/dev/null || true && export TEMP='C:\\Users\\snewt\\AppData\\Local\\Temp' TMP='C:\\Users\\snewt\\AppData\\Local\\Temp' && shopt -u extglob 2>/dev/null || true && { \\builtin "
+      }
+    ],
+    "orphansKilled": false,
+    "usage": null,
+    "resumeHeadMismatch": false
   },
   {
     "runId": "lane-dn_20261001_032027",
@@ -5054,7 +5153,7 @@
     "provider": "grok",
     "role": "reviewer",
     "taskId": "NAT.02.MASS",
-    "state": "RUNNING",
+    "state": "COMPLETED",
     "pid": 37132,
     "processStartedAt": "2026-10-01T08:20:29Z",
     "launcherPid": 27748,
@@ -5072,13 +5171,27 @@
     "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-dn\\lane-dn_20261001_032027.log",
     "launchTimeCT": "2026-10-01 03:20:27 CT",
     "startedAt": "2026-10-01T08:20:27Z",
-    "endedAt": null,
-    "exitCode": null,
+    "endedAt": "2026-10-01T08:27:10Z",
+    "exitCode": 0,
     "timeoutMinutes": 60,
     "baseCommit": "85d18b550dd03464c67331d28e813d40516bd077",
     "resumeFromSha": null,
     "pushGuardHooksPath": null,
-    "gitIdentity": "deus-grok"
+    "gitIdentity": "deus-grok",
+    "flags": [],
+    "timedOut": false,
+    "startError": null,
+    "logBytes": 1696,
+    "outputDrained": true,
+    "headCommit": "ac8cfd4aa884d69173430d9fdad46ed079c47be2",
+    "branchAfter": "task/lane-dn",
+    "newCommits": 1,
+    "dirtyFiles": [],
+    "outOfScope": [],
+    "orphans": [],
+    "orphansKilled": false,
+    "usage": null,
+    "resumeHeadMismatch": false
   },
   {
     "runId": "lane-en_20261001_032049",
