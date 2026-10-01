@@ -27,19 +27,26 @@ const MOVES = new Map([
 ]);
 const TARGETS = new Set([...MOVES.values(), ...RECONCILED, ...PROTECTED]);
 
-const STALE_LOCATORS = {
-    "DEUS_History.md:106": "shifted to line 108 (physical grave ownership gate)",
-    "DEUS_Ecology.md:8": "shifted to line 10 (census/bucket director; line 8 is blank)",
-    "DEUS_Floors.md:44": "shifted to line 50 (kindAt definition)",
-    "DEUS_World.md:151": "shifted to line 181 (stance selection_square failure)"
-};
+const CORRECTED_CITATIONS = [
+    { target: "DEUS_History.md", stale: "1161", valid: "1163", pattern: /currentYear|100 real hours/i, desc: "year takes over 100 real hours" },
+    { target: "DEUS_History.md", stale: "102", valid: "104", pattern: /Historical subject identity/i, desc: "historical subject identity" },
+    { target: "DEUS_History.md", stale: "106", valid: "108", pattern: /grave|ruin|burial/i, desc: "physical grave ownership gate" },
+    { target: "DEUS_History.md", stale: "93", valid: "95", pattern: /graveyard|physical grave|not evidence/i, desc: "graveyard is not evidence of a physical grave" },
+    { target: "DEUS_History.md", stale: "194-201", valid: "196-203", pattern: /Seed|Repeat|Simulation/i, desc: "demographic trajectories deterministic table" },
+    { target: "DEUS_History.md", stale: "207", valid: "209", pattern: /Both repeats|matching state/i, desc: "repeat output checksums match" },
+    { target: "DEUS_History.md", stale: "27", valid: "29", pattern: /Final integration artifact|Worker timings/i, desc: "age-500 simulation timing provenance" },
+    { target: "DEUS_Ecology.md", stale: "8", valid: "10", pattern: /bucket|census|director/i, desc: "census and bucket director" },
+    { target: "DEUS_Floors.md", stale: "44", valid: "50", pattern: /kindAt/i, desc: "kindAt definition" },
+    { target: "DEUS_World.md", stale: "151", valid: "181", pattern: /selection_square/i, desc: "selection_square failure" }
+];
 
-const SEMANTIC_LINE_CHECKS = {
-    "DEUS_History.md:108": { pattern: /grave|ruin|burial/i, desc: "grave/ruin/burial gate" },
-    "DEUS_Ecology.md:10": { pattern: /bucket|census|director/i, desc: "bucket/census director" },
-    "DEUS_Floors.md:50": { pattern: /kindAt/i, desc: "kindAt" },
-    "DEUS_World.md:181": { pattern: /selection_square/i, desc: "selection_square" }
-};
+const STALE_LOCATORS = new Map();
+const SEMANTIC_LINE_CHECKS = new Map();
+for (const c of CORRECTED_CITATIONS) {
+    STALE_LOCATORS.set(`${c.target}:${c.stale}`, `stale line locator: ${c.target}:${c.stale} was corrected to ${c.valid} (${c.desc})`);
+    const validStart = parseInt(c.valid.split("-")[0], 10);
+    SEMANTIC_LINE_CHECKS.set(`${c.target}:${validStart}`, { pattern: c.pattern, desc: c.desc });
+}
 
 const MUTANTS = {
     missing_live: { file: "docs/systems/DEUS_World.md", value: () => null, error: "missing live:" },
@@ -57,8 +64,11 @@ const MUTANTS = {
     lost_colonists_reflex: { file: "docs/systems/DEUS_Colonists.md", value: s => s.replace(/safeCellNear/g, "lostReflex"), error: "Colonists reflex text lost:" },
     missing_inventory_row: { file: INVENTORY, value: s => { const x = JSON.parse(s); x.live.pop(); return JSON.stringify(x); }, error: "live inventory mismatch" },
     engine_rules_typo: { file: "docs/ENGINE_RULES.md", value: s => s.replace("DEUS_World.md", "DEUS_Wor1d.md"), error: "broken-reference diagnostic:" },
-    stale_history_locator: { file: "docs/adr/ADR-003_sim_render_split_and_lod.md", value: s => s.replace("DEUS_History.md:108", "DEUS_History.md:106"), error: "stale line locator:" },
-    stale_ecology_locator: { file: "docs/audits/LIVING_WORLD_GAP_AUDIT.md", value: s => s.replace("DEUS_Ecology.md:10", "DEUS_Ecology.md:8"), error: "stale line locator:" }
+    unscanned_inventory_file: { file: "docs/ENGINE_RULES.md", value: s => s, error: "unvalidated inventoried file:" },
+    stale_history_1161: { file: "docs/adr/ADR-003_sim_render_split_and_lod.md", value: s => s.replace("DEUS_History.md:1163", "DEUS_History.md:1161"), error: "stale-reference diagnostic:" },
+    stale_history_locator: { file: "docs/adr/ADR-003_sim_render_split_and_lod.md", value: s => s.replace("DEUS_History.md:108", "DEUS_History.md:106"), error: "stale-reference diagnostic:" },
+    stale_ecology_locator: { file: "docs/audits/LIVING_WORLD_GAP_AUDIT.md", value: s => s.replace("DEUS_Ecology.md:10", "DEUS_Ecology.md:8"), error: "stale-reference diagnostic:" },
+    stale_floors_locator: { file: "docs/design/ECOLOGY.md", value: s => s.replace("DEUS_Floors.md:50", "DEUS_Floors.md:44"), error: "stale-reference diagnostic:" }
 };
 const args = process.argv.slice(2);
 const mutantArg = args.find(a => a.startsWith("--mutant="));
@@ -103,15 +113,17 @@ function preservedLines(source, target, label, skip = 1) {
 }
 function resolveLink(from, url) {
     let decoded;
-    try { decoded = decodeURIComponent(url); } catch { return { target: "INVALID_ENCODING", anchor: "", line: null }; }
+    try { decoded = decodeURIComponent(url); } catch { return { target: "INVALID_ENCODING", anchor: "", line: null, rawLine: null }; }
     if (/^(?:https?:|mailto:|data:)/i.test(decoded)) return null;
     let [raw, hashPart = ""] = decoded.split("#");
     const clean = raw.split("?")[0].replace(/\\/g, "/");
     let line = null;
-    const lineMatch = clean.match(/:(\d+)(?:-(\d+))?$/);
+    let rawLine = null;
+    const lineMatch = clean.match(/:(\d+(?:-\d+)?)$/);
     let pathOnly = clean;
     if (lineMatch) {
-        line = parseInt(lineMatch[1], 10);
+        rawLine = lineMatch[1];
+        line = parseInt(rawLine.split("-")[0], 10);
         pathOnly = clean.slice(0, lineMatch.index);
     }
     let target;
@@ -119,7 +131,7 @@ function resolveLink(from, url) {
     else if (pathOnly.includes("/docs/")) target = "docs/" + pathOnly.split("/docs/").pop();
     else if (pathOnly.startsWith("docs/")) target = pathOnly;
     else target = path.posix.normalize(path.posix.join(path.posix.dirname(from), pathOnly));
-    return { target, anchor: hashPart, line };
+    return { target, anchor: hashPart, line, rawLine };
 }
 function anchors(text) {
     const counts = new Map();
@@ -160,11 +172,14 @@ function validate() {
     preservedLines(git(["show", `${BASE}:docs/systems/DEUS_Colonists.md`]), read("docs/systems/DEUS_Colonists.md"), "Colonists reflex text lost", 4);
     const files = [...new Set(git(["ls-files", "--cached", "--others", "--exclude-standard", "-z"]).split("\0").filter(p => p.endsWith(".md")))];
     let documents = 0, links = 0;
+    const scannedFiles = new Set();
     for (const p of files) {
         // Immutable source/evidence records retain historical paths, per preservation scope.
         if (/^(?:docs\/archive\/|archive\/|tasks\/)/.test(p) || PROTECTED.includes(p)) continue;
+        if (mutant === "unscanned_inventory_file" && p === "docs/ENGINE_RULES.md") continue;
         const s = read(p); if (s === null) continue;
         documents++;
+        scannedFiles.add(p);
         // Code-spanned paths are the repository's most common documentation references.
         for (const old of MOVES.keys()) check(!s.includes(old), `stale documentation path: ${p} -> ${old}`);
         const withoutCode = s.replace(/^```[^\n]*\n[\s\S]*?^```\s*$/gm, "");
@@ -202,19 +217,29 @@ function validate() {
                 if (link.line !== null) {
                     const targetLines = normalize(destination).split("\n");
                     check(link.line >= 1 && link.line <= targetLines.length, `broken-reference diagnostic: line out of bounds: ${p} -> ${url} (max ${targetLines.length})`);
-                    const key = `${baseName}:${link.line}`;
-                    if (STALE_LOCATORS[key]) {
-                        check(false, `stale line locator: ${p} -> ${url} (${STALE_LOCATORS[key]})`);
+                    const exactKey = `${baseName}:${link.rawLine}`;
+                    const lineKey = `${baseName}:${link.line}`;
+                    const staleMsg = STALE_LOCATORS.get(exactKey) || STALE_LOCATORS.get(lineKey);
+                    if (staleMsg) {
+                        check(false, `stale-reference diagnostic: stale line locator: ${p} -> ${url} (${staleMsg})`);
                     }
-                    if (SEMANTIC_LINE_CHECKS[key]) {
+                    const checkSpec = SEMANTIC_LINE_CHECKS.get(lineKey);
+                    if (checkSpec) {
                         const lineText = targetLines[link.line - 1] || "";
-                        check(SEMANTIC_LINE_CHECKS[key].pattern.test(lineText), `stale line locator: ${p} -> ${url} (expected ${SEMANTIC_LINE_CHECKS[key].desc})`);
+                        check(checkSpec.pattern.test(lineText), `stale-reference diagnostic: stale line locator content: ${p} -> ${url} (expected ${checkSpec.desc})`);
                     }
                 }
             }
         }
     }
-    console.log(`Inventory: 33 live, 15 archived, 9 protected docs + Households plugin, 2 Colonists source snapshots, ${retargetedFiles.length} retargeted scope files`);
+
+    // GAP A: Enforce coverage of every inventoried file
+    for (const rf of retargetedFiles) {
+        check(read(rf) !== null, `missing inventoried file: ${rf}`);
+        check(scannedFiles.has(rf), `unvalidated inventoried file: ${rf}`);
+    }
+
+    console.log(`Inventory: 33 live, 15 archived, 9 protected docs + Households plugin, 2 Colonists source snapshots, ${retargetedFiles.length} retargeted scope files (100% coverage enforced)`);
     console.log(`Links: ${documents} mutable Markdown documents scanned; ${links} relevant destinations checked`);
 }
 try { validate(); } catch (e) { errors.push(`validator exception: ${e.message}`); }
