@@ -1,0 +1,98 @@
+tip e6b5f421 [claude] WG.20.03 WIP: test_rmmz_rows.js (104 checks, 16 mutants), expected fixture from ROWS.md, SCHEMA.md 1.4.0
+
+$ UF_TEST_PROVOKE=rmmz_rows.row_SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT: runtime {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_B.png","index":null,"tileId":177,"slotText":"tiles 176, 177, 184, 185","grid":"2x2"} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_B.png","index":null,"tileId":176,"slotText":"tiles 176, 177, 184, 185","grid":"2x2"}
+103/104 checks passed (provoked: rmmz_rows.row_SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT)
+[exit 1]
+
+$ UF_TEST_PROVOKE=rmmz_rows.reform_SURFACE_SHARED_SHADE_HEIGHT_H1_DEFAULT node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.reform_SURFACE_SHARED_SHADE_HEIGHT_H1_DEFAULT: paletteRampIds changed (["NEUT_VOID_BLACK"] -> ["NEUT_COOL_GRAY"])
+103/104 checks passed (provoked: rmmz_rows.reform_SURFACE_SHARED_SHADE_HEIGHT_H1_DEFAULT)
+[exit 1]
+
+$ UF_TEST_PROVOKE=rmmz_rows.counts node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.counts: 71 new rows (want 72) by group {"E":2,"C":15,"F":7,"A":30,"B":16,"D":1} (want {"A":30,"B":16,"C":15,"D":1,"E":3,"F":7}); 20 re-forms (want 20)
+103/104 checks passed (provoked: rmmz_rows.counts)
+[exit 1]
+
+$ UF_TEST_PROVOKE=rmmz_rows.ar_rows node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.ar_rows: 6/6 AR rows in docs/ASSET_REQUESTS.md; AR-2204 is in the catalogue's outOfScope
+103/104 checks passed (provoked: rmmz_rows.ar_rows)
+[exit 1]
+
+$ UF_TEST_PROVOKE=rmmz_rows.size_rows node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.size_rows: 3/3 derived RMMZ_SPEC rows; RMMZ_AUTOTILE_A4_SIDE is 96-96x96-120 fp 2x2 (RMMZ_SPEC), want 96x96 fp 2x2
+103/104 checks passed (provoked: rmmz_rows.size_rows)
+[exit 1]
+
+$ UF_TEST_PROVOKE=rmmz_rows.rulings_cited node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.rulings_cited: quotes at docs/OWNER_DECISIONS.md:1068, :924; 92/92 rows and re-forms present; SURFACE_SHARED_TERRAIN_CLIFF-GRANITE_TOP_DEFAULT does not cite docs/OWNER_DECISIONS.md:924
+103/104 checks passed (provoked: rmmz_rows.rulings_cited)
+[exit 1]
+
+$ UF_TEST_PROVOKE=rmmz_rows.schema_contract node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.schema_contract: 92 rmmzForm entries (want 92) validate; envelopeOverride + wTarget -> ["$.entries[0].envelopeOverride: unexpected property wTarget"]; footprintOverride + d -> ["$.entries[0]: unexpected property footprintOverride"]; footprintOverride is undefined
+103/104 checks passed (provoked: rmmz_rows.schema_contract)
+[exit 1]
+
+$ UF_TEST_PROVOKE=rmmz_rows.envelope_admits_art node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.envelope_admits_art: 11/12 recorded specimen boxes admitted (recorded dimensions only; no image is read); not admitted: PINE_B-V1_DEFAULT 96x132 (pine_c2d.png) vs envelope 42-64x80-104
+103/104 checks passed (provoked: rmmz_rows.envelope_admits_art)
+[exit 1]
+
+$ UF_TEST_PROVOKE=rmmz_rows.size_overrides node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.size_overrides: 8 entries carry envelopeOverride (want 9); footprintOverride on 0; conflicts.md section present; SURFACE_SHARED_TREE_BIRCH_B-V1_DEFAULT has no envelopeOverride
+103/104 checks passed (provoked: rmmz_rows.size_overrides)
+[exit 1]
+
+$ UF_TEST_PROVOKE=rmmz_rows.rmmz_form node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.rmmz_form: 92 rmmzForm entries (want 92); ALL_SHARED_EFFECT_STEAM_B-V1_DEFAULT: slot 144x96 vs RMMZ target 96x96
+103/104 checks passed (provoked: rmmz_rows.rmmz_form)
+[exit 1]
+
+$ UF_TEST_PROVOKE=rmmz_rows.pa_agrees node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.pa_agrees: 72 rows without a grid (want 72) and 20 grid rows (want 20) against tools/art/place_art.js tilesetTarget; ALL_SHARED_TERRAIN_OBSIDIAN_A2_DEFAULT: tilesetTarget 96x144 vs slot 144x144
+103/104 checks passed (provoked: rmmz_rows.pa_agrees)
+[exit 1]
+
+$ UF_TEST_PROVOKE=rmmz_rows.tile_unique node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.tile_unique: 134 claimed cells (want 134); duplicates 4: img/tilesets/DEUS_Dungeon_E.png#769: ALL_SHARED_EFFECT_STEAM_B-V1_DEFAULT and ALL_SHARED_EFFECT_STEAM_B-V1_DEFAULT-COPY; img/tilesets/DEUS_Dungeon_E.png#770: ALL_SHARED_EFFECT_STEAM_B-V1_DEFAULT and ALL_SHARED_EFFECT_STEAM_B-V1_DEFAULT-COPY; img/tilesets/DEUS_Dungeon_E.png#777: ALL_SHARED_EFFECT_STEAM_B-V1_DEFAULT and ALL_SHARED_EFFECT_STEAM_B-V1_DEFAULT-COPY
+103/104 checks passed (provoked: rmmz_rows.tile_unique)
+[exit 1]
+
+$ UF_TEST_PROVOKE=rmmz_rows.stock_positions node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.stock_positions: 28 stock positions (want 28), 30 A4 format examples (want 30); SURFACE_SHARED_TREE_OAK_B-V1_DEPLETED: "Stump (Moss)" is not the frozen label of Outside_B 156 ("Stump")
+103/104 checks passed (provoked: rmmz_rows.stock_positions)
+[exit 1]
+
+$ UF_TEST_PROVOKE=rmmz_rows.append_only node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.append_only: comparison build OK with 10122 entries; 10122 common entries, 1 slots moved; 72 new rows (want 72), all on _RMMZnn sheets
+103/104 checks passed (provoked: rmmz_rows.append_only)
+[exit 1]
+
+$ UF_TEST_PROVOKE=catalogue.rule_rmmz_form node tools/art/test_catalogue.js
+FAIL catalogue.rule_rmmz_form: an RMMZ form whose paint slot is not the RMMZ target (a 96x96 slot on a one-cell B tile): baseline fixture 0 errors; patched fixture -> 0 RMMZ_FORM [rule switched off]
+49/50 checks passed (provoked: catalogue.rule_rmmz_form)
+[exit 1]
+
+$ UF_TEST_PROVOKE=catalogue.rule_rmmz_tile_dup node tools/art/test_catalogue.js
+FAIL catalogue.rule_rmmz_tile_dup: two RMMZ forms claim the same cell (a 2x2 grid and a single tile both cover B tile 185): baseline fixture 0 errors; patched fixture -> 0 RMMZ_TILE_DUP [rule switched off]
+49/50 checks passed (provoked: catalogue.rule_rmmz_tile_dup)
+[exit 1]
+
+$ UF_TEST_PROVOKE=catalogue.rule_rmmz_size_override node tools/art/test_catalogue.js
+FAIL catalogue.rule_rmmz_size_override: an envelope that does not equal its per-row size override (WG.20.03 D4; the oak override 56-89x72-96 on an envelope left at the chart row 56-80x72-96): baseline fixture 0 errors; patched fixture -> 0 SIZE_OUTSIDE_ROW [rule switched off]
+49/50 checks passed (provoked: catalogue.rule_rmmz_size_override)
+[exit 1]
+
+$ UF_TEST_PROVOKE=catalogue.rule_coverage node tools/art/test_catalogue.js
+FAIL catalogue.rule_coverage: 21 FAIL rules, 29 fixture cases; rules without a case: GEOM_HEIGHT
+49/50 checks passed (provoked: catalogue.rule_coverage)
+[exit 1]
+
+$ UF_TEST_PROVOKE=catalogue.geometry_stratum_changes_slots node tools/art/test_catalogue.js
+FAIL catalogue.geometry_stratum_changes_slots: [40,14,14,14,14]: 0/4 slot heights changed (EDGE_MEADOW_S-H2 48->48, WALLFACE_OPENING_H2 48->48, RAMP_MEADOW_N-C2 96->96, RAMPSIDE_MEADOW_E-H2 48->48); [20,19,19,19,19]: 0/3 target heights changed (19->19, 57->57, 124->124)
+49/50 checks passed (provoked: catalogue.geometry_stratum_changes_slots)
+[exit 1]
+
+provocations: 19 of 19 exit 1
