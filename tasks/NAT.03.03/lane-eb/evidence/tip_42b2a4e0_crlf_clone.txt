@@ -1,0 +1,19 @@
+# tip 42b2a4e0, fresh clone with core.autocrlf=true (sources checked out CRLF), 2026-10-01T07:46:06-05:00
+$ node tools/check_deus_syntax.js
+Checked 62 DEUS plugin files. Errors: 0
+exit 0
+$ node tools/sim/test_water_cycle.js
+KILLED evaporation_unrecorded -> transfer_records_balance - records for water|return sum to -43744, the account changed by 35350
+KILLED credit_without_surface -> no_surface_is_base - the checkpoint authority's members
+MUTANTS: 9/9 killed
+exit 0
+$ node tools/sim/test_water_open_cp.js
+KILLED cursor_not_saved -> serialize_roundtrip_exact - run(90) vs load(save(run(1))) then run(89)
+KILLED export_dropped -> aquifer_exports_preserved - index.js lost the baseline export canonicalEdgeKey
+MUTANTS: 11/11 killed
+exit 0
+$ node tools/test_aquifer_seepage.js
+PASS: constants_from_units - 312000 cp = 50 ft3 x 6240 cp/ft3 read from units.js; a stub table (51 x 6241) changes aquifer constants and capacity; index.js re-exports intact
+
+ALL CHECKS PASSED: 17 check(s) verified in 103ms.
+exit 0

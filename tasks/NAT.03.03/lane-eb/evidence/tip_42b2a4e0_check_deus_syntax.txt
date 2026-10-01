@@ -1,0 +1,4 @@
+# tip 42b2a4e0 (42b2a4e0a8b45d46ac73b1ed6f8e28011802b5f4), worktree, 2026-10-01T07:45:57-05:00, node v24.19.0
+$ node tools/check_deus_syntax.js
+Checked 62 DEUS plugin files. Errors: 0
+exit 0

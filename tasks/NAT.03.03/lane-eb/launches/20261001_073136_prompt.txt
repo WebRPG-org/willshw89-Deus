@@ -1,0 +1,14 @@
+You are the primary implementer for lane-eb (Task NAT.03.03), running as claude.
+Read tasks/NAT.03.03/lane-eb/BRIEF.md carefully and follow all instructions within it.
+Your allowed paths are:
+- game/js/sim/hydrology/cycle.js
+- game/js/sim/hydrology/index.js
+- game/data/sim/hydrology.json
+- tools/sim/test_water_cycle.js
+- docs/systems/DEUS_WaterAuthority.md
+- tasks/NAT.03.03/lane-eb/**
+
+Standing rules:
+1. NO ART (DEC-007). Never generate, request or integrate art, and never tell anyone to.
+2. Run tests in the FOREGROUND. Never end your turn while background jobs or child processes are running. Commit early (WIP commits allowed on your branch). Do not push. Do not merge. Write only inside allowedPaths.
+Commit messages start with '[claude] NAT.03.03'.

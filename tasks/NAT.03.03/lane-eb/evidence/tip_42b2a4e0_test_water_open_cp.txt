@@ -1,0 +1,27 @@
+# tip 42b2a4e0 (42b2a4e0a8b45d46ac73b1ed6f8e28011802b5f4), worktree, 2026-10-01T07:46:05-05:00, node v24.19.0
+$ node tools/sim/test_water_open_cp.js
+PASS aquifer_exports_preserved - 9 baseline exports re-exported unchanged (6 ms)
+PASS cp_exact_conservation - water 9000000 cp, lava 3000000 cp exact every step; 36309107 cp moved (104 ms)
+PASS cavity_height_depth - cavity d1 / 2 ft, cell d7 / 10 ft, lip surface 7 ft, lava=water volume d3 (3 ms)
+PASS unlike_fluids_kept - lava cell and both water bodies unchanged after settling (2 ms)
+PASS wrap_seam_flow - outer east, internal and outer south seams each split 1560000 cp evenly (2 ms)
+PASS seam_once - one record 0,0,3,0,0|1,0,0,0,0, debit = credit = 312000 cp, order-independent (3 ms)
+PASS budget_bound - work and host probes <= budget for 1, 2, 3, 7, 64 and the default 512 (91 ms)
+PASS no_source_no_mint - unknown source, re-registration, solid target, exhaustion and tampered save all mint 0 cp (3 ms)
+PASS quiescent_zero - settled in 122 steps; 10 further steps cost 0 work, 0 probes (108 ms)
+PASS no_unit_constants - no unit literals; capacity follows units.js (6250 -> 1562500 cp) and host lava density (5 ms)
+PASS serialize_roundtrip_exact - 90-step continuation exact from 5 save points (4 mid-visit) (17 ms)
+RESULT: 11 passed, 0 failed
+KILLED drop_cp -> cp_exact_conservation - water open cp read cell by cell vs running total, step 0
+KILLED no_wrap -> wrap_seam_flow - water crossed the seam into 0,1,0,1,0
+KILLED free_probe -> budget_bound - host probes 5 exceed budget 1 (step 2)
+KILLED depth_quantum -> cavity_height_depth - equal volumes give equal depth views
+KILLED overwrite_type -> unlike_fluids_kept - lava cp untouched
+KILLED seam_key_directional -> seam_once - canonical seam key, lower cell key first
+KILLED mint_without_source -> no_source_no_mint - Missing expected exception: unregistered source refused
+KILLED always_requeue -> quiescent_zero - did not settle within 500 steps (queued 48)
+KILLED density_literal -> no_unit_constants - open.js holds unit literals
+KILLED cursor_not_saved -> serialize_roundtrip_exact - run(90) vs load(save(run(1))) then run(89)
+KILLED export_dropped -> aquifer_exports_preserved - index.js lost the baseline export canonicalEdgeKey
+MUTANTS: 11/11 killed
+exit 0

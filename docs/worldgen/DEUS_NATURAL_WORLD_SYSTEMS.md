@@ -112,6 +112,7 @@ The fifteen high-value emergent natural-world systems are formally classified in
 - **Visible States:** Eroded cliff scar, talus scree apron, landslide debris lobe, silty mud deposit, washed-out riverbank.
 
 #### J. Geology-Driven Caves, Karst & Ore Clues (WBS `WG.64.01–03`)
+- **Status note (2026-10-01):** WG.64.01 and WG.64.02 are superseded by WG.62.03, the D1 caves, ravines and shafts generated at world creation (Owner, DEC-066 item 3). No dissolution or tectonic process is simulated; events during play stay deferred (DEC-059 item 4). WG.64.03 is unchanged.
 - **Plain Meaning:** Subterranean voids and surface geological features directly shaped by rock type and tectonic fracturing.
 - **Physical Capabilities:** Karst dissolution in limestone/dolomite creating sinkholes, disappearing streams, and decorated caverns; structural fault fractures forming deep vertical chasms; mineral staining on surface cliffs hinting at subterranean veins; indicator flora growing over specific metalliferous deposits.
 - **Gameplay Intent:** Enables players to read surface clues to deduce underground resources and hazards without UI cheating.
