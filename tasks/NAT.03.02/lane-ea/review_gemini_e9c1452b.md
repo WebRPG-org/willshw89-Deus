@@ -5,7 +5,6 @@
 - **Reviewed Commit**: `e9c1452b57ea58ae534f0d2ca0dcab337d6067f0`
 - **Reviewer**: gemini (independent cross-family reviewer for claude writer)
 - **Date**: 2026-10-01
-VERDICT: CLEAN PASS
 
 ---
 
@@ -31,7 +30,7 @@ Engine core (`game/js/rmmz_*.js`, `game/js/main.js`, `game/js/libs/`) is untouch
 ## 2. Technical Evaluation
 
 - **Hydrology Entry Point & Interface Preservation (`game/js/sim/hydrology/index.js`)**:
-  - All 9 pre-existing baseline aquifer exports (`Stratum`, `AquiferEngine`, `encodeStratumId`, `decodeStratumId`, `canonicalEdgeKey`, `harmonicMeanPermeability`, `darcyFluxCp`, `solveInterfaceTransfer`, `createAquiferSystem`) are strictly preserved in name and target, matching `baseline_index_exports.json`.
+  - All 9 pre-existing baseline aquifer exports (`Stratum`, `AquiferEngine`, `encodeStratumId`, `decodeStratumId`, `canonicalEdgeKey`, `calcInterfaceConductivity`, `MAX_WATER_MASS_PER_STRATUM`, `VOLUME_PER_STRATUM`, `WATER_DENSITY_CENTIPOUNDS_PER_CUFT`) are strictly preserved in name and target, matching `baseline_index_exports.json`.
   - Exposes `createWaterAuthority` and schema `WATER_AUTHORITY_SCHEMA = "deus.water.authority/1"`.
 
 - **Open-Fluid Centipound Store (`game/js/sim/hydrology/open.js`)**:
@@ -59,5 +58,5 @@ Engine core (`game/js/rmmz_*.js`, `game/js/main.js`, `game/js/libs/`) is untouch
 
 The implementation satisfies all brief deliverables with high mathematical rigor and zero self-certification compliance.
 
-**VERDICT: CLEAN PASS**
+VERDICT: CLEAN PASS
 Recommended for merge via `merge_gate.js`.
