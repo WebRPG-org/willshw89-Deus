@@ -1,0 +1,460 @@
+{
+ "phase": "core",
+ "made": "2026-10-01T15:59:59.578Z",
+ "env": {
+  "DEUS_Z_RANGE": "-2..2"
+ },
+ "data": {
+  "tip": true,
+  "range": {
+   "zMin": -2,
+   "zMax": 2
+  },
+  "levels": 5,
+  "seed": 18,
+  "savedZRange": {
+   "zMin": -2,
+   "zMax": 2
+  },
+  "view": {
+   "x": 0,
+   "y": 0,
+   "z": 0,
+   "px": 128,
+   "py": 128
+  },
+  "heapAfterNewGame": {
+   "gc": true,
+   "usedJSHeapSize": 103000000,
+   "nodeHeapUsed": 35743384
+  },
+  "pathScratchAtStart": {
+   "layersAllocated": 1,
+   "layersWithScratch": [
+    0
+   ],
+   "bytesPerLayer": 1310720,
+   "bytes": 4456544,
+   "lastSearchLayers": [
+    0
+   ],
+   "heapEntries": 262152,
+   "levels": 5
+  },
+  "memory": {
+   "dir": 640,
+   "strata": 1469440,
+   "connectors": 146944,
+   "shapeGrids": 327680,
+   "biome": 131072,
+   "surface": 65536,
+   "legacyViews": 262144,
+   "dense": 0,
+   "caps": 5528,
+   "capEntries": 691,
+   "chunks": 320,
+   "mixedChunks": 287,
+   "outerMixedChunks": 0,
+   "levels": 5,
+   "total": 2408984
+  },
+  "memoryPerLevel": {
+   "0": {
+    "dir": 128,
+    "strata": 296960,
+    "connectors": 29696,
+    "chunks": 64,
+    "mixedChunks": 58
+   },
+   "1": {
+    "dir": 128,
+    "strata": 317440,
+    "connectors": 31744,
+    "chunks": 64,
+    "mixedChunks": 62
+   },
+   "2": {
+    "dir": 128,
+    "strata": 199680,
+    "connectors": 19968,
+    "chunks": 64,
+    "mixedChunks": 39
+   },
+   "-2": {
+    "dir": 128,
+    "strata": 327680,
+    "connectors": 32768,
+    "chunks": 64,
+    "mixedChunks": 64
+   },
+   "-1": {
+    "dir": 128,
+    "strata": 327680,
+    "connectors": 32768,
+    "chunks": 64,
+    "mixedChunks": 64
+   }
+  },
+  "palette": {
+   "entries": 3,
+   "bytes": 96
+  },
+  "fluid": {
+   "gridsAllocated": 0,
+   "bytes": 0,
+   "areasCount": 1,
+   "activeQueueLength": 0,
+   "cellsProcessedTotal": 646,
+   "cellsProcessedLastTick": 0,
+   "lastTickMs": 0,
+   "totalWaterVolume": 0,
+   "totalLavaVolume": 0,
+   "totalWaterMass": 0,
+   "totalLavaMass": 0,
+   "queueZMin": null
+  },
+  "levelEntries": [
+   -2,
+   -1,
+   0,
+   1,
+   2
+  ],
+  "authorityProbe": [
+   "-3: refused",
+   "-2: accepted",
+   "-1: accepted",
+   "0: accepted",
+   "2: accepted",
+   "1: accepted",
+   "3: refused"
+  ],
+  "elevation": {
+   "cell": {
+    "x": 12,
+    "y": 40
+   },
+   "samples": [
+    "-2/S0=0",
+    "-2/S2=2",
+    "-2/S4=4",
+    "-1/S0=5",
+    "-1/S2=7",
+    "-1/S4=9",
+    "0/S0=10",
+    "0/S2=12",
+    "0/S4=14",
+    "1/S0=15",
+    "1/S2=17",
+    "1/S4=19",
+    "2/S0=20",
+    "2/S2=22",
+    "2/S4=24"
+   ],
+   "maxElevation": 24,
+   "topElevation": 24
+  },
+  "blast": {
+   "block": {
+    "x": 20,
+    "y": 20
+   },
+   "center": {
+    "x": 23,
+    "y": 23,
+    "z": -1,
+    "s": 2
+   },
+   "radii": {
+    "3": {
+     "ok": true,
+     "strataDestroyed": 3,
+     "levels": [
+      -1
+     ],
+     "hits": [
+      "0,0,1,1",
+      "0,0,1,2",
+      "0,0,1,3"
+     ]
+    },
+    "5": {
+     "ok": true,
+     "strataDestroyed": 9,
+     "levels": [
+      -1
+     ],
+     "hits": [
+      "-1,0,1,2",
+      "0,-1,1,2",
+      "0,0,1,0",
+      "0,0,1,1",
+      "0,0,1,2",
+      "0,0,1,3",
+      "0,0,1,4",
+      "0,1,1,2",
+      "1,0,1,2"
+     ]
+    },
+    "7": {
+     "ok": true,
+     "strataDestroyed": 27,
+     "levels": [
+      -2,
+      -1,
+      0
+     ],
+     "hits": [
+      "-1,0,1,0",
+      "-1,0,1,1",
+      "-1,0,1,2",
+      "-1,0,1,3",
+      "-1,0,1,4",
+      "0,-1,1,0",
+      "0,-1,1,1",
+      "0,-1,1,2",
+      "0,-1,1,3",
+      "0,-1,1,4",
+      "0,0,0,4",
+      "0,0,1,0",
+      "0,0,1,1",
+      "0,0,1,2",
+      "0,0,1,3",
+      "0,0,1,4",
+      "0,0,2,0",
+      "0,1,1,0",
+      "0,1,1,1",
+      "0,1,1,2",
+      "0,1,1,3",
+      "0,1,1,4",
+      "1,0,1,0",
+      "1,0,1,1",
+      "1,0,1,2",
+      "1,0,1,3",
+      "1,0,1,4"
+     ]
+    }
+   }
+  },
+  "sparse": {
+   "outerLevels": 0,
+   "outerDirBytes": 0,
+   "outerMixedChunks": 0,
+   "outerMixedBytes": 0,
+   "capColumns": 691,
+   "chunksPerLevel": 64,
+   "totalBytes": 2408984,
+   "dirBytes": 640,
+   "mixedBytes": 1616384,
+   "coreMixedChunks": 287
+  },
+  "split": {
+   "level": 2,
+   "cell": {
+    "x": 60,
+    "y": 60
+   },
+   "before": {
+    "split": 0,
+    "mixedNow": 39,
+    "records": 0
+   },
+   "after": {
+    "split": 1,
+    "mixedNow": 40,
+    "records": 1,
+    "changedChunks": [
+     9
+    ]
+   },
+   "entry": "{\"z\":2,\"gen\":5,\"checksum\":\"9998ffb2\",\"strata\":{\"0,0\":{\"15420\":\"008300000000ff00000000\"}}}",
+   "entryAfterRevert": true
+  },
+  "heapAfterChecks": {
+   "gc": true,
+   "usedJSHeapSize": 103000000,
+   "nodeHeapUsed": 32511752
+  },
+  "pathScratch": {
+   "from": {
+    "x": 78,
+    "y": 4
+   },
+   "pathLength": 20,
+   "stats": {
+    "layersAllocated": 1,
+    "layersWithScratch": [
+     0
+    ],
+    "bytesPerLayer": 1310720,
+    "bytes": 4456544,
+    "lastSearchLayers": [
+     0
+    ],
+    "heapEntries": 262152,
+    "levels": 5
+   }
+  },
+  "core": {
+   "checksums": {
+    "0": "34c59783",
+    "1": "eaf389b9",
+    "2": "9998ffb2",
+    "-2": "e96252ee",
+    "-1": "5e3c240b"
+   },
+   "regenerated": {
+    "0": "34c59783",
+    "1": "eaf389b9",
+    "2": "9998ffb2",
+    "-2": "e96252ee",
+    "-1": "5e3c240b"
+   },
+   "baseline": {
+    "0": "ac9a96da",
+    "1": "eaf389b9",
+    "2": "99c985a5",
+    "-2": "3521c97f",
+    "-1": "df8000c6"
+   },
+   "cells": {
+    "0": "c90cb1ee",
+    "1": "cdb703b3",
+    "2": "f9ff0f2e",
+    "-2": "621f6eab",
+    "-1": "a1ae2b31"
+   },
+   "shapes": {
+    "0": "af074beb",
+    "1": "4b51f17f",
+    "2": "df0c47cd",
+    "-2": "4c9bec9e",
+    "-1": "1806cb4d"
+   }
+  },
+  "census": {
+   "strata": {
+    "1": 390979,
+    "2": 369842,
+    "4": 278,
+    "5": 128,
+    "131": 169
+   },
+   "outer": {},
+   "objects": {
+    "1": 76,
+    "2": 9,
+    "3": 440,
+    "4": 87,
+    "5": 5,
+    "7": 69,
+    "15": 171,
+    "17": 123,
+    "18": 26,
+    "19": 69,
+    "20": 4,
+    "22": 1389,
+    "23": 49,
+    "24": 187,
+    "25": 2,
+    "26": 71,
+    "27": 2,
+    "28": 139,
+    "29": 373,
+    "30": 71,
+    "31": 8,
+    "32": 1,
+    "33": 325,
+    "35": 51,
+    "36": 5,
+    "37": 6,
+    "39": 3,
+    "41": 1,
+    "63": 25,
+    "64": 20,
+    "65": 3,
+    "66": 33,
+    "67": 18,
+    "88": 1,
+    "89": 1,
+    "90": 1,
+    "91": 1,
+    "92": 1,
+    "93": 1,
+    "94": 1,
+    "95": 1,
+    "96": 1
+   },
+   "items": {
+    "banner_human:0": 1,
+    "banner_elf:0": 1,
+    "banner_halfling:0": 1,
+    "banner_dwarf:-1": 1,
+    "banner_gnome:-1": 1,
+    "banner_dragonborn:-2": 1,
+    "banner_half_elf:0": 1,
+    "banner_half_orc:0": 1,
+    "banner_tiefling:-2": 1,
+    "common_clothes:0": 636,
+    "pouch:0": 636,
+    "gold_coin:0": 9540,
+    "common_clothes:-1": 226,
+    "pouch:-1": 226,
+    "gold_coin:-1": 3390,
+    "common_clothes:-2": 216,
+    "pouch:-2": 216,
+    "gold_coin:-2": 3240
+   },
+   "units": {
+    "elf:0": 103,
+    "gnome:-1": 103,
+    "dwarf:-1": 123,
+    "half-elf:0": 140,
+    "halfling:0": 142,
+    "tiefling:-2": 109,
+    "dragonborn:-2": 107,
+    "human:0": 117,
+    "half-orc:0": 134,
+    "deer:0": 25,
+    "aurochs:0": 15,
+    "wild_horse:0": 9,
+    "wild_sheep:0": 8,
+    "hare:0": 19,
+    "fowl:0": 28,
+    "wolf:0": 8,
+    "jackal:0": 3,
+    "fox:0": 4,
+    "arctic_fox:0": 3,
+    "hawk:0": 2,
+    "songbird:0": 5,
+    "troll:0": 1,
+    "bat:-1": 10,
+    "bog_horror:-1": 1,
+    "troll:-1": 1,
+    "giant_spider:-1": 2,
+    "bat:-2": 6,
+    "giant_spider:-2": 4,
+    "bog_horror:-2": 1,
+    "boar:0": 2
+   },
+   "capStrata": 5160,
+   "capColumns": 691,
+   "fluidStrata": 406,
+   "ms": 262
+  },
+  "heapAfterCensus": {
+   "gc": true,
+   "usedJSHeapSize": 103000000,
+   "nodeHeapUsed": 32621388
+  },
+  "errors": {
+   "harness": [],
+   "console": []
+  }
+ },
+ "timing": {
+  "setupNewGameMs": 18266.7,
+  "setupNewGameAtMs": 1312.3,
+  "firstMapStartMs": 22496.8
+ }
+}

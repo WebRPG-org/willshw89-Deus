@@ -1,0 +1,101 @@
+{
+ "phase": "play",
+ "made": "2026-10-01T15:59:08.700Z",
+ "env": {
+  "DEUS_Z_RANGE": "-16..15"
+ },
+ "data": {
+  "tip": true,
+  "range": {
+   "zMin": -16,
+   "zMax": 15
+  },
+  "levels": 32,
+  "seed": 18,
+  "savedZRange": {
+   "zMin": -16,
+   "zMax": 15
+  },
+  "view": {
+   "x": 0,
+   "y": 0,
+   "z": 0,
+   "px": 128,
+   "py": 128
+  },
+  "saveFresh": {
+   "levels": 5859,
+   "zRange": 22,
+   "fluid": 37,
+   "fluidAlias": 37,
+   "total": 7209704
+  },
+  "saveChanges": {
+   "levels": {
+    "zHi": 12,
+    "zLo": -14
+   },
+   "cell": {
+    "x": 90,
+    "y": 90
+   },
+   "bytes": {
+    "before": 5859,
+    "afterHigh": 5933,
+    "afterLow": 6009
+   },
+   "records": {
+    "high": "{\"z\":12,\"gen\":5,\"strata\":{\"0,0\":{\"23130\":\"00000000000100000000ff\"}}}",
+    "low": "{\"z\":-14,\"gen\":5,\"strata\":{\"0,0\":{\"23130\":\"000101010100ffffffff00\"}}}"
+   },
+   "roundTrip": true
+  },
+  "saveAfterRevert": {
+   "levels": 5859,
+   "entries": [
+    -2,
+    -1,
+    0,
+    1,
+    2
+   ]
+  },
+  "extreme": {
+   "deck": {
+    "x0": 125,
+    "y0": 126
+   },
+   "rows": [
+    "15: setView true (in place true, frames 0), plate \"+15\", unit walked to (131,128) (event on screen), path 6 cells (scratch on [15]), up past the end refused",
+    "-16: setView true (in place true, frames 0), plate \"-16\", unit walked to (131,128) (event on screen), path 6 cells (scratch on [-16]), down past the end refused"
+   ],
+   "path": {
+    "15": {
+     "length": 6,
+     "layers": [
+      15
+     ]
+    },
+    "-16": {
+     "length": 6,
+     "layers": [
+      -16
+     ]
+    }
+   },
+   "screenshots": [
+    "C:\\Users\\snewt\\AppData\\Local\\Temp\\laneaa_zr_snap\\-16..15_play_39516_1790870346835\\test_output\\zrange.extreme_p15.png",
+    "C:\\Users\\snewt\\AppData\\Local\\Temp\\laneaa_zr_snap\\-16..15_play_39516_1790870346835\\test_output\\zrange.extreme_m16.png"
+   ]
+  },
+  "errors": {
+   "harness": [],
+   "console": []
+  }
+ },
+ "timing": {
+  "setupNewGameMs": 18361.3,
+  "setupNewGameAtMs": 1273.8,
+  "firstMapStartMs": 22521.3
+ }
+}
