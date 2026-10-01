@@ -1056,6 +1056,7 @@ Every decision item recorded in this log must provide:
 ---
 - **Amendment (Owner, 2026-10-01):** thresholds (4/4 passes, 3/4 goes to the Owner, fewer is out), Owner override, the YES WITH FIX answer and packets of ten; see DEC-069 items 1-3.
 - **Amendment (Owner, 2026-10-01):** the PM makes the fauna (Group 7) in the PixelLab character creator as eight-way still sprites, with no animations; see DEC-071.
+- **Amendment (Owner, 2026-10-01):** MiniMax is removed from the project, so the council is three judges (ChatGPT Pro, Grok Heavy, Gemini Pro): 3/3 passes, 2/3 goes to the Owner, fewer is out; see DEC-076.
 
 ### Decision `DEC-063`: The U7 method: the PM makes natural-world art in PixelLab Pixflux and Bitforge, in RMMZ's own sheet formats; RMMZ reference, Ultima 7 style; no creatures, faces, character sheets or animations yet; a stump is its own tree cut down
 - **Date:** 2026-10-01
@@ -1194,6 +1195,7 @@ Every decision item recorded in this log must provide:
   5. **Budget (amends DEC-063).** "Continue generating art, no limit on generations", then "Use the rest of our generations ... (Ill pay for art after)": the PM spends the PixelLab balance to zero, then reports what worked and prioritizes the remaining art.
   6. **The ten temperate cliff sets are in game** by the Owner's override ("I think those all look great"; "All 10 go in").
 - **Records updated with this entry:** pointer lines under DEC-062 and DEC-063; `art/COUNCIL_RECORD.md` holds the votes and quotes.
+- **Amendment (Owner, 2026-10-01):** item 1 now counts three judges, MiniMax being removed: 3/3 passes, 2/3 goes to the Owner, fewer is out; see DEC-076.
 
 ### Decision `DEC-070`: Equal faction starts, acceptable FPS, and the conditions on generating areas on first request (amends DEC-065 item 1)
 - **Date:** 2026-10-01 (~12:45-13:00Z)
@@ -1260,3 +1262,33 @@ Every decision item recorded in this log must provide:
   3. Rules: SRD 5.1 Mounted Combat (mounting or dismounting costs half the rider's speed; the mount moves at its own speed; a controlled mount can only Dash, Disengage or Dodge).
   4. World: a rider dismounts to pass a 48x96 door (DEC-068), a ladder, a shaft or a tight cave; deep water and dense woods restrict or slow a mount.
   5. Build: a new WBS leaf after the natural-world phase (DEC-037 keeps player and civilization systems frozen until then); it opens with the Owner's go.
+
+### Decision `DEC-075`: MiniMax made a launchable autonomous worker (withdrawn the same day by DEC-076)
+- **Date:** 2026-10-01 (AG commit `51058aa3`, 18:43Z)
+- **Decider:** Owner, to AG in the Antigravity chat. AG's commit subject cited "DEC-075: Full Autonomous Minimax Authorization (Owner ruling)" but added neither this entry nor the Owner's words. The Owner confirmed it to the PM on 2026-10-01 (~19:13Z): "I did give that and then I nixxed minimax altogherht".
+- **Status:** `SUPERSEDED` by DEC-076.
+- **What it changed (commit `51058aa3`):** a `minimax` provider in `tools/ops/launch_worker.ps1` (run through `tools/ops/minimax_cli.js`, effort fixed at high), and the routing rule in `.agents/rules/deus-multiagent-routing.md` changed to "MiniMax is fully supported via the minimax_cli.js adapter". The same commit put a byte-order mark at the start of both files and re-encoded `docs/VISION.md` (repaired in `dd4b52ea`).
+
+### Decision `DEC-076`: MiniMax is removed from the project altogether: no worker, no lane role, no braintrust consult, no art-council vote (supersedes DEC-075; amends DEC-062 item 1 and DEC-069 item 1)
+- **Date:** 2026-10-01 (given to AG after DEC-075; confirmed to the PM ~19:13Z)
+- **Decider:** Owner.
+- **Status:** `DECIDED`
+- **Quote:** "I did give that and then I nixxed minimax altogherht" (answering the PM's question whether AG's DEC-075 was the Owner's ruling).
+- **Ruling:**
+  1. MiniMax is not used for anything in DEUS: no worker launches, no lane roles, no braintrust consults and no art-council votes. `tools/ops/minimax_cli.js` is not run. The `minimax` provider that DEC-075 added to `tools/ops/launch_worker.ps1`, and the `minimax` entry in `tools/ops/pace.js`, come out through the coordinator. No open lane names MiniMax (lane-bv and lane-bx, its two writer lanes, are finished).
+  2. **Art council (amends DEC-062 item 1):** the judges are the three remaining braintrust chats, ChatGPT Pro, Grok Heavy and Gemini Pro. The PM reads "altogether" as including the council; the Owner can restore a fourth judge.
+  3. **Thresholds on three judges (amends DEC-069 item 1):** 3 of 3 passes; 2 of 3 goes to the Owner; fewer is out. The Owner's override and the YES WITH FIX answer are unchanged.
+  4. **Past votes stand.** MiniMax's votes in rounds already tallied stay in `art/COUNCIL_RECORD.md` as history. Open rounds (ART-COUNCIL-16 onward) are tallied on the three judges; in ART-COUNCIL-16 MiniMax voted YES on all eleven pieces, so no outcome changes.
+  5. **Braintrust consults** go to every remaining member: Codex (gpt-6-sol, DEC-077), Grok, ChatGPT and Gemini. The Owner's burn order of 2026-10-01 (MiniMax first, Codex second, Grok third) loses its first entry.
+- **Records updated with this entry:** pointer lines under DEC-062 and DEC-069; the art banners in `CLAUDE.md` and `AGENTS.md`; the judges line in `art/COUNCIL_RECORD.md`; `.agents/rules/deus-multiagent-routing.md` (the DEC-075 line withdrawn, the byte-order mark removed); the MiniMax lines in `docs/CANONICAL_ROLES.md` and `tools/ops/ANTIGRAVITY.md`. The launcher and pace changes go to the coordinator (MSG-PRUNE-PM-120).
+
+### Decision `DEC-077`: OpenAI use is capped at gpt-6-sol, at ultra effort
+- **Date:** 2026-10-01 (~19:00Z)
+- **Decider:** Owner, in chat with the PM.
+- **Status:** `DECIDED`
+- **Quotes:** "Lets cap out openAI usae at GPT 6 SOL, astra is draining us too fast"; briefly "Actually lets cap OpenAI at gpt 6 luna"; then "ok, GPT6 sol then" and "Bump it to ultra".
+- **Ruling:**
+  1. Every OpenAI call (Codex writers and reviewers, Codex consults, the PM's ask helper) uses gpt-6-sol. gpt-6-astra is not called; work that seems to need more goes to the Owner.
+  2. Effort: ultra (the launcher's Codex cap is already ultra).
+- **Where it is set:** the PM's Codex config (`~/.codex/config.toml`: model and default subagent model gpt-6-sol, effort ultra) and the PM's ask helper. In the main working copy, `tools/ops/launch_worker.ps1` passes `--model gpt-6-sol` to Codex, uncommitted when this entry was written; the coordinator commits it with the DEC-076 launcher change.
+- **Records updated with this entry:** this log; `.agents/rules/deus-multiagent-routing.md` names the cap.

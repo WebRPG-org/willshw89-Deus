@@ -2,7 +2,7 @@
 
 Every art-council round, with each judge's vote and the reason for every no (DEC-062, Owner 2026-10-01: "1 nay = no. They must all unimously vote yes", "I do want a record of why things were no'd", "A vote no MUST include a reason why").
 
-- **Judges:** the four braintrust chats: ChatGPT Pro, Grok Heavy, Gemini Pro, MiniMax M3.
+- **Judges:** the four braintrust chats: ChatGPT Pro, Grok Heavy, Gemini Pro, MiniMax M3, until 2026-10-01. From then, three: ChatGPT Pro, Grok Heavy and Gemini Pro (DEC-076: MiniMax removed from the project); 3/3 passes, 2/3 goes to the Owner, fewer is out. MiniMax votes already recorded below stay as history.
 - **Rule:** a piece passes only on four YEAs. One NAY or REDO rejects it. A no without a reason is incomplete, and the PM asks that judge again.
 - **The question (Owner amendment, 2026-10-01):** is the piece roughly the same quality as Ultima VII art, and consistent with it? YES, or NO with the reason. The PM confirms beforehand that the piece can be tooled (RMMZ format, seams, anchors, palette, size).
 - **ART-COUNCIL-1 was judged against the earlier, stricter bar** (strict Ultima VII / EverQuest / English folklore, uniquely DEUS). Its rejections stand as records; the pieces are re-judged on the new question in ART-COUNCIL-2.

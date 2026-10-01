@@ -45,7 +45,7 @@ Protect every pre-existing untracked/ignored path, including local art, referenc
 
 Do not add a second dispatcher. The old built-in provider arguments request unrestricted execution. Use explicit reviewed `-ProviderExe` and `-ProviderArgs` for new launches. `-ProviderArgs` bypasses the built-in effort selection too: include the authorized model and supported effort in those arguments, and do not combine it with the launcher's `-Effort`.
 
-The live PM helpers are under `C:\Users\snewt\.deus_worktrees\logs\pm_ops`. `tools/ops/pm_launch/top_models.ps1` is a separate repository copy intended for installation after review/merge. This setup does not replace either or assume they have identical contents. The local `tools/ops/minimax_cli.js` remains protected and is not a supported fifth provider.
+The live PM helpers are under `C:\Users\snewt\.deus_worktrees\logs\pm_ops`. `tools/ops/pm_launch/top_models.ps1` is a separate repository copy intended for installation after review/merge. This setup does not replace either or assume they have identical contents. The local `tools/ops/minimax_cli.js` remains protected and is not a supported fifth provider: MiniMax is removed from the project altogether (DEC-076, which withdraws DEC-075).
 
 ### Manual launch procedure
 
