@@ -1,519 +1,328 @@
 "use strict";
-// WG.00.44: trace whole target-plugin source into actual VM evaluations.
-// Reads alone (including hashes) and genuine partial slices are not hits. Source intervals survive
-// aliases, local helpers, arrays, templates, and mutant replacements; cuts rejoined around an
-// instrumentation insertion still cover the whole plugin. No filename is exempt.
-// The bounded analysis never executes a harness, its require() calls, or a plugin. Acorn comes from
-// the running Node distribution; a missing parser, parse error, or analysis limit throws explicitly.
-// Hook proof follows sandbox identities through aliases and createContext. Installation must
-// dominate each whole-source VM sink. Branch joins retain only definitely installed identities.
-// Unknown branches are explored; literal-false branches are not. This is a bounded static proof.
-// scan({root,dirs}) -> {root,scanned,hits:[{file,targets,evaluations,hookFailures}]}
-// classify(source,{root,filename}?) -> {vm,targets,hit,evaluations,hookFailures}
+// WG.00.44: finds every vm harness under tools/ that must install tools/lib/vm_sim_require.js.
+//
+// A hit is a tools/**/*.js file that
+//   1. creates a vm context: require("vm") / require("node:vm"), runInContext, runInNewContext, createContext or
+//      new vm.Script in its code (comments and string contents don't count), and
+//   2. names a target plugin (DEUS_World, DEUS_WorldGen, DEUS_Levels or DEUS_Fluid) in a string: the plugin id or
+//      its file name, with or without a path ("DEUS_Fluid.js", "game/js/plugins/DEUS_World.js"), or a bare
+//      name ("World", "WorldGen", "Levels", "Fluid") as an element of an array literal in a file that prefixes names
+//      with DEUS_ (a "DEUS_" string or a `DEUS_${...}` template) or reads from game/js/plugins, and
+//   3. does not use the target's text only through a slice. A file is slice-only when every place it names a target
+//      starts a declaration (const/let/var x = ...) in some enclosing block, and every use of x in that block is
+//      either another declaration (followed on the same way) or the receiver of .slice / .substring / .substr /
+//      .match / .exec. Inside a declaration only path and read calls carry the value on (path.join, path.resolve,
+//      readFileSync, String, Buffer.from): `const r = vm.runInContext(src, ctx)` is an evaluation, not a copy. tools/sim/test_units.js, which reads DEUS_World.js and runs only the regex-cut UF.Space
+//      block, is such a file. Any other use (a call argument, an evaluation, a loop, an assignment, a return) keeps
+//      the file a hit, so a doubt counts as whole: a whole source transformed for a mutant (.replace) is whole, and a
+//      file that names a target without evaluating it at all (tools/bench_history_demographics.js hashes
+//      DEUS_World.js) is a hit too.
+// The rule is the same for every file; no file name is exempt.
+//
+//   node tools/lib/vm_harness_scan.js [--json] [--root <repo>]   prints the hits
+//   require("./vm_harness_scan").scan({ root, dirs })              -> { root, scanned, hits: [{ file, targets }] }
+//   require("./vm_harness_scan").classify(source)                  -> { vm, targets, refs, sliceOnly, hit }
+
 const fs = require("fs");
 const path = require("path");
-const vm = require("vm");
+
 const TARGETS = ["World", "WorldGen", "Levels", "Fluid"];
-const TARGET_FILE = /(?:^|[\\/])DEUS_(World|WorldGen|Levels|Fluid)(?:\.js)?$/;
-const DEFAULT_ROOT = path.resolve(__dirname, "..", "..");
-let parser;
-function acorn() {
-    if (parser) return parser;
-    try {
-        const source = process.binding("natives")["internal/deps/acorn/acorn/dist/acorn"];
-        if (!source) throw new Error("bundled Acorn source is unavailable");
-        const exports = {};
-        vm.runInThisContext("(function(exports,module){" + source + "\n})", { filename: "node-bundled-acorn.js" })(exports, { exports });
-        if (typeof exports.parse !== "function") throw new Error("bundled Acorn has no parse()");
-        parser = exports; return parser;
-    } catch (e) { throw new Error("VM_HARNESS_SCAN_PARSER: this Node distribution must expose bundled Acorn; " + e.message); }
-}
-// A finite union of atoms. Text atoms carry source-coordinate intervals.
-const UNKNOWN = { kind: "unknown" }, U = [UNKNOWN];
-const P = x => [{ kind: "primitive", value: x }];
-const T = (text, spans = [], registry = false) => [{ kind: "text", text: String(text), spans, registry }];
-const N = name => [{ kind: "native", name }];
-const isText = a => a.kind === "text" || (a.kind === "primitive" && typeof a.value === "string");
-const scalar = a => a.kind === "text" ? a.text : a.kind === "primitive" ? a.value : undefined;
-const atomKeys = new WeakMap();
-function key(a) {
-    if (a.kind === "unknown") return "?";
-    if (a.kind === "primitive") return a.kind + ":" + typeof a.value + ":" + String(a.value);
-    if (a.kind === "text") {
-        if (!atomKeys.has(a)) atomKeys.set(a, "t:" + a.text + ":" + a.spans.map(s => [s.target, s.lo, s.hi, s.start, s.end].join(",")).join(";"));
-        return atomKeys.get(a);
-    }
-    if (a.kind === "function") return "f:" + a.node.start + ":" + a.scope.id;
-    if (a.kind === "regex") return "r:" + a.pattern + "/" + a.flags;
-    return a.kind + ":" + (a.id || a.name);
-}
-function union(...values) {
-    const out = [], seen = new Set();
-    for (const value of values) for (const atom of value || []) { const k = key(atom); if (!seen.has(k)) { seen.add(k); out.push(atom); } }
-    if (out.length > 96) return out.filter(a => a.kind === "text" && a.spans.length).concat(U);
-    return out.length ? out : U;
-}
-function truth(value) {
-    let yes = false, no = false;
-    for (const a of value) {
-        if (a.kind === "unknown" || a.kind === "native") { yes = no = true; }
-        else if (a.kind === "primitive" || a.kind === "text") { if (scalar(a)) yes = true; else no = true; }
-        else yes = true;
-    }
-    return yes && no ? null : yes;
-}
-function clip(atom, start, end) {
-    const text = atom.text.slice(start, end), spans = [];
-    for (const s of atom.spans || []) {
-        const a = Math.max(start, s.start), b = Math.min(end, s.end);
-        if (a >= b || s.end === s.start) continue;
-        const ratio = (s.hi - s.lo) / (s.end - s.start);
-        spans.push({ ...s, lo: s.lo + (a - s.start) * ratio, hi: s.lo + (b - s.start) * ratio, start: a - start, end: b - start });
-    }
-    return T(text, spans, atom.registry && start === 0 && end === atom.text.length);
-}
-function concatenate(a, b) {
-    const left = isText(a) ? String(scalar(a)) : a.kind === "primitive" ? String(a.value) : null;
-    const right = isText(b) ? String(scalar(b)) : b.kind === "primitive" ? String(b.value) : null;
-    if (left === null || right === null) return U;
-    return T(left + right, [...(a.spans || []), ...(b.spans || []).map(s => ({ ...s, start: s.start + left.length, end: s.end + left.length }))]);
-}
-function completeTargets(value) {
-    const targets = new Set();
-    for (const atom of value) {
-        if (atom.kind !== "text") continue;
-        const groups = new Map();
-        for (const s of atom.spans) { const group = groups.get(s.target) || []; group.push(s); groups.set(s.target, group); }
-        for (const [target, spans] of groups) {
-            spans.sort((a, b) => a.lo - b.lo); let end = 0;
-            for (const s of spans) { if (s.lo > end + 1e-7) break; end = Math.max(end, s.hi); }
-            if (spans.length && end >= spans[0].total - 1e-7) targets.add(target);
-        }
-    }
-    return [...targets].sort();
-}
-function classify(source, options = {}) {
-    let ast;
-    try { ast = acorn().parse(source, { ecmaVersion: "latest", sourceType: "script", locations: true, allowHashBang: true, allowReturnOutsideFunction: true }); }
-    catch (e) { throw new Error(`VM_HARNESS_SCAN_PARSE ${options.filename || "<source>"}: ${e.message}`); }
-    let possibleEvaluation = false, possibleSource = false;
-    (function findSink(node) {
-        if (!node || typeof node !== "object") return;
-        if (node.type === "Identifier" && ["runInContext", "runInNewContext", "Script", "compileFunction"].includes(node.name)) possibleEvaluation = true;
-        if (node.type === "MemberExpression" && node.computed && node.property.type === "Literal" && ["runInContext", "runInNewContext", "Script", "compileFunction"].includes(node.property.value)) possibleEvaluation = true;
-        const text = node.type === "Literal" && typeof node.value === "string" ? node.value : node.type === "TemplateElement" ? node.value.cooked : null;
-        if (text && (TARGETS.includes(text) || /DEUS_|(?:^|[\\/])plugins(?:\.js)?(?:$|[\\/])/.test(text))) possibleSource = true;
-        for (const [k, v] of Object.entries(node)) if (k !== "loc") { if (Array.isArray(v)) v.forEach(findSink); else if (v && typeof v === "object") findSink(v); }
-    })(ast);
-    // Both are necessary for the modeled constant/module-list read domain. Inspect decoded AST
-    // literals and template parts, so comments and string escaping do not change the rule.
-    if (!possibleEvaluation || !possibleSource) return { vm: false, targets: [], hit: false, evaluations: [], hookFailures: [] };
-    const root = path.resolve(options.root || DEFAULT_ROOT);
-    let serial = 0, steps = 0, depth = 0, vmFound = false;
-    const began = Date.now();
-    const evaluations = [], seenEvaluations = new Map(), called = new Set(), rootFunctions = [], active = new Set();
-    const state = { vars: new Map(), heap: new Map(), installed: new Set(), dead: false, returned: [] };
-    const makeScope = parent => ({ id: ++serial, parent, bindings: new Map() });
-    const global = makeScope(null);
-    const tick = node => { if (++steps > 250000 || Date.now() - began > 10000) throw new Error(`VM_HARNESS_SCAN_LIMIT ${options.filename || "<source>"}:${node?.loc?.start.line || "?"}: ${steps} steps, ${Date.now() - began} ms`); };
-    function binding(scope, name, create = false) {
-        for (let s = scope; s; s = s.parent) if (s.bindings.has(name)) return s.bindings.get(name);
-        if (!create) return null;
-        const id = ++serial; scope.bindings.set(name, id); return id;
-    }
-    function declare(scope, name) { if (!scope.bindings.has(name)) scope.bindings.set(name, ++serial); return scope.bindings.get(name); }
-    function get(scope, name, st) {
-        const id = binding(scope, name); if (id !== null) return st.vars.get(id) || U;
-        if (name === "undefined") return P(undefined);
-        if (name === "Infinity") return P(Infinity);
-        if (name === "__dirname") return T(path.dirname(options.filename ? path.resolve(root, options.filename) : path.join(root, "tools", "fixture.js")));
-        if (name === "__filename") return T(options.filename ? path.resolve(root, options.filename) : path.join(root, "tools", "fixture.js"));
-        if (["require", "String", "Buffer", "Object", "Array", "JSON", "Number", "Boolean", "Set", "Map", "Math", "process", "Function"].includes(name)) return N(name);
-        return U;
-    }
-    function freshObject(st, array = false, props) { const id = ++serial; st.heap.set(id, { array, props: new Map(props || []) }); return [{ kind: "object", id }]; }
-    function arrayValue(st, items) { return freshObject(st, true, items.map((v, i) => [String(i), v]).concat([["length", P(items.length)]])); }
-    function entries(value, st) {
-        const out = [];
-        for (const a of value) if (a.kind === "object") { const obj = st.heap.get(a.id); if (obj) for (const [k, v] of obj.props) if (/^\d+$/.test(k) || k === "*") out.push([k, v]); }
-        return out;
-    }
-    const elements = (value, st) => union(...entries(value, st).map(e => e[1]));
-    function properties(value, name, st) {
-        const out = [];
-        for (const a of value) {
-            if (a.kind === "native") out.push(N(a.name + "." + name));
-            else if (a.kind === "object") {
-                const obj = st.heap.get(a.id); if (!obj) continue;
-                if (name === "*") out.push(...[...obj.props].filter(([k]) => k !== "length").map(([, v]) => v));
-                else out.push(obj.props.get(name) || obj.props.get("*") || U);
-            } else if (name === "length" && isText(a)) out.push(P(String(scalar(a)).length));
-            else if (/^\d+$/.test(name) && isText(a)) out.push(T(String(scalar(a))[Number(name)] || ""));
-            else if (a.kind === "script" && name.startsWith("runIn")) out.push([{ kind: "scriptMethod", name, id: a.id, code: a.code }]);
-        }
-        return union(...out);
-    }
-    function put(value, name, v, st) { for (const a of value) if (a.kind === "object") { const obj = st.heap.get(a.id); if (obj) obj.props.set(name, name === "*" ? union(obj.props.get(name), v) : v); } }
-    const names = value => [...new Set(value.map(scalar).filter(a => typeof a === "string" || typeof a === "number").map(String))];
-    function member(node, scope, st) { const object = expr(node.object, scope, st), keys = node.computed ? names(expr(node.property, scope, st)) : [node.property.name]; return { object, keys: keys.length ? keys : ["*"] }; }
-    function assign(node, value, scope, st, declaration = false) {
-        if (!node) return;
-        if (node.type === "Identifier") { const id = declaration ? declare(scope, node.name) : binding(scope, node.name, true); st.vars.set(id, value); }
-        else if (node.type === "MemberExpression") { const m = member(node, scope, st); for (const k of m.keys) put(m.object, k, value, st); }
-        else if (node.type === "AssignmentPattern") assign(node.left, value.some(a => a.kind !== "unknown" && !(a.kind === "primitive" && a.value === undefined)) ? value : expr(node.right, scope, st), scope, st, declaration);
-        else if (node.type === "RestElement") assign(node.argument, value, scope, st, declaration);
-        else if (node.type === "ArrayPattern") node.elements.forEach((p, i) => assign(p, properties(value, String(i), st), scope, st, declaration));
-        else if (node.type === "ObjectPattern") for (const p of node.properties) { if (p.type === "RestElement") assign(p.argument, value, scope, st, declaration); else assign(p.value, properties(value, p.key.name || String(p.key.value), st), scope, st, declaration); }
-    }
-    function clone(st) { return { vars: new Map(st.vars), heap: new Map([...st.heap].map(([id, obj]) => [id, { array: obj.array, props: new Map(obj.props) }])), installed: new Set(st.installed), dead: st.dead, returned: st.returned.slice() }; }
-    function merge(st, a, b) {
-        st.vars = new Map([...new Set([...a.vars.keys(), ...b.vars.keys()])].map(k => [k, union(a.vars.get(k), b.vars.get(k))])); st.heap = new Map();
-        for (const id of new Set([...a.heap.keys(), ...b.heap.keys()])) {
-            const x = a.heap.get(id), y = b.heap.get(id);
-            if (!x || !y) { const obj = x || y; st.heap.set(id, { array: obj.array, props: new Map(obj.props) }); continue; }
-            st.heap.set(id, { array: x.array || y.array, props: new Map([...new Set([...x.props.keys(), ...y.props.keys()])].map(k => [k, union(x.props.get(k), y.props.get(k))])) });
-        }
-        st.installed = a.dead && !b.dead ? b.installed : b.dead && !a.dead ? a.installed : new Set([...a.installed].filter(id => b.installed.has(id)));
-        st.dead = a.dead && b.dead; st.returned = union(a.returned, b.returned);
-    }
-    function hoist(body, scope, st) {
-        for (const node of body || []) {
-            if (node.type === "FunctionDeclaration") { const value = [{ kind: "function", node, scope }]; assign(node.id, value, scope, st, true); if (scope === global) rootFunctions.push(value[0]); }
-            else if (node.type === "VariableDeclaration") for (const d of node.declarations) if (d.id.type === "Identifier") declare(scope, d.id.name);
-        }
-    }
-    function invoke(value, args, st, at) {
-        const results = [];
-        for (const fn of value) {
-            if (fn.kind === "native") { results.push(native(fn.name, args, st, at)); continue; }
-            if (fn.kind === "scriptMethod") { record(fn.code, args[0] || U, st, at); results.push(U); continue; }
-            if (fn.kind !== "function") continue;
-            if (depth > 15 || active.has(fn.node)) { results.push(U); continue; }
-            called.add(fn.node); active.add(fn.node); depth++;
-            const local = makeScope(fn.scope), wasDead = st.dead, previousReturn = st.returned; st.dead = false; st.returned = [];
-            fn.node.params.forEach((p, i) => assign(p, p.type === "RestElement" ? arrayValue(st, args.slice(i)) : args[i] || U, local, st, true));
-            if (fn.node.body.type === "BlockStatement") block(fn.node.body.body, local, st); else st.returned = expr(fn.node.body, local, st);
-            results.push(st.returned.length ? st.returned : P(undefined)); st.returned = previousReturn; st.dead = wasDead;
-            depth--; active.delete(fn.node);
-        }
-        return union(...results);
-    }
-    function record(code, sandbox, st, node) {
-        vmFound = true;
-        if (code.some(a => a.kind === "text" && a.registry)) {
-            const modules = registryNames.map(name => freshObject(st, false, [["name", T(name)], ["status", P(true)], ["parameters", freshObject(st)]]));
-            put(sandbox, "$plugins", arrayValue(st, modules), st);
-        }
-        const targets = completeTargets(code); if (!targets.length) return;
-        const identities = sandbox.filter(a => a.kind === "object").map(a => a.id);
-        const installed = identities.length > 0 && !sandbox.some(a => a.kind === "unknown") && identities.every(id => st.installed.has(id));
-        const k = node.start + ":" + targets.join(","), old = seenEvaluations.get(k);
-        if (old) { old.hooked = old.hooked && installed; return; }
-        const event = { line: node.loc.start.line, column: node.loc.start.column + 1, targets, hooked: installed, reason: installed ? "hook dominates evaluation on the same sandbox" : "no proven prior hook on the evaluating sandbox" };
-        seenEvaluations.set(k, event); evaluations.push(event);
-    }
-    const sourceCache = new Map();
-    function readSource(value) {
-        const out = [];
-        for (const raw of names(value)) {
-            const normalized = raw.replace(/\\/g, "/"), match = TARGET_FILE.exec(normalized);
-            if (match) {
-                const target = "DEUS_" + match[1];
-                if (!sourceCache.has(target)) {
-                    const candidates = [path.resolve(root, raw), path.join(root, "game", "js", "plugins", target + ".js"), path.join(DEFAULT_ROOT, "game", "js", "plugins", target + ".js")];
-                    const file = candidates.find(p => fs.existsSync(p) && fs.statSync(p).isFile());
-                    const text = file ? fs.readFileSync(file, "utf8") : `/* ${target} */\n(function(){\nreturn 1;\n})();\n`;
-                    sourceCache.set(target, T(text, [{ target, total: text.length, lo: 0, hi: text.length, start: 0, end: text.length }]));
+const TARGET_FILE = /(?:^|[\/\\])DEUS_(World|WorldGen|Levels|Fluid)(?:\.js)?$/;
+const KEYWORDS_BEFORE_REGEX = new Set(["return", "typeof", "instanceof", "case", "do", "else", "in", "of", "new", "delete", "void", "throw", "yield", "await"]);
+
+/**
+ * Splits JS source into code and literals. Comments go; every string, template and regex literal becomes a
+ * placeholder __S<n>__ in `code`, with its text in literals[n] = { kind, value }. A template keeps its ${...} text.
+ */
+function tokenize(src) {
+    const literals = [];
+    let code = "";
+    let i = 0;
+    const n = src.length;
+    let last = ""; // last significant code token (a punctuator char or a word)
+    const put = (kind, value) => {
+        code += `__S${literals.length}__`;
+        literals.push({ kind, value });
+        last = "lit";
+    };
+    const regexAllowed = () => last === "" || (last.length === 1 && "(,=:[!&|?{};+-*%<>~^".includes(last)) || KEYWORDS_BEFORE_REGEX.has(last);
+    // Reads a template literal from just after its opening backtick; returns [value, end index].
+    const readTemplate = start => {
+        let j = start, value = "";
+        while (j < n && src[j] !== "`") {
+            if (src[j] === "\\") { value += src.slice(j, j + 2); j += 2; continue; }
+            if (src[j] === "$" && src[j + 1] === "{") {
+                let depth = 1, k = j + 2;
+                while (k < n && depth > 0) {
+                    const c = src[k];
+                    if (c === "{") depth++;
+                    else if (c === "}") depth--;
+                    else if (c === "'" || c === "\"") { const q = c; k++; while (k < n && src[k] !== q) { if (src[k] === "\\") k++; k++; } }
+                    else if (c === "`") { k = readTemplate(k + 1)[1]; continue; }
+                    k++;
                 }
-                out.push(sourceCache.get(target));
-            } else if (/(?:^|\/)game\/js\/plugins\.js$/.test(normalized) || /(?:^|\/)js\/plugins\.js$/.test(normalized)) out.push(T("var $plugins = [];", [], true));
-            else out.push(U);
+                value += src.slice(j, k);
+                j = k;
+                continue;
+            }
+            value += src[j++];
         }
-        return union(...out);
+        return [value, j + 1];
+    };
+    while (i < n) {
+        const c = src[i];
+        if (c === "/" && src[i + 1] === "/") { while (i < n && src[i] !== "\n") i++; continue; }
+        if (c === "/" && src[i + 1] === "*") { const e = src.indexOf("*/", i + 2); i = e < 0 ? n : e + 2; code += " "; continue; }
+        if (c === "#" && i === 0 && src[1] === "!") { while (i < n && src[i] !== "\n") i++; continue; }
+        if (c === "'" || c === "\"") {
+            let j = i + 1, value = "";
+            while (j < n && src[j] !== c && src[j] !== "\n") {
+                if (src[j] === "\\") { value += src[j + 1] === undefined ? "" : src[j + 1]; j += 2; continue; }
+                value += src[j++];
+            }
+            put("string", value);
+            i = j + 1;
+            continue;
+        }
+        if (c === "`") { const [value, end] = readTemplate(i + 1); put("template", value); i = end; continue; }
+        if (c === "/" && regexAllowed()) {
+            let j = i + 1, inClass = false;
+            while (j < n && src[j] !== "\n") {
+                if (src[j] === "\\") { j += 2; continue; }
+                if (src[j] === "[") inClass = true;
+                else if (src[j] === "]") inClass = false;
+                else if (src[j] === "/" && !inClass) break;
+                j++;
+            }
+            j++;
+            while (j < n && /[a-z]/i.test(src[j])) j++;
+            put("regex", src.slice(i, j));
+            i = j;
+            continue;
+        }
+        if (/[A-Za-z_$]/.test(c)) {
+            let j = i;
+            while (j < n && /[\w$]/.test(src[j])) j++;
+            last = src.slice(i, j);
+            code += last;
+            i = j;
+            continue;
+        }
+        if (/\d/.test(c)) {
+            let j = i;
+            while (j < n && /[\w.]/.test(src[j])) j++;
+            code += src.slice(i, j);
+            last = "num";
+            i = j;
+            continue;
+        }
+        if (!/\s/.test(c)) last = (c === ")" || c === "]") ? "close" : c;
+        code += c;
+        i++;
     }
-    // Registry entries are data, not source executions. Names feed module-list filters.
-    const registrySet = new Set(TARGETS.map(n => "DEUS_" + n));
-    (function collect(node) {
-        if (!node || typeof node !== "object") return;
-        if (node.type === "Literal" && typeof node.value === "string") {
-            if (/^DEUS_[A-Za-z0-9_]+(?:\.js)?$/.test(node.value)) registrySet.add(node.value.replace(/\.js$/, ""));
-            else if (/^[A-Z][A-Za-z0-9]+$/.test(node.value) && node.value.length < 40) registrySet.add("DEUS_" + node.value);
-        }
-        for (const [k, v] of Object.entries(node)) if (k !== "loc") { if (Array.isArray(v)) v.forEach(collect); else if (v && typeof v === "object") collect(v); }
-    })(ast);
-    const registryNames = [...registrySet];
-    function native(name, args, st, node) {
-        if (name === "require") return union(...names(args[0] || U).map(n => {
-            const base = n.replace(/^node:/, "");
-            if (/(?:^|[\\/])vm_sim_require(?:\.js)?$/.test(base)) return N("simHook");
-            if (base === "vm") vmFound = true;
-            return N(base);
-        }));
-        if (name === "simHook.install") { for (const a of args[0] || []) if (a.kind === "object") st.installed.add(a.id); return args[0] || U; }
-        if (name === "vm.createContext") { vmFound = true; return args[0] || freshObject(st); }
-        if (["vm.runInContext", "vm.runInNewContext"].includes(name)) { record(args[0] || U, args[1] || U, st, node); return U; }
-        if (name === "vm.Script") return [{ kind: "script", id: ++serial, code: args[0] || U }];
-        if (name === "fs.readFileSync" || name === "fs.readFile") return readSource(args[0] || U);
-        if (name === "path.join" || name === "path.resolve") {
-            let out = T("");
-            for (const arg of args) { const parts = []; for (const a of out) for (const b of arg) if (scalar(b) !== undefined) parts.push(T(String(scalar(a)) + "/" + String(scalar(b)))); out = union(...parts); }
-            return out;
-        }
-        if (name === "path.dirname") return union(...names(args[0] || U).map(n => T(path.dirname(n))));
-        if (["String", "Buffer.from"].includes(name)) return args[0] || T("");
-        if (name === "Object.freeze" || name === "Object.seal") return args[0] || U;
-        if (name === "Object.create") return freshObject(st);
-        if (name === "Object.assign") { const target = args[0] || freshObject(st); for (const v of args.slice(1)) for (const a of v) if (a.kind === "object") { const obj = st.heap.get(a.id); if (obj) for (const [k, val] of obj.props) put(target, k, val, st); } return target; }
-        if (["Object.keys", "Object.values", "Object.entries"].includes(name)) {
-            const result = [];
-            for (const a of args[0] || []) if (a.kind === "object") for (const [k, v] of (st.heap.get(a.id) || { props: new Map() }).props) {
-                if (k === "length" || k === "*") continue;
-                result.push(name === "Object.keys" ? T(k) : name === "Object.values" ? v : arrayValue(st, [T(k), v]));
-            }
-            return arrayValue(st, result);
-        }
-        if (name === "Set" || name === "Array.from") return arrayValue(st, entries(args[0] || U, st).map(e => e[1]));
-        if (name === "Array.isArray") return P((args[0] || []).some(a => a.kind === "object" && st.heap.get(a.id)?.array));
-        if (name === "JSON.parse") return (args[0] || []).some(a => a.kind === "object") ? args[0] : U;
-        if (name === "JSON.stringify") return args[0] || U;
-        if (name === "process.cwd") return T(root);
-        if (name === "process.exit") { st.dead = true; return U; }
-        if (["child_process.spawnSync", "child_process.execFileSync"].includes(name)) {
-            const command = names(args[0] || U), argv = entries(args[1] || U, st).map(e => e[1]);
-            if (command.includes("git") && names(argv[0] || U).includes("show")) {
-                const files = union(...names(argv[1] || U).map(n => T(n.slice(n.indexOf(":") + 1))));
-                const text = readSource(files);
-                return name.endsWith("execFileSync") ? text : freshObject(st, false, [["stdout", text], ["status", P(0)]]);
-            }
-            return U;
-        }
-        if (name.startsWith("crypto.")) return N("hash");
-        if (name === "hash.digest") return T("HASH");
-        if (name.startsWith("hash.")) return N("hash");
-        if (name === "Number") return union(...(args[0] || U).map(a => a.kind === "primitive" || a.kind === "text" ? P(Number(scalar(a))) : U));
-        if (name === "Boolean") { const t = truth(args[0] || U); return t === null ? U : P(t); }
-        return U;
-    }
-    function method(object, name, args, st, node) {
-        const own = properties(object, name, st);
-        if (own.some(a => a.kind === "function" || a.kind === "native" || a.kind === "scriptMethod")) return invoke(own, args, st, node);
-        if (name === "toString" || name === "valueOf") return object;
-        const array = object.some(a => a.kind === "object" && st.heap.get(a.id)?.array);
-        if (array && ["map", "forEach", "filter", "find", "some", "every", "flatMap"].includes(name)) {
-            const results = []; let i = 0;
-            for (const [, item] of entries(object, st).slice(0, 64)) {
-                const result = invoke(args[0] || U, [item, P(i++), object], st, node), t = truth(result);
-                if (name === "map") results.push(result);
-                if (name === "flatMap") results.push(...entries(result, st).map(e => e[1]));
-                if ((name === "filter" || name === "find") && t !== false) results.push(item);
-                if (name === "some" && t === true) return P(true);
-                if (name === "every" && t === false) return P(false);
-            }
-            if (name === "find") return union(...results);
-            if (name === "some" || name === "every") return U;
-            return name === "forEach" ? P(undefined) : arrayValue(st, results);
-        }
-        if (array && name === "concat") return arrayValue(st, [...entries(object, st).map(e => e[1]), ...args.flatMap(v => entries(v, st).length ? entries(v, st).map(e => e[1]) : [v])]);
-        if (array && ["push", "add", "unshift"].includes(name)) { let n = entries(object, st).length; for (const a of args) put(object, String(n++), a, st); put(object, "length", P(n), st); return name === "add" ? object : P(n); }
-        if (array && ["includes", "has", "indexOf"].includes(name)) {
-            const all = elements(object, st), wanted = args[0] || U;
-            if (wanted.some(a => a.kind === "unknown") || all.some(a => a.kind === "unknown")) return U;
-            const found = wanted.some(a => all.some(b => scalar(a) === scalar(b)));
-            return name === "indexOf" ? P(found ? 0 : -1) : P(found);
-        }
-        if (array && name === "join") {
-            let out = T(""); const sep = names(args[0] || T(","))[0] || ""; let i = 0;
-            for (const [, item] of entries(object, st)) { if (i++) out = union(...out.map(a => concatenate(a, T(sep)[0]))); out = union(...out.flatMap(a => item.map(b => concatenate(a, b)))); }
-            return out;
-        }
-        if (array && ["slice", "reverse", "sort"].includes(name)) return object;
-        if (name === "exec" && object.some(a => a.kind === "regex")) return stringMethod(args[0] || U, "match", [object], st, node);
-        if (name === "test" && object.some(a => a.kind === "regex")) return U;
-        return stringMethod(object, name, args, st, node);
-    }
-    function stringMethod(object, name, args, st, node) {
-        const out = [];
-        for (const a0 of object) {
-            if (!isText(a0)) continue;
-            const a = a0.kind === "text" ? a0 : T(String(a0.value))[0], text = a.text;
-            const params = args.map(v => v.length === 1 && (v[0].kind === "primitive" || v[0].kind === "text") ? scalar(v[0]) : undefined);
-            if (["slice", "substring", "substr"].includes(name)) {
-                if (args.some((v, i) => params[i] === undefined && !v.every(x => x.kind === "primitive" && x.value === undefined))) continue;
-                let start = params[0] === undefined ? 0 : Number(params[0]), end;
-                if (name === "slice") { start = start < 0 ? Math.max(0, text.length + start) : Math.min(text.length, start); end = params[1] === undefined ? text.length : Number(params[1]); end = end < 0 ? Math.max(0, text.length + end) : Math.min(text.length, end); }
-                else if (name === "substring") { start = Math.min(text.length, Math.max(0, start)); end = params[1] === undefined ? text.length : Math.min(text.length, Math.max(0, Number(params[1]))); if (start > end) [start, end] = [end, start]; }
-                else { start = start < 0 ? Math.max(0, text.length + start) : Math.min(text.length, start); end = params[1] === undefined ? text.length : Math.min(text.length, start + Math.max(0, Number(params[1]))); }
-                out.push(clip(a, start, Math.max(start, end)));
-            } else if (name === "match") {
-                for (const r of args[0] || []) {
-                    let regex; try { regex = r.kind === "regex" ? new RegExp(r.pattern, r.flags) : new RegExp(String(scalar(r))); } catch (_) { continue; }
-                    const matches = text.match(regex);
-                    if (!matches) { out.push(P(null)); continue; }
-                    const items = []; let previous = 0;
-                    for (const match of matches.slice(0, 64)) {
-                        if (match === undefined) { items.push(P(undefined)); continue; }
-                        const start = text.indexOf(match, regex.global ? previous : 0); previous = start + match.length;
-                        items.push(start < 0 ? T(match) : clip(a, start, start + match.length));
-                    }
-                    out.push(arrayValue(st, items));
-                }
-            } else if (name === "replace" || name === "replaceAll") {
-                const r = args[0] && args[0][0], replacement = args[1]; let next = text;
-                if (r && replacement && replacement.length === 1 && isText(replacement[0])) {
-                    const pattern = r.kind === "regex" ? new RegExp(r.pattern, r.flags) : scalar(r);
-                    if (pattern !== undefined) { try { next = text[name](pattern, scalar(replacement[0])); } catch (_) {} }
-                }
-                const ratio = text.length ? next.length / text.length : 1;
-                out.push(T(next, a.spans.map(s => ({ ...s, start: s.start * ratio, end: s.end * ratio })), a.registry));
-            } else if (name === "indexOf" || name === "lastIndexOf") out.push(params[0] === undefined ? U : P(text[name](String(params[0]), params[1])));
-            else if (name === "includes" || name === "startsWith" || name === "endsWith") out.push(params[0] === undefined ? U : P(text[name](String(params[0]))));
-            else if (name === "trim" || name === "trimStart" || name === "trimEnd") { const next = text[name](), start = text.indexOf(next); out.push(clip(a, start, start + next.length)); }
-            else if (name === "split") {
-                if (params[0] === undefined) out.push(arrayValue(st, [[a]]));
-                else { let offset = 0; const parts = text.split(String(params[0])).slice(0, 64).map(part => { const start = text.indexOf(part, offset); offset = start + part.length + String(params[0]).length; return clip(a, start, start + part.length); }); out.push(arrayValue(st, parts)); }
-            } else if (name === "concat") { let v = [a]; for (const arg of args) v = union(...v.flatMap(x => arg.map(y => concatenate(x, y)))); out.push(v); }
-            else if (name === "toLowerCase" || name === "toUpperCase") out.push(T(text[name]()));
-            else if (name === "matchAll") out.push(arrayValue(st, []));
-        }
-        return union(...out);
-    }
-    function expr(node, scope, st) {
-        if (!node) return U; tick(node);
-        switch (node.type) {
-            case "Literal": return node.regex ? [{ kind: "regex", pattern: node.regex.pattern, flags: node.regex.flags }] : typeof node.value === "string" ? T(node.value) : P(node.value);
-            case "Identifier": return get(scope, node.name, st);
-            case "ThisExpression": return U;
-            case "ChainExpression": return expr(node.expression, scope, st);
-            case "FunctionExpression": case "ArrowFunctionExpression": return [{ kind: "function", node, scope }];
-            case "ArrayExpression": {
-                const items = []; for (const e of node.elements) { if (e?.type === "SpreadElement") items.push(...entries(expr(e.argument, scope, st), st).map(x => x[1])); else items.push(e ? expr(e, scope, st) : P(undefined)); }
-                return arrayValue(st, items);
-            }
-            case "ObjectExpression": {
-                const out = freshObject(st);
-                for (const p of node.properties) {
-                    if (p.type === "SpreadElement") { const v = expr(p.argument, scope, st); for (const a of v) if (a.kind === "object") for (const [k, x] of st.heap.get(a.id).props) put(out, k, x, st); }
-                    else { const keys = p.computed ? names(expr(p.key, scope, st)) : [p.key.name || String(p.key.value)]; const v = expr(p.value, scope, st); for (const k of keys) put(out, k, v, st); }
-                }
-                return out;
-            }
-            case "MemberExpression": { const m = member(node, scope, st); return union(...m.keys.map(k => properties(m.object, k, st))); }
-            case "TemplateLiteral": {
-                let out = T(node.quasis[0].value.cooked);
-                node.expressions.forEach((e, i) => { const v = expr(e, scope, st); out = union(...out.flatMap(a => v.map(b => concatenate(a, b)))); out = union(...out.map(a => concatenate(a, T(node.quasis[i + 1].value.cooked)[0]))); }); return out;
-            }
-            case "BinaryExpression": {
-                const left = expr(node.left, scope, st), right = expr(node.right, scope, st), out = [];
-                for (const a of left) for (const b of right) {
-                    if (node.operator === "+" && (isText(a) || isText(b))) { out.push(concatenate(a, b)); continue; }
-                    if (!["text", "primitive"].includes(a.kind) || !["text", "primitive"].includes(b.kind)) { out.push(U); continue; }
-                    const x = scalar(a), y = scalar(b); let result;
-                    switch (node.operator) {
-                        case "+": result = x + y; break; case "-": result = x - y; break; case "*": result = x * y; break; case "/": result = x / y; break; case "%": result = x % y; break;
-                        case "===": case "==": result = x === y; break; case "!==": case "!=": result = x !== y; break;
-                        case "<": result = x < y; break; case ">": result = x > y; break; case "<=": result = x <= y; break; case ">=": result = x >= y; break;
-                        default: out.push(U); continue;
-                    }
-                    out.push(P(result));
-                }
-                return union(...out);
-            }
-            case "LogicalExpression": {
-                const a = expr(node.left, scope, st), t = truth(a);
-                if (node.operator === "&&" && t === false || node.operator === "||" && t === true) return a;
-                if (node.operator === "&&" && t === true || node.operator === "||" && t === false) return expr(node.right, scope, st);
-                const before = clone(st), after = clone(st), b = expr(node.right, scope, after); merge(st, before, after); return union(a, b);
-            }
-            case "ConditionalExpression": {
-                const t = truth(expr(node.test, scope, st)); if (t !== null) return expr(t ? node.consequent : node.alternate, scope, st);
-                const a = clone(st), b = clone(st), x = expr(node.consequent, scope, a), y = expr(node.alternate, scope, b); merge(st, a, b); return union(x, y);
-            }
-            case "AssignmentExpression": {
-                const value = expr(node.right, scope, st), assigned = node.operator === "+=" ? union(...expr(node.left, scope, st).flatMap(a => value.map(b => concatenate(a, b)))) : value;
-                assign(node.left, assigned, scope, st); return assigned;
-            }
-            case "SequenceExpression": { let out = U; for (const e of node.expressions) out = expr(e, scope, st); return out; }
-            case "UnaryExpression": { const v = expr(node.argument, scope, st), t = truth(v); if (node.operator === "!") return t === null ? U : P(!t); if (node.operator === "void") return P(undefined); if (node.operator === "-") return union(...v.map(a => a.kind === "primitive" ? P(-a.value) : U)); if (node.operator === "typeof") return U; return v; }
-            case "UpdateExpression": assign(node.argument, U, scope, st); return U;
-            case "AwaitExpression": case "YieldExpression": return expr(node.argument, scope, st);
-            case "CallExpression": case "NewExpression": {
-                const args = [];
-                for (const a of node.arguments) { if (a.type === "SpreadElement") args.push(...entries(expr(a.argument, scope, st), st).map(x => x[1])); else args.push(expr(a, scope, st)); }
-                if (node.callee.type === "MemberExpression") { const m = member(node.callee, scope, st); return union(...m.keys.map(k => method(m.object, k, args, st, node))); }
-                return invoke(expr(node.callee, scope, st), args, st, node);
-            }
-            case "TaggedTemplateExpression": return U;
-            default: return U;
-        }
-    }
-    function block(body, scope, st) { hoist(body, scope, st); for (const node of body) { if (st.dead) break; stmt(node, scope, st); } }
-    function stmt(node, scope, st) {
-        if (!node) return; tick(node);
-        switch (node.type) {
-            case "VariableDeclaration": for (const d of node.declarations) assign(d.id, d.init ? expr(d.init, scope, st) : U, scope, st, true); break;
-            case "FunctionDeclaration": break;
-            case "ExpressionStatement": expr(node.expression, scope, st); break;
-            case "BlockStatement": block(node.body, makeScope(scope), st); break;
-            case "ReturnStatement": st.returned = union(st.returned, node.argument ? expr(node.argument, scope, st) : P(undefined)); st.dead = true; break;
-            case "ThrowStatement": expr(node.argument, scope, st); st.dead = true; break;
-            case "IfStatement": {
-                const t = truth(expr(node.test, scope, st));
-                if (t !== null) stmt(t ? node.consequent : node.alternate, scope, st);
-                else { const a = clone(st), b = clone(st); stmt(node.consequent, scope, a); stmt(node.alternate, scope, b); merge(st, a, b); } break;
-            }
-            case "ForOfStatement": case "ForInStatement": {
-                const value = expr(node.right, scope, st), items = node.type === "ForOfStatement" ? entries(value, st).map(e => e[1]) : [];
-                const iterable = items.length ? items.slice(0, 64) : [U], loop = makeScope(scope);
-                for (const item of iterable) { if (node.left.type === "VariableDeclaration") assign(node.left.declarations[0].id, item, loop, st, true); else assign(node.left, item, loop, st); stmt(node.body, loop, st); if (st.dead) break; }
-                break;
-            }
-            case "ForStatement": case "WhileStatement": case "DoWhileStatement": {
-                const loop = makeScope(scope); if (node.init) node.init.type === "VariableDeclaration" ? stmt(node.init, loop, st) : expr(node.init, loop, st);
-                const test = node.test ? truth(expr(node.test, loop, st)) : null;
-                if (test !== false || node.type === "DoWhileStatement") { const before = clone(st), after = clone(st); stmt(node.body, loop, after); if (node.update) expr(node.update, loop, after); merge(st, before, after); } break;
-            }
-            case "TryStatement": {
-                const a = clone(st), b = clone(st); stmt(node.block, scope, a);
-                if (node.handler) { const local = makeScope(scope); assign(node.handler.param, U, local, b, true); stmt(node.handler.body, local, b); merge(st, a, b); } else Object.assign(st, a);
-                if (node.finalizer) { st.dead = false; stmt(node.finalizer, scope, st); } break;
-            }
-            case "SwitchStatement": { expr(node.discriminant, scope, st); const states = node.cases.map(c => { const copy = clone(st); block(c.consequent, makeScope(scope), copy); return copy; }); for (const copy of states) merge(st, clone(st), copy); break; }
-            case "LabeledStatement": stmt(node.body, scope, st); break;
-            case "BreakStatement": case "ContinueStatement": case "EmptyStatement": case "DebuggerStatement": break;
-            default: break;
-        }
-    }
-    block(ast.body, global, state);
-    // Exported/CLI-gated loaders are additional roots. Nested callbacks are reached through their
-    // actual calls, retaining outer hook dominance; probing a root cannot change the main state.
-    for (const fn of rootFunctions) if (!called.has(fn.node)) { const copy = clone(state); copy.dead = false; invoke([fn], fn.node.params.map(() => U), copy, fn.node); }
-    const targets = [...new Set(evaluations.flatMap(e => e.targets))].sort();
-    const failures = evaluations.filter(e => !e.hooked).map(e => ({ line: e.line, column: e.column, targets: e.targets, reason: e.reason }));
-    return { vm: vmFound, targets, hit: targets.length > 0, evaluations, hookFailures: failures };
+    return { code, literals };
 }
-function hookFailures(source, options) { return classify(source, options).hookFailures; }
+
+
+const SLICING = /^\s*\.\s*(?:slice|substring|substr|match|exec)\s*\(/;
+// A use of a name: not part of a longer word and not a property (.name); a spread (...name) is a use.
+const ident = name => new RegExp("(?<![\\w$])(?<!(?:^|[^.])\\.)" + name.replace(/\$/g, "\\$") + "(?![\\w$])", "g");
+
+/** The [open, close] code offsets of every brace pair containing pos, innermost first, then the whole file. */
+function regionsAround(code, pos) {
+    const out = [];
+    let depth = 0;
+    for (let k = pos - 1; k >= 0; k--) {
+        const c = code[k];
+        if (c === "}") depth++;
+        else if (c === "{") {
+            if (depth > 0) { depth--; continue; }
+            let d = 0, e = k;
+            for (; e < code.length; e++) {
+                if (code[e] === "{") d++;
+                else if (code[e] === "}" && --d === 0) break;
+            }
+            out.push([k + 1, e]);
+        }
+    }
+    out.push([0, code.length]);
+    return out;
+}
+
+/** Every declarator directly in code[a, b): { names, at (binding offsets), init: [start, end] }. */
+function declarators(code, a, b) {
+    const out = [];
+    const decl = /\b(?:const|let|var)\s+/g;
+    decl.lastIndex = a;
+    let m;
+    while ((m = decl.exec(code)) && m.index < b) {
+        let k = m.index + m[0].length;
+        for (;;) {
+            // The binding: a name, or a destructuring pattern whose names all receive the value.
+            let names = [], at = [];
+            if (code[k] === "{" || code[k] === "[") {
+                let d = 0, e = k;
+                for (; e < b; e++) { if ("{[".includes(code[e])) d++; else if ("}]".includes(code[e]) && --d === 0) break; }
+                const pat = code.slice(k, e + 1), re = /[A-Za-z_$][\w$]*(?=\s*[,}\]=])/g;
+                let p;
+                while ((p = re.exec(pat))) { names.push(p[0]); at.push(k + p.index); }
+                k = e + 1;
+            } else {
+                const id = /^[A-Za-z_$][\w$]*/.exec(code.slice(k, k + 200));
+                if (!id) break;
+                names = [id[0]]; at = [k];
+                k += id[0].length;
+            }
+            while (/\s/.test(code[k])) k++;
+            if (code[k] !== "=" || code[k + 1] === "=" || code[k + 1] === ">") break; // "for (const x of y)": no initializer
+            const initStart = k + 1;
+            let d = 0, e = initStart;
+            for (; e < b; e++) {
+                const c = code[e];
+                if ("([{".includes(c)) d++;
+                else if (")]}".includes(c)) { if (d === 0) break; d--; }
+                else if (d === 0 && (c === ";" || c === ",")) break;
+                else if (d === 0 && c === "\n") {
+                    const before = code.slice(initStart, e).trimEnd(), after = code.slice(e).trimStart();
+                    if (!/[-+*/%?:|&,=<>(\[{.!]$/.test(before) && !/^[-+*/%?:|&,=<>.)\]}]/.test(after)) break;
+                }
+            }
+            out.push({ names, at, init: [initStart, e] });
+            if (code[e] !== ",") break;
+            k = e + 1;
+            while (/\s/.test(code[k])) k++;
+        }
+    }
+    return out;
+}
+
+// Calls that only carry a file name or its text on: building a path, reading the file.
+const PASS_THROUGH = /^(?:(?:fs\s*\.\s*)?readFileSync|path\s*\.\s*(?:join|resolve)|String|Buffer\s*\.\s*from)$/;
+
+/** True when code[at] sits, inside the initializer starting at `start`, in no call but PASS_THROUGH ones. */
+function onlyPassThrough(code, start, at) {
+    let depth = 0;
+    for (let k = at - 1; k >= start; k--) {
+        const c = code[k];
+        if (")]}".includes(c)) depth++;
+        else if ("([{".includes(c)) {
+            if (depth > 0) { depth--; continue; }
+            if (c !== "(") continue; // an array or object literal holds the value: followed through the declaration
+            const callee = /([A-Za-z_$][\w$]*(?:\s*\.\s*[A-Za-z_$][\w$]*)*|[)\]])\s*$/.exec(code.slice(Math.max(start, k - 200), k));
+            if (!callee) continue; // a grouping parenthesis
+            if (!PASS_THROUGH.test(callee[1])) return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * True when a target literal's text reaches nothing but slicing calls. It must start a declarator's initializer in
+ * some enclosing block; from there every use of the declared name in that block must be either another declarator's
+ * initializer, outside any call but a path or read one (followed on), or the receiver of .slice/.substring/.substr/
+ * .match/.exec. Any other use (a call argument, an evaluation, a return, a loop, an assignment) means the whole text
+ * may be evaluated.
+ */
+function onlySliced(code, pos) {
+    for (const [a, b] of regionsAround(code, pos)) {
+        const decls = declarators(code, a, b);
+        const home = decls.find(d => d.init[0] <= pos && pos < d.init[1]);
+        if (!home) continue;
+        if (!onlyPassThrough(code, home.init[0], pos)) return false;
+        const seen = new Set();
+        const follow = names => {
+            for (const name of names) {
+                if (seen.has(name)) continue;
+                seen.add(name);
+                const re = ident(name);
+                re.lastIndex = a;
+                let m;
+                while ((m = re.exec(code)) && m.index < b) {
+                    const at = m.index;
+                    if (decls.some(d => d.at.includes(at))) continue; // the binding itself
+                    if (SLICING.test(code.slice(at + name.length, at + name.length + 40))) continue;
+                    const into = decls.filter(d => d.init[0] <= at && at < d.init[1]).sort((x, y) => (y.init[0] - x.init[0]))[0];
+                    if (!into || !onlyPassThrough(code, into.init[0], at)) return false;
+                    if (!follow(into.names)) return false;
+                }
+            }
+            return true;
+        };
+        return follow(home.names);
+    }
+    return false;
+}
+
+function classify(source) {
+    const { code, literals } = tokenize(source);
+    const placeholder = /__S(\d+)__/g;
+    let vmFound = /\b(?:runInContext|runInNewContext|createContext)\s*\(/.test(code) || /\bnew\s+vm\s*\.\s*Script\b/.test(code);
+    const vmRequire = /\brequire\s*\(\s*__S(\d+)__\s*\)/g;
+    let m;
+    while ((m = vmRequire.exec(code))) {
+        const v = literals[Number(m[1])].value;
+        if (v === "vm" || v === "node:vm") vmFound = true;
+    }
+
+    const refs = []; // { target, pos }: where each target is named in the code
+    while ((m = placeholder.exec(code))) {
+        const l = literals[Number(m[1])];
+        const hit = l.kind !== "regex" && TARGET_FILE.exec(l.value);
+        if (hit) refs.push({ target: `DEUS_${hit[1]}`, pos: m.index });
+    }
+    const prefixes = literals.some(l => (l.kind === "string" && /DEUS_$/.test(l.value)) || (l.kind === "template" && /DEUS_\$\{/.test(l.value)));
+    const readsPlugins = literals.some(l => l.kind !== "regex" && (/js[\/\\]plugins/.test(l.value) || l.value === "plugins"));
+    if (prefixes || readsPlugins) {
+        const element = /[[,]\s*(__S(\d+)__)\s*(?=[,\]])/g;
+        while ((m = element.exec(code))) {
+            const l = literals[Number(m[2])];
+            if (l.kind === "string" && TARGETS.includes(l.value)) refs.push({ target: `DEUS_${l.value}`, pos: m.index + m[0].indexOf(m[1]) });
+        }
+    }
+    const targets = [...new Set(refs.map(r => r.target))].sort();
+    const sliced = refs.map(r => ({ target: r.target, onlySliced: onlySliced(code, r.pos) }));
+    const sliceOnly = refs.length > 0 && sliced.every(r => r.onlySliced);
+    return { vm: vmFound, targets, refs: sliced, sliceOnly, hit: vmFound && refs.length > 0 && !sliceOnly };
+}
+
 function walk(dir, out) {
-    let entries; try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch (_) { return; }
-    entries.sort((a, b) => a.name.localeCompare(b.name));
-    for (const e of entries) { if (e.name === "node_modules" || e.name === ".git") continue; const full = path.join(dir, e.name); if (e.isDirectory()) walk(full, out); else if (e.isFile() && e.name.endsWith(".js")) out.push(full); }
-}
-function scan(options = {}) {
-    const root = path.resolve(options.root || DEFAULT_ROOT), files = [], hits = [];
-    for (const dir of options.dirs || ["tools"]) walk(path.join(root, dir), files);
-    for (const full of files) {
-        const source = fs.readFileSync(full, "utf8");
-        // A necessary lexical prefilter only: the AST determines whether these tokens are code.
-        if (!/\b(?:vm|runInContext|runInNewContext|createContext|Script)\b/.test(source)) continue;
-        const file = path.relative(root, full).split(path.sep).join("/");
-        if (process.env.VM_SCAN_DEBUG) console.error("VM_SCAN " + file);
-        const result = classify(source, { root, filename: file });
-        if (result.hit) hits.push({ file, targets: result.targets, evaluations: result.evaluations, hookFailures: result.hookFailures });
+    let entries;
+    try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch (_) { return out; }
+    entries.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    for (const e of entries) {
+        if (e.name === "node_modules" || e.name === ".git") continue;
+        const full = path.join(dir, e.name);
+        if (e.isDirectory()) walk(full, out);
+        else if (e.isFile() && e.name.endsWith(".js")) out.push(full);
     }
-    hits.sort((a, b) => a.file.localeCompare(b.file)); return { root, scanned: files.length, hits };
+    return out;
 }
-module.exports = { scan, classify, hookFailures, TARGETS };
+
+/** Scans <root>/<dirs> (default: the repository's tools/). Files are repo-relative with forward slashes, sorted. */
+function scan(opts) {
+    const options = opts || {};
+    const root = path.resolve(options.root || path.join(__dirname, "..", ".."));
+    const dirs = options.dirs || ["tools"];
+    const files = [];
+    for (const d of dirs) walk(path.join(root, d), files);
+    const hits = [];
+    for (const full of files) {
+        const r = classify(fs.readFileSync(full, "utf8"));
+        if (r.hit) hits.push({ file: path.relative(root, full).split(path.sep).join("/"), targets: r.targets });
+    }
+    hits.sort((a, b) => (a.file < b.file ? -1 : a.file > b.file ? 1 : 0));
+    return { root, scanned: files.length, hits };
+}
+
+module.exports = { scan, classify, tokenize, TARGETS };
+
 if (require.main === module) {
-    const args = process.argv.slice(2), at = args.indexOf("--root"), result = scan({ root: at >= 0 ? args[at + 1] : undefined });
+    const args = process.argv.slice(2);
+    const r = args.indexOf("--root");
+    const result = scan({ root: r >= 0 ? args[r + 1] : undefined });
     if (args.includes("--json")) console.log(JSON.stringify(result, null, 2));
-    else { for (const h of result.hits) console.log(`${h.file}  ${h.targets.join(" ")}`); console.log(`${result.hits.length} hits in ${result.scanned} files under ${result.root}`); }
+    else {
+        for (const h of result.hits) console.log(`${h.file}  ${h.targets.join(" ")}`);
+        console.log(`${result.hits.length} hits in ${result.scanned} files under ${result.root}`);
+    }
 }

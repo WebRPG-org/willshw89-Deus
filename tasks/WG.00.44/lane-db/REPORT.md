@@ -1,167 +1,194 @@
 # WG.00.44 / lane-db writer report
 
-Date: 2026-10-01. Fix-round writer: Codex (OpenAI family), with same-family delegated implementation support.
-Directive: MSG-PRUNE-PM-107, as supplied in the Owner's resume instruction.
-Branch: `task/lane-db`. Base: `7f91efbb`. Resumed HEAD: `d7cef0d446fe7db100dd6c1bfd2ca92e053f2778`.
-Code checkpoint tested: `96e12464c0e16b7543a14c145d177704bd73ea17`. Status: BLOCKED at the AGENTS.md Rule 10 stop; this is not a completed fix round.
-The brief and tracked diff were read before editing. No tracked uncommitted changes were present;
-the two pre-existing untracked launch prompts are preserved. The manifest is unchanged, including its older
-claude/grok role fields; the PM owns manifest reconciliation. This is writer evidence, not independent
-review, approval, merge, or WBS closure. Nothing pushed or merged.
+Date: 2026-10-01. Writer: Codex (OpenAI family).
+Authorization: MSG-PRUNE-PM-116 item 1 and the Owner ruling, "Ship reviewed scanner".
+Branch: `task/lane-db`. Base: `7f91efbbfb7d21a99bfaef7cbcede6a87d53bf0d`.
+Requested resume: `ecaea43ec9508440bf17b4d615efe15edb231600`; observed HEAD at start:
+`c50fddfad4714d51b6cb0181ea0cd2d675bf556a` (only an operations launch record after the resume checkpoint).
+Tested candidate: `a018ccb53cfc0d3f0ddd1103ad13096ed80ed232`, an unreferenced Git snapshot
+of the staged restoration, used for detached fresh-clone checkouts before the final writer commit.
+The final commit adds the resulting report/evidence; its `game/`, `tools/`, and system doc inputs
+are identical to the tested candidate. This is writer evidence, not a new independent review,
+merge approval, or WBS closure. Nothing pushed or merged.
 
 ## What changed
 
-- `tools/lib/vm_harness_scan.js`: trace read-derived source to whole-target VM evaluations. Whole template
-  wrappers and whole-preserving chained/separated slices or matches count; genuine partial extracts and
-  hash-only consumers do not. Hook proof relates the installation to the evaluated sandbox and its order.
-- `tools/test_sim_loader.js`: regression programs for those source forms and explicit wrong-sandbox,
-  unreachable-install, and after-evaluation provocations. Each provocation targets
-  `every_vm_harness_installs_hook`. Whole World loads install unconditionally; the intentional browser/no-host
-  check evaluates only the loader block. `WG0044_KEEP_NW_SNAPSHOT=1` preserves evidence without altering gate arguments.
-- `tools/bench_history_demographics.js`: restored to its exact base contents. It hashes World but does not
-  evaluate a target plugin, so it requires no hook under the corrected rule.
-- `docs/systems/DEUS_World.md`: corrected rule and test contract, with final aggregate counts explicitly unconfirmed because the scan stops at its limit.
-- `evidence/harness_base_vs_tip.txt`: removed trailing spaces/tabs. The resumed artifact contained 29 affected
-  lines, measured by `git diff 7f91efbb..d7cef0d4 --check` (exit 2), rather than the 31 stated in the request.
-- `run_fix_round.js`, this report, and lane evidence: exact foreground commands, fresh-clone setup and outputs.
-  No art, runtime plugin, engine-core, manifest, database or plugin-list edits in this fix round.
+- `tools/lib/vm_harness_scan.js`, `tools/test_sim_loader.js`, and
+  `tools/bench_history_demographics.js`: restored exactly to `06ccf8ce` (code `7cc12f1f`).
+  The benchmark's reviewed hook is restored along with the scanner. The AST implementation
+  is removed from the active scanner/test; the attempt and its failed evidence remain historical.
+- `docs/systems/DEUS_World.md`: restored to `06ccf8ce`, with only an appended
+  "Known gaps (Owner ruling 2026-10-01)" section accepting the two scanner residuals.
+- `evidence/harness_base_vs_tip.txt`: retained the whitespace fixes unchanged from `ecaea43e`
+  (Git blob `86b22d6f62fd9e0b3a0992afbe56006044465f14`). The prior fix round measured
+  29 affected lines in the historical artifact, not the 31 alleged in its request.
+- `RESTORE_REVIEWED.md`, `run_reviewed_scanner_gates.js`, `capture_gate_snapshot.js`, this report,
+  and `evidence/reviewed_scanner_restore/`: bounded claim, foreground runner, evidence capture,
+  measured scan counts, six fresh-clone gate outputs, and inspected NW.js evidence.
+- No art generated, requested, or integrated. No runtime plugin, engine core, manifest,
+  RMMZ database, or plugin-list change in this restoration. The two pre-existing untracked
+  launch prompts are preserved. `lane.json` retains its older claude/grok fields unchanged;
+  this explicit Owner assignment authorizes Codex as writer.
 
 ## How I tested it
 
-Executed: `node tasks/WG.00.44/lane-db/run_fix_round.js 96e12464` on 2026-10-01.
-All six manifest commands ran. Five exited 0; `tools/test_sim_loader.js` exited 1.
-The scanner reaches its analysis limit on an unrelated VM suite; the corrected global hit list and hook proof are not established.
-It creates a separate fresh shared clone for each of the six manifest commands, sets
-`core.autocrlf=false` and `core.eol=lf`, checks out detached HEAD, verifies an initially clean tree,
-and runs synchronously with a 900-second timeout. The NW.js gate gets
-`WG0044_KEEP_NW_SNAPSHOT=1` so its screenshot can be opened after the exact manifest command.
+Executed in the foreground:
+`node tasks/WG.00.44/lane-db/run_reviewed_scanner_gates.js a018ccb53cfc0d3f0ddd1103ad13096ed80ed232`.
+Each manifest command ran in its own fresh shared clone with detached candidate HEAD,
+`core.autocrlf=false`, `core.eol=lf`, `core.safecrlf=false`, an initially clean tree,
+and a 900-second timeout. Node: v24.19.0. Exact commands and output:
+`evidence/reviewed_scanner_restore/gates.txt`; clone paths and durations: `summary.json`.
 
-Observed gate commands and exit codes:
+| Manifest command | Exit | Observed result |
+|---|---:|---|
+| `node tools/check_deus_syntax.js` | 0 | 62 DEUS plugin files; 0 errors |
+| `node tools/test_sim_loader.js` | 0 | 7 passed, 0 failed |
+| `node tools/test_32_levels_generation.js` | 0 | 9 passed, 0 failed |
+| `node tools/test_geology_strata.js` | 0 | 10 passed, 0 failed |
+| `node tools/test_new_game_year0.js` | 0 | 30 gating checks; 15 mutants caught |
+| `node tools/sim/test_units.js` | 0 | 7 passed, 0 failed |
 
-| Command | Exit |
-|---|---:|
-| `node tools/check_deus_syntax.js` | 0 |
-| `node tools/test_sim_loader.js` | 1 |
-| `node tools/test_32_levels_generation.js` | 0 |
-| `node tools/test_geology_strata.js` | 0 |
-| `node tools/test_new_game_year0.js` | 0 |
-| `node tools/sim/test_units.js` | 0 |
+For the exact loader gate command, `NODE_OPTIONS` preloaded `capture_gate_snapshot.js`,
+with `WG0044_CAPTURE_DIR` pointing to this run's NW.js evidence directory. The helper copies
+`test_output` and `game_runtime.log` immediately before the gate's normal snapshot cleanup;
+it then invokes the original cleanup. It changes no test source, arguments, result, or exit code.
+Other gate environments were inherited unchanged. Every test process was awaited.
 
-The six mutant runs select the six headless named checks with `--only=vm_loader_loads_ledger,missing_module_throws,every_vm_harness_installs_hook,scan_finds_known_harnesses,opener_registry,grid_pinned_by_hook`.
-Each must exit 1 with exactly one FAIL, its named target:
-
-| Mutant/provocation | Required FAIL |
-|---|---|
-| `return_null_on_missing` | `missing_module_throws` |
-| `fixed_list_scan` | `every_vm_harness_installs_hook` |
-| `unpinned_grid` | `grid_pinned_by_hook` |
-| `hook_wrong_sandbox` | `every_vm_harness_installs_hook` |
-| `hook_unreachable` | `every_vm_harness_installs_hook` |
-| `hook_after_eval` | `every_vm_harness_installs_hook` |
-
-Observed mutation outcomes at the code checkpoint:
-
-- `return_null_on_missing`: exit 1, expected missing-module FAIL plus both scanner checks failing on the analysis limit. Isolated proof NOT achieved.
-- `fixed_list_scan`: exit 1, only `every_vm_harness_installs_hook` is red, but the reason is `VM_HARNESS_SCAN_LIMIT` on `tools/society/test_person_identity.js`, not the planted fixture. The runner prints `EXPECTED_NAMED_FAILURE ... true` because it checks the name/exit only; this is NOT valid causal mutation proof.
-- `unpinned_grid`: exit 1, expected grid FAIL plus both scanner-limit failures. Isolated proof NOT achieved.
-- `hook_wrong_sandbox`, `hook_unreachable`, `hook_after_eval`: each exits 1 with both scanner checks red on the limit before planted-fixture acceptance is evaluated. Required aggregate provocation proof NOT achieved. The separate 11-fixture probe establishes only the local classifier result.
-- Extra guard `node tools/test_32_levels_generation.js --mutant=checksum_all_levels`: exit 1 with `  [FAIL] core_entries_only: keys: [-16,...,15]` (full unabridged keys in the log). This existing guard catches its mutant. The runner incorrectly prints its helper flag as false because its regex expects an unbracketed `FAIL` prefix; the actual command output is authoritative.
-
-Local development evidence: the old scanner at `d7cef0d4` misclassified 15 of the 36 new source fixtures,
-including wrapped whole source, hash-only use, full separated slices, and partial chained slices.
-The four runtime loader checks pass after the no-host probe is changed to an extract;
-`return_null_on_missing` and `unpinned_grid` still turn their respective checks red.
-The isolated added fixture probe at the committed checkpoint reports `RESULT: 47 passed, 0 failed`: 36 source cases and 11 hook cases (`evidence/fixture_checkpoint_96e12464.txt`). It directly calls the same classifier on those fixture programs. These local observations do not replace the failing aggregate gate.
-
-Post-run checks actually executed: `git diff --check` and `git diff 7f91efbb..HEAD --check` both exit 0; `git diff 7f91efbb -- tools/bench_history_demographics.js` is empty; `git diff d7cef0d4 -- tasks/WG.00.44/lane-db/lane.json` is empty. All changed paths were checked against allowedPaths. The two pre-existing launch prompts remain untracked. No owned test/Node/NW.js child process remains running.
+Supplementary headless proof uses the restored test's six headless checks (no extra NW.js run):
+`--only=vm_loader_loads_ledger,missing_module_throws,every_vm_harness_installs_hook,scan_finds_known_harnesses,opener_registry,grid_pinned_by_hook`.
+The runner exercises `return_null_on_missing`, `fixed_list_scan`, and `unpinned_grid`, requiring
+exit 1 and exactly their respective named failure. All three met that requirement: respectively
+`missing_module_throws`, `every_vm_harness_installs_hook`, and `grid_pinned_by_hook` turned red.
+It also overlays only the restored loader test,
+scanner, and hook onto a separate base clone for fail-before measurements. Full outcomes are in
+the same log. The base-overlay run exited 1 with 2 passed and exactly the 4 expected headless
+failures (loader, missing-module, every-harness-hook, opener-registry). The complete foreground
+runner exited 0 with `RESULT: 0 unexpected failures`. The stronger AST wrong-sandbox/order provocations are not reinstated: those gaps
+are Owner-accepted residuals.
 
 ## Evidence
 
-Full command log: `evidence/fix_round_96e12464.txt`. The foreground runner exited 1 after all six gates and seven mutation runs; its final base-scan exception is captured separately in `evidence/runner_completion_96e12464.txt`. The runner never reached its final diff-check step, so that check was run separately.
-The corrected base and tip hook counts remain UNCONFIRMED: the global scan is not completing, so the earlier 48/49 claim is withdrawn rather than replaced with a guessed count.
+The earlier writer's assertion that `git diff --check` was clean was false and remains withdrawn.
+Fresh whitespace checks are separate evidence; historical successes are not relabelled.
+`harness_base_vs_tip.txt` is historical and was not rerun as a full benchmark matrix here.
 
-- Opened screenshot `evidence/nwjs_checkpoint_96e12464.png` (816 x 624): grass map, rows of units with green bars, red banner, Ground selector, 1x Speed, zoom panel and bottom controls. It establishes map boot, not downstream simulation behavior. The archived PNG is byte-identical to the opened snapshot capture (SHA-256 `43d2e0f35cc5f6947b82316c90df6aad8714bcb6e72a45e2c03b570ac679f245`).
-- NW.js suite output: `evidence/nwjs_checkpoint_96e12464_results.txt`, `RESULT: 5 passed, 0 failed (exit 0)`. This subcheck succeeds even though the enclosing loader gate fails on its scanner checks.
-- Actual runtime log: `evidence/nwjs_checkpoint_96e12464_sim_log.txt`:
-  `2026-10-01T15:44:12.046Z [SIM] UF.Sim.require("ledger") resolved C:\Users\snewt\AppData\Local\Temp\wg0044-nw-a3LFJi\game\js\sim\ledger.js`
-- `sim_loader.no_console_errors` reports none since the recorder loaded at plugins.js index 0.
-The older evidence files remain historical records of the original writer's runs. In particular,
-`harness_base_vs_tip.txt` was whitespace-cleaned, not rerun in this fix round. Its historical survey included
-the hash-only benchmark. The earlier report's assertion that `git diff --check` was clean was false and is
-withdrawn; only new command output can support that assertion.
+`evidence/reviewed_scanner_restore/validation.txt` records `git diff --check`,
+`git diff --cached --check`, and `git diff 7f91efbb --check`, each exit 0; exact
+restoration of all three code files; unchanged manifest and whitespace-corrected
+historical evidence; allowed-path checks; and equality of final test inputs to
+the candidate. The post-run process check found 0 owned test/Node/NW.js processes.
+
+The restored loader gate measured **49 hits in 937 files**, with no missing install-text match.
+This includes `tools/test_sim_loader.js` itself and the conservative hash-only benchmark hit.
+The raw lane base omits the newly added loader test; the runner records raw-base and
+base-with-test-overlay counts separately: **48 hits in 934 files** for the untouched base;
+**49 hits in 937 files** with the three test/support files overlaid. The base-overlay hook
+check reports 48 missing install matches; the test itself supplies the 49th match.
+See `scan_base.json` and `scan_base_with_test.json`.
+`scan_tip.json` records the full restored candidate list. A hit count is not proof of correct
+sandbox identity or installation order.
+
+Opened screenshot: `evidence/reviewed_scanner_restore/nwjs/test_output/sim_loader.map.png`
+(816 x 624). It shows grass, rows of units with green bars, a red banner near the center,
+trees and rocks, Ground selector, 1x Speed, zoom panel, minimap, and bottom controls.
+This matches map-boot evidence for the Class C loader check; it does not prove downstream
+matter, water, or simulation-forward gameplay.
+
+Actual NW.js outputs: `nwjs/test_output/results.txt` and `nwjs/game_runtime.log` under the
+same evidence directory. Trimmed real output:
+
+```text
+PASS every_vm_harness_installs_hook - 49 hits in 937 files; without the hook: none; planted harness found by the scan: true, refused: true; hooked fixture accepted: true
+PASS scan_finds_known_harnesses - 49 hits; known hits missing: none; excluded files found: none; fixtures classified wrong: none
+RESULT: 7 passed, 0 failed
+PASS sim_loader.no_console_errors - none since TEST_SimLoaderConsole loaded (plugins.js index 0)
+RESULT: 5 passed, 0 failed (exit 0)
+```
+
+The NW.js runtime log resolves `ledger` to
+`C:\Users\snewt\AppData\Local\Temp\wg0044-nw-n8AiKH\game\js\sim\ledger.js`.
+The prior Grok CLEAN PASS at `d7cef0d4` covers `06ccf8ce`; it is preserved as historical
+review, not represented as review of this restoration commit.
 
 ## Not done / known problems
 
-- The fix round is incomplete. The full scanner exceeds its 10-second per-file budget on `tools/society/test_militia.js`, which loads `DEUS_Militia.js` rather than a target plugin. Two cost-control refinements did not resolve the aggregate problem. The fresh-clone fixed-list mutant also reaches the limit on the real target harness `tools/society/test_person_identity.js`; narrowing the non-target prefilter alone is therefore not sufficient proof of resolution. `FIX_ROUND.md` records the diagnosis and unapplied proposed correction. Code patches stopped under AGENTS.md Rule 10; user direction is pending.
-- Required all-green gates, complete base/tip counts, and isolated named-failure proof for every mutant/provocation have not been achieved.
-
-- Independent review of this fix round has not run. Prior review artifacts describe earlier SHAs.
-- RMMZ editor F5 and interactive F8 are not checked in this fix round. The brief's Class C proof uses NW.js
-  on a snapshot, with the actual resolved ledger path and console-error check.
-- The scanner uses Node's bundled Acorn parser through a private Node interface because this repository has
-  no parser dependency. It must fail with a diagnostic if the parser is unavailable; portability to another
-  Node distribution is not established by this machine's run.
-- A static checker is bounded by the supported loader forms. Unsupported or unresolved cases must remain
-  visible for review rather than being certified from an install-text match.
-- Historical non-gate harness failures listed in the earlier writer evidence were not repaired or rerun here.
-- Combined candidate runs for lane-dc and lane-do, if applicable, remain the PM's responsibility under the brief.
-- `docs/STATUS.md` is outside allowedPaths. The bounded resume claim is in `FIX_ROUND.md`; no PM-controlled
-  status, role, integration or closure record was changed.
+- Owner-accepted answerability MERGE NO residuals: the scanner does not count template-wrapped
+  or chained-slice whole loads; its install check proves an install appears, not that it runs
+  on the evaluating sandbox before evaluation. These are accepted gaps, not fixed defects.
+- The scanner conservatively includes `bench_history_demographics.js`, which hashes World
+  rather than evaluating the target plugin. Its reviewed hook is restored exactly.
+- Editor F5 and interactive F8 are not checked in this session. NW.js snapshot proof is separate.
+  No new gameplay, save/load, or downstream consumer completion is claimed.
+- The broader historical harness matrix and unrelated known failures were not repaired or rerun.
+- PM review/integration, manifest role reconciliation if required, and lane-dc/lane-do combined
+  candidate gates remain outside this writer handoff. No self-certification or merge performed.
+- `docs/STATUS.md` and `docs/VISION.md` are outside allowedPaths. This ruling, scoped claim,
+  and report are recorded inside the lane; no PM-controlled status/closure record was edited.
 
 ## Try it in RMMZ
+
+When the PM makes the editor available after the natural-world build:
 
 1. Open `game/game.rmmzproject`, press F5, and start a New Game.
 2. Press F8; evaluate `UF.Sim.resolve("ledger")`, then `UF.Sim.require("ledger").createLedger`.
 3. Evaluate `UF.Sim.require("nope")`.
 
-Expected: a path under the project's `game/js/sim`, a function, then a
-`DEUS_SIM_MODULE_MISSING` exception naming attempted paths. This fix round changes tooling assurance;
-these runtime steps exercise the original lane implementation. Interactive steps are not checked here.
+Expected: the project's `game/js/sim/ledger.js` path, a function, then a
+`DEUS_SIM_MODULE_MISSING` exception naming attempted paths. These manual steps were not run.
+The restoration changes tooling assurance; the runtime loader is the existing reviewed code.
 
 ## Decisions needed
 
-- User direction is required under AGENTS.md Rule 10 before a third aggregate scan-cost correction. Proposed next investigation: narrow the source-input prefilter to actual target/registry routes and resolve the excessive work on the genuine person-identity target harness, then rerun focused and fresh-clone gates. No further scanner correction is applied.
-- The PM must arrange independent review and any manifest role update before integration. This checkpoint must not be merged as a completed lane.
+No further Owner ruling is needed for this restoration: "Ship reviewed scanner" settles the
+Rule 10 stop by reverting the AST attempt and accepting the stated scanner gaps. The PM owns
+subsequent review and integration through the normal gate; this report does not authorize them.
 
 ## GAME TRANSLATION
 
-WBS / Lane: WG.00.44 / lane-db. Authorization: MSG-PRUNE-PM-107 and the explicit Codex resume instruction.
-Writer code checkpoint / evidence date: `96e12464`; 2026-10-01.
+WBS / Lane: WG.00.44 / lane-db.
+Approved scope / Owner authorization: MSG-PRUNE-PM-116 item 1; Owner 2026-10-01, "Ship reviewed scanner".
+Writer candidate / evidence date: `a018ccb53cfc0d3f0ddd1103ad13096ed80ed232`; 2026-10-01.
 Translation Class: C FOUNDATIONAL / INDIRECT.
 
-- **Player / World Effect:** consistent module loading in the game and its test harnesses prevents consumers
-  from silently using missing or substitute simulation modules. This correction strengthens the tooling that
-  checks that contract; it adds no player-visible feature.
-- **Trigger:** target plugin evaluation in a VM harness; runtime consumers call `UF.Sim.require(name)`.
-- **Runtime Authority:** the existing `UF.Sim` block in `game/js/plugins/DEUS_World.js` owns module resolution and
-  the matter-opener registry. The fix-round scanner owns only test discovery and hook proof.
-- **Simulation Path:** harness source -> `vm_harness_scan` -> verified prior `vm_sim_require.install(sandbox)` ->
-  `DEUS_SIM_HOST` -> `UF.Sim.require` -> `game/js/sim` module exports. Missing modules throw.
-- **Engine Bridge:** the existing World plugin loads in RPG Maker MZ. Matter-opener execution remains deferred
-  to lane-dv; core registration is lane-dl. No new consumer bridge is implemented here.
-- **Visible Result:** no new gameplay result. NW.js map boot and ledger resolution are foundational evidence;
-  they do not prove downstream matter or water behavior.
-- **Persistence:** this fix adds no save state or schema. Module handles and opener callbacks are runtime objects;
-  downstream consumers own persistence. Save/load behavior is not newly claimed.
-- **Failure Without This Lane:** an unhooked or wrongly hooked target sandbox can resolve modules incorrectly
-  or inherit a changed grid fallback, invalidating tests of the generated world.
-- **Automated Proof:** the six manifest gates and named mutation/provocation outputs in the final evidence log.
-- **In-Game Proof:** NW.js snapshot loader subcheck passed, screenshot opened and runtime log archived as above; interactive editor F5/F8 NOT RUN.
+- **Player / World Effect:** restores the reviewed tooling that checks simulation-module loading
+  and harness grid pinning. No player-visible feature is added by this restoration.
+- **Trigger:** scanning a target-plugin VM harness; runtime consumers call `UF.Sim.require(name)`.
+- **Runtime Authority:** the unchanged `UF.Sim` block in `game/js/plugins/DEUS_World.js` owns
+  module resolution and the matter-opener registry. The scanner owns only test discovery.
+- **Simulation Path:** `vm_harness_scan.scan` discovers hits; `test_sim_loader` checks install text;
+  harness `vm_sim_require.install(sandbox)` provides `DEUS_SIM_HOST`; `UF.Sim.require` resolves
+  `game/js/sim` exports. Missing modules throw. Sandbox identity/order is not established by the scan.
+- **Engine Bridge:** the existing World plugin loads in RMMZ; its ledger resolution was exercised
+  in the NW.js snapshot. Matter-opener execution is deferred to lane-dv and core registration to lane-dl.
+- **Visible Result:** inspected map boot as described above. Downstream simulation-forward,
+  matter, and water behavior was not demonstrated by this tooling restoration.
+- **Persistence:** no new state or save schema. Module handles/opener callbacks are runtime objects;
+  downstream consumers own persistence. New save/load or region-reload proof: NOT RUN.
+- **Failure Without This Lane:** inconsistent module loading or grid defaults can invalidate harness
+  results used to support world behavior; missing modules must not silently substitute or return null.
+- **Automated Proof:** the six manifest gates on the candidate, scanner counts, three named mutants,
+  and headless base-overlay probe are in `evidence/reviewed_scanner_restore/gates.txt`.
+- **In-Game Proof:** NW.js loader suite 5 passed, 0 failed; actual ledger path in runtime log;
+  screenshot opened. Editor F5/F8: NOT RUN. Downstream gameplay: NOT VERIFIED.
 
-CONSUMED BY GAME SYSTEMS: WorldGen registers before Levels exists through the World-owned opener registry;
-lanes dv/dl supply execution/registration. Future matter consumers (including dm/fi) depend on consistent
-module resolution. The loader integration test loads the actual ledger export in a World VM and NW.js snapshot;
-it does not demonstrate those downstream lanes' game behavior.
+CONSUMED BY GAME SYSTEMS: WorldGen can register matter openers before Levels exists through
+World's registry; authorized lanes dv/dl supply execution/registration. Matter consumers,
+including lanes dm/fi, depend on consistent module resolution. Delivery to the current World
+consumer is exercised by ledger export identity in the VM and ledger resolution/loading in NW.js.
+Broken resolution would prevent consumers from loading the authoritative simulation modules;
+this evidence does not establish those future consumers' gameplay.
 
 GAME BRIDGE STATUS:
 
-- Simulation implemented: YES for the existing loader/registry contract, exercised by the loader checks;
-  this fix changes its tooling assurance only.
-- Engine bridge implemented: YES for the existing World plugin loader; opener execution DEFERRED TO lane-dv.
-- Presentation implemented: NO; no new presentation is in this foundational scope.
-- Input/player interaction implemented: NO; no input or player interaction is added here.
-- Save/load implemented: NO new state; downstream consumer persistence is outside this fix.
-- Playable verification performed: NO editor F5/F8 run; snapshot loader proof is separately reported.
+- Simulation implemented: YES for the existing loader/registry contract; loader gate evidence.
+- Engine bridge implemented: YES for the existing World-to-ledger loader in NW.js;
+  matter-opener execution remains DEFERRED TO lane-dv.
+- Presentation implemented: NO new presentation; not part of this foundational restoration.
+- Input/player interaction implemented: NO new input or player action in this scope.
+- Save/load implemented: NO new save state; downstream persistence remains with its consumers.
+- Playable verification performed: NO editor F5/F8 run or downstream scenario; NW.js loader
+  integration proof is reported separately.
 
-Remaining step before player can experience downstream effects: the authorized consumer lanes must connect
-and prove their own world behavior; this report does not declare those behaviors playable.
+Remaining step before downstream effects reach the player: the authorized consumer lanes must
+connect and demonstrate their world behavior. Player-facing status: NOT YET PLAYABLE for those
+downstream effects; this handoff makes no gameplay-complete claim.

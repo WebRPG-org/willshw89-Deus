@@ -1,0 +1,141 @@
+UTC 2026-10-01T18:12:06.434Z
+$ git diff --check
+
+EXIT 0
+$ git diff --cached --check
+
+EXIT 0
+$ git diff 7f91efbb --check
+
+EXIT 0
+$ git diff --exit-code 06ccf8ce -- tools/lib/vm_harness_scan.js
+
+EXIT 0
+EXACT_RESTORE tools/lib/vm_harness_scan.js
+$ git diff --exit-code 06ccf8ce -- tools/test_sim_loader.js
+
+EXIT 0
+EXACT_RESTORE tools/test_sim_loader.js
+$ git diff --exit-code 06ccf8ce -- tools/bench_history_demographics.js
+
+EXIT 0
+EXACT_RESTORE tools/bench_history_demographics.js
+$ git diff --exit-code a018ccb53cfc0d3f0ddd1103ad13096ed80ed232 -- game tools docs/systems/DEUS_World.md tasks/WG.00.44/lane-db/run_reviewed_scanner_gates.js tasks/WG.00.44/lane-db/capture_gate_snapshot.js
+
+EXIT 0
+$ git diff --exit-code ecaea43e -- tasks/WG.00.44/lane-db/lane.json tasks/WG.00.44/lane-db/evidence/harness_base_vs_tip.txt
+
+EXIT 0
+$ git diff --name-only HEAD
+docs/systems/DEUS_World.md
+tasks/WG.00.44/lane-db/REPORT.md
+tasks/WG.00.44/lane-db/RESTORE_REVIEWED.md
+tasks/WG.00.44/lane-db/capture_gate_snapshot.js
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/gates.txt
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/nwjs/game_runtime.log
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/nwjs/snapshot_path.txt
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/nwjs/test_output/results.txt
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/nwjs/test_output/sim_loader.map.png
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/scan_base.json
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/scan_base_with_test.json
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/scan_tip.json
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/summary.json
+tasks/WG.00.44/lane-db/run_reviewed_scanner_gates.js
+tools/bench_history_demographics.js
+tools/lib/vm_harness_scan.js
+tools/test_sim_loader.js
+EXIT 0
+SCOPE_OK HEAD: 17 paths
+$ git diff --name-only 7f91efbb
+docs/systems/DEUS_World.md
+game/js/plugins/DEUS_World.js
+tasks/WG.00.44/lane-db/FIX_ROUND.md
+tasks/WG.00.44/lane-db/REPORT.md
+tasks/WG.00.44/lane-db/RESTORE_REVIEWED.md
+tasks/WG.00.44/lane-db/capture_gate_snapshot.js
+tasks/WG.00.44/lane-db/evidence/base_keepgreen_gates_7f91efbb.txt
+tasks/WG.00.44/lane-db/evidence/checkpoint_validation_96e12464.txt
+tasks/WG.00.44/lane-db/evidence/fail_before_at_7f91efbb.txt
+tasks/WG.00.44/lane-db/evidence/fix_round_96e12464.txt
+tasks/WG.00.44/lane-db/evidence/fixture_checkpoint_96e12464.txt
+tasks/WG.00.44/lane-db/evidence/harness_base_vs_tip.txt
+tasks/WG.00.44/lane-db/evidence/nwjs_checkpoint_96e12464.png
+tasks/WG.00.44/lane-db/evidence/nwjs_checkpoint_96e12464_results.txt
+tasks/WG.00.44/lane-db/evidence/nwjs_checkpoint_96e12464_sim_log.txt
+tasks/WG.00.44/lane-db/evidence/nwjs_game_runtime_sim_lines.txt
+tasks/WG.00.44/lane-db/evidence/nwjs_sim_loader_map.png
+tasks/WG.00.44/lane-db/evidence/nwjs_sim_loader_results.txt
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/gates.txt
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/nwjs/game_runtime.log
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/nwjs/snapshot_path.txt
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/nwjs/test_output/results.txt
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/nwjs/test_output/sim_loader.map.png
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/scan_base.json
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/scan_base_with_test.json
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/scan_tip.json
+tasks/WG.00.44/lane-db/evidence/reviewed_scanner_restore/summary.json
+tasks/WG.00.44/lane-db/evidence/runner_completion_96e12464.txt
+tasks/WG.00.44/lane-db/evidence/tip_gates_fresh_clone_7cc12f1f.txt
+tasks/WG.00.44/lane-db/evidence/tip_mutants_7cc12f1f.txt
+tasks/WG.00.44/lane-db/launches/20261001_071059_prompt.txt
+tasks/WG.00.44/lane-db/launches/20261001_071059_record.md
+tasks/WG.00.44/lane-db/launches/20261001_130024_prompt.txt
+tasks/WG.00.44/lane-db/review_grok_06ccf8ce.md
+tasks/WG.00.44/lane-db/run_fix_round.js
+tasks/WG.00.44/lane-db/run_reviewed_scanner_gates.js
+tools/bench_history_demographics.js
+tools/bench_history_sim.js
+tools/bench_species_biology.js
+tools/bench_underground_gen.js
+tools/bench_vertical_worldgen.js
+tools/capture_pre_migration_baseline.js
+tools/dev/sim_forward.js
+tools/lib/vm_harness_scan.js
+tools/lib/vm_sim_require.js
+tools/performance/census_boot_load.js
+tools/profile_historical_demographics.js
+tools/sim/test_fluid_attach.js
+tools/sim/test_living_world_rules.js
+tools/sim/test_sim_forward_guard.js
+tools/sim/test_underground_year0.js
+tools/society/test_person_identity.js
+tools/test_19b_performance_determinism.js
+tools/test_32_levels_generation.js
+tools/test_bag_and_racial_banners.js
+tools/test_combat_dying_integration.js
+tools/test_deep_cuts_and_mountain_cap_wg0041.js
+tools/test_duplicate_registration.js
+tools/test_extraction_difficulty.js
+tools/test_faction_starting_gear.js
+tools/test_fluid_correctness_lane_cw.js
+tools/test_generated_z2_cut_proof.js
+tools/test_geology_strata.js
+tools/test_hist_metadata_contracts.js
+tools/test_historical_carrying_capacity.js
+tools/test_history_materialization_and_world_age.js
+tools/test_liquid_depth_simulation.js
+tools/test_native_survival_soak.js
+tools/test_natural_connections_no_mint.js
+tools/test_new_game_year0.js
+tools/test_production_history_demographics.js
+tools/test_region_seam_continuity.js
+tools/test_resource_node_materials.js
+tools/test_round_world.js
+tools/test_seamless_map_edges.js
+tools/test_sim_loader.js
+tools/test_sparse_outer_save.js
+tools/test_starter_kit_and_stockpile.js
+tools/test_strata_cuts_and_caves.js
+tools/test_strata_fluid_reconciliation.js
+tools/test_strata_foundation.js
+tools/test_survival_regressions.js
+tools/test_volumetric_terrain_column.js
+tools/test_worldgen_quickfixes.js
+tools/test_z_flora.js
+tools/worldgen/test_vertical_biome_coupling.js
+tools/zrange/bench_queries.js
+EXIT 0
+SCOPE_OK 7f91efbb: 87 paths
+SCREENSHOT_SHA256 ff1846e7974c3996e7fc3b4ba2ac11a533bd6d0a0ec06b40efc2760a3918978c
+Screenshot opened in-session: 816x624 grass map, unit rows, green bars, red banner, Ground/speed/zoom controls.
+Owned test/Node/NW.js processes remaining: 0
