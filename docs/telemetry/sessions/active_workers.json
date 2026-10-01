@@ -5702,7 +5702,7 @@
     "provider": "claude",
     "role": "writer",
     "taskId": "WG.00.44",
-    "state": "RUNNING",
+    "state": "ORPHANED-CHILDREN",
     "pid": 15040,
     "processStartedAt": "2026-10-01T12:11:02Z",
     "launcherPid": 10456,
@@ -5720,13 +5720,85 @@
     "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-db\\lane-db_20261001_071059.log",
     "launchTimeCT": "2026-10-01 07:10:59 CT",
     "startedAt": "2026-10-01T12:10:59Z",
-    "endedAt": null,
-    "exitCode": null,
+    "endedAt": "2026-10-01T13:33:57Z",
+    "exitCode": 0,
     "timeoutMinutes": 120,
     "baseCommit": "f31e251d25a8987064925cb42633638553a6166b",
     "resumeFromSha": null,
     "pushGuardHooksPath": null,
-    "gitIdentity": "deus-claude"
+    "gitIdentity": "deus-claude",
+    "flags": [
+      "ORPHANED-CHILDREN"
+    ],
+    "timedOut": false,
+    "startError": null,
+    "logBytes": 3043108,
+    "outputDrained": true,
+    "headCommit": "06ccf8ceb72dec04f377aa25849518be338585d3",
+    "branchAfter": "task/lane-db",
+    "newCommits": 6,
+    "dirtyFiles": [],
+    "outOfScope": [],
+    "orphans": [
+      {
+        "pid": 38096,
+        "name": "node.exe",
+        "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" C:\\Users\\snewt\\AppData\\Roaming/npm/node_modules/@openai/codex/bin/codex.js exec -m gpt-6-astra -s read-only --skip-git-repo-check -C C:\\Users\\snewt\\OneDrive\\Desktop\\UF -c \"model_reasoning_effort=\\\"max\\\"\" -o C:/Users/snewt/.deus_ops/design_nw1/DESIGN_NW_1_astra.md -"
+      },
+      {
+        "pid": 42416,
+        "name": "grok.exe",
+        "commandLine": "\"C:\\Users\\snewt\\.grok\\bin\\grok.exe\" --always-approve --prompt-file C:\\Users\\snewt\\.deus_worktrees\\lane-pg\\tasks\\WG.20.03\\lane-pg\\launches\\20261001_082633_prompt.txt --reasoning-effort xhigh"
+      },
+      {
+        "pid": 33604,
+        "name": "powershell.exe",
+        "commandLine": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -File tools/ops/launch_worker.ps1 -Lane lane-pg -Provider grok -Role reviewer -BriefPath tasks/WG.20.03/lane-pg/BRIEF.md -PromptFile C:\\Users\\snewt\\.deus_ops\\prompts\\review_lane_pg_41389d4c.txt -ResumeFrom"
+      },
+      {
+        "pid": 45848,
+        "name": "cmd.exe",
+        "commandLine": "\"C:\\WINDOWS\\system32\\cmd.exe\" /c \"node tools/governance/test_check_claims.js > \"C:\\Users\\snewt\\AppData\\Local\\Temp\\lanepg_grok_logs\\04_node_tools_governance_test_check_claims_js.out\" 2>&1\""
+      },
+      {
+        "pid": 46032,
+        "name": "codex-code-mode-host.exe",
+        "commandLine": "\"C:\\Users\\snewt\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\node_modules\\@openai\\codex-win32-x64\\vendor\\x86_64-pc-windows-msvc\\bin\\codex-code-mode-host.exe\""
+      },
+      {
+        "pid": 44864,
+        "name": "bash.exe",
+        "commandLine": "\"C:\\Program Files\\Git\\bin\\..\\usr\\bin\\bash.exe\" -c \"source /c/Users/snewt/.claude/shell-snapshots/snapshot-bash-1790716439332-bimsel.sh 2>/dev/null || true && export TEMP='C:\\Users\\snewt\\AppData\\Local\\Temp' TMP='C:\\Users\\snewt\\AppData\\Local\\Temp' && shopt -u extglob 2>/dev/null || true && { \\builtin "
+      },
+      {
+        "pid": 42124,
+        "name": "node_repl.exe",
+        "commandLine": "C:\\Users\\snewt\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\b63ee7ee40c23b77\\bin\\node_repl.exe"
+      },
+      {
+        "pid": 25196,
+        "name": "powershell.exe",
+        "commandLine": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -File C:\\Users\\snewt\\AppData\\Local\\Temp\\lanepg_grok_gates.ps1"
+      },
+      {
+        "pid": 45332,
+        "name": "node.exe",
+        "commandLine": "node  tools/governance/test_check_claims.js "
+      },
+      {
+        "pid": 37032,
+        "name": "node_repl.exe",
+        "commandLine": "\"C:\\Users\\snewt\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\b63ee7ee40c23b77\\bin\\node_repl.exe\""
+      },
+      {
+        "pid": 39608,
+        "name": "node.exe",
+        "commandLine": "\"C:\\Users\\snewt\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\b63ee7ee40c23b77\\bin\\node.exe\" C:\\Users\\snewt\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\b63ee7ee40c23b77\\bin\\node_modules\\@oai\\cua-repl\\bin\\cua-repl.mjs"
+      }
+    ],
+    "orphansKilled": false,
+    "usage": null,
+    "resumeHeadMismatch": false
   },
   {
     "runId": "lane-dc_20261001_071115",
@@ -5896,6 +5968,70 @@
     "timeoutMinutes": 60,
     "baseCommit": "41389d4c7d04580cfe274e1c610324536dfb1ae6",
     "resumeFromSha": "41389d4c",
+    "pushGuardHooksPath": null,
+    "gitIdentity": "deus-grok"
+  },
+  {
+    "runId": "lane-db_20261001_083414",
+    "lane": "lane-db",
+    "provider": "grok",
+    "role": "reviewer",
+    "taskId": "WG.00.44",
+    "state": "RUNNING",
+    "pid": 16604,
+    "processStartedAt": "2026-10-01T13:34:16Z",
+    "launcherPid": 42940,
+    "launcherStartedAt": "2026-10-01T13:34:13Z",
+    "worktree": "C:\\Users\\snewt\\.deus_worktrees\\lane-db",
+    "branch": "task/lane-db",
+    "briefPath": "C:\\Users\\snewt\\.deus_worktrees\\lane-db\\tasks\\WG.00.44\\lane-db\\BRIEF.md",
+    "launchPromptPath": "C:\\Users\\snewt\\.deus_worktrees\\lane-db\\tasks\\WG.00.44\\lane-db\\launches\\20261001_083414_prompt.txt",
+    "promptFile": "C:\\Users\\snewt\\.deus_ops\\prompts\\review_lane_db_06ccf8ce.txt",
+    "promptSource": "file",
+    "promptFrom": "-PromptFile",
+    "promptCandidatesSkipped": [],
+    "pushRule": "no-push",
+    "pushRuleSource": "default",
+    "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-db\\lane-db_20261001_083414.log",
+    "launchTimeCT": "2026-10-01 08:34:14 CT",
+    "startedAt": "2026-10-01T13:34:14Z",
+    "endedAt": null,
+    "exitCode": null,
+    "timeoutMinutes": 60,
+    "baseCommit": "06ccf8ceb72dec04f377aa25849518be338585d3",
+    "resumeFromSha": "06ccf8ce",
+    "pushGuardHooksPath": null,
+    "gitIdentity": "deus-grok"
+  },
+  {
+    "runId": "lane-do_20261001_083515",
+    "lane": "lane-do",
+    "provider": "grok",
+    "role": "reviewer",
+    "taskId": "NAT.02.MASS",
+    "state": "RUNNING",
+    "pid": 35788,
+    "processStartedAt": "2026-10-01T13:35:17Z",
+    "launcherPid": 35996,
+    "launcherStartedAt": "2026-10-01T13:35:14Z",
+    "worktree": "C:\\Users\\snewt\\.deus_worktrees\\lane-do",
+    "branch": "task/lane-do",
+    "briefPath": "C:\\Users\\snewt\\.deus_worktrees\\lane-do\\tasks\\NAT.02.MASS\\lane-do\\BRIEF.md",
+    "launchPromptPath": "C:\\Users\\snewt\\.deus_worktrees\\lane-do\\tasks\\NAT.02.MASS\\lane-do\\launches\\20261001_083515_prompt.txt",
+    "promptFile": "C:\\Users\\snewt\\.deus_ops\\prompts\\review_lane_do_bcbe8241.txt",
+    "promptSource": "file",
+    "promptFrom": "-PromptFile",
+    "promptCandidatesSkipped": [],
+    "pushRule": "no-push",
+    "pushRuleSource": "default",
+    "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-do\\lane-do_20261001_083515.log",
+    "launchTimeCT": "2026-10-01 08:35:15 CT",
+    "startedAt": "2026-10-01T13:35:15Z",
+    "endedAt": null,
+    "exitCode": null,
+    "timeoutMinutes": 60,
+    "baseCommit": "bcbe824133358f9b38ecaaa63d4de2fa9738f766",
+    "resumeFromSha": "bcbe8241",
     "pushGuardHooksPath": null,
     "gitIdentity": "deus-grok"
   }
