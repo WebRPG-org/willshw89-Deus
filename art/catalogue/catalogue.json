@@ -62,7 +62,7 @@
     {"path":"docs/asset_briefs/SEG-17_equipment_layers_and_effects.md","sha256":"c241520fb2fea26b4635cbbf0b79a9cd0cfed011e10da969607522617593250f","role":"ASSET_BRIEF"},
     {"path":"docs/asset_briefs/SEG-18_combat_gear_and_workshops.md","sha256":"196ead8111e72419e036350a2c620e85f16b8165d3051561ca92e0ebadd04bd6","role":"ASSET_BRIEF"},
     {"path":"docs/design/SCALE.md","sha256":"790530dd141522f35c7977cac358c1894c9e94262bf019192c6d3769f186a2d8","role":"CITED"},
-    {"path":"docs/worldgen/DEUS_WORLDGEN_WBS.md","sha256":"6b770c22208b10092bdba96b0c7e231af89a076b52b258aba2052c7a18275112","role":"CITED"},
+    {"path":"docs/worldgen/DEUS_WORLDGEN_WBS.md","sha256":"76f4e22c03c09af42293b70d584f21d2ed4aaec8cb83c39397f3f7ef33c8997b","role":"CITED"},
     {"path":"game/data/DEUS_AssetIndex.json","sha256":"48fe8a838a5e22f8a4cf868d8202d2e194419a3f712230165d10afa05dc57ec3","role":"ASSET_INDEX_STALE_FORK+CITED"},
     {"path":"game/data/DEUS_BiomeRegistry.json","sha256":"e22cf7c15302e064a3d3d5dd4b3aa6318b79bd3411e4a43d776015b510a3675a","role":"BIOME_REGISTRY+CITED"},
     {"path":"game/data/DEUS_PaletteRegistry.json","sha256":"f4c29611019cf3087c7c991b2f71cd393ebbbbabdfc61a681c504205a57919ca","role":"CITED+PALETTE_REGISTRY"},
