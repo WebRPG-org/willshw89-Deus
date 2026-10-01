@@ -6477,8 +6477,8 @@
         const st2 = World().state;
         const keysAfter = keysOf(st2 && st2.levels);
         const backOnGround = viewZ() === 0;
-        await t.waitFrames(10);
-        t.screenshot("after_load");
+        let shot = "not taken";
+        try { shot = t.screenshot("after_load"); } catch (e) { shot = "failed: " + (e && e.message); }
         const errors = t.errorsSoFar();
         t.check("sparse_outer_save",
             rangeOk && viewed && !!b10 && b10.z === -10 && noMinus10 && dug === true
@@ -6489,6 +6489,6 @@
             `zRange ${range && range.zMin}..${range && range.zMax}; viewed -10 ${viewed} baseline ${b10 && b10.z} levels["-10"] ${noMinus10 ? "absent" : "PRESENT"}; ` +
             `dug ${cell ? cell.x + "," + cell.y : "no solid cell"} on -3 (${dug === true ? "ok" : "refused " + JSON.stringify(Levels.lastRefusal())}); ` +
             `keys before save ${JSON.stringify(keysBefore)}; slot ${slot} ${saved ? "saved" : "not saved"}, ${loaded ? "loaded" : "not loaded"}${loadError ? " (" + loadError + ")" : ""}; ` +
-            `keys after load ${JSON.stringify(keysAfter)}; errors ${errors.length ? errors[0] : "none"}`);
+            `keys after load ${JSON.stringify(keysAfter)}; errors ${errors.length ? errors[0] : "none"}; shot ${shot}`);
     }
 })();
