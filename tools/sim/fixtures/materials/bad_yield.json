@@ -3,7 +3,7 @@
   "steps": [
     {
       "op": "set",
-      "path": "catalogue.materials[id=granite].yield.postings.0.mu",
+      "path": "catalogue.materials[id=granite].yield.postings.0.cp",
       "value": 1
     }
   ]

@@ -1,12 +1,5 @@
 {
   "schema": 1,
-  "mu": {
-    "id": "MU_SIZE",
-    "proposal": "1 mu = 1 g",
-    "proposalMuPerKg": 1000,
-    "confirmed": false,
-    "status": "PM_DEFAULT_UNCONFIRMED"
-  },
   "geometry": {
     "squareFt": 5,
     "sliceFt": 2,
@@ -385,7 +378,6 @@
       "strataId": 0,
       "kind": "none",
       "massless": true,
-      "massPerSlice": 0,
       "kgPerSlice": 0,
       "massStatus": "SOURCED",
       "reason": "Air is not matter. Strata id 0 is the empty voxel.",
@@ -415,7 +407,8 @@
       },
       "decay": {
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 0
     },
     {
       "id": "granite",
@@ -424,14 +417,13 @@
       "ledger": {
         "class": "stone",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 2750,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4754 density 2.75",
       "kgPerSlice": 3894,
-      "massPerSlice": 3894000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanBase": [
@@ -481,7 +473,7 @@
             "form": "item",
             "item": "stone",
             "count": 259,
-            "mu": 3885000
+            "cp": 856513
           },
           {
             "process": "break",
@@ -489,8 +481,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 9000,
-            "lineage": "granite"
+            "lineage": "granite",
+            "cp": 1967
           }
         ]
       },
@@ -502,8 +494,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 3894000,
-            "lineage": "granite"
+            "lineage": "granite",
+            "cp": 858480
           }
         ]
       },
@@ -519,7 +511,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-RUBBLE",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 858480
     },
     {
       "id": "basalt",
@@ -528,14 +521,13 @@
       "ledger": {
         "class": "stone",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 2900,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4773 density 2.9",
       "kgPerSlice": 4106,
-      "massPerSlice": 4106000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanBase": [
@@ -585,7 +577,7 @@
             "form": "item",
             "item": "stone",
             "count": 273,
-            "mu": 4095000
+            "cp": 902811
           },
           {
             "process": "break",
@@ -593,8 +585,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 11000,
-            "lineage": "basalt"
+            "lineage": "basalt",
+            "cp": 2407
           }
         ]
       },
@@ -606,8 +598,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 4106000,
-            "lineage": "basalt"
+            "lineage": "basalt",
+            "cp": 905218
           }
         ]
       },
@@ -623,7 +615,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-RUBBLE",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 905218
     },
     {
       "id": "slate",
@@ -632,14 +625,13 @@
       "ledger": {
         "class": "stone",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 2650,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4791 density 2.65",
       "kgPerSlice": 3752,
-      "massPerSlice": 3752000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanBase": [
@@ -689,7 +681,7 @@
             "form": "item",
             "item": "stone",
             "count": 250,
-            "mu": 3750000
+            "cp": 826750
           },
           {
             "process": "break",
@@ -697,8 +689,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 2000,
-            "lineage": "slate"
+            "lineage": "slate",
+            "cp": 424
           }
         ]
       },
@@ -710,8 +702,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 3752000,
-            "lineage": "slate"
+            "lineage": "slate",
+            "cp": 827174
           }
         ]
       },
@@ -727,7 +719,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-RUBBLE",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 827174
     },
     {
       "id": "marble",
@@ -736,14 +729,13 @@
       "ledger": {
         "class": "stone",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 2700,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4810 density 2.7",
       "kgPerSlice": 3823,
-      "massPerSlice": 3823000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanBase": [
@@ -793,7 +785,7 @@
             "form": "item",
             "item": "stone",
             "count": 254,
-            "mu": 3810000
+            "cp": 839978
           },
           {
             "process": "break",
@@ -801,8 +793,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 13000,
-            "lineage": "marble"
+            "lineage": "marble",
+            "cp": 2849
           }
         ]
       },
@@ -814,8 +806,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 3823000,
-            "lineage": "marble"
+            "lineage": "marble",
+            "cp": 842827
           }
         ]
       },
@@ -831,7 +823,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-RUBBLE",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 842827
     },
     {
       "id": "limestone",
@@ -840,14 +833,13 @@
       "ledger": {
         "class": "stone",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 2300,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4717 density 2.3",
       "kgPerSlice": 3256,
-      "massPerSlice": 3256000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanBase": [
@@ -897,7 +889,7 @@
             "form": "item",
             "item": "stone",
             "count": 217,
-            "mu": 3255000
+            "cp": 717619
           },
           {
             "process": "break",
@@ -905,8 +897,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 1000,
-            "lineage": "limestone"
+            "lineage": "limestone",
+            "cp": 206
           }
         ]
       },
@@ -918,8 +910,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 3256000,
-            "lineage": "limestone"
+            "lineage": "limestone",
+            "cp": 717825
           }
         ]
       },
@@ -935,7 +927,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-RUBBLE",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 717825
     },
     {
       "id": "sandstone",
@@ -944,14 +937,13 @@
       "ledger": {
         "class": "stone",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 2100,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4736 density 2.1",
       "kgPerSlice": 2973,
-      "massPerSlice": 2973000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanBase": [
@@ -1001,7 +993,7 @@
             "form": "item",
             "item": "stone",
             "count": 198,
-            "mu": 2970000
+            "cp": 654786
           },
           {
             "process": "break",
@@ -1009,8 +1001,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 3000,
-            "lineage": "sandstone"
+            "lineage": "sandstone",
+            "cp": 648
           }
         ]
       },
@@ -1022,8 +1014,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 2973000,
-            "lineage": "sandstone"
+            "lineage": "sandstone",
+            "cp": 655434
           }
         ]
       },
@@ -1039,7 +1031,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-RUBBLE",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 655434
     },
     {
       "id": "stone",
@@ -1048,14 +1041,13 @@
       "ledger": {
         "class": "stone",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 2300,
       "densityStatus": "SOURCED",
       "densitySource": "Alias materials.aliases.stone = stones:limestone at DEUS_WorldCatalog.json:4969; limestone density :4717",
       "kgPerSlice": 3256,
-      "massPerSlice": 3256000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "resolvesBy": "geologyAt",
       "sameMassAs": "limestone",
@@ -1106,7 +1098,7 @@
             "form": "item",
             "item": "stone",
             "count": 217,
-            "mu": 3255000
+            "cp": 717619
           },
           {
             "process": "break",
@@ -1114,8 +1106,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 1000,
-            "lineage": "limestone"
+            "lineage": "limestone",
+            "cp": 206
           }
         ]
       },
@@ -1127,8 +1119,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 3256000,
-            "lineage": "limestone"
+            "lineage": "limestone",
+            "cp": 717825
           }
         ]
       },
@@ -1144,7 +1136,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-RUBBLE",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 717825
     },
     {
       "id": "soil",
@@ -1153,7 +1146,7 @@
       "ledger": {
         "class": "soil",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "laneQSplit": {
@@ -1166,7 +1159,6 @@
       "densityStatus": "PM_DEFAULT",
       "densitySource": "SIM.40.01 §2.3 extrapolated 1.6 t/m3; no catalogue density",
       "kgPerSlice": 2265,
-      "massPerSlice": 2265000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 35000,
@@ -1213,8 +1205,8 @@
             "fromForm": "strata",
             "class": "soil",
             "form": "strata",
-            "mu": 2265000,
-            "note": "No generic soil item. The remainder stays loose soil strata (SIM.40.01 §9.2 rows 3 and 4)."
+            "note": "No generic soil item. The remainder stays loose soil strata (SIM.40.01 §9.2 rows 3 and 4).",
+            "cp": 499347
           }
         ]
       },
@@ -1226,8 +1218,8 @@
             "fromForm": "strata",
             "class": "soil",
             "form": "strata",
-            "mu": 2265000,
-            "debrisMaterial": "loose_fill"
+            "debrisMaterial": "loose_fill",
+            "cp": 499347
           }
         ]
       },
@@ -1240,7 +1232,8 @@
         ],
         "direct": true,
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 499347
     },
     {
       "id": "wood",
@@ -1250,14 +1243,13 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 750,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4611 density 0.75",
       "kgPerSlice": 1062,
-      "massPerSlice": 1062000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 40000,
@@ -1326,7 +1318,7 @@
             "form": "item",
             "item": "log",
             "count": 132,
-            "mu": 1056000
+            "cp": 232848
           },
           {
             "process": "identity",
@@ -1334,8 +1326,8 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 6000,
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 1283
           }
         ]
       },
@@ -1347,10 +1339,10 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 1062000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 234131
           }
         ]
       },
@@ -1364,7 +1356,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-ORGANIC",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 234131
     },
     {
       "id": "oak",
@@ -1373,14 +1366,13 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 750,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4611 density 0.75",
       "kgPerSlice": 1062,
-      "massPerSlice": 1062000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 40000,
@@ -1449,7 +1441,7 @@
             "form": "item",
             "item": "log",
             "count": 132,
-            "mu": 1056000
+            "cp": 232848
           },
           {
             "process": "identity",
@@ -1457,8 +1449,8 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 6000,
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 1283
           }
         ]
       },
@@ -1470,10 +1462,10 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 1062000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 234131
           }
         ]
       },
@@ -1487,7 +1479,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-ORGANIC",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 234131
     },
     {
       "id": "pine",
@@ -1496,14 +1489,13 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 450,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4570 density 0.45",
       "kgPerSlice": 637,
-      "massPerSlice": 637000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 40000,
@@ -1572,7 +1564,7 @@
             "form": "item",
             "item": "log",
             "count": 79,
-            "mu": 632000
+            "cp": 139356
           },
           {
             "process": "identity",
@@ -1580,8 +1572,8 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 5000,
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 1078
           }
         ]
       },
@@ -1593,10 +1585,10 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 637000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 140434
           }
         ]
       },
@@ -1610,7 +1602,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-ORGANIC",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 140434
     },
     {
       "id": "birch",
@@ -1619,14 +1612,13 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 650,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4589 density 0.65",
       "kgPerSlice": 920,
-      "massPerSlice": 920000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 40000,
@@ -1694,8 +1686,17 @@
             "class": "wood",
             "form": "item",
             "item": "log",
-            "count": 115,
-            "mu": 920000
+            "count": 114,
+            "cp": 201096
+          },
+          {
+            "process": "identity",
+            "fromClass": "wood",
+            "fromForm": "strata",
+            "class": "wood",
+            "form": "strata",
+            "cp": 1729,
+            "note": "Sub-item remainder"
           }
         ]
       },
@@ -1707,10 +1708,10 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 920000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 202825
           }
         ]
       },
@@ -1724,7 +1725,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-ORGANIC",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 202825
     },
     {
       "id": "wood_ash",
@@ -1733,14 +1735,13 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 680,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4633 density 0.68 (catalogue key woods.ash; renamed so it is not the ash residue)",
       "kgPerSlice": 963,
-      "massPerSlice": 963000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 40000,
@@ -1809,7 +1810,7 @@
             "form": "item",
             "item": "log",
             "count": 120,
-            "mu": 960000
+            "cp": 211680
           },
           {
             "process": "identity",
@@ -1817,8 +1818,8 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 3000,
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 625
           }
         ]
       },
@@ -1830,10 +1831,10 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 963000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 212305
           }
         ]
       },
@@ -1847,7 +1848,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-ORGANIC",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 212305
     },
     {
       "id": "willow",
@@ -1856,14 +1858,13 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 420,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4654 density 0.42",
       "kgPerSlice": 595,
-      "massPerSlice": 595000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 40000,
@@ -1932,7 +1933,7 @@
             "form": "item",
             "item": "log",
             "count": 74,
-            "mu": 592000
+            "cp": 130536
           },
           {
             "process": "identity",
@@ -1940,8 +1941,8 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 3000,
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 639
           }
         ]
       },
@@ -1953,10 +1954,10 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 595000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 131175
           }
         ]
       },
@@ -1970,7 +1971,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-ORGANIC",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 131175
     },
     {
       "id": "elm",
@@ -1979,14 +1981,13 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 600,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4675 density 0.60",
       "kgPerSlice": 850,
-      "massPerSlice": 850000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 40000,
@@ -2055,7 +2056,7 @@
             "form": "item",
             "item": "log",
             "count": 106,
-            "mu": 848000
+            "cp": 186984
           },
           {
             "process": "identity",
@@ -2063,8 +2064,8 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 2000,
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 409
           }
         ]
       },
@@ -2076,10 +2077,10 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 850000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 187393
           }
         ]
       },
@@ -2093,7 +2094,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-ORGANIC",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 187393
     },
     {
       "id": "yew",
@@ -2102,14 +2104,13 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 670,
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4696 density 0.67",
       "kgPerSlice": 949,
-      "massPerSlice": 949000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 40000,
@@ -2178,7 +2179,7 @@
             "form": "item",
             "item": "log",
             "count": 118,
-            "mu": 944000
+            "cp": 208152
           },
           {
             "process": "identity",
@@ -2186,8 +2187,8 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 5000,
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 1067
           }
         ]
       },
@@ -2199,10 +2200,10 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 949000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 209219
           }
         ]
       },
@@ -2216,7 +2217,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-ORGANIC",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 209219
     },
     {
       "id": "water",
@@ -2225,18 +2227,11 @@
       "ledger": {
         "class": "water",
         "family": "water",
-        "unit": "du"
+        "unit": "cp"
       },
       "ledgerForm": "fluid",
-      "massStatus": "OWNER_OPEN",
+      "massStatus": "SOURCED",
       "reason": "A 10-ft layer is 7 du (DEUS_Fluid.js:50 DEPTH_MAX). 7 does not divide by 5 slices. No per-slice rounding is chosen.",
-      "layerDu": 7,
-      "layerDuStatus": "SOURCED",
-      "layerDuSource": "DEUS_Fluid.js:50",
-      "kgPerDu": 1011,
-      "muPerDu": 1011000,
-      "perDuStatus": "PM_DEFAULT",
-      "perDuSource": "SIM.40.01 §2.3 ice voxel holds 1 du at 1,011 kg",
       "support": {
         "spanAny": 0,
         "maxUnsupportedSpanSquares": 0,
@@ -2264,7 +2259,8 @@
         ],
         "status": "PM_DEFAULT"
       },
-      "muPerDuStatus": "PM_DEFAULT_UNCONFIRMED"
+      "cpPerStratum": 312000,
+      "massSource": "docs/OWNER_DECISIONS.md DEC-038"
     },
     {
       "id": "lava",
@@ -2273,21 +2269,17 @@
       "ledger": {
         "class": "lava",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "fluid",
       "massStatus": "PM_DEFAULT",
       "reason": "Class lava is family mineral, so the ledger books it in mu. muPerDu is the fixed conversion from the fluid hook's du.",
-      "kgPerDu": 2053,
-      "muPerDu": 2053000,
-      "perDuStatus": "PM_DEFAULT",
       "solidify": {
         "duPerBasaltVoxel": 2,
         "basaltId": "basalt",
-        "basaltKg": 4106,
-        "remainderRubbleKg": 2053,
         "status": "PM_DEFAULT",
-        "source": "SIM.40.01 §9.1"
+        "source": "SIM.40.01 §9.1",
+        "basaltCp": 905218
       },
       "support": {
         "spanAny": 0,
@@ -2318,7 +2310,7 @@
         "direct": true,
         "status": "PM_DEFAULT"
       },
-      "muPerDuStatus": "PM_DEFAULT_UNCONFIRMED"
+      "cpPerStratum": 905218
     },
     {
       "id": "rubble",
@@ -2327,13 +2319,12 @@
       "ledger": {
         "class": "rubble",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.6 times the parent voxel, SIM.40.01 §2.4",
       "kgPerSlice": 1954,
-      "massPerSlice": 1954000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "bulkKgByLineage": {
         "granite": 2336,
@@ -2383,8 +2374,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 1954000,
-            "note": "No rubble item in the catalogue. The pick keeps class rubble. No rubble item. The mass stays loose rubble strata (SIM.40.01 §9.2 row 8)."
+            "note": "No rubble item in the catalogue. The pick keeps class rubble. No rubble item. The mass stays loose rubble strata (SIM.40.01 §9.2 row 8).",
+            "cp": 430783
           }
         ]
       },
@@ -2396,7 +2387,7 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 1954000
+            "cp": 430783
           }
         ]
       },
@@ -2411,7 +2402,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-RUBBLE",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 430783
     },
     {
       "id": "loose_fill",
@@ -2420,14 +2412,13 @@
       "ledger": {
         "class": "soil",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 1350,
       "densityStatus": "PM_DEFAULT",
       "densitySource": "SIM.40.01 §2.4 1.35 t/m3",
       "kgPerSlice": 1911,
-      "massPerSlice": 1911000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 20000,
@@ -2467,8 +2458,8 @@
             "fromForm": "strata",
             "class": "soil",
             "form": "strata",
-            "mu": 1911000,
-            "note": "No generic soil item. The remainder stays loose soil strata (SIM.40.01 §9.2 rows 3 and 4)."
+            "note": "No generic soil item. The remainder stays loose soil strata (SIM.40.01 §9.2 rows 3 and 4).",
+            "cp": 421303
           }
         ]
       },
@@ -2480,7 +2471,7 @@
             "fromForm": "strata",
             "class": "soil",
             "form": "strata",
-            "mu": 1911000
+            "cp": 421303
           }
         ]
       },
@@ -2493,7 +2484,8 @@
         ],
         "direct": true,
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 421303
     },
     {
       "id": "sediment",
@@ -2502,14 +2494,13 @@
       "ledger": {
         "class": "sediment",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 1500,
       "densityStatus": "PM_DEFAULT",
       "densitySource": "SIM.40.01 §2.4 1.5 t/m3",
       "kgPerSlice": 2124,
-      "massPerSlice": 2124000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 20000,
@@ -2551,7 +2542,7 @@
             "fromForm": "strata",
             "class": "sediment",
             "form": "strata",
-            "mu": 2124000
+            "cp": 468262
           }
         ]
       },
@@ -2563,7 +2554,7 @@
             "fromForm": "strata",
             "class": "sediment",
             "form": "strata",
-            "mu": 2124000
+            "cp": 468262
           }
         ]
       },
@@ -2576,7 +2567,8 @@
         ],
         "direct": true,
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 468262
     },
     {
       "id": "ash",
@@ -2585,14 +2577,13 @@
       "ledger": {
         "class": "ash",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 600,
       "densityStatus": "PM_DEFAULT",
       "densitySource": "SIM.40.01 §2.4 0.6 t/m3. Lane R R-04.3 is a different figure (D-ASH-MASS).",
       "kgPerSlice": 850,
-      "massPerSlice": 850000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "disagreement": "D-ASH-MASS",
       "support": {
@@ -2635,7 +2626,7 @@
             "fromForm": "strata",
             "class": "ash",
             "form": "strata",
-            "mu": 850000
+            "cp": 187393
           }
         ]
       },
@@ -2647,7 +2638,7 @@
             "fromForm": "strata",
             "class": "ash",
             "form": "strata",
-            "mu": 850000
+            "cp": 187393
           }
         ]
       },
@@ -2661,7 +2652,8 @@
         "direct": false,
         "disagreement": "D-RECLAIM-ORGANIC",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 187393
     },
     {
       "id": "ice",
@@ -2670,14 +2662,12 @@
       "ledger": {
         "class": "water",
         "family": "water",
-        "unit": "du"
+        "unit": "cp"
       },
       "ledgerForm": "ice",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "Not the solid-ice 917 kg/m3. SIM.40.01 §2.3: one slice holds 1 du, 1,011 kg.",
-      "massPerSlice": 1,
       "massStatus": "SOURCED",
-      "duPerSlice": 1,
       "solidIceKg": 1298,
       "solidIceNote": "Cited and not used. The load is the 1 du figure.",
       "support": {
@@ -2726,7 +2716,7 @@
             "class": "water",
             "form": "ice",
             "debrisMaterial": "ice",
-            "du": 1
+            "cp": 312000
           }
         ]
       },
@@ -2739,7 +2729,7 @@
             "class": "water",
             "form": "ice",
             "looseBulkKg": 607,
-            "du": 1
+            "cp": 312000
           }
         ]
       },
@@ -2758,9 +2748,8 @@
       "supportLoadKgPerSlice": 1011,
       "supportLoadKgStatus": "SOURCED",
       "supportLoadKgSource": "SIM.40.01 §9.1: the load of one du is 1,011 kg. Not a ledger posting.",
-      "supportLoadMuPerSlice": 1011000,
-      "supportLoadMuStatus": "PM_DEFAULT_UNCONFIRMED",
-      "supportLoadMuSource": "supportLoadKgPerSlice times proposalMuPerKg. The mu size is unconfirmed. Not a ledger posting."
+      "cpPerStratum": 312000,
+      "supportLoadCpPerSlice": 222887
     },
     {
       "id": "iron",
@@ -2770,7 +2759,6 @@
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4888",
       "kgPerSlice": 11143,
-      "massPerSlice": 11143000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "ledgerForm": "item",
       "support": {
@@ -2805,15 +2793,15 @@
             "fromForm": "item",
             "class": "fe_metal",
             "form": "item",
-            "mu": 11143000,
-            "bulk": true
+            "bulk": true,
+            "cp": 2456611
           }
         ]
       },
       "ledger": {
         "class": "fe_metal",
         "family": "fe",
-        "unit": "mu"
+        "unit": "cp"
       },
       "collapse": {
         "postings": [
@@ -2823,8 +2811,8 @@
             "fromForm": "item",
             "class": "fe_metal",
             "form": "item",
-            "mu": 11143000,
-            "bulk": true
+            "bulk": true,
+            "cp": 2456611
           }
         ]
       },
@@ -2837,7 +2825,8 @@
         ],
         "direct": true,
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 2456611
     },
     {
       "id": "copper",
@@ -2847,7 +2836,6 @@
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4830",
       "kgPerSlice": 12686,
-      "massPerSlice": 12686000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "ledgerForm": "item",
       "support": {
@@ -2881,15 +2869,15 @@
             "fromForm": "item",
             "class": "cu_metal",
             "form": "item",
-            "mu": 12686000,
-            "bulk": true
+            "bulk": true,
+            "cp": 2796784
           }
         ]
       },
       "ledger": {
         "class": "cu_metal",
         "family": "cu",
-        "unit": "mu"
+        "unit": "cp"
       },
       "collapse": {
         "postings": [
@@ -2899,8 +2887,8 @@
             "fromForm": "item",
             "class": "cu_metal",
             "form": "item",
-            "mu": 12686000,
-            "bulk": true
+            "bulk": true,
+            "cp": 2796784
           }
         ]
       },
@@ -2913,7 +2901,8 @@
         ],
         "direct": true,
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 2796784
     },
     {
       "id": "silver",
@@ -2923,7 +2912,6 @@
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4928",
       "kgPerSlice": 14852,
-      "massPerSlice": 14852000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "ledgerForm": "item",
       "support": {
@@ -2957,15 +2945,15 @@
             "fromForm": "item",
             "class": "ag_metal",
             "form": "item",
-            "mu": 14852000,
-            "bulk": true
+            "bulk": true,
+            "cp": 3274306
           }
         ]
       },
       "ledger": {
         "class": "ag_metal",
         "family": "ag",
-        "unit": "mu"
+        "unit": "cp"
       },
       "collapse": {
         "postings": [
@@ -2975,8 +2963,8 @@
             "fromForm": "item",
             "class": "ag_metal",
             "form": "item",
-            "mu": 14852000,
-            "bulk": true
+            "bulk": true,
+            "cp": 3274306
           }
         ]
       },
@@ -2989,7 +2977,8 @@
         ],
         "direct": true,
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 3274306
     },
     {
       "id": "gold",
@@ -2999,7 +2988,6 @@
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4948",
       "kgPerSlice": 27354,
-      "massPerSlice": 27354000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "ledgerForm": "item",
       "support": {
@@ -3033,15 +3021,15 @@
             "fromForm": "item",
             "class": "au_metal",
             "form": "item",
-            "mu": 27354000,
-            "bulk": true
+            "bulk": true,
+            "cp": 6030525
           }
         ]
       },
       "ledger": {
         "class": "au_metal",
         "family": "au",
-        "unit": "mu"
+        "unit": "cp"
       },
       "collapse": {
         "postings": [
@@ -3051,8 +3039,8 @@
             "fromForm": "item",
             "class": "au_metal",
             "form": "item",
-            "mu": 27354000,
-            "bulk": true
+            "bulk": true,
+            "cp": 6030525
           }
         ]
       },
@@ -3066,7 +3054,8 @@
         "direct": true,
         "disagreement": "D-NOBLE",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 6030525
     },
     {
       "id": "platinum",
@@ -3076,7 +3065,6 @@
       "densityStatus": "PLACEHOLDER",
       "densitySource": "PLACEHOLDER 21.45 g/cm3, not in the catalogue",
       "kgPerSlice": 30370,
-      "massPerSlice": 30370000,
       "massStatus": "PLACEHOLDER",
       "ledgerForm": "item",
       "support": {
@@ -3110,15 +3098,15 @@
             "fromForm": "item",
             "class": "pt_metal",
             "form": "item",
-            "mu": 30370000,
-            "bulk": true
+            "bulk": true,
+            "cp": 6695439
           }
         ]
       },
       "ledger": {
         "class": "pt_metal",
         "family": "pt",
-        "unit": "mu"
+        "unit": "cp"
       },
       "collapse": {
         "postings": [
@@ -3128,8 +3116,8 @@
             "fromForm": "item",
             "class": "pt_metal",
             "form": "item",
-            "mu": 30370000,
-            "bulk": true
+            "bulk": true,
+            "cp": 6695439
           }
         ]
       },
@@ -3143,7 +3131,8 @@
         "direct": true,
         "disagreement": "D-NOBLE",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 6695439
     },
     {
       "id": "steel",
@@ -3153,7 +3142,6 @@
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4908",
       "kgPerSlice": 11114,
-      "massPerSlice": 11114000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "ledgerForm": "item",
       "support": {
@@ -3188,15 +3176,15 @@
             "fromForm": "item",
             "class": "steel",
             "form": "item",
-            "mu": 11114000,
-            "bulk": true
+            "bulk": true,
+            "cp": 2450218
           }
         ]
       },
       "ledger": {
         "class": "steel",
         "family": "fe",
-        "unit": "mu"
+        "unit": "cp"
       },
       "collapse": {
         "postings": [
@@ -3206,8 +3194,8 @@
             "fromForm": "item",
             "class": "steel",
             "form": "item",
-            "mu": 11114000,
-            "bulk": true
+            "bulk": true,
+            "cp": 2450218
           }
         ]
       },
@@ -3220,7 +3208,8 @@
         ],
         "direct": true,
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 2450218
     },
     {
       "id": "tin",
@@ -3230,7 +3219,6 @@
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4849",
       "kgPerSlice": 10350,
-      "massPerSlice": 10350000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "ledgerForm": "item",
       "support": {
@@ -3259,24 +3247,24 @@
         "postings": [
           {
             "process": "identity",
-            "mu": 0,
-            "unmappedMu": 10350000
+            "cp": 0,
+            "unmappedCp": 2281784
           }
         ]
       },
       "unmapped": {
         "element": "sn",
         "perMille": 1000,
-        "mu": 10350000,
         "reason": "Ledger families have no sn (LEDGER_API.md §10).",
-        "disagreement": "D-TIN"
+        "disagreement": "D-TIN",
+        "cp": 2281784
       },
       "collapse": {
         "postings": [
           {
             "process": "identity",
-            "mu": 0,
-            "unmappedMu": 10350000
+            "cp": 0,
+            "unmappedCp": 2281784
           }
         ]
       },
@@ -3286,7 +3274,8 @@
         "path": [],
         "disagreement": "D-TIN",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 2281784
     },
     {
       "id": "bronze",
@@ -3296,7 +3285,6 @@
       "densityStatus": "SOURCED",
       "densitySource": "DEUS_WorldCatalog.json:4868",
       "kgPerSlice": 12318,
-      "massPerSlice": 12318000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "ledgerForm": "item",
       "support": {
@@ -3330,16 +3318,16 @@
             "fromForm": "item",
             "class": "cu_metal",
             "form": "item",
-            "mu": 10839840,
-            "unmappedMu": 1478160,
-            "bulk": true
+            "bulk": true,
+            "cp": 2389776,
+            "unmappedCp": 325878
           }
         ]
       },
       "ledger": {
         "class": "cu_metal",
         "family": "cu",
-        "unit": "mu",
+        "unit": "cp",
         "mappedPerMille": 880
       },
       "laneQPerMille": {
@@ -3351,9 +3339,9 @@
       "unmapped": {
         "element": "sn",
         "perMille": 120,
-        "mu": 1478160,
         "reason": "Ledger families have no sn.",
-        "disagreement": "D-TIN"
+        "disagreement": "D-TIN",
+        "cp": 325878
       },
       "collapse": {
         "postings": [
@@ -3363,9 +3351,9 @@
             "fromForm": "item",
             "class": "cu_metal",
             "form": "item",
-            "mu": 10839840,
-            "unmappedMu": 1478160,
-            "bulk": true
+            "bulk": true,
+            "cp": 2389776,
+            "unmappedCp": 325878
           }
         ]
       },
@@ -3373,15 +3361,16 @@
         "dec028": "trace",
         "ledgerClass": "cu_trace",
         "ledgerForm": "strata",
-        "mappedMu": 10839840,
         "unmappedElement": "sn",
-        "unmappedMu": 1478160,
         "path": [
           "rust:cu_metal->cu_trace"
         ],
         "disagreement": "D-TIN",
-        "status": "PM_DEFAULT"
-      }
+        "status": "PM_DEFAULT",
+        "mappedCp": 2389776,
+        "unmappedCp": 325878
+      },
+      "cpPerStratum": 2715654
     },
     {
       "id": "electrum",
@@ -3391,7 +3380,6 @@
       "densityStatus": "PM_DEFAULT",
       "densitySource": "Harmonic mean of catalogue gold 19.32 and silver 10.49, 50/50 by mass",
       "kgPerSlice": 19251,
-      "massPerSlice": 19251000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "ledgerForm": "item",
       "support": {
@@ -3425,8 +3413,8 @@
             "fromForm": "item",
             "class": "electrum",
             "form": "item",
-            "mu": 19251000,
-            "bulk": true
+            "bulk": true,
+            "cp": 4244120
           }
         ]
       },
@@ -3436,7 +3424,7 @@
           "au": 1,
           "ag": 1
         },
-        "unit": "mu"
+        "unit": "cp"
       },
       "collapse": {
         "postings": [
@@ -3446,8 +3434,8 @@
             "fromForm": "item",
             "class": "electrum",
             "form": "item",
-            "mu": 19251000,
-            "bulk": true
+            "bulk": true,
+            "cp": 4244120
           }
         ]
       },
@@ -3461,7 +3449,8 @@
         "direct": true,
         "disagreement": "D-NOBLE",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 4244120
     },
     {
       "id": "scrap",
@@ -3470,14 +3459,13 @@
       "ledger": {
         "class": "fe_metal",
         "family": "fe",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "item",
       "disagreement": "D-SCRAP-FORM",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.25 times the parent metal voxel, SIM.40.01 §2.4. Generic row is iron.",
       "kgPerSlice": 2786,
-      "massPerSlice": 2786000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "bulkKgByLineage": {
         "iron": 2786,
@@ -3531,8 +3519,8 @@
             "fromForm": "item",
             "class": "fe_metal",
             "form": "item",
-            "mu": 2786000,
-            "bulk": true
+            "bulk": true,
+            "cp": 614208
           }
         ]
       },
@@ -3544,8 +3532,8 @@
             "fromForm": "item",
             "class": "fe_metal",
             "form": "item",
-            "mu": 2786000,
-            "bulk": true
+            "bulk": true,
+            "cp": 614208
           }
         ]
       },
@@ -3571,7 +3559,8 @@
         "bookable": false,
         "gap": "D-SCRAP-FORM",
         "reason": "This strata id is the SIM.40.01 slot. The metal class has no strata form, so the id is not a ledger strata key. The mass is booked on the item form."
-      }
+      },
+      "cpPerStratum": 614208
     },
     {
       "id": "mineral_trace",
@@ -3580,7 +3569,7 @@
       "ledger": {
         "class": "fe_trace",
         "family": "fe",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "classByElement": {
@@ -3593,7 +3582,6 @@
       "densityStatus": "PM_DEFAULT",
       "densitySource": "SIM.40.01 §2.4 1.8 t/m3",
       "kgPerSlice": 2549,
-      "massPerSlice": 2549000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 20000,
@@ -3635,7 +3623,7 @@
             "fromForm": "strata",
             "class": "fe_trace",
             "form": "strata",
-            "mu": 2549000
+            "cp": 561958
           }
         ]
       },
@@ -3647,7 +3635,7 @@
             "fromForm": "strata",
             "class": "fe_trace",
             "form": "strata",
-            "mu": 2549000
+            "cp": 561958
           }
         ]
       },
@@ -3660,7 +3648,8 @@
         ],
         "neverOre": true,
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 561958
     },
     {
       "id": "broken_timber",
@@ -3669,14 +3658,13 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 250,
       "densityStatus": "PM_DEFAULT",
       "densitySource": "SIM.40.01 §2.4 0.25 t/m3",
       "kgPerSlice": 354,
-      "massPerSlice": 354000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanBase": [
@@ -3738,7 +3726,7 @@
             "form": "item",
             "item": "log",
             "count": 44,
-            "mu": 352000
+            "cp": 77616
           },
           {
             "process": "identity",
@@ -3746,8 +3734,8 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 2000,
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 428
           }
         ]
       },
@@ -3759,8 +3747,8 @@
             "fromForm": "strata",
             "class": "wood",
             "form": "strata",
-            "mu": 354000,
-            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3)."
+            "note": "Sub-item remainder stays loose wood strata (SIM.40.01 §9.2 row 3).",
+            "cp": 78044
           }
         ]
       },
@@ -3773,7 +3761,8 @@
         ],
         "disagreement": "D-RECLAIM-ORGANIC",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 78044
     },
     {
       "id": "dust",
@@ -3782,14 +3771,13 @@
       "ledger": {
         "class": "sediment",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 1000,
       "densityStatus": "PM_DEFAULT",
       "densitySource": "SIM.40.01 §2.4 1.0 t/m3",
       "kgPerSlice": 1416,
-      "massPerSlice": 1416000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 20000,
@@ -3831,7 +3819,7 @@
             "fromForm": "strata",
             "class": "sediment",
             "form": "strata",
-            "mu": 1416000
+            "cp": 312175
           }
         ]
       },
@@ -3843,7 +3831,7 @@
             "fromForm": "strata",
             "class": "sediment",
             "form": "strata",
-            "mu": 1416000
+            "cp": 312175
           }
         ]
       },
@@ -3856,7 +3844,8 @@
         ],
         "disagreement": "D-RECLAIM-RUBBLE",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 312175
     },
     {
       "id": "snow",
@@ -3895,13 +3884,12 @@
       "ledger": {
         "class": "stone",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.30 x limestone kg, SIM.40.01 §2.5",
       "kgPerSlice": 977,
-      "massPerSlice": 977000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 200000,
@@ -3945,7 +3933,7 @@
             "form": "item",
             "item": "stone",
             "count": 65,
-            "mu": 975000
+            "cp": 214955
           },
           {
             "process": "break",
@@ -3953,9 +3941,9 @@
             "fromForm": "object",
             "class": "rubble",
             "form": "strata",
-            "mu": 2000,
             "family": "mineral",
-            "note": "Sub-item remainder is loose rubble (SIM.40.01 §9.2 row 5)."
+            "note": "Sub-item remainder is loose rubble (SIM.40.01 §9.2 row 5).",
+            "cp": 437
           }
         ]
       },
@@ -3967,8 +3955,8 @@
             "fromForm": "object",
             "class": "rubble",
             "form": "strata",
-            "mu": 977000,
-            "debrisMaterial": "rubble"
+            "debrisMaterial": "rubble",
+            "cp": 215392
           }
         ]
       },
@@ -3989,11 +3977,12 @@
         "lines": [
           {
             "material": "limestone",
-            "mu": 977000
+            "cp": 215392
           }
         ],
-        "totalMu": 977000
-      }
+        "totalCp": 215392
+      },
+      "cpPerStratum": 215392
     },
     {
       "id": "ashlar",
@@ -4002,13 +3991,12 @@
       "ledger": {
         "class": "stone",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.40 x marble kg (dressed stone 2.7)",
       "kgPerSlice": 1529,
-      "massPerSlice": 1529000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanAny": 1,
@@ -4050,7 +4038,7 @@
             "form": "item",
             "item": "stone",
             "count": 101,
-            "mu": 1515000
+            "cp": 334007
           },
           {
             "process": "break",
@@ -4058,9 +4046,9 @@
             "fromForm": "object",
             "class": "rubble",
             "form": "strata",
-            "mu": 14000,
             "family": "mineral",
-            "note": "Sub-item remainder is loose rubble (SIM.40.01 §9.2 row 5)."
+            "note": "Sub-item remainder is loose rubble (SIM.40.01 §9.2 row 5).",
+            "cp": 3080
           }
         ]
       },
@@ -4072,8 +4060,8 @@
             "fromForm": "object",
             "class": "rubble",
             "form": "strata",
-            "mu": 1529000,
-            "debrisMaterial": "rubble"
+            "debrisMaterial": "rubble",
+            "cp": 337087
           }
         ]
       },
@@ -4094,11 +4082,12 @@
         "lines": [
           {
             "material": "marble",
-            "mu": 1529000
+            "cp": 337087
           }
         ],
-        "totalMu": 1529000
-      }
+        "totalCp": 337087
+      },
+      "cpPerStratum": 337087
     },
     {
       "id": "brick",
@@ -4107,13 +4096,12 @@
       "ledger": {
         "class": "stone",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.20 x brick density 1.9 t/m3 voxel",
       "kgPerSlice": 538,
-      "massPerSlice": 538000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 150000,
@@ -4157,7 +4145,7 @@
             "form": "item",
             "item": "stone",
             "count": 35,
-            "mu": 525000
+            "cp": 115745
           },
           {
             "process": "break",
@@ -4165,9 +4153,9 @@
             "fromForm": "object",
             "class": "rubble",
             "form": "strata",
-            "mu": 13000,
             "family": "mineral",
-            "note": "Sub-item remainder is loose rubble (SIM.40.01 §9.2 row 5)."
+            "note": "Sub-item remainder is loose rubble (SIM.40.01 §9.2 row 5).",
+            "cp": 2864
           }
         ]
       },
@@ -4179,8 +4167,8 @@
             "fromForm": "object",
             "class": "rubble",
             "form": "strata",
-            "mu": 538000,
-            "debrisMaterial": "rubble"
+            "debrisMaterial": "rubble",
+            "cp": 118609
           }
         ]
       },
@@ -4201,11 +4189,12 @@
         "lines": [
           {
             "material": "brick",
-            "mu": 538000
+            "cp": 118609
           }
         ],
-        "totalMu": 538000
-      }
+        "totalCp": 118609
+      },
+      "cpPerStratum": 118609
     },
     {
       "id": "stone_vault",
@@ -4214,13 +4203,12 @@
       "ledger": {
         "class": "stone",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.35 x limestone",
       "kgPerSlice": 1140,
-      "massPerSlice": 1140000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanAny": 3,
@@ -4261,8 +4249,17 @@
             "class": "stone",
             "form": "item",
             "item": "stone",
-            "count": 76,
-            "mu": 1140000
+            "count": 75,
+            "cp": 248025
+          },
+          {
+            "process": "break",
+            "fromClass": "stone",
+            "fromForm": "object",
+            "class": "rubble",
+            "form": "strata",
+            "cp": 3302,
+            "note": "Sub-item remainder"
           }
         ]
       },
@@ -4274,8 +4271,8 @@
             "fromForm": "object",
             "class": "rubble",
             "form": "strata",
-            "mu": 1140000,
-            "debrisMaterial": "rubble"
+            "debrisMaterial": "rubble",
+            "cp": 251327
           }
         ]
       },
@@ -4296,11 +4293,12 @@
         "lines": [
           {
             "material": "limestone",
-            "mu": 1140000
+            "cp": 251327
           }
         ],
-        "totalMu": 1140000
-      }
+        "totalCp": 251327
+      },
+      "cpPerStratum": 251327
     },
     {
       "id": "foundation",
@@ -4309,13 +4307,12 @@
       "ledger": {
         "class": "stone",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.60 x limestone",
       "kgPerSlice": 1954,
-      "massPerSlice": 1954000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanAny": 0,
@@ -4358,7 +4355,7 @@
             "form": "item",
             "item": "stone",
             "count": 130,
-            "mu": 1950000
+            "cp": 429910
           },
           {
             "process": "break",
@@ -4366,9 +4363,9 @@
             "fromForm": "object",
             "class": "rubble",
             "form": "strata",
-            "mu": 4000,
             "family": "mineral",
-            "note": "Sub-item remainder is loose rubble (SIM.40.01 §9.2 row 5)."
+            "note": "Sub-item remainder is loose rubble (SIM.40.01 §9.2 row 5).",
+            "cp": 873
           }
         ]
       },
@@ -4380,8 +4377,8 @@
             "fromForm": "object",
             "class": "rubble",
             "form": "strata",
-            "mu": 1954000,
-            "debrisMaterial": "rubble"
+            "debrisMaterial": "rubble",
+            "cp": 430783
           }
         ]
       },
@@ -4402,11 +4399,12 @@
         "lines": [
           {
             "material": "limestone",
-            "mu": 1954000
+            "cp": 430783
           }
         ],
-        "totalMu": 1954000
-      }
+        "totalCp": 430783
+      },
+      "cpPerStratum": 430783
     },
     {
       "id": "rammed_earth",
@@ -4415,13 +4413,12 @@
       "ledger": {
         "class": "soil",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.30 x compacted earth 1.9 t/m3",
       "kgPerSlice": 807,
-      "massPerSlice": 807000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 60000,
@@ -4462,8 +4459,8 @@
             "fromForm": "strata",
             "class": "soil",
             "form": "strata",
-            "mu": 807000,
-            "note": "No generic soil item. The remainder stays loose soil strata (SIM.40.01 §9.2 rows 3 and 4)."
+            "note": "No generic soil item. The remainder stays loose soil strata (SIM.40.01 §9.2 rows 3 and 4).",
+            "cp": 177913
           }
         ]
       },
@@ -4475,8 +4472,8 @@
             "fromForm": "strata",
             "class": "soil",
             "form": "strata",
-            "mu": 807000,
-            "debrisMaterial": "loose_fill"
+            "debrisMaterial": "loose_fill",
+            "cp": 177913
           }
         ]
       },
@@ -4493,12 +4490,13 @@
         "lines": [
           {
             "material": "soil",
-            "mu": 807000
+            "cp": 177913
           }
         ],
-        "totalMu": 807000
+        "totalCp": 177913
       },
-      "disagreement": "D-SOIL-SPLIT"
+      "disagreement": "D-SOIL-SPLIT",
+      "cpPerStratum": 177913
     },
     {
       "id": "timber_floor",
@@ -4507,13 +4505,12 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "52 kg/m2 x 2.322576 m2",
       "kgPerSlice": 121,
-      "massPerSlice": 121000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanAny": 2,
@@ -4572,9 +4569,9 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 120000,
             "item": "log",
-            "count": 15
+            "count": 15,
+            "cp": 26460
           },
           {
             "process": "identity",
@@ -4582,8 +4579,8 @@
             "fromForm": "object",
             "class": "wood",
             "form": "object",
-            "mu": 1000,
-            "gap": "D-WOOD-LOOSE"
+            "gap": "D-WOOD-LOOSE",
+            "cp": 216
           }
         ]
       },
@@ -4595,11 +4592,11 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 120000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
             "item": "log",
-            "count": 15
+            "count": 15,
+            "cp": 26460
           },
           {
             "process": "identity",
@@ -4607,10 +4604,10 @@
             "fromForm": "object",
             "class": "wood",
             "form": "object",
-            "mu": 1000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
-            "gap": "D-WOOD-LOOSE"
+            "gap": "D-WOOD-LOOSE",
+            "cp": 216
           }
         ]
       },
@@ -4628,20 +4625,21 @@
         "lines": [
           {
             "material": "oak",
-            "mu": 121000
+            "cp": 26676
           }
         ],
-        "totalMu": 121000
+        "totalCp": 26676
       },
       "speciesScale": {
-        "oak": 121000,
-        "pine": 73000,
-        "birch": 105000,
-        "wood_ash": 110000,
-        "willow": 68000,
-        "elm": 97000,
-        "yew": 108000
-      }
+        "oak": 26676,
+        "pine": 16094,
+        "birch": 23149,
+        "wood_ash": 24251,
+        "willow": 14991,
+        "elm": 21385,
+        "yew": 23810
+      },
+      "cpPerStratum": 26676
     },
     {
       "id": "timber_wall",
@@ -4650,13 +4648,12 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.25 x oak",
       "kgPerSlice": 266,
-      "massPerSlice": 266000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 40000,
@@ -4716,9 +4713,20 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 266000,
             "item": "firewood",
-            "count": 133
+            "count": 132,
+            "cp": 58212
+          },
+          {
+            "process": "identity",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "object",
+            "cp": 431,
+            "note": "Sub-item remainder",
+            "gap": "D-WOOD-LOOSE",
+            "debrisMaterial": "broken_timber"
           }
         ]
       },
@@ -4730,11 +4738,22 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 266000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
             "item": "firewood",
-            "count": 133
+            "count": 132,
+            "cp": 58212
+          },
+          {
+            "process": "identity",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "object",
+            "cp": 431,
+            "note": "Sub-item remainder",
+            "gap": "D-WOOD-LOOSE",
+            "debrisMaterial": "broken_timber"
           }
         ]
       },
@@ -4752,20 +4771,21 @@
         "lines": [
           {
             "material": "oak",
-            "mu": 266000
+            "cp": 58643
           }
         ],
-        "totalMu": 266000
+        "totalCp": 58643
       },
       "speciesScale": {
-        "oak": 266000,
-        "pine": 160000,
-        "birch": 231000,
-        "wood_ash": 241000,
-        "willow": 149000,
-        "elm": 213000,
-        "yew": 238000
-      }
+        "oak": 58643,
+        "pine": 35274,
+        "birch": 50927,
+        "wood_ash": 53131,
+        "willow": 32849,
+        "elm": 46958,
+        "yew": 52470
+      },
+      "cpPerStratum": 58643
     },
     {
       "id": "timber_frame",
@@ -4774,13 +4794,12 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.12 x oak. Mineral infill is named and not given a mass (D-TIMBER-INFILL).",
       "kgPerSlice": 127,
-      "massPerSlice": 127000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 15000,
@@ -4840,9 +4859,9 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 120000,
             "item": "log",
-            "count": 15
+            "count": 15,
+            "cp": 26460
           },
           {
             "process": "salvage",
@@ -4850,9 +4869,9 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 6000,
             "item": "firewood",
-            "count": 3
+            "count": 3,
+            "cp": 1323
           },
           {
             "process": "identity",
@@ -4860,8 +4879,8 @@
             "fromForm": "object",
             "class": "wood",
             "form": "object",
-            "mu": 1000,
-            "gap": "D-WOOD-LOOSE"
+            "gap": "D-WOOD-LOOSE",
+            "cp": 216
           }
         ]
       },
@@ -4873,11 +4892,11 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 120000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
             "item": "log",
-            "count": 15
+            "count": 15,
+            "cp": 26460
           },
           {
             "process": "salvage",
@@ -4885,11 +4904,11 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 6000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
             "item": "firewood",
-            "count": 3
+            "count": 3,
+            "cp": 1323
           },
           {
             "process": "identity",
@@ -4897,10 +4916,10 @@
             "fromForm": "object",
             "class": "wood",
             "form": "object",
-            "mu": 1000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
-            "gap": "D-WOOD-LOOSE"
+            "gap": "D-WOOD-LOOSE",
+            "cp": 216
           }
         ]
       },
@@ -4918,21 +4937,22 @@
         "lines": [
           {
             "material": "oak",
-            "mu": 127000
+            "cp": 27999
           }
         ],
-        "totalMu": 127000
+        "totalCp": 27999
       },
       "speciesScale": {
-        "oak": 127000,
-        "pine": 76000,
-        "birch": 110000,
-        "wood_ash": 115000,
-        "willow": 71000,
-        "elm": 102000,
-        "yew": 113000
+        "oak": 27999,
+        "pine": 16755,
+        "birch": 24251,
+        "wood_ash": 25353,
+        "willow": 15653,
+        "elm": 22487,
+        "yew": 24912
       },
-      "disagreement": "D-TIMBER-INFILL"
+      "disagreement": "D-TIMBER-INFILL",
+      "cpPerStratum": 27999
     },
     {
       "id": "timber_post",
@@ -4941,13 +4961,12 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.04 x oak",
       "kgPerSlice": 42,
-      "massPerSlice": 42000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 20000,
@@ -5006,9 +5025,20 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 42000,
             "item": "firewood",
-            "count": 21
+            "count": 20,
+            "cp": 8820
+          },
+          {
+            "process": "identity",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "object",
+            "cp": 439,
+            "note": "Sub-item remainder",
+            "gap": "D-WOOD-LOOSE",
+            "debrisMaterial": "broken_timber"
           }
         ]
       },
@@ -5020,11 +5050,22 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 42000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
             "item": "firewood",
-            "count": 21
+            "count": 20,
+            "cp": 8820
+          },
+          {
+            "process": "identity",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "object",
+            "cp": 439,
+            "note": "Sub-item remainder",
+            "gap": "D-WOOD-LOOSE",
+            "debrisMaterial": "broken_timber"
           }
         ]
       },
@@ -5042,20 +5083,21 @@
         "lines": [
           {
             "material": "oak",
-            "mu": 42000
+            "cp": 9259
           }
         ],
-        "totalMu": 42000
+        "totalCp": 9259
       },
       "speciesScale": {
-        "oak": 42000,
-        "pine": 25000,
-        "birch": 36000,
-        "wood_ash": 38000,
-        "willow": 24000,
-        "elm": 34000,
-        "yew": 38000
-      }
+        "oak": 9259,
+        "pine": 5512,
+        "birch": 7937,
+        "wood_ash": 8378,
+        "willow": 5291,
+        "elm": 7496,
+        "yew": 8378
+      },
+      "cpPerStratum": 9259
     },
     {
       "id": "timber_roof",
@@ -5064,13 +5106,12 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "60 kg/m2",
       "kgPerSlice": 139,
-      "massPerSlice": 139000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanAny": 2,
@@ -5129,9 +5170,9 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 136000,
             "item": "log",
-            "count": 17
+            "count": 17,
+            "cp": 29988
           },
           {
             "process": "salvage",
@@ -5139,9 +5180,9 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 2000,
             "item": "firewood",
-            "count": 1
+            "count": 1,
+            "cp": 441
           },
           {
             "process": "identity",
@@ -5149,8 +5190,8 @@
             "fromForm": "object",
             "class": "wood",
             "form": "object",
-            "mu": 1000,
-            "gap": "D-WOOD-LOOSE"
+            "gap": "D-WOOD-LOOSE",
+            "cp": 215
           }
         ]
       },
@@ -5162,11 +5203,11 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 136000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
             "item": "log",
-            "count": 17
+            "count": 17,
+            "cp": 29988
           },
           {
             "process": "salvage",
@@ -5174,11 +5215,11 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 2000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
             "item": "firewood",
-            "count": 1
+            "count": 1,
+            "cp": 441
           },
           {
             "process": "identity",
@@ -5186,10 +5227,10 @@
             "fromForm": "object",
             "class": "wood",
             "form": "object",
-            "mu": 1000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
-            "gap": "D-WOOD-LOOSE"
+            "gap": "D-WOOD-LOOSE",
+            "cp": 215
           }
         ]
       },
@@ -5207,20 +5248,21 @@
         "lines": [
           {
             "material": "oak",
-            "mu": 139000
+            "cp": 30644
           }
         ],
-        "totalMu": 139000
+        "totalCp": 30644
       },
       "speciesScale": {
-        "oak": 139000,
-        "pine": 83000,
-        "birch": 120000,
-        "wood_ash": 126000,
-        "willow": 78000,
-        "elm": 111000,
-        "yew": 124000
-      }
+        "oak": 30644,
+        "pine": 18298,
+        "birch": 26455,
+        "wood_ash": 27778,
+        "willow": 17196,
+        "elm": 24471,
+        "yew": 27337
+      },
+      "cpPerStratum": 30644
     },
     {
       "id": "thatch_roof",
@@ -5229,13 +5271,12 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "41 kg/m2",
       "kgPerSlice": 95,
-      "massPerSlice": 95000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanAny": 2,
@@ -5294,9 +5335,9 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 88000,
             "item": "log",
-            "count": 11
+            "count": 11,
+            "cp": 19404
           },
           {
             "process": "salvage",
@@ -5304,9 +5345,9 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 6000,
             "item": "firewood",
-            "count": 3
+            "count": 3,
+            "cp": 1323
           },
           {
             "process": "identity",
@@ -5314,8 +5355,8 @@
             "fromForm": "object",
             "class": "wood",
             "form": "object",
-            "mu": 1000,
-            "gap": "D-WOOD-LOOSE"
+            "gap": "D-WOOD-LOOSE",
+            "cp": 217
           }
         ]
       },
@@ -5327,11 +5368,11 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 88000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
             "item": "log",
-            "count": 11
+            "count": 11,
+            "cp": 19404
           },
           {
             "process": "salvage",
@@ -5339,11 +5380,11 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 6000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
             "item": "firewood",
-            "count": 3
+            "count": 3,
+            "cp": 1323
           },
           {
             "process": "identity",
@@ -5351,10 +5392,10 @@
             "fromForm": "object",
             "class": "wood",
             "form": "object",
-            "mu": 1000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
-            "gap": "D-WOOD-LOOSE"
+            "gap": "D-WOOD-LOOSE",
+            "cp": 217
           }
         ]
       },
@@ -5372,11 +5413,12 @@
         "lines": [
           {
             "material": "oak",
-            "mu": 95000
+            "cp": 20944
           }
         ],
-        "totalMu": 95000
-      }
+        "totalCp": 20944
+      },
+      "cpPerStratum": 20944
     },
     {
       "id": "bridge_deck",
@@ -5385,13 +5427,12 @@
       "ledger": {
         "class": "wood",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.14 x oak",
       "kgPerSlice": 149,
-      "massPerSlice": 149000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanAny": 2,
@@ -5450,9 +5491,9 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 144000,
             "item": "log",
-            "count": 18
+            "count": 18,
+            "cp": 31752
           },
           {
             "process": "salvage",
@@ -5460,9 +5501,9 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 4000,
             "item": "firewood",
-            "count": 2
+            "count": 2,
+            "cp": 882
           },
           {
             "process": "identity",
@@ -5470,8 +5511,8 @@
             "fromForm": "object",
             "class": "wood",
             "form": "object",
-            "mu": 1000,
-            "gap": "D-WOOD-LOOSE"
+            "gap": "D-WOOD-LOOSE",
+            "cp": 215
           }
         ]
       },
@@ -5483,11 +5524,11 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 144000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
             "item": "log",
-            "count": 18
+            "count": 18,
+            "cp": 31752
           },
           {
             "process": "salvage",
@@ -5495,11 +5536,11 @@
             "fromForm": "object",
             "class": "wood",
             "form": "item",
-            "mu": 4000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
             "item": "firewood",
-            "count": 2
+            "count": 2,
+            "cp": 882
           },
           {
             "process": "identity",
@@ -5507,10 +5548,10 @@
             "fromForm": "object",
             "class": "wood",
             "form": "object",
-            "mu": 1000,
             "debrisMaterial": "broken_timber",
             "disagreement": "D-WOOD-COLLAPSE",
-            "gap": "D-WOOD-LOOSE"
+            "gap": "D-WOOD-LOOSE",
+            "cp": 215
           }
         ]
       },
@@ -5528,20 +5569,21 @@
         "lines": [
           {
             "material": "oak",
-            "mu": 149000
+            "cp": 32849
           }
         ],
-        "totalMu": 149000
+        "totalCp": 32849
       },
       "speciesScale": {
-        "oak": 149000,
-        "pine": 89000,
-        "birch": 129000,
-        "wood_ash": 135000,
-        "willow": 83000,
-        "elm": 119000,
-        "yew": 133000
-      }
+        "oak": 32849,
+        "pine": 19621,
+        "birch": 28440,
+        "wood_ash": 29762,
+        "willow": 18298,
+        "elm": 26235,
+        "yew": 29321
+      },
+      "cpPerStratum": 32849
     },
     {
       "id": "iron_grate",
@@ -5550,13 +5592,12 @@
       "ledger": {
         "class": "fe_metal",
         "family": "fe",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.01 x iron voxel",
       "kgPerSlice": 111,
-      "massPerSlice": 111000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanAny": 2,
@@ -5598,9 +5639,20 @@
             "fromForm": "object",
             "class": "fe_metal",
             "form": "item",
-            "mu": 111000,
             "item": "hardware_iron",
-            "count": 222
+            "count": 222,
+            "cp": 24420
+          },
+          {
+            "process": "salvage",
+            "fromClass": "fe_metal",
+            "fromForm": "object",
+            "class": "fe_metal",
+            "form": "item",
+            "cp": 51,
+            "note": "Sub-item remainder",
+            "gap": "D-SCRAP-FORM",
+            "debrisMaterial": "scrap"
           }
         ]
       },
@@ -5612,11 +5664,22 @@
             "fromForm": "object",
             "class": "fe_metal",
             "form": "item",
-            "mu": 111000,
             "debrisMaterial": "scrap",
             "disagreement": "D-SCRAP-FORM",
             "item": "hardware_iron",
-            "count": 222
+            "count": 222,
+            "cp": 24420
+          },
+          {
+            "process": "salvage",
+            "fromClass": "fe_metal",
+            "fromForm": "object",
+            "class": "fe_metal",
+            "form": "item",
+            "cp": 51,
+            "note": "Sub-item remainder",
+            "gap": "D-SCRAP-FORM",
+            "debrisMaterial": "scrap"
           }
         ]
       },
@@ -5633,16 +5696,17 @@
         "lines": [
           {
             "material": "iron",
-            "mu": 111000
+            "cp": 24471
           }
         ],
-        "totalMu": 111000
+        "totalCp": 24471
       },
       "strataForm": {
         "bookable": false,
         "gap": "D-SCRAP-FORM",
         "reason": "This strata id is the SIM.40.01 slot. The metal class has no strata form, so the id is not a ledger strata key. The mass is booked on the item form."
-      }
+      },
+      "cpPerStratum": 24471
     },
     {
       "id": "conjured_stone",
@@ -5651,13 +5715,12 @@
       "ledger": {
         "class": "stone",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "object",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "0.10 x granite",
       "kgPerSlice": 389,
-      "massPerSlice": 389000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "spanAny": 2,
@@ -5701,7 +5764,7 @@
             "form": "item",
             "item": "stone",
             "count": 25,
-            "mu": 375000
+            "cp": 82675
           },
           {
             "process": "break",
@@ -5709,9 +5772,9 @@
             "fromForm": "object",
             "class": "rubble",
             "form": "strata",
-            "mu": 14000,
             "family": "mineral",
-            "note": "Sub-item remainder is loose rubble (SIM.40.01 §9.2 row 5)."
+            "note": "Sub-item remainder is loose rubble (SIM.40.01 §9.2 row 5).",
+            "cp": 3085
           }
         ]
       },
@@ -5723,8 +5786,8 @@
             "fromForm": "object",
             "class": "rubble",
             "form": "strata",
-            "mu": 389000,
-            "debrisMaterial": "rubble"
+            "debrisMaterial": "rubble",
+            "cp": 85760
           }
         ]
       },
@@ -5745,11 +5808,12 @@
         "lines": [
           {
             "material": "granite",
-            "mu": 389000
+            "cp": 85760
           }
         ],
-        "totalMu": 389000
-      }
+        "totalCp": 85760
+      },
+      "cpPerStratum": 85760
     },
     {
       "id": "stairs_reserved",
@@ -5785,7 +5849,7 @@
       "ledger": {
         "class": "fe_ore",
         "family": "fe",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "massStatus": "OWNER_OPEN",
@@ -5824,7 +5888,7 @@
       "ledger": {
         "class": "cu_ore",
         "family": "cu",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "massStatus": "OWNER_OPEN",
@@ -5863,7 +5927,7 @@
       "ledger": {
         "class": "ag_ore",
         "family": "ag",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "massStatus": "OWNER_OPEN",
@@ -5902,7 +5966,7 @@
       "ledger": {
         "class": "au_ore",
         "family": "au",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "massStatus": "OWNER_OPEN",
@@ -5941,7 +6005,7 @@
       "ledger": {
         "class": "pt_ore",
         "family": "pt",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "massStatus": "OWNER_OPEN",
@@ -6108,14 +6172,13 @@
       "ledger": {
         "class": "soil",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 1600,
       "densityStatus": "PLACEHOLDER",
       "densitySource": "No catalogue density. 1600 kg/m3 stands in and is not a measured sand value.",
       "kgPerSlice": 2265,
-      "massPerSlice": 2265000,
       "massStatus": "PLACEHOLDER",
       "support": {
         "bearingKg": 20000,
@@ -6155,8 +6218,17 @@
             "class": "soil",
             "form": "item",
             "item": "sand",
-            "count": 1510,
-            "mu": 2265000
+            "count": 1508,
+            "cp": 499148
+          },
+          {
+            "process": "identity",
+            "fromClass": "soil",
+            "fromForm": "strata",
+            "class": "soil",
+            "form": "strata",
+            "cp": 199,
+            "note": "Sub-item remainder"
           }
         ]
       },
@@ -6168,7 +6240,7 @@
             "fromForm": "strata",
             "class": "soil",
             "form": "strata",
-            "mu": 2265000
+            "cp": 499347
           }
         ]
       },
@@ -6180,7 +6252,8 @@
           "identity"
         ],
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 499347
     },
     {
       "id": "clay",
@@ -6189,14 +6262,13 @@
       "ledger": {
         "class": "soil",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 1800,
       "densityStatus": "PLACEHOLDER",
       "densitySource": "No catalogue density. 1800 kg/m3 stands in.",
       "kgPerSlice": 2549,
-      "massPerSlice": 2549000,
       "massStatus": "PLACEHOLDER",
       "support": {
         "bearingKg": 20000,
@@ -6236,8 +6308,8 @@
             "class": "soil",
             "form": "item",
             "item": "clay",
-            "count": 1699,
-            "mu": 2548500
+            "count": 1697,
+            "cp": 561707
           },
           {
             "process": "identity",
@@ -6245,8 +6317,8 @@
             "fromForm": "strata",
             "class": "soil",
             "form": "strata",
-            "mu": 500,
-            "note": "No generic soil item. The remainder stays loose soil strata (SIM.40.01 §9.2 rows 3 and 4)."
+            "note": "No generic soil item. The remainder stays loose soil strata (SIM.40.01 §9.2 rows 3 and 4).",
+            "cp": 251
           }
         ]
       },
@@ -6258,7 +6330,7 @@
             "fromForm": "strata",
             "class": "soil",
             "form": "strata",
-            "mu": 2549000
+            "cp": 561958
           }
         ]
       },
@@ -6270,7 +6342,8 @@
           "identity"
         ],
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 561958
     },
     {
       "id": "gravel",
@@ -6279,14 +6352,13 @@
       "ledger": {
         "class": "rubble",
         "family": "mineral",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 1500,
       "densityStatus": "PLACEHOLDER",
       "densitySource": "No catalogue density. 1500 kg/m3 stands in, the sediment figure, not a measured gravel.",
       "kgPerSlice": 2124,
-      "massPerSlice": 2124000,
       "massStatus": "PLACEHOLDER",
       "support": {
         "bearingKg": 30000,
@@ -6324,8 +6396,8 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 2124000,
-            "note": "No rubble item. The mass stays loose rubble strata (SIM.40.01 §9.2 row 8)."
+            "note": "No rubble item. The mass stays loose rubble strata (SIM.40.01 §9.2 row 8).",
+            "cp": 468262
           }
         ]
       },
@@ -6337,7 +6409,7 @@
             "fromForm": "strata",
             "class": "rubble",
             "form": "strata",
-            "mu": 2124000
+            "cp": 468262
           }
         ]
       },
@@ -6351,7 +6423,8 @@
         ],
         "disagreement": "D-RECLAIM-RUBBLE",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 468262
     },
     {
       "id": "bone",
@@ -6360,7 +6433,7 @@
       "ledger": {
         "class": "biomass",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "item",
       "disagreement": "D-BONE",
@@ -6368,7 +6441,6 @@
       "densityStatus": "PLACEHOLDER",
       "densitySource": "No catalogue density and no ledger bone class. 1900 kg/m3 stands in.",
       "kgPerSlice": 2690,
-      "massPerSlice": 2690000,
       "massStatus": "PLACEHOLDER",
       "support": {
         "spanAny": 0,
@@ -6401,7 +6473,7 @@
             "class": "biomass",
             "form": "item",
             "item": "bone",
-            "mu": 2690000
+            "cp": 593043
           }
         ]
       },
@@ -6413,7 +6485,7 @@
             "fromForm": "item",
             "class": "humus",
             "form": "strata",
-            "mu": 2690000
+            "cp": 593043
           }
         ]
       },
@@ -6431,7 +6503,8 @@
         "bookable": false,
         "gap": "D-BONE-FORM",
         "reason": "Strata id 51 is the SIM.40.01 loose id. Class biomass has no strata form, so this id is not a ledger strata key. The slice mass is booked as biomass/item."
-      }
+      },
+      "cpPerStratum": 593043
     },
     {
       "id": "charcoal",
@@ -6440,14 +6513,13 @@
       "ledger": {
         "class": "charcoal",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityKgM3": 240,
       "densityStatus": "PM_DEFAULT",
       "densitySource": "Lane R R-04.3 15 lb/ft3 rounded to 240 kg/m3. Slice 340 kg. D-CHARCOAL-MASS.",
       "kgPerSlice": 340,
-      "massPerSlice": 340000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "disagreement": "D-CHARCOAL-MASS",
       "support": {
@@ -6493,7 +6565,7 @@
             "fromForm": "strata",
             "class": "charcoal",
             "form": "strata",
-            "mu": 340000
+            "cp": 74957
           }
         ]
       },
@@ -6505,7 +6577,7 @@
             "fromForm": "strata",
             "class": "charcoal",
             "form": "strata",
-            "mu": 340000
+            "cp": 74957
           }
         ]
       },
@@ -6518,7 +6590,8 @@
         ],
         "disagreement": "D-RECLAIM-ORGANIC",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 74957
     },
     {
       "id": "humus",
@@ -6527,13 +6600,12 @@
       "ledger": {
         "class": "humus",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "strata",
       "densityStatus": "PM_DEFAULT",
       "densitySource": "Lane R R-06.3 litter bulk 80 lb/ft3 x 50 ft3 = 4000 lb ≈ 1814 kg after half-up. Not a catalogue density.",
       "kgPerSlice": 1814,
-      "massPerSlice": 1814000,
       "massStatus": "PM_DEFAULT_UNCONFIRMED",
       "support": {
         "bearingKg": 20000,
@@ -6565,7 +6637,7 @@
             "fromForm": "strata",
             "class": "humus",
             "form": "strata",
-            "mu": 1814000
+            "cp": 399919
           }
         ]
       },
@@ -6577,7 +6649,7 @@
             "fromForm": "strata",
             "class": "humus",
             "form": "strata",
-            "mu": 1814000
+            "cp": 399919
           }
         ]
       },
@@ -6590,7 +6662,8 @@
         ],
         "disagreement": "D-RECLAIM-ORGANIC",
         "status": "PM_DEFAULT"
-      }
+      },
+      "cpPerStratum": 399919
     },
     {
       "id": "flesh",
@@ -6598,14 +6671,13 @@
       "ledger": {
         "class": "biomass",
         "family": "organic",
-        "unit": "mu"
+        "unit": "cp"
       },
       "ledgerForm": "item",
       "densityKgM3": 1000,
       "densityStatus": "PLACEHOLDER",
       "densitySource": "No catalogue density. 1000 kg/m3 stands in for a body-scale reference, not a measured value.",
       "kgPerSlice": 1416,
-      "massPerSlice": 1416000,
       "massStatus": "PLACEHOLDER",
       "support": {
         "spanAny": 0,
@@ -6654,8 +6726,8 @@
             "fromForm": "item",
             "class": "biomass",
             "form": "item",
-            "mu": 1416000,
-            "bulk": true
+            "bulk": true,
+            "cp": 312175
           }
         ]
       },
@@ -6667,7 +6739,7 @@
             "fromForm": "item",
             "class": "humus",
             "form": "strata",
-            "mu": 1416000
+            "cp": 312175
           }
         ]
       },
@@ -6681,8 +6753,10 @@
         "disagreement": "D-RECLAIM-ORGANIC",
         "status": "PM_DEFAULT"
       },
-      "note": "Corpses and food share this class. Creature form is SIM.40.10's mass, not booked here."
+      "note": "Corpses and food share this class. Creature form is SIM.40.10's mass, not booked here.",
+      "cpPerStratum": 312175
     }
   ],
-  "decayStatusNote": "Lives are milli-years of simulated time (design year x 1000). DPY and the tick rate are null (D-1 OWNER_OPEN). Infinity is infinite:true, not a chosen year."
+  "decayStatusNote": "Lives are milli-years of simulated time (design year x 1000). DPY and the tick rate are null (D-1 OWNER_OPEN). Infinity is infinite:true, not a chosen year.",
+  "massUnit": "cp"
 }

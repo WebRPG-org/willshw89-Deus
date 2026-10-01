@@ -1,0 +1,7 @@
+LITERAL DEUS_Levels.js:109 [range literal] Object.freeze({ id: "deep_caverns", zMin: -16, zMax: -9, role: "deep" }),
+LITERAL DEUS_Levels.js:110 [range literal] Object.freeze({ id: "shallow_underground", zMin: -8, zMax: -1, role: "shallow" })
+LITERAL DEUS_Levels.js:2608 [5-slot index] for (let li = 0; li < 5; li++) {
+LITERAL DEUS_WorldGen.js:1608 [level bound] if (!L || !W || !W.state || ctx.z !== -2 || typeof L.setStrata !== "function" || typeof L.floodTypeAt !== "function") return;
+LITERAL DEUS_Depth.js:1423 [range literal] const zr = W.zRange ? W.zRange() : { zMin: -2, zMax: 2 };
+scan: 138 line(s) with a Z-range pattern in 22 plugins under C:\Users\snewt\.deus_worktrees\lane-do; 133 allowed by 110 allow-list entries; 5 not allowed; 0 stale entries
+exit_code=1

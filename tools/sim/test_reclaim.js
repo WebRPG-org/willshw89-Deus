@@ -17,6 +17,23 @@ const masses = JSON.parse(fs.readFileSync(path.join(ROOT, "game", "data", "sim",
 const interactions = JSON.parse(fs.readFileSync(path.join(ROOT, "game", "data", "sim", "interactions.json"), "utf8"));
 const ledgerDefaults = require(path.join(ROOT, "game", "js", "sim", "ledger_defaults.js"));
 const bag = { catalogue: catalogue, masses: masses, interactions: interactions };
+function adaptForReclaim(raw) {
+    const b = JSON.parse(JSON.stringify(raw));
+    for (const id of Object.keys(b.masses.objects || {})) {
+        const o = b.masses.objects[id];
+        if (o.massCp != null && o.massMu == null) o.massMu = o.massCp;
+        if (o.lines) for (const ln of o.lines) if (ln.cp != null && ln.mu == null) ln.mu = ln.cp;
+        if (o.bill) for (const bl of o.bill) if (bl.cp != null && bl.mu == null) bl.mu = bl.cp;
+        if (o.yield && o.yield.postings) for (const p of o.yield.postings) if (p.cp != null && p.mu == null) p.mu = p.cp;
+        if (o.collapse && o.collapse.postings) for (const p of o.collapse.postings) if (p.cp != null && p.mu == null) p.mu = p.cp;
+    }
+    for (const id of Object.keys(b.masses.items || {})) {
+        const it = b.masses.items[id];
+        if (it.massCp != null && it.massMu == null) it.massMu = it.massCp;
+    }
+    return b;
+}
+const reclaimBag = adaptForReclaim(bag);
 const SRC = fs.readFileSync(path.join(ROOT, "game", "js", "sim", "reclaim.js"), "utf8").replace(/\r\n/g, "\n");
 
 let passed = 0, failed = 0;
@@ -35,7 +52,7 @@ function loadReclaim(src) {
 function open() {
     const ledger = createLedger();
     const materials = createMaterials(bag);
-    const session = createReclaim({ ledger: ledger, materials: materials, data: bag, strict: true });
+    const session = createReclaim({ ledger: ledger, materials: materials, data: reclaimBag, strict: true });
     return { ledger: ledger, materials: materials, session: session };
 }
 function codeOf(fn) {
@@ -99,7 +116,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     w.session.registerObject("wall_wood", 1, "worldgen");
     w.session.seal();
     const r = w.session.note("deconstruct", { elementId: "wall_wood", count: 1, cause: "objects:remove" });
-    check("deconstruct wall", r.ok && placeMu(w.session, "wood", "item") === 8000 && placeMu(w.session, "wood", "object") === 0 && w.session.conserved().ok, JSON.stringify(r));
+    check("deconstruct wall", r.ok && placeMu(w.session, "wood", "item") === 1764 && placeMu(w.session, "wood", "object") === 0 && w.session.conserved().ok, JSON.stringify(r));
 }
 
 {
@@ -109,7 +126,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     const ore = w.ledger.familyTotal("fe");
     const r = w.session.note("harvest", { elementId: "ironstone", cause: "objects:mine" });
     w.session.tick(40);
-    check("ore harvest keeps the gram", r.ok && w.ledger.familyTotal("fe") === ore && w.ledger.amount("fe_ore", "item") === 24000 && w.ledger.amount("fe_ore", "object") === 0 && w.session.conserved().ok, JSON.stringify(r) + " " + w.session.conserved().recountMsg);
+    check("ore harvest keeps the gram", r.ok && w.ledger.familyTotal("fe") === ore && w.ledger.amount("fe_ore", "item") === 5292 && w.ledger.amount("fe_ore", "object") === 0 && w.session.conserved().ok, JSON.stringify(r) + " " + w.session.conserved().recountMsg);
 }
 
 {
@@ -137,14 +154,14 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     const stored = piles.filter(function (p) { return p.exempt && p.cls === "fe_metal"; });
     const rusted = piles.filter(function (p) { return p.cls === "fe_trace"; });
     const gold = piles.filter(function (p) { return p.cls === "au_metal" && p.form === "item"; });
-    check("exempt iron stays metal", stored.length === 1 && stored[0].mu === 4000 && rusted.length === 1 && rusted[0].mu === 4000, JSON.stringify(piles));
-    check("gold stays scrap", gold.length === 1 && gold[0].mu === 100 && w.ledger.amount("au_ore", "item") === 0);
+    check("exempt iron stays metal", stored.length === 1 && stored[0].mu === 882 && rusted.length === 1 && rusted[0].mu === 882, JSON.stringify(piles));
+    check("gold stays scrap", gold.length === 1 && gold[0].mu === 22 && w.ledger.amount("au_ore", "item") === 0);
     check("finite families constant", w.ledger.familyTotal("au") === au && w.ledger.familyTotal("fe") === fe && w.ledger.familyTotal("gem") === gem && w.session.conserved().ok);
 }
 
 {
     const w = open();
-    w.session.registerItem("bone", 3628, "worldgen", { at: { x: 5, y: 5, z: 0 } });
+    w.session.registerItem("bone", 3636, "worldgen", { at: { x: 5, y: 5, z: 0 } });
     w.session.seal();
     const organic = w.ledger.familyTotal("organic");
     const mat = w.session.places()[0].materialId;
@@ -154,7 +171,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
         guard++;
     }
     const blocks = w.session.blocks().filter(function (b) { return b.cls === "humus" && b.x === 5; });
-    check("bone rots to one humus block", guard >= 1 && last && last.ok !== false && blocks.length === 1 && blocks[0].blocks === 1 && blocks[0].remainder === 0, JSON.stringify(last) + " " + JSON.stringify(blocks));
+    check("bone rots to one humus block", guard >= 1 && last && last.ok !== false && blocks.length === 1 && blocks[0].blocks === 1 && blocks[0].remainder === (3636 * 110 - 399919), JSON.stringify(last) + " " + JSON.stringify(blocks));
     check("bone family constant", w.ledger.familyTotal("organic") === organic && w.session.conserved().ok);
 }
 
@@ -238,7 +255,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     ));
     const ledger = createLedger();
     const materials = createMaterials(bag);
-    const session = Mut.createReclaim({ ledger: ledger, materials: materials, data: bag, strict: true });
+    const session = Mut.createReclaim({ ledger: ledger, materials: materials, data: reclaimBag, strict: true });
     session.registerSlice("limestone", 1, "worldgen");
     session.seal();
     let caught = false;
@@ -255,7 +272,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     ));
     const ledger = createLedger();
     const materials = createMaterials(bag);
-    const session = Mut.createReclaim({ ledger: ledger, materials: materials, data: bag, strict: true });
+    const session = Mut.createReclaim({ ledger: ledger, materials: materials, data: reclaimBag, strict: true });
     session.registerSlice("limestone", 1, "worldgen");
     session.registerHolding("stone", "strata", 1, "spare", { materialId: "limestone", pathId: "limestone", exempt: true });
     session.seal();

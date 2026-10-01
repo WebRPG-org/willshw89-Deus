@@ -3,7 +3,7 @@
   "steps": [
     {
       "op": "set",
-      "path": "catalogue.materials[id=granite].massPerSlice",
+      "path": "catalogue.materials[id=granite].cpPerStratum",
       "value": null
     }
   ]

@@ -1,0 +1,3 @@
+resume from HEAD 304ca7b2; re-read BRIEF and the uncommitted diff first
+
+Fix the three failures in tools/test_zrange.js (sparse_memory, old_layers_identical, matter_unchanged).

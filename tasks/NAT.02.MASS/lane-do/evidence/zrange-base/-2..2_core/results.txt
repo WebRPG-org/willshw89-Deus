@@ -1,0 +1,13 @@
+UF_Test run 2026-10-01T10:07:44.999Z args=[]
+DEBUG_SHEET: Scene_Boot.start called
+AVAILABLE SUITES: selftest, smoke, perf, native_starting_gear, native_survival_dying, native_perf_4x_benchmark, zrange, select, select, minimap, natural_connections, ownership, ecology, projects, settlement, colonists, overseer, world, spawn, worldgen, biomes, tiles, ground, factions, skins, history, objects, walls, doors, items, jobs, floors, wildlife, wildlife_seeds, stance, combat, anim, fog, daynight, timespeed, camera, culling, speech, overhead, look, sheet, talk, fire, vertical, natural_walls, flooding, strata, environment, faction_menus, title, load, setup, depth, layers_flat, select, select
+SUITE zrange
+PASS zrange.single_authority_ingame - range -2..2 (5 levels; UF.Levels.LEVELS the same list true); probes (isLevel, inWorld, Levels.isLevel, label, map id round trip, addUnit, Items.drop, Objects.setIn, strataAt, shapeAt, level list): -3: refused; -2: accepted; -1: accepted; 0: accepted; 2: accepted; 1: accepted; 3: refused
+PASS zrange.elevation_math - e = (z - -2) * 5 + s on cell (12,40) of levels -2, -1, 0, 1, 2: worldStrataElevationAt, airRunAt at e (0) and e + 1 (air above), a one-stratum box damage at e destroys exactly (z, s); highest elevation 24 (the top S4: 24); all agree
+PASS zrange.feet_constants - UF.Space: cell 5 ft (per cell 5), stratum 2 ft, 5 strata a layer, Z_STEP_FEET 10 (DEC-013: 5 / 2 / 5 / 10)
+PASS zrange.sparse_outer_uniform - 0 levels outside -2..+2: directory 0 B (64 chunks x 2 B a level), MIXED chunks 0 (0 B: the rock of 691 generated ceiling-cap columns rising above +2, none at this range), every other chunk UNIFORM; as expected; whole area: 2408984 B (directory 640 B, MIXED arrays 1616384 B, shape grids 327680 B)
+PASS zrange.sparse_split_one_chunk - sky cell (60,60) on +2 (air true): a wooden deck splits 1 chunk(s) [9] (split 0 -> 1, MIXED now 39 -> 40, records 0 -> 1); saved entry 89 B {"z":2,"gen":5,"checksum":"9998ffb2","strata":{"0,0":{"15420":"008300000000ff00000000"}}}; reverted: split 0, records 0, entry KEPT (had one before: true)
+PASS zrange.path_scratch_bounded - a 3D search on the ground from (78,4) to (98,4): path 20 cells; its scratch reached level(s) [0] of 5; layers with scratch arrays since boot 1 (1310720 B each), heap 262152 entries
+PASS zrange.core_data_written - range -2..2, seed 18: checksums {"0":"34c59783","1":"eaf389b9","2":"9998ffb2","-2":"e96252ee","-1":"5e3c240b"}; census 187 ms
+PASS zrange.no_errors - harness errors 0; console.error 0
+RESULT: 8 passed, 0 failed (exit 0)

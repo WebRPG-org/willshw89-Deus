@@ -1,0 +1,105 @@
+{
+ "phase": "play",
+ "made": "2026-10-01T10:06:40.207Z",
+ "env": {
+  "DEUS_Z_RANGE": "-4..4"
+ },
+ "data": {
+  "tip": true,
+  "range": {
+   "zMin": -4,
+   "zMax": 4
+  },
+  "levels": 9,
+  "seed": 18,
+  "savedZRange": {
+   "zMin": -4,
+   "zMax": 4
+  },
+  "view": {
+   "x": 0,
+   "y": 0,
+   "z": 0,
+   "px": 128,
+   "py": 128
+  },
+  "saveFresh": {
+   "levels": 6079,
+   "zRange": 20,
+   "fluid": 37,
+   "fluidAlias": 37,
+   "total": 7209920
+  },
+  "saveChanges": {
+   "levels": {
+    "zHi": 4,
+    "zLo": -4
+   },
+   "cell": {
+    "x": 90,
+    "y": 90
+   },
+   "bytes": {
+    "before": 6079,
+    "afterHigh": 6119,
+    "afterLow": 6159
+   },
+   "records": {
+    "high": "{\"z\":4,\"gen\":5,\"checksum\":\"1e6e3a14\",\"strata\":{\"0,0\":{\"23130\":\"00000000000100000000ff\"}}}",
+    "low": "{\"z\":-4,\"gen\":5,\"checksum\":\"dc2a7d91\",\"strata\":{\"0,0\":{\"23130\":\"000101010100ffffffff00\"}}}"
+   },
+   "roundTrip": true
+  },
+  "saveAfterRevert": {
+   "levels": 6079,
+   "entries": [
+    -4,
+    -3,
+    -2,
+    -1,
+    0,
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  "extreme": {
+   "deck": {
+    "x0": 125,
+    "y0": 126
+   },
+   "rows": [
+    "4: setView true (in place true, frames 0), plate \"+4\", unit walked to (131,128) (event on screen), path 6 cells (scratch on [4]), up past the end refused",
+    "-4: setView true (in place true, frames 0), plate \"-4\", unit walked to (131,128) (event on screen), path 6 cells (scratch on [-4]), down past the end refused"
+   ],
+   "path": {
+    "4": {
+     "length": 6,
+     "layers": [
+      4
+     ]
+    },
+    "-4": {
+     "length": 6,
+     "layers": [
+      -4
+     ]
+    }
+   },
+   "screenshots": [
+    "C:\\Users\\snewt\\.deus_worktrees\\lane-do\\tasks\\NAT.02.MASS\\lane-do\\laneaa_zr_snap\\-4..4_play_33744_1790849198320\\test_output\\zrange.extreme_p4.png",
+    "C:\\Users\\snewt\\.deus_worktrees\\lane-do\\tasks\\NAT.02.MASS\\lane-do\\laneaa_zr_snap\\-4..4_play_33744_1790849198320\\test_output\\zrange.extreme_m4.png"
+   ]
+  },
+  "errors": {
+   "harness": [],
+   "console": []
+  }
+ },
+ "timing": {
+  "setupNewGameMs": 26643,
+  "setupNewGameAtMs": 2436.8,
+  "firstMapStartMs": 32460.1
+ }
+}

@@ -1,9 +1,9 @@
 {
-  "expect": "E_MU_SCALE",
+  "expect": "E_CP_RULE",
   "steps": [
     {
       "op": "set",
-      "path": "catalogue.materials[id=granite].massPerSlice",
+      "path": "catalogue.materials[id=granite].cpPerStratum",
       "value": 1
     }
   ]

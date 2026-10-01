@@ -1,0 +1,101 @@
+{
+ "phase": "play",
+ "made": "2026-10-01T10:06:43.865Z",
+ "env": {
+  "DEUS_Z_RANGE": "-2..2"
+ },
+ "data": {
+  "tip": true,
+  "range": {
+   "zMin": -2,
+   "zMax": 2
+  },
+  "levels": 5,
+  "seed": 18,
+  "savedZRange": {
+   "zMin": -2,
+   "zMax": 2
+  },
+  "view": {
+   "x": 0,
+   "y": 0,
+   "z": 0,
+   "px": 128,
+   "py": 128
+  },
+  "saveFresh": {
+   "levels": 5859,
+   "zRange": 20,
+   "fluid": 37,
+   "fluidAlias": 37,
+   "total": 7209700
+  },
+  "saveChanges": {
+   "levels": {
+    "zHi": 2,
+    "zLo": -2
+   },
+   "cell": {
+    "x": 90,
+    "y": 90
+   },
+   "bytes": {
+    "before": 5859,
+    "afterHigh": 5899,
+    "afterLow": 5939
+   },
+   "records": {
+    "high": "{\"z\":2,\"gen\":5,\"checksum\":\"9998ffb2\",\"strata\":{\"0,0\":{\"23130\":\"00000000000100000000ff\"}}}",
+    "low": "{\"z\":-2,\"gen\":5,\"checksum\":\"e96252ee\",\"strata\":{\"0,0\":{\"23130\":\"000200000001ff000000ff\"}}}"
+   },
+   "roundTrip": true
+  },
+  "saveAfterRevert": {
+   "levels": 5859,
+   "entries": [
+    -2,
+    -1,
+    0,
+    1,
+    2
+   ]
+  },
+  "extreme": {
+   "deck": {
+    "x0": 125,
+    "y0": 126
+   },
+   "rows": [
+    "2: setView true (in place true, frames 0), plate \"+2\", unit walked to (131,128) (event on screen), path 6 cells (scratch on [2]), up past the end refused",
+    "-2: setView true (in place true, frames 0), plate \"-2\", unit walked to (131,128) (event on screen), path 6 cells (scratch on [-2]), down past the end refused"
+   ],
+   "path": {
+    "2": {
+     "length": 6,
+     "layers": [
+      2
+     ]
+    },
+    "-2": {
+     "length": 6,
+     "layers": [
+      -2
+     ]
+    }
+   },
+   "screenshots": [
+    "C:\\Users\\snewt\\.deus_worktrees\\lane-do\\tasks\\NAT.02.MASS\\lane-do\\laneaa_zr_snap\\-2..2_play_33744_1790849201695\\test_output\\zrange.extreme_p2.png",
+    "C:\\Users\\snewt\\.deus_worktrees\\lane-do\\tasks\\NAT.02.MASS\\lane-do\\laneaa_zr_snap\\-2..2_play_33744_1790849201695\\test_output\\zrange.extreme_m2.png"
+   ]
+  },
+  "errors": {
+   "harness": [],
+   "console": []
+  }
+ },
+ "timing": {
+  "setupNewGameMs": 24455.7,
+  "setupNewGameAtMs": 2097.2,
+  "firstMapStartMs": 29842.4
+ }
+}

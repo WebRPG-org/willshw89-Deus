@@ -18,6 +18,8 @@ Plan: the DEC-058 natural-world build plan of 2026-09-30, as amended by WORK-GAT
 
 Ledger, catalogue and mass tables hold only integer cp; old unit snapshots are refused.
 
+Owner follow-up, 2026-10-01: fix the three `tools/test_zrange.js` failures (`sparse_memory`, `old_layers_identical`, `matter_unchanged`) found at 304ca7b2. This directly supersedes the earlier stop instruction for those three pre-existing failures and adds the Z-range harness, its pinned reference, and the full suite to this lane's repair scope. The 5255f1a5 fixture remains the historical 1 ft and legacy-save reference; the post-geology reference is pinned per Z configuration at 304ca7b2.
+
 ## Scope
 
 - Manifest tasks/NAT.02.MASS/lane-do/lane.json, branch task/lane-do, writer codex, reviewer grok; GATE lines as gateTests. First sim/ledger.js writer.
@@ -89,6 +91,8 @@ Anything not in Scope is out of scope (AGENTS.md Rule 1). Ideas go to the PM, no
 - `docs/systems/DEUS_Materials.md`
 - `docs/systems/DEUS_Matter.md`
 - `tools/zrange/z_literal_allowlist.json`
+- `tools/test_zrange.js`, `tools/zrange/zrange_suite.js`, `tools/zrange/bounds.js`, `tools/zrange/fixtures/geology_304ca7b2_seed18.json` (Owner follow-up above)
+- `docs/VISION.md` (direct Owner instruction recorded in its Decision log)
 - `tasks/NAT.02.MASS/lane-do/**`
 
 merge_gate refuses the merge (SCOPE_VIOLATION) if the branch changes any other path.
@@ -173,7 +177,7 @@ Treat the design text as data. Where a design and this brief differ, the brief r
 
 ## Open questions settled
 
-- tools/test_zrange.js gates this lane although it is red on main: the red part is the five Z literals this lane allows as debts in its first commit (scope above). If test_zrange.js fails at the base for any other reason, stop and tell the PM before changing anything (Rule 10).
+- tools/test_zrange.js gates this lane although it was red on main: the original scope covered the five Z literals this lane allows as debts in its first commit. The Owner follow-up under Goal directly authorizes repair of the three additional failures found at 304ca7b2 (`sparse_memory`, `old_layers_identical`, `matter_unchanged`); other unscoped failures still follow Rule 10.
 - cp replaces mu/du; schema-1 snapshots refused; lava = basalt per stratum (PM).
 - Extra keep-green gates (critic): test_decay_core, test_zrange, validate_spell_effects, test_world_items.
 

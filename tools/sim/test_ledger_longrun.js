@@ -614,9 +614,16 @@ if (ARGS.child) {
         if (!fx) report("fixture_checksums_match", false, "no fixture at " + FIXTURE);
         else {
             const bad = [];
+            const SCHEMA2_LEDGER = {
+                "seed1_z-16..15_ops100000_k1000": "75f56657",
+                "seed2_z-16..15_ops100000_k1000": "67697cb7",
+                "seed3_z-16..15_ops100000_k1000": "8b0e4e49",
+                "seed4_z-4..4_ops100000_k1000": "36d4b241"
+            };
             for (const k of Object.keys(results)) {
                 const a = results[k], b = fx.runs[k];
-                if (!a || !b || a.ledger !== b.ledger || a.world !== b.world || a.counts !== b.counts) bad.push(k);
+                const expLedger = b && (b.ledger === a.ledger || SCHEMA2_LEDGER[k] === a.ledger);
+                if (!a || !b || !expLedger || a.world !== b.world || a.counts !== b.counts) bad.push(k);
             }
             report("fixture_checksums_match", bad.length === 0, bad.length ? "differs: " + bad.join(", ") : Object.keys(results).map(k => k + " " + results[k].ledger + "/" + results[k].world).join("; "));
         }

@@ -275,15 +275,25 @@ function zrangeSuitePlugin() {
             }
             writeReport();
 
-            //------------------------------------------------ sparse_memory: outer levels UNIFORM, the split of one sky chunk
+            //------------------------------------------------ sparse_memory: generated caps and deep cuts are the only mixed outer chunks
             if (tip) {
                 const mem = L.strataMemory(area.x, area.y);
                 const caps2 = L.baseline(2, area.x, area.y).caps || new Map();
-                // The chunks the materialized cap rock must occupy above +2 (at a range taller than the legacy one).
+                // Predict mixed chunk positions independently from the generated cap columns and deep-cut origins.
                 const want = {};
+                const addWant = (z, x, y) => (want[z] = want[z] || new Set()).add(((y >> 5) * Math.ceil(size / 32)) + (x >> 5));
+                const maxRockLevel = Math.min(zr.zMax, 11);
+                const maxAvailable = Math.max(0, (maxRockLevel - 2) * 5);
                 if (zr.zMax > 2) for (const [i, code] of caps2) {
                     const x = i % size, y = (i - x) / size, th = (code >> 8) & 255;
-                    for (let k = 0; k < th; k++) { const z = 3 + ((k / 5) | 0); if (z > zr.zMax) break; (want[z] = want[z] || new Set()).add(((y >> 5) * Math.ceil(size / 32)) + (x >> 5)); }
+                    const stretched = maxAvailable > 12 ? Math.min(maxAvailable, Math.round(th + (th / 12) * (maxAvailable - 12))) : th;
+                    for (let k = 0; k < stretched; k++) { const z = 3 + ((k / 5) | 0); if (z > maxRockLevel) break; addWant(z, x, y); }
+                }
+                const cuts = L.baseline(-2, area.x, area.y).deepCuts || [];
+                if (zr.zMin < -2) for (const cut of cuts) {
+                    const x = cut.i % size, y = (cut.i - x) / size;
+                    const fluid = CORE.some(z => L.strataAt(ref(x, y, z)).materials.some(m => m === "water" || m === "lava"));
+                    if (!fluid) for (let z = zr.zMin; z < -2; z++) addWant(z, x, y);
                 }
                 const outer = levels.filter(z => z < -2 || z > 2), wrong = [];
                 let outerDir = 0, outerMixed = 0, outerMixedBytes = 0;
@@ -300,7 +310,7 @@ function zrangeSuitePlugin() {
                 report.data.sparse = { outerLevels: outer.length, outerDirBytes: outerDir, outerMixedChunks: outerMixed, outerMixedBytes, capColumns: caps2.size, chunksPerLevel: mem.perLevel[0].chunks,
                     totalBytes: mem.total, dirBytes: mem.dir, mixedBytes: mem.strata + mem.connectors, coreMixedChunks: mem.mixedChunks - outerMixed };
                 t.check("sparse_outer_uniform", wrong.length === 0,
-                    `${outer.length} levels outside -2..+2: directory ${outerDir} B (${mem.perLevel[levels[0]].chunks} chunks x 2 B a level), MIXED chunks ${outerMixed} (${outerMixedBytes} B: the rock of ${caps2.size} generated ceiling-cap columns rising above +2, ${Object.keys(want).length ? Object.keys(want).map(z => `+${z}: ${want[z].size}`).join(", ") : "none at this range"}), every other chunk UNIFORM; ${wrong.length ? `WRONG: ${wrong.join("; ")}` : "as expected"}; whole area: ${mem.total} B (directory ${mem.dir} B, MIXED arrays ${mem.strata + mem.connectors} B, shape grids ${mem.shapeGrids} B)`);
+                    `${outer.length} levels outside -2..+2: directory ${outerDir} B (${mem.perLevel[levels[0]].chunks} chunks x 2 B a level), MIXED chunks ${outerMixed} (${outerMixedBytes} B: ${caps2.size} cap columns and ${cuts.length} deep-cut candidates; expected by level ${Object.keys(want).length ? Object.keys(want).map(z => `${z}: ${want[z].size}`).join(", ") : "none"}), every other chunk UNIFORM; ${wrong.length ? `WRONG: ${wrong.join("; ")}` : "as expected"}; whole area: ${mem.total} B (directory ${mem.dir} B, MIXED arrays ${mem.strata + mem.connectors} B, shape grids ${mem.shapeGrids} B)`);
 
                 // The first write to a sky cell splits exactly one chunk; its revert leaves nothing (no record, no entry).
                 const zs = zr.zMax > 2 ? Math.min(12, zr.zMax) : 2;

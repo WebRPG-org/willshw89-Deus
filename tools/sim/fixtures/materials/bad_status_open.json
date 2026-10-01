@@ -3,7 +3,7 @@
   "steps": [
     {
       "op": "set",
-      "path": "catalogue.materials[id=water].massStatus",
+      "path": "catalogue.calendar.status",
       "value": "PLACEHOLDER"
     }
   ]

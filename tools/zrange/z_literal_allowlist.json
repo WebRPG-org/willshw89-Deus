@@ -660,6 +660,42 @@
    "match": "if (provoked(\"persistence\") && copy.ufWorld.levels[\"-1\"])",
    "class": "provoke",
    "reason": "test provocation of an in-plugin check (vertical.persistence): corrupts a generated level's saved strata on purpose"
+  },
+  {
+   "file": "DEUS_Levels.js",
+   "match": "id: \"deep_caverns\", zMin: -16, zMax: -9",
+   "class": "debt",
+   "reason": "ZD-1 (D1 reconciliation, 2026-10-01): a DEC-013 DEPTH_BANDS row, unallowed at main since eed4776b (WG.00.15). Retired by lane-dg (WG.CELL-WRITE part 11), which deletes DEPTH_BANDS and this entry"
+  },
+  {
+   "file": "DEUS_Levels.js",
+   "match": "id: \"shallow_underground\", zMin: -8, zMax: -1",
+   "class": "debt",
+   "reason": "ZD-2 (D1 reconciliation, 2026-10-01): a DEC-013 DEPTH_BANDS row, unallowed at main since eed4776b (WG.00.15). Retired by lane-dg (WG.CELL-WRITE part 11), which deletes DEPTH_BANDS and this entry"
+  },
+  {
+   "file": "DEUS_Levels.js",
+   "match": "for (let li = 0; li < 5; li++) {",
+   "class": "debt",
+   "reason": "ZD-3 (D1 reconciliation, 2026-10-01): materializeDeepCuts' DEC-001 fluid guard walks five core levels, unallowed at main since dab44cb9 (WG.00.41). No retiring lane yet: the PM names a WG.CELL-WRITE part before that part is dispatched"
+  },
+  {
+   "file": "DEUS_WorldGen.js",
+   "match": "ctx.z !== -2 || typeof L.setStrata !== \"function\"",
+   "class": "debt",
+   "reason": "ZD-4 (D1 reconciliation, 2026-10-01): quietCampLava acts only at z = -2, where Levels makes lava today; unallowed at main since 559139b0 (SIM.10.05). No retiring lane yet: the PM names a D1-GEO WorldGen writer after lane-dj removes the z === -2 lava branches"
+  },
+  {
+   "file": "DEUS_Depth.js",
+   "match": "W.zRange ? W.zRange() : { zMin: -2, zMax: 2 }",
+   "class": "debt",
+   "reason": "ZD-5 (D1 reconciliation, 2026-10-01): a -2..+2 fallback when the World authority has no zRange, unallowed at main since 87f4e4ee (WG.00.21). No retiring lane yet: the PM names the next DEUS_Depth.js writer, or that lane re-classes it as a fallback entry with its reviewer's agreement"
+  },
+  {
+   "file": "DEUS_Levels.js",
+   "match": "const want = [-3, -2, -1, 0, 1, 2];",
+   "class": "fixture",
+   "reason": "test fixture: in-plugin suite vertical.sparse_save checks that digging level -3 saves core levels plus -3 (added in lane-da b719c64a)"
   }
  ]
 }
