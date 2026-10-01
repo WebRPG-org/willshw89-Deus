@@ -148,3 +148,11 @@ No. The lane touches neither `game/js/plugins.js` nor an RMMZ database file `gam
 - Lanes: "lane-dm | SIM.00.02a (NEW slice of SIM.00.02) | One shared simulation tick from the absolute game clock | claude -> gemini | S | 3 | lane-db | no".
 - Hot-file ownership order: "`game/js/plugins/DEUS_World.js` | lane-db [2] -> lane-dm [3] -> lane-de [4]".
 - Later users of the tick: lane-ec (wave 7, DEUS_Fluid on the shared tick), lane-es (wave 9, DEUS_Structural on the shared tick) and lane-ej (wave 16, one world budget).
+
+## Reviewer change (PM, 2026-10-01 ~22:40Z)
+
+The reviewer is now **grok** (was gemini), for two reasons:
+- the Gemini CLI can no longer run as a launch_worker worker. lane-gh's gemini launch failed with "IneligibleTierError: This client is no longer supported for Gemini Code Assist for individuals".
+- the [gemini] commit `bda69d18` holds a one-line review file, "VERDICT: PASS", with no target hash, no checks and no launch_worker run (AUDIT_LOG A13-7).
+
+The grok review is launched through `tools/ops/launch_worker.ps1` and reviews the whole lane range.

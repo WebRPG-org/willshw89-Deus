@@ -3,7 +3,7 @@
   "taskId": "SIM.00.02a",
   "branch": "task/lane-dm",
   "writer": "claude",
-  "reviewer": "gemini",
+  "reviewer": "grok",
   "allowedPaths": [
     "game/js/sim/host/tick.js",
     "game/js/plugins/DEUS_World.js",
