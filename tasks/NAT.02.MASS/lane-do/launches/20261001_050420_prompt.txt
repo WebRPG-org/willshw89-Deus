@@ -1,0 +1,32 @@
+You are the primary implementer for lane-do (Task NAT.02.MASS), running as codex.
+Read tasks/NAT.02.MASS/lane-do/BRIEF.md carefully and follow all instructions within it.
+
+CRITICAL FIRST STEP:
+Your FIRST COMMIT must be appending the tools/zrange/z_literal_allowlist.json named-debt entries ZD-1 to ZD-5 exactly as given in BRIEF.md lines 31-62, and nothing else.
+Verify node tools/zrange/scan_z_literals.js exits 1 before, exits 0 after, and commit with subject '[codex] NAT.02.MASS: allowlist ZD-1 to ZD-5 named debts'.
+Then proceed with flipping the ledger, material catalogue, and mass tables to integer centipounds per BRIEF.md.
+
+Your allowed paths are:
+- game/js/sim/ledger.js
+- game/js/sim/ledger_defaults.js
+- game/js/sim/materials.js
+- game/data/sim/materials.json
+- game/data/sim/mass_tables.json
+- game/data/sim/README.md
+- tools/sim/migrate_mass_units.js
+- tools/sim/test_ledger.js
+- tools/sim/test_ledger_longrun.js
+- tools/sim/test_materials.js
+- tools/sim/fixtures/materials/**
+- tools/sim/test_reclaim.js
+- tools/sim/test_reclaim_longrun.js
+- docs/systems/DEUS_Materials.md
+- docs/systems/DEUS_Matter.md
+- tools/zrange/z_literal_allowlist.json
+- tasks/NAT.02.MASS/lane-do/**
+
+Standing rules:
+1. NO ART (DEC-007). Never generate, request or integrate art.
+2. Run tests in the FOREGROUND. Never end your turn while background jobs or child processes are running. Commit early (WIP commits allowed on your branch). Do not push. Do not merge. Write only inside allowedPaths.
+Commit messages start with '[codex] NAT.02.MASS'.
+Write REPORT.md in the AGENTS.md report format with GAME TRANSLATION block.
