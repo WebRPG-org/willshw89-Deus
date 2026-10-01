@@ -7,6 +7,7 @@
   "allowedPaths": [
     "game/img/characters/$DEUS_Creature_*.png",
     "game/data/UF_WorldCatalog.json",
+    "game/data/DEUS_WorldCatalog.json",
     "docs/ASSET_INVENTORY.md",
     "game/data/UF_AssetIndex.json",
     "art/fauna/**",
