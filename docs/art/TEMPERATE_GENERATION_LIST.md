@@ -72,6 +72,8 @@ Merge Priority 2: replaces the two WEAK floors and sets up the cave-floor/dug-ea
 
 ### Group 3: Cliffs, edges, ramps and natural walls (114 runs)
 
+> **DEC-060 (Owner, 2026-10-01): this group is generated with Nano Banana Pro by the PM, not by you in PixelLab.** The PM uses layout-guide images and edit passes, judges each result, and records a PM YEA. The PixelLab rows below are kept as the specification of what each piece must show.
+
 Merge Priority 3: four face materials (SOIL, ROCK, SAND, MUD), each with 4 edge faces, 4 ramp-side faces and 20 ramp cells (112 in all), plus 2 wall panels. Rock and soil tops use existing ground fills (no runs). Every row here uses outline off: these are tile-like terrain pieces (see Presets).
 
 | # | item | PixelLab tool | settings | runs | you get | prompt | then |

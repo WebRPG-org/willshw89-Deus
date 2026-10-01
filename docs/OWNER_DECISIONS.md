@@ -995,3 +995,19 @@ Every decision item recorded in this log must provide:
   - Rule 10 escalations (two failed fixes);
   - any change to the read-only engine core (Rule 9);
   - generating all art.
+
+---
+
+### Decision `DEC-060`: Group 3 (cliffs, edges, ramps, natural walls) by Nano Banana Pro; PM generates and judges; ground induction may use A2 for now
+- **Date:** 2026-10-01
+- **Source:** Owner, 2026-10-01:
+  - "Group 3 Cliffs, edges, ramps and natural walls. I want you to prompt nano banana pro for these";
+  - "I want you to generate the images, and figure out if they are suitable or not";
+  - two answers to the PM's questions: "Yes, download them" and "A2 is fine for now".
+  - Earlier the same day, the Owner told the PM he had instructed AG to "induct all of the ground tiles from pixellab and integrate them into a world generation".
+- **Ruling:**
+  1. **Group 3 of the temperate list is generated with Nano Banana Pro (Gemini 3 Pro Image) by the PM**, in the Owner's Gemini app. Under DEC-007 this is a direct Owner hand-off and counts as the Owner's generation. For Group 3 this overrides SOP AS-GEN-004/AS-GEN-005 (PixelLab only, one generator per set) and DEC-055's PixelLab-native rule. The PixelLab ground tops beside these faces are an accepted mix.
+  2. **The PM judges suitability** and records each pick as PM YEA or NAY under DEC-056. Rejected images are not used.
+  3. **Post-processing is allowed for Group 3**: resampling to the art-pixel grid, the palette snap to the material ramp, and slicing into catalogue slots.
+  4. **The PM may download the generated images** from gemini.google.com for QA (the Owner's yes, 2026-10-01).
+  5. **The ground-tile induction (AG) may convert PixelLab corner sets to RMMZ A2 tilesets for now.** The native corner renderer (RENDER.NATIVE) comes later. The work still goes through a reviewed lane, not main's working copy (DEC-048).
