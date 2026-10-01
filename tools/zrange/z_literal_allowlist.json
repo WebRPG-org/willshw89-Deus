@@ -690,6 +690,12 @@
    "match": "W.zRange ? W.zRange() : { zMin: -2, zMax: 2 }",
    "class": "debt",
    "reason": "ZD-5 (D1 reconciliation, 2026-10-01): a -2..+2 fallback when the World authority has no zRange, unallowed at main since 87f4e4ee (WG.00.21). No retiring lane yet: the PM names the next DEUS_Depth.js writer, or that lane re-classes it as a fallback entry with its reviewer's agreement"
+  },
+  {
+   "file": "DEUS_Levels.js",
+   "match": "const want = [-3, -2, -1, 0, 1, 2];",
+   "class": "fixture",
+   "reason": "test fixture: in-plugin suite vertical.sparse_save checks that digging level -3 saves core levels plus -3 (added in lane-da b719c64a)"
   }
  ]
 }
