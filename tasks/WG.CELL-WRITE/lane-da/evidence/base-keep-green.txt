@@ -1,0 +1,44 @@
+Actual lane base b889de90382b7bdc89ca98b8fb6dbb38beb49ba2.
+Clone: C:\Users\snewt\AppData\Local\Temp\lane-da-clones\base-b889de90
+timeout_ms: 900000 on each command. timed_out: false on each.
+
+--- node tools/check_deus_syntax.js ---
+started: 2026-10-01T09:16:46.064Z
+ended: 2026-10-01T09:16:51.078Z
+elapsed_ms: 5014
+exit: 0
+Checked 62 DEUS plugin files. Errors: 0
+
+--- node tools/test_32_levels_generation.js ---
+This is the base test (entries for all 32 levels). The tip's renamed checks are not in this commit.
+started: 2026-10-01T09:16:51.151Z
+ended: 2026-10-01T09:17:01.833Z
+elapsed_ms: 10682
+exit: 0
+  [PASS] world_default_zrange_is_32
+  [PASS] ensure_world_levels_generates_all_32_entries
+  [PASS] level_entries_span_minus16_to_plus15
+  [PASS] all_32_levels_have_valid_checksums
+  [PASS] all_32_levels_have_gen5
+  [PASS] level_minus_16_baseline_exists
+  [PASS] level_plus_15_baseline_exists
+  [PASS] level_entry_minus_10_present
+  [PASS] level_entry_plus_10_present
+  [PASS] mutant_core_only_caught
+Results: 10 passed, 0 failed.
+
+--- node tools/test_strata_cuts_and_caves.js ---
+First attempt, before the LF re-checkout, exit 2 at shafts_keep_fluid (anchor missing; working tree later read as CRLF). Not the keep-green result.
+Recorded run: after core.autocrlf=false and a fresh checkout of game/js (LF, blob 8076d47c).
+started: 2026-10-01T09:23:49.051Z
+ended: 2026-10-01T09:31:00.407Z
+elapsed_ms: 431356
+exit: 0
+PASS clearance_4_5_more - fixture column (64,30): 1 solid + 4 air under solid 4 ft (derived shape floor: the compatibility view; the clearance is the data), 5 air on -2's S4 5, across -1 and the ground 6 (airRunAt 6), up to +1 9, open sky Infinity, a 2 ft slot 2 (shape solid), solid 0, no floor -1; restored records 0; generated floors: 4 ft (176,39,0), 5 ft (167,31,0), > 5 ft 7 ft (175,46,0); 1,000,000 queries 1547 ns each, heap growth 92840 B (checksum 6075000)
+PASS fluid_suite - node tools/test_strata_fluid_reconciliation.js: exit 0 in 331 s; PASSED: 36; FAILED: 0; MUTANT VERIFICATION: 5/5 mutants detected.
+PASS foundation_suite - node tools/test_strata_foundation.js: exit 0 in 431 s; RESULT: 27 passed, 0 failed (exit 0)
+PASS no_errors - none
+TIME 431.2 s
+RESULT: 30 passed, 0 failed (exit 0)
+
+Guards inside the fail-before run on this same base (evidence/fail-before.txt): PASS all_32_layers_reconstructible_unchanged, PASS migration_keeps_real_outer_change.

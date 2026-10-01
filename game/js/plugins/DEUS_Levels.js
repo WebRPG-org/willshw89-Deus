@@ -4764,12 +4764,6 @@
         return v ? v.z : null;
     }
 
-    // The level the view is moving to. Looking at a level is not changing it, so this writes no save entry (WG.00.43).
-    function buildViewBaselines(st, z) {
-        if (!st) return;
-        for (let ay = 0; ay < st.areasY; ay++) for (let ax = 0; ax < st.areasX; ax++) baseline(z, ax, ay);
-    }
-
     /**
      * Show level z (a level of the world Z range). Keeps the cursor cell and the camera; opts.center: { x, y } to centre on instead (follow).
      * In place (SIM.00.00): the map scene, its Spriteset and the simulation keep running; the level's prewarmed build
@@ -4782,7 +4776,6 @@
         if (!v || !isLevel(z) || !W.inWorld(v.x, v.y, z)) return false;
         if (v.z === z) return true;
         if ($gamePlayer.isTransferring() || pending) return false;
-        buildViewBaselines(W.state, z);
         const c = opts.center || null;
         const px = c ? c.x | 0 : $gamePlayer.x, py = c ? c.y | 0 : $gamePlayer.y;
         pending = { from: v.z, to: z, displayX: $gameMap.displayX(), displayY: $gameMap.displayY(), center: c, t0: performance.now(), frames0: mapFrames,

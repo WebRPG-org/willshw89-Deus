@@ -34,9 +34,10 @@ const MUTANTS = {
         'if (k !== "z" && k !== "gen" && k !== "checksum" && k !== "strata") return false;',
         'if (k !== "z" && k !== "gen" && k !== "checksum" && k !== "strata" && k !== "caps") return false;'
     ],
+    // setView no longer walks areas. The mutant writes a checksum entry for an outer z at the view move itself.
     entry_on_view: [
-        "function buildViewBaselines(st, z) {\n        if (!st) return;\n        for (let ay = 0; ay < st.areasY; ay++) for (let ax = 0; ax < st.areasX; ax++) baseline(z, ax, ay);\n    }",
-        "function buildViewBaselines(st, z) {\n        if (!st) return;\n        for (let ay = 0; ay < st.areasY; ay++) for (let ax = 0; ax < st.areasX; ax++) baseline(z, ax, ay);\n        if (st.levels && (z < CORE.zMin || z > CORE.zMax)) {\n            const key = String(z);\n            if (!st.levels[key]) st.levels[key] = { z, gen: levelGen(st, 0), checksum: checksumOf(z), strata: {} };\n            else if (!st.levels[key].checksum) st.levels[key].checksum = checksumOf(z);\n        }\n    }"
+        "if ($gamePlayer.isTransferring() || pending) return false;\n        const c = opts.center || null;",
+        "if ($gamePlayer.isTransferring() || pending) return false;\n        if (W.state && W.state.levels && (z < CORE.zMin || z > CORE.zMax)) {\n            const key = String(z);\n            const viewSt = W.state;\n            if (!viewSt.levels[key]) viewSt.levels[key] = { z: z, gen: levelGen(viewSt, 0), checksum: checksumOf(z), strata: {} };\n            else if (!viewSt.levels[key].checksum) viewSt.levels[key].checksum = checksumOf(z);\n        }\n        const c = opts.center || null;"
     ],
     outer_baseline_shift: [
         "uniformStore(b, z < CORE.zMin ? STONE_CELL : AIR_CELL, size);",
@@ -308,6 +309,17 @@ function runChecks() {
     const keys = sortedKeys(st.levels);
     const gen = L.GEN;
 
+    // Terrain+range on untouched seed-18 worlds: New Game only, before any view or change/revert.
+    const envWide = makeEnv("-16..15");
+    newGame(envWide, 18);
+    const envNarrow = makeEnv("-4..4");
+    newGame(envNarrow, 18);
+    const wide = terrainRangeBytes(envWide);
+    const narrow = terrainRangeBytes(envNarrow);
+    const diff = wide.total - narrow.total;
+    console.log(`INFO terrain+range -16..+15 ${wide.total} (levels ${wide.levelsB} zRange ${wide.rangeB} fluid ${wide.fluidB}) -4..+4 ${narrow.total} (levels ${narrow.levelsB} zRange ${narrow.rangeB} fluid ${narrow.fluidB}) diff ${diff}`);
+    check("fresh_save_terrain_range_bound", diff <= 256, `diff ${diff} B (bound 256) untouched seed 18 before view or change`);
+
     const sumDetail = [];
     let sumsOk = true;
     for (let z = -16; z <= 15; z++) {
@@ -332,10 +344,13 @@ function runChecks() {
     const toPlus = L.setView(12);
     const b10 = L.baseline(-10, 0, 0);
     const b12 = L.baseline(12, 0, 0);
-    const afterView = sortedKeys(st.levels);
+    const saveContents = env.DataManager.makeSaveContents();
+    const savedLevels = saveContents && saveContents.ufWorld && saveContents.ufWorld.levels;
+    const afterView = savedLevels ? sortedKeys(savedLevels) : null;
     check("view_does_not_save",
-        !!view && toMinus === true && toPlus === true && b10 && b10.z === -10 && b12 && b12.z === 12 && JSON.stringify(afterView) === JSON.stringify(CORE),
-        `view ${JSON.stringify(view)} setView -10 ${toMinus} +12 ${toPlus} baselines ${b10 && b10.z},${b12 && b12.z} keys ${JSON.stringify(afterView)}`);
+        !!view && toMinus === true && toPlus === true && b10 && b10.z === -10 && b12 && b12.z === 12
+            && !!savedLevels && JSON.stringify(afterView) === JSON.stringify(CORE),
+        `view ${JSON.stringify(view)} setView -10 ${toMinus} +12 ${toPlus} baselines ${b10 && b10.z},${b12 && b12.z} makeSaveContents().ufWorld.levels ${JSON.stringify(afterView)}`);
 
     const cellA = findSolid(L, -8);
     let caseA = false;
@@ -347,14 +362,6 @@ function runChecks() {
         caseA = dug === true && !!mid && back === true && st.levels["-8"] === undefined;
         caseADetail = `cell ${cellA.x},${cellA.y} dug ${dug} hadEntry ${!!mid} revert ${back} entryAfter ${st.levels["-8"] ? JSON.stringify(Object.keys(st.levels["-8"])) : "gone"}`;
     }
-
-    const wide = terrainRangeBytes(env);
-    const env9 = makeEnv("-4..4");
-    newGame(env9, 18);
-    const narrow = terrainRangeBytes(env9);
-    const diff = wide.total - narrow.total;
-    console.log(`INFO terrain+range -16..+15 ${wide.total} (levels ${wide.levelsB} zRange ${wide.rangeB} fluid ${wide.fluidB}) -4..+4 ${narrow.total} (levels ${narrow.levelsB} zRange ${narrow.rangeB} fluid ${narrow.fluidB}) diff ${diff}`);
-    check("fresh_save_terrain_range_bound", diff <= 256, `diff ${diff} B (bound 256)`);
 
     const host = makeEnv("-16..15");
     const hostSt = newGame(host, 18);
