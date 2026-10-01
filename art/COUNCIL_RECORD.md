@@ -121,3 +121,7 @@ Versions judged: trees after the U7 canopy pass (birch, swamp, pine and apple re
 | Stalactites (v5) | YEA | YEA | YEA | NAY | rejected | Gemini: jagged, messy isolated pixels; lacks smooth volumetric shading. |
 
 **PM note.** After seven rounds the remaining pieces fail on judges who contradict each other (strata: ChatGPT and Gemini YES, Grok and MiniMax NO; lichen: three YES, ChatGPT NO; soil, red clay, vines and stalactites: three YES, Gemini NO, with Gemini asking for smoother gradients where it earlier asked for harder clusters). The PM has stopped iterating these until the Owner rules on how the council should handle a split that further passes do not close.
+
+## Owner ruling on splits (2026-10-01, ~12:15Z)
+
+The Owner answered the PM's question "strict 4/4" (amendment line under DEC-062 in `docs/OWNER_DECISIONS.md`). Pieces that did not get four YES votes stay out of the game: cliffs 2, 5, 6, 9 and 10, the hanging vines, the stalactites and both apple trees. The 17 pieces that passed 4 of 4 keep their result; they still wait for their catalogue rows (lane-pg) and the Owner's D2 answer on script-made pixels before any PM YEA.

@@ -1040,6 +1040,7 @@ Every decision item recorded in this log must provide:
   - Item 4 is replaced. The judges answer one question per piece: **is it roughly the same quality as Ultima VII art, and consistent with it?** YES, or NO with the reason.
   - The PM confirms each piece can be tooled before it goes to the judges: machine QA of the RMMZ format, seams, anchors, palette and size.
   - Items 1, 2, 3 and 5 stand: four judges, unanimity, and every NO recorded with its reason. The English folklore / Ultima VII / EverQuest direction (DEC-047) stays the art direction, but it is no longer a separate judging test.
+- **Amendment (Owner, 2026-10-01, ~12:15Z, answering the PM's question on judges who keep splitting):** "strict 4/4". Unanimity stays strict even when further rounds do not close a split: a piece without four YES votes stays out of the game. The PM had offered three choices (strict 4/4; 3 of 4 with the dissent recorded; the Owner breaks ties) after seven council rounds split on cliffs 2, 5, 6, 9 and 10, the hanging vines, the stalactites and both apple trees (`art/COUNCIL_RECORD.md`).
 
 ---
 
