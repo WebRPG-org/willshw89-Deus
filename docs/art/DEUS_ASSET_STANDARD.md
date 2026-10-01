@@ -437,7 +437,7 @@ Fog is a drawn dither with binary alpha. UI pulse is two drawn frames, not a tin
 
 ### 2.16 Frame squares, slot templates, pipeline, field templates, generation log (A9)
 
-**AS-SIZE-001.** Owner 13:16–13:20 CT. Frame size is size class plus body shape, in 48 px squares. **Amended by DEC-072 (Owner, 2026-10-01):** every map sprite fits within 96x96 in every facing, in the smallest 48-multiple frame that holds it (48x48, 96x48, 48x96 or 96x96; DEC-072 amendment); doors are 48x96; the Huge and Gargantuan rows below no longer apply to map sprites:
+**AS-SIZE-001.** [Amended by DEC-072 amendment of 2026-10-01 ~20:20Z (Owner: "They need to look good in a 48 pixel wide space because if they are going to walk down a hallway we dont want them clipping"): every humanoid is at most 48 px wide in the south, west, east and north facings; width comes from the pose, never from squeezing.] Owner 13:16–13:20 CT. Frame size is size class plus body shape, in 48 px squares. **Amended by DEC-072 (Owner, 2026-10-01):** every map sprite fits within 96x96 in every facing, in the smallest 48-multiple frame that holds it (48x48, 96x48, 48x96 or 96x96; DEC-072 amendment); doors are 48x96; the Huge and Gargantuan rows below no longer apply to map sprites:
 
 | Size | Shape | Squares | Pixels | Frame class |
 |---|---|---|---|---|
