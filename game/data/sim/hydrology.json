@@ -1,0 +1,14 @@
+{
+  "schema": "deus.sim.hydrology/1",
+  "notes": "Hydrology tuning read by game/js/sim/hydrology/cycle.js (NAT.03.03, lane-eb). Masses are integer centipounds (DEC-038); times are shared simulation ticks (36 game-seconds each at 1x, DESIGN-D2 3.2). Contract: docs/systems/DEUS_WaterAuthority.md, Water return.",
+  "waterReturn": {
+    "version": 1,
+    "delayTicks": 100,
+    "delayTicksNote": "Settled (brief NAT.03.03 lane-eb, Open questions settled): water credited to the return inventory rains back no earlier than 100 ticks later.",
+    "rainCpPerVisit": 1535,
+    "rainCpPerVisitNote": "PM_DEFAULT: the most one receiver visit of the rain rotation delivers; about 3 mm of water over a 5 ft x 5 ft cell (0.246 ft3 x 6240 cp/ft3).",
+    "evaporationPeriodTicks": 2400,
+    "evaporationCpPerReceiver": 1535,
+    "evaporationNote": "PM_DEFAULT (plan risk 19, flagged for the Owner): one evaporation pass at most every 2400 ticks (one game day), taking up to 1535 cp (about 3 mm) of sky-exposed water from each receiver. A pass runs under the shared work budget and may take longer than a period."
+  }
+}
