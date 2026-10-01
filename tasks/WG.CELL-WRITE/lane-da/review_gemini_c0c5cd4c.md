@@ -5,7 +5,6 @@
 - **Reviewed Commit**: `c0c5cd4cd9f89596b9f8a2089c2e22462bc5070a`
 - **Reviewer**: gemini (independent cross-family reviewer for grok writer)
 - **Date**: 2026-10-01
-VERDICT: CLEAN PASS
 
 ---
 
@@ -68,5 +67,5 @@ Engine core (`game/js/rmmz_*.js`, `game/js/main.js`, `game/js/libs/`) is complet
 
 All five items from `MSG-PRUNE-PM-079` / `ANSWER-DA` have been satisfied with rigorous automated and in-code evidence. The lane is 100% compliant with DEUS governance standards, zero self-certification rules, and architectural memory/save invariants.
 
-**VERDICT: CLEAN PASS**
+VERDICT: CLEAN PASS
 Recommended for merge via `merge_gate.js`.
