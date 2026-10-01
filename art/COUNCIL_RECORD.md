@@ -297,6 +297,41 @@ Cutting advice received: ChatGPT (cut sheet B's faces intact; C10 flora second-r
 
 Cutting advice received: ChatGPT (rock row 4 col 2 quieter ramp; wood top row col 3; falls lower light-beam row col 4); Grok (stairs up: the mossy cell right of the clean one; ramp down: row 4 rightmost mouth; pit wall: bottom-row mossy left cell); Gemini (vined and crumbled stairs; mossy pit walls; crooked-rung and knotted rope ladders); MiniMax (dust from the denser cluster two positions right).
 
-## ART-COUNCIL-13 (2026-10-01, sent ~16:05Z): lava, obsidian, four tree crowns
+## ART-COUNCIL-13 (2026-10-01, sent ~16:05Z, tallied ~18:20Z): lava, obsidian, four tree crowns
 
-MiniMax 6 YES; Gemini 6 YES; Grok 6 YES WITH FIX (lava: yellow cores to the crack's mid orange; obsidian: lighten only each facet's upper-left edge; crowns: palest green to the upper-left only, lower-right rim one step darker). ChatGPT's answer did not arrive; re-asked ~17:20Z. Tally pending.
+| Piece | MiniMax | ChatGPT | Grok | Gemini | Result |
+|---|---|---|---|---|---|
+| Lava | YES | YES | YES WITH FIX | YES | passes after fix (yellow cores to the crack's mid orange; orange off a plate's upper-left edge one step darker) |
+| Obsidian | YES | NO (broad navy fills and detached shine strokes read as glossy panels, not fractured stone planes) | YES WITH FIX | YES | 3 of 4: Owner decides |
+| Small crown A | YES | YES | YES WITH FIX | YES | passes after fix (palest green to the upper-left only; lower-right rim one step darker) |
+| Small crown B | YES | YES | YES WITH FIX | YES | passes after fix (as A) |
+| Large crown A | YES | YES | YES WITH FIX | YES | passes after fix (pale burst to the upper-left quadrant; lower-right rim one step darker) |
+| Large crown B | YES | YES | YES WITH FIX | YES | passes after fix (as A; keep the dark centre gap) |
+
+ChatGPT's answer arrived on the re-ask (it had stalled and showed only after a page reload). Cutting advice: ChatGPT (lava: the upper-left complete pool; obsidian: top large row, column 2; crowns: upper large row, column 3); Grok (lava: row 2 broken-crust cell; obsidian: row 4 centre; crowns: lower rows with a dark gap); MiniMax (large crown A one column right; the warmer lava edge variant); Gemini (the lava bubble node; more crown variants).
+
+## ART-COUNCIL-14 and -15 (2026-10-01, sent ~17:20Z, tallied ~18:20Z): 19 creatures in eight directions (DEC-071)
+
+Pieces 15.7 troll (troll4) and 15.8 bog horror (bog-horror2) were withdrawn after the Owner deleted those generations; their votes are not counted.
+
+| Piece | MiniMax | ChatGPT | Grok | Gemini | Result |
+|---|---|---|---|---|---|
+| 14.1 Wolf | YES | YES | YES | YES | passes |
+| 14.2 Fox | YES | YES | YES | YES | passes |
+| 14.3 Wildcat | YES | YES WITH FIX | YES WITH FIX | YES | superseded: the Owner judged it squashed; redrawn at 2x and halved (wildcat-h), new vote |
+| 14.4 Boar | YES | YES | YES | YES | passes |
+| 14.5 Red deer stag | YES | NO (broad flat flanks and continuous edge highlights look cut out) | YES WITH FIX | YES | 3 of 4; superseded by the full-size redraw (stag-f), new vote |
+| 14.6 Wild horse | YES | NO (neck, shoulder and rump merge into flat fills) | YES WITH FIX | YES | 3 of 4; superseded by the full-size redraw (wild-horse-f), new vote |
+| 14.7 Aurochs bull | YES | YES | YES WITH FIX | YES | superseded by the full-size redraw (aurochs-f), new vote |
+| 14.8 Wild sheep (ram) | YES | YES | YES WITH FIX | YES | passes after fix (fleece to 3 browns, no checker, lightest brown upper-left only) |
+| 14.9 Hare | YES | YES | YES | YES | passes |
+| 14.10 Rat | YES | YES | YES WITH FIX | YES | passes after fix (one light-grey pixel upper-left of the body, one dark pixel under the belly) |
+| 15.1 Hen | YES | YES | YES | YES | passes |
+| 15.2 Hawk | YES | YES | YES | YES | passes |
+| 15.3 Songbird | YES | YES | YES | YES | passes |
+| 15.4 Bat | YES | YES | YES | YES | passes |
+| 15.5 Serpent | YES | YES | YES WITH FIX | YES | superseded: the Owner deleted it (squashed); redrawn as a round-coiled adder (serpent-h), new vote |
+| 15.6 Giant spider | YES | YES | YES | YES | passes (the full-size redraw spider-f gets its own vote) |
+| 15.9 Restless dead | YES | YES | YES WITH FIX | YES | passes after fix (robe to 2 browns, light on the upper-left shoulder only) |
+
+Owner, 2026-10-01: "You can go ahead and induct all of these into the game once the art council apporves them, that way we can evaluate density etc".
