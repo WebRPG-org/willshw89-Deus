@@ -18,11 +18,27 @@
  * 11. test_save_load_persistence
  * 12. test_dirty_region_quiescence
  *
- * Negative control mutants (Rule 4):
+ * Budgeted, resumable, wrap-aware kernel (NAT.03.01 lane-ed):
+ * - budget_bounds_interfaces: opts.maxInterfaces caps interface evaluations per call.
+ * - budgeted_equals_unbudgeted: a pass split over budgeted calls equals one whole tick.
+ * - cursor_survives_save: an unfinished pass resumes after serialize/deserialize.
+ * - wrap_neighbour: opts.wrap joins the world's edge columns/rows (L = 5 ft).
+ * - constants_from_units: aquifer.js water constants are read from sim/units.js.
+ *
+ * Negative control mutants (Rule 4), as MUTANT=<name> or --mutant=<name>:
  * - infinite_water: Drawdown disabled (donor water mass never decrements).
  * - leak_free: Permeability forced to zero (no flow occurs).
  * - no_clamp: Clamping bypassed (oversaturation/negative water allowed).
+ * - cursor_reset: A resumed budgeted pass restarts at its first edge.
+ *
+ * --case=<name> runs one check. Every check runs even if an earlier one fails;
+ * the exit code is 1 if any check failed.
  */
+
+const mutantArg = process.argv.find(a => a.startsWith("--mutant="));
+if (mutantArg) process.env.MUTANT = mutantArg.slice("--mutant=".length);
+const caseArg = process.argv.find(a => a.startsWith("--case="));
+const onlyCase = caseArg ? caseArg.slice("--case=".length) : null;
 
 const {
     Stratum,
@@ -41,8 +57,6 @@ let failedCount = 0;
 
 function assert(condition, message) {
     if (!condition) {
-        console.error("FAIL: " + message);
-        failedCount++;
         throw new Error("Assertion failed: " + message);
     }
 }
@@ -375,31 +389,342 @@ function test_dirty_region_quiescence() {
     recordPass("test_dirty_region_quiescence", `Sleeping update cost=${sleepCostMicros.toFixed(3)} μs, activeCells=${resSleep.activeCells}, interfacesProcessed=${resSleep.interfacesProcessed}`);
 }
 
+// ---------------------------------------------------------------------------
+// NAT.03.01 lane-ed: budgeted, resumable, wrap-aware kernel
+// ---------------------------------------------------------------------------
+
+const WRAP_4x3 = { width: 4, height: 3 };
+
+// A 4 x 3 x 2-strata block at z=0 with mixed conductivity, an impermeable cell,
+// a cavern, a nearly full receiver and slow (sub-centipound) interfaces, so a pass
+// exercises transfers, clamps, residuals and K=0 skips.
+function buildFixture() {
+    const engine = new AquiferEngine();
+    const ks = [1000, 200000, 500000, 30000];
+    for (let s = 0; s < 2; s++) {
+        for (let y = 0; y < 3; y++) {
+            for (let x = 0; x < 4; x++) {
+                const id = encodeStratumId(x, y, 0, s);
+                let k = ks[(x + 2 * y + s) % ks.length];
+                let mass = ((x * 7 + y * 13 + s * 29) % 11) * 8500;
+                let type = "porous_rock";
+                if (x === 2 && y === 1 && s === 0) k = 0;          // impermeable
+                if (x === 3 && y === 2 && s === 1) { type = "cavern"; mass = 0; k = 1000000; }
+                if (x === 0 && y === 2 && s === 0) mass = 93500;    // nearly full (cap 93600)
+                engine.addStratum(new Stratum(id, x, y, 0, s, type === "cavern" ? 10000 : 3000, k, Math.min(mass, 93600), type));
+            }
+        }
+    }
+    return engine;
+}
+
+function stateOf(engine) {
+    const strata = Array.from(engine.strata.values()).map(st => [st.id, st.waterMass]).sort();
+    const residuals = Array.from(engine.signedResidualMap.entries()).sort();
+    return JSON.stringify({
+        strata,
+        residuals,
+        dirty: Array.from(engine.dirtyCells).sort(),
+        ledgerMassWater: engine.ledgerMassWater,
+        ledgerMassVoid: engine.ledgerMassVoid
+    });
+}
+
+// Run budgeted calls until `passes` passes have completed. onCall(engine, result, callIndex)
+// may return a replacement engine (save/load). Returns { engine, calls, interfaces, partials }.
+function runBudgeted(engine, passes, opts, onCall) {
+    let done = 0, calls = 0, interfaces = 0, partials = 0;
+    const callLimit = 100000;
+    while (done < passes) {
+        assert(calls < callLimit, `budgeted run did not finish ${passes} passes within ${callLimit} calls (finished ${done})`);
+        const r = engine.processTick(1, null, opts);
+        calls++;
+        interfaces += r.interfacesProcessed;
+        assert(r.interfacesProcessed <= opts.maxInterfaces,
+            `call ${calls} evaluated ${r.interfacesProcessed} interfaces, budget ${opts.maxInterfaces}`);
+        if (r.complete === true) done++;
+        else partials++;
+        if (onCall) engine = onCall(engine, r, calls) || engine;
+    }
+    return { engine, calls, interfaces, partials };
+}
+
+// 13. Budget bounds interface evaluations per call
+function budget_bounds_interfaces() {
+    const reference = buildFixture();
+    const whole = reference.processTick(1);
+    const E = whole.interfacesProcessed;
+    assert(E > 20, `fixture should present more than 20 interfaces, got ${E}`);
+
+    const engine = buildFixture();
+    const budget = 5;
+    const first = engine.processTick(1, null, { maxInterfaces: budget });
+    assert(first.interfacesProcessed === budget, `first budgeted call evaluated ${first.interfacesProcessed}, expected ${budget}`);
+    assert(first.complete === false, `first budgeted call reported complete=${first.complete}`);
+    assert(first.remainingInterfaces === E - budget, `remainingInterfaces ${first.remainingInterfaces}, expected ${E - budget}`);
+
+    let calls = 1, total = first.interfacesProcessed, last = first;
+    while (!last.complete) {
+        assert(calls < 1000, `pass did not complete within 1000 calls`);
+        last = engine.processTick(1, null, { maxInterfaces: budget });
+        calls++;
+        total += last.interfacesProcessed;
+        assert(last.interfacesProcessed <= budget, `call ${calls} evaluated ${last.interfacesProcessed} > ${budget}`);
+    }
+    assert(total === E, `budgeted pass evaluated ${total} interfaces in all, unbudgeted ${E}`);
+    assert(calls === Math.ceil(E / budget), `budgeted pass took ${calls} calls, expected ${Math.ceil(E / budget)}`);
+
+    // A cell woken while a pass is unfinished is still dirty when the pass ends.
+    const woken = new AquiferEngine();
+    woken.addStratum(new Stratum(encodeStratumId(0, 0, 0, 0), 0, 0, 0, 0, 3000, 200000, 60000));
+    woken.addStratum(new Stratum(encodeStratumId(1, 0, 0, 0), 1, 0, 0, 0, 3000, 200000, 30000));
+    woken.addStratum(new Stratum(encodeStratumId(2, 0, 0, 0), 2, 0, 0, 0, 3000, 200000, 10000));
+    woken.addStratum(new Stratum(encodeStratumId(9, 9, 0, 0), 9, 9, 0, 0, 3000, 200000, 40000));
+    woken.dirtyCells.delete("9,9,0,0");
+    const part = woken.processTick(1, null, { maxInterfaces: 1 });
+    assert(part.complete === false, `three-cell pass finished in one interface`);
+    woken.markDirty(9, 9, 0, 0);
+    let guard = 0;
+    while (!woken.processTick(1, null, { maxInterfaces: 1 }).complete) assert(++guard < 100, `three-cell pass did not finish`);
+    assert(woken.dirtyCells.has("9,9,0,0"), `cell marked dirty mid-pass was dropped when the pass finished`);
+
+    for (const bad of [0, -1, 1.5, "5", NaN]) {
+        let threw = false;
+        try { buildFixture().processTick(1, null, { maxInterfaces: bad }); } catch (e) { threw = e instanceof RangeError; }
+        assert(threw, `maxInterfaces=${String(bad)} was accepted`);
+    }
+
+    recordPass("budget_bounds_interfaces", `${E} interfaces split into ${calls} calls of <= ${budget}; invalid budgets refused`);
+}
+
+// 14. A pass split over budgeted calls gives exactly the unbudgeted result
+function budgeted_equals_unbudgeted() {
+    const ticks = 30;
+    const results = [];
+    const references = [];
+    for (const wrap of [null, WRAP_4x3]) {
+        const reference = buildFixture();
+        let moved = 0, refInterfaces = 0;
+        for (let t = 0; t < ticks; t++) {
+            const r = reference.processTick(1, null, wrap ? { wrap } : null);
+            moved += r.totalWaterMoved;
+            refInterfaces += r.interfacesProcessed;
+        }
+        assert(moved > 0, `fixture moved no water (wrap=${!!wrap})`);
+        const expected = stateOf(reference);
+        references.push(expected);
+        for (const budget of [1, 2, 3, 7, 1000]) {
+            const opts = { maxInterfaces: budget };
+            if (wrap) opts.wrap = wrap;
+            const run = runBudgeted(buildFixture(), ticks, opts);
+            if (budget < 10) assert(run.partials > 0, `budget ${budget} never left a pass unfinished`);
+            assert(run.interfaces === refInterfaces, `budget ${budget}: ${run.interfaces} interfaces, unbudgeted ${refInterfaces}`);
+            const got = stateOf(run.engine);
+            assert(got === expected, `budget ${budget} (wrap=${!!wrap}) diverged from unbudgeted after ${ticks} ticks`);
+            results.push(budget);
+        }
+    }
+    assert(references[0] !== references[1], `wrapped and open fixtures ended identical: the wrapped runs prove nothing`);
+    recordPass("budgeted_equals_unbudgeted", `${results.length} budgeted runs (budgets 1,2,3,7,1000; open and wrapped) bit-identical to ${ticks} unbudgeted ticks`);
+}
+
+// 15. An unfinished pass survives save/load and resumes where it stopped
+function cursor_survives_save() {
+    const ticks = 12;
+    const wrap = WRAP_4x3;
+    const reference = buildFixture();
+    for (let t = 0; t < ticks; t++) reference.processTick(1, null, { wrap });
+    const expected = stateOf(reference);
+
+    let midPassSaves = 0;
+    const run = runBudgeted(buildFixture(), ticks, { maxInterfaces: 4, wrap }, (engine, r, call) => {
+        if (r.complete || call % 3 !== 0) return null;
+        const saved = engine.serialize();
+        const cursor = JSON.parse(saved).cursor;
+        assert(cursor && Array.isArray(cursor.edges) && cursor.next > 0, `mid-pass save holds no resumable cursor: ${cursor ? `next ${cursor.next} of ${Array.isArray(cursor.edges) ? cursor.edges.length : "?"} edges` : String(cursor)}`);
+        const loaded = new AquiferEngine();
+        loaded.deserialize(saved);
+        assert(loaded.serialize() === saved, `re-save after load differs from the save`);
+        midPassSaves++;
+        return loaded;
+    });
+    assert(midPassSaves >= 10, `only ${midPassSaves} mid-pass saves were made`);
+    assert(stateOf(run.engine) === expected, `resumed-after-load run diverged from ${ticks} unbudgeted ticks`);
+
+    // A save between passes has no cursor; a save without the cursor field (older
+    // format) loads as "no unfinished pass" and ticks as before.
+    const between = buildFixture();
+    between.processTick(1);
+    const plain = JSON.parse(between.serialize());
+    assert(plain.cursor === null, `save between passes has cursor ${JSON.stringify(plain.cursor)}`);
+    delete plain.cursor;
+    const legacy = new AquiferEngine();
+    legacy.deserialize(JSON.stringify(plain));
+    assert(legacy.passCursor === null, `legacy save loaded with an unfinished pass`);
+    const legacyStep = legacy.processTick(1);
+    const betweenStep = between.processTick(1);
+    assert(legacyStep.complete === true && stateOf(legacy) === stateOf(between), `legacy save ticks differently`);
+    assert(legacyStep.interfacesProcessed === betweenStep.interfacesProcessed, `legacy save evaluated a different pass`);
+
+    recordPass("cursor_survives_save", `${midPassSaves} mid-pass save/load round trips; result bit-identical to ${ticks} unbudgeted ticks; cursor-less save loads`);
+}
+
+// 16. Wrapped horizontal neighbours across the world seam
+function wrap_neighbour() {
+    const wrap = { width: 4, height: 4 };
+    const pairMass = [60000, 30000];
+
+    // Reference: an ordinary adjacent pair (x=1 and x=2), no wrap.
+    const ref = new AquiferEngine();
+    ref.addStratum(new Stratum(encodeStratumId(1, 0, 0, 0), 1, 0, 0, 0, 3000, 200000, pairMass[0]));
+    ref.addStratum(new Stratum(encodeStratumId(2, 0, 0, 0), 2, 0, 0, 0, 3000, 200000, pairMass[1]));
+    const refStep = ref.processTick(1);
+    assert(refStep.totalWaterMoved > 0, `reference pair moved no water`);
+
+    for (const [a, b, label] of [[[3, 0], [0, 0], "x seam"], [[0, 3], [0, 0], "y seam"]]) {
+        const make = () => {
+            const e = new AquiferEngine();
+            e.addStratum(new Stratum(encodeStratumId(a[0], a[1], 0, 0), a[0], a[1], 0, 0, 3000, 200000, pairMass[0]));
+            e.addStratum(new Stratum(encodeStratumId(b[0], b[1], 0, 0), b[0], b[1], 0, 0, 3000, 200000, pairMass[1]));
+            return e;
+        };
+        const idA = encodeStratumId(a[0], a[1], 0, 0);
+        const idB = encodeStratumId(b[0], b[1], 0, 0);
+
+        const open = make();
+        const openStep = open.processTick(1);
+        assert(openStep.totalWaterMoved === 0, `${label}: water crossed the seam without opts.wrap`);
+
+        const wrapped = make();
+        assert(wrapped.getNeighbors(idA, wrap).indexOf(idB) >= 0, `${label}: ${idB} is not a wrapped neighbour of ${idA}`);
+        assert(wrapped.isHorizontalNeighbor(idA, idB, wrap) === true, `${label}: wrapped pair is not horizontal`);
+        assert(wrapped.isHorizontalNeighbor(idA, idB) === false, `${label}: open grid joins the seam`);
+        const step = wrapped.processTick(1, null, { wrap });
+        assert(step.interfacesProcessed === 1, `${label}: wrapped pass evaluated ${step.interfacesProcessed} interfaces, expected 1`);
+        assert(step.totalWaterMoved === refStep.totalWaterMoved,
+            `${label}: wrapped transfer ${step.totalWaterMoved} cp, adjacent L=5 pair ${refStep.totalWaterMoved} cp`);
+        assert(wrapped.getStratum(idA).waterMass === pairMass[0] - refStep.totalWaterMoved, `${label}: donor mass wrong`);
+        assert(wrapped.getTotalMass() === pairMass[0] + pairMass[1], `${label}: mass not conserved`);
+    }
+
+    // One axis wraps, the other does not.
+    const xOnly = { width: 4 };
+    const probe = new AquiferEngine();
+    probe.addStratum(new Stratum(encodeStratumId(0, 0, 0, 0), 0, 0, 0, 0));
+    probe.addStratum(new Stratum(encodeStratumId(3, 0, 0, 0), 3, 0, 0, 0));
+    probe.addStratum(new Stratum(encodeStratumId(0, 3, 0, 0), 0, 3, 0, 0));
+    const nb = probe.getNeighbors(encodeStratumId(0, 0, 0, 0), xOnly);
+    assert(nb.indexOf("3,0,0,0") >= 0 && nb.indexOf("0,3,0,0") < 0, `width-only wrap gave neighbours ${JSON.stringify(nb)}`);
+
+    // markDirty wakes the neighbour across the seam.
+    const woke = new AquiferEngine();
+    woke.addStratum(new Stratum(encodeStratumId(0, 0, 0, 0), 0, 0, 0, 0));
+    woke.addStratum(new Stratum(encodeStratumId(3, 0, 0, 0), 3, 0, 0, 0));
+    woke.dirtyCells.clear();
+    woke.markDirty(0, 0, 0, 0, wrap);
+    assert(woke.dirtyCells.has("3,0,0,0"), `markDirty did not wake the wrapped neighbour`);
+
+    // An unfinished pass refuses to resume under a different wrap.
+    const mixed = buildFixture();
+    mixed.processTick(1, null, { maxInterfaces: 3, wrap: WRAP_4x3 });
+    let threw = false;
+    try { mixed.processTick(1, null, { maxInterfaces: 3 }); } catch (e) { threw = e instanceof RangeError; }
+    assert(threw, `a wrapped pass resumed without its wrap`);
+
+    recordPass("wrap_neighbour", `x and y seams carry ${refStep.totalWaterMoved} cp like an adjacent L=5 pair; none without opts.wrap; width-only wrap; markDirty wakes across the seam`);
+}
+
+// 17. Water constants come from sim/units.js
+function constants_from_units() {
+    const Module = require("module");
+    const units = require("../game/js/sim/units.js");
+    const aquiferPath = require.resolve("../game/js/sim/hydrology/aquifer.js");
+    const unitsPath = require.resolve("../game/js/sim/units.js");
+
+    assert(VOLUME_PER_STRATUM === units.STRATUM_FT3, `VOLUME_PER_STRATUM ${VOLUME_PER_STRATUM} != units.STRATUM_FT3 ${units.STRATUM_FT3}`);
+    assert(WATER_DENSITY_CENTIPOUNDS_PER_CUFT === units.WATER_CP_PER_FT3, `WATER_DENSITY ${WATER_DENSITY_CENTIPOUNDS_PER_CUFT} != units.WATER_CP_PER_FT3`);
+    assert(MAX_WATER_MASS_PER_STRATUM === units.WATER_CP_PER_STRATUM, `MAX_WATER_MASS_PER_STRATUM ${MAX_WATER_MASS_PER_STRATUM} != units.WATER_CP_PER_STRATUM`);
+    assert(MAX_WATER_MASS_PER_STRATUM === 312000 && VOLUME_PER_STRATUM === 50 && WATER_DENSITY_CENTIPOUNDS_PER_CUFT === 6240,
+        `constant values changed`);
+
+    // Load a fresh aquifer.js against a units table with different values: an
+    // imported constant follows the table, a local literal does not.
+    const savedAquifer = require.cache[aquiferPath];
+    const savedUnits = require.cache[unitsPath];
+    const stub = new Module(unitsPath);
+    stub.filename = unitsPath;
+    stub.loaded = true;
+    stub.exports = Object.freeze(Object.assign({}, units, {
+        STRATUM_FT3: 51, WATER_CP_PER_FT3: 6241, WATER_CP_PER_STRATUM: 51 * 6241
+    }));
+    let fresh;
+    try {
+        delete require.cache[aquiferPath];
+        require.cache[unitsPath] = stub;
+        fresh = require(aquiferPath);
+    } finally {
+        if (savedAquifer) require.cache[aquiferPath] = savedAquifer; else delete require.cache[aquiferPath];
+        if (savedUnits) require.cache[unitsPath] = savedUnits; else delete require.cache[unitsPath];
+    }
+    assert(fresh.VOLUME_PER_STRATUM === 51, `aquifer VOLUME_PER_STRATUM ignores units.js (got ${fresh.VOLUME_PER_STRATUM})`);
+    assert(fresh.WATER_DENSITY_CENTIPOUNDS_PER_CUFT === 6241, `aquifer WATER_DENSITY ignores units.js (got ${fresh.WATER_DENSITY_CENTIPOUNDS_PER_CUFT})`);
+    assert(fresh.MAX_WATER_MASS_PER_STRATUM === 51 * 6241, `aquifer MAX_WATER_MASS_PER_STRATUM ignores units.js (got ${fresh.MAX_WATER_MASS_PER_STRATUM})`);
+    const cavern = new fresh.Stratum("0,0,0,0", 0, 0, 0, 0, 10000, 1000000, 0, "cavern");
+    assert(cavern.maxWaterMass === 51 * 6241, `Stratum capacity ignores units.js (got ${cavern.maxWaterMass})`);
+
+    const index = require("../game/js/sim/hydrology/index.js");
+    const aquifer = require("../game/js/sim/hydrology/aquifer.js");
+    for (const name of ["MAX_WATER_MASS_PER_STRATUM", "VOLUME_PER_STRATUM", "WATER_DENSITY_CENTIPOUNDS_PER_CUFT", "Stratum", "AquiferEngine"]) {
+        assert(index[name] === aquifer[name], `index.js re-export ${name} differs from aquifer.js`);
+    }
+
+    recordPass("constants_from_units", `312000 cp = 50 ft3 x 6240 cp/ft3 read from units.js; a stub table (51 x 6241) changes aquifer constants and capacity; index.js re-exports intact`);
+}
+
 // Main runner
+const CHECKS = [
+    test_stratum_storage_and_porosity,
+    test_darcy_cavern_breach,
+    test_impermeable_barrier,
+    test_aquifer_drawdown_equilibrium,
+    test_sub_unit_seepage_accumulation,
+    test_flow_reversal_residual_cancellation,
+    test_processing_order_invariance,
+    test_donor_exhaustion_clamp,
+    test_receiver_capacity_clamp,
+    test_mass_ledger_conservation,
+    test_save_load_persistence,
+    test_dirty_region_quiescence,
+    budget_bounds_interfaces,
+    budgeted_equals_unbudgeted,
+    cursor_survives_save,
+    wrap_neighbour,
+    constants_from_units
+];
+
 function runAll() {
-    console.log("=== NAT.03.01 Aquifer Kernel Gate Tests [BASELINE] ===");
+    console.log("=== NAT.03.01 Aquifer Kernel Gate Tests ===" + (process.env.MUTANT ? ` [MUTANT=${process.env.MUTANT}]` : ""));
     const t0 = Date.now();
-
-    test_stratum_storage_and_porosity();
-    test_darcy_cavern_breach();
-    test_impermeable_barrier();
-    test_aquifer_drawdown_equilibrium();
-    test_sub_unit_seepage_accumulation();
-    test_flow_reversal_residual_cancellation();
-    test_processing_order_invariance();
-    test_donor_exhaustion_clamp();
-    test_receiver_capacity_clamp();
-    test_mass_ledger_conservation();
-    test_save_load_persistence();
-    test_dirty_region_quiescence();
-
+    const selected = onlyCase ? CHECKS.filter(fn => fn.name === onlyCase) : CHECKS;
+    if (selected.length === 0) {
+        console.error(`FAIL: no check named ${onlyCase}`);
+        return false;
+    }
+    for (const check of selected) {
+        try {
+            check();
+        } catch (err) {
+            failedCount++;
+            console.error(`FAIL: ${check.name} - ${err.message}`);
+        }
+    }
     const elapsedMs = Date.now() - t0;
+    if (failedCount > 0) {
+        console.log(`\nRESULT: ${passedCount} passed, ${failedCount} failed in ${elapsedMs}ms.`);
+        return false;
+    }
     console.log(`\nALL CHECKS PASSED: ${passedCount} check(s) verified in ${elapsedMs}ms.`);
+    return true;
 }
 
-try {
-    runAll();
-} catch (err) {
-    console.error(`TEST RUN FAILED: ${err.message}`);
-    process.exit(1);
-}
+if (!runAll()) process.exit(1);

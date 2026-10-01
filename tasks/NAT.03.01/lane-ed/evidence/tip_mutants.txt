@@ -1,0 +1,92 @@
+# tip d7e55287
+$ node tools/test_aquifer_seepage.js --mutant=cursor_reset
+=== NAT.03.01 Aquifer Kernel Gate Tests === [MUTANT=cursor_reset]
+PASS: test_stratum_storage_and_porosity - maxWaterMass=78000, saturation=5000 bps, head=82500 ms
+PASS: test_darcy_cavern_breach - Harmonic K=181818, transferred=36 cp into void, conserved mass=93600 cp
+PASS: test_impermeable_barrier - Zero seepage across K=0 boundary, kInterface=0
+PASS: test_aquifer_drawdown_equilibrium - Equilibrated in 500 ticks, totalMass=100000 cp
+PASS: test_sub_unit_seepage_accumulation - Fractional residuals accumulated across ticks into exact integer transfer without truncation loss
+PASS: test_flow_reversal_residual_cancellation - Signed canonical edge residual canceled forward debt upon head inversion (0.0022 -> -0.0192)
+PASS: test_processing_order_invariance - Forward and reverse neighbor evaluation produced bit-identical mass: 79618, 50127, 20255 cp
+PASS: test_donor_exhaustion_clamp - Zero negative water: donor clamped at exactly 0, transferred 5 cp
+PASS: test_receiver_capacity_clamp - Zero oversaturation: receiver clamped to max capacity 93600 cp
+PASS: test_mass_ledger_conservation - Mass before=100000 cp, after=100000 cp, diff=0 cp (100% conserved)
+PASS: test_save_load_persistence - Serialized/deserialized state bit-identical, mass=90000 cp
+PASS: test_dirty_region_quiescence - Sleeping update cost=2.000 μs, activeCells=0, interfacesProcessed=0
+FAIL: budget_bounds_interfaces - Assertion failed: pass did not complete within 1000 calls
+FAIL: budgeted_equals_unbudgeted - Assertion failed: budgeted run did not finish 30 passes within 100000 calls (finished 0)
+FAIL: cursor_survives_save - Assertion failed: budgeted run did not finish 12 passes within 100000 calls (finished 0)
+PASS: wrap_neighbour - x and y seams carry 12 cp like an adjacent L=5 pair; none without opts.wrap; width-only wrap; markDirty wakes across the seam
+PASS: constants_from_units - 312000 cp = 50 ft3 x 6240 cp/ft3 read from units.js; a stub table (51 x 6241) changes aquifer constants and capacity; index.js re-exports intact
+
+RESULT: 14 passed, 3 failed in 1974ms.
+exit=1
+
+$ MUTANT=infinite_water node tools/test_aquifer_seepage.js
+=== NAT.03.01 Aquifer Kernel Gate Tests === [MUTANT=infinite_water]
+PASS: test_stratum_storage_and_porosity - maxWaterMass=78000, saturation=5000 bps, head=82500 ms
+FAIL: test_darcy_cavern_breach - Assertion failed: Aquifer stratum did not seep (mass=93600)
+PASS: test_impermeable_barrier - Zero seepage across K=0 boundary, kInterface=0
+FAIL: test_aquifer_drawdown_equilibrium - Assertion failed: Drawdown failed to reduce high head cell
+PASS: test_sub_unit_seepage_accumulation - Fractional residuals accumulated across ticks into exact integer transfer without truncation loss
+PASS: test_flow_reversal_residual_cancellation - Signed canonical edge residual canceled forward debt upon head inversion (0.0022 -> -0.0192)
+PASS: test_processing_order_invariance - Forward and reverse neighbor evaluation produced bit-identical mass: 80000, 50127, 20255 cp
+FAIL: test_donor_exhaustion_clamp - Assertion failed: Donor should be depleted to 0, got 5
+PASS: test_receiver_capacity_clamp - Zero oversaturation: receiver clamped to max capacity 93600 cp
+PASS: test_mass_ledger_conservation - Mass before=100000 cp, after=103185 cp, diff=3185 cp (100% conserved)
+PASS: test_save_load_persistence - Serialized/deserialized state bit-identical, mass=90012 cp
+PASS: test_dirty_region_quiescence - Sleeping update cost=1.800 μs, activeCells=0, interfacesProcessed=0
+PASS: budget_bounds_interfaces - 46 interfaces split into 10 calls of <= 5; invalid budgets refused
+PASS: budgeted_equals_unbudgeted - 10 budgeted runs (budgets 1,2,3,7,1000; open and wrapped) bit-identical to 30 unbudgeted ticks
+PASS: cursor_survives_save - 48 mid-pass save/load round trips; result bit-identical to 12 unbudgeted ticks; cursor-less save loads
+FAIL: wrap_neighbour - Assertion failed: x seam: donor mass wrong
+PASS: constants_from_units - 312000 cp = 50 ft3 x 6240 cp/ft3 read from units.js; a stub table (51 x 6241) changes aquifer constants and capacity; index.js re-exports intact
+
+RESULT: 13 passed, 4 failed in 60ms.
+exit=1
+
+$ MUTANT=leak_free node tools/test_aquifer_seepage.js
+=== NAT.03.01 Aquifer Kernel Gate Tests === [MUTANT=leak_free]
+PASS: test_stratum_storage_and_porosity - maxWaterMass=78000, saturation=5000 bps, head=82500 ms
+FAIL: test_darcy_cavern_breach - Assertion failed: Cavern void received no seepage water (mass=0)
+PASS: test_impermeable_barrier - Zero seepage across K=0 boundary, kInterface=0
+PASS: test_aquifer_drawdown_equilibrium - Equilibrated in 500 ticks, totalMass=100000 cp
+PASS: test_sub_unit_seepage_accumulation - Fractional residuals accumulated across ticks into exact integer transfer without truncation loss
+PASS: test_flow_reversal_residual_cancellation - Signed canonical edge residual canceled forward debt upon head inversion (0.0022 -> -0.0192)
+PASS: test_processing_order_invariance - Forward and reverse neighbor evaluation produced bit-identical mass: 79618, 50127, 20255 cp
+PASS: test_donor_exhaustion_clamp - Zero negative water: donor clamped at exactly 0, transferred 5 cp
+PASS: test_receiver_capacity_clamp - Zero oversaturation: receiver clamped to max capacity 93600 cp
+PASS: test_mass_ledger_conservation - Mass before=100000 cp, after=100000 cp, diff=0 cp (100% conserved)
+PASS: test_save_load_persistence - Serialized/deserialized state bit-identical, mass=90000 cp
+PASS: test_dirty_region_quiescence - Sleeping update cost=1.700 μs, activeCells=0, interfacesProcessed=0
+PASS: budget_bounds_interfaces - 46 interfaces split into 10 calls of <= 5; invalid budgets refused
+PASS: budgeted_equals_unbudgeted - 10 budgeted runs (budgets 1,2,3,7,1000; open and wrapped) bit-identical to 30 unbudgeted ticks
+PASS: cursor_survives_save - 48 mid-pass save/load round trips; result bit-identical to 12 unbudgeted ticks; cursor-less save loads
+PASS: wrap_neighbour - x and y seams carry 12 cp like an adjacent L=5 pair; none without opts.wrap; width-only wrap; markDirty wakes across the seam
+PASS: constants_from_units - 312000 cp = 50 ft3 x 6240 cp/ft3 read from units.js; a stub table (51 x 6241) changes aquifer constants and capacity; index.js re-exports intact
+
+RESULT: 16 passed, 1 failed in 60ms.
+exit=1
+
+$ MUTANT=no_clamp node tools/test_aquifer_seepage.js
+=== NAT.03.01 Aquifer Kernel Gate Tests === [MUTANT=no_clamp]
+PASS: test_stratum_storage_and_porosity - maxWaterMass=78000, saturation=5000 bps, head=82500 ms
+PASS: test_darcy_cavern_breach - Harmonic K=181818, transferred=36 cp into void, conserved mass=93600 cp
+PASS: test_impermeable_barrier - Zero seepage across K=0 boundary, kInterface=0
+PASS: test_aquifer_drawdown_equilibrium - Equilibrated in 500 ticks, totalMass=100000 cp
+PASS: test_sub_unit_seepage_accumulation - Fractional residuals accumulated across ticks into exact integer transfer without truncation loss
+PASS: test_flow_reversal_residual_cancellation - Signed canonical edge residual canceled forward debt upon head inversion (0.0022 -> -0.0192)
+PASS: test_processing_order_invariance - Forward and reverse neighbor evaluation produced bit-identical mass: 79618, 50127, 20255 cp
+FAIL: test_donor_exhaustion_clamp - Assertion failed: Donor dropped below zero: -495
+PASS: test_receiver_capacity_clamp - Zero oversaturation: receiver clamped to max capacity 93600 cp
+PASS: test_mass_ledger_conservation - Mass before=100000 cp, after=100000 cp, diff=0 cp (100% conserved)
+PASS: test_save_load_persistence - Serialized/deserialized state bit-identical, mass=90000 cp
+PASS: test_dirty_region_quiescence - Sleeping update cost=1.800 μs, activeCells=0, interfacesProcessed=0
+PASS: budget_bounds_interfaces - 46 interfaces split into 10 calls of <= 5; invalid budgets refused
+PASS: budgeted_equals_unbudgeted - 10 budgeted runs (budgets 1,2,3,7,1000; open and wrapped) bit-identical to 30 unbudgeted ticks
+PASS: cursor_survives_save - 48 mid-pass save/load round trips; result bit-identical to 12 unbudgeted ticks; cursor-less save loads
+PASS: wrap_neighbour - x and y seams carry 12 cp like an adjacent L=5 pair; none without opts.wrap; width-only wrap; markDirty wakes across the seam
+PASS: constants_from_units - 312000 cp = 50 ft3 x 6240 cp/ft3 read from units.js; a stub table (51 x 6241) changes aquifer constants and capacity; index.js re-exports intact
+
+RESULT: 16 passed, 1 failed in 58ms.
+exit=1

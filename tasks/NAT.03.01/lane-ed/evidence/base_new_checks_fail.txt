@@ -1,0 +1,58 @@
+# test file from d7e55287 over a git archive of base c9f3858b (aquifer.js and units.js at the base)
+$ node tools/test_aquifer_seepage.js
+=== NAT.03.01 Aquifer Kernel Gate Tests ===
+PASS: test_stratum_storage_and_porosity - maxWaterMass=78000, saturation=5000 bps, head=82500 ms
+PASS: test_darcy_cavern_breach - Harmonic K=181818, transferred=36 cp into void, conserved mass=93600 cp
+PASS: test_impermeable_barrier - Zero seepage across K=0 boundary, kInterface=0
+PASS: test_aquifer_drawdown_equilibrium - Equilibrated in 500 ticks, totalMass=100000 cp
+PASS: test_sub_unit_seepage_accumulation - Fractional residuals accumulated across ticks into exact integer transfer without truncation loss
+PASS: test_flow_reversal_residual_cancellation - Signed canonical edge residual canceled forward debt upon head inversion (0.0022 -> -0.0192)
+PASS: test_processing_order_invariance - Forward and reverse neighbor evaluation produced bit-identical mass: 79618, 50127, 20255 cp
+PASS: test_donor_exhaustion_clamp - Zero negative water: donor clamped at exactly 0, transferred 5 cp
+PASS: test_receiver_capacity_clamp - Zero oversaturation: receiver clamped to max capacity 93600 cp
+PASS: test_mass_ledger_conservation - Mass before=100000 cp, after=100000 cp, diff=0 cp (100% conserved)
+PASS: test_save_load_persistence - Serialized/deserialized state bit-identical, mass=90000 cp
+PASS: test_dirty_region_quiescence - Sleeping update cost=1.700 μs, activeCells=0, interfacesProcessed=0
+FAIL: budget_bounds_interfaces - Assertion failed: first budgeted call evaluated 46, expected 5
+FAIL: budgeted_equals_unbudgeted - Assertion failed: call 1 evaluated 46 interfaces, budget 1
+FAIL: cursor_survives_save - Assertion failed: call 1 evaluated 46 interfaces, budget 4
+FAIL: wrap_neighbour - Assertion failed: x seam: 0,0,0,0 is not a wrapped neighbour of 3,0,0,0
+FAIL: constants_from_units - Assertion failed: aquifer VOLUME_PER_STRATUM ignores units.js (got 50)
+
+RESULT: 12 passed, 5 failed in 15ms.
+exit=1
+
+$ node tools/test_aquifer_seepage.js --case=budget_bounds_interfaces
+=== NAT.03.01 Aquifer Kernel Gate Tests ===
+FAIL: budget_bounds_interfaces - Assertion failed: first budgeted call evaluated 46, expected 5
+
+RESULT: 0 passed, 1 failed in 1ms.
+exit=1
+
+$ node tools/test_aquifer_seepage.js --case=wrap_neighbour
+=== NAT.03.01 Aquifer Kernel Gate Tests ===
+FAIL: wrap_neighbour - Assertion failed: x seam: 0,0,0,0 is not a wrapped neighbour of 3,0,0,0
+
+RESULT: 0 passed, 1 failed in 1ms.
+exit=1
+
+$ node tools/test_aquifer_seepage.js --case=constants_from_units
+=== NAT.03.01 Aquifer Kernel Gate Tests ===
+FAIL: constants_from_units - Assertion failed: aquifer VOLUME_PER_STRATUM ignores units.js (got 50)
+
+RESULT: 0 passed, 1 failed in 1ms.
+exit=1
+
+$ node tools/test_aquifer_seepage.js --case=budgeted_equals_unbudgeted
+=== NAT.03.01 Aquifer Kernel Gate Tests ===
+FAIL: budgeted_equals_unbudgeted - Assertion failed: call 1 evaluated 46 interfaces, budget 1
+
+RESULT: 0 passed, 1 failed in 5ms.
+exit=1
+
+$ node tools/test_aquifer_seepage.js --case=cursor_survives_save
+=== NAT.03.01 Aquifer Kernel Gate Tests ===
+FAIL: cursor_survives_save - Assertion failed: call 1 evaluated 46 interfaces, budget 4
+
+RESULT: 0 passed, 1 failed in 4ms.
+exit=1
