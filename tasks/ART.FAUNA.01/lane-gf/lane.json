@@ -16,7 +16,8 @@
     "docs/art/catalogue/**",
     "docs/systems/DEUS_Wildlife.md",
     "tools/art/test_fauna_induction.js",
-    "tasks/ART.FAUNA.01/lane-gf/**"
+    "tasks/ART.FAUNA.01/lane-gf/**",
+    "tools/art/fauna/**"
   ],
   "gateTests": [
     {
