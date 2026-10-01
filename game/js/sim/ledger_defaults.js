@@ -6,9 +6,8 @@
 // is where that matter is (strata, item, object, ...). Q-MASS[family] is the sum over every class of the family and
 // every form. A class belongs to one FAMILY, or (an alloy) to several families by an integer composition.
 //
-// Units. "mu" is an integer mass unit whose size per material and per 2-ft slice is set later by SIM.40.00/SIM.40.01
-// (ADR-003 §7.8 "one table per material and form, set by SIM.40.01 with WG.65.15"); it is an Owner/PM question in the
-// REPORT. "du" is the fluid depth unit, 1/7 of a full cell (DEUS_Fluid.js:50 DEPTH_MAX = 7; ADR-003 §7.8 Q-WATER).
+// Units. "cp" is the integer centipound (1/100 lb), the universal mass unit for all families (DEC-038).
+// A full 5x5x2-ft stratum of pure water is 312,000 cp. All matter balances are kept in nonnegative integer cp.
 
 const FORMS = [
     "strata",   // matter in place in a cell's 2-ft slices, natural or deposited (rock, soil, rubble, sediment, ash beds, rust traces)
@@ -24,15 +23,15 @@ const FORMS = [
 // DEUS_ResourceRegistry.json:500-507 conservedClasses STONE, IRON, COPPER, SILVER, GOLD, PLATINUM; audit F-04 / §6 step 2
 // (strata by material, loose items by material, fluid volume, biomass); FIR-3 (carbon/ash).
 const FAMILIES = {
-    mineral: { unit: "mu", finite: false }, // registry STONE; rock, rubble, soil mineral, sediment, lava
-    organic: { unit: "mu", finite: false }, // wood, living biomass, humus, ash, charcoal (Lane R keeps ash/charcoal in ORGANIC)
-    water: { unit: "du", finite: false },   // liquid water and ice
-    fe: { unit: "mu", finite: true },       // registry IRON (:243); STEEL counts toward iron (:453)
-    cu: { unit: "mu", finite: true },       // registry COPPER (:282)
-    ag: { unit: "mu", finite: true },       // registry SILVER (:321)
-    au: { unit: "mu", finite: true },       // registry GOLD (:360)
-    pt: { unit: "mu", finite: true },       // registry PLATINUM (:399)
-    gem: { unit: "mu", finite: true }       // VISION V83 (docs/VISION.md:94): "Finite stone, ore, gems and fossil beds ... do not respawn"
+    mineral: { unit: "cp", finite: false }, // registry STONE; rock, rubble, soil mineral, sediment, lava
+    organic: { unit: "cp", finite: false }, // wood, living biomass, humus, ash, charcoal (Lane R keeps ash/charcoal in ORGANIC)
+    water: { unit: "cp", finite: false },   // liquid water and ice
+    fe: { unit: "cp", finite: true },       // registry IRON (:243); STEEL counts toward iron (:453)
+    cu: { unit: "cp", finite: true },       // registry COPPER (:282)
+    ag: { unit: "cp", finite: true },       // registry SILVER (:321)
+    au: { unit: "cp", finite: true },       // registry GOLD (:360)
+    pt: { unit: "cp", finite: true },       // registry PLATINUM (:399)
+    gem: { unit: "cp", finite: true }       // VISION V83 (docs/VISION.md:94): "Finite stone, ore, gems and fossil beds ... do not respawn"
 };
 
 const METALS = ["fe", "cu", "ag", "au", "pt"];
@@ -198,7 +197,7 @@ function deepFreeze(o) {
 }
 
 module.exports = deepFreeze({
-    schema: 1,
+    schema: 2,
     families: FAMILIES,
     forms: FORMS,
     classes: CLASSES,

@@ -377,6 +377,13 @@ function suite(L, D) {
         throwsCode(() => L.createLedger(null), "E_CONFIG", "null config");
         throwsCode(() => L.createLedger([]), "E_CONFIG", "array config");
     });
+    T("unit_cp_only", () => {
+        for (const badUnit of ["mu", "du", "kg", "g", "lb"]) {
+            const c = cfg();
+            c.families.mineral = { unit: badUnit, finite: false };
+            throwsCode(() => L.createLedger(c), "E_UNIT", "unit " + badUnit);
+        }
+    });
     T("config_is_copied_at_load", () => {
         const c = cfg(), l = L.createLedger(c), before = stable(l.describe());
         c.transforms.push({ id: "sprout", from: "stone", fromForms: ["strata"], to: "fe_ore", toForms: ["strata"] });
@@ -827,7 +834,7 @@ function suite(L, D) {
             ["missing key", s => { delete s.amounts["stone|strata"]; }],
             ["odd electrum", s => { s.amounts["electrum|item"] += 1; }],
             ["config", s => { s.config = "00000000"; }],
-            ["schema", s => { s.schema = 2; }],
+            ["schema", s => { s.schema = 3; }],
             ["closure: amount", s => { s.amounts["stone|strata"] += 1; s.interval.startFam.mineral += 1; s.interval.startCls.stone += 1; }],
             ["closure: base", s => { s.base.mineral += 1; }],
             ["closure: life", s => { s.life.src["magic|stone"] += 1; s.interval.src.stone += 1; }],
@@ -850,6 +857,14 @@ function suite(L, D) {
         const other = cfg();
         other.logLimit = 128;
         throwsCode(() => L.createLedger(other).restore(JSON.parse(JSON.stringify(a.snapshot()))), "E_SNAPSHOT", "another config");
+    });
+    T("schema1_snapshot_refused", () => {
+        const a = busy(world());
+        const s = JSON.parse(JSON.stringify(a.snapshot()));
+        s.schema = 1;
+        const b = world(), cs = b.checksum();
+        throwsCode(() => b.restore(s), "E_UNIT_PROVENANCE", "schema 1 snapshot refused");
+        eq(b.checksum(), cs, "refused schema 1 leaves ledger unchanged");
     });
     T("restore_unsealed_snapshot", () => {
         const a = L.createLedger();

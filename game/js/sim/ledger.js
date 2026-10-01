@@ -15,7 +15,7 @@
 
 const DEFAULTS = require("./ledger_defaults");
 
-const SCHEMA = 1;
+const SCHEMA = 2;
 const MAX = Number.MAX_SAFE_INTEGER;
 const NAME_RE = /^[a-z][a-z0-9_.-]{0,63}$/;
 const CAUSE_MAX = 200;
@@ -90,6 +90,7 @@ function normalize(cfg) {
         checkName(f, "family");
         const d = cfg.families[f];
         if (!isObj(d) || typeof d.unit !== "string" || !d.unit) fail("E_CONFIG", "family " + f + " needs a unit string");
+        if (d.unit !== "cp") fail("E_UNIT", "family " + f + ": unit must be 'cp', got " + show(d.unit));
         if (d.finite !== undefined && typeof d.finite !== "boolean") fail("E_CONFIG", "family " + f + ": finite must be a boolean");
         families[f] = { unit: d.unit, finite: d.finite === true };
     }
@@ -628,6 +629,7 @@ function createLedger(config) {
     function restore(snap) {
         const bad = msg => fail("E_SNAPSHOT", "restore: " + msg);
         if (!isObj(snap)) bad("the snapshot must be an object");
+        if (snap.schema === 1) fail("E_UNIT_PROVENANCE", "restore: schema 1 snapshot uses legacy mass units (mu/du); centipounds required");
         if (snap.schema !== SCHEMA) bad("schema " + show(snap.schema) + " is not " + SCHEMA);
         if (snap.config !== C.fingerprint) bad("taken with another config (" + show(snap.config) + "; this ledger's is " + C.fingerprint + ")");
         if (Object.keys(snap).length !== 9) bad("unexpected top-level keys");
