@@ -474,6 +474,20 @@ function budget_bounds_interfaces() {
     assert(total === E, `budgeted pass evaluated ${total} interfaces in all, unbudgeted ${E}`);
     assert(calls === Math.ceil(E / budget), `budgeted pass took ${calls} calls, expected ${Math.ceil(E / budget)}`);
 
+    // A cell woken while a pass is unfinished is still dirty when the pass ends.
+    const woken = new AquiferEngine();
+    woken.addStratum(new Stratum(encodeStratumId(0, 0, 0, 0), 0, 0, 0, 0, 3000, 200000, 60000));
+    woken.addStratum(new Stratum(encodeStratumId(1, 0, 0, 0), 1, 0, 0, 0, 3000, 200000, 30000));
+    woken.addStratum(new Stratum(encodeStratumId(2, 0, 0, 0), 2, 0, 0, 0, 3000, 200000, 10000));
+    woken.addStratum(new Stratum(encodeStratumId(9, 9, 0, 0), 9, 9, 0, 0, 3000, 200000, 40000));
+    woken.dirtyCells.delete("9,9,0,0");
+    const part = woken.processTick(1, null, { maxInterfaces: 1 });
+    assert(part.complete === false, `three-cell pass finished in one interface`);
+    woken.markDirty(9, 9, 0, 0);
+    let guard = 0;
+    while (!woken.processTick(1, null, { maxInterfaces: 1 }).complete) assert(++guard < 100, `three-cell pass did not finish`);
+    assert(woken.dirtyCells.has("9,9,0,0"), `cell marked dirty mid-pass was dropped when the pass finished`);
+
     for (const bad of [0, -1, 1.5, "5", NaN]) {
         let threw = false;
         try { buildFixture().processTick(1, null, { maxInterfaces: bad }); } catch (e) { threw = e instanceof RangeError; }
@@ -527,7 +541,7 @@ function cursor_survives_save() {
         if (r.complete || call % 3 !== 0) return null;
         const saved = engine.serialize();
         const cursor = JSON.parse(saved).cursor;
-        assert(cursor && Array.isArray(cursor.edges) && cursor.next > 0, `mid-pass save holds no cursor: ${JSON.stringify(cursor)}`);
+        assert(cursor && Array.isArray(cursor.edges) && cursor.next > 0, `mid-pass save holds no resumable cursor: ${cursor ? `next ${cursor.next} of ${Array.isArray(cursor.edges) ? cursor.edges.length : "?"} edges` : String(cursor)}`);
         const loaded = new AquiferEngine();
         loaded.deserialize(saved);
         assert(loaded.serialize() === saved, `re-save after load differs from the save`);
