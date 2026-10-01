@@ -1,0 +1,45 @@
+Date 2026-10-01T08:01:00.793Z
+Writer SHA 42d864f38d422660a46363852af889ec9fde5c0c
+CWD C:\Users\snewt\.deus_worktrees\lane-dn\tasks\NAT.02.MASS\lane-dn\verification-e6E4Xs\gate-3
+Command: node tools/sim/test_units.js --mutation-sweep
+PASS units_geometry_matches_space
+PASS kg_to_cp_rule
+PASS apportion_exact
+PASS overflow_refused
+PASS water_stratum_is_312000
+PASS gallons_are_derived
+PASS world_bound_safe
+RESULT: 7 passed, 0 failed
+FAIL density_6250::water_stratum_is_312000: Expected values to be strictly equal:
+
+312500 !== 312000
+
+FAIL density_6250::units_geometry_matches_space: Expected values to be strictly equal:
+
+6250 !== 6240
+
+KILLED density_6250
+FAIL round_half_down::kg_to_cp_rule: 0.00226796185
+
+0 !== 1
+
+KILLED round_half_down
+FAIL apportion_drops_remainder::apportion_exact: Expected values to be strictly deep-equal:
++ actual - expected
+
+  [
+-   4,
+    3,
+    3,
++   3
+  ]
+
+KILLED apportion_drops_remainder
+FAIL overflow_guard_removed::overflow_refused: Missing expected exception (rangeError): addCp overflow; Missing expected exception (rangeError): subCp underflow; Missing expected exception (rangeError): mulCp overflow
+
+3 !== 0
+
+KILLED overflow_guard_removed
+MUTATION RESULT: 4/4 killed; 0 survived/invalid
+
+EXIT 0

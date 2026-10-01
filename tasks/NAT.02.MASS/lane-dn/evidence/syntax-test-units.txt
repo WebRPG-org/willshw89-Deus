@@ -1,0 +1,6 @@
+Date 2026-10-01T08:01:07.631Z
+Writer SHA 42d864f38d422660a46363852af889ec9fde5c0c
+CWD C:\Users\snewt\.deus_worktrees\lane-dn
+Command: node --check tools/sim/test_units.js
+
+EXIT 0

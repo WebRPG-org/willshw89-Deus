@@ -145,9 +145,8 @@ once, and requires assertion failures from every named killing check. Syntax,
 loading or mutation-target errors do not count as kills. Any survivor or invalid
 mutant exits 1. Production code has no mutation switches.
 
-**CONSUMED BY GAME SYSTEMS (planned):** material conversion and ledger work
-in lane-do, water import/authority work in lane-ea, and related hydrology work
-in lane-ed depend on this table per the lane brief. The ultimate visible
+**CONSUMED BY GAME SYSTEMS (planned):** importer work in lanes do, ea and ed
+depends on this table per the lane brief. The ultimate visible
 consumers are `DEUS_Fluid` (finite filling/draining) and structural collapse
 (mass-bearing rubble). Wrong units would create or erase water/rubble weight.
 These consumers do not import this module in this lane; consumer integration

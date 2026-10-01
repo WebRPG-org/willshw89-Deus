@@ -1,0 +1,17 @@
+Date 2026-10-01T08:01:07.520Z
+Writer SHA 42d864f38d422660a46363852af889ec9fde5c0c
+CWD C:\Users\snewt\.deus_worktrees\lane-dn\tasks\NAT.02.MASS\lane-dn\verification-e6E4Xs\negative-bound
+Command: node tools/sim/test_units.js
+PASS units_geometry_matches_space
+PASS kg_to_cp_rule
+PASS apportion_exact
+PASS overflow_refused
+PASS water_stratum_is_312000
+PASS gallons_are_derived
+FAIL world_bound_safe: Expected values to be strictly equal:
+
+769 !== 768
+
+RESULT: 6 passed, 1 failed
+
+EXIT 1

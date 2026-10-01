@@ -5,11 +5,13 @@ Base: `3b12aed03ce7a66a4c84ec0cedc3bec453002fdc`, branch `task/lane-dn`.
 
 ## Claim
 
-IN PROGRESS: codex owns `game/js/sim/units.js`, `tools/sim/test_units.js`,
+RELEASED FOR REVIEW: codex implemented `game/js/sim/units.js`, `tools/sim/test_units.js`,
 `docs/systems/DEUS_Matter.md`, and this lane's task folder for the units brief.
 The direct Owner allowedPaths restriction prevents editing `docs/STATUS.md`
 or `docs/VISION.md`; this local record substitutes for the usual claim and
 records that precedence. No art, importers, soil, push, merge or WBS closure.
+Writer implementation and evidence are ready for the designated Grok review;
+this is not an independent verdict or a closed MASS leaf.
 
 ## Preconditions
 
@@ -51,3 +53,18 @@ required by the brief; no playable behavior is claimed.
   explicitly water-only; a caller-supplied material maximum plus extra reservoir
   mass permits later importers to check a real whole-world bound without
   inventing a new material density in this lane.
+
+## Final validation
+
+- Tested implementation SHA: `42d864f38d422660a46363852af889ec9fde5c0c`.
+- All four manifest gates passed in separate fresh shared-object Git clones
+  with isolated sparse working trees containing game/js and tools. Checkout
+  used LF, and each clone HEAD was checked against that exact SHA.
+- The final harness against the actual base also failed all seven checks on
+  module absence, exit 1. All four behavior mutants were killed at the tip.
+- Disabling apportion_exact only in a scratch harness let the remainder mutant
+  survive: three of four killed and exit 1. Separate display-gallon and bound
+  corruptions each failed their named check and exited 1.
+- Foreground runner finished with exit 0 and removed its own temporary clones.
+- Full report and game translation: REPORT.md. Later changes are documentation
+  and recorded evidence only; the tested production/test source is unchanged.
