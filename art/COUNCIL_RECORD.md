@@ -212,3 +212,16 @@ The PM showed the Owner all ten sets assembled through RMMZ's own autotile table
 | 10 layered strata | v7 | v7 | Owner override |
 
 Cliffs passed: 10 of 10. The round 12-14 limestone and strata remakes become spares. Next: the PM's YEA rows in art/APPROVALS.md and archiving the files into the repo with their catalogue rows.
+
+## ART-COUNCIL-9 (2026-10-01, ~14:20-15:00Z): four Create Image Pro apple trees (round 11)
+
+Board c9_apples.png (four 96x96 candidates at 2x on grass) against the Ultima VII reference; asked in each judge's ART-01 thread (Gemini through AG) as a fresh vote. Limestone and strata were withdrawn from this packet before voting (they failed the PM's RMMZ-table repeat test).
+
+| Piece | MiniMax | ChatGPT | Grok | Gemini | Result |
+|---|---|---|---|---|---|
+| Apple 1 | YES | NO | NO | NO | out |
+| Apple 2 | YES | NO | NO | NO | out |
+| Apple 3 | YES | YES | NO | NO | out (2 of 4) |
+| Apple 4 | YES | NO | NO | NO | out |
+
+NO reasons, condensed (full text in the threads): repeated pillow or scalloped leaf clumps, each cel-shaded with a bright cap and dark rim, instead of U7's one irregular dithered crown with dark interior gaps and limbs showing (Grok, ChatGPT, Gemini); apples drawn as 5-10 px glossy discs with white specular dots on a regular rhythm, where U7 fruit is 1-2 px red pixels with no highlight (all three); near-spherical or symmetrical silhouettes and straight cylindrical trunks with even bark strokes (Grok, Gemini). Apple 4's gnarled forked trunk and open silhouette were praised by Grok and Gemini. Lesson for the next fruit tree: start from apple 4's structure or a U7 fruit tree, one dithered crown, fruit as 1-2 px red pixels, no specular, no per-clump outlines.
