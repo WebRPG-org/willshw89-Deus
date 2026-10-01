@@ -261,6 +261,7 @@ Every decision item recorded in this log must provide:
 - **Ruling:** Every catalogue entry's pixel size, envelope, footprint and anchor derive from the scale chart (`art/reference/DEUS_HUMAN_SCALE_STRIP_V1.png`, whose numeric source is `game/data/DEUS_ScaleRegistry.json`; the two are not independent evidence), citing one chart row per entry. The catalogue builder (`tools/art/build_catalogue.js`), template generator (`tools/art/make_blank_templates.js`) and placement validator (`tools/art/validate_art.js`) enforce it. Disagreements with other documents go to the Owner and are never resolved by workers. Sim distances (DEC-013 geometry) govern the simulation. Where geometry and chart imply different px/ft, it is an Owner question (`stratumPx`).
 - **Open:** If "the scale chart" means a different file, the Owner names it and DEC-016 is amended.
 - **Amendment (Owner, 2026-10-01):** nine per-row size overrides for the catalogue-rows lane (lane-pg) are approved; see DEC-066 item 1. Other disagreements still go to the Owner.
+- **Amendment (Owner, 2026-10-01, ~23:25Z):** "I will solve size mismatches when I see them in the game". A size mismatch against a catalogue envelope no longer holds council-passed art back. The PM puts the piece in at its drawn size, in the smallest 48-multiple frame that holds it, and lists each mismatch with the induction. The Owner adjusts sizes after seeing them in the game.
 
 ---
 
