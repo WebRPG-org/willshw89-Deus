@@ -86,7 +86,7 @@ function Get-DeusProviderSpec {
     param([string]$Provider, [string]$PromptPath, [switch]$Probe)
     $npm = Join-Path $env:APPDATA 'npm'
     switch ($Provider) {
-        'claude', 'fable', 'opus', 'sonnet', 'haiku' {
+        { $_ -in 'claude', 'fable', 'opus', 'sonnet', 'haiku' } {
             $exe = Join-Path $npm 'node_modules\@anthropic-ai\claude-code\bin\claude.exe'
             if (-not (Test-Path -LiteralPath $exe)) {
                 $c = Get-Command claude.exe -ErrorAction SilentlyContinue
@@ -173,7 +173,7 @@ function Add-DeusEffortArgument {
     # for gemini is always high after Resolve-DeusLaunchEffort.
     param([string]$Provider, [string]$ArgLine, [string]$Level)
     switch ($Provider) {
-        'claude', 'fable', 'opus', 'sonnet', 'haiku' { return "$ArgLine --effort $Level" }
+        { $_ -in 'claude', 'fable', 'opus', 'sonnet', 'haiku' } { return "$ArgLine --effort $Level" }
         'grok'   { return "$ArgLine --reasoning-effort $Level" }
         'codex'  {
             $flag = '-c ' + (ConvertTo-DeusArg "model_reasoning_effort=`"$Level`"")
