@@ -10,7 +10,51 @@
     "docs/systems/**",
     "tasks/OPS.PRUNE.06/lane-cu/**",
     "tools/ops/active_lanes.json",
-    "tools/test_l6_docs_preservation.js"
+    "tools/test_l6_docs_preservation.js",
+    "CLAUDE.md",
+    "docs/ASSET_REQUESTS.md",
+    "docs/AUDIT_LOG.md",
+    "docs/ENGINE_RULES.md",
+    "docs/VISION.md",
+    "docs/adr/ADR-003_sim_render_split_and_lod.md",
+    "docs/audits/GROK_19B_ADVERSARIAL_TEST_PLAN.md",
+    "docs/audits/GROK_19B_RISK_REVIEW.md",
+    "docs/audits/LIVING_WORLD_GAP_AUDIT.md",
+    "docs/design/ABILITIES.md",
+    "docs/design/CHAIN_OF_COMMAND.md",
+    "docs/design/CLASSES.md",
+    "docs/design/COMBAT_CHAINS.md",
+    "docs/design/CRAFTING.md",
+    "docs/design/DF_GAP_MAP.md",
+    "docs/design/DRAG_DROP.md",
+    "docs/design/ECOLOGY.md",
+    "docs/design/GROUND_SHADES.md",
+    "docs/design/PEOPLES.md",
+    "docs/design/PERSONALITY.md",
+    "docs/design/README.md",
+    "docs/design/REMAINS.md",
+    "docs/design/SCALE.md",
+    "docs/design/SELECTION.md",
+    "docs/design/TECH_TREE.md",
+    "docs/design/TERRAIN_LEVELS.md",
+    "docs/design/VERTICAL_BUILD_PLAN.md",
+    "docs/design/WORK_TIMING.md",
+    "docs/design/WORLD_ARCHITECTURE.md",
+    "docs/design/Z_COMPATIBILITY_AUDIT.md",
+    "docs/handoffs/HANDOFF_DEUS_TSK_FABLE_19B_CUTS_CAVES.md",
+    "docs/handoffs/HANDOFF_DEUS_TSK_FABLE_19C_DEPTH.md",
+    "docs/handoffs/HANDOFF_anim.md",
+    "docs/handoffs/HANDOFF_cave_followup.md",
+    "docs/handoffs/HANDOFF_codex.md",
+    "docs/handoffs/HANDOFF_df_mechanics.md",
+    "docs/handoffs/HANDOFF_sheet.md",
+    "docs/handoffs/HANDOFF_skins_faces.md",
+    "docs/handoffs/HANDOFF_sprites_batch1.md",
+    "docs/handoffs/HANDOFF_z0_cliffs.md",
+    "docs/migration/onedrive_links_inventory.md",
+    "docs/worldgen/DEUS_WORLDGEN_WBS.md",
+    "prompts/FABLE_PROMPT_19B_REMEDIATION.md",
+    "prompts/GROK_PROMPT_TASK_19B_ATTACK.md"
   ],
   "gateTests": [
     {
@@ -40,6 +84,13 @@
         "tools/governance/test_check_claims.js"
       ],
       "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_l6_docs_preservation.js"
+      ],
+      "timeoutSec": 900
     }
   ]
 }
