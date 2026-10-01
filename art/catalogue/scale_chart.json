@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "deus-art-catalogue/1.2.0",
+  "schemaVersion": "deus-art-catalogue/1.4.0",
   "about": "Size rows cited by catalogue entries (DEC-016). Registry rows copy game/data/DEUS_ScaleRegistry.json; chartLabel/chartHeightPx are transcribed from the strip (art/catalogue/strip_transcription.json); RMMZ_SPEC rows are parsed from docs/RMMZ_ASSET_SPEC.md; GEOMETRY rows are computed from art/catalogue/geometry.json. No other rows.",
   "strip": {
     "path": "art/reference/DEUS_HUMAN_SCALE_STRIP_V1.png",
@@ -53,6 +53,9 @@
     {"rowId":"RMMZ_AUTOTILE_A3","source":"RMMZ_SPEC","category":"TILE_CLASS","wMin":96,"wTarget":96,"wMax":96,"hMin":96,"hTarget":96,"hMax":96,"footprint":{"w":2,"h":2},"anchor":"CENTER","overhangAllowed":false,"ref":"docs/RMMZ_ASSET_SPEC.md:70"},
     {"rowId":"RMMZ_AUTOTILE_A4","source":"RMMZ_SPEC","category":"TILE_CLASS","wMin":96,"wTarget":96,"wMax":96,"hMin":120,"hTarget":120,"hMax":120,"footprint":{"w":2,"h":2.5},"anchor":"CENTER","overhangAllowed":false,"ref":"docs/RMMZ_ASSET_SPEC.md:71"},
     {"rowId":"RMMZ_FACE_144","source":"RMMZ_SPEC","category":"TILE_CLASS","wMin":144,"wTarget":144,"wMax":144,"hMin":144,"hTarget":144,"hMax":144,"footprint":{"w":3,"h":3},"anchor":"CENTER","overhangAllowed":false,"ref":"docs/RMMZ_ASSET_SPEC.md:80"},
+    {"rowId":"RMMZ_AUTOTILE_A4_TOP","source":"RMMZ_SPEC","category":"TILE_CLASS","wMin":96,"wTarget":96,"wMax":96,"hMin":144,"hTarget":144,"hMax":144,"footprint":{"w":2,"h":3},"anchor":"CENTER","overhangAllowed":false,"ref":"docs/RMMZ_ASSET_SPEC.md:69 (derived: the A2 block; A4 even block rows use the floor table, game/js/rmmz_core.js:2547-2552)"},
+    {"rowId":"RMMZ_AUTOTILE_A4_SIDE","source":"RMMZ_SPEC","category":"TILE_CLASS","wMin":96,"wTarget":96,"wMax":96,"hMin":96,"hTarget":96,"hMax":96,"footprint":{"w":2,"h":2},"anchor":"CENTER","overhangAllowed":false,"ref":"docs/RMMZ_ASSET_SPEC.md:70 (derived: the A3 block; A4 odd block rows use the wall table, game/js/rmmz_core.js:2547-2552)"},
+    {"rowId":"RMMZ_TILE_48_2X2","source":"RMMZ_SPEC","category":"TILE_CLASS","wMin":96,"wTarget":96,"wMax":96,"hMin":96,"hTarget":96,"hMax":96,"footprint":{"w":2,"h":2},"anchor":"CENTER","overhangAllowed":false,"ref":"docs/RMMZ_ASSET_SPEC.md:11 (derived: 2 x RMMZ_TILE_48, a whole-cell 2x2 stack of B-E cells, game/js/rmmz_core.js:2483-2498)"},
     {"rowId":"GEOM_TILE","source":"GEOMETRY","category":"GEOMETRY","wMin":48,"wTarget":48,"wMax":48,"hMin":48,"hTarget":48,"hMax":48,"footprint":{"w":1,"h":1},"anchor":"CENTER","overhangAllowed":false,"ref":"art/catalogue/geometry.json (tilePx)"},
     {"rowId":"GEOM_STRATUM_1","source":"GEOMETRY","category":"GEOMETRY","wMin":48,"wTarget":48,"wMax":48,"hMin":19,"hTarget":19,"hMax":20,"footprint":{"w":1,"h":1},"anchor":"CENTER","overhangAllowed":false,"ref":"art/catalogue/geometry.json (1 consecutive stratumPx: min..max over start positions, target = the lowest 1)","strata":1},
     {"rowId":"GEOM_STRATUM_2","source":"GEOMETRY","category":"GEOMETRY","wMin":48,"wTarget":48,"wMax":48,"hMin":38,"hTarget":38,"hMax":39,"footprint":{"w":1,"h":1},"anchor":"CENTER","overhangAllowed":false,"ref":"art/catalogue/geometry.json (2 consecutive stratumPx: min..max over start positions, target = the lowest 2)","strata":2},

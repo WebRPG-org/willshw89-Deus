@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-// tools/art/build_catalogue.js: the DEUS art catalogue builder (WG.20.02, schema deus-art-catalogue/1.1.0).
+// tools/art/build_catalogue.js: the DEUS art catalogue builder (WG.20.02; schema deus-art-catalogue/1.4.0 since WG.20.03).
 //
 // Reads the project's asset sources and writes one deterministic, machine-readable manifest of every
 // tile and sprite slot: ids, sizes, slots, sources, statuses and references. It contains NO image data
@@ -19,7 +19,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const SCHEMA_VERSION = 'deus-art-catalogue/1.2.0';
+const SCHEMA_VERSION = 'deus-art-catalogue/1.4.0';
 const ACCEPTED_GEOMETRY_SCHEMAS = new Set(['deus-art-catalogue/1.1.0', 'deus-art-catalogue/1.2.0']);
 
 const OUT = {
@@ -60,6 +60,7 @@ const SRC = {
     docsBiomeReg: 'docs/art/DEUS_BiomeRegistry.json',
     decisions: 'docs/OWNER_DECISIONS.md',
     vision: 'docs/VISION.md',
+    rmmzRows: 'art/catalogue/rmmz_rows.json',
 };
 
 // Enumerations of the contract (docs/art/catalogue/SCHEMA.md).
@@ -71,7 +72,7 @@ const SOURCE_KINDS = ['catalog', 'assetIndex', 'brief', 'ar', 'manifest', 'matri
 const CATEGORY_GROUP = {
     TERRAIN: 'TILE', WATER: 'TILE', TOP: 'TILE', EDGE: 'TILE', RAMP: 'TILE', RAMPSIDE: 'TILE',
     WALLFACE: 'TILE', CONNECTOR: 'TILE', VEIN: 'TILE',
-    SHADE: 'OVERLAY', RIMSHADOW: 'OVERLAY', DECAY: 'OVERLAY',
+    SHADE: 'OVERLAY', RIMSHADOW: 'OVERLAY', DECAY: 'OVERLAY', MARK: 'OVERLAY',
     TREE: 'PROP', FLORA: 'PROP', STONE: 'PROP', REMAINS: 'PROP', STRUCTURE: 'PROP', FURNITURE: 'PROP',
     WORKSHOP: 'PROP', HANGING: 'PROP', LIGHT: 'PROP',
     ITEM: 'ITEM',
@@ -100,6 +101,12 @@ const HANGING_KINDS = ['ROOTS', 'VINES', 'STALACTITES', 'WATERFALL', 'DUST', 'LI
 const DECAY_STAGES = ['WEATHERED', 'OVERGROWN', 'COLLAPSED', 'BURIED'];
 const ALL_BAND = 'ALL';
 const SHARED = 'SHARED';
+// An AR whose title matches this is interface art and goes to outOfScope (Owner question Q-UI).
+const UI_AR = /window skin|menu theme|cursor|look panel|selection marker|stance rings?|designation marker|core ui|character-sheet ui/i;
+// RMMZ tile-id ranges per sheet letter (game/js/rmmz_core.js:2667-2676, Tilemap.TILE_ID_*).
+const RMMZ_TILE_RANGES = { B: [0, 256], C: [256, 512], D: [512, 768], E: [768, 1024], A5: [1536, 1664], A1: [2048, 2816], A2: [2816, 4352], A3: [4352, 5888], A4: [5888, 8192] };
+const RMMZ_SHAPES = 48; // autotile shapes per kind; an autotile entry is the kind's shape 0
+const RMMZ_SHEET_RE = /_(A1|A2|A3|A4|A5|B|C|D|E)\.png$/;
 
 // ---------------------------------------------------------------- utilities
 function sha256(buf) { return crypto.createHash('sha256').update(buf).digest('hex'); }
@@ -111,15 +118,19 @@ function makeId(band, biome, category, type, variant, state) {
 }
 function ceilTo(n, step) { return step * Math.ceil(n / step); }
 
-function makeCtx(root) {
+// overrides (tests only; the CLI never sets it): { '<relPath>': '<text>' } replaces an input file in memory
+// for every reader of that path (exists, buf/hashFile, text/read/lines/lineOf), so the pinned sha256 follows it.
+function makeCtx(root, overrides) {
     const cache = new Map();
+    const ov = overrides || {};
+    const has = rel => Object.prototype.hasOwnProperty.call(ov, rel);
     const ctx = {
         root,
         abs: rel => path.join(root, rel),
-        exists: rel => fs.existsSync(path.join(root, rel)),
-        buf: rel => fs.readFileSync(path.join(root, rel)),
+        exists: rel => has(rel) || fs.existsSync(path.join(root, rel)),
+        buf: rel => has(rel) ? Buffer.from(ov[rel], 'utf8') : fs.readFileSync(path.join(root, rel)),
         text: rel => {
-            if (!cache.has(rel)) cache.set(rel, fs.readFileSync(path.join(root, rel), 'utf8').replace(/^﻿/, ''));
+            if (!cache.has(rel)) cache.set(rel, (has(rel) ? ov[rel] : fs.readFileSync(path.join(root, rel), 'utf8')).replace(/^﻿/, ''));
             return cache.get(rel);
         },
         json: rel => JSON.parse(ctx.text(rel)),
@@ -232,6 +243,13 @@ function parseRmmzSpec(ctx) {
     }
     const be = find(/^\| \*\*B – E\*\* \|[^|]*\| \*\*(\d+) × (\d+) px\*\*/);
     if (be) for (const s of ['B', 'C', 'D', 'E']) out.sheets[s] = { w: +be.m[1], h: +be.m[2], line: be.line };
+    // Derived rows (WG.20.03; docs/RMMZ_ASSET_SPEC.md is not edited): an A4 top kind (even block row) draws with the
+    // floor table like an A2 block, an A4 side kind (odd block row) with the wall table like an A3 block
+    // (game/js/rmmz_core.js:2547-2552); a 2x2 stack is four whole B-E cells (game/js/rmmz_core.js:2483-2498).
+    const a2 = out.rows.RMMZ_AUTOTILE_A2, a3 = out.rows.RMMZ_AUTOTILE_A3, t48 = out.rows.RMMZ_TILE_48;
+    if (a2) out.rows.RMMZ_AUTOTILE_A4_TOP = { w: a2.w, h: a2.h, line: a2.line, note: 'A4 top kind', ref: `${SRC.rmmzSpec}:${a2.line} (derived: the A2 block; A4 even block rows use the floor table, game/js/rmmz_core.js:2547-2552)` };
+    if (a3) out.rows.RMMZ_AUTOTILE_A4_SIDE = { w: a3.w, h: a3.h, line: a3.line, note: 'A4 side kind', ref: `${SRC.rmmzSpec}:${a3.line} (derived: the A3 block; A4 odd block rows use the wall table, game/js/rmmz_core.js:2547-2552)` };
+    if (t48) out.rows.RMMZ_TILE_48_2X2 = { w: 2 * t48.w, h: 2 * t48.h, line: t48.line, note: '2x2 cell stack', ref: `${SRC.rmmzSpec}:${t48.line} (derived: 2 x RMMZ_TILE_48, a whole-cell 2x2 stack of B-E cells, game/js/rmmz_core.js:2483-2498)` };
     const face = find(/\*\*Cell Size\*\*: \*\*(\d+) × (\d+) px\*\*/);
     if (face) out.rows.RMMZ_FACE_144 = { w: +face.m[1], h: +face.m[2], line: face.line, note: 'face cell' };
     const fsheet = find(/^- \*\*Dimensions\*\*: \*\*(\d+) × (\d+) px\*\* \(4 columns × 2 rows/);
@@ -360,14 +378,20 @@ function buildScaleChart(ctx, g, rmmz, strip, stats) {
         rows.push(row);
     }
     // Tile-class rows from the RMMZ spec (sizes parsed from docs/RMMZ_ASSET_SPEC.md, never typed here).
-    for (const id of ['RMMZ_TILE_48', 'RMMZ_AUTOTILE_A1', 'RMMZ_AUTOTILE_A2', 'RMMZ_AUTOTILE_A3', 'RMMZ_AUTOTILE_A4', 'RMMZ_FACE_144']) {
+    for (const id of ['RMMZ_TILE_48', 'RMMZ_AUTOTILE_A1', 'RMMZ_AUTOTILE_A2', 'RMMZ_AUTOTILE_A3', 'RMMZ_AUTOTILE_A4', 'RMMZ_FACE_144', 'RMMZ_AUTOTILE_A4_TOP', 'RMMZ_AUTOTILE_A4_SIDE', 'RMMZ_TILE_48_2X2']) {
         const r = rmmz.rows[id];
         if (!r) { stats.errors.push({ code: 'RMMZ_SPEC', id, msg: `size of ${id} not found in ${SRC.rmmzSpec}` }); continue; }
-        const row = { rowId: id, source: 'RMMZ_SPEC', category: 'TILE_CLASS', wMin: r.w, wTarget: r.w, wMax: r.w, hMin: r.h, hTarget: r.h, hMax: r.h, footprint: { w: r.w / g.tilePx, h: r.h / g.tilePx }, anchor: 'CENTER', overhangAllowed: false, ref: `${SRC.rmmzSpec}:${r.line}` };
+        const row = { rowId: id, source: 'RMMZ_SPEC', category: 'TILE_CLASS', wMin: r.w, wTarget: r.w, wMax: r.w, hMin: r.h, hTarget: r.h, hMax: r.h, footprint: { w: r.w / g.tilePx, h: r.h / g.tilePx }, anchor: 'CENTER', overhangAllowed: false, ref: r.ref || `${SRC.rmmzSpec}:${r.line}` };
         const lab = stripByRow.get(id);
         if (lab) { row.chartLabel = lab.chartLabel; row.chartHeightPx = lab.chartHeightPx; }
         rows.push(row);
     }
+    // The derived A4 rows must tile the parsed A4 sheet: 8 top kinds across, whole (top + side) pairs down.
+    const a4 = rmmz.sheets.A4, a4Top = rmmz.rows.RMMZ_AUTOTILE_A4_TOP, a4Side = rmmz.rows.RMMZ_AUTOTILE_A4_SIDE;
+    if (a4 && a4Top && a4Side) {
+        if (a4.w !== 8 * a4Top.w) stats.errors.push({ code: 'RMMZ_SPEC', id: 'RMMZ_AUTOTILE_A4_TOP', msg: `A4 sheet width ${a4.w} (${SRC.rmmzSpec}:${a4.line}) is not 8 x the top width ${a4Top.w}` });
+        if (a4.h % (a4Top.h + a4Side.h) !== 0) stats.errors.push({ code: 'RMMZ_SPEC', id: 'RMMZ_AUTOTILE_A4_SIDE', msg: `A4 sheet height ${a4.h} (${SRC.rmmzSpec}:${a4.line}) is not a whole number of top + side pairs (${a4Top.h} + ${a4Side.h})` });
+    } else stats.errors.push({ code: 'RMMZ_SPEC', id: 'A4', msg: `the A4 sheet or the A2/A3 blocks were not parsed from ${SRC.rmmzSpec}` });
     // Geometry rows, computed from geometry.json only.
     const T = g.tilePx;
     const geo = (rowId, w, hMin, h, note, extra, hTarget) => rows.push(Object.assign({ rowId, source: 'GEOMETRY', category: 'GEOMETRY', wMin: w, wTarget: w, wMax: w, hMin, hTarget: hTarget === undefined ? h : hTarget, hMax: h, footprint: { w: Math.max(1, Math.ceil(w / T)), h: 1 }, anchor: 'CENTER', overhangAllowed: false, ref: `${SRC.geometry} (${note})` }, extra || {}));
@@ -564,27 +588,33 @@ function runtimeFromKey(key, idx, g) {
     return { kind: 'NONE', file: ix ? ix.file : null, index: null };
 }
 
+// An inducted source set (art/masters/source_sets/<id>/manifest.json) overrides the entry's topology, runtime and status.
+function applySourceSet(ctx, e, stats) {
+    const sourceSetManifestPath = path.join(ctx.root, 'art', 'masters', 'source_sets', e.id, 'manifest.json');
+    if (fs.existsSync(sourceSetManifestPath)) {
+        try {
+            const sm = JSON.parse(fs.readFileSync(sourceSetManifestPath, 'utf8'));
+            if (sm.topologyClass) e.topologyClass = sm.topologyClass;
+            if (sm.variantCount) e.variantCount = sm.variantCount;
+            if (sm.variantSelectionMode) e.variantSelectionMode = sm.variantSelectionMode;
+            if (sm.orientationSemantics !== undefined) e.orientationSemantics = sm.orientationSemantics;
+            if (sm.sourceVariants) e.sourceVariants = sm.sourceVariants;
+            if (sm.runtime) e.runtime = sm.runtime;
+            if (sm.status) e.status = sm.status;
+            if (sm.statusWhy) e.statusWhy = sm.statusWhy;
+            else if (sm.status === 'APPROVED') e.statusWhy = 'Owner approved source set inducted with 8 variants';
+        } catch (err) {
+            stats.errors.push({ code: 'SOURCE_SET_MANIFEST_ERROR', id: e.id, msg: err.message });
+        }
+    }
+    return e;
+}
+
 function buildEntries(ctx, S) {
     const { g, chart, rowById, raceById, rampIds, mapping, wc, idx, inv, briefs, requests, manifest, rmmz, stats, sizeClasses, creatures } = S;
     const entries = [];
     const add = e => {
-        const sourceSetManifestPath = path.join(ctx.root, 'art', 'masters', 'source_sets', e.id, 'manifest.json');
-        if (fs.existsSync(sourceSetManifestPath)) {
-            try {
-                const sm = JSON.parse(fs.readFileSync(sourceSetManifestPath, 'utf8'));
-                if (sm.topologyClass) e.topologyClass = sm.topologyClass;
-                if (sm.variantCount) e.variantCount = sm.variantCount;
-                if (sm.variantSelectionMode) e.variantSelectionMode = sm.variantSelectionMode;
-                if (sm.orientationSemantics !== undefined) e.orientationSemantics = sm.orientationSemantics;
-                if (sm.sourceVariants) e.sourceVariants = sm.sourceVariants;
-                if (sm.runtime) e.runtime = sm.runtime;
-                if (sm.status) e.status = sm.status;
-                if (sm.statusWhy) e.statusWhy = sm.statusWhy;
-                else if (sm.status === 'APPROVED') e.statusWhy = 'Owner approved source set inducted with 8 variants';
-            } catch (err) {
-                stats.errors.push({ code: 'SOURCE_SET_MANIFEST_ERROR', id: e.id, msg: err.message });
-            }
-        }
+        applySourceSet(ctx, e, stats);
         entries.push(e);
         return e;
     };
@@ -1053,8 +1083,178 @@ function buildAddendum(S, base) {
     return { entries: out, terrains };
 }
 
+// ---------------------------------------------------------------- RMMZ-format rows (WG.20.03)
+// Rows and runtime re-forms read from art/catalogue/rmmz_rows.json (the hand input; this code holds no row data).
+// New rows are MISSING, carry an RMMZ tileset runtime and rmmzForm, and are packed append-only by the caller.
+// Re-forms change only runtime, rmmzForm, sourceIds.ar and statusWhy of an existing entry whose runtime is NONE.
+const RMMZ_ROW_KEYS = ['group', 'ar', 'band', 'category', 'type', 'variant', 'state', 'scaleRow', 'anchor', 'frames', 'ramps', 'rampBasis', 'file', 'tileId', 'grid', 'stock', 'standardPending', 'notes'];
+const RMMZ_ROW_OPTIONAL = ['envelopeOverride', 'footprintOverride', 'overrideWhy'];
+const RMMZ_REFORM_KEYS = ['id', 'ar', 'file', 'tileId', 'grid', 'stock'];
+const RMMZ_VARIANT_RE = /^(TOP|SIDE|A1|A2|B-V(?!0)\d)$/;
+const RMMZ_GRID_RE = /^([1-8])x([1-8])$/;
+
+function rmmzSheetOf(file) { const m = RMMZ_SHEET_RE.exec(file || ''); return m ? m[1] : null; }
+function gridOf(grid) { const m = RMMZ_GRID_RE.exec(grid || '1x1'); return m ? { w: +m[1], h: +m[2] } : null; }
+// The B-E cells a grid covers (left to right, then down); an autotile kind is one claim.
+function rmmzCells(rt) {
+    if (rt.tileId >= RMMZ_TILE_RANGES.A5[0]) return [rt.tileId];
+    const gr = gridOf(rt.grid) || { w: 1, h: 1 };
+    const out = [];
+    for (let dy = 0; dy < gr.h; dy++) for (let dx = 0; dx < gr.w; dx++) out.push(rt.tileId + dx + 8 * dy);
+    return out;
+}
+// Human text of an RMMZ address: "A4 slot s: top kind k", "A1 kind k (waterfall)", "A2 kind k", "tile n", "tiles a, b".
+function rmmzSlotText(rt) {
+    const id = rt.tileId, L = rmmzSheetOf(rt.file);
+    if (L === 'A4') { const k = (id - RMMZ_TILE_RANGES.A4[0]) / RMMZ_SHAPES; return `A4 slot ${a4Slot(id)}: ${Math.floor(k / 8) % 2 ? 'side' : 'top'} kind ${k}`; }
+    if (L === 'A1') { const k = (id - RMMZ_TILE_RANGES.A1[0]) / RMMZ_SHAPES; return `A1 kind ${k}${k === 2 || k === 3 || (k >= 5 && k % 2 === 1) ? ' (waterfall)' : ''}`; }
+    if (L === 'A2') return `A2 kind ${(id - RMMZ_TILE_RANGES.A2[0]) / RMMZ_SHAPES}`;
+    return rt.grid ? `tiles ${rmmzCells(rt).join(', ')}` : `tile ${id}`;
+}
+// A4 material slot s holds top kind 16*floor(s/8)+s%8 and side kind = top + 8 (3 row pairs of 8 on the sheet).
+function a4Slot(tileId) { const k = (tileId - RMMZ_TILE_RANGES.A4[0]) / RMMZ_SHAPES; return 8 * Math.floor(k / 16) + (k % 8); }
+function envText(v) { return `${v.wMin === v.wMax ? v.wMax : v.wMin + '-' + v.wMax}x${v.hMin === v.hMax ? v.hMax : v.hMin + '-' + v.hMax}`; }
+
+function buildRmmzRows(ctx, S, entries) {
+    const { g, stats, requests, rampIds, rowById } = S;
+    const out = { rows: [], reformed: [], doc: null };
+    let doc;
+    try { doc = ctx.readJson(SRC.rmmzRows, 'RMMZ_ROWS'); } catch (err) { stats.errors.push({ code: 'RMMZ_ROWS_INVALID', id: SRC.rmmzRows, msg: `not readable JSON: ${err.message}` }); return out; }
+    out.doc = doc;
+    const nBefore = stats.errors.length;
+    const bad = (where, key, msg) => stats.errors.push({ code: 'RMMZ_ROWS_INVALID', id: `${where}.${key}`, msg });
+    const has = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+    const isStrOrNull = v => v === null || (typeof v === 'string' && v.length > 0);
+    if (doc.schema !== 'deus-rmmz-rows/1') bad('schema', 'schema', `schema ${JSON.stringify(doc.schema)} is not deus-rmmz-rows/1`);
+    for (const k of ['rulings', 'sheets', 'rows', 'reforms']) if (!Array.isArray(doc[k])) bad(k, k, `${k} must be a list`);
+    if (stats.errors.length > nBefore) return out;
+    // Sheets: each runtime file with its RMMZ letter.
+    const sheetOfFile = new Map();
+    doc.sheets.forEach((s, i) => {
+        const L = rmmzSheetOf(s.file);
+        if (!s.file || !L) bad(`sheets[${i}]`, 'file', `${JSON.stringify(s.file)} does not end in an RMMZ sheet letter (_A1.._A5, _B.._E .png)`);
+        else if (s.sheet !== L) bad(`sheets[${i}]`, 'sheet', `sheet ${JSON.stringify(s.sheet)} is not the letter ${L} of ${s.file}`);
+        else if (sheetOfFile.has(s.file)) bad(`sheets[${i}]`, 'file', `${s.file} is listed twice`);
+        else sheetOfFile.set(s.file, L);
+    });
+    const bands = new Set(bandIds(g).concat([ALL_BAND]));
+    const checkFile = (where, it) => {
+        if (!sheetOfFile.has(it.file)) bad(where, 'file', `${JSON.stringify(it.file)} is not listed in sheets`);
+        if (!Number.isInteger(it.tileId)) bad(where, 'tileId', `${JSON.stringify(it.tileId)} is not an integer`);
+        if (it.grid !== null && !gridOf(it.grid)) bad(where, 'grid', `${JSON.stringify(it.grid)} is not null or WxH (1-8 cells each way)`);
+        if (!isStrOrNull(it.stock)) bad(where, 'stock', 'stock must be a non-empty string or null');
+        if (!/^AR-\d+$/.test(it.ar || '')) bad(where, 'ar', `${JSON.stringify(it.ar)} is not an AR id`);
+    };
+    doc.rows.forEach((it, i) => {
+        const w = `rows[${i}]`;
+        for (const k of RMMZ_ROW_KEYS) if (!has(it, k)) bad(w, k, `missing key ${k}`);
+        for (const k of Object.keys(it)) if (!RMMZ_ROW_KEYS.includes(k) && !RMMZ_ROW_OPTIONAL.includes(k)) bad(w, k, `unknown key ${k}`);
+        if (typeof it.group !== 'string' || !it.group) bad(w, 'group', 'group must be a non-empty string');
+        if (!bands.has(it.band)) bad(w, 'band', `${JSON.stringify(it.band)} is not a geometry band or ${ALL_BAND}`);
+        if (!CATEGORIES.includes(it.category)) bad(w, 'category', `${JSON.stringify(it.category)} is not a catalogue category`);
+        if (typeof it.type !== 'string' || !it.type) bad(w, 'type', 'type must be a non-empty string');
+        if (!RMMZ_VARIANT_RE.test(it.variant || '')) bad(w, 'variant', `${JSON.stringify(it.variant)} is not TOP, SIDE, A1, A2 or B-V<n>`);
+        if (it.state !== 'DEFAULT' && it.state !== 'DEPLETED') bad(w, 'state', `${JSON.stringify(it.state)} is not DEFAULT or DEPLETED`);
+        const row = rowById.get(it.scaleRow);
+        if (!row) bad(w, 'scaleRow', `${JSON.stringify(it.scaleRow)} is not a scale-chart row`);
+        if (!ANCHOR_TYPES.includes(it.anchor)) bad(w, 'anchor', `${JSON.stringify(it.anchor)} is not one of ${ANCHOR_TYPES.join('|')}`);
+        if (!Number.isInteger(it.frames) || it.frames < 1) bad(w, 'frames', `${JSON.stringify(it.frames)} is not a whole number >= 1`);
+        if (!Array.isArray(it.ramps) || !it.ramps.length) bad(w, 'ramps', 'ramps must be a non-empty list');
+        else for (const r of it.ramps) if (!rampIds.has(r)) bad(w, 'ramps', `ramp ${r} is not in the palette registry`);
+        if (it.rampBasis !== 'MATCH' && it.rampBasis !== 'PROPOSED') bad(w, 'rampBasis', `${JSON.stringify(it.rampBasis)} is not MATCH or PROPOSED`);
+        if (!isStrOrNull(it.standardPending)) bad(w, 'standardPending', 'standardPending must be a non-empty string or null');
+        if (!isStrOrNull(it.notes)) bad(w, 'notes', 'notes must be a non-empty string or null');
+        checkFile(w, it);
+        const ov = it.envelopeOverride, fov = it.footprintOverride;
+        if (ov !== undefined) {
+            const keys = ov && typeof ov === 'object' ? Object.keys(ov).sort(sortStr) : [];
+            if (keys.join(',') !== 'hMax,hMin,wMax,wMin') bad(w, 'envelopeOverride', `must have exactly wMin, wMax, hMin, hMax (has ${keys.join(', ') || 'none'})`);
+            else if (!keys.every(k => Number.isInteger(ov[k]) && ov[k] >= 0)) bad(w, 'envelopeOverride', 'every value must be a whole number >= 0');
+            else if (ov.wMin > ov.wMax || ov.hMin > ov.hMax) bad(w, 'envelopeOverride', `min above max (${envText(ov)})`);
+            else if (row && !(ov.wMin <= row.wTarget && row.wTarget <= ov.wMax && ov.hMin <= row.hTarget && row.hTarget <= ov.hMax)) bad(w, 'envelopeOverride', `${envText(ov)} does not hold the ${it.scaleRow} targets ${row.wTarget}x${row.hTarget}`);
+        }
+        if (fov !== undefined) {
+            const keys = fov && typeof fov === 'object' ? Object.keys(fov).sort(sortStr) : [];
+            if (keys.join(',') !== 'h,w') bad(w, 'footprintOverride', `must have exactly w, h (has ${keys.join(', ') || 'none'})`);
+            else if (!(typeof fov.w === 'number' && fov.w > 0 && typeof fov.h === 'number' && fov.h > 0)) bad(w, 'footprintOverride', 'w and h must be numbers > 0');
+        }
+        if ((ov !== undefined || fov !== undefined) !== (typeof it.overrideWhy === 'string' && it.overrideWhy.trim().length > 0)) bad(w, 'overrideWhy', ov !== undefined || fov !== undefined ? 'a size override needs a non-empty overrideWhy (the measured specimen: file, sha256 prefix, bounding box)' : 'overrideWhy without a size override');
+    });
+    doc.reforms.forEach((it, i) => {
+        const w = `reforms[${i}]`;
+        for (const k of RMMZ_REFORM_KEYS) if (!has(it, k)) bad(w, k, `missing key ${k}`);
+        for (const k of Object.keys(it)) if (!RMMZ_REFORM_KEYS.includes(k)) bad(w, k, `unknown key ${k}`);
+        if (typeof it.id !== 'string' || !it.id) bad(w, 'id', 'id must be a non-empty string');
+        checkFile(w, it);
+    });
+    // Rulings: each quote is found in docs/OWNER_DECISIONS.md (first-hit line).
+    const rulingLines = doc.rulings.map((r, i) => {
+        const n = typeof r.quote === 'string' && r.quote ? ctx.lineOf(SRC.decisions, r.quote) : 0;
+        if (!n) stats.errors.push({ code: 'RULING_MISSING', id: r.id || `rulings[${i}]`, msg: `quote ${JSON.stringify(r.quote)} is not in ${SRC.decisions}` });
+        return n;
+    });
+    if (doc.rulings.length < 2) stats.errors.push({ code: 'RULING_MISSING', id: 'rulings', msg: 'the standing row permission and the RMMZ-format ruling must both be quoted' });
+    // ARs: open, not withdrawn, not interface art; the text names every runtime file its rows use.
+    const filesOfAr = new Map();
+    for (const it of doc.rows.concat(doc.reforms)) { if (!filesOfAr.has(it.ar)) filesOfAr.set(it.ar, new Set()); filesOfAr.get(it.ar).add(it.file); }
+    const reqOf = new Map();
+    for (const [ar, files] of filesOfAr) {
+        const req = requests.find(r => r.id === ar);
+        const why = !req ? `absent from ${SRC.requests}` : req.withdrawn ? `withdrawn (${SRC.requests}:${req.line})` : !req.open ? `closed: ${req.status} (${SRC.requests}:${req.line})` : UI_AR.test(req.title) ? `its title matches the interface-art pattern, so it is out of scope (${SRC.requests}:${req.line})` : null;
+        if (why) { stats.errors.push({ code: 'AR_MISSING', id: ar, msg: `${ar} is ${why}` }); continue; }
+        reqOf.set(ar, req);
+        for (const f of files) if (typeof f === 'string' && !req.text.includes(path.basename(f))) stats.errors.push({ code: 'RMMZ_AR_TEXT', id: ar, msg: `${ar} (${SRC.requests}:${req.line}) does not name ${path.basename(f)}` });
+    }
+    if (stats.errors.length > nBefore) return out;
+    // The AR and ruling clause of every row's reason (ROWS.md section 1).
+    const q = doc.rulings;
+    const clause = it => {
+        const req = reqOf.get(it.ar), L = sheetOfFile.get(it.file);
+        const form = L === 'A4' ? `${path.basename(it.file, '.png')} slot ${a4Slot(it.tileId)}, ${it.stock ? 'format example ' + it.stock : 'no format example'}`
+            : it.stock ? `stock ${it.stock}` : `DEUS ${L} extension sheet, no stock slot`;
+        return `${it.ar} ${req.status} (${SRC.requests}:${req.line}); Owner 2026-10-01 "${q[0].quote}" (${SRC.decisions}:${rulingLines[0]}), RMMZ format (${SRC.decisions}:${rulingLines[1]}); RMMZ form: ${form}; no art yet (DEC-007 catalogue first)`;
+    };
+    const runtimeOf = it => Object.assign({ kind: 'RMMZ_TILESET', file: it.file, index: null, tileId: it.tileId, slotText: rmmzSlotText(it) }, it.grid ? { grid: it.grid } : {});
+    for (const it of doc.rows) {
+        const row = rowById.get(it.scaleRow);
+        const runtime = runtimeOf(it);
+        const e = entryBase(g, {
+            category: it.category, band: it.band, type: it.type, variant: it.variant, state: it.state,
+            sourceIds: { ar: [it.ar] }, scaleRow: it.scaleRow, ramps: it.ramps,
+            frames: { cols: it.frames, rows: 1, facings: ['S'], rate: null }, runtime, references: ['pack:WORLD'],
+            standardPending: it.standardPending, alphaMode: 'BINARY', status: 'MISSING', statusWhy: clause(it),
+            mapping: { scaleBasis: 'MATCH', rampBasis: it.rampBasis, rule: `${it.ar} ${path.basename(it.file)} ${runtime.slotText}` }, notes: it.notes,
+        });
+        // A size override (WG.20.03 D4) wins over the size row: min/max from the override, targets from the row.
+        const ov = it.envelopeOverride, fov = it.footprintOverride;
+        const sizeOpts = {};
+        if (ov) sizeOpts.envelope = { wMin: ov.wMin, wTarget: row.wTarget, wMax: ov.wMax, hMin: ov.hMin, hTarget: row.hTarget, hMax: ov.hMax };
+        if (fov) sizeOpts.footprint = { w: fov.w, h: fov.h };
+        applySize(g, e, row, it.anchor, sizeOpts);
+        e.rmmzForm = { sheet: sheetOfFile.get(it.file), stock: it.stock };
+        if (ov) e.envelopeOverride = { wMin: ov.wMin, wMax: ov.wMax, hMin: ov.hMin, hMax: ov.hMax };
+        if (fov) e.footprintOverride = { w: fov.w, h: fov.h };
+        if (ov || fov) e.statusWhy += `; size override of ${it.scaleRow} ${envText(row)}${ov ? ' to ' + envText(ov) : ''}${fov ? `, footprint ${fov.w}x${fov.h}` : ''} (WG.20.03 D4): ${it.overrideWhy}`;
+        applySourceSet(ctx, e, stats);
+        out.rows.push(e);
+    }
+    const byId = new Map(entries.map(e => [e.id, e]));
+    for (const it of doc.reforms) {
+        const e = byId.get(it.id);
+        if (!e) { stats.errors.push({ code: 'REFORM_TARGET', id: it.id, msg: 'the re-form names an entry that does not exist' }); continue; }
+        if (!e.runtime || e.runtime.kind !== 'NONE') { stats.errors.push({ code: 'REFORM_TARGET', id: it.id, msg: `the target already has runtime kind ${e.runtime ? e.runtime.kind : 'none'}` }); continue; }
+        e.runtime = runtimeOf(it);
+        e.rmmzForm = { sheet: sheetOfFile.get(it.file), stock: it.stock };
+        e.sourceIds.ar = uniq(e.sourceIds.ar.concat([it.ar])).sort(sortStr);
+        e.statusWhy = `${e.statusWhy}; ${clause(it)}`;
+        out.reformed.push(e);
+    }
+    return out;
+}
+
 // ---------------------------------------------------------------- packing
-function pack(g, entries, stats) {
+// tag: '' for the main atlases; 'RMMZ' for the append-only sheets of the RMMZ-format rows (no existing slot moves).
+function pack(g, entries, stats, tag) {
     const T = g.tilePx;
     const W = Math.floor(g.atlasMaxPx / T) * T;
     const H = W;
@@ -1071,7 +1271,7 @@ function pack(g, entries, stats) {
     for (const [k, list] of groups) {
         const [band, biome, type] = k.split('|');
         let n = 0, sheet = null, x = 0, y = 0, shelfH = 0, idx = 0;
-        const open = () => { n++; sheet = { sheetId: `ATLAS_${band}_${biome}_${type}_${String(n).padStart(2, '0')}`, kind: 'ATLAS', group: { band, biome, type }, w: 0, h: 0, gridPx: T, runtimeFile: null }; sheets.push(sheet); x = 0; y = 0; shelfH = 0; idx = 0; };
+        const open = () => { n++; sheet = { sheetId: `ATLAS_${band}_${biome}_${type}_${tag || ''}${String(n).padStart(2, '0')}`, kind: 'ATLAS', group: { band, biome, type }, w: 0, h: 0, gridPx: T, runtimeFile: null }; sheets.push(sheet); x = 0; y = 0; shelfH = 0; idx = 0; };
         open();
         for (const e of list) {
             if (e._w > W || e._h > H) { stats.errors.push({ code: 'SHEET_TOO_LARGE', id: e.id, msg: `slot ${e._w}x${e._h} does not fit an atlas of ${W}px` }); continue; }
@@ -1110,6 +1310,43 @@ function runtimeSheets(g, entries, rmmz, stats) {
     return Array.from(out.values());
 }
 
+// RMMZ_FORM: why an entry's rmmzForm does not match where RMMZ reads its tile, or null. Targets come from the
+// parsed size rows: A1 kinds 0-1 and the even kinds from 4 up are 3 frames side by side (3 x the A1 block), the
+// other A1 kinds one block; A2 one A2 block; A4 a top block in even block rows and a side block in odd ones; B-E
+// grid x tilePx. A3 and A5 have no target yet and are refused (fail closed).
+function rmmzFormProblem(e, rows, T) {
+    const rt = e.runtime || {};
+    if (rt.kind !== 'RMMZ_TILESET') return `runtime kind ${rt.kind} is not RMMZ_TILESET`;
+    const L = rmmzSheetOf(rt.file);
+    if (!L) return `runtime file ${rt.file} names no RMMZ sheet letter`;
+    if (e.rmmzForm.sheet !== L) return `rmmzForm.sheet ${e.rmmzForm.sheet} is not the letter ${L} of ${rt.file}`;
+    const id = rt.tileId, range = RMMZ_TILE_RANGES[L];
+    if (!Number.isInteger(id) || id < range[0] || id >= range[1]) return `tileId ${id} is outside the ${L} range ${range[0]}..${range[1] - 1}`;
+    let target;
+    if (L === 'A3' || L === 'A5') return `no RMMZ target for ${L} rows yet (fail closed until a lane gives one)`;
+    if (L === 'A1' || L === 'A2' || L === 'A4') {
+        if ((id - range[0]) % RMMZ_SHAPES !== 0) return `tileId ${id} is autotile shape ${(id - range[0]) % RMMZ_SHAPES}; an autotile entry is its kind's shape 0`;
+        if (rt.grid) return `grid ${rt.grid} on an autotile; a grid is for B-E cells only`;
+        const k = (id - range[0]) / RMMZ_SHAPES;
+        const rowId = L === 'A1' ? 'RMMZ_AUTOTILE_A1' : L === 'A2' ? 'RMMZ_AUTOTILE_A2' : Math.floor(k / 8) % 2 === 0 ? 'RMMZ_AUTOTILE_A4_TOP' : 'RMMZ_AUTOTILE_A4_SIDE';
+        const blk = rows.get(rowId);
+        if (!blk) return `size row ${rowId} is missing`;
+        const wide = L === 'A1' && (k < 2 || (k >= 4 && k % 2 === 0));
+        target = { w: (wide ? 3 : 1) * blk.wMax, h: blk.hMax, what: `${L} kind ${k} (${rowId}${wide ? ' x 3 frames' : ''})` };
+    } else {
+        const local = id - range[0];
+        if (local === 0) return `local tile 0 of a ${L} sheet is refused (a DEUS convention, not an RMMZ rule: RMMZ leaves only tileId 0 undrawn, and stock C sheets use their local tile 0)`;
+        const gr = gridOf(rt.grid);
+        if (!gr) return `grid ${rt.grid} is not WxH`;
+        const col = local % 8, row = Math.floor((local % 128) / 8);
+        if (col + gr.w > 8 || row + gr.h > 16) return `grid ${rt.grid || '1x1'} at local tile ${local} (column ${col}, row ${row}) leaves its 8-column half of 16 rows`;
+        target = { w: gr.w * T, h: gr.h * T, what: `${gr.w}x${gr.h} cells of ${T} px` };
+    }
+    if (!e.slot) return 'no paint slot';
+    if (e.slot.w !== target.w || e.slot.h !== target.h) return `slot ${e.slot.w}x${e.slot.h} is not the RMMZ target ${target.w}x${target.h} (${target.what})`;
+    return null;
+}
+
 // ---------------------------------------------------------------- validation (the FAIL rules)
 // Every rule has a code. `disabled` switches one rule off (the provocation mechanism of the tests).
 function validateCatalogue(cat, ctx) {
@@ -1140,7 +1377,13 @@ function validateCatalogue(cat, ctx) {
         if (row && e.envelope) {
             const v = e.envelope;
             const inside = (lo, x, hi) => x >= lo && x <= hi;
-            if (!(inside(row.wMin, v.wMin, row.wMax) && inside(row.wMin, v.wTarget, row.wMax) && inside(row.wMin, v.wMax, row.wMax) && inside(row.hMin, v.hMin, row.hMax) && inside(row.hMin, v.hTarget, row.hMax) && inside(row.hMin, v.hMax, row.hMax))) err('SIZE_OUTSIDE_ROW', e.id, `envelope outside ${e.scaleRow} min/max`);
+            const ov = e.envelopeOverride;
+            if (ov) {
+                // A per-row size override (WG.20.03 D4) replaces the chart row: the envelope's min/max equal the
+                // override's and its targets lie inside it.
+                if (v.wMin !== ov.wMin || v.wMax !== ov.wMax || v.hMin !== ov.hMin || v.hMax !== ov.hMax) err('SIZE_OUTSIDE_ROW', e.id, `envelope min/max ${envText(v)} differ from its envelopeOverride ${envText(ov)}`);
+                else if (!(inside(ov.wMin, v.wTarget, ov.wMax) && inside(ov.hMin, v.hTarget, ov.hMax))) err('SIZE_OUTSIDE_ROW', e.id, `envelope target ${v.wTarget}x${v.hTarget} outside its envelopeOverride ${envText(ov)}`);
+            } else if (!(inside(row.wMin, v.wMin, row.wMax) && inside(row.wMin, v.wTarget, row.wMax) && inside(row.wMin, v.wMax, row.wMax) && inside(row.hMin, v.hMin, row.hMax) && inside(row.hMin, v.hTarget, row.hMax) && inside(row.hMin, v.hMax, row.hMax))) err('SIZE_OUTSIDE_ROW', e.id, `envelope outside ${e.scaleRow} min/max`);
         }
         if (e.zMin < g.zMin || e.zMax > g.zMax || e.zMin > e.zMax || !Number.isInteger(e.zMin) || !Number.isInteger(e.zMax)) err('Z_OUT_OF_RANGE', e.id, `z ${e.zMin}..${e.zMax} outside ${g.zMin}..${g.zMax}`);
         const traced = SOURCE_KINDS.some(k => (e.sourceIds[k] || []).length);
@@ -1220,6 +1463,19 @@ function validateCatalogue(cat, ctx) {
             }
         }
     }
+    // RMMZ forms (WG.20.03): every entry with rmmzForm sits where RMMZ reads it, and no two claim one cell.
+    const claims = new Map();
+    for (const e of cat.entries) {
+        if (!e.rmmzForm) continue;
+        const p = rmmzFormProblem(e, rows, T);
+        if (p) err('RMMZ_FORM', e.id, p);
+        if (!e.runtime || !Number.isInteger(e.runtime.tileId)) continue;
+        for (const c of rmmzCells(e.runtime)) {
+            const k = `${e.runtime.file}#${c}`;
+            if (claims.has(k)) err('RMMZ_TILE_DUP', e.id, `${e.runtime.file} cell ${c} is also claimed by ${claims.get(k)}`);
+            else claims.set(k, e.id);
+        }
+    }
     // Every source id maps to an entry or to outOfScope with a reason.
     const covered = new Map(SOURCE_KINDS.map(k => [k, new Set()]));
     for (const e of cat.entries) for (const k of SOURCE_KINDS) for (const id of e.sourceIds[k] || []) covered.get(k).add(id);
@@ -1285,10 +1541,9 @@ function outOfScopeRows(S, cat, ix) {
         if (/^ui_/.test(b.id) && !/^ui_fx_/.test(b.id)) add('brief', b.sourceId, `interface brief (${b.file}:${b.line}); UI is outside the world catalogue (Owner question Q-UI)`);
         if (b.id === 'eq_work_animations' || b.id === 'eq_attack_animations') add('brief', b.sourceId, `pose-contract proof sheet (${b.file}:${b.line}: "the proof is not loaded"); it fixes hand positions for the body and layer slots, it is not a runtime slot`);
     }
-    const uiAr = /window skin|menu theme|cursor|look panel|selection marker|stance rings?|designation marker|core ui|character-sheet ui/i;
     for (const r of requests) {
         if (r.withdrawn) add('ar', r.id, `WITHDRAWN (${SRC.requests}:${r.line})`);
-        else if (uiAr.test(r.title)) add('ar', r.id, `interface request (${SRC.requests}:${r.line}); UI is outside the world catalogue (Owner question Q-UI)`);
+        else if (UI_AR.test(r.title)) add('ar', r.id, `interface request (${SRC.requests}:${r.line}); UI is outside the world catalogue (Owner question Q-UI)`);
         else if (!r.open) add('ar', r.id, `closed request (${r.status}, ${SRC.requests}:${r.line}); its assets are catalogued through their catalog, AssetIndex and brief ids`);
     }
     const canon = biomeReg.canonicalBiomes;
@@ -1482,6 +1737,16 @@ function buildConflicts(ctx, S, cat, sizeDoc, scaleRows) {
     const st = stats.conflicts.filter(c => c.topic === 'status');
     li(st.length ? uniq(st.map(c => c.text)).join('; ') : `${SRC.inventory} and ${SRC.ufIndex} agree on every status.`);
 
+    sec('Per-row size overrides (DEC-016, open for the Owner)');
+    const ovEntries = cat.entries.filter(e => e.envelopeOverride || e.footprintOverride);
+    li(`DEC-016 makes the scale chart the size authority (${at(SRC.decisions, 'Decision `DEC-016`')}). ${ovEntries.length} entries of ${SRC.rmmzRows} widen their chart row for one measured specimen (WG.20.03 decision D4; the Owner approved the overrides of this lane on 2026-10-01: ${at(SRC.decisions, 'Decision `DEC-066`')} item 1). Each override is the union of the row's min/max and the specimen's bounding box, so the row's targets stay inside it; slots and anchors are unchanged.`);
+    for (const e of ovEntries) {
+        const row = S.rowById.get(e.scaleRow);
+        const ov = e.envelopeOverride, fov = e.footprintOverride;
+        const why = (/\(WG\.20\.03 D4\): (.*)$/.exec(e.statusWhy) || [null, ''])[1];
+        li(`${e.id}: ${e.scaleRow} ${row ? envText(row) : '?'} (${row ? row.ref : 'row missing'}) -> ${ov ? envText(ov) : envText(row || e.envelope)}${fov ? `, footprint ${row ? row.footprint.w + 'x' + row.footprint.h : '?'} -> ${fov.w}x${fov.h}` : ''}: ${why}`);
+    }
+
     sec('Owner questions (asked, not answered)');
     const qs = ownerQuestions(S, cat);
     qs.forEach((q, i) => out.push(`${i + 1}. **${q.id}** ${q.text}`));
@@ -1644,7 +1909,7 @@ function buildDocs(cat, S, cov, terrains, conflicts, famCite) {
 function build(opts) {
     opts = opts || {};
     const root = opts.root || path.resolve(__dirname, '..', '..');
-    const ctx = makeCtx(root);
+    const ctx = makeCtx(root, opts.overrides);
     const stats = { errors: [], warnings: [], conflicts: [] };
     const g = opts.geometry || ctx.readJson(SRC.geometry, 'GEOMETRY');
     if (opts.geometry) ctx.read(SRC.geometry, 'GEOMETRY');
@@ -1680,6 +1945,10 @@ function build(opts) {
     const base = buildEntries(ctx, S);
     const add = buildAddendum(S, base);
     const entries = base.entries.concat(add.entries);
+    // RMMZ-format rows and runtime re-forms (WG.20.03). The new rows take every per-entry pass below but are
+    // left out of the main pack and packed append-only after it, so no existing slot moves.
+    const rmmzRows = buildRmmzRows(ctx, S, entries);
+    const all = entries.concat(rmmzRows.rows);
     // Tie brief anchors to the entries they anchor.
     const anchorMap = { anchor_tree: 'objects:oak', anchor_wall: 'objects:wall_wood', anchor_ground: 'groundKinds:meadow' };
     for (const b of S.briefs) {
@@ -1690,7 +1959,7 @@ function build(opts) {
     for (const [ar, sel] of Object.entries(S.mapping.arMap || {})) {
         for (const cid of sel) for (const e of base.byCatalog.get(cid) || []) e.sourceIds.ar = uniq(e.sourceIds.ar.concat([ar])).sort(sortStr);
     }
-    for (const e of entries) {
+    for (const e of all) {
         for (const k of SOURCE_KINDS) e.sourceIds[k] = uniq(e.sourceIds[k]).sort(sortStr);
         if (!e.promptFile) {
             const pf = `art/prompts/${e.id}.json`;
@@ -1706,9 +1975,9 @@ function build(opts) {
         : e.category === 'TREE' ? 'pack:STYLE_TREE'
         : e.scaleRow === 'ARCH_WALL_2GRID' ? 'pack:STYLE_WALL'
         : ['TERRAIN', 'TOP', 'EDGE', 'RAMP', 'RAMPSIDE'].includes(e.category) ? 'pack:STYLE_GROUND' : null;
-    for (const e of entries) { const s = styleOf(e); if (s && !e.references.includes(s)) e.references.push(s); }
+    for (const e of all) { const s = styleOf(e); if (s && !e.references.includes(s)) e.references.push(s); }
     // Optional fields are written only when they carry something.
-    for (const e of entries) {
+    for (const e of all) {
         if (e.notes === null) delete e.notes;
         if (!e.geometryDerived) delete e.geometryDerived;
         if (!e.ownerOpen) delete e.ownerOpen;
@@ -1747,7 +2016,12 @@ function build(opts) {
     }
     const dec045Sheet = { sheetId: dec045SheetId, kind: 'ATLAS', group: { band: 'SURFACE', biome: 'SHARED', type: 'TILE' }, w: dec045Entries.length * 48, h: 48, gridPx: 48, runtimeFile: null };
     entries.push(...dec045Entries);
-    const sheets = atlas.concat(rt).concat([dec045Sheet]).sort((a, b) => sortStr(a.sheetId, b.sheetId));
+    // WG.20.03: the RMMZ-format rows on their own ATLAS_<band>_SHARED_<groupType>_RMMZ<nn> sheets, after the main
+    // pack and the DEC-045 block (the same shelf algorithm and sort key), plus their RMMZ runtime sheets.
+    const rmmzAtlas = pack(g, rmmzRows.rows, stats, 'RMMZ');
+    const rmmzRt = runtimeSheets(g, rmmzRows.rows, rmmz, stats).filter(s => !rt.some(x => x.sheetId === s.sheetId));
+    entries.push(...rmmzRows.rows);
+    const sheets = atlas.concat(rt, [dec045Sheet], rmmzAtlas, rmmzRt).sort((a, b) => sortStr(a.sheetId, b.sheetId));
     entries.sort((a, b) => sortStr(a.id, b.id));
 
     const scaleChartDoc = { schemaVersion: SCHEMA_VERSION, about: `Size rows cited by catalogue entries (DEC-016). Registry rows copy ${SRC.scaleReg}; chartLabel/chartHeightPx are transcribed from the strip (${SRC.strip}); RMMZ_SPEC rows are parsed from ${SRC.rmmzSpec}; GEOMETRY rows are computed from ${SRC.geometry}. No other rows.`, strip: strip.strip, rows: scale.rows };
