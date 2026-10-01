@@ -1,0 +1,44 @@
+{
+  "lane": "lane-dm",
+  "taskId": "SIM.00.02a",
+  "branch": "task/lane-dm",
+  "writer": "claude",
+  "reviewer": "gemini",
+  "allowedPaths": [
+    "game/js/sim/host/tick.js",
+    "game/js/plugins/DEUS_World.js",
+    "tools/test_sim_tick.js",
+    "docs/systems/DEUS_SimTick.md",
+    "tasks/SIM.00.02a/lane-dm/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_sim_tick.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_sim_loader.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_new_game_year0.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}
