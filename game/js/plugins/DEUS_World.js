@@ -458,6 +458,86 @@
     window.UF.Space = Space;
 
     //-------------------------------------------------------------------------
+    // UF.Sim (WG.00.44): the one loader for the pure game/js/sim modules, and the New-Game matter-opener registry.
+    // It lives here (plugins.js index 5) so DEUS_WorldGen (6) can register openers while UF.Levels (35) doesn't exist yet.
+
+    const SIM_NAME = /^[A-Za-z0-9_]+(\/[A-Za-z0-9_]+)*(\.js)?$/;
+    const simResolved = new Map(); // name -> absolute path, so each module is logged once
+
+    /** Where sim modules come from: a vm harness's host (tools/lib/vm_sim_require.js puts DEUS_SIM_HOST in its
+     *  sandbox), else the game's own require. null in a plain browser, which has no require. */
+    function simHost() {
+        if (typeof DEUS_SIM_HOST !== "undefined" && DEUS_SIM_HOST) return DEUS_SIM_HOST;
+        if (typeof require !== "function") return null;
+        return {
+            require,
+            cwd: typeof process !== "undefined" && process && typeof process.cwd === "function" ? process.cwd() : null,
+            dirname: typeof __dirname === "string" ? __dirname : null,
+            log: line => { try { require("fs").appendFileSync("game_runtime.log", `${new Date().toISOString()} ${line}\n`); } catch (_) {} }
+        };
+    }
+
+    /** The absolute path of game/js/sim/<name> (<name>.js, or <name>/index.js). Throws, naming every path tried. */
+    function simResolve(name) {
+        if (typeof name !== "string" || !SIM_NAME.test(name)) {
+            throw new TypeError(`UF.Sim.require: "${name}" is not a sim module name (letters, digits, _ and /, as in "ledger" or "hydro/index")`);
+        }
+        const host = simHost();
+        const tried = [];
+        if (host && typeof host.require === "function") {
+            const path = host.require("path");
+            const fs = host.require("fs");
+            const bases = [];
+            // The game runs with the game folder as its working directory; a headless tool runs from the repository root.
+            if (host.cwd) bases.push(path.join(host.cwd, "js", "sim"), path.join(host.cwd, "game", "js", "sim"));
+            if (host.dirname) bases.push(path.join(host.dirname, "..", "sim"));
+            const forms = name.endsWith(".js") ? [name] : [`${name}.js`, `${name}/index.js`];
+            for (const base of bases) {
+                for (const form of forms) {
+                    const file = path.resolve(base, form);
+                    if (tried.includes(file)) continue;
+                    tried.push(file);
+                    if (fs.existsSync(file) && fs.statSync(file).isFile()) return file;
+                }
+            }
+        }
+        const err = new Error(`UF.Sim.require("${name}"): no such sim module; tried ${tried.length ? tried.join(", ") : "nothing (no require in this host)"}`);
+        err.code = "DEUS_SIM_MODULE_MISSING";
+        err.tried = tried;
+        throw err;
+    }
+
+    /** The module's exports. A missing module throws (simResolve); a module that throws while loading throws too. */
+    function simRequire(name) {
+        const file = simResolve(name);
+        const host = simHost();
+        const mod = host.require(file);
+        if (simResolved.get(name) !== file) {
+            simResolved.set(name, file);
+            if (typeof host.log === "function") host.log(`[SIM] UF.Sim.require("${name}") resolved ${file}`);
+        }
+        return mod;
+    }
+
+    // Matter openers: f(...) run in name order at a New Game (lane-dv runs them; this is only the registry).
+    const matterOpenerFns = new Map();
+    function registerMatterOpener(name, fn) {
+        if (typeof name !== "string" || name === "") throw new TypeError("UF.Sim.registerMatterOpener: the name must be a non-empty string");
+        if (typeof fn !== "function") throw new TypeError(`UF.Sim.registerMatterOpener("${name}"): the opener must be a function`);
+        if (matterOpenerFns.has(name)) throw new Error(`UF.Sim.registerMatterOpener: "${name}" is already registered`);
+        matterOpenerFns.set(name, fn);
+    }
+    /** Every registered opener as a new array of frozen { name, fn }, sorted by name (code-unit order). */
+    function matterOpeners() {
+        return [...matterOpenerFns.keys()].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
+            .map(name => Object.freeze({ name, fn: matterOpenerFns.get(name) }));
+    }
+
+    // Kept as an object: sim/geomorphology publishes DEUS.Sim.Soil on the same namespace.
+    const Sim = window.UF.Sim = window.UF.Sim || {};
+    Object.assign(Sim, { require: simRequire, resolve: simResolve, registerMatterOpener, matterOpeners });
+
+    //-------------------------------------------------------------------------
     // World creation
 
     /**
