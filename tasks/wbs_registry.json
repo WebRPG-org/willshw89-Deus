@@ -215,7 +215,8 @@
       "writer": "claude",
       "reviewer": "grok",
       "dependsOn": ["WG.00.43"],
-      "gateTests": ["tools/check_deus_syntax.js", "tools/test_sim_loader.js", "tools/test_32_levels_generation.js", "tools/test_geology_strata.js", "tools/test_new_game_year0.js"]
+      "gateTests": ["tools/check_deus_syntax.js", "tools/test_sim_loader.js", "tools/test_32_levels_generation.js", "tools/test_geology_strata.js", "tools/test_new_game_year0.js", "tools/sim/test_units.js"],
+      "conditionalHandoff": "WORK-GATE wave 2B (2026-10-01, GO WITH CHANGES; P1 as corrected): tools/test_area_generation_speed.js is lane-dc's file. It is in lane-db's allowedPaths for one purpose only: if lane-dc merges first, lane-db merges origin/main and installs only the vm hook in it. If lane-db merges first, lane-db does not create or edit it; lane-dc installs the hook, and the PM adds tools/test_sim_loader.js to lane-dc's gateTests and to WG.00.45 gateTests here by a [pm] manifest commit before lane-dc's final review, then reruns the manifest and registry checks. A one-file exception to the hot-file order: db and dc run in parallel. The second merger integrates before its final review and answerability check, and the PM runs both lanes' gate sets on the combined candidate (P5; also for lane-db and lane-do if lane-do is still open). tools/sim/test_units.js is a read-only keep-green gate of this leaf, not a hook target (P2)"
     },
     "WG.00.45": {
       "title": "Generate an area at least twice as fast, byte for byte the same",
@@ -229,7 +230,8 @@
       "writer": "grok",
       "reviewer": "gemini",
       "dependsOn": ["WG.00.43"],
-      "gateTests": ["tools/check_deus_syntax.js", "tools/test_area_generation_speed.js", "tools/test_strata_cuts_and_caves.js", "tools/test_deep_cuts_and_mountain_cap_wg0041.js"]
+      "gateTests": ["tools/check_deus_syntax.js", "tools/test_area_generation_speed.js", "tools/test_strata_cuts_and_caves.js", "tools/test_deep_cuts_and_mountain_cap_wg0041.js", "tools/test_sparse_outer_save.js"],
+      "conditionalHandoff": "WORK-GATE wave 2B (2026-10-01, GO WITH CHANGES; P1 as corrected): lane-dc creates tools/test_area_generation_speed.js; the one-file hook handoff with lane-db is recorded at WG.00.44 conditionalHandoff. If lane-db merges first, tools/test_sim_loader.js joins this leaf's gateTests (manifest and registry) by a [pm] commit before lane-dc's final review. tools/test_sparse_outer_save.js is a read-only keep-green gate of this leaf (P6)"
     },
     "WG.00.46": {
       "title": "Levels generates an area only when asked: per-area checksums, the areaGenerated event, load-order queueing",
