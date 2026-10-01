@@ -117,6 +117,9 @@ Active tasks, open branches, and pending review submissions:
 ### A. Active Lanes in Review / In Flight
 | Branch | Lane / Task | Scope | Status |
 |---|---|---|---|
+| `task/lane-db` | `lane-db` (`WG.00.44`) | Sim loader & test hook scanner (7cc12f1f) | MERGE READY (Step 1): Grok review `c727ebed` CLEAN PASS; all 6 gates exit 0 |
+| `task/lane-dc` | `lane-dc` (`WG.CELL-WRITE`) | Fixed-arity hash speed optimization | MERGE READY (Step 2): Codex review `ab1e36ec` CLEAN PASS; idle-host speed median 3004.8 ms <= 5000 ms |
+| `task/lane-do` | `lane-do` (`NAT.02.MASS`) | Conserved mass centipound tables | MERGE READY (Step 3): Grok review `5b4b8bcc` CLEAN PASS; full zrange matrix 7 pass |
 | `task/lane-co` | `lane-co` (`OPS.PRUNE.02`) | L2: Archive 41 `UF_*.js` shims & retarget tools | In Review: Grok review `cc3f12d1` CLEAN PASS, 10/10 gates PASS |
 | `task/lane-ct` | `lane-ct` (`OPS.PRUNE.05`) | G05: Rule-4 Test Failure Path Fixes across 16 harnesses | In Review: Grok review `4e3f45ee` CLEAN PASS, merge_gate dry-run PASS |
 | `task/lane-cu` | `lane-cu` (`OPS.PRUNE.06`) | G06: L6 Docs Archival & Canonical Renaming (33 live, 15 archive) | In Review: Grok review `190392c5` CLEAN PASS, 15,175 preservation assertions pass |
