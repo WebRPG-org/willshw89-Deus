@@ -31,7 +31,7 @@
     {"path":"docs/ASSET_INVENTORY.md","sha256":"1e484e43eb174635de21cb57db068daffa726195f127ce9f582c735378909e17","role":"ASSET_INVENTORY"},
     {"path":"docs/ASSET_MANIFEST.md","sha256":"d3f5a32a5f51ed40ee41206acc14839ae3d398e68a262e7d0e5450c9e551caf7","role":"ASSET_MANIFEST"},
     {"path":"docs/ASSET_REQUESTS.md","sha256":"e3b25c478192f3bbb1e4c3ef2b3736286e8ac2a0e9791aa482142b68958b2ba1","role":"ASSET_REQUESTS+CITED"},
-    {"path":"docs/OWNER_DECISIONS.md","sha256":"229854fb1b2a76afefdb3de4ef5027a3d2720723bb2e44499fe70962b2f1fc57","role":"CITED"},
+    {"path":"docs/OWNER_DECISIONS.md","sha256":"d9d12506c3a36e534532da1cd050256281fb19e3920a7ef83016927fa2b0c628","role":"CITED"},
     {"path":"docs/PROJECT_DEUS_ART_DIRECTION_SPEC.md","sha256":"ef2b0fe60fb49caf2e89a10bacb5eb27278cbb485d62acd8edc00357d02858c6","role":"CITED"},
     {"path":"docs/RMMZ_ASSET_SPEC.md","sha256":"a1e45f41f4698a255742e353d44d78380c10d26be863d8a04ddc3bc1a2d277be","role":"CITED+RMMZ_SPEC"},
     {"path":"docs/art/DEUS_BIOME_PRODUCTION_MATRIX.json","sha256":"f648801215984caa6965d97f7e90323a1eb560ed7d1d138b6381b9ae56b89f9a","role":"BIOME_MATRIX+CITED"},
