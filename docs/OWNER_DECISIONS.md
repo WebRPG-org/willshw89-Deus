@@ -1045,6 +1045,7 @@ Every decision item recorded in this log must provide:
 
 ---
 - **Amendment (Owner, 2026-10-01):** thresholds (4/4 passes, 3/4 goes to the Owner, fewer is out), Owner override, the YES WITH FIX answer and packets of ten; see DEC-069 items 1-3.
+- **Amendment (Owner, 2026-10-01):** the PM makes the fauna (Group 7) in the PixelLab character creator as eight-way still sprites, with no animations; see DEC-071.
 
 ### Decision `DEC-063`: The U7 method: the PM makes natural-world art in PixelLab Pixflux and Bitforge, in RMMZ's own sheet formats; RMMZ reference, Ultima 7 style; no creatures, faces, character sheets or animations yet; a stump is its own tree cut down
 - **Date:** 2026-10-01
@@ -1085,6 +1086,7 @@ Every decision item recorded in this log must provide:
 - **Amendment (Owner, 2026-10-01):** script work on the PixelLab output of the PM's art may ship; see DEC-066 item 2 (the piece still starts from a Pixflux or Bitforge generation and needs the unanimous council).
 ---
 - **Amendment (Owner, 2026-10-01):** Create Image Pro allowed, the cliff-set method is the default, and the PixelLab balance is spent to zero; see DEC-069 items 4-5.
+- **Amendment (Owner, 2026-10-01):** the PM makes the fauna (Group 7) in the PixelLab character creator as eight-way still sprites, with no animations; see DEC-071.
 
 ### Decision `DEC-064`: "Lets do all these": the PM's nine-item improvement list of 2026-10-01 is approved work
 - **Date:** 2026-10-01
@@ -1191,3 +1193,27 @@ Every decision item recorded in this log must provide:
   2. **Equal starts.** "I want all of the factions to have requally good starts, we need to balance plant growth and stuff across the biomes." Measurable parity rules (metrics, tolerances, tests, lane placement) come from the braintrust design round DESIGN-NW-1; any new plan leaf it needs goes to the Owner first.
   3. **FPS.** "FPS has to be acceptable. Anything we implement cannot slow FPS to a grind ingame. Part of it is figuring out a solution and another part is streamlining it." Every lane must keep frame time acceptable; the binding frame budget and the per-lane performance gate come from DESIGN-NW-1 and go to the Owner with it.
 - **Records updated with this entry:** a pointer line under DEC-065.
+
+### Decision `DEC-071`: The PM makes the fauna in the PixelLab character creator as eight-way still sprites (amends DEC-062 and DEC-063, "no animals")
+- **Date:** 2026-10-01
+- **Decider:** Owner, in chat with the PM.
+- **Status:** `DECIDED`
+- **Quotes:** "I will work on fauna, give me cards"; "Every card should come with a RMMZ sheet example, and a U7 example"; "Actually, you know what, you can generate fauna. use the character creatuor with V3, high top down, and the corret sprite size, highly detailed, selective outlining"; "No animations for the fauna tho, just the 8 way sprite"; "bro what, literally a quadraped option" (with a screenshot of PixelLab Create Character, Quadruped selected, where v3 is greyed out and Pro is the selected mode).
+- **Ruling:**
+  1. **The PM generates the Group 7 fauna** (the 19 species in `docs/art/TEMPERATE_GENERATION_LIST.md` Group 7) in PixelLab Create Character. Humanoid-shaped creatures (troll, restless dead, bog horror) use v3 with view high top-down, outline "selective outline" and detail "high detail". Four-legged animals use the Quadruped type, which offers Pro mode only (v3 is not offered for quadrupeds); creatures with no quadruped skeleton (birds, bat, serpent, spider) also use Pro mode. Pro ignores the outline and detail settings, so its prompt states "highly detailed" and "selective outline". Every creature is drawn at its correct sprite size, within the frames of DEC-072.
+  2. **No animations.** Eight-direction still sprites only. The game uses S, W, E and N for creatures (AS-GLOBAL-022); the four diagonals are kept.
+  3. **Every piece is shown with its RMMZ example and its U7 example:** the stock RMMZ sheet it replaces and the matching Ultima VII sprite, in its card and in its council packet.
+  4. **Unchanged:** catalogue row first, the council (DEC-062 as amended by DEC-069), the PM YEA in `art/APPROVALS.md` (DEC-056). People, facesets and character sheets for people stay with the Owner.
+  5. **Temperate bestiary, row-first waived for this batch.** "You can do the fauna and monsters for the biome"; "Use the rest of the credits and present to the art council". Asked whether to waive DEC-007 row-first for the temperate creatures of the adopted bestiary (`docs/design/bestiary/BESTIARY_grok_heavy.md`, NAT.07.01) so the remaining PixelLab credits are spent now, the Owner chose "Waive, generate now". Their catalogue rows land through a reviewed lane before any of them enters the game. The six AS-SEX-002 partners (doe, sow, mare, aurochs cow, ewe, rooster) were generated before their rows the same day and are covered by the same condition.
+- **Records updated with this entry:** pointer lines under DEC-062 and DEC-063; the art banners in `CLAUDE.md` and `AGENTS.md`.
+
+### Decision `DEC-072`: Sprite scale and frames: small races 48 px tall, dwarves 60, humans 72, large races 96; tall humanoids in 48x96, long animals in 96x48, giants up to 96x96 (amends AS-GLOBAL-021, AS-PM-001 and AS-SIZE-001)
+- **Date:** 2026-10-01
+- **Decider:** Owner, in chat with the PM, while the PM was generating the Group 7 fauna (DEC-071).
+- **Status:** `DECIDED`
+- **Quotes:** "Lets try to keep the proportions right as well, I know pixellab lets us make longer quadrupeds, idk how that works in rmmz"; "Nah, now small races are 48, large races are 96, and humans are 72 in height"; "I would actually prefer tall humanoids like trolls fit inside of 48x96"; "And keep long animals within 96x48"; "And then giant shit I would like to limit to 96x96, thats like, dragons"; "So obviously the scale wont be perfect but its fantasy and its approximate and I think it wil look good". Then: "And then dwarves will be 60 tall. gnomes and halflings will be 48 tall".
+- **Ruling:**
+  1. **Heights.** Small races are 48 px tall (gnomes and halflings 48 px), dwarves 60 px, humans 72 px, large races 96 px. This replaces the 42 px adult human (AS-GLOBAL-021, scale chart row `CHARACTER_HUMAN_ADULT`) and the race heights in AS-PM-001.
+  2. **Frames (RMMZ `$` sheets; the frame is drawn centred on the creature's tile with its bottom on the tile's bottom edge, so a larger frame overhangs the neighbouring tiles).** Small creatures fit inside 48x48. Tall humanoids, trolls included, fit inside 48x96. Long animals fit inside 96x48. Giant creatures, such as dragons, are limited to 96x96. The Huge 144 and Gargantuan 192 frames in AS-SIZE-001 and AS-PM-001 are withdrawn for map sprites.
+  3. **Approximate.** Relative sizes follow real proportions only as far as these frames allow; every facing of a sprite must fit its frame.
+- **Records updated with this entry:** amendment notes on AS-GLOBAL-021, AS-PM-001 and AS-SIZE-001 in `docs/art/DEUS_ASSET_STANDARD.md`; DEC-071 item 1. Not yet updated (data, through a reviewed lane): `game/data/DEUS_ScaleRegistry.json`, `art/catalogue/scale_chart.json`, the catalogue frame classes for humanoid rows, and the 42 px wording in `docs/art/TEMPERATE_GENERATION_LIST.md` and `docs/art/TEMPERATE_ART_NEEDS.md`.
