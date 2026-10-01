@@ -21,6 +21,11 @@
     "docs/systems/DEUS_Materials.md",
     "docs/systems/DEUS_Matter.md",
     "tools/zrange/z_literal_allowlist.json",
+    "tools/test_zrange.js",
+    "tools/zrange/zrange_suite.js",
+    "tools/zrange/bounds.js",
+    "tools/zrange/fixtures/geology_304ca7b2_seed18.json",
+    "docs/VISION.md",
     "tasks/NAT.02.MASS/lane-do/**"
   ],
   "gateTests": [
@@ -113,6 +118,13 @@
       "cmd": "node",
       "args": [
         "tools/zrange/scan_z_literals.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_zrange.js"
       ],
       "timeoutSec": 900
     },

@@ -1,0 +1,7 @@
+UF_Test run 2026-10-01T19:46:36.816Z args=[]
+DEBUG_SHEET: Scene_Boot.start called
+AVAILABLE SUITES: selftest, smoke, perf, native_starting_gear, native_survival_dying, native_perf_4x_benchmark, zrange, select, select, minimap, natural_connections, ownership, ecology, projects, settlement, colonists, overseer, world, spawn, worldgen, biomes, tiles, ground, factions, skins, history, objects, walls, doors, items, jobs, floors, wildlife, wildlife_seeds, stance, combat, anim, fog, daynight, timespeed, camera, culling, speech, overhead, look, sheet, talk, fire, vertical, natural_walls, flooding, strata, sparse_outer, environment, faction_menus, title, load, setup, depth, layers_flat, select, select
+SUITE zrange
+PASS zrange.sim_data_written - after 1500 map updates (95388 ms; 1500 time ticks): census 343 ms
+PASS zrange.no_errors - harness errors 0; console.error 0
+RESULT: 2 passed, 0 failed (exit 0)
