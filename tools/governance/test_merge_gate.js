@@ -779,7 +779,8 @@ function main() {
         const applied = r && r.out.includes(`| mutants | ${mutant} (self-test only; merge disabled) |`) && !r.codes.includes("USAGE") && !r.codes.includes("MUTANT_NOT_ALLOWED");
         const lost = r ? c.expect.codes.filter(code => !r.codes.includes(code)) : [];
         // A mutant that makes a rule stricter is killed on a passing case, which it must make the gate refuse.
-        const broke = c.expect.codes.length ? lost.length > 0 : Boolean(r && r.codes.length > 0);
+        // A mutant that disables a report feature is killed if it makes the verify function fail.
+        const broke = c.expect.codes.length ? (lost.length > 0 || (c.verify && !res.ok)) : Boolean(r && r.codes.length > 0);
         check(`mutant_${mutant}_killed`, applied && !res.ok && broke,
             !applied ? `mutant not applied: ${res.detail}` : `mutant survived: ${caseName} still reported [${r.codes.join(", ")}]`);
     }
