@@ -1,0 +1,127 @@
+{
+  "lane": "lane-do",
+  "taskId": "NAT.02.MASS",
+  "branch": "task/lane-do",
+  "writer": "codex",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "game/js/sim/ledger.js",
+    "game/js/sim/ledger_defaults.js",
+    "game/js/sim/materials.js",
+    "game/data/sim/materials.json",
+    "game/data/sim/mass_tables.json",
+    "game/data/sim/README.md",
+    "tools/sim/migrate_mass_units.js",
+    "tools/sim/test_ledger.js",
+    "tools/sim/test_ledger_longrun.js",
+    "tools/sim/test_materials.js",
+    "tools/sim/fixtures/materials/**",
+    "tools/sim/test_reclaim.js",
+    "tools/sim/test_reclaim_longrun.js",
+    "docs/systems/DEUS_Materials.md",
+    "docs/systems/DEUS_Matter.md",
+    "tools/zrange/z_literal_allowlist.json",
+    "tasks/NAT.02.MASS/lane-do/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_materials.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_ledger.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_ledger_longrun.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_reclaim.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_reclaim_longrun.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_living_world_rules.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_water_dynamics.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_fluid_correctness_lane_cw.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/migrate_mass_units.js",
+        "--check"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/world_items/test_world_items.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_decay_core.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_zrange.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/spells/validate_spell_effects.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}

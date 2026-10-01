@@ -1,0 +1,37 @@
+{
+  "lane": "lane-fd",
+  "taskId": "NAT.07.03",
+  "branch": "task/lane-fd",
+  "writer": "claude",
+  "reviewer": "gemini",
+  "allowedPaths": [
+    "game/js/sim/placement/encounters.js",
+    "game/data/ecology/encounter_weights.json",
+    "docs/systems/DEUS_Encounters.md",
+    "tools/test_encounter_tables.js",
+    "tasks/NAT.07.03/lane-fd/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_encounter_tables.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_bestiary_adaptation.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}
