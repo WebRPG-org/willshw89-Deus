@@ -150,3 +150,4 @@ Applied to each piece's latest round (votes in the tables above):
 | Cliff 10 layered strata (v7) | ART-COUNCIL-7 | 2 YES, 2 NAY | not passed | Grok and MiniMax (see ART-COUNCIL-7) |
 
 Cliffs passed: 8 of 10 (sets 1, 2, 3, 4, 6, 7, 8, 9). Limestone and strata go to ART-COUNCIL-8 as new versions (recoloured from passed sets 7 and 8, zero generations). No piece enters the game until its catalogue row exists (lane-pg) and the PM records its YEA in art/APPROVALS.md.
+- Owner override (2026-10-01, ~13:50Z): "I can also override art council if I like something." A piece the Owner approves passes whatever the council's vote; it is recorded here as an Owner override with his words.
