@@ -1,0 +1,23 @@
+# base 607c012d (607c012d5ea3097c50aa05eb081f977dcf77e44f), 2026-10-01T07:37:27-05:00, node v24.19.0
+$ node tools/test_aquifer_seepage.js
+=== NAT.03.01 Aquifer Kernel Gate Tests ===
+PASS: test_stratum_storage_and_porosity - maxWaterMass=78000, saturation=5000 bps, head=82500 ms
+PASS: test_darcy_cavern_breach - Harmonic K=181818, transferred=36 cp into void, conserved mass=93600 cp
+PASS: test_impermeable_barrier - Zero seepage across K=0 boundary, kInterface=0
+PASS: test_aquifer_drawdown_equilibrium - Equilibrated in 500 ticks, totalMass=100000 cp
+PASS: test_sub_unit_seepage_accumulation - Fractional residuals accumulated across ticks into exact integer transfer without truncation loss
+PASS: test_flow_reversal_residual_cancellation - Signed canonical edge residual canceled forward debt upon head inversion (0.0022 -> -0.0192)
+PASS: test_processing_order_invariance - Forward and reverse neighbor evaluation produced bit-identical mass: 79618, 50127, 20255 cp
+PASS: test_donor_exhaustion_clamp - Zero negative water: donor clamped at exactly 0, transferred 5 cp
+PASS: test_receiver_capacity_clamp - Zero oversaturation: receiver clamped to max capacity 93600 cp
+PASS: test_mass_ledger_conservation - Mass before=100000 cp, after=100000 cp, diff=0 cp (100% conserved)
+PASS: test_save_load_persistence - Serialized/deserialized state bit-identical, mass=90000 cp
+PASS: test_dirty_region_quiescence - Sleeping update cost=3.100 μs, activeCells=0, interfacesProcessed=0
+PASS: budget_bounds_interfaces - 46 interfaces split into 10 calls of <= 5; invalid budgets refused
+PASS: budgeted_equals_unbudgeted - 10 budgeted runs (budgets 1,2,3,7,1000; open and wrapped) bit-identical to 30 unbudgeted ticks
+PASS: cursor_survives_save - 48 mid-pass save/load round trips; result bit-identical to 12 unbudgeted ticks; cursor-less save loads
+PASS: wrap_neighbour - x and y seams carry 12 cp like an adjacent L=5 pair; none without opts.wrap; width-only wrap; markDirty wakes across the seam
+PASS: constants_from_units - 312000 cp = 50 ft3 x 6240 cp/ft3 read from units.js; a stub table (51 x 6241) changes aquifer constants and capacity; index.js re-exports intact
+
+ALL CHECKS PASSED: 17 check(s) verified in 79ms.
+exit 0
