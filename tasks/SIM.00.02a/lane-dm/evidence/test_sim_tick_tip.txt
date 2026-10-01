@@ -1,0 +1,32 @@
+HEAD cf5545cc ([ops] SIM.00.02a lane-dm launch prompt 20261001_171035 (writer claude))
+$ node tools/test_sim_tick.js
+PASS tick_from_game_minutes - pure clock: minutes 1,2,3 -> 1, 2, 2 ticks (remainder 0 s); game: tickCount 0 at world start, after each advanceMinute(1): 1, 3, 5 (expected 1, 3, 5), remainder 0 s, owed 0; console errors 0
+PASS multi_minute_advance - advanceMinute(6): 10 ticks from 1 time:minute event (expected 10 from 1); then AddTime 6 (plugin command): 20 (expected 20); remainder 0 s, owed 0
+PASS history_does_not_tick - year-3 New Game (history years 3): 0 time:minute events from the demographics history, 60 in all during world:created with iterateWorldHistory(state, 3) (stopped by ReferenceError: WORK_BEATS_PER_SHARED is not defined); tickCount 0 and armed false at the end of world:created, 0 when newWorld returned (armed true at minute 840, calendar minute 840, owed 0); advanceMinute(6) afterwards -> 10 (expected 10); 0 console errors; 3174 ms
+PASS bulk_advance_bounded - pure clock: advanceToMinute(1440) -> 100, then 23 drains of at most 100: 2400 in total (expected 2400), owed 0; game: advanceMinute(1440) ran 100 ticks in that call, owed 2300; drained over 24 more minutes (largest step 100): 2440 ticks = 2400 from the bulk advance + 40 from those minutes; catch-ups 24
+PASS paused_zero - 60 running frames: 10 ticks; 600 paused frames: ticks 10 -> 10, calendar minute 486 -> 486, advances 6 -> 6; 600 running frames after: 110 ticks over 66 game minutes (expected 110)
+PASS speed_scales - 600 frames at the default TimeSpeed (1/6 s per game minute): 60 minutes, 100 ticks (expected 100); at TimeSpeed 0.05: 200 minutes, 333 ticks (expected 333)
+PASS handlers_ordered - registered b(10) a(10) c(-5) d(2.5); 5 ticks ran: c1 d1 a1 b1 c2 d2 a2 b2 c3 d3 a3 b3 c4 d4 a4 b4 c5 d5 a5 b5; duplicate "a": UF.Sim.onTick: "a" is already registered; order NaN: TypeError; no fn: TypeError; empty name: TypeError; tickStats().handlers c,d,a,b, domain action
+PASS save_resume_exact - saved ufWorld.simTick {"v":1,"secondsPerTick":36,"armed":true,"origin":480,"last":1921,"remainder":24,"owed":2300,"ticks":101,"advances":2,"catchUps":1,"rebases":0}; loaded clock equals the saved one: true; after 30 x 1 min, 7 min and AddTime 50 in both: original 2546 ticks/0 owed/24 s, loaded 2546/0/24 s; loaded ticks+owed = floor(elapsed/36 s): true; a save without simTick arms at its minute 1921: true
+PASS no_frame_hook - 600 running Scene_Map frames: 60 time:minute events, 60 clock advances (expected one per event); 300 paused frames: 0 advances (expected 0)
+PASS calendar_stub - DEUS_World alone with $ufTime = { year: 1 }: newWorld ran; armed true at minute 0, 0 ticks
+PASS nwjs_new_game - run_tests exit 0; 8 sim_tick PASS lines; no FAIL/ERROR lines
+      PASS sim_tick.uf_sim_tick_present - UF.Sim.tickCount / tickStats from DEUS_World.js
+      PASS sim_tick.ticks_rise_while_running - 180 frames at x1: tickCount 10 -> 40, game minute 486 -> 504
+      PASS sim_tick.advances_only_on_minutes - 18 time:minute events, 18 clock advances (no frame hook: one per event)
+      PASS sim_tick.ticks_fixed_while_paused - 180 paused frames: tickCount 40 -> 40, game minute 504 -> 504, advances 24 -> 24
+      PASS sim_tick.addtime_60_adds_100 - paused, AddTime 60 (plugin command): tickCount 40 -> 140, owed 0 -> 0
+      PASS sim_tick.speed_scales - 2 s at x1: 109 game updates, 11 min, 18 ticks (expected 18); 2 s at x4: 168 game updates, 17 min, 28 ticks (expected 28)
+      PASS sim_tick.ticks_match_elapsed - ticks 186 + owed 0 over 112 game minutes since minute 480
+      PASS sim_tick.no_console_errors - none since TEST_SimTickConsole loaded (plugins.js index 0)
+PASS mutant_frame_hook - a Scene_Map frame hook also calls the minute handler every frame: no_frame_hook red
+PASS mutant_drop_remainder - the seconds past the last whole tick are dropped: tick_from_game_minutes red
+PASS mutant_unsaved_accumulator - the save keeps the tick count but not the remainder or the owed ticks: save_resume_exact red
+PASS mutant_count_events - each time:minute event counts as 60 s, whatever it carried: multi_minute_advance red
+PASS mutant_uncapped_catchup - a bulk advance hands out every due tick at once: bulk_advance_bounded red
+PASS mutant_arm_early - the clock is armed before world:created, so history pre-simulation ticks: history_does_not_tick red
+PASS mutant_frame_rate_ticks - a fixed 10 Hz frame accumulator (a minute every 10 frames) instead of time:minute: paused_zero red, speed_scales red
+PASS mutant_calendar_required - any $ufTime is read as a full calendar: calendar_stub red
+PASS mutant_unordered_handlers - handlers run in registration order: handlers_ordered red
+RESULT: 20 passed, 0 failed
+exit 0 (36 s)

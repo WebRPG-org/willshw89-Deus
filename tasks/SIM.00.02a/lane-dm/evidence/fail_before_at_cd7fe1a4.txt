@@ -1,0 +1,22 @@
+cd7fe1a4 [ops] SIM.00.02a lane-dm launch prompt 20261001_151024 (writer claude)
+FAIL tick_from_game_minutes - threw Error: Cannot find module 'C:\Users\snewt\AppData\Local\Temp\lanedm_base\game\js\sim\host\tick.js' | Require stack: | - C:\Users\snewt\AppData\Local\Temp\lanedm_base\tools\test_sim_tick.js
+FAIL multi_minute_advance - UF.Sim.onTick / tickCount / tickStats missing after DEUS_World.js loads
+FAIL history_does_not_tick - UF.Sim.onTick / tickCount / tickStats missing after DEUS_World.js loads
+FAIL bulk_advance_bounded - threw Error: Cannot find module 'C:\Users\snewt\AppData\Local\Temp\lanedm_base\game\js\sim\host\tick.js' | Require stack: | - C:\Users\snewt\AppData\Local\Temp\lanedm_base\tools\test_sim_tick.js
+FAIL paused_zero - UF.Sim.onTick / tickCount / tickStats missing after DEUS_World.js loads
+FAIL speed_scales - UF.Sim.onTick / tickCount / tickStats missing after DEUS_World.js loads
+FAIL handlers_ordered - UF.Sim.onTick / tickCount / tickStats missing after DEUS_World.js loads
+FAIL save_resume_exact - UF.Sim.onTick / tickCount / tickStats missing after DEUS_World.js loads
+FAIL no_frame_hook - UF.Sim.onTick / tickCount / tickStats missing after DEUS_World.js loads
+FAIL calendar_stub - UF.Sim.onTick / tickCount / tickStats missing after DEUS_World.js loads
+FAIL mutant_frame_hook - a Scene_Map frame hook also calls the minute handler every frame: no_frame_hook already red without the mutant
+FAIL mutant_drop_remainder - the seconds past the last whole tick are dropped: tick_from_game_minutes already red without the mutant
+FAIL mutant_unsaved_accumulator - the save keeps the tick count but not the remainder or the owed ticks: save_resume_exact already red without the mutant
+FAIL mutant_count_events - each time:minute event counts as 60 s, whatever it carried: multi_minute_advance already red without the mutant
+FAIL mutant_uncapped_catchup - a bulk advance hands out every due tick at once: bulk_advance_bounded already red without the mutant
+FAIL mutant_arm_early - the clock is armed before world:created, so history pre-simulation ticks: history_does_not_tick already red without the mutant
+FAIL mutant_frame_rate_ticks - a fixed 10 Hz frame accumulator (a minute every 10 frames) instead of time:minute: paused_zero already red without the mutant, speed_scales already red without the mutant
+FAIL mutant_calendar_required - any $ufTime is read as a full calendar: calendar_stub already red without the mutant
+FAIL mutant_unordered_handlers - handlers run in registration order: handlers_ordered already red without the mutant
+RESULT: 0 passed, 19 failed
+exit 1

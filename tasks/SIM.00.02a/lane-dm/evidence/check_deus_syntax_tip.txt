@@ -1,0 +1,4 @@
+HEAD cf5545cc ([ops] SIM.00.02a lane-dm launch prompt 20261001_171035 (writer claude))
+$ node tools/check_deus_syntax.js
+Checked 62 DEUS plugin files. Errors: 0
+exit 0
