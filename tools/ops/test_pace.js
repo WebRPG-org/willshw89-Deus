@@ -429,7 +429,7 @@ function runSuite(api, integration = false, quiet = false, cliSource = null) {
     });
     test('all_five_providers_reported_missing_as_unknown', () => {
         const reports = evaluate().reports;
-        assert.deepEqual(reports.map(r => r.provider), ['gemini', 'claude', 'grok', 'codex', 'minimax']);
+        assert.deepEqual(reports.map(r => r.provider), ['gemini', 'claude', 'grok', 'codex']);
         for (const r of reports.filter(r => r.provider !== 'claude')) {
             unknown(r); assert.match(api.format(r), /\[source: UNKNOWN\]/);
         }
@@ -500,7 +500,7 @@ function runSuite(api, integration = false, quiet = false, cliSource = null) {
                 const before = fs.readFileSync(historyPath, 'utf8');
                 const result = cli(['--read-only']); assert.equal(result.status, 0, result.stderr);
                 assert.equal(fs.readFileSync(historyPath, 'utf8'), before);
-                assert.match(result.stdout, /PACE minimax window UNKNOWN rem UNKNOWN/);
+                assert.match(result.stdout, /PACE codex window UNKNOWN rem UNKNOWN/);
             });
             test('cli_stdin_json', () => {
                 const result = spawnSync(process.execPath, [cliFile, '--input', '-', '--history', historyPath,

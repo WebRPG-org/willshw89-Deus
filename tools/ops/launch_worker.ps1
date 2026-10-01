@@ -114,7 +114,7 @@ function Get-DeusProviderSpec {
             $js = Join-Path $npm 'node_modules\@openai\codex\bin\codex.js'
             if (-not (Test-Path -LiteralPath $js)) { $exe = $null }
             if ($Probe) { $a = (ConvertTo-DeusArg $js) + ' exec --skip-git-repo-check -' }
-            else { $a = (ConvertTo-DeusArg $js) + ' exec --dangerously-bypass-approvals-and-sandbox --json -' }
+            else { $a = (ConvertTo-DeusArg $js) + ' exec --dangerously-bypass-approvals-and-sandbox --model gpt-6-sol --json -' }
             return @{ Exe = $exe; Args = $a; StdinPrompt = $true }
         }
         'gemini' {
