@@ -1,0 +1,9 @@
+{
+  "command": "node tools/test_no_loadscript_shims.js",
+  "sourceBlob": "d0b41df4aecfa929c348259c35022e559ebba194",
+  "sourceSha256": "70168df14ead9fff7a8c7a8c9e4dbda0a46815d8a680ec3251d33dcb0af68698",
+  "exit": 0,
+  "started": "2026-09-30T22:27:52.453Z",
+  "finished": "2026-09-30T22:27:52.681Z",
+  "log": "tasks/OPS.PRUNE.02/lane-co/evidence/gates/test_no_loadscript_shims.log"
+}

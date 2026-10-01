@@ -3,7 +3,7 @@
 // Verification suite for:
 // 1. Material refinement & multi-component processing chains (UF_WorldCatalog.json)
 // 2. Faction construction knowledge tech progression (UF_CultureGrowth.js)
-// 3. Cultural wall styles, sturdiness, and in-place upgrade pathways (UF_Households.js, UF_Colonists.js)
+// 3. Cultural wall styles, sturdiness, and in-place upgrade pathways (UF_Households.js, DEUS_Colonists.js)
 // Conforms to Rule 4 (Tests must be able to fail; includes --mutant flags)
 //=============================================================================
 
@@ -285,7 +285,7 @@ function testHouseholdUpgradeAndWorkstations() {
     global.Scene_Map = { prototype: { update() {} } };
     global.Graphics = { frameCount: 0 };
     global.ImageManager = { loadCharacter: () => ({ isReady: () => true, width: 144, height: 192 }) };
-    const codeC = fs.readFileSync(path.join(ROOT, "game", "js", "plugins", "UF_Colonists.js"), "utf8");
+    const codeC = fs.readFileSync(path.join(ROOT, "game", "js", "plugins", "DEUS_Colonists.js"), "utf8");
     eval(codeC);
 
     const C = global.UF.Colonists;

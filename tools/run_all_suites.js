@@ -1,17 +1,17 @@
 // One command for the whole test run (written 2026-09-18): ONE snapshot copy of game/ with every world plugin
 // registered (tools/test_snapshot.js --no-run), then every suite run in that copy one after another through
-// tools/run_tests.js (a fresh nw.exe per suite, since UF_Test takes one suite name per launch; the copy itself is made
+// tools/run_tests.js (a fresh nw.exe per suite, since DEUS_Test takes one suite name per launch; the copy itself is made
 // once), then the inventory tool, then a table. The real game/ folder is never touched (ENGINE_RULES section 6).
 //
 // Usage: node tools/run_all_suites.js [--name <n>] [--plugins A,B,C] [--suites a,b,c] [--skip-inventory] [--dir <folder>]
 //   --name            snapshot name (default "all"): the copy lives in %TEMP%\uf_snapshots\<name>
-//   --plugins         UF_ plugins to register before UF_Test, in this order (default: PLUGINS below, the contract's list)
+//   --plugins         UF_ plugins to register before DEUS_Test, in this order (default: PLUGINS below, the contract's list)
 //   --suites          which suites, in order (default: SUITES below); "inventory" is the node tool
 //   --skip-inventory  don't run tools/generate_asset_inventory.js (note: that tool rewrites docs/ASSET_INVENTORY.md and
 //                     game/data/UF_AssetIndex.json in the real project, as running it by hand does)
 //   --dir             where to put the copy (default: %TEMP%\uf_snapshots\<name>)
 // Output: <snapshot>\test_output\all_results.txt (every suite's RESULT line, its FAIL/ERROR/HARNESS lines, timing),
-//         <snapshot>\test_output\<suite>\results.txt plus that suite's screenshots (UF_Test deletes top-level PNGs and
+//         <snapshot>\test_output\<suite>\results.txt plus that suite's screenshots (DEUS_Test deletes top-level PNGs and
 //         results.txt at the start of every launch, so each suite's files are moved into their own folder), and a table.
 // Exit code: 0 every suite passed, 1 any suite had a FAIL or didn't finish (no RESULT line), 2 the snapshot failed.
 "use strict";
@@ -20,8 +20,8 @@ const path = require("path");
 const os = require("os");
 const { spawnSync } = require("child_process");
 
-const PLUGINS = ["UF_World", "UF_WorldGen", "UF_Tiles", "UF_Factions", "UF_History", "UF_Objects", "UF_Items", "UF_Jobs",
-    "UF_ColonyOverseer", "UF_Colonists", "UF_Wildlife", "UF_Stance", "UF_Fog", "UF_DayNight", "UF_TimeSpeed", "UF_Camera", "UF_Visuals", "UF_Look", "UF_Interact"];
+const PLUGINS = ["DEUS_World", "DEUS_WorldGen", "DEUS_Tiles", "DEUS_Factions", "DEUS_History", "DEUS_Objects", "DEUS_Items", "DEUS_Jobs",
+    "DEUS_ColonyOverseer", "DEUS_Colonists", "DEUS_Wildlife", "DEUS_Stance", "DEUS_Fog", "DEUS_DayNight", "DEUS_TimeSpeed", "DEUS_Camera", "DEUS_Visuals", "DEUS_Look", "DEUS_Interact"];
 const SUITES = ["world", "worldgen", "biomes", "tiles", "objects", "items", "jobs", "colonists", "overseer", "wildlife", "factions",
     "history", "stance", "fog", "daynight", "timespeed", "visuals", "look", "smoke", "inventory"];
 
@@ -86,7 +86,7 @@ for (let i = 0; i < suites.length; i++) {
         row = { suite, passed: m ? Number(m[1]) : 0, failed: m ? Number(m[2]) : 0, exit: m ? Number(m[3]) : 2,
             result: m ? m[0] : `no RESULT line (run_tests exit ${r.status}; ${(r.stderr || "").trim().split(/\r?\n/).filter(Boolean).slice(-2).join(" | ") || "no stderr"})`,
             fails: all.filter(l => /^FAIL /.test(l)), errors: all.filter(l => /^(ERROR|HARNESS) /.test(l)), ms: Date.now() - started, shots: [] };
-        // Keep this suite's files: UF_Test wipes results.txt and every PNG in test_output at the next launch.
+        // Keep this suite's files: DEUS_Test wipes results.txt and every PNG in test_output at the next launch.
         const keep = path.join(outDir, suite);
         fs.rmSync(keep, { recursive: true, force: true });
         fs.mkdirSync(keep, { recursive: true });

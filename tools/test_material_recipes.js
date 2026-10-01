@@ -107,8 +107,8 @@ function createMockUnit(name, x = 10, y = 10) {
 }
 
 // Load plugins
-require(path.resolve(__dirname, "..", "game", "js", "plugins", "UF_Items.js"));
-require(path.resolve(__dirname, "..", "game", "js", "plugins", "UF_Jobs.js"));
+require(path.resolve(__dirname, "..", "game", "js", "plugins", "DEUS_Items.js"));
+require(path.resolve(__dirname, "..", "game", "js", "plugins", "DEUS_Jobs.js"));
 
 const I = UF.Items;
 const J = UF.Jobs;

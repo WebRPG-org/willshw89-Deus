@@ -15,17 +15,17 @@ try {
     childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
 } catch (e) {}
 
-// 2. Ensure UF_FactionMenus and UF_Test are registered in snapshot plugins.js
+// 2. Ensure DEUS_FactionMenus and DEUS_Test are registered in snapshot plugins.js
 const pluginsJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins.js');
 if (fs.existsSync(pluginsJsPath)) {
     let pluginsText = fs.readFileSync(pluginsJsPath, 'utf8');
-    if (!pluginsText.includes('"UF_FactionMenus"')) {
+    if (!pluginsText.includes('"DEUS_FactionMenus"')) {
         pluginsText = pluginsText.replace(
-            '{"name":"UF_Test"',
-            '{"name":"UF_FactionMenus","status":true,"description":"[UF Faction Menus] Dynamic matching full-screen menu themes, backdrops, window skins, and cultural cursors for all 11 factions.","parameters":{}},\n{"name":"UF_Test"'
+            '{"name":"DEUS_Test"',
+            '{"name":"DEUS_FactionMenus","status":true,"description":"[UF Faction Menus] Dynamic matching full-screen menu themes, backdrops, window skins, and cultural cursors for all 11 factions.","parameters":{}},\n{"name":"DEUS_Test"'
         );
         fs.writeFileSync(pluginsJsPath, pluginsText, 'utf8');
-        console.log('Registered UF_FactionMenus in snapshot plugins.js');
+        console.log('Registered DEUS_FactionMenus in snapshot plugins.js');
     }
 }
 

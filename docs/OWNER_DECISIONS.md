@@ -995,3 +995,47 @@ Every decision item recorded in this log must provide:
   - Rule 10 escalations (two failed fixes);
   - any change to the read-only engine core (Rule 9);
   - generating all art.
+
+---
+
+### Decision `DEC-060`: Group 3 (cliffs, edges, ramps, natural walls) by Nano Banana Pro; PM generates and judges; ground induction may use A2 for now
+- **Date:** 2026-10-01
+- **Source:** Owner, 2026-10-01:
+  - "Group 3 Cliffs, edges, ramps and natural walls. I want you to prompt nano banana pro for these";
+  - "I want you to generate the images, and figure out if they are suitable or not";
+  - two answers to the PM's questions: "Yes, download them" and "A2 is fine for now".
+  - Earlier the same day, the Owner told the PM he had instructed AG to "induct all of the ground tiles from pixellab and integrate them into a world generation".
+- **Ruling:**
+  1. **Group 3 of the temperate list is generated with Nano Banana Pro (Gemini 3 Pro Image) by the PM**, in the Owner's Gemini app. Under DEC-007 this is a direct Owner hand-off and counts as the Owner's generation. For Group 3 this overrides SOP AS-GEN-004/AS-GEN-005 (PixelLab only, one generator per set) and DEC-055's PixelLab-native rule. The PixelLab ground tops beside these faces are an accepted mix.
+  2. **The PM judges suitability** and records each pick as PM YEA or NAY under DEC-056. Rejected images are not used.
+  3. **Post-processing is allowed for Group 3**: resampling to the art-pixel grid, the palette snap to the material ramp, and slicing into catalogue slots.
+  4. **The PM may download the generated images** from gemini.google.com for QA (the Owner's yes, 2026-10-01).
+  5. **The ground-tile induction (AG) may convert PixelLab corner sets to RMMZ A2 tilesets for now.** The native corner renderer (RENDER.NATIVE) comes later. The work still goes through a reviewed lane, not main's working copy (DEC-048).
+
+---
+
+### Decision `DEC-061`: the originality check is removed entirely
+- **Date:** 2026-10-01
+- **Source:** Owner, 2026-10-01: "We can nix the originality check entirely. delete it off the planet. we are already controlling for originality".
+- **Ruling:**
+  1. **`tools/originality_check.js` and its checks are deleted, not archived** (the Owner said delete). This covers `tools/originality_check.js`, `tools/check_furniture_originality.js`, `tools/test_object_originality.js`, the originality step in every pipeline script that calls it, and the quarantine entries that name it.
+  2. **AGENTS.md Rule 8 no longer requires the originality check.** U7 art stays usable as examples, stand-ins, style references and training data, and everything that ships is still our own work. Originality is controlled by how the art is made (PixelLab generation from our own prompts, guides and style swatches, never a copy, trace, recolour or crop of a U7 image) and by the art council (DEC-062).
+  3. **The removal runs as a reviewed AG cleanup lane** (about 25 scripts and about 30 docs cite it), not on main's working copy (DEC-048), scheduled after wave 1 launches. The PM syncs the binding rule files now (AGENTS.md Rule 8, VISION); the lane sweeps the rest.
+
+---
+
+### Decision `DEC-062`: art enters the game only on a unanimous art-council YEA; every NAY is recorded with its reason; strict style bar
+- **Date:** 2026-10-01
+- **Source:** Owner, 2026-10-01:
+  - "You continue generating art and taking feedback from art council. 1 nay = no. They must all unimously vote yes. I do want a record of why things were no'd though. I want strict U7/everquest/English folklore and uniquely represented style";
+  - "A vote no MUST include a reason why".
+- **Ruling:**
+  1. **The art council is the four braintrust chats** (ChatGPT Pro, Grok Heavy, Gemini Pro, MiniMax M3). Each judges every piece independently.
+  2. **Unanimity.** A piece passes only if all four judges vote YEA. One NAY, or one REDO, means no. This tightens DEC-056: the PM records a PM YEA only after a unanimous council YEA, the catalogue row and machine QA. The Owner can still change any choice.
+  3. **Every no carries its reason.** A NAY or REDO without a reason is incomplete, and the PM goes back to that judge for the reason before the round closes. Every no is recorded with each judge's reason in `art/COUNCIL_RECORD.md`, and rejected pieces get a NAY row in `art/APPROVALS.md` pointing to it.
+  4. **Style bar:** strict Ultima VII / EverQuest / English folklore, rendered in a style that is uniquely DEUS: not generic pixel art and not a copy of any of them. Every council prompt and every generation card states this bar.
+  5. **The PM keeps generating** (the Owner's direct hand-off under DEC-007; the U7 method of 2026-10-01: PixelLab Bitforge and Pixflux), iterating on the council's reasons and resubmitting until the vote is unanimous.
+- **Amendment (Owner, 2026-10-01, later the same day):** "I simply want the jduges to confirm it is roughly the same quality and consistent as U7 art, that should suffice as long as you can tool it etc?"
+  - Item 4 is replaced. The judges answer one question per piece: **is it roughly the same quality as Ultima VII art, and consistent with it?** YES, or NO with the reason.
+  - The PM confirms each piece can be tooled before it goes to the judges: machine QA of the RMMZ format, seams, anchors, palette and size.
+  - Items 1, 2, 3 and 5 stand: four judges, unanimity, and every NO recorded with its reason. The English folklore / Ultima VII / EverQuest direction (DEC-047) stays the art direction, but it is no longer a separate judging test.

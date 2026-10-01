@@ -1,0 +1,10 @@
+DEFERRED tools/test_time_domains_proof.js:38 ../game/js/plugins/UF_World.js (L3/lane-cp)
+RESULT: FAIL; 41 required archives; 2 protected plugins; 6 violations; 1 L3 deferrals
+FAIL loadscript-call: game/js/plugins/DEUS_Camera.js
+FAIL loadscript-call: game/js/plugins/DEUS_ColonyOverseer.js
+FAIL loadscript-call: game/js/plugins/DEUS_Core.js
+FAIL loadscript-call: game/js/plugins/DEUS_History.js
+FAIL loadscript-call: game/js/plugins/DEUS_Items.js
+FAIL broken-retarget: tools/TEST_BrokenRetarget.js:1 ../archive/game/js/plugins/UF_Anim.js
+
+EXIT=1

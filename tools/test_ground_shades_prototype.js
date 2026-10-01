@@ -17,7 +17,7 @@ const catalog = JSON.parse(fs.readFileSync(path.resolve(__dirname, "..", "game",
 global.$ufWorldCatalog = catalog;
 
 // Load UF_WorldGen to test resolve and fields
-const worldGenCode = fs.readFileSync(path.resolve(__dirname, "..", "game", "js", "plugins", "UF_WorldGen.js"), "utf8");
+const worldGenCode = fs.readFileSync(path.resolve(__dirname, "..", "game", "js", "plugins", "DEUS_WorldGen.js"), "utf8");
 eval(worldGenCode);
 
 console.log("Loaded catalog and UF_WorldGen. Testing climate fields and ground families...");

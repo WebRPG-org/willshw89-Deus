@@ -497,7 +497,7 @@ Owner 13:30–13:37 CT, 13:50 CT, 13:56 CT and 14:09–14:10 CT. No art is gener
 
 **AS-PREVIEW-001.** Every generated asset is shown in an animated in-game scene at 1 source pixel to 1 screen pixel, sent to the Owner in chat, and merged only after yea. Nay sends it back to be generated again. The preview uses the drawn frames at 1:1.
 
-**AS-GEN-005.** One generator per category and per layered set. That generator is PixelLab. A paper-doll set and a creature family each carry that one id. A set whose members disagree fails. Retro Diffusion and Nano Banana Pro are not mixed into a layered set.
+**AS-GEN-005.** One generator per category and per layered set. That generator is PixelLab. A paper-doll set and a creature family each carry that one id. A set whose members disagree fails. Retro Diffusion and Nano Banana Pro are not mixed into a layered set. Exception (DEC-060, Owner 2026-10-01): temperate Group 3 (cliffs, edges, ramps, natural walls) is generated with Nano Banana Pro by the PM, resampled and palette-snapped, and may sit beside PixelLab ground tops.
 
 **AS-SEX-001.** Each of the nine races has `body:<race>:adult-male`, `body:<race>:adult-female`, `body:<race>:elder-male`, `body:<race>:elder-female` and `body:<race>:child`. The child body is its own sheet, drawn at the child frame class, and it is not split by sex. Dwarf `adult-male`, `adult-female`, `elder-male` and `elder-female` are 36 px tall. The head preset serves the portrait (**AS-GENE-001**). The character map sprite is the unarmored base for that race and sex (**AS-CHMAP-001**). Children and elders have no map-sprite base yet. Dwarf heights above stay 36 px. The art key `outfitId__race__body` remains the armour icon key.
 

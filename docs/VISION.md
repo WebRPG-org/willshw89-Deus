@@ -448,5 +448,7 @@ Append only, newest at the bottom.
   - the PM decides the DEC-055 art layout and ADR-003;
   - fire, seasons/weather, migration, rare geological events and structure decay are deferred.
   The final NW v1 sign-off stays with the user.
-
 - 2026-09-30: The Owner directly assigned Codex OPS.PRUNE.06 on lane-cu: "Update internal headings and Markdown links across docs/systems/ and the repository to point to the canonical DEUS_*.md paths." This authorizes documentation reference edits beyond the lane manifest's initial docs/systems whitelist, alongside the 33 live renames, 15 archives and Colonists reconciliation. Households and the eight L4-owned docs remain protected; no runtime or WBS status change is authorized.
+- 2026-10-01: The user moved temperate Group 3 (cliffs, edges, ramps, natural walls) to Nano Banana Pro, generated and judged by the PM, and allowed A2 conversion for the ground-tile induction for now (DEC-060).
+- 2026-10-01: The user removed the originality check entirely (DEC-061) and made the art council unanimous: one NAY rejects a piece, every NAY carries its reason, and the style bar is strict Ultima VII / EverQuest / English folklore, uniquely DEUS (DEC-062).
+- 2026-10-01: The user simplified the art council's question: the judges only confirm a piece is roughly the same quality as Ultima VII art and consistent with it; the PM confirms it can be tooled (DEC-062 amendment).

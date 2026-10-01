@@ -30,7 +30,7 @@ global.ImageManager = { loadTileset: () => {} };
 global.DataManager = { onLoad: () => {} };
 global['$ufWorldCatalog'] = JSON.parse(fs.readFileSync('game/data/UF_WorldCatalog.json', 'utf8'));
 
-require('../game/js/plugins/UF_Tiles.js');
+require('../game/js/plugins/DEUS_Tiles.js');
 
 const bmp = UF.Tiles.initShadeAtlas();
 console.log('Shade atlas initialized, keys in shadeKeyMap:', UF.Tiles.shadeStats());

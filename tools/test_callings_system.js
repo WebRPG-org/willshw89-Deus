@@ -308,8 +308,8 @@ function createSandboxEnvironment(seed = 7777) {
         ]
     };
 
-    loadPlugin("UF_Factions.js");
-    loadPlugin("UF_History.js");
+    loadPlugin("DEUS_Factions.js");
+    loadPlugin("DEUS_History.js");
     loadPlugin("UF_Households.js");
 
     return { sandbox, World, ctx };

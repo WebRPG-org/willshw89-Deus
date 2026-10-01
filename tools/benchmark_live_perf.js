@@ -30,8 +30,8 @@ try {
     childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
 } catch (e) {}
 
-// 2. Inject performance profiling harness into UF_Test.js in snapshot
-const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Test.js');
+// 2. Inject performance profiling harness into DEUS_Test.js in snapshot
+const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js');
 let testCode = fs.readFileSync(testJsPath, 'utf8');
 
 const profilerSuiteCode = `
@@ -238,7 +238,7 @@ const profilerSuiteCode = `
     }, { isDefault: false });
 `;
 
-// Insert the suite into UF_Test.js right before Test.suite("perf",
+// Insert the suite into DEUS_Test.js right before Test.suite("perf",
 testCode = testCode.replace('Test.suite("perf",', `${profilerSuiteCode}\n    Test.suite("perf",`);
 fs.writeFileSync(testJsPath, testCode, 'utf8');
 

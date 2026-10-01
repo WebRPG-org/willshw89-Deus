@@ -3,8 +3,8 @@
 const fs = require("fs"), path = require("path"), vm = require("vm"), assert = require("assert/strict");
 const root = path.resolve(__dirname, "..");
 
-let sourceColonists = fs.readFileSync(path.join(root, "game/js/plugins/UF_Colonists.js"), "utf8");
-let sourceFactions = fs.readFileSync(path.join(root, "game/js/plugins/UF_Factions.js"), "utf8");
+let sourceColonists = fs.readFileSync(path.join(root, "game/js/plugins/DEUS_Colonists.js"), "utf8");
+let sourceFactions = fs.readFileSync(path.join(root, "game/js/plugins/DEUS_Factions.js"), "utf8");
 let sourceGoals = fs.readFileSync(path.join(root, "game/js/plugins/UF_Goals.js"), "utf8");
 
 const mutant = process.argv.find(a => a.startsWith("--mutant="));

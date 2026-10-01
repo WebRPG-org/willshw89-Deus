@@ -1,0 +1,2 @@
+PASS registration: all 42 enabled plugin entry files exist after archival; plugins.js was read only. This is a static bridge check, not an RMMZ boot.
+EXIT=0

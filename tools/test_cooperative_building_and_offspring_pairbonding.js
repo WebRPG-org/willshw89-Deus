@@ -17,9 +17,9 @@ const readPlugin = name => fs.readFileSync(path.join(root, "game/js/plugins", na
 const catalog = JSON.parse(fs.readFileSync(path.join(root, "game/data/UF_WorldCatalog.json"), "utf8"));
 
 const mutant = (process.argv.find(a => a.startsWith("--mutant=")) || "").slice(9);
-let colonistsCode = readPlugin("UF_Colonists");
+let colonistsCode = readPlugin("DEUS_Colonists");
 let householdsCode = readPlugin("UF_Households");
-let historyCode = readPlugin("UF_History");
+let historyCode = readPlugin("DEUS_History");
 
 if (mutant === "no_focal_bonus") {
     // Mutant: disable cooperative focal household priority boost
@@ -259,12 +259,12 @@ function createHarness() {
     ctx.window = ctx;
     vm.createContext(ctx);
 
-    const plugins = ["UF_Factions", "UF_CultureGrowth", "UF_History", "UF_Households", "UF_Colonists"];
+    const plugins = ["DEUS_Factions", "UF_CultureGrowth", "DEUS_History", "UF_Households", "DEUS_Colonists"];
     for (const p of plugins) {
         let code = readPlugin(p);
-        if (p === "UF_Colonists") code = colonistsCode;
+        if (p === "DEUS_Colonists") code = colonistsCode;
         if (p === "UF_Households") code = householdsCode;
-        if (p === "UF_History") code = historyCode;
+        if (p === "DEUS_History") code = historyCode;
         vm.runInContext(code, ctx);
     }
 

@@ -3,7 +3,7 @@
 const fs = require("fs"), path = require("path"), vm = require("vm"), assert = require("assert/strict");
 const root = path.resolve(__dirname, "..");
 const read = name => fs.readFileSync(path.join(root, "game/js/plugins", name + ".js"), "utf8");
-const source = read("UF_WorldGen"), objectSource = read("UF_Objects");
+const source = read("DEUS_WorldGen"), objectSource = read("DEUS_Objects");
 const catalog = JSON.parse(fs.readFileSync(path.join(root, "game/data/UF_WorldCatalog.json"), "utf8"));
 let passed = 0, failed = 0;
 function check(name, fn) {
@@ -40,8 +40,8 @@ function harness(code = source, objectsCode = objectSource) {
             Events: { on: (event, fn) => { if (!listeners.has(event)) listeners.set(event, []); listeners.get(event).push(fn); }, emit: (event, ...args) => { for (const fn of listeners.get(event) || []) fn(...args); } } } };
     context.window = context;
     vm.createContext(context);
-    vm.runInContext(code, context, { filename: "UF_WorldGen.js" });
-    vm.runInContext(objectsCode, context, { filename: "UF_Objects.js" });
+    vm.runInContext(code, context, { filename: "DEUS_WorldGen.js" });
+    vm.runInContext(objectsCode, context, { filename: "DEUS_Objects.js" });
     const build = z => {
         const map = mapOf(z); map.ufObjects.fill(0);
         generators.get("uf_underground_resources")({ areaX: 0, areaY: 0, z, width: size, height: size, objects: map.ufObjects });
