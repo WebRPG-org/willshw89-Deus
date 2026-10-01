@@ -1,5 +1,6 @@
 {
   "id": "birch_stump",
+  "name": "birch_stump",
   "frameWidth": 48,
   "frameHeight": 48,
   "anchor": [
@@ -10,6 +11,8 @@
     1,
     1
   ],
+  "passable": true,
+  "under": false,
   "facings": [
     "S",
     "W",
@@ -18,9 +21,11 @@
   ],
   "animations": {
     "stand": [
-      0
+      1
     ]
   },
-  "passable": true,
-  "under": false
+  "generator": "PixelLab (PM, DEC-063)",
+  "standard": "RMMZ reference, Ultima VII style (DEC-063)",
+  "master": "art/approved/SURFACE_SHARED_TREE_BIRCH_B-V1_DEPLETED.png",
+  "masterSha256": "f64ffcee9394020a09d3af1b4cc7890b6d25dbb3a45c241b5d99ad673b7651fe"
 }

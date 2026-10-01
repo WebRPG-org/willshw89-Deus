@@ -1,5 +1,6 @@
 {
   "id": "tree_swamp",
+  "name": "tree_swamp",
   "frameWidth": 96,
   "frameHeight": 96,
   "anchor": [
@@ -10,19 +11,18 @@
     1,
     1
   ],
+  "passable": false,
+  "under": false,
   "facings": [
     "S"
   ],
   "animations": {
     "stand": [
       1
-    ],
-    "sway": [
-      0,
-      1,
-      2
     ]
   },
-  "generator": "Google Nano Banana 2",
-  "standard": "Final Fantasy VI 16-bit HD"
+  "generator": "PixelLab (PM, DEC-063)",
+  "standard": "RMMZ reference, Ultima VII style (DEC-063)",
+  "master": "art/approved/SURFACE_SHARED_TREE_SWAMP_B-V1_DEFAULT.png",
+  "masterSha256": "a4e2c5dfd272bbeb8553fdd7cf8e2ce855648e9ba280c0f2a158d2f4ee6ae18f"
 }

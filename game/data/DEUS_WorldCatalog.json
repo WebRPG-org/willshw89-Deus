@@ -1254,7 +1254,7 @@
           "yields": {
             "log": 3
           },
-          "becomes": "stump"
+          "becomes": "oak_stump"
         }
       },
       "clump": 0.85,
@@ -1275,7 +1275,7 @@
           "yields": {
             "log": 2
           },
-          "becomes": "stump"
+          "becomes": "birch_stump"
         }
       },
       "clump": 0.7,
@@ -1296,7 +1296,7 @@
           "yields": {
             "log": 3
           },
-          "becomes": "stump"
+          "becomes": "pine_stump"
         }
       },
       "clump": 0.9,
@@ -1347,7 +1347,7 @@
           "yields": {
             "log": 3
           },
-          "becomes": "stump"
+          "becomes": "fruit_stump"
         }
       },
       "clump": 0.5,
@@ -1372,7 +1372,7 @@
           "yields": {
             "log": 3
           },
-          "becomes": "stump"
+          "becomes": "fruit_stump"
         }
       },
       "image": "!$UF_Fruit_Tree_Bare"
@@ -1411,7 +1411,7 @@
           "yields": {
             "log": 2
           },
-          "becomes": "stump"
+          "becomes": "swamp_stump"
         }
       },
       "clump": 0.7,
@@ -1496,7 +1496,7 @@
             "log": 1,
             "firewood": 2
           },
-          "becomes": "stump"
+          "becomes": "dead_stump"
         }
       },
       "clump": 0.6,
@@ -1703,7 +1703,7 @@
       "clump": 0.5,
       "clumpScale": 8,
       "avoidWater": 0,
-      "image": "!$UF_GrassTuft"
+      "image": "!UF_GrassTuft_V8"
     },
     {
       "id": "reeds",
@@ -3184,6 +3184,120 @@
         "work": 200
       },
       "ruin": "rubble"
+    },
+    {
+      "id": "oak_stump",
+      "name": "Oak Stump",
+      "image": "!$UF_Oak_Stump",
+      "passable": true,
+      "tags": [
+        "stump",
+        "wood"
+      ],
+      "actions": {
+        "chop": {
+          "work": 100,
+          "yields": {
+            "log": 1
+          },
+          "becomes": null
+        }
+      }
+    },
+    {
+      "id": "swamp_stump",
+      "name": "Swamp Stump",
+      "image": "!$UF_Swamp_Stump",
+      "passable": true,
+      "tags": [
+        "stump",
+        "wood"
+      ],
+      "actions": {
+        "chop": {
+          "work": 100,
+          "yields": {
+            "log": 1
+          },
+          "becomes": null
+        }
+      }
+    },
+    {
+      "id": "dead_stump",
+      "name": "Dead Stump",
+      "image": "!$UF_Dead_Stump",
+      "passable": true,
+      "tags": [
+        "stump",
+        "wood"
+      ],
+      "actions": {
+        "chop": {
+          "work": 100,
+          "yields": {
+            "log": 1
+          },
+          "becomes": null
+        }
+      }
+    },
+    {
+      "id": "birch_stump",
+      "name": "Birch Stump",
+      "image": "!$UF_Birch_Stump",
+      "passable": true,
+      "tags": [
+        "stump",
+        "wood"
+      ],
+      "actions": {
+        "chop": {
+          "work": 100,
+          "yields": {
+            "log": 1
+          },
+          "becomes": null
+        }
+      }
+    },
+    {
+      "id": "pine_stump",
+      "name": "Pine Stump",
+      "image": "!$UF_Pine_Stump",
+      "passable": true,
+      "tags": [
+        "stump",
+        "wood"
+      ],
+      "actions": {
+        "chop": {
+          "work": 100,
+          "yields": {
+            "log": 1
+          },
+          "becomes": null
+        }
+      }
+    },
+    {
+      "id": "fruit_stump",
+      "name": "Fruit Stump",
+      "image": "!$UF_Fruit_Stump",
+      "passable": true,
+      "tags": [
+        "stump",
+        "wood"
+      ],
+      "actions": {
+        "chop": {
+          "work": 100,
+          "yields": {
+            "log": 1
+          },
+          "becomes": null
+        }
+      }
     }
   ],
   "items": {

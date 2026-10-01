@@ -1,5 +1,6 @@
 {
   "id": "oak_stump",
+  "name": "oak_stump",
   "frameWidth": 48,
   "frameHeight": 48,
   "anchor": [
@@ -10,6 +11,8 @@
     1,
     1
   ],
+  "passable": true,
+  "under": false,
   "facings": [
     "S",
     "W",
@@ -18,9 +21,11 @@
   ],
   "animations": {
     "stand": [
-      0
+      1
     ]
   },
-  "passable": true,
-  "under": false
+  "generator": "PixelLab (PM, DEC-063)",
+  "standard": "RMMZ reference, Ultima VII style (DEC-063)",
+  "master": "art/approved/SURFACE_SHARED_TREE_OAK_B-V1_DEPLETED.png",
+  "masterSha256": "08760f2592fa69eb5bb05537cc72b9b275302d6217800640e4c8e9eab6e3bb5a"
 }

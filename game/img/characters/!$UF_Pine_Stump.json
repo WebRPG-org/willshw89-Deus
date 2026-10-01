@@ -1,5 +1,6 @@
 {
   "id": "pine_stump",
+  "name": "pine_stump",
   "frameWidth": 48,
   "frameHeight": 48,
   "anchor": [
@@ -10,6 +11,8 @@
     1,
     1
   ],
+  "passable": true,
+  "under": false,
   "facings": [
     "S",
     "W",
@@ -18,9 +21,11 @@
   ],
   "animations": {
     "stand": [
-      0
+      1
     ]
   },
-  "passable": true,
-  "under": false
+  "generator": "PixelLab (PM, DEC-063)",
+  "standard": "RMMZ reference, Ultima VII style (DEC-063)",
+  "master": "art/approved/SURFACE_SHARED_TREE_PINE_B-V1_DEPLETED.png",
+  "masterSha256": "d1b913a0916af0ec0b74d82b5a7b89f719b090b8c3c991cf8e56ddac5bf4a1ad"
 }

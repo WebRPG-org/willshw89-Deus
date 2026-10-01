@@ -1,5 +1,6 @@
 {
   "id": "swamp_stump",
+  "name": "swamp_stump",
   "frameWidth": 48,
   "frameHeight": 48,
   "anchor": [
@@ -10,6 +11,8 @@
     1,
     1
   ],
+  "passable": true,
+  "under": false,
   "facings": [
     "S",
     "W",
@@ -18,9 +21,11 @@
   ],
   "animations": {
     "stand": [
-      0
+      1
     ]
   },
-  "passable": true,
-  "under": false
+  "generator": "PixelLab (PM, DEC-063)",
+  "standard": "RMMZ reference, Ultima VII style (DEC-063)",
+  "master": "art/approved/SURFACE_SHARED_TREE_SWAMP_B-V1_DEPLETED.png",
+  "masterSha256": "ba740c66021abf7d0f66f359b111baaa092d2490d5787e9d915df5b9b9f7a2df"
 }
