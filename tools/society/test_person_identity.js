@@ -32,6 +32,7 @@ const YEAR0_PLUGINS = ["DEUS_Core", "DEUS_World", "DEUS_WorldGen", "DEUS_Faction
     "DEUS_Dnd5e", "DEUS_Callings", "DEUS_HistoricalDemographics", "DEUS_Colonists"];
 
 const Identity = require(IDENTITY_PATH);
+const simHook = require("../lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 const schema = JSON.parse(fs.readFileSync(SCHEMA_PATH, "utf8"));
 const doc = fs.readFileSync(DOC_PATH, "utf8");
 
@@ -419,6 +420,7 @@ function loadRuntime(names) {
     for (const s of sources) for (const m of s.matchAll(protoRe)) {
         if (m[2]) env[m[1]].prototype[m[2]] = () => { throw new Error(`Unexpected engine method ${m[1]}.${m[2]}`); };
     }
+    simHook.install(env);
     const ctx = vm.createContext(env);
     vm.runInContext(["Math", "Object", "Array", "Number", "String", "Boolean", "Map", "Set", "JSON", "Date",
         "Uint8Array", "Uint16Array", "Int32Array", "Float32Array", "performance", "window"]

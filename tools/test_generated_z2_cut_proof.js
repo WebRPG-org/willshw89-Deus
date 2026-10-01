@@ -67,6 +67,7 @@ const vm = require("vm");
 const zlib = require("zlib");
 const { spawn } = require("child_process");
 const { performance } = require("perf_hooks");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.resolve(__dirname, "..");
 const PLUGINS = path.join(ROOT, "game", "js", "plugins");
@@ -347,6 +348,7 @@ function setupVM(sources, tag, probe) {
     const core = fs.readFileSync(path.join(ROOT, "game/js/rmmz_core.js"), "utf8");
     const mgr = fs.readFileSync(path.join(ROOT, "game/js/rmmz_managers.js"), "utf8");
     const deus = fs.readFileSync(path.join(PLUGINS, "DEUS_Core.js"), "utf8");
+    simHook.install(env);
     const ctx = vm.createContext(env);
     vm.runInContext(section(mgr, "DataManager.makeSaveContents =", "DataManager.correctDataErrors ="), ctx, { filename: "rmmz_managers.js" });
     vm.runInContext(section(core, "function JsonEx()", "//-----------------------------------------------------------------------------"), ctx, { filename: "rmmz_core.js JsonEx" });

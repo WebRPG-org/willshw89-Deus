@@ -15,6 +15,7 @@ const path = require("path");
 const vm = require("vm");
 const { performance } = require("perf_hooks");
 const { execFileSync } = require("child_process");
+const simHook = require("../lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const args = process.argv.slice(2);
@@ -66,6 +67,7 @@ function setup() {
     env.$gameMap = new env.Game_Map(); env.$gameMap._events = [];
     env.$gamePlayer = new env.Game_Player(); env.$gamePlayer.x = 128; env.$gamePlayer.y = 128;
     // A context without interceptors (node >= 22.8): globals cost what they cost in the game (a contextified vm is ~10x slower on them).
+    simHook.install(env);
     const ctx = vm.createContext(vm.constants.DONT_CONTEXTIFY);
     for (const k of Object.keys(env)) ctx[k] = env[k];
     ctx.window = ctx;

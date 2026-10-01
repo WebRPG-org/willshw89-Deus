@@ -34,6 +34,8 @@ function findRoot() {
 }
 
 const ROOT = findRoot();
+// WG.00.44 hook, from the root found above: test_sim_forward_guard runs mutated copies of this file from a temp folder.
+const simHook = require(path.join(ROOT, "tools", "lib", "vm_sim_require"));
 const FORMAT = "deus.sim_forward.v1";
 const PLUGINS = ["DEUS_Core", "DEUS_World", "DEUS_WorldGen", "DEUS_Factions", "DEUS_History", "DEUS_Levels", "DEUS_Dnd5e", "DEUS_Callings", "DEUS_HistoricalDemographics"];
 const SEED_MAX = 0x7fffffff;
@@ -159,6 +161,7 @@ function loadHeadless() {
     for (const source of sources) for (const m of source.matchAll(protoRe)) {
         if (m[2]) env[m[1]].prototype[m[2]] = () => { throw new Error("Unexpected engine method " + m[1] + "." + m[2]); };
     }
+    simHook.install(env);
     const ctx = vm.createContext(env);
     vm.runInContext(["Math", "Object", "Array", "Number", "String", "Boolean", "Map", "Set", "JSON", "Date",
         "Uint8Array", "Uint16Array", "Int32Array", "Float32Array", "performance", "window"]

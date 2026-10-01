@@ -1,0 +1,1 @@
+2026-10-01T15:44:12.046Z [SIM] UF.Sim.require("ledger") resolved C:\Users\snewt\AppData\Local\Temp\wg0044-nw-a3LFJi\game\js\sim\ledger.js

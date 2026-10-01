@@ -9,6 +9,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.resolve(__dirname, "..");
 const PLUGINS = path.join(ROOT, "game/js/plugins");
@@ -45,6 +46,7 @@ function fixture(source) {
         env[name] = function() {};
     }
     env.Scene_Boot.prototype.start = function() {};
+    simHook.install(env);
     const context = vm.createContext(env);
     vm.runInContext(section(CORE, "Tilemap.TILE_ID_B =", "Tilemap.Layer ="), context);
     vm.runInContext(WORLD, context, { filename: "DEUS_World.js" });

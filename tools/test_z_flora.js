@@ -1,6 +1,7 @@
 "use strict";
 // Actual WorldGen + Objects sources; controlled pocket terrain and World storage, no renderer.
 const fs = require("fs"), path = require("path"), vm = require("vm"), assert = require("assert/strict");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 const root = path.resolve(__dirname, "..");
 const read = name => fs.readFileSync(path.join(root, "game/js/plugins", name + ".js"), "utf8");
 const source = read("DEUS_WorldGen"), objectSource = read("DEUS_Objects");
@@ -39,6 +40,7 @@ function harness(code = source, objectsCode = objectSource) {
             Items: { drop: (area, x, y, type, n) => { const item = { area: { x: area.x, y: area.y }, z: area.z, x, y, type, n }; drops.push(item); return [item]; } },
             Events: { on: (event, fn) => { if (!listeners.has(event)) listeners.set(event, []); listeners.get(event).push(fn); }, emit: (event, ...args) => { for (const fn of listeners.get(event) || []) fn(...args); } } } };
     context.window = context;
+    simHook.install(context);
     vm.createContext(context);
     vm.runInContext(code, context, { filename: "DEUS_WorldGen.js" });
     vm.runInContext(objectsCode, context, { filename: "DEUS_Objects.js" });

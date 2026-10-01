@@ -1,0 +1,21 @@
+Command: node tasks/WG.00.44/lane-db/run_fix_round.js 96e12464
+Final process exit: 1
+EVIDENCE C:\Users\snewt\.deus_worktrees\lane-db\tasks\WG.00.44\lane-db\evidence\fix_round_96e12464.txt
+CLONES C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny
+C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:118
+    const tick = node => { if (++steps > 250000 || Date.now() - began > 10000) throw new Error(`VM_HARNESS_SCAN_LIMIT ${options.filename || "<source>"}:${node?.loc?.start.line || "?"}: ${steps} steps, ${Date.now() - began} ms`); };
+                                                                               ^
+
+Error: VM_HARNESS_SCAN_LIMIT tools/society/test_militia.js:90: 31709 steps, 10002 ms
+    at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:118:86)
+    at expr (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:381:30)
+    at expr (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:425:66)
+    at expr (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:396:133)
+    at stmt (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:457:86)
+    at block (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:449:110)
+    at invoke (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:195:57)
+    at expr (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:443:24)
+    at expr (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:389:193)
+    at stmt (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:453:98)
+
+Node.js v24.19.0

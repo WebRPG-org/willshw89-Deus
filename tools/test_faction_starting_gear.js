@@ -14,6 +14,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.resolve(__dirname, "..");
 const PLUGINS = path.join(ROOT, "game", "js", "plugins");
@@ -124,6 +125,7 @@ windowMock.DEUS = windowMock.UF;
 windowMock.window = windowMock;
 windowMock.global = windowMock;
 
+simHook.install(windowMock);
 const ctx = vm.createContext(windowMock);
 
 // Load required scripts into VM

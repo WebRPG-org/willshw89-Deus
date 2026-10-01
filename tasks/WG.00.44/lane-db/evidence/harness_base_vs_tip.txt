@@ -1,0 +1,53 @@
+# WG.00.44 lane-db: every hooked harness at base 7f91efbb vs tip, in gate-style clones (core.autocrlf=false, core.eol=lf).
+# Tip sha per row: 257aeae0 = all harness edits; a0c8598a adds only the tools/dev/sim_forward.js require fix (and 8865cb29 only docs).
+# Failing checks are compared line by line where the harness prints them (strata x2, region seam, soak, vertical biome, sim_forward guard: identical).
+harness (args) | base exit | tip exit (sha) | same | failing checks / stop reason at tip (trimmed)
+tools/bench_history_demographics.js|--selftest | 0 | 0 (a0c8598a) | yes |
+tools/bench_history_sim.js|--selftest | 1 | 1 (a0c8598a) | yes | FAIL: Error: Trial seed=0 years=100 failed: FAIL: Error: History: HistoricalDemographics, Callings and Dnd5e must be loaded before New Game
+tools/bench_species_biology.js|--selftest | 1 | 1 (a0c8598a) | yes | FAIL: Error: Candidate mismatch: inspected production file differs from ASTRA-14 dispatch
+tools/bench_underground_gen.js|--runs|1|--runtime|both | 1 | 1 (a0c8598a) | yes | RESULT: FAIL | elapsed 49.8 ms | JSON C:\Users\snewt\AppData\Local\Temp\lanedb\tipclone\game\test_output\bench_underground_gen.json
+tools/bench_vertical_worldgen.js|--runs|1|--runtime|both | 2 | 2 (a0c8598a) | yes |  at Module.load (node:internal/modules/cjs/loader:1594:32) | at Module._load (node:internal/modules/cjs/loader:1396:12) | at wrapModuleLoad (node:internal/modules/cjs/loa
+tools/bench_vertical_worldgen.js|--selftest | 2 | 2 (a0c8598a) | yes |  at Module.load (node:internal/modules/cjs/loader:1594:32) | at Module._load (node:internal/modules/cjs/loader:1396:12) | at wrapModuleLoad (node:internal/modules/cjs/loa
+tools/capture_pre_migration_baseline.js | 0 | 0 (a0c8598a) | yes |
+tools/dev/sim_forward.js|--seed|424242|--years|1|--output|sf_out.json | 0 | 0 (a0c8598a) | yes |
+tools/performance/census_boot_load.js | 0 | 0 (a0c8598a) | yes |
+tools/profile_historical_demographics.js|--selftest | 1 | 1 (a0c8598a) | yes | FAIL: Error: CANDIDATE_MISMATCH: working plugin differs from CODEX-01 packet
+tools/sim/test_fluid_attach.js | 0 | 0 (257aeae0) | yes |
+tools/sim/test_living_world_rules.js | 0 | 0 (257aeae0) | yes |
+tools/sim/test_sim_forward_guard.js | 1 | 1 (a0c8598a) | yes |  [FAIL] seed_year0_matches_fixture: seed snapshot differs from the fixture (284413 bytes) || [FAIL] seed_then_forward_matches_fixture_forward: ledger hash
+tools/sim/test_underground_year0.js | 0 | 0 (257aeae0) | yes |
+tools/society/test_person_identity.js | 0 | 0 (257aeae0) | yes |
+tools/test_19b_performance_determinism.js | 1 | 1 (257aeae0) | yes |  at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5) | at node:internal/main/run_main_module:33:47 | | Node.js v24.19.0
+tools/test_32_levels_generation.js | 0 | 0 (257aeae0) | yes |
+tools/test_bag_and_racial_banners.js | 0 | 0 (257aeae0) | yes |
+tools/test_combat_dying_integration.js | 0 | 0 (257aeae0) | yes |
+tools/test_deep_cuts_and_mountain_cap_wg0041.js | 0 | 0 (257aeae0) | yes |
+tools/test_duplicate_registration.js | 0 | 0 (257aeae0) | yes |
+tools/test_extraction_difficulty.js | 1 | 1 (257aeae0) | yes |  path: 'C:\\Users\\snewt\\AppData\\Local\\Temp\\lanedb\\tipclone\\game\\js\\plugins\\UF_Skills.js' | } | | Node.js v24.19.0
+tools/test_faction_starting_gear.js | 1 | 1 (257aeae0) | yes |  at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5) | at node:internal/main/run_main_module:33:47 | | Node.js v24.19.0
+tools/test_fluid_correctness_lane_cw.js | 0 | 0 (257aeae0) | yes |
+tools/test_generated_z2_cut_proof.js | 0 | 0 (257aeae0) | yes |
+tools/test_geology_strata.js | 0 | 0 (257aeae0) | yes |
+tools/test_hist_metadata_contracts.js | 1 | 1 (257aeae0) | yes | FATAL: History: HistoricalDemographics, Callings and Dnd5e must be loaded before New Game
+tools/test_historical_carrying_capacity.js | 0 | 0 (257aeae0) | yes |
+tools/test_history_materialization_and_world_age.js | 1 | 1 (257aeae0) | yes | FAIL Error: ROUNDTRIP_worldSha256: saved world changed after process exit and restart
+tools/test_liquid_depth_simulation.js | 1 | 1 (257aeae0) | yes | FAIL legacy_flooding_compatibility - Levels.describeCell reflects fluid depth: "Ground"
+tools/test_native_survival_soak.js | 1 | 1 (a0c8598a) | yes | FAIL soak.starter_chest_present - Central starter chest found near camp (128,128) || FAIL soak.nobody_dehydrated_at_midnight - founders short of water at midnight: none;
+tools/test_natural_connections_no_mint.js | 0 | 0 (257aeae0) | yes |
+tools/test_new_game_year0.js | 0 | 0 (257aeae0) | yes |
+tools/test_production_history_demographics.js | 1 | 1 (257aeae0) | yes | FAIL: Error: Production candidate mismatch before regression tests
+tools/test_region_seam_continuity.js | 1 | 1 (a0c8598a) | yes | FAIL sky_cap_empty_z12 - 7 area(s) with non-open cells, e.g. area 1,0 cell 39,49 shape=2
+tools/test_resource_node_materials.js | 1 | 1 (257aeae0) | yes |  at Module._load (node:internal/modules/cjs/loader:1396:12) | at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) | | Node.js v24.19.0
+tools/test_round_world.js | 1 | 1 (257aeae0) | yes |  at Module._load (node:internal/modules/cjs/loader:1396:12) | at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) | | Node.js v24.19.0
+tools/test_seamless_map_edges.js | 1 | 1 (257aeae0) | yes |  at Module._load (node:internal/modules/cjs/loader:1396:12) | at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) | | Node.js v24.19.0
+tools/test_sparse_outer_save.js | 0 | 0 (257aeae0) | yes |
+tools/test_starter_kit_and_stockpile.js | 0 | 0 (257aeae0) | yes |
+tools/test_strata_cuts_and_caves.js | 1 | 1 (a0c8598a) | yes | FAIL clearance_4_5_more - fixture column (64,30): 1 solid + 4 air under solid 4 ft (derived shape floor: the compatibility view; the clearance is the data), 5 air on -2's
+tools/test_strata_fluid_reconciliation.js | 0 | 0 (257aeae0) | yes |
+tools/test_strata_foundation.js | 0 | 0 (a0c8598a) | yes |
+tools/test_survival_regressions.js | 0 | 0 (257aeae0) | yes |
+tools/test_volumetric_terrain_column.js | 0 | 0 (257aeae0) | yes |
+tools/test_worldgen_quickfixes.js | 0 | 0 (257aeae0) | yes |
+tools/test_z_flora.js | 1 | 1 (257aeae0) | yes | FAIL z_flora.depth_specific_natural_and_kit: TypeError: generators.get(...) is not a function || FAIL z_flora.starter_resource_coverage: Error: Missing underground flora
+tools/worldgen/test_vertical_biome_coupling.js | 1 | 1 (a0c8598a) | yes |  [FAIL] mutant independent_roll: Error: Override anchor found 0 times in DEUS_Levels.js: const useColumn = couplingActive(); || FAIL 1 problem(s) (147319 ms)
+tools/zrange/bench_queries.js|--rounds=1 | 0 | 0 (a0c8598a) | yes |

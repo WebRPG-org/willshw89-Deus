@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
 const assert = require("assert");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.resolve(__dirname, "..");
 const MODULES = ["World", "WorldGen", "Factions", "HistoricalDemographics", "Callings", "Dnd5e", "History", "Levels", "Objects", "Items", "Containers", "Stockpiles", "Colonists"];
@@ -35,6 +36,7 @@ function loadEngine() {
         env[m[1]].prototype[m[2]] = () => {};
     }
 
+    simHook.install(env);
     sources.forEach((src, i) => vm.runInNewContext(src, env, { filename: filePaths[i] }));
     return env;
 }

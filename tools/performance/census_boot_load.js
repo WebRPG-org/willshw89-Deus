@@ -15,6 +15,7 @@ const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
 const { performance } = require("perf_hooks");
+const simHook = require("../lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const PLUGINS = path.join(ROOT, "game", "js", "plugins");
@@ -84,6 +85,8 @@ for (const f of criticalPlugins) {
     env.Tilemap = { TILE_ID_A1: 2048, TILE_ID_A2: 2816, isTileA1: () => false, isWaterTile: () => false };
     env.UF = {};
     env.DEUS = {};
+
+    simHook.install(env);
 
     const ctx = vm.createContext(env);
     const t0 = performance.now();

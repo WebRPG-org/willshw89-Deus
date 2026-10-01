@@ -11,6 +11,7 @@ const crypto = require("crypto");
 const v8 = require("v8");
 const { performance } = require("perf_hooks");
 const { spawnSync } = require("child_process");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 const ROOT = path.resolve(__dirname, "..");
 const PLUGIN = "game/js/plugins/DEUS_HistoricalDemographics.js";
 // Re-pinned to WG.00.17 (18a0db6eab08f6bd7826c238b02c6a7edc1f2d4c): DEUS_HistoricalDemographics reads worldZRange()
@@ -144,6 +145,7 @@ function load(data, seed = 0, mutant = null) {
     for (const source of sources) for (const m of source.matchAll(/\b((?:Game|Scene|Window|Spriteset|Sprite)_[A-Za-z0-9_]+)\.prototype\.([A-Za-z0-9_]+)/g)) {
         env[m[1]].prototype[m[2]] = () => { throw new Error(`Unexpected engine method ${m[1]}.${m[2]}`); };
     }
+    simHook.install(env);
     const context = vm.createContext(env);
     vm.runInContext(["Math", "Object", "Array", "Number", "String", "Boolean", "Map", "Set", "JSON", "Date",
         "Uint8Array", "Uint16Array", "Int32Array", "Float32Array", "performance", "window"]

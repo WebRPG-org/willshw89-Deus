@@ -24,6 +24,7 @@ const path = require("path");
 const vm = require("vm");
 const crypto = require("crypto");
 const { performance } = require("perf_hooks");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.resolve(__dirname, "..");
 const PLUGINS = path.join(ROOT, "game", "js", "plugins");
@@ -238,6 +239,8 @@ function setupEnvironment() {
     env.$gamePlayer = new env.Game_Player();
     env.$gamePlayer.x = 32;
     env.$gamePlayer.y = 32;
+
+    simHook.install(env);
 
     const ctx = vm.createContext(env);
 

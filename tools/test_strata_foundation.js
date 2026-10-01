@@ -54,6 +54,7 @@ const vm = require("vm");
 const v8 = require("v8");
 const { performance, PerformanceObserver } = require("perf_hooks");
 const { execFileSync, spawnSync } = require("child_process");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 // The allocation check needs global.gc: run again with --expose-gc when it's missing.
 if (typeof global.gc !== "function") {
@@ -238,6 +239,7 @@ function setup(sources, tag, zRange) {
     env.$gamePlayer = new env.Game_Player();
     env.$gamePlayer.x = 128;
     env.$gamePlayer.y = 128;
+    simHook.install(env);
     const ctx = vm.createContext(env);
     const section = (src, a, b) => {
         const i = src.indexOf(a), j = src.indexOf(b, i + a.length);

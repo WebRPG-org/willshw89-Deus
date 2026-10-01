@@ -1,0 +1,372 @@
+{
+  "root": "C:\\Users\\snewt\\AppData\\Local\\Temp\\wg0044-reviewed-gates-nvOhxH\\base",
+  "scanned": 934,
+  "hits": [
+    {
+      "file": "tools/bench_history_demographics.js",
+      "targets": [
+        "DEUS_World"
+      ]
+    },
+    {
+      "file": "tools/bench_history_sim.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/bench_species_biology.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/bench_underground_gen.js",
+      "targets": [
+        "DEUS_Levels"
+      ]
+    },
+    {
+      "file": "tools/bench_vertical_worldgen.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/capture_pre_migration_baseline.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/dev/sim_forward.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/performance/census_boot_load.js",
+      "targets": [
+        "DEUS_Fluid",
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/profile_historical_demographics.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/sim/test_fluid_attach.js",
+      "targets": [
+        "DEUS_Fluid"
+      ]
+    },
+    {
+      "file": "tools/sim/test_living_world_rules.js",
+      "targets": [
+        "DEUS_Fluid",
+        "DEUS_Levels",
+        "DEUS_World"
+      ]
+    },
+    {
+      "file": "tools/sim/test_sim_forward_guard.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/sim/test_underground_year0.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/society/test_person_identity.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_19b_performance_determinism.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_32_levels_generation.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_bag_and_racial_banners.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_combat_dying_integration.js",
+      "targets": [
+        "DEUS_World"
+      ]
+    },
+    {
+      "file": "tools/test_deep_cuts_and_mountain_cap_wg0041.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_duplicate_registration.js",
+      "targets": [
+        "DEUS_World"
+      ]
+    },
+    {
+      "file": "tools/test_extraction_difficulty.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_faction_starting_gear.js",
+      "targets": [
+        "DEUS_World"
+      ]
+    },
+    {
+      "file": "tools/test_fluid_correctness_lane_cw.js",
+      "targets": [
+        "DEUS_Fluid",
+        "DEUS_Levels"
+      ]
+    },
+    {
+      "file": "tools/test_generated_z2_cut_proof.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_geology_strata.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_hist_metadata_contracts.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_historical_carrying_capacity.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_history_materialization_and_world_age.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_liquid_depth_simulation.js",
+      "targets": [
+        "DEUS_Fluid"
+      ]
+    },
+    {
+      "file": "tools/test_native_survival_soak.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_natural_connections_no_mint.js",
+      "targets": [
+        "DEUS_Fluid",
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_new_game_year0.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_production_history_demographics.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_region_seam_continuity.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_resource_node_materials.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_round_world.js",
+      "targets": [
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_seamless_map_edges.js",
+      "targets": [
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_sparse_outer_save.js",
+      "targets": [
+        "DEUS_Fluid",
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_starter_kit_and_stockpile.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_strata_cuts_and_caves.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_strata_fluid_reconciliation.js",
+      "targets": [
+        "DEUS_Fluid",
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_strata_foundation.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_survival_regressions.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_volumetric_terrain_column.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_worldgen_quickfixes.js",
+      "targets": [
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/test_z_flora.js",
+      "targets": [
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/worldgen/test_vertical_biome_coupling.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    },
+    {
+      "file": "tools/zrange/bench_queries.js",
+      "targets": [
+        "DEUS_Levels",
+        "DEUS_World",
+        "DEUS_WorldGen"
+      ]
+    }
+  ]
+}

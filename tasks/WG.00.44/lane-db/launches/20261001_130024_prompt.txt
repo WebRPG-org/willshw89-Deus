@@ -1,0 +1,52 @@
+resume from HEAD ecaea43e; re-read BRIEF and the uncommitted diff first
+
+You are the primary implementer (writer) for lane-db (Task WG.00.44 — Simulation Forward Hook), running as codex.
+Worktree: C:\Users\snewt\.deus_worktrees\lane-db
+Branch: task/lane-db
+Base commit: 7f91efbb
+Resume from commit: ecaea43ec9508440bf17b4d615efe15edb231600
+Brief: tasks/WG.00.44/lane-db/BRIEF.md
+Directive: MSG-PRUNE-PM-116 item 1 and Owner ruling 2026-10-01 ("Ship reviewed scanner")
+
+Context & Assignment:
+The Owner ruled on the Rule 10 stop at ecaea43e: "Ship reviewed scanner".
+The reviewed scanner at 06ccf8ce (code 7cc12f1f, which Grok passed cleanly) is to be restored.
+The answerability MERGE NO items on the scanner are accepted residuals by the Owner ruling; the AST work stays in history only.
+
+Your exact required deliverables:
+
+1. Restore to 06ccf8ce (code 7cc12f1f):
+   - Restore tools/lib/vm_harness_scan.js to 06ccf8ce
+   - Restore tools/test_sim_loader.js to 06ccf8ce
+   - Restore tools/bench_history_demographics.js to 06ccf8ce (hook removed/restored to match the scanner)
+
+2. docs/systems/DEUS_World.md:
+   - Restore to 06ccf8ce
+   - Append a short "Known gaps (Owner ruling 2026-10-01)" section stating, per the Owner ruling, that the reviewed scanner:
+     (a) does not count template-wrapped or chained-slice whole loads
+     (b) checks that the install appears, not that the hook is installed on the evaluating sandbox before evaluation.
+
+3. REPORT.md & Evidence:
+   - Retain REPORT.md corrections:
+     * Retain whitespace fixes in tasks/WG.00.44/lane-db/evidence/harness_base_vs_tip.txt so `git diff --check` passes cleanly.
+     * Retain retracted clean-diff claim; record real measured counts (49 hits).
+   - Rerun all six manifest gate tests in fresh clones (timeout 900s each):
+     * node tools/check_deus_syntax.js
+     * node tools/test_sim_loader.js
+     * node tools/test_32_levels_generation.js
+     * node tools/test_geology_strata.js
+     * node tools/test_new_game_year0.js
+     * node tools/sim/test_units.js
+   - Update tasks/WG.00.44/lane-db/REPORT.md with the gate results and translation block.
+
+4. Standing Rules:
+   - NO ART (DEC-007). Zero art generated, requested, or integrated.
+   - Run all tests in the FOREGROUND. Never exit with child processes running.
+   - DO NOT edit tasks/WG.00.44/lane-db/lane.json.
+   - Only modify allowed paths under lane.json.
+   - Verify `git diff --check` exits 0.
+   - Commit your work with clear commit message starting with `[codex] WG.00.44`:
+     [codex] WG.00.44 restore reviewed scanner at 06ccf8ce and document accepted residuals per Owner ruling
+   - DO NOT push to origin or merge.
+   - When done, report the final SHA and summary of changes:
+     FINAL SHA: <sha>

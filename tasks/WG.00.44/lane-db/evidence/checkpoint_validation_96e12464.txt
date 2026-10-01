@@ -1,0 +1,19 @@
+UTC 2026-10-01T15:52:07.595Z
+Code checkpoint 96e12464c0e16b7543a14c145d177704bd73ea17; post-run working-copy checks.
+$ git diff --check
+
+EXIT 0
+$ git diff 7f91efbb..HEAD --check
+
+EXIT 0
+$ git diff 7f91efbb -- tools/bench_history_demographics.js
+
+EXIT 0
+$ git diff d7cef0d4 -- tasks/WG.00.44/lane-db/lane.json
+
+EXIT 0
+$ git diff 96e12464 -- tools game
+
+EXIT 0
+Scope: 66 tracked paths changed from base; outside allowedPaths: []
+RESULT: 0 validation failures

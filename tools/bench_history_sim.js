@@ -8,6 +8,7 @@ const fs = require("fs"), path = require("path"), vm = require("vm");
 const crypto = require("crypto"), os = require("os");
 const { performance } = require("perf_hooks");
 const { spawnSync } = require("child_process");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 const ROOT = path.resolve(__dirname, "..");
 const OUTPUT = path.join(ROOT, "game/test_output/bench_history_sim.json");
 const MODULES = ["World", "WorldGen", "Factions", "History", "Levels"];
@@ -100,6 +101,7 @@ function trial(seed, years, profiled) {
         const t = performance.now(); phases[name] = duration(t - this.time); this.time = t;
     } };
     const { env, errors, warnings } = environment(bundle, probe);
+    simHook.install(env);
     const context = vm.createContext(env);
     // Lexical native builtins avoid contextified global lookup overhead in the
     // tight terrain loops, without changing their implementations.

@@ -6,6 +6,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.resolve(__dirname, "..");
 const FIXTURE = path.join(ROOT, "tools", "fixtures", "levels", "save_32_entries_seed18.json");
@@ -156,6 +157,7 @@ function makeEnv(zRange) {
     const tileEnd = core.indexOf("Tilemap.Layer =", tileStart);
     if (tileStart < 0 || tileEnd < 0) throw new Error("Tilemap autotile table not found");
     vm.runInNewContext(core.slice(tileStart, tileEnd), env, { filename: "rmmz_core.js Tilemap" });
+    simHook.install(env);
     const levels = levelsSource();
     for (const f of ["DEUS_World.js", "DEUS_WorldGen.js", "DEUS_Levels.js", "DEUS_Fluid.js"]) {
         const src = f === "DEUS_Levels.js" ? levels : fs.readFileSync(path.join(ROOT, "game/js/plugins", f), "utf8");

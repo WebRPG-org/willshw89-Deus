@@ -6,6 +6,7 @@
 const fs = require("fs"), path = require("path"), vm = require("vm"), crypto = require("crypto"), os = require("os");
 const { performance } = require("perf_hooks");
 const { spawnSync } = require("child_process");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 const ROOT = path.resolve(__dirname, ".."), OUTPUT = path.join(ROOT, "docs/systems/UF_History_Profile.md");
 const BASE = "8a40d2ed66da758fc95fc3c1e8205709336c54df";
 const PLUGIN = "game/js/plugins/DEUS_HistoricalDemographics.js";
@@ -178,6 +179,7 @@ function load(data, seed, probe = null, injectedSource = null) {
     for (const name of names) env[name] = function() { throw new Error(`Unexpected engine constructor ${name}`); };
     for (const source of sources) for (const m of source.matchAll(/\b((?:Game|Scene|Window|Spriteset|Sprite)_[A-Za-z0-9_]+)\.prototype\.([A-Za-z0-9_]+)/g))
         env[m[1]].prototype[m[2]] = () => { throw new Error(`Unexpected engine method ${m[1]}.${m[2]}`); };
+    simHook.install(env);
     const context = vm.createContext(env);
     vm.runInContext(["Math", "Object", "Array", "Number", "String", "Boolean", "Map", "Set", "JSON", "Date", "Uint8Array", "Uint16Array", "Int32Array", "Float32Array", "performance", "window"]
         .map(n => `const ${n} = globalThis.${n};`).join("\n"), context);

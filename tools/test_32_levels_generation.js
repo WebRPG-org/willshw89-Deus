@@ -5,6 +5,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 console.log("=== DEUS 32-LAYER WORLD GENERATION TEST SUITE ===");
 
@@ -80,6 +81,7 @@ function makeEnv() {
     env.$gameMap = new env.Game_Map();
     env.$gamePlayer = new env.Game_Player();
 
+    simHook.install(env);
     const levels = levelsSource();
     ['DEUS_World.js', 'DEUS_WorldGen.js', 'DEUS_Levels.js'].forEach(f => {
         const src = f === 'DEUS_Levels.js' ? levels : fs.readFileSync(path.join(ROOT, 'game/js/plugins', f), 'utf8');

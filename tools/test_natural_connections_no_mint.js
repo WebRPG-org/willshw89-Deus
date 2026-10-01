@@ -49,6 +49,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.resolve(__dirname, "..");
 const PLUGINS = path.join(ROOT, "game", "js", "plugins");
@@ -160,6 +161,7 @@ function buildEnvironment(seed) {
     env.$gamePlayer.x = 128;
     env.$gamePlayer.y = 128;
     env.$gameMessage = { isBusy: () => false };
+    simHook.install(env);
     const ctx = vm.createContext(env);
     const section = (src, a, b) => {
         const i = src.indexOf(a), j = src.indexOf(b, i + a.length);

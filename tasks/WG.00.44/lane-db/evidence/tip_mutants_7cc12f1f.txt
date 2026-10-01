@@ -1,0 +1,31 @@
+clone HEAD 7cc12f1f45c83fd279acb55a98a2e2f7b69eab3a
+=== node tools/test_sim_loader.js --mutant=return_null_on_missing --only=vm_loader_loads_ledger,missing_module_throws,every_vm_harness_installs_hook,scan_finds_known_harnesses,opener_registry,grid_pinned_by_hook
+MUTANT return_null_on_missing (expected to fail missing_module_throws)
+PASS vm_loader_loads_ledger - resolve("ledger") = C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\js\sim\ledger.js; exports createLedger: function; same object as Node's require: true; resolve("hydro") = C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\js\sim\hydro\index.js; sandbox require left alone: true
+FAIL missing_module_throws - returned null instead of throwing
+PASS every_vm_harness_installs_hook - 49 hits in 937 files; without the hook: none; planted harness found by the scan: true, refused: true; hooked fixture accepted: true
+PASS scan_finds_known_harnesses - 49 hits; known hits missing: none; excluded files found: none; fixtures classified wrong: none
+PASS opener_registry - order Air, core, water; duplicate "core": UF.Sim.registerMatterOpener: "core" is already registered; bad fn: TypeError; empty name: TypeError; registry after a caller emptied its copy: 3; UF.Levels at register: undefined
+PASS grid_pinned_by_hook - fallback-3 fixture: {} -> 1x1, grid "shipped" -> 3x3, AreasX "2" -> 2x1, PluginManager set after install -> 1x1, legacy UF_World AreasX "4" -> 4x1; real DEUS_World.js -> 1x1; grid "3x3" refused: true
+RESULT: 5 passed, 1 failed
+EXIT 1
+=== node tools/test_sim_loader.js --mutant=fixed_list_scan --only=vm_loader_loads_ledger,missing_module_throws,every_vm_harness_installs_hook,scan_finds_known_harnesses,opener_registry,grid_pinned_by_hook
+MUTANT fixed_list_scan (expected to fail every_vm_harness_installs_hook)
+PASS vm_loader_loads_ledger - resolve("ledger") = C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\js\sim\ledger.js; exports createLedger: function; same object as Node's require: true; resolve("hydro") = C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\js\sim\hydro\index.js; sandbox require left alone: true
+PASS missing_module_throws - threw DEUS_SIM_MODULE_MISSING: UF.Sim.require("no_such_module_wg0044"): no such sim module; tried C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\js\sim\no_such_module_wg0044\index.js, C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\game\js\sim\no_such_module_wg0044\index.js; "../plugins/DEUS_World" -> TypeError; no host -> UF.Sim.require("ledger"): no such sim module; tried nothing (no require in this host)
+FAIL every_vm_harness_installs_hook - 10 hits in 10 files; without the hook: none; planted harness found by the scan: false, refused: true; hooked fixture accepted: true
+PASS scan_finds_known_harnesses - 10 hits; known hits missing: none; excluded files found: none; fixtures classified wrong: none
+PASS opener_registry - order Air, core, water; duplicate "core": UF.Sim.registerMatterOpener: "core" is already registered; bad fn: TypeError; empty name: TypeError; registry after a caller emptied its copy: 3; UF.Levels at register: undefined
+PASS grid_pinned_by_hook - fallback-3 fixture: {} -> 1x1, grid "shipped" -> 3x3, AreasX "2" -> 2x1, PluginManager set after install -> 1x1, legacy UF_World AreasX "4" -> 4x1; real DEUS_World.js -> 1x1; grid "3x3" refused: true
+RESULT: 5 passed, 1 failed
+EXIT 1
+=== node tools/test_sim_loader.js --mutant=unpinned_grid --only=vm_loader_loads_ledger,missing_module_throws,every_vm_harness_installs_hook,scan_finds_known_harnesses,opener_registry,grid_pinned_by_hook
+MUTANT unpinned_grid (expected to fail grid_pinned_by_hook)
+PASS vm_loader_loads_ledger - resolve("ledger") = C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\js\sim\ledger.js; exports createLedger: function; same object as Node's require: true; resolve("hydro") = C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\js\sim\hydro\index.js; sandbox require left alone: true
+PASS missing_module_throws - threw DEUS_SIM_MODULE_MISSING: UF.Sim.require("no_such_module_wg0044"): no such sim module; tried C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\js\sim\no_such_module_wg0044\index.js, C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\lanedb\gtip\game\game\js\sim\no_such_module_wg0044\index.js; "../plugins/DEUS_World" -> TypeError; no host -> UF.Sim.require("ledger"): no such sim module; tried nothing (no require in this host)
+PASS every_vm_harness_installs_hook - 49 hits in 937 files; without the hook: none; planted harness found by the scan: true, refused: true; hooked fixture accepted: true
+PASS scan_finds_known_harnesses - 49 hits; known hits missing: none; excluded files found: none; fixtures classified wrong: none
+PASS opener_registry - order Air, core, water; duplicate "core": UF.Sim.registerMatterOpener: "core" is already registered; bad fn: TypeError; empty name: TypeError; registry after a caller emptied its copy: 3; UF.Levels at register: undefined
+FAIL grid_pinned_by_hook - fallback-3 fixture: {} -> 3x3, grid "shipped" -> 3x3, AreasX "2" -> 2x3, PluginManager set after install -> 3x3, legacy UF_World AreasX "4" -> 4x3; real DEUS_World.js -> 1x1; grid "3x3" refused: true
+RESULT: 5 passed, 1 failed
+EXIT 1
