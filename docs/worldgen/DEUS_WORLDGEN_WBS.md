@@ -1,7 +1,7 @@
 # DEUS WorldGen Work Breakdown Structure
 
 **Namespace:** WG  
-**Rev:** 39  
+**Rev:** 40  
 **IDs:** Stable. Next free in WG.00 is WG.00.48 (WG.00.40-.42 were minted outside this file and are backfilled below; WG.00.43-.47 are minted below)  
 **Canonical Authority:** the Owner approves; the Coordinator records; the PM signs off.  
 **Status:** CANONICAL ON MAIN  
@@ -770,6 +770,7 @@ Notes:
 
 | Rev | Date | Change |
 |:---:|:---:|:---|
+| 40 | 2026-10-01 | PM (Claude), recording the Owner rulings DEC-067 (commit bbe6dd73): lanes withdrawn from the natural-world build: lane-ek (NAT.03.06 mixed-LOD water, off by default), lane-ds (NAT.02.MASS part 6, density repo scan), lane-fa (WG.62.01 start kit; the leaf waits for the civilization phase), lane-fq, lane-fr and lane-fs (exact wet collapse; replaced by the approximate wet collapse in lane-fk, re-scoped). Merged: lane-fu into lane-fj (NAT.02.02), lane-fv into lane-eu. Shrunk: lane-ec2 to the current fluid save format. Deferred: lane-fl (ART.NAT.01) until the Owner funds art. Kept: lane-fc, fe, ff, fi (spawn designations are world generation). Water direction binding on every water lane: slow Minecraft-like spreading, pressure (common level, push-up, barrier load), finite and conserved. No leaf status changes in this revision. |
 | 39 | 2026-10-01 | PM (Claude): minted WG.20.03, RMMZ-format catalogue rows for the PM's art scope (lane-pg, claude -> grok), under the Owner's standing row permission (DEC-063 item 12) and the nine size overrides the Owner approved (DEC-066 item 1). Rows only, status MISSING, no art generation. Two WORK-GATE judges (MiniMax M3, ChatGPT Pro): GO WITH CHANGES, all applied. |
 | 38 | 2026-10-01 | PM (Claude), before wave 3: registered NAT.03.03 (water return, W-CYCLE of the merged D2 design; lane-eb, claude -> gemini) in `tasks/wbs_registry.json` as a registry entry only, like NAT.03.02 (no WBS row). Collision check: `docs/worldgen/NW_ID_CROSSWALK.md` section 2, the NAT.03.02, NAT.03.03 row (one earlier use in mail, AG-PRUNE-022, for water meeting lava, which the merged D2 design gives to NAT.03.05). |
 | 37 | 2026-10-01 | PM (Claude), recording the Owner's ruling DEC-066 item 3 ("17 a"): WG.64.01 (karst dissolution) and WG.64.02 (fault fractures) set to `SUPERSEDED` by WG.62.03; the WG.62.03 row's "to be marked superseded before lane-dh starts" sentence updated. No leaf added. |
