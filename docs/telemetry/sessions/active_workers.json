@@ -6908,7 +6908,7 @@
     "provider": "codex",
     "role": "writer",
     "taskId": "OPS.GATE.AUTHOR",
-    "state": "RUNNING",
+    "state": "ORPHANED-CHILDREN",
     "pid": 32424,
     "processStartedAt": "2026-10-01T20:30:37Z",
     "launcherPid": 42360,
@@ -6926,12 +6926,71 @@
     "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-gg\\lane-gg_20261001_153034.log",
     "launchTimeCT": "2026-10-01 15:30:34 CT",
     "startedAt": "2026-10-01T20:30:34Z",
-    "endedAt": null,
-    "exitCode": null,
+    "endedAt": "2026-10-01T20:59:36Z",
+    "exitCode": 0,
     "timeoutMinutes": 60,
     "baseCommit": "446abbf2c5863d932df50feca2fb5f63784c3409",
     "resumeFromSha": "a3fd229f",
     "pushGuardHooksPath": null,
-    "gitIdentity": "deus-codex"
+    "gitIdentity": "deus-codex",
+    "flags": [
+      "ORPHANED-CHILDREN"
+    ],
+    "timedOut": false,
+    "startError": null,
+    "logBytes": 573072,
+    "outputDrained": true,
+    "headCommit": "50a06144b0763b9dba114d511def832343a5ba08",
+    "branchAfter": "task/lane-gg",
+    "newCommits": 2,
+    "dirtyFiles": [],
+    "outOfScope": [],
+    "orphans": [
+      {
+        "pid": 31768,
+        "name": "node.exe",
+        "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" tools/sim/test_underground_year0.js"
+      },
+      {
+        "pid": 44908,
+        "name": "node.exe",
+        "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Users\\snewt\\AppData\\Local\\Temp\\lanedm_cmp\\run.js\" \"C:\\Users\\snewt\\.deus_worktrees\\lane-dm\" \"C:\\Users\\snewt\\AppData\\Local\\Temp\\lanedm_cmp\\tip2.json\" \"C:\\Users\\snewt\\AppData\\Local\\Temp\\lanedm_cmp\\list.txt\" "
+      }
+    ],
+    "orphansKilled": false,
+    "usage": null,
+    "resumeHeadMismatch": false
+  },
+  {
+    "runId": "lane-gg_20261001_160002",
+    "lane": "lane-gg",
+    "provider": "grok",
+    "role": "reviewer",
+    "taskId": "OPS.GATE.AUTHOR",
+    "state": "RUNNING",
+    "pid": 6284,
+    "processStartedAt": "2026-10-01T21:00:04Z",
+    "launcherPid": 19592,
+    "launcherStartedAt": "2026-10-01T21:00:00Z",
+    "worktree": "C:\\Users\\snewt\\.deus_worktrees\\lane-gg",
+    "branch": "task/lane-gg",
+    "briefPath": "C:\\Users\\snewt\\.deus_worktrees\\lane-gg\\tasks\\OPS.GATE.AUTHOR\\lane-gg\\BRIEF.md",
+    "launchPromptPath": "C:\\Users\\snewt\\.deus_worktrees\\lane-gg\\tasks\\OPS.GATE.AUTHOR\\lane-gg\\launches\\20261001_160002_prompt.txt",
+    "promptFile": "C:\\Users\\snewt\\.deus_ops\\prompts\\reviewer_lane_gg_grok.txt",
+    "promptSource": "file",
+    "promptFrom": "-PromptFile",
+    "promptCandidatesSkipped": [],
+    "pushRule": "no-push",
+    "pushRuleSource": "default",
+    "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-gg\\lane-gg_20261001_160002.log",
+    "launchTimeCT": "2026-10-01 16:00:02 CT",
+    "startedAt": "2026-10-01T21:00:02Z",
+    "endedAt": null,
+    "exitCode": null,
+    "timeoutMinutes": 60,
+    "baseCommit": "50a06144b0763b9dba114d511def832343a5ba08",
+    "resumeFromSha": "50a06144",
+    "pushGuardHooksPath": null,
+    "gitIdentity": "deus-grok"
   }
 ]
