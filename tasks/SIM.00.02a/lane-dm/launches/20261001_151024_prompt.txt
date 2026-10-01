@@ -1,0 +1,3 @@
+resume from HEAD 030a8cc6; re-read BRIEF and the uncommitted diff first
+
+Execute the writer task for lane-dm based on the SIM.00.02a brief.
