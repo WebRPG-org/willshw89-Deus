@@ -1,0 +1,13 @@
+PASS no_rock_z12_to_z15_seed_18 - seed 18: 0 strata other than air on +12..+15 in the start area (want 0)
+PASS no_rock_z12_to_z15_seed_3 - seed 3: 0 strata other than air on +12..+15 in the start area (want 0)
+PASS no_rock_z12_to_z15_seed_21 - seed 21: 0 strata other than air on +12..+15 in the start area (want 0)
+PASS no_rock_z12_to_z15_seed_4 - seed 4: 0 strata other than air on +12..+15 in the start area (want 0)
+PASS highlands_reached - highest natural solid level per seed: 18: +11, 3: +11, 21: +11, 4: +11 (want the highest between +7 and +11, none above +11)
+PASS deep_cuts_to_bedrock - seed 18: 75 deep cuts (75 before), 73 over no core fluid, 73 carved to bedrock with four open strata (8 ft) above it; problems 0
+PASS deep_cuts_core_opening - seed 18: 73/73 unguarded cuts open through the core from fromE-1 to -2 S0; obstructing strata 0
+PASS deep_cuts_fluid_guard - seed 18: 2 cuts sit over core water or lava (decided before the pass); 2 left exactly as they were from -16 to +2, 0 changed
+PASS same_seed_determinism_32_layers - 32 levels byte-identical across two fresh VMs
+PASS cross_world_default_host - seed 18 inside a seed-3 default-range host, 15 levels: all match the fresh world
+PASS cross_world_legacy_host - seed 18 inside a seed-3 legacy-range host, 15 levels: all match the fresh world
+
+RESULT: 11 passed, 0 failed (exit 0)

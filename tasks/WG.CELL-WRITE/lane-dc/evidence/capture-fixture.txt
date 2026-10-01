@@ -1,0 +1,23 @@
+area generation speed CAPTURE
+FAIL no_rest_parameter_hash_on_generator_path - line 205: spread into hash32; line 205: rest rand/rnd/rint/rfl; line 324: rest-parameter hash32; line 324: spread into hash32; line 617: spread into hash32; line 617: rest rand/rnd/rint/rfl
+checksum gen 1 seed 18 1x1 1716.7 ms z0 0779462c
+checksum gen 2 seed 18 1x1 847.4 ms z0 0779462c
+checksum gen 3 seed 18 1x1 8907.1 ms z0 0779462c
+checksum gen 4 seed 18 1x1 16751.0 ms z0 0779462c
+checksum gen 5 seed 18 1x1 19427.5 ms z0 1f5c2a72
+checksum gen 1 seed 20260927 1x1 2420.5 ms z0 664e5663
+checksum gen 2 seed 20260927 1x1 990.9 ms z0 664e5663
+checksum gen 3 seed 20260927 1x1 12250.7 ms z0 664e5663
+checksum gen 4 seed 20260927 1x1 15194.7 ms z0 664e5663
+checksum gen 5 seed 20260927 1x1 18199.2 ms z0 3bec30ce
+checksum gen 1 seed 18 3x3 24403.9 ms z0 353be9a8
+checksum gen 2 seed 18 3x3 17079.1 ms z0 353be9a8
+checksum gen 3 seed 18 3x3 105158.3 ms z0 353be9a8
+checksum gen 4 seed 18 3x3 167662.7 ms z0 353be9a8
+checksum gen 5 seed 18 3x3 139852.4 ms z0 8c73447f
+checksum gen 1 seed 20260927 3x3 12394.4 ms z0 25482ae8
+checksum gen 2 seed 20260927 3x3 7105.2 ms z0 25482ae8
+checksum gen 3 seed 20260927 3x3 58282.0 ms z0 25482ae8
+checksum gen 4 seed 20260927 3x3 151312.7 ms z0 25482ae8
+checksum gen 5 seed 20260927 3x3 167228.0 ms z0 58c88b58
+CAPTURE wrote C:\Users\snewt\.deus_worktrees\lane-dc\tools\fixtures\levels\core_checksums_gen1_5.json sha 07a944291879018ac0ddf369e78f72c3cd87f0ab cases 20

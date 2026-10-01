@@ -201,8 +201,8 @@
     // The pre-WG.00.15 4x4 roll. Salts stay on the generator version so an uncoupled world matches its old bytes.
     function paintProvinceBiomes(seed, gen, z, ax, ay, size, biome, material) {
         const salt = hashString(gen === 2 ? `uf.levels.v2.${z}` : `uf.levels.v3.${z}`);
-        const offset = hash32(seed, salt, 99) % 4;
-        const rand = (...p) => hash32(seed, salt, ax, ay, ...p) / 4294967296;
+        const offset = hash32_3(seed, salt, 99) % 4;
+        const rand = (p, q) => hash32_6(seed, salt, ax, ay, p, q) / 4294967296;
         const provinces = [];
         for (let py = 0; py < 4; py++) for (let px = 0; px < 4; px++) {
             const i = py * 4 + px;
@@ -321,19 +321,46 @@
     //-------------------------------------------------------------------------
     // Seeded noise (self-contained, so a change elsewhere never changes a saved world's levels)
 
-    function hash32(...parts) {
-        let h = 2166136261 >>> 0;
-        for (const part of parts) {
-            let v = part >>> 0;
-            for (let i = 0; i < 4; i++) {
-                h ^= v & 255;
-                h = Math.imul(h, 16777619) >>> 0;
-                v >>>= 8;
-            }
-        }
+    // FNV-1a offset. Mutant hash_changed retargets this constant. checksumOf keeps its own literal.
+    const HASH_OFFSET = 2166136261;
+    // One FNV byte. The product is Math.imul(h, 16777619) written as 16-bit halves (403 and 256),
+    // so a cross-realm Math in the node vm is not called once per byte.
+    function mixPart(h, part) {
+        let v = part >>> 0;
+        let x = (h ^ (v & 255)) >>> 0;
+        let lo = x & 65535, hi = x >>> 16;
+        x = ((lo * 403) + (((hi * 403 + lo * 256) << 16) >>> 0)) >>> 0;
+        x = (x ^ ((v >>> 8) & 255)) >>> 0;
+        lo = x & 65535; hi = x >>> 16;
+        x = ((lo * 403) + (((hi * 403 + lo * 256) << 16) >>> 0)) >>> 0;
+        x = (x ^ ((v >>> 16) & 255)) >>> 0;
+        lo = x & 65535; hi = x >>> 16;
+        x = ((lo * 403) + (((hi * 403 + lo * 256) << 16) >>> 0)) >>> 0;
+        x = (x ^ (v >>> 24)) >>> 0;
+        lo = x & 65535; hi = x >>> 16;
+        return ((lo * 403) + (((hi * 403 + lo * 256) << 16) >>> 0)) >>> 0;
+    }
+    // Finalizer. 0x2c1b3c6d is the same 16-bit multiply: low 15469, high 11291.
+    function hashFinish(h) {
         h ^= h >>> 15;
-        h = Math.imul(h, 0x2c1b3c6d) >>> 0;
+        const lo = h & 65535, hi = h >>> 16;
+        h = ((lo * 15469) + (((hi * 15469 + lo * 11291) << 16) >>> 0)) >>> 0;
         return (h ^ (h >>> 12)) >>> 0;
+    }
+    function hash32_3(a, b, c) {
+        let h = HASH_OFFSET >>> 0;
+        h = mixPart(h, a); h = mixPart(h, b); h = mixPart(h, c);
+        return hashFinish(h);
+    }
+    function hash32_4(a, b, c, d) {
+        let h = HASH_OFFSET >>> 0;
+        h = mixPart(h, a); h = mixPart(h, b); h = mixPart(h, c); h = mixPart(h, d);
+        return hashFinish(h);
+    }
+    function hash32_6(a, b, c, d, e, f) {
+        let h = HASH_OFFSET >>> 0;
+        h = mixPart(h, a); h = mixPart(h, b); h = mixPart(h, c); h = mixPart(h, d); h = mixPart(h, e); h = mixPart(h, f);
+        return hashFinish(h);
     }
     const hashString = s => {
         let h = 0;
@@ -341,12 +368,16 @@
         return h;
     };
     const smooth = t => t * t * (3 - 2 * t);
+    // Toward -infinity for values inside the int32 range, matching Math.floor on generator coordinates.
+    const floorN = n => { const t = n | 0; return t > n ? t - 1 : t; };
     function valueNoise(seed, salt, gx, gy, scale) {
         const fx = gx / scale, fy = gy / scale;
-        const ix = Math.floor(fx), iy = Math.floor(fy);
+        const ix = floorN(fx), iy = floorN(fy);
         const tx = smooth(fx - ix), ty = smooth(fy - iy);
-        const c = (a, b) => hash32(seed, salt, a, b) / 4294967296;
-        const a = c(ix, iy), b = c(ix + 1, iy), d = c(ix, iy + 1), e = c(ix + 1, iy + 1);
+        const a = hash32_4(seed, salt, ix, iy) / 4294967296;
+        const b = hash32_4(seed, salt, ix + 1, iy) / 4294967296;
+        const d = hash32_4(seed, salt, ix, iy + 1) / 4294967296;
+        const e = hash32_4(seed, salt, ix + 1, iy + 1) / 4294967296;
         const top = a + (b - a) * tx, bottom = d + (e - d) * tx;
         return top + (bottom - top) * ty;
     }
@@ -614,7 +645,7 @@
         const biome = new Uint8Array(size * size), water = new Uint8Array(size * size), pockets = [];
         if (gen === 2) {
             const salt = hashString(`uf.levels.v2.${z}`);
-            const rand = (...p) => hash32(seed, salt, ax, ay, ...p) / 4294967296;
+            const rand = (p, q) => hash32_6(seed, salt, ax, ay, p, q) / 4294967296;
             shape.fill(SOLID);
             paintSubstrate(seed, gen, z, ax, ay, size, biome, material, worldDesc);
             const divisions = z === -1 ? 6 : 4, span = size / divisions;
@@ -2690,9 +2721,27 @@
         const areasX = desc.areasX || 1, areasY = desc.areasY || 1;
         const G = window.UF && UF.WorldGen, cat = catalog(), cl = (cat && cat.climate) || DEFAULT_CLIMATE;
         const salt = hashString(`deus.levels.features.v${gen}`);
-        const rnd = (...p) => hash32(seed, salt, ax, ay, ...p) / 4294967296;
-        const rint = (range, ...p) => range[0] + Math.floor(rnd(...p) * (range[1] - range[0] + 1));
-        const rfl = (range, ...p) => range[0] + rnd(...p) * (range[1] - range[0]);
+        // Fixed arity. A missing tail is not mixed, which is what the old rest parameter did.
+        function rnd(a, b, c, d, e) {
+            let h = mixPart(mixPart(mixPart(mixPart(HASH_OFFSET >>> 0, seed), salt), ax), ay);
+            const n = arguments.length;
+            h = mixPart(h, a);
+            if (n > 1) h = mixPart(h, b);
+            if (n > 2) h = mixPart(h, c);
+            if (n > 3) h = mixPart(h, d);
+            if (n > 4) h = mixPart(h, e);
+            return hashFinish(h) / 4294967296;
+        }
+        function rint(range, a, b, c, d) {
+            const n = arguments.length - 1;
+            const u = n <= 2 ? rnd(a, b) : n === 3 ? rnd(a, b, c) : rnd(a, b, c, d);
+            return range[0] + Math.floor(u * (range[1] - range[0] + 1));
+        }
+        function rfl(range, a, b, c, d, e) {
+            const n = arguments.length - 1;
+            const u = n <= 2 ? rnd(a, b) : n === 3 ? rnd(a, b, c) : n === 4 ? rnd(a, b, c, d) : rnd(a, b, c, d, e);
+            return range[0] + u * (range[1] - range[0]);
+        }
         const out = { gen, area: { x: ax, y: ay }, cuts: [], caves: [], shafts: [], skylights: [], massifCells: 0, capCells: 0,
             carvedStrata: 0, cutCells: 0, caveCells: 0, rampsAdded: 0, floatingRemoved: 0, ms: 0 };
         bs[4].caps = new Map();

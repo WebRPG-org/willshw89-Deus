@@ -3,7 +3,7 @@
   "taskId": "WG.CELL-WRITE",
   "branch": "task/lane-dc",
   "writer": "grok",
-  "reviewer": "gemini",
+  "reviewer": "codex",
   "allowedPaths": [
     "game/js/plugins/DEUS_Levels.js",
     "tools/test_area_generation_speed.js",
