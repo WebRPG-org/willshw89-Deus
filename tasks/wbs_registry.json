@@ -340,6 +340,25 @@
       "parts": [{ "lane": "lane-el", "role": "fluid-writer audit: NaturalConnections' private water store retired (wave 1)", "laneManifest": "tasks/NAT.03.02/lane-el/lane.json", "writer": "claude", "reviewer": "gemini" }, { "lane": "lane-ea", "role": "contract checkpoint: the water authority entry point and the cp open-fluid store, headless (wave 2)", "laneManifest": "tasks/NAT.03.02/lane-ea/lane.json", "writer": "claude", "reviewer": "gemini" }, { "lane": "lane-ec", "role": "runtime cutover part a: DEUS_Fluid becomes the facade over the cp water authority (wave 7)", "laneManifest": "tasks/NAT.03.02/lane-ec/lane.json", "writer": "codex", "reviewer": "grok" }, { "lane": "lane-ec2", "role": "runtime cutover part b: the fluid save codec (wave 8)", "laneManifest": "tasks/NAT.03.02/lane-ec2/lane.json", "writer": "codex", "reviewer": "grok" }, { "lane": "lane-ee", "role": "groundwater bridge: registered aquifers and springs move real water (wave 10)", "laneManifest": "tasks/NAT.03.02/lane-ee/lane.json", "writer": "claude", "reviewer": "grok" }, { "lane": "lane-ef", "role": "geology registration of springs and aquifers (wave 11)", "laneManifest": "tasks/NAT.03.02/lane-ef/lane.json", "writer": "claude", "reviewer": "gemini" }],
       "closesWhen": "every part is merged"
     },
+    "NAT.03.03": {
+      "title": "Water return: every water exit comes back as rain",
+      "package": null,
+      "packageNote": "none: natural-world build leaf (DEC-058); WORK-GATE G02 assigns no package",
+      "status": "PLANNED",
+      "kind": "NEW leaf of the merged D2 design (W-CYCLE: game/js/sim/hydrology/cycle.js and its tests)",
+      "reserved": "2026-10-01, before its first lane (lane-eb, wave 3), as docs/worldgen/NW_ID_CROSSWALK.md section 6 requires ('Not reserved here, each before its first lane'); collision check in that file's NAT.03.02, NAT.03.03 row",
+      "lane": "lane-eb",
+      "branch": "task/lane-eb",
+      "laneManifest": "tasks/NAT.03.03/lane-eb/lane.json",
+      "writer": "claude",
+      "reviewer": "gemini",
+      "dependsOn": ["NAT.03.02 contract checkpoint (lane-ea, merged 2bb8f7da)"],
+      "consumers": ["NAT.03.02 runtime cutover part a (lane-ec binds it to DEUS_Fluid and the ledger)", "NAT.03.05 contact quench (lane-ei: steam credits return)", "NAT.02.01.WET (lane-fk: held water returns; lava never credits return)"],
+      "collisionCheck": "2026-10-01 at main f4998385: git grep -I -F -w over 232 local and remote branch refs and tags finds it in 35 refs, only in docs/agents/mailboxes/fable/inbox.jsonl and gemini/outbox.jsonl (AG-PRUNE-022), docs/worldgen/NW_ID_CROSSWALK.md, tasks/NAT.02.01/lane-en/BRIEF.md, tasks/NAT.03.01/lane-ed/REPORT.md and docs/systems/DEUS_WaterAuthority.md; the worktrees under .deus_worktrees hold the same files plus three lane launch logs; in .deus_pm only the two D2 designs (Grok Heavy voice and merged) and the merged D3 design. Every use means water return except AG-PRUNE-022 (2026-09-30), which filed '(4) Water-lava meeting with DEC-040 ledger' under 'NAT.03.03 / DEC-040' before the merged D2 design gave that work to NAT.03.05 (lane-ei)",
+      "design": "braintrust DESIGN-D2_merged_chatgpt_pro.md line 288 (the NAT.03.03 row) and lines 133-149, 186 and 202 (2026-09-30)",
+      "decisions": ["DEC-040", "DEC-058"],
+      "gateTests": ["tools/check_deus_syntax.js", "tools/sim/test_water_cycle.js", "tools/sim/test_water_open_cp.js", "tools/test_aquifer_seepage.js"]
+    },
     "NAT.07.03": {
       "title": "Encounter tables per biome cell and danger tier",
       "package": null,

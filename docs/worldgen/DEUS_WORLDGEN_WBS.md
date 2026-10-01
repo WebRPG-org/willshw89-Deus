@@ -1,7 +1,7 @@
 # DEUS WorldGen Work Breakdown Structure
 
 **Namespace:** WG  
-**Rev:** 37  
+**Rev:** 38  
 **IDs:** Stable. Next free in WG.00 is WG.00.48 (WG.00.40-.42 were minted outside this file and are backfilled below; WG.00.43-.47 are minted below)  
 **Canonical Authority:** the Owner approves; the Coordinator records; the PM signs off.  
 **Status:** CANONICAL ON MAIN  
@@ -769,6 +769,7 @@ Notes:
 
 | Rev | Date | Change |
 |:---:|:---:|:---|
+| 38 | 2026-10-01 | PM (Claude), before wave 3: registered NAT.03.03 (water return, W-CYCLE of the merged D2 design; lane-eb, claude -> gemini) in `tasks/wbs_registry.json` as a registry entry only, like NAT.03.02 (no WBS row). Collision check: `docs/worldgen/NW_ID_CROSSWALK.md` section 2, the NAT.03.02, NAT.03.03 row (one earlier use in mail, AG-PRUNE-022, for water meeting lava, which the merged D2 design gives to NAT.03.05). |
 | 37 | 2026-10-01 | PM (Claude), recording the Owner's ruling DEC-066 item 3 ("17 a"): WG.64.01 (karst dissolution) and WG.64.02 (fault fractures) set to `SUPERSEDED` by WG.62.03; the WG.62.03 row's "to be marked superseded before lane-dh starts" sentence updated. No leaf added. |
 | 36 | 2026-10-01 | PM (Claude), WORK-GATE G02 section 4, waves 4 and 5 (braintrust verdict, binding), as a delta on the D1 reconciliation (its rulings stand: peridotite in lane-dp, supportColumn in DEUS_WorldGen.js, ensureCore/ensureChamber in lane-dq, 73 lanes): registered NAT.02.01.RUBBLE (lane-fo) and ART.NAT.01 (lane-fl, lane-er folded in) in `tasks/wbs_registry.json`; recorded the GEN=6 witness's five must-kill mutants in the WG.00.30 row; the catalogue-slot rule and its accepted residual are on the board (`docs/STATUS.md` section 3). |
 | 35 | 2026-10-01 | PM (Claude), WORK-GATE G02 section 4, wave-3 records: recorded DEC-065 (a PM ruling under DEC-058 and DEC-059 item 1). Added PM-2 to section 5.3 (New Game may generate each faction-home area once, all nine when all nine hold homes; no eager generation of all 32 levels in every area; lazy (area, z) demand kept; the PM measures the shipped-grid cost before lane-dd and records it in DEC-065, and lanes dd and de print it; lane-dd does not merge until the Owner has accepted or rejected the narrowing of the 2026-09-29 all-32-levels request) and PM-3 (natural collapse rubble is reclaim-eligible and registered once; accounting only under DEC-057 item 1). The WG.00.46 row cites DEC-065 item 1. |
