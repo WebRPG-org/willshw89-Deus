@@ -4,6 +4,8 @@
 
 A Node script with no npm dependencies (standard library and the `git` command only). It is not a plugin: nothing runs in the game. It judges one lane branch against its manifest, prints a summary table, and either refuses with named reason codes or, when every check holds and `--dry-run` is absent, runs `git merge --no-ff` into `main`. It never pushes.
 
+**2026-10-01 OPS.GATE.AUTHOR:** Codex added commit-author checks, an ancestry-based transition list for open lanes, and matching self-tests. Grok review and PM integration are separate gates.
+
 ## 1. Purpose
 A lane branch reaches `main` only through the integrator (docs/CANONICAL_ROLES.md §2 and §3: implementation + independent review + coordinator merge). The gate turns the integrator's merge checks (scope, review, tests, push state, a clean `main`) into rules that can fail. It reads every fact from git objects rather than from anyone's report, and prints the raw values it compared so the integrator can check the gate as well.
 
@@ -76,6 +78,21 @@ Agent families (docs/CANONICAL_ROLES.md §2 lists "Claude / Fable" and "Gemini /
 
 Writing `gateTests` on Windows: `cmd` is spawned without a shell. `node` is replaced by the Node binary running the gate. Other commands must be real executables on `PATH`, not `.cmd`/`.bat` shims: without a shell, `spawnSync("npm")` fails with `ENOENT` and `spawnSync("npm.cmd")` with `EINVAL` (checked with Node v24.19.0, 2026-09-26). Both end as `TEST_SPAWN_ERROR`. Point `node` at the script instead.
 
+### Commit author identities (OPS.GATE.AUTHOR, 2026-10-01)
+
+The gate reads Git's **author name** from each new lane commit in `origin/main..tip`. The launcher sets the worker names below. The PM and coordinator use their own names.
+
+| Subject tag | Required author name | Purpose |
+|---|---|---|
+| `[claude]`, `[fable]` | `deus-claude` | Claude/Fable family |
+| `[grok]` | `deus-grok` | Grok family |
+| `[codex]` | `deus-codex` | Codex family |
+| `[gemini]`, `[antigravity]` | `deus-gemini` | Gemini/Antigravity family; see the manifest exception below |
+| `[pm]` changing `lane.json` | `deus-pm` | PM manifest edit |
+| `[ops]` | `deus-ops` | Coordinator launch records and evidence inside the lane task directory |
+
+The gate does not check committer names or cryptographic signatures. Author names are a consistency check; independent review and launch evidence remain necessary.
+
 ## 4. Security model
 1. **One checked commit.** At the start the gate resolves `refs/heads/<branch>` to one sha (the "checked sha"). The manifest, the diff, the review and the test clones all read that commit's git objects. Uncommitted or unpushed edits in any work tree are never judged (case `fail_uncommitted_fix_not_counted`). The merge names that sha, not the branch, and just before merging the gate re-reads both refs (`RACE_REF_MOVED` if either moved).
 2. **The manifest is trusted before anything it says is used.** Every commit that ever changed `lane.json` (`git log <tip> -- <manifest>`) must be a single-parent commit tagged `[gemini]`/`[antigravity]` (the coordinator) or `[pm]` (the PM, directive 0028-AC A0). If any other commit changed it, the gate stops there: scope, review and tests show `SKIPPED (manifest not trusted)` and none of the manifest's `gateTests` run (cases `fail_writer_edits_lane_json` and `fail_claude_edits_pm_opened_lane_json` check with a marker file that the tampered test did not run). `[pm]` is trusted for this one purpose. It is not an agent family (`FAMILIES` has no `pm`), so a `[pm]` commit is never a review (§5 (b): `REVIEW_TAG_UNKNOWN`), never skipped as a stacked review when the gate looks for the reviewed commit, and `pm` is not a valid manifest `writer` or `reviewer` (§3). A merge commit is never trusted, whatever its tag, and neither are look-alike tags such as `[grok_pm]` or `[pm_bot]`. Git's default history simplification follows the parent a file's content came from. A manifest edit made on a side branch and merged in is therefore listed under the side commit that made it. On 2026-09-26 a `[claude]` side edit merged by a `[gemini]` merge commit gave `MANIFEST_TAMPERED` naming the `[claude]` commit.
@@ -112,6 +129,8 @@ They run in this order. The Checks table (§7) has one row per check.
 4. JSON parse and `validateManifest` (§3): `MANIFEST_INVALID`.
 5. `lane`, `taskId`, `branch` agreement: `MANIFEST_MISMATCH`.
 
+6. **Author:** For new manifest changes, `[pm]` requires `deus-pm`, while `[gemini]`/`[antigravity]` requires `deus-ops` or `deus-gemini` (`MANIFEST_AUTHOR`).
+
 ### (a) scope
 `git diff --name-status -z --no-renames <merge-base main tip> <tip>`. Every path must match an `allowedPaths` glob, or the gate refuses with `SCOPE_VIOLATION` listing each one. Added, modified and deleted paths all count. A rename counts as a delete plus an add, so both names must be allowed. The diff includes the coordinator's own commits on the branch (brief, manifest, launch prompts), so the manifest normally allows `tasks/<id>/<lane>/**`.
 
@@ -131,8 +150,9 @@ Glob syntax (`globToRegExp`), matched against the whole path, case-sensitive:
 ### (b) review
 The gate walks the first-parent chain `git rev-list --first-parent <tip> ^main`, newest first.
 
-1. **The tip must be the review commit.** The tip is taken as the review when it has one parent and touches a file matching `tasks/<taskId>/<lane>/review_*.md`. If it isn't, the gate looks further down the chain. A lower commit that touches a review file gives `REVIEW_NOT_LAST`, listing every commit after it. Any commit after the review counts, including a `[gemini]` launch-prompt commit (case `fail_gemini_commit_after_review`). If the tip is a merge commit that touches a review file, the code is `REVIEW_COMMIT_FILES`. If no commit touches a review file, the code is `REVIEW_MISSING`. Only the tip review is judged: an earlier FAIL review followed by a fix and a new PASS review passes (case `pass_failed_review_then_fix_then_pass_review`).
+1. **The tip must be the review commit.** The tip is taken as the review when it has one parent and touches a file matching `tasks/<taskId>/<lane>/review_*.md`. If it isn't, the gate looks further down the chain. A lower commit that touches a review file gives `REVIEW_NOT_LAST`, listing every commit after it. Any commit after the review counts, including a `[gemini]` launch-prompt commit (case `fail_gemini_commit_after_review`). If the tip is a merge commit that touches a review file, the code is `REVIEW_COMMIT_FILES`. If no commit touches a review file, the code is `REVIEW_MISSING`. Only the tip review's verdict, file and target are judged: an earlier FAIL review followed by a fix and a new PASS review passes (case `pass_failed_review_then_fix_then_pass_review`). Every review author is still checked.
 2. **Reviewer identity.** The review's subject tag must be a known agent (`REVIEW_TAG_UNKNOWN`; for a `[pm]` review the detail adds "[pm] may write lane.json but never reviews", case `fail_pm_review_commit_is_not_a_review`) outside the writer's family (`REVIEW_SAME_FAMILY`: `[claude]` and `[fable]` never review each other). When the manifest names a `reviewer`, the tag must be in that reviewer's family (`REVIEWER_NOT_DESIGNATED`).
+   Every review commit in `origin/main..tip`, including an earlier review followed by a fix, must have author `deus-<family of its tag>` (`REVIEW_AUTHOR`). A grandfathered tip never exempts a review.
 3. **The reviewed commit ("target")** is the first commit below the review on the first-parent chain that is not itself a review. Here a review means one parent, only non-deleted review files, and a tag of a known family other than the writer's, so stacked reviews are skipped. The target can be any agent's commit. For example, a `[gemini]` launch-prompt commit made after the writer's last commit and before the review is the target (case `pass_review_names_gemini_commit_after_writer`). With no commit below the review: `REVIEW_NO_TARGET`.
 4. **Files.** The review commit must add or modify exactly one review file and touch nothing else (`REVIEW_COMMIT_FILES`). The file must be named `tasks/<taskId>/<lane>/review_<tag>_<first 8 hex of target>.md`, where `<tag>` is the review's subject tag (`REVIEW_FILE_NAME`).
 5. **Hash.** The file must contain the target's full 40-character hash, as a whole word, in any case. Other hashes may appear too; 64-hex tokens and abbreviations do not count. No full hash at all gives `REVIEW_HASH_MISSING`. Full hashes that don't include the target give `REVIEW_WRONG_COMMIT`.
@@ -155,6 +175,14 @@ content:  # TEST_ review
 ```
 
 Reviewers: write exactly one verdict line. A findings line such as `- Verdict: FAIL (F1, now fixed)` is a verdict line and refuses the gate.
+
+### (b2) commit authors
+
+Every agent-tagged non-review commit in `origin/main..tip` requires author `deus-<tag family>` (`WRITER_AUTHOR`). One coordinator exception permits a single-parent `[gemini]`/`[antigravity]` commit authored `deus-ops` when it changes that lane's `lane.json` and any other changed path is its `BRIEF.md`. A `[ops]` commit requires author `deus-ops` and all changed paths under `tasks/<taskId>/<lane>/` (`OPS_COMMIT_SCOPE`). A merge commit whose second parent is an ancestor of `origin/main` is exempt from these writer and ops rules.
+
+The gate reads `tools/governance/author_rules.json` from **`origin/main` only**. Its initial content is `{"version": 1, "grandfatheredTips": {}}`. When this lane merges, the PM adds each then-open lane's tip hash to the mapping, keyed by lane name. Commits that are ancestors of those tips are exempt from `MANIFEST_AUTHOR`, `WRITER_AUTHOR`, and `OPS_COMMIT_SCOPE`; later commits are not, even when backdated. Reviews never receive this exemption. A lane edit to the rules file cannot grant itself an exemption. Missing or invalid rules refuse the gate with `GIT_ERROR`.
+
+PM transition steps: immediately before integrating OPS.GATE.AUTHOR, record the full 40-character tip of every still-open lane. After merging this lane, write those hashes as the values of `grandfatheredTips` in `main`'s `author_rules.json` and commit that PM change on `main`. Push `main` before running the new gate on another lane; the gate's fetch then sees that exact list on `origin/main`. Keep the entries as fixed historical tips when the lanes advance. Add no later tips to excuse new commits.
 
 ### (c) tests
 1. `gateTests` empty: `TESTS_NONE`.
@@ -195,7 +223,7 @@ Each refusal prints one line `REFUSED <CODE>: <detail>` before the final `GATE:`
 |---|---|---|---|---|---|
 | `USAGE` | refs | 2 | Missing or unknown argument, bad `--lane`/`--branch`, unknown mutant | Read the usage text printed above the summary | `fail_usage_without_manifest`, `fail_unknown_mutant` |
 | `MUTANT_NOT_ALLOWED` | refs | 2 | `--mutant` without `DEUS_MERGE_GATE_SELFTEST=1` | Remove `--mutant`; it is for the self-test only | `fail_mutant_flag_without_selftest_env` |
-| `GIT_ERROR` | refs | 2 | Not inside a git work tree, or a git command failed unexpectedly | Run the git command named in the detail by hand | none |
+| `GIT_ERROR` | refs | 2 | Not inside a git work tree, a git command failed unexpectedly, or `author_rules.json` is missing/invalid on `origin/main` | Run the named git command or inspect `git show origin/main:tools/governance/author_rules.json` | none |
 | `REMOTE_ERROR` | refs | 1 | `git fetch origin` or `git ls-remote origin` failed | `git fetch origin`; check network and credentials | none |
 | `BRANCH_MISSING` | refs | 1 | No local `refs/heads/<branch>` | `git branch --list <branch>`; fetch and create it from `origin/<branch>` | `fail_branch_missing` |
 | `MAIN_MISSING` | refs | 1 | No local `refs/heads/main` | `git branch --list main` | none |
@@ -205,6 +233,7 @@ Each refusal prints one line `REFUSED <CODE>: <detail>` before the final `GATE:`
 | `MANIFEST_MISMATCH` | (a) manifest | 1 | Manifest path, `lane`, `taskId` or `branch` disagree with the arguments | Compare `--lane`/`--branch` with the manifest | `fail_manifest_branch_mismatch`, `fail_manifest_path_of_other_lane` |
 | `MANIFEST_MISSING` | (a) manifest | 1 | No `lane.json` at the tip | `git ls-tree <tip> tasks/<id>/<lane>/` | `fail_manifest_missing` |
 | `MANIFEST_TAMPERED` | (a) manifest | 1 | A commit other than a single-parent `[gemini]` or `[pm]` commit changed `lane.json` | `git log --format="%H %P %s" <tip> -- <manifest>` | `fail_writer_edits_lane_json`, `fail_lane_json_edited_by_grok`, `fail_lane_json_changed_by_merge_commit`, `fail_claude_edits_pm_opened_lane_json`, `fail_lane_json_edited_by_ops`, `fail_lane_json_edited_by_codex`, `fail_lane_json_edited_by_untagged_commit`, `fail_lane_json_edited_by_grok_pm_tag`, `fail_lane_json_changed_by_pm_merge_commit` |
+| `MANIFEST_AUTHOR` | (a) manifest | 1 | A new `[pm]` manifest edit is not by `deus-pm`, or a `[gemini]`/`[antigravity]` edit is not by `deus-ops` or `deus-gemini` | `git log --format="%H %an %s" origin/main..<tip> -- <manifest>` | `fail_pm_manifest_by_ops` |
 | `MANIFEST_INVALID` | (a) manifest | 1 | `lane.json` is not JSON or breaks a §3 rule | `git show <tip>:<manifest>` | `fail_manifest_invalid_json`; rules: `unit_manifest_validation` |
 | `SCOPE_VIOLATION` | (a) scope | 1 | A diff path matches no `allowedPaths` glob | The Diff table's `NO` rows | `fail_out_of_scope_file`, `fail_out_of_scope_deletion`, `fail_sibling_lane_dir_prefix` |
 | `REVIEW_MISSING` | (b) review | 1 | No commit on the branch touches `tasks/<id>/<lane>/review_*.md` | `git log --first-parent --stat main..<branch>` | `fail_review_missing` |
@@ -212,6 +241,9 @@ Each refusal prints one line `REFUSED <CODE>: <detail>` before the final `GATE:`
 | `REVIEW_COMMIT_FILES` | (b) review | 1 | The review commit touches other files, several review files, deletes one, or is a merge | `git show --stat <review commit>` | `fail_review_commit_touches_code` (merge-tip variant: none) |
 | `REVIEW_TAG_UNKNOWN` | (b) review | 1 | Review subject has no known agent tag (`[pm]` included) | `git show -s --format=%s <tip>` | `fail_review_tag_unknown`, `fail_pm_review_commit_is_not_a_review` |
 | `REVIEW_SAME_FAMILY` | (b) review | 1 | Reviewer in the writer's family (`claude` = `fable`) | Compare the review tag with the manifest `writer` | `fail_same_tag_review_claude_reviews_claude`, `fail_same_tag_review_with_designated_reviewer`, `fail_fable_reviews_claude`, `fail_claude_reviews_fable` |
+| `REVIEW_AUTHOR` | (b) review | 1 | A review commit's author is not `deus-<family of subject tag>` | `git show -s --format="%an %s" <review sha>` | `fail_review_author_ops`, `fail_review_author_pm` |
+| `WRITER_AUTHOR` | (b2) authors | 1 | An agent-tagged non-review commit's author does not match its family | `git show -s --format="%an %s" <commit sha>` | `fail_writer_author_mismatch`, `fail_gemini_code_by_ops`, `fail_after_grandfathered_tip`, `fail_grandfather_list_on_lane` |
+| `OPS_COMMIT_SCOPE` | (b2) authors | 1 | An `[ops]` commit has an author other than `deus-ops` or changes a path outside its lane task directory | `git show --format="%an %s" --stat <commit sha>` | `fail_ops_commit_outside_task` |
 | `REVIEWER_NOT_DESIGNATED` | (b) review | 1 | Review tag not in the manifest `reviewer`'s family | Compare with the manifest `reviewer` | `fail_reviewer_not_designated`, `fail_same_tag_review_with_designated_reviewer` |
 | `REVIEW_NO_TARGET` | (b) review | 1 | Nothing but reviews on the branch | `git log --first-parent main..<branch>` | none |
 | `REVIEW_FILE_NAME` | (b) review | 1 | Review file not `review_<tag>_<target sha8>.md` | Review table: `reviewer file` vs `expected file` | `fail_review_file_misnamed`, `fail_review_names_other_commit` |
@@ -239,7 +271,7 @@ Each refusal prints one line `REFUSED <CODE>: <detail>` before the final `GATE:`
 ## 7. Summary output
 Sections, in order: a header table (lane, branch, manifest, mode, repository, and `mutants` when any are active); **Refs** with the command and raw hash of each value; **Manifest** with the path, the blob at the tip, every commit that changed it, and writer / reviewer; **Diff**, one row per path with status and `In allowedPaths`; **Review**; **Tests**, one row per test with command, timeout, exit, duration and result, then the output tail of each failed or timed-out test; **Checks** with each row's `PASS`, `REFUSED` or `SKIPPED (<why>)` plus its reason codes; the `REFUSED` lines; and the final `GATE:` line. Before the summary, one `.. test n/N: <command> (timeout T s) in <clone>` progress line is printed per test. Sections for stages that did not run are left out.
 
-A passing dry run on the self-test fixture (2026-09-26, exit 0; temp paths shortened):
+A historical passing dry run on the self-test fixture (2026-09-26, exit 0; temp paths shortened). This predates the `(b2) authors` row added on 2026-10-01:
 
 ```
 # DEUS merge gate summary (tools/governance/merge_gate.js)
@@ -355,7 +387,7 @@ Start from the `REFUSED` lines. Each names its check, and the matching table hol
 - **Exit 2.** For `USAGE`, the usage text is printed above the summary. `GIT_ERROR` names the git command that failed. Run it by hand from the same folder.
 
 ## 9. Known limits
-- **Agent identity is the commit subject tag.** Anyone who can commit can write `[gemini]`, `[pm]` or `[grok]`. The gate does not check author, committer or signatures. It enforces the protocol but does not authenticate agents.
+- **Author names are not authentication.** Anyone who can commit can choose a subject tag and author name. The gate checks both for consistency but does not check committer or signatures. The PM still checks launch evidence before merge.
 - **The gate that judges a lane is the copy the integrator runs** (normally `main`'s). A lane that changes `merge_gate.js` itself, such as WG.00.12b, is judged by the old rules until it is merged: the pre-G1 gate refuses every `[pm]`-opened lane with `MANIFEST_TAMPERED`.
 - **Gate tests are lane code.** Manifest provenance ensures the coordinator chose the commands, but the scripts they run come from the branch. They run with the privileges of whoever runs the gate. The clone isolates the tree a test sees, not the machine: a test can write anywhere that user can. The pre-merge re-check catches a moved ref or tracked changes in `main`'s worktree, not every side effect.
 - **Quarantine matching is exact token equality** after normalisation. A test that reaches a quarantined file indirectly is not caught. That includes a wrapper script, `node -e "require(…)"`, or another spelling such as `tests/../tests/flaky.js`.
@@ -373,9 +405,11 @@ node tools/governance/test_merge_gate.js [--keep] [--only=<substring>]
 ```
 `--keep` leaves the temporary repository. `--only` runs the unit checks plus the cases whose name contains the substring, with no mutants. Output: one `PASS <name>` or `FAIL <name>: <detail>` per check, then `RESULT: <n> passed, <m> failed`. Exit 1 on any failure.
 
-**Fixture.** Under `%TEMP%\deus-merge-gate-test-XXXXXX`: a bare `origin.git`, and a `work` clone with `main` checked out and pushed. The base commit holds `README.md`, `src/app.js` and `tools/ops/gate_tests.json`, which quarantines `tests/flaky.js`. Each case builds its own branch `task/lane-<name>` with plumbing and a private index, so `main` stays checked out and clean. The branch holds a `[gemini]` manifest commit, writer commits and a review commit. The case pushes it or not, then runs the gate from `work`. Refusal cases run without `--dry-run`, so a gate that wrongly passed would really merge. Every case checks that `main` did not move unless a merge was expected. A case passes only if the gate's exit code and its exact set of reason codes match, and the final `GATE:` line agrees with the exit code.
+**Fixture.** Under `%TEMP%\deus-merge-gate-test-XXXXXX`: a bare `origin.git`, and a `work` clone with `main` checked out and pushed. The base commit holds `README.md`, `src/app.js`, `tools/governance/author_rules.json` (empty grandfather list), and `tools/ops/gate_tests.json`, which quarantines `tests/flaky.js`. Each case builds its own branch `task/lane-<name>` with plumbing and a private index, so `main` stays checked out and clean. The branch holds a manifest commit, writer commits and a review commit, each with the expected author unless a case explicitly tests a mismatch. The case pushes it or not, then runs the gate from `work`. Refusal cases run without `--dry-run`, so a gate that wrongly passed would really merge. Every case checks that `main` did not move unless a merge was expected. A case passes only if the gate's exit code and its exact set of reason codes match, and the final `GATE:` line agrees with the exit code.
 
-**Checks (107; 105 before OPS.10.04; 89 before WG.00.12b).** 8 unit checks (globs, verdict parsing, tags and families, the manifest trust table, full-hash extraction, quarantine path normalisation, manifest validation including `push` and `pm`, and every mutant having a kill case), 71 gate cases, 25 `--mutant` kills, and 3 source mutants.
+**Checks (129 after OPS.GATE.AUTHOR; 107 before it, 105 before OPS.10.04, 89 before WG.00.12b).** 8 unit checks (globs, verdict parsing, tags and families, the manifest trust table, full-hash extraction, quarantine path normalisation, manifest validation including `push` and `pm`, and every mutant having a kill case), 88 gate cases, 30 `--mutant` kills, and 3 source mutants.
+
+OPS.GATE.AUTHOR cases cover both wrong and matching review authors, including an earlier review; writer author mismatches; the coordinator's `[gemini]` manifest exception and a code or brief-only violation; PM manifest authors; `[ops]` lane scope and author; a main-sync merge; an ancestry-based grandfathered tip, a later backdated commit, and an attempted lane-side edit of `author_rules.json`. The five new mutants above must each be killed. The test harness sets each throw-away commit's author from its tag unless a case explicitly overrides it.
 
 The brief's twelve required refusals map to these cases:
 
@@ -408,6 +442,11 @@ WG.00.12b added ten cases for PM-opened lanes: the two passing `[pm]` shapes and
 | `manifest_gemini_untrusted` | trust in `[gemini]` (stricter) | `pass_valid_lane_dry_run_prints_summary` |
 | `manifest_pm_untrusted` | trust in `[pm]` (stricter) | `pass_pm_opened_lane` |
 | `pm_review_family` | "`[pm]` is no agent family" | `fail_pm_review_commit_is_not_a_review` |
+| `review_author_off` | review author identity | `fail_review_author_ops` |
+| `writer_author_off` | agent-tagged writer author identity | `fail_writer_author_mismatch` |
+| `manifest_author_off` | manifest editor author identity | `fail_pm_manifest_by_ops` |
+| `ops_scope_off` | `[ops]` author and lane-directory scope | `fail_ops_commit_outside_task` |
+| `grandfather_by_date` | replaces ancestry with author-date comparison | `fail_after_grandfathered_tip` |
 | `scope_off` | allowedPaths | `fail_out_of_scope_file` |
 | `review_required_off` | review presence | `fail_review_missing` |
 | `review_order_off` | review must be the tip | `fail_writer_commit_after_review` |

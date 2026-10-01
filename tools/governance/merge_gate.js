@@ -21,6 +21,10 @@
  *                 manifest names one, and it touches only tasks/<id>/<lane>/review_<tag>_<sha8>.md.
  *                 That file holds the full 40-character hash of the last non-review commit on the
  *                 branch and a "VERDICT: PASS" or "VERDICT: CLEAN PASS" line (and no other verdict).
+ *                 Every review commit's author name matches its tag family, with no grandfathering.
+ *   (b2) AUTHOR   agent-tagged commits match their family author; [ops] commits are authored deus-ops
+ *                 and confined to the lane task directory. Manifest author names are checked in (a).
+ *                 Open-lane exceptions are read from origin/main's author_rules.json by ancestry.
  *   (c) TESTS     each gateTests entry runs with spawnSync (no shell) in its own fresh clone checked
  *                 out at the tip, with its own timeout; each must exit 0. The clone is forced to
  *                 core.autocrlf=false, core.eol=lf and core.safecrlf=false before checkout, so the
@@ -55,6 +59,7 @@ const MAIN = "main";
 const REMOTE = "origin";
 const DEFAULT_TIMEOUT_SEC = 600;
 const QUARANTINE_FILE = "tools/ops/gate_tests.json";
+const AUTHOR_RULES_FILE = "tools/governance/author_rules.json";
 const SELFTEST_ENV = "DEUS_MERGE_GATE_SELFTEST";
 const LOG_TAIL_LINES = 20;
 
@@ -72,6 +77,11 @@ const MUTANTS = {
     manifest_gemini_untrusted: "refuse lane.json edits by [gemini] commits",
     manifest_pm_untrusted: "refuse lane.json edits by [pm] commits",
     pm_review_family: "count [pm] as an agent family, so a [pm] commit can be the review",
+    review_author_off: "ignore the review commit author",
+    writer_author_off: "ignore agent-tagged writer commit authors",
+    manifest_author_off: "ignore manifest commit authors",
+    ops_scope_off: "ignore [ops] author and path restrictions",
+    grandfather_by_date: "exempt commits by author date instead of ancestry",
     scope_off: "accept paths outside allowedPaths",
     review_required_off: "accept a branch with no review commit",
     review_order_off: "use the latest review commit even when other commits follow it",
@@ -98,6 +108,7 @@ const CHECKS = [
     ["MANIFEST", "(a) manifest"],
     ["SCOPE", "(a) scope"],
     ["REVIEW", "(b) review"],
+    ["AUTHOR", "(b2) authors"],
     ["TESTS", "(c) tests"],
     ["PUSHED", "(d) pushed"],
     ["MAIN", "(e) main"]
@@ -169,10 +180,10 @@ function parseNameStatus(out) {
 }
 
 function commitInfo(sha) {
-    const [h, p, s] = git(["show", "-s", "--format=%H%x00%P%x00%s", sha]).replace(/\n$/, "").split("\0");
+    const [h, p, s, author] = git(["show", "-s", "--format=%H%x00%P%x00%s%x00%an", sha]).replace(/\n$/, "").split("\0");
     const parents = p ? p.split(" ") : [];
     const files = parents.length ? parseNameStatus(git(["diff", "--name-status", "-z", "--no-renames", parents[0], h])) : [];
-    return { sha: h, parents, subject: s, tag: subjectTag(s), files };
+    return { sha: h, parents, subject: s, tag: subjectTag(s), author, files };
 }
 
 // ---------------------------------------------------------------- helpers
@@ -471,9 +482,9 @@ function checkManifest(R, ctx) {
         return null;
     }
     const text = readBlob(ctx.tip, mp);
-    const history = git(["log", "--format=%H%x1f%P%x1f%s%x1e", ctx.tip, "--", mp]).split("\x1e")
+    const history = git(["log", "--format=%H%x1f%P%x1f%s%x1f%an%x1e", ctx.tip, "--", mp]).split("\x1e")
         .map(s => s.replace(/^\s+/, "")).filter(Boolean)
-        .map(s => { const [sha, p, subject] = s.split("\x1f"); return { sha, parents: p ? p.split(" ") : [], subject, tag: subjectTag(subject) }; });
+        .map(s => { const [sha, p, subject, author] = s.split("\x1f"); return { sha, parents: p ? p.split(" ") : [], subject, author, tag: subjectTag(subject) }; });
     R.manifest = { path: mp, blob: text === null ? null : git(["rev-parse", `${ctx.tip}:${mp}`]).trim(), history, parsed: null };
     if (text === null || !history.length) {
         R.refuse("MANIFEST", "MANIFEST_MISSING", `${mp} is not in the tree of ${ctx.tip}`);
@@ -488,6 +499,15 @@ function checkManifest(R, ctx) {
         }
         if (bad.length) return null;
     }
+    if (!mut("manifest_author_off")) {
+        for (const h of history) {
+            if (isAncestor(h.sha, ctx.refs.mainTracking)) continue;
+            if (isGrandfathered(ctx, h.sha)) continue;
+            const allowed = h.tag === PM_TAG ? ["deus-pm"] : ["deus-ops", "deus-gemini"];
+            if (!allowed.includes(h.author)) R.refuse("MANIFEST", "MANIFEST_AUTHOR", `${h.sha} [${h.tag}] changed ${mp}; author "${h.author}" must be ${allowed.join(" or ")}`);
+        }
+    }
+    if (R.state("MANIFEST").codes.includes("MANIFEST_AUTHOR")) return null;
     let m;
     try { m = JSON.parse(text); } catch (e) {
         R.refuse("MANIFEST", "MANIFEST_INVALID", `${mp} at ${short(ctx.tip)} is not valid JSON: ${e.message}`);
@@ -512,6 +532,58 @@ function checkScope(R, ctx, man) {
     const bad = files.filter(f => !f.allowed);
     if (bad.length && !mut("scope_off")) {
         R.refuse("SCOPE", "SCOPE_VIOLATION", `${bad.length} path(s) outside allowedPaths: ${bad.map(f => `${f.status} ${f.path}`).join(", ")}`);
+    }
+}
+
+function loadAuthorRules() {
+    const raw = readBlob(`refs/remotes/${REMOTE}/${MAIN}`, AUTHOR_RULES_FILE);
+    if (raw === null) throw new UsageError("GIT_ERROR", `${AUTHOR_RULES_FILE} is missing on origin/main`);
+    try {
+        const data = JSON.parse(raw);
+        if (data.version !== 1 || !data.grandfatheredTips || Array.isArray(data.grandfatheredTips) || typeof data.grandfatheredTips !== "object" ||
+            Object.values(data.grandfatheredTips).some(v => typeof v !== "string" || !/^[0-9a-f]{40}$/.test(v))) throw new Error("expected version 1 and grandfatheredTips mapping names to full commit hashes");
+        return Object.values(data.grandfatheredTips);
+    } catch (e) {
+        throw new UsageError("GIT_ERROR", `${AUTHOR_RULES_FILE} on origin/main is invalid: ${e.message}`);
+    }
+}
+
+function isGrandfathered(ctx, sha) {
+    return (ctx.grandfatheredTips || []).some(tip => {
+        if (mut("grandfather_by_date")) {
+            const commitTime = Number(git(["show", "-s", "--format=%at", sha]).trim());
+            const tipTime = Number(git(["show", "-s", "--format=%at", tip], { allowFail: true }).out.trim());
+            return Number.isFinite(tipTime) && commitTime <= tipTime;
+        }
+        return isAncestor(sha, tip);
+    });
+}
+
+function checkCommitAuthors(R, ctx, man) {
+    const dir = `tasks/${man.taskId}/${man.lane}/`;
+    const reviewPath = p => p.startsWith(dir) && /^review_[^/]*\.md$/.test(p.slice(dir.length));
+    const shas = git(["rev-list", ctx.tip, `^refs/remotes/${REMOTE}/${MAIN}`]).split("\n").filter(Boolean);
+    for (const sha of shas) {
+        const c = commitInfo(sha);
+        const reviewFamily = family(c.tag);
+        if (reviewFamily && c.parents.length === 1 && c.files.length > 0 &&
+            c.files.every(f => reviewPath(f.path) && f.status !== "D")) {
+            if (reviewFamily && c.author !== `deus-${reviewFamily}` && !mut("review_author_off"))
+                R.refuse("REVIEW", "REVIEW_AUTHOR", `${sha} [${c.tag}] author "${c.author}" must be deus-${reviewFamily}`);
+            continue; // review authors are never grandfathered
+        }
+        if (isGrandfathered(ctx, sha)) continue;
+        if (c.parents.length > 1 && isAncestor(c.parents[1], ctx.refs.mainTracking)) continue; // sync from main
+        const fam = family(c.tag);
+        if (fam && c.author !== `deus-${fam}` && !mut("writer_author_off")) {
+            const manifestOnly = fam === "gemini" && c.author === "deus-ops" && c.parents.length === 1 &&
+                c.files.some(f => f.path === ctx.manifestPath) && c.files.every(f => f.path === ctx.manifestPath || f.path === `${dir}BRIEF.md`);
+            if (!manifestOnly) R.refuse("AUTHOR", "WRITER_AUTHOR", `${sha} [${c.tag}] author "${c.author}" must be deus-${fam}`);
+        }
+        if (c.tag === "ops" && !mut("ops_scope_off")) {
+            if (c.author !== "deus-ops" || c.files.some(f => !f.path.startsWith(dir)))
+                R.refuse("AUTHOR", "OPS_COMMIT_SCOPE", `${sha} [ops] author "${c.author}" must be deus-ops and every changed path must be under ${dir}`);
+        }
     }
 }
 
@@ -790,12 +862,14 @@ function run(argv) {
                 R.refuse("REFS", "NOTHING_TO_MERGE", `${b} ${ctx.tip} is already contained in ${MAIN}`);
                 later.forEach(c => R.skip(c, "nothing to merge"));
             } else {
+                ctx.grandfatheredTips = loadAuthorRules();
                 const man = checkManifest(R, ctx);
                 if (!man) ["SCOPE", "REVIEW", "TESTS"].forEach(c => R.skip(c, "manifest not trusted"));
                 else {
                     ctx.taskId = man.taskId;
                     checkScope(R, ctx, man);
                     checkReview(R, ctx, man);
+                    checkCommitAuthors(R, ctx, man);
                     checkTests(R, ctx, man);
                 }
             }

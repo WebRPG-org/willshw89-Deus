@@ -75,6 +75,7 @@ function setupFixture() {
     const files = {
         "README.md": "# TEST_ repository\n",
         "src/app.js": "module.exports = {};\n",
+        "tools/governance/author_rules.json": JSON.stringify({ version: 1, grandfatheredTips: {} }) + "\n",
         "tools/ops/gate_tests.json": JSON.stringify({ gate: [], quarantine: [{ path: "tests/flaky.js", reason: "TEST_ flaky" }] }, null, 2) + "\n"
     };
     for (const [p, c] of Object.entries(files)) {
@@ -87,7 +88,7 @@ function setupFixture() {
 }
 
 // A commit built with a private index, so main stays checked out and clean in the work tree.
-function commitTree(parents, files, message) {
+function commitTree(parents, files, message, options = {}) {
     const idx = path.join(TMP, "build.index");
     fs.rmSync(idx, { force: true });
     const env = { GIT_INDEX_FILE: idx };
@@ -100,7 +101,14 @@ function commitTree(parents, files, message) {
         }
     }
     const tree = w(["write-tree"], { env });
-    return w(["commit-tree", tree, ...parents.flatMap(p => ["-p", p]), "-m", message]);
+    const tag = /^\[([^\]]+)\]/.exec(message);
+    const names = { claude: "deus-claude", fable: "deus-claude", grok: "deus-grok", codex: "deus-codex",
+        gemini: "deus-gemini", antigravity: "deus-gemini", pm: "deus-pm", ops: "deus-ops" };
+    const author = options.author || (tag && names[tag[1].toLowerCase()]) || "deus-ops";
+    const commitEnv = Object.assign({}, env, { GIT_AUTHOR_NAME: author, GIT_AUTHOR_EMAIL: "author@deus.invalid",
+        GIT_COMMITTER_NAME: author, GIT_COMMITTER_EMAIL: "committer@deus.invalid" });
+    if (options.date) { commitEnv.GIT_AUTHOR_DATE = options.date; commitEnv.GIT_COMMITTER_DATE = options.date; }
+    return w(["commit-tree", tree, ...parents.flatMap(p => ["-p", p]), "-m", message], { env: commitEnv });
 }
 
 const FEATURE = {
@@ -139,15 +147,15 @@ class Lane {
         this.head = mainSha();
         this.commits = {};
     }
-    commit(message, files, extraParents = []) {
-        this.head = commitTree([this.head, ...extraParents], files, message);
+    commit(message, files, extraParents = [], options = {}) {
+        this.head = commitTree([this.head, ...extraParents], files, message, options);
         w(["update-ref", `refs/heads/${this.branch}`, this.head]);
         return this.head;
     }
     manifestText(m) { return JSON.stringify(m || this.manifest, null, 2) + "\n"; }
-    manifestCommit(text, tag = "gemini") {
+    manifestCommit(text, tag = "gemini", options = {}) {
         return this.commits.manifest = this.commit(`[${tag}] TEST_ brief + manifest`,
-            { [this.manifestPath]: text !== undefined ? text : this.manifestText(), [`${this.dir}/BRIEF.md`]: "# TEST_ brief\n" });
+            { [this.manifestPath]: text !== undefined ? text : this.manifestText(), [`${this.dir}/BRIEF.md`]: "# TEST_ brief\n" }, [], options);
     }
     // Opens the lane as the PM does since 0028-AC A0.
     pmOpen() { return this.manifestCommit(undefined, "pm"); }
@@ -159,8 +167,8 @@ class Lane {
         widened.gateTests.push({ cmd: "node", args: ["-e", `require("fs").writeFileSync(${JSON.stringify(MARK_TAMPER)}, "ran")`], timeoutSec: 30 });
         return this.commit(subject, { [this.manifestPath]: this.manifestText(widened), "src/extra.js": "module.exports = 2;\n" });
     }
-    writer(files, message) {
-        return this.commits.writer = this.commit(message || "[claude] TEST_ feature", Object.assign({}, FEATURE, files || {}));
+    writer(files, message, options = {}) {
+        return this.commits.writer = this.commit(message || "[claude] TEST_ feature", Object.assign({}, FEATURE, files || {}), [], options);
     }
     reviewText(target, verdict) { return `# TEST_ review\n\nReviewed commit: ${target}\n\n${verdict}\n`; }
     review(o = {}) {
@@ -168,7 +176,7 @@ class Lane {
         const file = o.file || `${this.dir}/review_${tag}_${target.slice(0, 8)}.md`;
         const body = o.body !== undefined ? o.body : this.reviewText(target, o.verdict || "VERDICT: PASS");
         return this.commits.review = this.commit(o.subject || `[${tag}] TEST_ review of ${target.slice(0, 8)}`,
-            Object.assign({ [file]: body }, o.extra || {}));
+            Object.assign({ [file]: body }, o.extra || {}), [], { author: o.author });
     }
     push() { w(["push", "-q", "origin", this.branch]); return this; }
     standard() { this.manifestCommit(); this.writer(); this.review(); return this.push(); }
@@ -179,6 +187,20 @@ function built(name, manifest, steps) {
     const l = new Lane(name, manifest);
     steps(l);
     return l;
+}
+
+function setGrandfatheredTip(l, c, sha) {
+    c.savedMain = mainSha();
+    const p = path.join(WORK, "tools/governance/author_rules.json");
+    fs.writeFileSync(p, JSON.stringify({ version: 1, grandfatheredTips: { [l.lane]: sha } }) + "\n");
+    w(["add", "--", "tools/governance/author_rules.json"]);
+    w(["commit", "-q", "-m", "[pm] TEST_ grandfather open lane"]);
+    w(["push", "-q", "origin", "main"]);
+}
+
+function restoreGrandfatheredTip(l, c) {
+    w(["reset", "-q", "--hard", c.savedMain]);
+    w(["push", "-q", "--force", "origin", "main"]);
 }
 
 function addWorktree(l, files) {
@@ -298,6 +320,23 @@ const CASES = [
     // passing cases
     { name: "pass_valid_lane_dry_run_prints_summary", build: () => new Lane("ok").standard(), args: DRY, expect: PASS, verify: verifySummary },
     { name: "pass_clean_pass_bold_verdict", build: () => built("bold", null, l => { l.manifestCommit(); l.writer(); l.review({ verdict: "**VERDICT:** CLEAN PASS" }); l.push(); }), args: DRY, expect: PASS },
+    { name: "pass_review_author_matches", build: () => built("raok", null, l => { l.pmOpen(); l.writer(); l.review({ author: "deus-grok" }); l.push(); }), args: DRY, expect: PASS },
+    { name: "pass_gemini_manifest_by_ops", build: () => built("gmops", null, l => { l.manifestCommit(undefined, "gemini", { author: "deus-ops" }); l.writer(); l.review(); l.push(); }), args: DRY, expect: PASS },
+    { name: "pass_pm_manifest_by_pm", build: () => built("pmby", null, l => { l.manifestCommit(undefined, "pm", { author: "deus-pm" }); l.writer(); l.review(); l.push(); }), args: DRY, expect: PASS },
+    { name: "pass_ops_launch_record", build: () => built("opsrec", null, l => { l.pmOpen(); l.writer(); l.commit("[ops] TEST_ launch record", { [`${l.dir}/launches/p.txt`]: "TEST_ prompt\n" }, [], { author: "deus-ops" }); l.review(); l.push(); }), args: DRY, expect: PASS },
+    {
+        name: "pass_main_sync_merge_exempt", args: DRY, expect: PASS,
+        build: () => built("sync", null, l => {
+            l.pmOpen(); l.writer();
+            l.commit("[codex] TEST_ sync main", {}, [mainSha()], { author: "deus-ops" });
+            l.review(); l.push();
+        })
+    },
+    {
+        name: "pass_grandfathered_tip", args: DRY, expect: PASS,
+        build: () => built("grand", { writer: "codex" }, l => { l.pmOpen(); l.writer(null, "[codex] TEST_ old work", { author: "deus-ops" }); l.review(); l.push(); }),
+        setup: (l, c) => setGrandfatheredTip(l, c, l.commits.writer), teardown: restoreGrandfatheredTip
+    },
     {
         name: "pass_failed_review_then_fix_then_pass_review", args: DRY, expect: PASS,
         build: () => built("refail", null, l => {
@@ -334,6 +373,32 @@ const CASES = [
     },
 
     // (b) review
+    { name: "fail_review_author_ops", build: () => built("raops", null, l => { l.pmOpen(); l.writer(); l.review({ author: "deus-ops" }); l.push(); }), expect: REFUSE("REVIEW_AUTHOR") },
+    { name: "fail_review_author_pm", build: () => built("rapm", null, l => { l.pmOpen(); l.writer(); l.review({ author: "deus-pm" }); l.push(); }), expect: REFUSE("REVIEW_AUTHOR") },
+    { name: "fail_earlier_review_author_ops", build: () => built("raold", null, l => { l.pmOpen(); l.writer(); l.review({ author: "deus-ops", verdict: "VERDICT: FAIL" }); l.writer({ "src/feature.js": "module.exports = { add: (a, b) => b + a };\n" }, "[claude] TEST_ fix"); l.review(); l.push(); }), expect: REFUSE("REVIEW_AUTHOR") },
+    { name: "fail_writer_author_mismatch", build: () => built("waops", { writer: "codex" }, l => { l.pmOpen(); l.writer(null, "[codex] TEST_ feature", { author: "deus-ops" }); l.review(); l.push(); }), expect: REFUSE("WRITER_AUTHOR") },
+    { name: "fail_gemini_code_by_ops", build: () => built("gcode", null, l => { l.pmOpen(); l.writer(); l.commit("[gemini] TEST_ code", { "src/feature.js": "module.exports = { add: () => 4 };\n" }, [], { author: "deus-ops" }); l.review(); l.push(); }), expect: REFUSE("WRITER_AUTHOR") },
+    { name: "fail_gemini_brief_only_by_ops", build: () => built("gbrief", null, l => { l.pmOpen(); l.writer(); l.commit("[gemini] TEST_ brief only", { [`${l.dir}/BRIEF.md`]: "# TEST_ changed brief\n" }, [], { author: "deus-ops" }); l.review(); l.push(); }), expect: REFUSE("WRITER_AUTHOR") },
+    { name: "fail_pm_manifest_by_ops", build: () => built("pmops", null, l => { l.manifestCommit(undefined, "pm", { author: "deus-ops" }); l.writer(); l.review(); l.push(); }), expect: REFUSE("MANIFEST_AUTHOR") },
+    { name: "fail_ops_commit_outside_task", build: () => built("opsout", null, l => { l.pmOpen(); l.writer(); l.commit("[ops] TEST_ code edit", { "src/feature.js": "module.exports = { add: () => 4 };\n" }, [], { author: "deus-ops" }); l.review(); l.push(); }), expect: REFUSE("OPS_COMMIT_SCOPE") },
+    { name: "fail_ops_commit_wrong_author", build: () => built("opswho", null, l => { l.pmOpen(); l.writer(); l.commit("[ops] TEST_ launch record", { [`${l.dir}/launches/p.txt`]: "TEST_ prompt\n" }, [], { author: "deus-gemini" }); l.review(); l.push(); }), expect: REFUSE("OPS_COMMIT_SCOPE") },
+    {
+        name: "fail_after_grandfathered_tip", expect: REFUSE("WRITER_AUTHOR"),
+        build: () => built("grandaft", { writer: "codex" }, l => {
+            l.pmOpen(); l.commits.old = l.writer(null, "[codex] TEST_ old work", { author: "deus-ops" });
+            l.writer({ "src/feature.js": FEATURE["src/feature.js"] }, "[codex] TEST_ later work", { author: "deus-ops", date: "2000-01-01T00:00:00Z" });
+            l.review(); l.push();
+        }),
+        setup: (l, c) => setGrandfatheredTip(l, c, l.commits.old), teardown: restoreGrandfatheredTip
+    },
+    {
+        name: "fail_grandfather_list_on_lane", expect: REFUSE("WRITER_AUTHOR"),
+        build: () => built("grandonlane", { writer: "codex", allowedPaths: ["src/feature.js", "tests/test_feature.js", "tools/governance/author_rules.json", "tasks/TEST.01/lane-grandonlane/**"] }, l => {
+            l.pmOpen(); const old = l.writer(null, "[codex] TEST_ forged old work", { author: "deus-ops" });
+            l.commit("[codex] TEST_ forge grandfather list", { "tools/governance/author_rules.json": JSON.stringify({ version: 1, grandfatheredTips: { [l.lane]: old } }) + "\n" });
+            l.review(); l.push();
+        })
+    },
     { name: "fail_same_tag_review_claude_reviews_claude", build: () => built("self", { reviewer: undefined }, l => { l.manifestCommit(); l.writer(); l.review({ tag: "claude" }); l.push(); }), expect: REFUSE("REVIEW_SAME_FAMILY") },
     { name: "fail_same_tag_review_with_designated_reviewer", build: () => built("self2", null, l => { l.manifestCommit(); l.writer(); l.review({ tag: "claude" }); l.push(); }), expect: REFUSE("REVIEW_SAME_FAMILY", "REVIEWER_NOT_DESIGNATED") },
     { name: "fail_fable_reviews_claude", build: () => built("fable1", { reviewer: undefined }, l => { l.manifestCommit(); l.writer(); l.review({ tag: "fable" }); l.push(); }), expect: REFUSE("REVIEW_SAME_FAMILY") },
@@ -583,6 +648,11 @@ const CASES = [
 
 // Mutant -> the case it must break: a refusal case must lose a reason code, a passing case must be refused.
 const KILLS = {
+    review_author_off: "fail_review_author_ops",
+    writer_author_off: "fail_writer_author_mismatch",
+    manifest_author_off: "fail_pm_manifest_by_ops",
+    ops_scope_off: "fail_ops_commit_outside_task",
+    grandfather_by_date: "fail_after_grandfathered_tip",
     manifest_provenance_off: "fail_writer_edits_lane_json",
     manifest_trust_any_tag: "fail_lane_json_edited_by_ops",
     manifest_trust_pm_merge: "fail_lane_json_changed_by_pm_merge_commit",
