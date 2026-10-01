@@ -1335,7 +1335,7 @@ function rmmzFormProblem(e, rows, T) {
         target = { w: (wide ? 3 : 1) * blk.wMax, h: blk.hMax, what: `${L} kind ${k} (${rowId}${wide ? ' x 3 frames' : ''})` };
     } else {
         const local = id - range[0];
-        if (local === 0) return `local tile 0 of a ${L} sheet is refused (a DEUS convention, not an RMMZ rule: RMMZ leaves only tileId 0 undrawn, and stock C sheets use their local tile 0)`;
+        if (local === 0) return `local tile 0 of sheet ${L} is refused (a DEUS convention, not an RMMZ rule: RMMZ leaves only tileId 0 undrawn, and stock C sheets use their local tile 0)`;
         const gr = gridOf(rt.grid);
         if (!gr) return `grid ${rt.grid} is not WxH`;
         const col = local % 8, row = Math.floor((local % 128) / 8);
