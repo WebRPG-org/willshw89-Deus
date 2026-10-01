@@ -1,0 +1,50 @@
+Code checkpoint 96e12464; 2026-10-01T15:43:59.528Z
+Commands: node stdin probe extracts scannerFixtures(), then PLANTED/HOOK_PROVOCATIONS and the hook fixture map from tools/test_sim_loader.js; calls scan.classify on each fixture without running the full directory scan.
+PASS source_fixture.wrapped_whole hit=true expected=true
+PASS source_fixture.wrapped_partial hit=false expected=false
+PASS source_fixture.hash_only_with_vm hit=false expected=false
+PASS source_fixture.hash_and_whole_eval hit=true expected=true
+PASS source_fixture.mention_not_read hit=false expected=false
+PASS source_fixture.two_sources_partial_only hit=false expected=false
+PASS source_fixture.script_evaluated hit=true expected=true
+PASS source_fixture.script_compiled_only hit=false expected=false
+PASS source_fixture.helper_return hit=true expected=true
+PASS source_fixture.alias_full hit=true expected=true
+PASS source_fixture.slice_empty_separated hit=true expected=true
+PASS source_fixture.slice_empty_chained hit=true expected=true
+PASS source_fixture.slice_zero_separated hit=true expected=true
+PASS source_fixture.slice_zero_chained hit=true expected=true
+PASS source_fixture.slice_length_separated hit=true expected=true
+PASS source_fixture.slice_length_chained hit=true expected=true
+PASS source_fixture.slice_infinity_separated hit=true expected=true
+PASS source_fixture.slice_infinity_chained hit=true expected=true
+PASS source_fixture.slice_start_separated hit=false expected=false
+PASS source_fixture.slice_start_chained hit=false expected=false
+PASS source_fixture.slice_end_separated hit=false expected=false
+PASS source_fixture.slice_end_chained hit=false expected=false
+PASS source_fixture.substring_full_separated hit=true expected=true
+PASS source_fixture.substring_full_chained hit=true expected=true
+PASS source_fixture.substring_partial_separated hit=false expected=false
+PASS source_fixture.substring_partial_chained hit=false expected=false
+PASS source_fixture.substr_full_separated hit=true expected=true
+PASS source_fixture.substr_full_chained hit=true expected=true
+PASS source_fixture.substr_partial_separated hit=false expected=false
+PASS source_fixture.substr_partial_chained hit=false expected=false
+PASS source_fixture.match_whole_separated hit=true expected=true
+PASS source_fixture.match_whole_chained hit=true expected=true
+PASS source_fixture.match_partial_separated hit=false expected=false
+PASS source_fixture.match_partial_chained hit=false expected=false
+PASS source_fixture.exec_whole hit=true expected=true
+PASS source_fixture.exec_partial hit=false expected=false
+PASS hook_fixture.missing hit=true accepted=false expected=false failures=[{"line":7,"column":1,"targets":["DEUS_World"],"reason":"no proven prior hook on the evaluating sandbox"}]
+PASS hook_fixture.hooked hit=true accepted=true expected=true failures=[]
+PASS hook_fixture.context_alias hit=true accepted=true expected=true failures=[]
+PASS hook_fixture.wrong_context_alias hit=true accepted=false expected=false failures=[{"line":9,"column":1,"targets":["DEUS_World"],"reason":"no proven prior hook on the evaluating sandbox"}]
+PASS hook_fixture.shadowed_sandbox hit=true accepted=false expected=false failures=[{"line":9,"column":1,"targets":["DEUS_World"],"reason":"no proven prior hook on the evaluating sandbox"}]
+PASS hook_fixture.reassigned_sandbox hit=true accepted=false expected=false failures=[{"line":9,"column":1,"targets":["DEUS_World"],"reason":"no proven prior hook on the evaluating sandbox"}]
+PASS hook_fixture.dormant_install hit=true accepted=false expected=false failures=[{"line":9,"column":1,"targets":["DEUS_World"],"reason":"no proven prior hook on the evaluating sandbox"}]
+PASS hook_fixture.conditional_install hit=true accepted=false expected=false failures=[{"line":9,"column":1,"targets":["DEUS_World"],"reason":"no proven prior hook on the evaluating sandbox"}]
+PASS hook_fixture.hook_wrong_sandbox hit=true accepted=false expected=false failures=[{"line":9,"column":1,"targets":["DEUS_World"],"reason":"no proven prior hook on the evaluating sandbox"}]
+PASS hook_fixture.hook_unreachable hit=true accepted=false expected=false failures=[{"line":9,"column":1,"targets":["DEUS_World"],"reason":"no proven prior hook on the evaluating sandbox"}]
+PASS hook_fixture.hook_after_eval hit=true accepted=false expected=false failures=[{"line":8,"column":1,"targets":["DEUS_World"],"reason":"no proven prior hook on the evaluating sandbox"}]
+RESULT: 47 passed, 0 failed

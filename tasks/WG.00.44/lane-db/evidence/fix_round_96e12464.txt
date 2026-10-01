@@ -1,0 +1,361 @@
+UTC 2026-10-01T15:42:23.091Z; Node v24.19.0; source C:\Users\snewt\.deus_worktrees\lane-db
+Fresh shared clones; detached HEAD; core.autocrlf=false; core.eol=lf; each gate timeout 900s.
+Gate environment: WG0044_KEEP_NW_SNAPSHOT=1; remaining environment inherited.
+$ git -c core.autocrlf=false -c core.eol=lf clone --shared --no-checkout C:\Users\snewt\.deus_worktrees\lane-db C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-1
+Cloning into 'C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-1'...
+done.
+
+EXIT 0
+$ git config core.autocrlf false
+
+EXIT 0
+$ git config core.eol lf
+
+EXIT 0
+$ git checkout --detach 96e12464
+HEAD is now at 96e12464 [codex] WG.00.44 checkpoint scanner correction at Rule 10 stop
+
+EXIT 0
+$ git rev-parse HEAD
+96e12464c0e16b7543a14c145d177704bd73ea17
+
+EXIT 0
+$ git status --porcelain
+
+EXIT 0
+$ node tools/check_deus_syntax.js
+Checked 62 DEUS plugin files. Errors: 0
+
+EXIT 0
+$ git -c core.autocrlf=false -c core.eol=lf clone --shared --no-checkout C:\Users\snewt\.deus_worktrees\lane-db C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-2
+Cloning into 'C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-2'...
+done.
+
+EXIT 0
+$ git config core.autocrlf false
+
+EXIT 0
+$ git config core.eol lf
+
+EXIT 0
+$ git checkout --detach 96e12464
+HEAD is now at 96e12464 [codex] WG.00.44 checkpoint scanner correction at Rule 10 stop
+
+EXIT 0
+$ git rev-parse HEAD
+96e12464c0e16b7543a14c145d177704bd73ea17
+
+EXIT 0
+$ git status --porcelain
+
+EXIT 0
+$ node tools/test_sim_loader.js
+PASS vm_loader_loads_ledger - resolve("ledger") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-2\game\js\sim\ledger.js; exports createLedger: function; same object as Node's require: true; resolve("hydro") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-2\game\js\sim\hydro\index.js; sandbox require left alone: true
+PASS missing_module_throws - threw DEUS_SIM_MODULE_MISSING: UF.Sim.require("no_such_module_wg0044"): no such sim module; tried C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-2\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-2\game\js\sim\no_such_module_wg0044\index.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-2\game\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-2\game\game\js\sim\no_such_module_wg0044\index.js; "../plugins/DEUS_World" -> TypeError; no host -> UF.Sim.require("ledger"): no such sim module; tried nothing (no require in this host)
+FAIL every_vm_harness_installs_hook - threw Error: VM_HARNESS_SCAN_LIMIT tools/society/test_militia.js:86: 31504 steps, 10013 ms |     at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-2\tools\lib\vm_harness_scan.js:118:86) |     at expr (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-2\tools\lib\vm_harness_scan.js:381:30)
+FAIL scan_finds_known_harnesses - threw Error: VM_HARNESS_SCAN_LIMIT tools/society/test_militia.js:86: 31603 steps, 10002 ms |     at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-2\tools\lib\vm_harness_scan.js:118:86) |     at expr (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-2\tools\lib\vm_harness_scan.js:381:30)
+PASS opener_registry - order Air, core, water; duplicate "core": UF.Sim.registerMatterOpener: "core" is already registered; bad fn: TypeError; empty name: TypeError; registry after a caller emptied its copy: 3; UF.Levels at register: undefined
+PASS grid_pinned_by_hook - fallback-3 fixture: {} -> 1x1, grid "shipped" -> 3x3, AreasX "2" -> 2x1, PluginManager set after install -> 1x1, legacy UF_World AreasX "4" -> 4x1; real DEUS_World.js -> 1x1; grid "3x3" refused: true
+  kept snapshot: C:\Users\snewt\AppData\Local\Temp\wg0044-nw-a3LFJi
+PASS nwjs_loader - run_tests exit 0; 5 sim_loader PASS lines; no FAIL/ERROR lines; log: 2026-10-01T15:44:12.046Z [SIM] UF.Sim.require("ledger") resolved C:\Users\snewt\AppData\Local\Temp\wg0044-nw-a3LFJi\game\js\sim\ledger.js; expected C:\Users\snewt\AppData\Local\Temp\wg0044-nw-a3LFJi\game\js\sim\ledger.js
+RESULT: 5 passed, 2 failed
+
+EXIT 1
+$ git -c core.autocrlf=false -c core.eol=lf clone --shared --no-checkout C:\Users\snewt\.deus_worktrees\lane-db C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-3
+Cloning into 'C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-3'...
+done.
+
+EXIT 0
+$ git config core.autocrlf false
+
+EXIT 0
+$ git config core.eol lf
+
+EXIT 0
+$ git checkout --detach 96e12464
+HEAD is now at 96e12464 [codex] WG.00.44 checkpoint scanner correction at Rule 10 stop
+
+EXIT 0
+$ git rev-parse HEAD
+96e12464c0e16b7543a14c145d177704bd73ea17
+
+EXIT 0
+$ git status --porcelain
+
+EXIT 0
+$ node tools/test_32_levels_generation.js
+=== DEUS 32-LAYER WORLD GENERATION TEST SUITE ===
+  [PASS] world_default_zrange_is_32
+  [PASS] core_entries_only
+  [PASS] all_32_levels_reconstructible
+  [PASS] core_levels_have_valid_checksums
+  [PASS] core_levels_have_gen
+  [PASS] level_minus_16_baseline_exists
+  [PASS] level_plus_15_baseline_exists
+  [PASS] no_entry_for_unchanged_minus_10
+  [PASS] no_entry_for_unchanged_plus_10
+
+Results: 9 passed, 0 failed.
+
+EXIT 0
+$ git -c core.autocrlf=false -c core.eol=lf clone --shared --no-checkout C:\Users\snewt\.deus_worktrees\lane-db C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-4
+Cloning into 'C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-4'...
+done.
+
+EXIT 0
+$ git config core.autocrlf false
+
+EXIT 0
+$ git config core.eol lf
+
+EXIT 0
+$ git checkout --detach 96e12464
+HEAD is now at 96e12464 [codex] WG.00.44 checkpoint scanner correction at Rule 10 stop
+
+EXIT 0
+$ git rev-parse HEAD
+96e12464c0e16b7543a14c145d177704bd73ea17
+
+EXIT 0
+$ git status --porcelain
+
+EXIT 0
+$ node tools/test_geology_strata.js
+INFO plugins loaded: DEUS_World.js, DEUS_WorldGen.js, DEUS_Levels.js (218 ms)
+INFO world seed 1074124084, size 256, areas 1x1, zRange -2..2 (state has no zRange: legacy)
+INFO space 5 ft cell, 2 ft stratum
+=== Running Geological Strata Test Suite ===
+PASS geology.api_present - WorldGen.geologyAt and Levels.stratumAt are defined
+PASS geology.surface_strata_valid - sampled 196 cells: 5 stone types found (granite, slate, limestone, sandstone, basalt), all match catalog
+PASS geology.determinism - cell (128,128) produced identical stone 'slate' across repeated calls
+PASS geology.physical_properties_attached - stone Slate: density 2.65, compressiveStrength 65, workability 75
+PASS geology.upper_earth_strata - Z=-1 stratum: stone 'limestone', depthBand 'upper_earth'
+PASS geology.deep_earth_strata - Z=-2 stratum: stone 'slate', depthBand 'deep'
+PASS geology.levels_stratum_at - Levels.stratumAt matches WorldGen.geologyAt: slate
+PASS geology.cell_info_contains_geology - WorldGen.cellInfo(128,128,0) includes geology: stone 'slate'
+PASS geology.levels_cell_at_contains_stratum - Levels.cellAt(64,64,-1) includes stratum: stone 'limestone'
+PASS geology.coupled_outer_substrate - seed 18 (100, 100), coupling on, -16..15; Z-3: columnBiomeId rooted_loam, biomeAt rooted_loam (want rooted_loam); Z-9: columnBiomeId deep_mine_belt, biomeAt deep_mine_belt (want deep_mine_belt); Z-16: columnBiomeId deep_mine_belt, biomeAt deep_mine_belt (want deep_mine_belt)
+
+RESULT: 10 passed, 0 failed (exit 0)
+
+EXIT 0
+$ git -c core.autocrlf=false -c core.eol=lf clone --shared --no-checkout C:\Users\snewt\.deus_worktrees\lane-db C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-5
+Cloning into 'C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-5'...
+done.
+
+EXIT 0
+$ git config core.autocrlf false
+
+EXIT 0
+$ git config core.eol lf
+
+EXIT 0
+$ git checkout --detach 96e12464
+HEAD is now at 96e12464 [codex] WG.00.44 checkpoint scanner correction at Rule 10 stop
+
+EXIT 0
+$ git rev-parse HEAD
+96e12464c0e16b7543a14c145d177704bd73ea17
+
+EXIT 0
+$ git status --porcelain
+
+EXIT 0
+$ node tools/test_new_game_year0.js
+=== DEUS NEW GAME YEAR 0 TEST SUITE (INV-SIM-01 / ATK-YEAR0-001) ===
+
+--- Section A: setup window and embark payload (DEUS_FactionMenus.js) ---
+  [PASS] window_default_year_is_0: Window_NewGameSetup.currentYear() === 0 (expected 0)
+  [PASS] embark_year_is_0: UF.NewGameSetup.year === 0 on untouched embark (expected 0)
+  [PASS] fallback_embark_year_is_0: Fallback UF.NewGameSetup.year === 0 when window is null (expected 0)
+  [PASS] key_left_at_0_stays_0: Left arrow at year 0 -> year 0, box "0", 0 cursor sounds (expected 0, "0", 0)
+  [PASS] key_shift_left_clamps_to_0: Shift+Left from year 5 -> year 0, box "0" (expected 0, "0")
+  [PASS] key_pagedown_clamps_to_0: PageDown from 3 -> 0, again -> 0 (expected 0, 0)
+  [PASS] key_left_reaches_0_from_1: Left arrow from year 1 -> 0 (expected 0)
+  [PASS] key_right_left_round_trip: 0 -> Right -> 1 -> Left -> 0 (expected 1, 0)
+  [PASS] key_shift_right_clamps_999: Shift+Right from 995 -> 999 (expected 999)
+  [PASS] set_year_0_is_0: setYear(0) -> 0, box "0" (expected 0, "0")
+  [PASS] set_year_negative_clamps_0: setYear(-10) -> 0 (expected 0)
+  [PASS] set_year_non_numeric_is_0: setYear("abc"/undefined/null/"") -> 0/0/0/0 (expected 0/0/0/0)
+  [PASS] set_year_over_999_clamps: setYear(1200) -> 999 (expected 999)
+  [PASS] typed_0_sets_year_0: Typing "0" over 42 -> _year 0, currentYear 0 (expected 0, 0)
+  [PASS] blur_empty_box_is_0: Clearing the box then leaving it -> 0, box "0" (expected 0, "0")
+  [PASS] blur_negative_or_garbage_is_0: Leaving the box holding "-5"/"abc" -> 0/0 (expected 0/0)
+  [PASS] box_0_overrides_stale_year: Box "0" with stale _year 42 -> currentYear 0 (expected 0)
+  [PASS] embark_payload_shape: Untouched payload {"faction":"human","biome":"grassland_temperate","year":0,"seed":168030814,"worldSize":256,"fogOfWar":false} (expected keys faction,fogOfWar,seed,worldSize,year; integer year 0; seed 1..2147483646)
+  [PASS] embark_payload_json_round_trip: JSON round trip of payload -> year 0 (expected 0, key present)
+  [PASS] embark_calls_setup_new_game_once: DataManager.setupNewGame called 1 times on one embark (expected 1)
+  [PASS] typed_then_decremented_embarks_0: Typed 3, Left x4, Start -> payload year 0 (expected 0)
+  [PASS] embark_with_box_still_focused_is_0: Typed 12 then 0, Start without leaving the box -> payload year 0, box destroyed true (expected 0, true)
+
+--- Section B: clock save/load keeps year 0 (DEUS_Core.js) ---
+  [PASS] save_writes_year_0: makeSaveContents at year 0 -> deusTime.year 0, ufTime.year 0 (expected 0, 0)
+  [PASS] load_restores_year_0: extractSaveContents of a year-0 save over clock year 7 -> 0 (expected 0)
+  [PASS] legacy_uftime_save_restores_year_0: extractSaveContents of a legacy ufTime-only year-0 save -> 0 (expected 0)
+  [PASS] core_loaded_without_errors: console.error calls while loading DEUS_Core: 0 (expected 0)
+
+--- Section C: headless New Game fed the Section A payload (DEUS_Core.js, DEUS_History.js) ---
+  [PASS] new_game_pipeline_ran: world:created listeners built history (true) with 0 console errors
+  [PASS] new_game_clock_year_is_0: Clock year after a Year 0 New Game: 0 (expected 0)
+  [PASS] new_game_save_year_is_0: deusTime.year in the first save of a Year 0 New Game: 0 (expected 0)
+  [PASS] clock_constructor_keeps_year_0: new Game_DEUSTime() with UF.NewGameSetup.year 0: year 0 (expected 0)
+  history after New Game: {"startYear":0,"years":0,"worldAge":0,"clockYear0":0,"demographicsCurrentYear":0,"demographicsStartYear":0,"units":72} (3600 ms)
+
+--- Section D: Rule 4 mutation checks ---
+  [PASS] mutant default_year_1 caught: 5 failing checks, targeted: window_default_year_is_0, embark_year_is_0
+  [PASS] mutant fallback_year_1 caught: 1 failing checks, targeted: fallback_embark_year_is_0
+  [PASS] mutant change_year_floor_1 caught: 6 failing checks, targeted: key_left_reaches_0_from_1
+  [PASS] mutant change_year_no_floor caught: 4 failing checks, targeted: key_left_at_0_stays_0, key_shift_left_clamps_to_0
+  [PASS] mutant set_year_floor_1 (pre-hardening code) caught: 4 failing checks, targeted: set_year_0_is_0
+  [PASS] mutant current_year_ignores_box_0 (pre-hardening code) caught: 1 failing checks, targeted: box_0_overrides_stale_year
+  [PASS] mutant typed_year_floor_1 caught: 2 failing checks, targeted: typed_0_sets_year_0
+  [PASS] mutant blur_floor_1 caught: 2 failing checks, targeted: blur_empty_box_is_0, blur_negative_or_garbage_is_0
+  [PASS] mutant payload_year_as_string caught: 6 failing checks, targeted: embark_payload_shape
+  [PASS] mutant payload_drops_year_0 caught: 6 failing checks, targeted: embark_payload_json_round_trip
+  [PASS] mutant save_coerces_year_0_to_1 caught: 2 failing checks, targeted: save_writes_year_0
+  [PASS] mutant load_coerces_year_0_to_1 caught: 2 failing checks, targeted: load_restores_year_0, legacy_uftime_save_restores_year_0
+  [PASS] mutant core_restores_or_1 (pre-ATK-YEAR0-002 code) caught: 1 failing checks, targeted: clock_constructor_keeps_year_0
+  [PASS] mutant history_founds_year_0_at_1 caught: 2 failing checks, targeted: new_game_clock_year_is_0, new_game_save_year_is_0
+  [PASS] mutant history_clock_floor_1 caught: 2 failing checks, targeted: new_game_clock_year_is_0, new_game_save_year_is_0
+  [PASS] section_c_checks_can_pass: with the clock fed the setup year, 4/4 Section C checks pass (clock year 0, save year 0; 3558 ms)
+
+==================================================
+SETUP CONTRACT PASSED: 30 gating checks, 15 mutants caught (ATK-YEAR0-001 closure criterion).
+INV-SIM-01 END-TO-END MET: clock, save and constructor all at year 0.
+==================================================
+
+EXIT 0
+$ git -c core.autocrlf=false -c core.eol=lf clone --shared --no-checkout C:\Users\snewt\.deus_worktrees\lane-db C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6
+Cloning into 'C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6'...
+done.
+
+EXIT 0
+$ git config core.autocrlf false
+
+EXIT 0
+$ git config core.eol lf
+
+EXIT 0
+$ git checkout --detach 96e12464
+HEAD is now at 96e12464 [codex] WG.00.44 checkpoint scanner correction at Rule 10 stop
+
+EXIT 0
+$ git rev-parse HEAD
+96e12464c0e16b7543a14c145d177704bd73ea17
+
+EXIT 0
+$ git status --porcelain
+
+EXIT 0
+$ node tools/sim/test_units.js
+PASS units_geometry_matches_space
+PASS kg_to_cp_rule
+PASS apportion_exact
+PASS overflow_refused
+PASS water_stratum_is_312000
+PASS gallons_are_derived
+PASS world_bound_safe
+RESULT: 7 passed, 0 failed
+
+EXIT 0
+$ node tools/test_sim_loader.js --mutant=return_null_on_missing --only=vm_loader_loads_ledger,missing_module_throws,every_vm_harness_installs_hook,scan_finds_known_harnesses,opener_registry,grid_pinned_by_hook
+MUTANT return_null_on_missing (expected to fail missing_module_throws)
+PASS vm_loader_loads_ledger - resolve("ledger") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\ledger.js; exports createLedger: function; same object as Node's require: true; resolve("hydro") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\hydro\index.js; sandbox require left alone: true
+FAIL missing_module_throws - returned null instead of throwing
+FAIL every_vm_harness_installs_hook - threw Error: VM_HARNESS_SCAN_LIMIT tools/society/test_militia.js:54: 32194 steps, 10004 ms |     at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:118:86) |     at stmt (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:451:28)
+FAIL scan_finds_known_harnesses - threw Error: VM_HARNESS_SCAN_LIMIT tools/society/test_militia.js:53: 32079 steps, 10001 ms |     at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:118:86) |     at stmt (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:451:28)
+PASS opener_registry - order Air, core, water; duplicate "core": UF.Sim.registerMatterOpener: "core" is already registered; bad fn: TypeError; empty name: TypeError; registry after a caller emptied its copy: 3; UF.Levels at register: undefined
+PASS grid_pinned_by_hook - fallback-3 fixture: {} -> 1x1, grid "shipped" -> 3x3, AreasX "2" -> 2x1, PluginManager set after install -> 1x1, legacy UF_World AreasX "4" -> 4x1; real DEUS_World.js -> 1x1; grid "3x3" refused: true
+RESULT: 3 passed, 3 failed
+
+EXIT 1
+EXPECTED_NAMED_FAILURE return_null_on_missing false
+$ node tools/test_sim_loader.js --mutant=fixed_list_scan --only=vm_loader_loads_ledger,missing_module_throws,every_vm_harness_installs_hook,scan_finds_known_harnesses,opener_registry,grid_pinned_by_hook
+MUTANT fixed_list_scan (expected to fail every_vm_harness_installs_hook)
+PASS vm_loader_loads_ledger - resolve("ledger") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\ledger.js; exports createLedger: function; same object as Node's require: true; resolve("hydro") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\hydro\index.js; sandbox require left alone: true
+PASS missing_module_throws - threw DEUS_SIM_MODULE_MISSING: UF.Sim.require("no_such_module_wg0044"): no such sim module; tried C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\no_such_module_wg0044\index.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\game\js\sim\no_such_module_wg0044\index.js; "../plugins/DEUS_World" -> TypeError; no host -> UF.Sim.require("ledger"): no such sim module; tried nothing (no require in this host)
+FAIL every_vm_harness_installs_hook - threw Error: VM_HARNESS_SCAN_LIMIT C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\society\test_person_identity.js:78: 43363 steps, 10005 ms |     at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:118:86) |     at stmt (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:451:28)
+PASS scan_finds_known_harnesses - 10 hits; known hits missing: none; excluded files found: none; fixtures: 42; classified wrong: none
+PASS opener_registry - order Air, core, water; duplicate "core": UF.Sim.registerMatterOpener: "core" is already registered; bad fn: TypeError; empty name: TypeError; registry after a caller emptied its copy: 3; UF.Levels at register: undefined
+PASS grid_pinned_by_hook - fallback-3 fixture: {} -> 1x1, grid "shipped" -> 3x3, AreasX "2" -> 2x1, PluginManager set after install -> 1x1, legacy UF_World AreasX "4" -> 4x1; real DEUS_World.js -> 1x1; grid "3x3" refused: true
+RESULT: 5 passed, 1 failed
+
+EXIT 1
+EXPECTED_NAMED_FAILURE fixed_list_scan true
+$ node tools/test_sim_loader.js --mutant=unpinned_grid --only=vm_loader_loads_ledger,missing_module_throws,every_vm_harness_installs_hook,scan_finds_known_harnesses,opener_registry,grid_pinned_by_hook
+MUTANT unpinned_grid (expected to fail grid_pinned_by_hook)
+PASS vm_loader_loads_ledger - resolve("ledger") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\ledger.js; exports createLedger: function; same object as Node's require: true; resolve("hydro") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\hydro\index.js; sandbox require left alone: true
+PASS missing_module_throws - threw DEUS_SIM_MODULE_MISSING: UF.Sim.require("no_such_module_wg0044"): no such sim module; tried C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\no_such_module_wg0044\index.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\game\js\sim\no_such_module_wg0044\index.js; "../plugins/DEUS_World" -> TypeError; no host -> UF.Sim.require("ledger"): no such sim module; tried nothing (no require in this host)
+FAIL every_vm_harness_installs_hook - threw Error: VM_HARNESS_SCAN_LIMIT tools/society/test_militia.js:87: 31936 steps, 10008 ms |     at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:118:86) |     at expr (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:381:30)
+FAIL scan_finds_known_harnesses - threw Error: VM_HARNESS_SCAN_LIMIT tools/society/test_militia.js:148: 31972 steps, 10016 ms |     at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:118:86) |     at stmt (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:451:28)
+PASS opener_registry - order Air, core, water; duplicate "core": UF.Sim.registerMatterOpener: "core" is already registered; bad fn: TypeError; empty name: TypeError; registry after a caller emptied its copy: 3; UF.Levels at register: undefined
+FAIL grid_pinned_by_hook - fallback-3 fixture: {} -> 3x3, grid "shipped" -> 3x3, AreasX "2" -> 2x3, PluginManager set after install -> 3x3, legacy UF_World AreasX "4" -> 4x3; real DEUS_World.js -> 1x1; grid "3x3" refused: true
+RESULT: 3 passed, 3 failed
+
+EXIT 1
+EXPECTED_NAMED_FAILURE unpinned_grid false
+$ node tools/test_sim_loader.js --mutant=hook_wrong_sandbox --only=vm_loader_loads_ledger,missing_module_throws,every_vm_harness_installs_hook,scan_finds_known_harnesses,opener_registry,grid_pinned_by_hook
+MUTANT hook_wrong_sandbox (expected to fail every_vm_harness_installs_hook)
+PASS vm_loader_loads_ledger - resolve("ledger") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\ledger.js; exports createLedger: function; same object as Node's require: true; resolve("hydro") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\hydro\index.js; sandbox require left alone: true
+PASS missing_module_throws - threw DEUS_SIM_MODULE_MISSING: UF.Sim.require("no_such_module_wg0044"): no such sim module; tried C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\no_such_module_wg0044\index.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\game\js\sim\no_such_module_wg0044\index.js; "../plugins/DEUS_World" -> TypeError; no host -> UF.Sim.require("ledger"): no such sim module; tried nothing (no require in this host)
+FAIL every_vm_harness_installs_hook - threw Error: VM_HARNESS_SCAN_LIMIT tools/society/test_militia.js:88: 32414 steps, 10006 ms |     at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:118:86) |     at expr (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:381:30)
+FAIL scan_finds_known_harnesses - threw Error: VM_HARNESS_SCAN_LIMIT tools/society/test_militia.js:108: 32434 steps, 10002 ms |     at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:118:86) |     at expr (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:381:30)
+PASS opener_registry - order Air, core, water; duplicate "core": UF.Sim.registerMatterOpener: "core" is already registered; bad fn: TypeError; empty name: TypeError; registry after a caller emptied its copy: 3; UF.Levels at register: undefined
+PASS grid_pinned_by_hook - fallback-3 fixture: {} -> 1x1, grid "shipped" -> 3x3, AreasX "2" -> 2x1, PluginManager set after install -> 1x1, legacy UF_World AreasX "4" -> 4x1; real DEUS_World.js -> 1x1; grid "3x3" refused: true
+RESULT: 4 passed, 2 failed
+
+EXIT 1
+EXPECTED_NAMED_FAILURE hook_wrong_sandbox false
+$ node tools/test_sim_loader.js --mutant=hook_unreachable --only=vm_loader_loads_ledger,missing_module_throws,every_vm_harness_installs_hook,scan_finds_known_harnesses,opener_registry,grid_pinned_by_hook
+MUTANT hook_unreachable (expected to fail every_vm_harness_installs_hook)
+PASS vm_loader_loads_ledger - resolve("ledger") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\ledger.js; exports createLedger: function; same object as Node's require: true; resolve("hydro") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\hydro\index.js; sandbox require left alone: true
+PASS missing_module_throws - threw DEUS_SIM_MODULE_MISSING: UF.Sim.require("no_such_module_wg0044"): no such sim module; tried C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\no_such_module_wg0044\index.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\game\js\sim\no_such_module_wg0044\index.js; "../plugins/DEUS_World" -> TypeError; no host -> UF.Sim.require("ledger"): no such sim module; tried nothing (no require in this host)
+FAIL every_vm_harness_installs_hook - threw Error: VM_HARNESS_SCAN_LIMIT tools/society/test_militia.js:241: 32323 steps, 10010 ms |     at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:118:86) |     at expr (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:381:30)
+FAIL scan_finds_known_harnesses - threw Error: VM_HARNESS_SCAN_LIMIT tools/society/test_militia.js:86: 32649 steps, 10007 ms |     at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:118:86) |     at expr (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:381:30)
+PASS opener_registry - order Air, core, water; duplicate "core": UF.Sim.registerMatterOpener: "core" is already registered; bad fn: TypeError; empty name: TypeError; registry after a caller emptied its copy: 3; UF.Levels at register: undefined
+PASS grid_pinned_by_hook - fallback-3 fixture: {} -> 1x1, grid "shipped" -> 3x3, AreasX "2" -> 2x1, PluginManager set after install -> 1x1, legacy UF_World AreasX "4" -> 4x1; real DEUS_World.js -> 1x1; grid "3x3" refused: true
+RESULT: 4 passed, 2 failed
+
+EXIT 1
+EXPECTED_NAMED_FAILURE hook_unreachable false
+$ node tools/test_sim_loader.js --mutant=hook_after_eval --only=vm_loader_loads_ledger,missing_module_throws,every_vm_harness_installs_hook,scan_finds_known_harnesses,opener_registry,grid_pinned_by_hook
+MUTANT hook_after_eval (expected to fail every_vm_harness_installs_hook)
+PASS vm_loader_loads_ledger - resolve("ledger") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\ledger.js; exports createLedger: function; same object as Node's require: true; resolve("hydro") = C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\hydro\index.js; sandbox require left alone: true
+PASS missing_module_throws - threw DEUS_SIM_MODULE_MISSING: UF.Sim.require("no_such_module_wg0044"): no such sim module; tried C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\js\sim\no_such_module_wg0044\index.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\game\game\js\sim\no_such_module_wg0044\index.js; "../plugins/DEUS_World" -> TypeError; no host -> UF.Sim.require("ledger"): no such sim module; tried nothing (no require in this host)
+FAIL every_vm_harness_installs_hook - threw Error: VM_HARNESS_SCAN_LIMIT tools/society/test_militia.js:652: 32324 steps, 10016 ms |     at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:118:86) |     at stmt (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:451:28)
+FAIL scan_finds_known_harnesses - threw Error: VM_HARNESS_SCAN_LIMIT tools/society/test_militia.js:108: 32434 steps, 10009 ms |     at tick (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:118:86) |     at expr (C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\gate-6\tools\lib\vm_harness_scan.js:381:30)
+PASS opener_registry - order Air, core, water; duplicate "core": UF.Sim.registerMatterOpener: "core" is already registered; bad fn: TypeError; empty name: TypeError; registry after a caller emptied its copy: 3; UF.Levels at register: undefined
+PASS grid_pinned_by_hook - fallback-3 fixture: {} -> 1x1, grid "shipped" -> 3x3, AreasX "2" -> 2x1, PluginManager set after install -> 1x1, legacy UF_World AreasX "4" -> 4x1; real DEUS_World.js -> 1x1; grid "3x3" refused: true
+RESULT: 4 passed, 2 failed
+
+EXIT 1
+EXPECTED_NAMED_FAILURE hook_after_eval false
+$ node tools/test_32_levels_generation.js --mutant=checksum_all_levels
+=== DEUS 32-LAYER WORLD GENERATION TEST SUITE ===
+  [PASS] world_default_zrange_is_32
+  [FAIL] core_entries_only: keys: [-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+
+EXIT 1
+EXPECTED_NAMED_FAILURE checksum_all_levels false
+$ git -c core.autocrlf=false -c core.eol=lf clone --shared --no-checkout C:\Users\snewt\.deus_worktrees\lane-db C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\base
+Cloning into 'C:\Users\snewt\AppData\Local\Temp\wg0044-fix-gates-ulCnny\base'...
+done.
+
+EXIT 0
+$ git config core.autocrlf false
+
+EXIT 0
+$ git config core.eol lf
+
+EXIT 0
+$ git checkout --detach 7f91efbb
+HEAD is now at 7f91efbb [pm] open wave-2B natural-world lanes db, dc (WORK-GATE wave 2B): manifests + briefs + registry gate sync
+
+EXIT 0
+$ git rev-parse HEAD
+7f91efbbfb7d21a99bfaef7cbcede6a87d53bf0d
+
+EXIT 0
+$ git status --porcelain
+
+EXIT 0

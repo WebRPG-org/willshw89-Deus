@@ -29,3 +29,16 @@ module names, and plugin-registry paths, then rerun the focused scan and all gat
 No additional implementation patch is authorized by this checkpoint; user direction
 is required before a third aggregate cost correction. Foreground gate evidence and
 a writer checkpoint commit can still be recorded without changing that code.
+
+## Checkpoint evidence handoff, 2026-10-01
+
+Code checkpoint: `96e12464c0e16b7543a14c145d177704bd73ea17`. All six manifest commands
+ran in separate fresh clones: five exit 0, test_sim_loader exits 1. The isolated
+36 source cases and 11 hook cases pass. The fresh-clone fixed_list_scan mutant
+also times out on the genuine target harness tools/society/test_person_identity.js,
+so the non-target prefilter correction alone cannot yet be presented as sufficient.
+All mutation commands ran, but the required aggregate isolated-failure proof is not
+established. See REPORT.md and evidence/fix_round_96e12464.txt for exact outcomes.
+The foreground runner finished exit 1; no owned test child remains running.
+Writer edits are stopped and the active claim is released for PM inspection.
+This is a blocked checkpoint, not lane completion or independent certification.
