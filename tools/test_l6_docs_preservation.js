@@ -13,6 +13,7 @@ const { execFileSync, spawnSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "..");
 const BASE = "9271173f2b6a11bf624edfac54df28fe7471357b";
 const INVENTORY = "tasks/OPS.PRUNE.06/lane-cu/preservation_inventory.json";
+const RETARGETED_INVENTORY = "tasks/OPS.PRUNE.06/lane-cu/retargeted_files.json";
 const LIVE = "Anim Camera Colonists ColonyOverseer Combat DayNight Doors Ecology Environment Factions Fire Floors History Interact Items Jobs Levels Look NaturalConnections Objects Ownership Select Sheet Speech Stance Talk Test Tiles TimeSpeed Walls Wildlife World WorldGen".split(" ");
 const ARCHIVED = ["DEUS_PHYSICAL_WORLD_SIMULATION_SPEC.md", "DEUS_VerticalBiomes.md",
     ..."CultureGrowth Dialogue FarmView FireSafety Goals Gumps History_Profile Outposts ProfileTabs Roads Skills Tech AssetInventory".split(" ").map(n => `UF_${n}.md`)];
@@ -25,6 +26,21 @@ const MOVES = new Map([
     ...ARCHIVED.map(n => [`docs/systems/${n}`, `docs/archive/systems/${n}`])
 ]);
 const TARGETS = new Set([...MOVES.values(), ...RECONCILED, ...PROTECTED]);
+
+const STALE_LOCATORS = {
+    "DEUS_History.md:106": "shifted to line 108 (physical grave ownership gate)",
+    "DEUS_Ecology.md:8": "shifted to line 10 (census/bucket director; line 8 is blank)",
+    "DEUS_Floors.md:44": "shifted to line 50 (kindAt definition)",
+    "DEUS_World.md:151": "shifted to line 181 (stance selection_square failure)"
+};
+
+const SEMANTIC_LINE_CHECKS = {
+    "DEUS_History.md:108": { pattern: /grave|ruin|burial/i, desc: "grave/ruin/burial gate" },
+    "DEUS_Ecology.md:10": { pattern: /bucket|census|director/i, desc: "bucket/census director" },
+    "DEUS_Floors.md:50": { pattern: /kindAt/i, desc: "kindAt" },
+    "DEUS_World.md:181": { pattern: /selection_square/i, desc: "selection_square" }
+};
+
 const MUTANTS = {
     missing_live: { file: "docs/systems/DEUS_World.md", value: () => null, error: "missing live:" },
     missing_archive: { file: "docs/archive/systems/UF_Roads.md", value: () => null, error: "missing preserved:" },
@@ -39,7 +55,10 @@ const MUTANTS = {
     corrupt_anchor: { file: "docs/systems/README.md", value: s => s.replace("(DEUS_World.md)", "(DEUS_World.md#missing-l6-heading)"), error: "broken Markdown anchor:" },
     lost_live_text: { file: "docs/systems/DEUS_World.md", value: () => "# DEUS_World\n", error: "live text lost:" },
     lost_colonists_reflex: { file: "docs/systems/DEUS_Colonists.md", value: s => s.replace(/safeCellNear/g, "lostReflex"), error: "Colonists reflex text lost:" },
-    missing_inventory_row: { file: INVENTORY, value: s => { const x = JSON.parse(s); x.live.pop(); return JSON.stringify(x); }, error: "live inventory mismatch" }
+    missing_inventory_row: { file: INVENTORY, value: s => { const x = JSON.parse(s); x.live.pop(); return JSON.stringify(x); }, error: "live inventory mismatch" },
+    engine_rules_typo: { file: "docs/ENGINE_RULES.md", value: s => s.replace("DEUS_World.md", "DEUS_Wor1d.md"), error: "broken-reference diagnostic:" },
+    stale_history_locator: { file: "docs/adr/ADR-003_sim_render_split_and_lod.md", value: s => s.replace("DEUS_History.md:108", "DEUS_History.md:106"), error: "stale line locator:" },
+    stale_ecology_locator: { file: "docs/audits/LIVING_WORLD_GAP_AUDIT.md", value: s => s.replace("DEUS_Ecology.md:10", "DEUS_Ecology.md:8"), error: "stale line locator:" }
 };
 const args = process.argv.slice(2);
 const mutantArg = args.find(a => a.startsWith("--mutant="));
@@ -84,16 +103,23 @@ function preservedLines(source, target, label, skip = 1) {
 }
 function resolveLink(from, url) {
     let decoded;
-    try { decoded = decodeURIComponent(url); } catch { return { target: "INVALID_ENCODING", anchor: "" }; }
+    try { decoded = decodeURIComponent(url); } catch { return { target: "INVALID_ENCODING", anchor: "", line: null }; }
     if (/^(?:https?:|mailto:|data:)/i.test(decoded)) return null;
-    const [raw, anchor = ""] = decoded.split("#");
+    let [raw, hashPart = ""] = decoded.split("#");
     const clean = raw.split("?")[0].replace(/\\/g, "/");
+    let line = null;
+    const lineMatch = clean.match(/:(\d+)(?:-(\d+))?$/);
+    let pathOnly = clean;
+    if (lineMatch) {
+        line = parseInt(lineMatch[1], 10);
+        pathOnly = clean.slice(0, lineMatch.index);
+    }
     let target;
-    if (!clean) target = from;
-    else if (clean.includes("/docs/")) target = "docs/" + clean.split("/docs/").pop();
-    else if (clean.startsWith("docs/")) target = clean;
-    else target = path.posix.normalize(path.posix.join(path.posix.dirname(from), clean));
-    return { target, anchor };
+    if (!pathOnly) target = from;
+    else if (pathOnly.includes("/docs/")) target = "docs/" + pathOnly.split("/docs/").pop();
+    else if (pathOnly.startsWith("docs/")) target = pathOnly;
+    else target = path.posix.normalize(path.posix.join(path.posix.dirname(from), pathOnly));
+    return { target, anchor: hashPart, line };
 }
 function anchors(text) {
     const counts = new Map();
@@ -111,6 +137,10 @@ function validate() {
     sameList(inventory.archived.map(r => `${r.source}->${r.target}`), ARCHIVED.map(n => `docs/systems/${n}->docs/archive/systems/${n}`), "archive");
     sameList(inventory.protected.map(r => r.path), PROTECTED, "protected");
     sameList(inventory.reconciliation.map(r => r.target), RECONCILED, "reconciliation");
+
+    const retargetedFiles = JSON.parse(read(RETARGETED_INVENTORY));
+    check(Array.isArray(retargetedFiles) && retargetedFiles.length > 0, "retargeted files inventory missing or empty");
+
     for (const n of LIVE) {
         const target = `docs/systems/DEUS_${n}.md`, source = `docs/systems/UF_${n}.md`;
         const s = read(target);
@@ -142,20 +172,49 @@ function validate() {
             ...Array.from(withoutCode.matchAll(/\]\(<?([^\s)>]+)>?(?:\s+"[^"]*")?\)/g), m => m[1]),
             ...Array.from(withoutCode.matchAll(/^\s*\[[^\]]+\]:\s*<?([^\s>]+)>?/gm), m => m[1])
         ];
-        for (const url of urls) {
+        // Also extract code-spanned and plain path references
+        const docRefRegex = /(?:[`(\[<]?)(?:(?:\.\.\/)*(?:docs\/)?(?:archive\/)?systems\/([A-Za-z0-9_.-]+\.md)(?::\d+(?:-\d+)?)?(?:#[a-zA-Z0-9_-]+)?)(?:[`\)\]>]?)/g;
+        let refMatch;
+        while ((refMatch = docRefRegex.exec(withoutCode)) !== null) {
+            urls.push(refMatch[0].replace(/^[`(\[<]/, '').replace(/[`\)\]>]$/, ''));
+        }
+
+        const uniqueUrls = [...new Set(urls)];
+        for (const url of uniqueUrls) {
             const link = resolveLink(p, url); if (!link) continue;
             const related = /^(?:docs\/systems\/|docs\/archive\/systems\/)/.test(link.target) || TARGETS.has(link.target) || p.startsWith("docs/systems/");
             if (!related) continue; // Not a general-purpose audit of unrelated historical links.
+            const baseName = path.basename(link.target);
+            const isRetargeted = baseName.startsWith("DEUS_") ||
+                link.target.includes("archive/systems") ||
+                MOVES.has(link.target) ||
+                TARGETS.has(link.target);
+            if (!isRetargeted) continue;
+
             links++;
             check(!MOVES.has(link.target), `stale documentation path: ${p} -> ${url}`);
             const destination = read(link.target);
-            check(destination !== null, `broken Markdown link: ${p} -> ${url}`);
-            if (destination !== null && link.anchor && link.target.endsWith(".md")) {
-                check(anchors(destination).includes(link.anchor), `broken Markdown anchor: ${p} -> ${url}`);
+            check(destination !== null, `broken-reference diagnostic: broken Markdown link: ${p} -> ${url}`);
+            if (destination !== null) {
+                if (link.anchor && link.target.endsWith(".md")) {
+                    check(anchors(destination).includes(link.anchor), `broken Markdown anchor: ${p} -> ${url}`);
+                }
+                if (link.line !== null) {
+                    const targetLines = normalize(destination).split("\n");
+                    check(link.line >= 1 && link.line <= targetLines.length, `broken-reference diagnostic: line out of bounds: ${p} -> ${url} (max ${targetLines.length})`);
+                    const key = `${baseName}:${link.line}`;
+                    if (STALE_LOCATORS[key]) {
+                        check(false, `stale line locator: ${p} -> ${url} (${STALE_LOCATORS[key]})`);
+                    }
+                    if (SEMANTIC_LINE_CHECKS[key]) {
+                        const lineText = targetLines[link.line - 1] || "";
+                        check(SEMANTIC_LINE_CHECKS[key].pattern.test(lineText), `stale line locator: ${p} -> ${url} (expected ${SEMANTIC_LINE_CHECKS[key].desc})`);
+                    }
+                }
             }
         }
     }
-    console.log(`Inventory: 33 live, 15 archived, 9 protected docs + Households plugin, 2 Colonists source snapshots`);
+    console.log(`Inventory: 33 live, 15 archived, 9 protected docs + Households plugin, 2 Colonists source snapshots, ${retargetedFiles.length} retargeted scope files`);
     console.log(`Links: ${documents} mutable Markdown documents scanned; ${links} relevant destinations checked`);
 }
 try { validate(); } catch (e) { errors.push(`validator exception: ${e.message}`); }

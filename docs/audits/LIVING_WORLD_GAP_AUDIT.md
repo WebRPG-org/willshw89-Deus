@@ -766,7 +766,7 @@ These are recommendations to the Coordinator. Claude does not change WBS statuse
 | `docs/RISK_REGISTER.md:60` | LIFE-001 `ARCHITECTURALLY_MITIGATED` | Mitigations are PLANNED; several code paths leak mass (F-04). The same holds for LIFE-002 (line 61, VEG-1), LIFE-003 (line 62) and NAT-003 (line 74). |
 | `docs/INVARIANT_REGISTRY.md:53` | INV-SIM-03: finite resources "cannot be fabricated without material cost" | Violated by `DEUS_Interact.js:167`, `DEUS_Ecology.js:739` and the stone-wall quarry. |
 | `docs/archive/systems/UF_Roads.md:3` | Built, "not yet registered" | The plugin is archived; live code still calls `UF.Roads`. |
-| `docs/systems/DEUS_Ecology.md:8` | A bucket and census director | The code is version 1 (`DEUS_Ecology.js:44`); the catalog's `ecology` v2 keys are unread. |
+| `docs/systems/DEUS_Ecology.md:10` | A bucket and census director | The code is version 1 (`DEUS_Ecology.js:44`); the catalog's `ecology` v2 keys are unread. |
 | `game/data/DEUS_ResourceRegistry.json:509` | A conservation rule | Never loaded by any file in `game/js`. |
 | `DEUS_Items.js:7`, `DEUS_Walls.js:7` | "decay rates", "material durability" | No such code. |
 | `DEUS_Wildlife.js:37` | "a throttled wander AI" | Removed (`DEUS_Wildlife.js:1197`). |

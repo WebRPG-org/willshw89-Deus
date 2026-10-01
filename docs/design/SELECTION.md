@@ -54,7 +54,7 @@ Line numbers were read on 2026-09-19, early afternoon. UF_Jobs, UF_Interact, UF_
   - `UF.Look.isOverUI()`: any open window in the window layer (`UF_Look.js` Look.isOverUI). UF_Talk wraps it to return true while a talk is open (`UF_Talk.js:1875`).
   - `UF.Interact.handleMouse()`: true while the menu is open or has just taken a click. UF_Talk wraps it to return true while a talk is open (:1866).
 - **Legacy windows sit outside the window layer.** UF_Gumps' container and paperdoll, UF_Dialogue, UF_Crafting and UF_DFWorld's profile are added straight to the scene (`SceneManager._scene.addChild`, e.g. `UF_Gumps.js:312, 326`), so none of the three tests above sees them. UF_Select also scans the scene's direct children for open `Window`s (§3.6).
-- **Only one unit can be selected.** `$colonyManager.selectedColonist` holds one colonist (`UF_ColonyOverseer.js:95-121`). UF_Stance draws one selection-corner sprite for it (`UF_Stance.js:316-337`). UF_Stance's `selection_square` check already fails before this work, with and without the spawn guard (`docs/systems/DEUS_World.md:151`); the cause is not recorded. UF_Stance is Gemini's file, so UF_Select neither changes it nor relies on that check (§5.3).
+- **Only one unit can be selected.** `$colonyManager.selectedColonist` holds one colonist (`UF_ColonyOverseer.js:95-121`). UF_Stance draws one selection-corner sprite for it (`UF_Stance.js:316-337`). UF_Stance's `selection_square` check already fails before this work, with and without the spawn guard (`docs/systems/DEUS_World.md:181`); the cause is not recorded. UF_Stance is Gemini's file, so UF_Select neither changes it nor relies on that check (§5.3).
 - **UF_Construction's click mode is dead code.** It aliases `processMapTouch`, which the Overseer replaced with a no-op. Its dock was removed (`UF_Construction.js:178-200`), so it can't collide.
 
 ---
@@ -574,7 +574,7 @@ Suites that already fail on a snapshot without UF_Select (e.g. stance `selection
 - **Marker cost in UF_Interact.** The marker layer filters the whole job list every frame and draws one sprite per designation in view. At zoom 1/3 a full-screen box of trees could mean hundreds of sprites. `select.big_rect_frame_time` measures it. If it fails, the fix belongs in UF_Interact (claimed by the five-level run now), not in UF_Select.
 - **Duplicate designations from the menu.** The right-click menu offers "Chop down oak" again on an oak that is already designated, and makes a second job. The area tool skips such cells. A note for UF_Interact's owner.
 - **UF_DFWorld's Shift.** A legacy plugin opens a profile on a Shift press when a `_dfProfile` event stands in front of the invisible player (`UF_DFWorld.js:490-496`). It can collide with Shift-select, rarely. Retiring that key is the user's call.
-- **UF_Stance's `selection_square` fails as of 2026-09-19** (`docs/systems/DEUS_World.md:151`). UF_Select reuses UF_Stance's bitmap and pulse but has its own marker check. Gemini owns the fix.
+- **UF_Stance's `selection_square` fails as of 2026-09-19** (`docs/systems/DEUS_World.md:181`). UF_Select reuses UF_Stance's bitmap and pulse but has its own marker check. Gemini owns the fix.
 - **An empty box without Shift clears the selection** (the RTS convention). If the user prefers that an empty box leaves the selection alone, it is one condition.
 - **Right-click never moves units by itself.** V34/V38 make right-click the options menu. If the user wants RTS-style "right-click moves", that changes V34/V38 for the case where units are selected, and needs their decision.
 

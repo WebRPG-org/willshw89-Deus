@@ -2,11 +2,9 @@
   "version": 1,
   "description": "Explicit versioned list of active task branches and reference branches tracked on the Project DEUS Control Board (docs/STATUS.md). Updated by coordinator upon lane launch or retirement.",
   "activeLanes": [
-    "task/lane-cq",
     "task/lane-co",
-    "task/lane-cr",
-    "task/lane-cs2",
-    "task/lane-cw",
+    "task/lane-ct",
+    "task/lane-cu",
     "task/art-temperate-induction",
     "task/lane-a",
     "task/lane-bd",
@@ -18,8 +16,7 @@
     "task/lane-cl",
     "task/lane-e",
     "task/lane-h",
-    "task/lane-pm-streamline",
-    "task/lane-cu"
+    "task/lane-pm-streamline"
   ],
   "referenceBranches": [
     "task/lane-cs",
@@ -31,6 +28,12 @@
     "task/lane-bw",
     "task/lane-by",
     "task/lane-bz",
-    "task/lane-cm"
+    "task/lane-cm",
+    "task/lane-cq",
+    "task/lane-cr",
+    "task/lane-cs2",
+    "task/lane-cw",
+    "task/lane-cw2",
+    "task/lane-cx"
   ]
 }
