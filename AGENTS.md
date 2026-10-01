@@ -118,8 +118,8 @@ Player-facing text never uses Ultima or DF proper nouns or signature terms (Avat
 Cross-model agent roles, decision authorities, and responsibilities are canonically governed by [`docs/CANONICAL_ROLES.md`](file:///c:/Users/snewt/OneDrive/Desktop/UF/docs/CANONICAL_ROLES.md) (Owner Directive 2026-09-25):
 - **Gemini / Antigravity**: Coordinator, WBS controller, integration authority, non-living art production pipeline via Google Nano Banana Pro. Does not self-certify.
 - **Claude / Fable**: Primary implementer for engine, simulation, and society leaves.
-- **Grok**: Independent adversarial review, mutation design, defect closure, performance attack plans.
-- **Codex**: Bounded tooling, test harnesses, scripts, governance & telemetry utilities.
+- **Grok**: Independent adversarial review, mutation design, defect closure, performance attack plans; production code writer in a lane whose manifest names Grok (natural-world lanes under DEC-058; other lanes while Claude is constrained, DEC-031 item 1; `docs/CANONICAL_ROLES.md` Section 2.1).
+- **Codex**: Bounded tooling, test harnesses, scripts, governance & telemetry utilities; production code writer in natural-world lanes whose manifest names Codex (DEC-058; `docs/CANONICAL_ROLES.md` Section 2.1).
 
 Who touches what:
 | Path | Owner |

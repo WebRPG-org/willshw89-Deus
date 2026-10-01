@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "registryVersion": "1.0.0",
-  "lastUpdated": "2026-09-28T20:11:00Z",
+  "lastUpdated": "2026-10-01",
   "repository": "willshw89/Deus",
-  "mainSha": "4100f7ff124319a0e2d886fd0fa44b7dfe7335b3",
+  "mainSha": "b21cfe622202462a4e6916900c6da1e9fa329ae5",
   "activeMilestone": "Pre-Faction World Lock",
   "governingPhaseLock": "DEC-037 (Natural World Phase Lock)",
   "rulesHierarchy": "DEC-039 (Owner Decisions -> SRD 5.1 -> Vanilla Minecraft -> DEUS Translation -> Original Content)",
@@ -23,12 +23,18 @@
     {
       "id": "PKG-02",
       "name": "Package 2: Physical Matter & Structural Mechanics",
-      "status": "COMPLETED",
-      "inGameProof": "VERIFIED",
-      "complete": true,
-      "proofEvidence": "DEUS-RPT-INENGINE-PROOF-01 / art/review/package_proofs.proof_pkg2_collapse_rubble.png",
+      "status": "REOPENED",
+      "inGameProof": "REQUIRED",
+      "complete": false,
+      "proofEvidence": "SUPERSEDED 2026-10-01: DEUS-RPT-INENGINE-PROOF-01 / art/review/package_proofs.proof_pkg2_collapse_rubble.png ran sim/structural against a caller-built object { solid: 50000, rubble: 0 } as its ledger (tools/test_package_proofs_ingame.js:84), not game/js/sim/ledger.js",
+      "reopened": {
+        "date": "2026-10-01",
+        "by": "PM (Claude) per WORK-GATE G02 section 4 (braintrust verdict, binding) under DEC-058",
+        "reason": "NAT.02.01 is a stub kernel (docs/AUDIT_LOG.md A11-1, BLOCKER): game/js/sim/structural/collapse.js:58-69 posts mass through ledger.transferMass, which game/js/sim/ledger.js does not export. The gate this registry named, tools/test_structural_support.js, exists in no ref.",
+        "rebuild": "NAT.02.01 parts 1-6 (lanes en, eo, ep, eq, fv, fr) on the shared leaves NAT.02.MASS and WG.CELL-WRITE"
+      },
       "causalOrder": 2,
-      "leaves": ["NAT.02.01"]
+      "leaves": ["NAT.02.01", "NAT.02.MASS", "WG.CELL-WRITE"]
     },
     {
       "id": "PKG-03",
@@ -66,7 +72,15 @@
     {
       "id": "PKG-07",
       "name": "Package 7: Fauna & Monsters",
-      "status": "DEPENDENCY_LOCKED",
+      "status": "UNLOCKED",
+      "inGameProof": "REQUIRED",
+      "complete": false,
+      "unlocked": {
+        "date": "2026-10-01",
+        "by": "PM (Claude) per WORK-GATE G02 section 4 (braintrust verdict, binding) under DEC-057, DEC-058 and DEC-059 item 1",
+        "scope": "DEC-057 re-scope: creatures, wildlife and monsters are placed by seeded rules per biome-depth cell (DEC-030) and danger tier (DEC-050); no ecology simulation, breeding, carrying capacity or food webs",
+        "aheadOfPKG04to06": "DEC-057 defers the soil, climate and flora simulations this package was locked behind; seeded placement needs only the biome cell, the danger field and the bestiary"
+      },
       "causalOrder": 7,
       "leaves": ["NAT.07.01"]
     },
@@ -111,13 +125,78 @@
     "NAT.02.01": {
       "title": "Structural Support & Cascading Collapse Engine",
       "package": "PKG-02",
-      "status": "DONE",
-      "lane": "lane-bv",
-      "writer": "Claude / Fable",
-      "reviewer": "Grok",
-      "reviewVerdict": "PASS",
-      "mergedSha": "54f67436",
-      "gateTests": ["tools/test_structural_support.js"]
+      "status": "REOPENED",
+      "reopened": {
+        "date": "2026-10-01",
+        "by": "PM (Claude) per WORK-GATE G02 section 4 (braintrust verdict, binding)",
+        "reason": "docs/AUDIT_LOG.md A11-1 (BLOCKER, stub kernel; review fdb5c0a0 gave PASS); docs/STATUS.md section 4 records NOT DONE",
+        "rebuild": "merged D3 S-CORE as NAT.02.01 parts 1-6: lane-en (part 1, wave 1, claude -> grok, tasks/NAT.02.01/lane-en/lane.json), lane-eo, lane-ep, lane-eq, lane-fv, lane-fr",
+        "closesWhen": "all six parts are merged; part 1 alone never closes the leaf"
+      },
+      "previousClosure": {
+        "lane": "lane-bv",
+        "manifestWriter": "minimax (tasks/NAT.02.01/lane-bv/lane.json)",
+        "landedWriterCommit": "fdb5c0a0 (subject tag [codex])",
+        "reviewer": "Grok",
+        "reviewVerdict": "PASS (tasks/NAT.02.01/lane-bv/review_grok_fdb5c0a0.md)",
+        "reviewCommit": "54f67436",
+        "mergeCommit": "c00ada72",
+        "manifestGate": "tools/test_structural_collapse.js",
+        "errata": "this entry said writer 'Claude / Fable', mergedSha 54f67436 (the review commit) and gate tools/test_structural_support.js (never existed)"
+      }
+    },
+    "NAT.02.MASS": {
+      "title": "Shared mass contract: integer centipounds, conversions, ledger and materials",
+      "package": "PKG-02",
+      "status": "PLANNED",
+      "kind": "SHARED leaf (merged D2/D3); lanes carry 'part N of M', never .0N sub-ids",
+      "soleWriterOf": ["game/js/sim/ledger.js", "game/js/sim/ledger_defaults.js", "game/js/sim/materials.js", "game/data/sim/materials.json", "game/js/sim/reclaim.js", "shared mass arithmetic and conversion helpers"],
+      "parts": "part 1 lane-dn (wave 1, codex -> grok, tasks/NAT.02.MASS/lane-dn/lane.json); proposed after the G02 dt-into-dp fold: do, dp (absorbs dt), dr, dq, ds, fu. G02 section 3 may add MASS parts (ensureCore/ensureChamber, band material rows), so the total is fixed once at the wave-2 D1 reconciliation",
+      "design": "braintrust DESIGN-D2_merged_chatgpt_pro.md line 284; DESIGN-D3_merged_chatgpt_pro.md lines 67 and 266 (2026-09-30)",
+      "decisions": ["DEC-038", "DEC-040", "DEC-058"],
+      "closesWhen": "every part is merged; a first part never closes the leaf"
+    },
+    "WG.CELL-WRITE": {
+      "title": "Shared cell-write contract: the sole writer of game/js/plugins/DEUS_Levels.js",
+      "package": "PKG-02",
+      "status": "PLANNED",
+      "kind": "SHARED leaf (merged D2/D3, confirmed by merged D1 on 2026-10-01); lanes carry 'part N of M', never .0N sub-ids",
+      "scope": "atomic matter and geometry transactions (commitMatterBatch, removeStratum), the setShape hole fix, committed-change publication, D2 flood-query delegation, the fluid participant hooks, and the D1 initialization connection (sparse save, generator 6 application, carve and magma stamps)",
+      "ownership": "Only WG.CELL-WRITE parts edit DEUS_Levels.js. D1 Levels work (lanes da, dc, dd, dg, di, dj) runs as WG.CELL-WRITE parts that cross-reference their D1 deliverable; D1-GEO lanes (df, dh, dk, dl) get no Levels path. Replaces PLAN.md risk 25 (WORK-GATE G02 section 3).",
+      "parts": "part 1 lane-da (save-only precursor, deliverable WG.00.43, tasks/WG.CELL-WRITE/lane-da/lane.json); the rest numbered once at the wave-2 D1 reconciliation",
+      "design": "braintrust DESIGN-D2_merged_chatgpt_pro.md line 285; DESIGN-D3_merged_chatgpt_pro.md lines 68 and 267; DESIGN-D1_merged_grok_heavy.md section 3.2",
+      "decisions": ["DEC-037", "DEC-058"],
+      "closesWhen": "every part is merged; a first part never closes the leaf"
+    },
+    "WG.00.43": {
+      "title": "Sparse outer save: no save entry for an unchanged outer level",
+      "package": null,
+      "packageNote": "none: WORK-GATE G02 assigns no package. Its prerequisite WG.00.17 sits with the PKG-01 leaves (WG.00.40, WG.00.41), and PKG-01 (COMPLETED) is not reopened for it; it is not a PKG-02 matter or structure leaf",
+      "status": "PLANNED",
+      "alias": "merged D1 'WG.00.18' (renumbered: WG.00.18 is Layer-View Presentation)",
+      "executedAs": "WG.CELL-WRITE part 1 (save and init scope only)",
+      "lane": "lane-da",
+      "branch": "task/lane-da",
+      "laneManifest": "tasks/WG.CELL-WRITE/lane-da/lane.json",
+      "writer": "grok",
+      "reviewer": "gemini",
+      "dependsOn": ["main after lane-cu (OPS.PRUNE.06)", "WG.00.17 (merged 1c2fcc28; its sparse save regressed by a8c1e62a, which this leaf restores; its Z-literal scan is also red, 5 unallowed literals, not this leaf's work)"],
+      "migrationMarker": "WG.00.43",
+      "gateTests": ["tools/check_deus_syntax.js", "tools/test_sparse_outer_save.js", "tools/test_32_levels_generation.js", "tools/test_strata_cuts_and_caves.js"]
+    },
+    "NAT.07.01": {
+      "title": "Bestiary adaptation layer: one DEUS row per SRD 5.1 creature",
+      "package": "PKG-07",
+      "status": "PLANNED",
+      "scope": "Seeded-adaptation scope (DEC-057; DEC-050 item 3; DEC-053 item 2): tools/bestiary/build_bestiary.js generates game/data/srd_adaptation/creatures.json from the pinned bestiary source, keyed by srd: id, with an exact source-id/output-id bijection over the 317 ids of game/data/srd51/creatures.json; per row role, tier from CR, biome-depth cells, frequency, bodies[] from game/js/sim/rules/species_map.js and placement rules; --check rebuilds byte-identically. srd51 is never edited. Re-auditing unchanged upstream SRD content is excluded; verifying the generated adaptation is required (WORK-GATE G02). Out: runtime spawning (NAT.07.04, NAT.07.05), ecology, art rows (ART.NAT.01).",
+      "lane": "lane-ex",
+      "branch": "task/lane-ex",
+      "laneManifest": "tasks/NAT.07.01/lane-ex/lane.json",
+      "writer": "claude",
+      "reviewer": "gemini",
+      "source": { "path": "docs/design/bestiary/BESTIARY_grok_heavy.md", "sha256": "c6f9d41853f29ecd83b4ffa5cbd26b17d6a1e67f3445bfde29b843c41e740914", "from": "braintrust 2026-09-30, Grok Heavy voice; no BESTIARY-MERGE was run" },
+      "openQuestion": "DEC-053 item 1 and DEC-050 item 3 put all 317 creatures in the world's biome-depth cells; the source marks 13 rows EXCLUDE (no cell) and gives srd:creature:solar the Sky only. lane-ex builds from the pinned source as it is (one row each, EXCLUDE rows included; WORK-GATE G02: lane-ex adds no bestiary design). The question goes to the Owner and the PM; an answer lands later as a versioned revision of the source (a new pinned file and hash, a new build). It does not gate lane-ex.",
+      "gateTests": ["tools/check_deus_syntax.js", "tools/test_bestiary_adaptation.js", "tools/bestiary/build_bestiary.js --check"]
     },
     "WG.00.41": {
       "title": "32-Layer Column Architecture & Region-Seam Continuity",
@@ -135,11 +214,13 @@
       "package": "PKG-01",
       "status": "DONE",
       "lane": "lane-bs",
-      "writer": "Claude / Fable",
+      "writer": "gemini",
       "reviewer": "Grok",
       "reviewVerdict": "PASS",
+      "reviewArtifact": "tasks/WG.00.40/lane-bs/review_grok_9ff79bf2.md",
       "mergedSha": "cdc0fb95",
-      "gateTests": ["tools/test_physical_inventory_proof.js"]
+      "gateTests": ["tools/test_physical_inventory_proof.js"],
+      "errata": "2026-10-01 (PM, WORK-GATE G02 WBS sync): this entry said writer 'Claude / Fable'; tasks/WG.00.40/lane-bs/lane.json names writer gemini, and the writer commit 9ff79bf2 is tagged [gemini]"
     },
     "NAT.04.01": {
       "title": "Lean Geomorphology & Soil Kernel",
