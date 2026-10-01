@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Standard DEUS worker launcher (WG.00.12 Lane J).
 
@@ -62,11 +62,12 @@ function Get-DeusProviderFamily([string]$Provider) {
         '^grok$' { return 'xai' }
         '^(codex|astra|openai|gpt)$' { return 'openai' }
         '^(gemini|antigravity|agy)$' { return 'google' }
+        '^minimax$' { return 'minimax' }
     }
     return $null
 }
 
-function Get-DeusKnownProviders { return @('claude', 'grok', 'codex', 'gemini') }
+function Get-DeusKnownProviders { return @('claude', 'grok', 'codex', 'gemini', 'minimax') }
 
 function ConvertTo-DeusArg([string]$Value) {
     # Quote one argument for CommandLineToArgvW / the MSVC runtime.
@@ -131,6 +132,14 @@ function Get-DeusProviderSpec {
             $a = '/d /s /c ' + (ConvertTo-DeusArg $inner)
             return @{ Exe = $exe; Args = $a; StdinPrompt = $true }
         }
+        'minimax' {
+            $node = Get-Command node.exe -ErrorAction SilentlyContinue
+            $exe = $null
+            if ($node) { $exe = $node.Source }
+            $scriptPath = Join-Path (Get-Location) 'tools\ops\minimax_cli.js'
+            $a = (ConvertTo-DeusArg $scriptPath) + ' --prompt-file ' + (ConvertTo-DeusArg $PromptPath)
+            return @{ Exe = $exe; Args = $a; StdinPrompt = $false }
+        }
     }
     return $null
 }
@@ -147,6 +156,7 @@ function Resolve-DeusLaunchEffort {
         grok   = @{ Floor = 'xhigh'; Cap = 'max' }
         codex  = @{ Floor = 'xhigh'; Cap = 'ultra' }
         gemini = @{ Floor = 'high'; Cap = 'high' }
+        minimax = @{ Floor = 'high'; Cap = 'high' }
     }
     $p = $policy[$Provider]
     if (-not $p) { return @{ Error = "-Effort is not defined for provider $Provider" } }
@@ -176,6 +186,7 @@ function Add-DeusEffortArgument {
             return ($ArgLine -replace ' exec ', " exec $flag ")
         }
         'gemini' { return $ArgLine }
+        'minimax' { return $ArgLine }
     }
     return $ArgLine
 }
