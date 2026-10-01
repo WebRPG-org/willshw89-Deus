@@ -13,6 +13,7 @@
     "art/fauna/**",
     "art/APPROVALS.md",
     "art/catalogue/**",
+    "docs/art/catalogue/**",
     "docs/systems/DEUS_Wildlife.md",
     "tools/art/test_fauna_induction.js",
     "tasks/ART.FAUNA.01/lane-gf/**"
