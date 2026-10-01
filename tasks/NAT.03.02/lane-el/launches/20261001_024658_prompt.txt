@@ -1,0 +1,13 @@
+You are the primary implementer for lane-el (Task NAT.03.02), running as claude.
+Read tasks/NAT.03.02/lane-el/BRIEF.md carefully and follow all instructions within it.
+Your allowed paths are:
+- game/js/plugins/DEUS_NaturalConnections.js
+- tools/test_natural_connections_no_mint.js
+- tools/test_natural_connections.js
+- docs/systems/DEUS_NaturalConnections.md
+- tasks/NAT.03.02/lane-el/**
+
+Standing rules:
+1. NO ART (DEC-007). Never generate, request or integrate art, and never tell anyone to.
+2. Run tests in the FOREGROUND. Never end your turn while background jobs or child processes are running. Commit early (WIP commits allowed on your branch). Do not push. Do not merge. Write only inside allowedPaths.
+Commit messages start with '[claude] NAT.03.02'.
