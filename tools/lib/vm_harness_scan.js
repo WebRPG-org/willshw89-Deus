@@ -11,7 +11,8 @@
 //   3. does not use the target's text only through a slice. A file is slice-only when every place it names a target
 //      starts a declaration (const/let/var x = ...) in some enclosing block, and every use of x in that block is
 //      either another declaration (followed on the same way) or the receiver of .slice / .substring / .substr /
-//      .match / .exec. tools/sim/test_units.js, which reads DEUS_World.js and runs only the regex-cut UF.Space
+//      .match / .exec. Inside a declaration only path and read calls carry the value on (path.join, path.resolve,
+//      readFileSync, String, Buffer.from): `const r = vm.runInContext(src, ctx)` is an evaluation, not a copy. tools/sim/test_units.js, which reads DEUS_World.js and runs only the regex-cut UF.Space
 //      block, is such a file. Any other use (a call argument, an evaluation, a loop, an assignment, a return) keeps
 //      the file a hit, so a doubt counts as whole: a whole source transformed for a mutant (.replace) is whole, and a
 //      file that names a target without evaluating it at all (tools/bench_history_demographics.js hashes
@@ -158,7 +159,6 @@ function declarators(code, a, b) {
         let k = m.index + m[0].length;
         for (;;) {
             // The binding: a name, or a destructuring pattern whose names all receive the value.
-            const bindStart = k;
             let names = [], at = [];
             if (code[k] === "{" || code[k] === "[") {
                 let d = 0, e = k;
@@ -187,7 +187,7 @@ function declarators(code, a, b) {
                     if (!/[-+*/%?:|&,=<>(\[{.!]$/.test(before) && !/^[-+*/%?:|&,=<>.)\]}]/.test(after)) break;
                 }
             }
-            out.push({ names, at, init: [initStart, e], bindStart });
+            out.push({ names, at, init: [initStart, e] });
             if (code[e] !== ",") break;
             k = e + 1;
             while (/\s/.test(code[k])) k++;
@@ -196,17 +196,39 @@ function declarators(code, a, b) {
     return out;
 }
 
+// Calls that only carry a file name or its text on: building a path, reading the file.
+const PASS_THROUGH = /^(?:(?:fs\s*\.\s*)?readFileSync|path\s*\.\s*(?:join|resolve)|String|Buffer\s*\.\s*from)$/;
+
+/** True when code[at] sits, inside the initializer starting at `start`, in no call but PASS_THROUGH ones. */
+function onlyPassThrough(code, start, at) {
+    let depth = 0;
+    for (let k = at - 1; k >= start; k--) {
+        const c = code[k];
+        if (")]}".includes(c)) depth++;
+        else if ("([{".includes(c)) {
+            if (depth > 0) { depth--; continue; }
+            if (c !== "(") continue; // an array or object literal holds the value: followed through the declaration
+            const callee = /([A-Za-z_$][\w$]*(?:\s*\.\s*[A-Za-z_$][\w$]*)*|[)\]])\s*$/.exec(code.slice(Math.max(start, k - 200), k));
+            if (!callee) continue; // a grouping parenthesis
+            if (!PASS_THROUGH.test(callee[1])) return false;
+        }
+    }
+    return true;
+}
+
 /**
  * True when a target literal's text reaches nothing but slicing calls. It must start a declarator's initializer in
  * some enclosing block; from there every use of the declared name in that block must be either another declarator's
- * initializer (followed on) or the receiver of .slice/.substring/.substr/.match/.exec. Any other use (a call argument,
- * an evaluation, a return, a loop, an assignment) means the whole text may be evaluated.
+ * initializer, outside any call but a path or read one (followed on), or the receiver of .slice/.substring/.substr/
+ * .match/.exec. Any other use (a call argument, an evaluation, a return, a loop, an assignment) means the whole text
+ * may be evaluated.
  */
 function onlySliced(code, pos) {
     for (const [a, b] of regionsAround(code, pos)) {
         const decls = declarators(code, a, b);
         const home = decls.find(d => d.init[0] <= pos && pos < d.init[1]);
         if (!home) continue;
+        if (!onlyPassThrough(code, home.init[0], pos)) return false;
         const seen = new Set();
         const follow = names => {
             for (const name of names) {
@@ -220,7 +242,7 @@ function onlySliced(code, pos) {
                     if (decls.some(d => d.at.includes(at))) continue; // the binding itself
                     if (SLICING.test(code.slice(at + name.length, at + name.length + 40))) continue;
                     const into = decls.filter(d => d.init[0] <= at && at < d.init[1]).sort((x, y) => (y.init[0] - x.init[0]))[0];
-                    if (!into) return false;
+                    if (!into || !onlyPassThrough(code, into.init[0], at)) return false;
                     if (!follow(into.names)) return false;
                 }
             }

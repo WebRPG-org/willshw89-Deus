@@ -218,11 +218,12 @@ const checks = {
         const files = scanMod.scan({ root: ROOT }).hits.map(h => h.file);
         const absent = KNOWN_HITS.filter(f => !files.includes(f));
         const wrong = KNOWN_NOT_HITS.filter(f => files.includes(f));
-        // The rule on small fixtures: a module-name list and a mutant's whole-source transform are hits; a slice, a
+        // The rule on small fixtures: a module-name list, an evaluation kept in a const and a mutant's whole-source transform are hits; a slice, a
         // comment-only mention and a file without vm are not.
         const cases = {
             module_list: [true, `const vm = require("vm"), fs = require("fs");\nconst MODULES = ["Core", "Levels"];\nconst ctx = vm.createContext({});\nfor (const m of MODULES) vm.runInContext(fs.readFileSync("game/js/plugins/DEUS_" + m + ".js", "utf8"), ctx);\n`],
-            mutant_transform: [true, `const vm = require("node:vm"), fs = require("fs");\nconst src = fs.readFileSync("game/js/plugins/DEUS_Fluid.js", "utf8");\nvm.runInNewContext(src.replace("a", "b"), {});\n`],
+            assigned_eval: [true, `const vm = require("vm"), fs = require("fs");\nconst src = fs.readFileSync("game/js/plugins/DEUS_Levels.js", "utf8");\nconst result = vm.runInNewContext(src, {});\nconst head = result.slice(0, 1);\n`],
+            mutant_transform: [true,`const vm = require("node:vm"), fs = require("fs");\nconst src = fs.readFileSync("game/js/plugins/DEUS_Fluid.js", "utf8");\nvm.runInNewContext(src.replace("a", "b"), {});\n`],
             source_slice: [false, `const vm = require("vm"), fs = require("fs");\nfunction space() {\n    const file = "game/js/plugins/DEUS_World.js";\n    const source = fs.readFileSync(file, "utf8");\n    const block = source.match(/const Space = \\{[\\s\\S]*?\\};/);\n    return vm.runInNewContext(block[0], {});\n}\n`],
             comment_only: [false, `const vm = require("vm");\n// stands in for DEUS_World ("DEUS_World.js")\nvm.runInNewContext("1 + 1", {});\n`],
             no_vm: [false, `const fs = require("fs");\nconst src = fs.readFileSync("game/js/plugins/DEUS_World.js", "utf8");\nconsole.log(src.length);\n`]
