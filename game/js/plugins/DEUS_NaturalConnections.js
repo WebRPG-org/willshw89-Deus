@@ -535,7 +535,8 @@
                     for (let i = 0; i < 400; i++) fluid.step(area, 512);
                     const stepped = sums(), afterSteps = landingWater();
                     $gameMap.setDisplayPos(landing.x - $gameMap.screenTileX() / 2, landing.y - $gameMap.screenTileY() / 2);
-                    await t.waitFrames(3);
+                    // Two frame-30 ticks of Scene_Map.update with the entrance wet: the old private store minted there.
+                    await t.waitFrames(61);
                     const shotView = world.viewLevel().z;
                     t.screenshot("landing_dry_after_wetting");
                     // The wet entrance itself, on Ground, while the landing below stays dry.
@@ -546,7 +547,7 @@
                     t.check("liquid_flow_through_connection", shotView === -1 && !dryBefore.isWater && !afterSteps.isWater && afterSteps.depth === 0 &&
                         !afterFrames.isWater && afterFrames.depth === 0 && debit === 0 && credit === 0 && end[1] === start[1] && end[2] === start[2],
                         `400 UF.Fluid steps: Ground debit ${debit}, lower-level credit ${credit}; landing (${landing.x},${landing.y},${landing.z}) before ${JSON.stringify(dryBefore)}, ` +
-                        `after steps ${JSON.stringify(afterSteps)}, after both screenshots ${JSON.stringify(afterFrames)}; level sums ${JSON.stringify(sums0)} -> ${JSON.stringify(start)} -> ${JSON.stringify(stepped)} -> ${JSON.stringify(end)}; landing shot at view ${shotView}`);
+                        `after steps ${JSON.stringify(afterSteps)}, after 61 frames and both screenshots ${JSON.stringify(afterFrames)}; level sums ${JSON.stringify(sums0)} -> ${JSON.stringify(start)} -> ${JSON.stringify(stepped)} -> ${JSON.stringify(end)}; landing shot at view ${shotView}`);
                 } finally {
                     // Remove the test water through UF.Fluid: every cell of the box back to its depth before.
                     for (const c of box) if (fluid.depthAt(area.x, area.y, c.x, c.y, c.z) !== c.depth || fluid.typeAt(area.x, area.y, c.x, c.y, c.z) !== c.type)
