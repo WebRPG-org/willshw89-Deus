@@ -1,1 +1,27 @@
-{"version": 1, "grandfatheredTips": {}}
+{
+  "version": 1,
+  "grandfatheredTips": {
+    "art-temperate-induction": "90c82ac517ca4f080725e41eed56594e4b10b8a1",
+    "lane-a": "16fec1077534c48480a5fac893cade74546a5ffd",
+    "lane-b": "ed75745694e174ad7836724c0ac206bd0d186a2c",
+    "lane-bd": "3ea1ab6957e34c0728067b27424564b2fc421b71",
+    "lane-bj": "d134315d276f9ad995ae0ff0916f8d67ebf99119",
+    "lane-bp": "79bf40be6a7b6a89b03688679b8e737ea13a7b3c",
+    "lane-ca": "000341d85275b5982863e49271e6997e3c586d66",
+    "lane-ce": "7d7bba11f0ed661af6b11a4f09dfcf9a9657b2df",
+    "lane-cf": "5e60e59b44569d95ed4481e4e9244979100cc7db",
+    "lane-cl": "b7d22aafa96728295add4141b7366e5480ef847b",
+    "lane-cs": "caabae27a59ee08c6f367fafaf8053755490dbbe",
+    "lane-cv": "767b6c6fb22f98dd5438bc610912c74a1f742f2b",
+    "lane-cw": "145d60b6e090482ddb9bf03f75642fabbde040de",
+    "lane-cy": "fb29a17b1518f5d8b725a6ea4ac3250cb18f05aa",
+    "lane-cy2": "86c51fd91a599b691b4d5197d37a1964ac7078d7",
+    "lane-dm": "d8ff27cdd23b2272de47bfc4bc6043801f0dc53f",
+    "lane-do": "9ddcb6dc3a9f589e18050994f27417ee304735d5",
+    "lane-do2": "be662d81e80e9f14450738c1707f85222ff9de9a",
+    "lane-e": "05948e9c614e7eeaa42c7afbf347c7fd9c311126",
+    "lane-gh": "70fd0d400d22509fe2992af19bb8f57e1feb3305",
+    "lane-h": "e3af4cfa49132d332aef31def47b75cbb0fe9395",
+    "lane-pm-streamline": "472de24711e352190d9305a67b807682f1abc83a"
+  }
+}
