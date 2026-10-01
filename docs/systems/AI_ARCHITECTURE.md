@@ -5,6 +5,8 @@
 **Applicability:** Colonist AI, Settler NPC AI, Wildlife & Threat AI  
 **Status:** Living Design Specification (Updated 2026-09-20)
 
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** wildlife and monsters are spawned and despawned by a seeded runtime spawner; there is no ecological lifecycle, breeding or herd migration for them. Superseded: the "ecological lifecycle" and "herd migration" in the `UF_Wildlife.js` line of Specification 1c (see the note there).
+
 ---
 
 ## 1. Executive Summary & Core Philosophy
@@ -175,7 +177,7 @@ To achieve hyperrealistic colony simulation without chaotic task thrashing, huma
   Merging all AI into a single 15,000-line script creates severe maintenance debt, breaks modular testing, and entangles distinct simulation domains.
 - **The Modularity Standard**:
   - `UF_Jobs.js`: Physical execution engine (verbs, pathing, tile arrival, kinetic interactions). Has no opinions on high-level goals.
-  - `UF_Wildlife.js`: Ecological lifecycle (fauna grazing, predator territory, herd migration).
+  - `UF_Wildlife.js`: Ecological lifecycle (fauna grazing, predator territory, herd migration). [DEC-073: wildlife and monsters have no ecological lifecycle and do not migrate; they are spawned and despawned by a seeded runtime spawner (lane-fe, NAT.07.04; lane-ff, NAT.07.05).]
   - `UF_Combat.js`: Tactical weapon ranges, damage calculations, stance evaluation.
   - `UF_Households.js`: Kinship, generational tracking, bed ownership, structural demands.
   - `UF_Goals.js`: Long-term colonist ambitions and life milestones.

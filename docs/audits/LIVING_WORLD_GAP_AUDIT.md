@@ -1,5 +1,7 @@
 # Living World Gap Audit (SIM.50.01)
 
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** wildlife and monsters are spawned by a seeded runtime spawner around the player and active AI faction settlements; there is no breeding, carrying capacity, food web, migration or persistent population for them. SIM.50.07 animal migration is cut, and anonymous wildlife leaves the LOD summaries (SIM.30.01-05 shrink). The audit's code findings at `75cf2ff3` stand as a record. As requirements for wildlife and monsters these are superseded: rows 6 and C3 of the §1.1 status table (for C3, the wildlife part); §3.6 (its requirement and MIG-2, MIG-3 and MIG-4, plus the migration clause of MIG-1); REP-3 in §4.3; the Migration row of the §5 invariant matrix; and SIM.50.07 in the §6 recommended order and its dependency row. People and owned livestock keep their lifecycle (SIM.40.10).
+
 | | |
 |---|---|
 | Task | SIM.50.01, Living World Gap Audit (WBS Rev 22; Directive 0021-V Addendum §14; VISION V142) |
@@ -32,13 +34,13 @@
 | 3 | Vegetation spread and succession | SIM.50.04 | PARTIAL | Hourly seed spread 1 to 3 cells, one sapling-to-tree step, in-place regrowth | No succession, canopy, death, soil or season input; ground level only; the same code creates ore (LIFE-002) |
 | 4 | Fire spread | SIM.50.05 | PARTIAL | Active burning list, 4-neighbour spread by catalog chance, fuel countdown, burnout rules | No wind, dryness, weather or cross-layer spread; burned items are deleted; no carbon or ash mass |
 | 5 | Seasons and weather | SIM.50.06 | PARTIAL | A calendar whose "seasons" are the four 6-hour quarters of one day (V123 time scale); weather rolled once per area; diurnal temperature | No annual cycle, freezing, snow cover, thaw or runoff; no crop system loaded; calendar scale needs an Owner ruling |
-| 6 | Animal migration | SIM.50.07 | ABSENT (movement DORMANT) | Herds placed once at New Game with a home cell | Wildlife AI switched off; no migration, no cross-layer animal movement, no herd summary |
+| 6 | Animal migration | SIM.50.07 | ABSENT (movement DORMANT) | Herds placed once at New Game with a home cell | Wildlife AI switched off; no migration, no cross-layer animal movement, no herd summary [DEC-073: SIM.50.07 is cut 2026-10-01; wildlife and monsters do not migrate and keep no herd summary. They are spawned at runtime around the player and active AI faction settlements.] |
 | 7 | Anthropic land reshaping | SIM.50.08 | PARTIAL | Mining a solid cell to floor, chopping, colony path plans | No road wear, field clearing, dams, canals or terraces; every earth-moving path breaks mass conservation |
 | 8 | Settlement lifecycle | SIM.50.09 | PARTIAL | Live phases camp, village, town from population; history ledger records abandonment | No hamlet, city or capital; no live contraction or abandonment; no ruins; foundations never reused |
 | 9 | Geological events | SIM.50.10 | ABSENT | Sinkholes, fissures and lava tubes as static generator shapes | No runtime event, scheduler, earthquake, collapse or eruption |
 | C1 | Structural support and collapse | SIM.40.01-04 | ABSENT | A per-cell `support` value used only by a diagnostic | No support propagation, no collapse, constructions are not strata |
 | C2 | Decay and reclamation | SIM.40.05-09 | ABSENT | Doors have HP; remains vanish after 12 game hours | No structure or item decay, no stages, no burial |
-| C3 | Reproduction and lifecycle | SIM.40.10 | PARTIAL / DORMANT | Asexual herd births each game hour; colonist conception; a yearly history ledger with species profiles | Live pregnancies and aging never advance; births cost no food; no animal age, sex or litters |
+| C3 | Reproduction and lifecycle | SIM.40.10 | PARTIAL / DORMANT | Asexual herd births each game hour; colonist conception; a yearly history ledger with species profiles | Live pregnancies and aging never advance; births cost no food; no animal age, sex or litters [DEC-073: animal age, sex and litters are needed for owned livestock only; wildlife and monsters do not breed] |
 | C4 | Faction Development Plans | DEC-015, SOC.10.02-03 | ABSENT | Three fixed build-step lists per culture; hardcoded brain weights | No plan schema, no plan files, no stages past town, no tech tree |
 
 ### 1.2 Findings that decide the order of work
@@ -480,7 +482,7 @@ These greps over `game/` (excluding shims) have no simulation hits: `erosion|ero
 
 ### 3.6 SIM.50.07 Animal migration and herd movement
 
-**Required:** seasonal herd travel between upland and lowland across Z layers; summary-LOD movement off camera; individuals materialise near focus.
+**Required:** seasonal herd travel between upland and lowland across Z layers; summary-LOD movement off camera; individuals materialise near focus. [DEC-073: superseded. SIM.50.07 is cut 2026-10-01: wildlife and monsters do not migrate, and anonymous wildlife leaves the LOD summaries. Ordinary creatures are spawned around the player and active AI faction settlements and despawn only when far away and out of sight.]
 
 **Exists**
 
@@ -499,10 +501,10 @@ These greps over `game/` (excluding shims) have no simulation hits: `erosion|ero
 
 | ID | Severity | Gap |
 |---|---|---|
-| MIG-1 | BLOCKER | Wildlife has no wander, graze or flee movement in live play: the AI is removed, and off-screen units move only with a goal (`DEUS_World.js:1699`). The only animal movement left is Combat moving hostile units toward targets (units tagged hostile, or any species containing "wolf", `DEUS_Combat.js:1323`). Migration needs a movement model first. |
-| MIG-2 | MAJOR | There is no herd entity with its own state (range, season, route). A herd is only an integer on each unit. |
-| MIG-3 | MAJOR | There is no season to trigger migration (section 3.5), and no layer or biome-band targets (DEC-013 bands do not exist yet). |
-| MIG-4 | MAJOR | There is no summary LOD. Every animal is a full unit in `World.state.units`, and full-fidelity systems walk all of them (Appendix B). |
+| MIG-1 | BLOCKER | Wildlife has no wander, graze or flee movement in live play: the AI is removed, and off-screen units move only with a goal (`DEUS_World.js:1699`). The only animal movement left is Combat moving hostile units toward targets (units tagged hostile, or any species containing "wolf", `DEUS_Combat.js:1323`). Migration needs a movement model first. [DEC-073: migration is cut, so the last sentence no longer applies.] |
+| MIG-2 | MAJOR | There is no herd entity with its own state (range, season, route). A herd is only an integer on each unit. [DEC-073: superseded; wild herds do not migrate, so they need no range, season or route.] |
+| MIG-3 | MAJOR | There is no season to trigger migration (section 3.5), and no layer or biome-band targets (DEC-013 bands do not exist yet). [DEC-073: superseded; there is no migration to trigger.] |
+| MIG-4 | MAJOR | There is no summary LOD. Every animal is a full unit in `World.state.units`, and full-fidelity systems walk all of them (Appendix B). [DEC-073: superseded as a need for a wildlife summary LOD: anonymous wildlife leaves the LOD summaries (SIM.30.01-05 shrink), and an ordinary creature despawns when far away and out of sight.] |
 | MIG-5 | MINOR | The underground species list is hardcoded (`DEUS_Wildlife.js:454`). |
 
 **Invariant check:**
@@ -685,7 +687,7 @@ These greps found no runtime hits: `earthquake|quake|tremor|seism|sinkhole|volca
 **Gaps**
 - **REP-1 (MAJOR):** live pregnancy and aging are DORMANT (above). V123's aging and V140's growth do not run.
 - **REP-2 (MAJOR, LIFE-001):** births create full units with no food mass. There is no mass-to-growth conversion and no remains-to-soil return.
-- **REP-3 (MAJOR):** there is no animal age, sex, litter, gestation or lifespan. There is no species origin setting (`breeds`, `spawned`, `created`, `unique`, DEC-014 §5), and no search found such a field.
+- **REP-3 (MAJOR):** there is no animal age, sex, litter, gestation or lifespan. There is no species origin setting (`breeds`, `spawned`, `created`, `unique`, DEC-014 §5), and no search found such a field. [DEC-073: superseded for wildlife and monsters, which do not breed; it stands for owned livestock (SIM.40.10). Origin classes continue as WG.68.13 spawn-origin classes.]
 - **REP-4 (MAJOR):** there is no individual budget or crowd counts (DEC-014 §2-3). History converts every living person to a unit (`DEUS_History.js:481`). The fixed caps are the opposite of DEC-014 §1's "no arbitrary ceiling".
 - **REP-5 (MINOR):** the elder age is 50 in `DEUS_Colonists.js:2807` but 55 in `DEUS_Colonists.js:3243`.
 
@@ -718,7 +720,7 @@ Each cell gives the verdict and the gap ID that explains it. "n/a" means the inv
 | Vegetation | fails (0, -1, -2 only) | meets (object diffs) | partial (current plus rotating area) | meets (bounded sampling) | not modelled | **fails (VEG-1)** | n/a |
 | Fire | fails | meets | fails (all fires full fidelity) | meets, with a unit scan per beat (FIR-6) | fails (FIR-3) | n/a | partial (ash ground, level 0) |
 | Seasons and weather | fails | n/a | n/a | meets (O(1) clock) | n/a | n/a | n/a |
-| Migration | fails | individuals only | fails (MIG-4) | n/a (no wildlife tick) | n/a | n/a | n/a |
+| Migration [DEC-073: SIM.50.07 is cut 2026-10-01; kept as a record] | fails | individuals only | fails (MIG-4) | n/a (no wildlife tick) | n/a | n/a | n/a |
 | Land reshaping | fails | meets (changed cells) | fails | partial (job list per update) | fails (LAND-1) | depends on VEG-1 | n/a |
 | Settlements | fails | n/a | fails (REP-4) | partial (dirty set plus cycle) | n/a | n/a | fails (SET-2) |
 | Geological events | n/a (ABSENT) | n/a | n/a | n/a | n/a | n/a | n/a |
@@ -748,13 +750,13 @@ These are recommendations to the Coordinator. Claude does not change WBS statuse
 
    This is the missing prerequisite of SIM.40.01; the WBS row does not list it.
 6. **SIM.40.01-02 support and collapse,** then SIM.40.05-09 decay, then SIM.50.10 events.
-7. **SIM.30.01-03 LOD regions,** before migration (SIM.50.07), crowd counts (DEC-014) and off-focus water (WAT-8).
+7. **SIM.30.01-03 LOD regions,** before migration (SIM.50.07), crowd counts (DEC-014) and off-focus water (WAT-8). [DEC-073: SIM.50.07 is cut 2026-10-01, and anonymous wildlife leaves the LOD summaries.]
 8. **The nine systems** in the WBS order, with these dependencies added:
 
    | Row | Dependencies to add |
    |---|---|
    | SIM.50.05 fire | SIM.50.06 (wind, dryness) |
-   | SIM.50.07 migration | SIM.50.06 (seasons), SIM.30.01 (regions) |
+   | SIM.50.07 migration [DEC-073: cut 2026-10-01] | SIM.50.06 (seasons), SIM.30.01 (regions) |
    | SIM.50.04 vegetation | WG.67 (soil, moisture), SIM.50.06 |
    | SIM.50.08 land reshaping | the ledger and step 5 |
 

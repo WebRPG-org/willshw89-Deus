@@ -4,19 +4,23 @@
 **Integration Authority:** Gemini / Antigravity (DEUS Coordinator)  
 **Approved by Owner Directive:** 2026-09-25  
 
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** wildlife and monsters are spawned by a seeded runtime spawner using intelligent rules, not simulated as populations: no breeding, carrying capacity, food webs, migration or persistent population vectors for them. For wildlife and monsters this supersedes the §1 quoted mandate, mandates 1, 3 and 4 and the remote-population part of mandate 6; `populationDynamics` in §3, and `trophicLevel` and `diet.primaryPreySpecies` as required food-web fields; `supernaturalReproduction` and the population entries of the exceptions table in §4 (slime fission "when nutrients exceed carrying thresholds", the dragon `reproductionRate`); §5; §6; §7; the "thousands of simulated creatures" scale, Tiers C and D and the materialization protocol in §9; "population" as a name for a wild group in §12; and the trophic-role item of the §13 gate. Mandate 5's "ecology profile" is now the WG.68.07 spawn profile. §2 (taxonomy), §8 (lairs and dens) and §10 (catalogue, with `trophicLevel` kept only as a behaviour label) stay as spawn inputs. §11's archetypes belong to WG.68.14, which DEC-073 shrinks to people, owned livestock, flora and notable creatures; whether they also serve anonymous spawned creatures as behaviour primitives under WG.68.16 is open for the PM. Owned livestock keep lifecycle and breeding (civilization phase, SIM.40.10); flora is unchanged.
+
 ---
 
 ## 1. Executive Mandate & Canonical Principle
 
 > **"DEUS uses one underlying living-world ecology framework for ordinary wildlife, monsters, domesticated creatures, and other non-civilization creatures where their nature permits. Wildlife and monsters may differ in lore, danger, behavior, reproduction, diet, magical requirements, or environmental effects, but they should not use completely separate population/spawn architectures without a documented reason."**
 
+[DEC-073: for wildlife and monsters this living-world ecology framework is replaced by the runtime spawner described in the banner above; they still share one architecture, the spawner. Owned livestock keep lifecycle and breeding (SIM.40.10).]
+
 ### Core Architectural Mandates
-1. **Shared Living Foundation:** A timber wolf and a fantastical subterranean predator behave differently, but both participate in the exact same underlying world systems: habitat suitability, food, water, territory, predators, prey, reproduction, migration, mortality, environmental disturbance, and carrying capacity.
+1. **Shared Living Foundation:** A timber wolf and a fantastical subterranean predator behave differently, but both participate in the exact same underlying world systems: habitat suitability, food, water, territory, predators, prey, reproduction, migration, mortality, environmental disturbance, and carrying capacity. [DEC-073: no longer applies to wildlife and monsters: there is no food web, reproduction, migration or carrying capacity for them.]
 2. **One Authoritative Physical World:** Worldgen and live simulation operate on one authoritative physical world and the canonical authorities of its subsystems. No separate generated-world and simulation-world representations may compete. Five-strata geometry (`DEUS_Levels.js`) remains authoritative for solid physical terrain. Fluid volume remains governed by the canonical fluid representation (`DEUS_Fluid.js`) reconciled against strata capacity and passage rules.
-3. **Habitat Suitability Over Random Spawn Timers:** Creatures do not materialize out of thin air because an invisible timer elapsed at a "spawn point." Creature populations exist because the physical world satisfies their environmental requirements (biomes, strata levels, moisture, cave shelter, food sources, civilization distance).
-4. **Persistent Populations Over Magical Respawns:** Overhunting a species reduces its regional population and can lead to **local extirpation**. Eradicated populations do not automatically respawn; they recover only through biological reproduction of survivors or migration from adjacent un-depleted regions.
-5. **Catalogue-First Creature Art Integration:** No visual asset for any wildlife, monster, or domesticated creature may be generated before the species is registered in the **Master Semantic Creature Catalogue** (`WG.68.15`), its ecology profile is defined, its animation requirements are specified, and permanent runtime sheet coordinates are allocated.
-6. **Multi-Timescale Performance Compliance:** Complex creature AI and kinematics execute strictly on Tier A (visible/engaged) and Tier B (nearby). Remote populations simulate coarsely at hours, days, and seasons, consuming near-zero CPU. Complies with [`docs/PERFORMANCE_ARCHITECTURE.md`](file:///c:/Users/snewt/OneDrive/Desktop/UF/docs/PERFORMANCE_ARCHITECTURE.md). Exact update frequencies are established by empirical profiling rather than premature freezing.
+3. **Habitat Suitability Over Random Spawn Timers:** Creatures do not materialize out of thin air because an invisible timer elapsed at a "spawn point." Creature populations exist because the physical world satisfies their environmental requirements (biomes, strata levels, moisture, cave shelter, food sources, civilization distance). [DEC-073: superseded for wildlife and monsters. A seeded runtime spawner places them by intelligent rules: the biome-depth cell (DEC-030), the danger tier (DEC-050), the bestiary rows and encounter tables (NAT.07.01, NAT.07.03), light, time of day, season (weights off while DEC-059 defers seasons), density caps per cell, herd and group sizes, and distance from the player, starts and settlements. Each spawn is a pure function of the seed, the cell, the tier, z, the time window and an attempt index, checked against live nearby counts.]
+4. **Persistent Populations Over Magical Respawns:** Overhunting a species reduces its regional population and can lead to **local extirpation**. Eradicated populations do not automatically respawn; they recover only through biological reproduction of survivors or migration from adjacent un-depleted regions. [DEC-073: superseded for wildlife and monsters. There is no extirpation: heavy hunting lowers an area's spawn rate for a few in-game days, then the normal rules refill it (one small per-area depletion record). Tamed, captured, named, quest and lair creatures, and any creature carrying items, persist with stable IDs; every other creature despawns only when it is far away and out of sight. A lair's boss is unique and gone for good once killed; its lesser occupants refill.]
+5. **Catalogue-First Creature Art Integration:** No visual asset for any wildlife, monster, or domesticated creature may be generated before the species is registered in the **Master Semantic Creature Catalogue** (`WG.68.15`), its ecology profile is defined, its animation requirements are specified, and permanent runtime sheet coordinates are allocated. [DEC-073: for wildlife and monsters, the ecology profile is the WG.68.07 spawn profile.]
+6. **Multi-Timescale Performance Compliance:** Complex creature AI and kinematics execute strictly on Tier A (visible/engaged) and Tier B (nearby). Remote populations simulate coarsely at hours, days, and seasons, consuming near-zero CPU. [DEC-073: there are no remote wildlife or monster populations; ordinary creatures exist only where spawned, around the player and active AI faction settlements.] Complies with [`docs/PERFORMANCE_ARCHITECTURE.md`](file:///c:/Users/snewt/OneDrive/Desktop/UF/docs/PERFORMANCE_ARCHITECTURE.md). Exact update frequencies are established by empirical profiling rather than premature freezing.
 
 ---
 
@@ -139,6 +143,8 @@ All ordinary wildlife, domesticated animals, and biological monsters share this 
 }
 ```
 
+[DEC-073: for wildlife and monsters, `populationDynamics` is no longer required and its fields (carrying capacity, reproduction season, gestation, litter size, maturation, lifespan, migration) have no use; the `droughtResponse` values `MIGRATE_WATER` and `POPULATION_CRASH` have no population to act on. WG.68.07 is now a spawn profile with no population fields; `groupSizeRange` gives the herd and group sizes the spawner uses. `trophicLevel` and `diet.primaryPreySpecies` are no longer required for wildlife and monsters, because there is no food web (WG.68.09 cut); they may be kept only as behaviour labels.]
+
 ---
 
 ## 4. Monster-Specific Extension & Override Model
@@ -178,6 +184,8 @@ Fantastical monsters extend the shared ecology schema by declaring explicit over
 }
 ```
 
+[DEC-073: monsters do not breed or reproduce; they are spawned by the spawner's rules, so `supernaturalReproduction` no longer drives their numbers.]
+
 ### The Ecological Exceptions Framework
 Where creature lore rejects normal biological constraints, explicit exception flags bypass the baseline lifecycle without requiring a separate engine subsystem:
 
@@ -190,11 +198,15 @@ Where creature lore rejects normal biological constraints, explicit exception fl
 | **Slimes & Amorphous** | `reproduction: ASEXUAL_FISSION`, `diet: ORGANIC_MATTER_ALL`. | Thrive in stagnant drainage, flooded sewers, and damp cave sumps; divide when nutrients exceed carrying thresholds. |
 | **Ancient Dragons** | `lifespan: CENTURIES`, `territoryRadius: REGIONAL_VAST`, `reproductionRate: ULTRA_LOW`. | Solitary apex predators occupying mountain summits or deep volcanic caverns; establish multi-kilometer fear radiuses affecting settlements and herds. |
 
+[DEC-073: for spawned monsters, the population entries in this table (slime fission "when nutrients exceed carrying thresholds", the dragon `reproductionRate`) no longer drive numbers; monsters are spawned by the spawner's rules.]
+
 ---
 
 ## 5. Habitat-Driven Presence vs. Spawn Points
 
 Project DEUS strictly bans the MMO/Action-RPG convention of arbitrary "monster spawners" (e.g., an invisible box that creates 3 goblins every 120 seconds). Creature presence is determined strictly by **Physical Habitat Suitability**:
+
+[DEC-073: superseded for wildlife and monsters. They are spawned at runtime by the rules listed under mandate 3 in §1, and no carrying capacity is solved (step 5 of the chart below). WG.68.08 is now spawn eligibility with no carrying-capacity solver. Some inputs below can still feed spawn eligibility: steps 1 and 2 of the chart (WG.68.08's physical terrain suitability), and from step 4 the distance from settlements and the hunting depletion record (DEC-073 items 1 and 2). Prey biomass and herbivore density (step 3) are not spawn inputs, because there is no food web (WG.68.09 cut).]
 
 ```mermaid
 flowchart TD
@@ -224,6 +236,8 @@ If colonists mine into the cavern, light torches, and hunt the prey, the Cave St
 
 Monsters and wildlife share the same nutritional chains, creating authentic environmental interdependence:
 
+[DEC-073: cut for wildlife and monsters (WG.68.09 food webs is cut). There are no trophic cascades between populations, so the cascades below do not happen. Spawned creature bodies sit outside the closed-mass ledger, and their remains never become conserved soil (DEC-073 item 9).]
+
 ```mermaid
 flowchart LR
     VEG["Vegetation & Flora<br/>Grass, Shrubs, Trees"] --> HERB["Herbivores<br/>Deer, Mountain Goats"]
@@ -246,6 +260,8 @@ flowchart LR
 
 Creature populations are represented as **persistent historical quantities**, not transient sprite spawns:
 
+[DEC-073: superseded for wildlife and monsters (WG.68.11 persistent populations is cut). There are no population quantities, carrying-capacity formula, reproduction ticks, extirpation flag or recolonization by migration, and item 4 does not apply. What remains is a density cap per cell, checked against live nearby counts, and one small per-area depletion record: heavy hunting lowers the area's spawn rate for a few in-game days, then the normal rules refill it.]
+
 1. **Carrying Capacity ($K$):** The maximum population of a species an area can sustain:
    $$K = \min(F_{\text{food}}, F_{\text{water}}, F_{\text{shelter}}) \times (1.0 - P_{\text{civilization}})$$
 2. **Biological Reproduction:** Net population change ticks on seasonal cadences based on litter size, gestation duration, and available food surplus above maintenance calories.
@@ -261,6 +277,8 @@ Creature populations are represented as **persistent historical quantities**, no
 
 Creature habitation is an authentic spatial feature rooted in the physical terrain:
 
+[DEC-073: kept. Lairs and dens are persistent anchors (WG.68.10) and part of the spawn designations that must come out identical whether an (area, z) is built at New Game or later (DEC-070 condition C). A lair's boss is unique and gone for good once killed; its lesser occupants refill over time by the spawn rules. Dens are no longer breeding sites for wildlife.]
+
 | Lair Classification | Physical Substrate Requirement | Inhabiting Species Examples | Gameplay & Provenance Function |
 |---|---|---|---|
 | **Earthy Burrow** | Soft loam/sand soil on $Z=0$ or $Z=+1$ | Badgers, giant rodents, dire foxes | Soil aeration; hides small game from predators. |
@@ -274,7 +292,7 @@ Creature habitation is an authentic spatial feature rooted in the physical terra
 
 ## 9. Multi-Timescale Performance & Individual Materialization
 
-To maintain 60 FPS while supporting thousands of simulated creatures across the world, DEUS enforces **Dual-Representation Scalability** across four simulation fidelity tiers.
+To maintain 60 FPS while supporting thousands of simulated creatures across the world, DEUS enforces **Dual-Representation Scalability** across four simulation fidelity tiers. [DEC-073: wildlife and monsters are not simulated across the world; ordinary creatures exist only where spawned, around the player and active AI faction settlements.]
 
 > **Canonical Performance Rule:**
 > - **VISIBLE / ENGAGED** $\rightarrow$ Highest required fidelity (kinematics, pathing, animations).
@@ -303,6 +321,8 @@ TIER D (Dormant / Unloaded World)   Population Summary Vector  Event-driven / de
 ### Materialization & Dematerialization Protocol
 1. **Materialization (Tier D $\rightarrow$ Tier A/B):** When the player or an active settlement approaches a populated area, the engine reads the population summary vector and materializes discrete, deterministic creature instances with consistent health, sex, and age.
 2. **Dematerialization (Tier B $\rightarrow$ Tier D):** When the player leaves an area, surviving individuals condense back into the regional population vector, preserving net births, deaths, and wounds bit-for-bit.
+
+[DEC-073: superseded for wildlife and monsters. Tiers C and D hold no anonymous creatures, and there is no population summary vector. Materialization is replaced by spawning around the player and active AI faction settlements. Dematerialization is replaced by despawning, which happens only when a creature is far away and out of sight, so a herd the player can see never vanishes. Tamed, captured, named, quest and lair creatures, and any creature carrying items, persist with stable IDs. Spawn rules belong to lane-fe (NAT.07.04); despawn, notable persistence and lair refill to lane-ff (NAT.07.05). Tiers A and B still apply to the creatures that exist.]
 
 ---
 
@@ -336,6 +356,8 @@ CREATURE CATALOGUE ENTRY SPECIFICATION:
     ├── Sheet Assignment (game/img/characters/)
     └── QC & Verification Status (PLANNED | READY | DELIVERED | VERIFIED)
 ```
+
+[DEC-073: for wildlife and monsters, `trophicLevel` under ECOLOGICAL PARAMETERS is kept only as a behaviour label, not a food-web input (WG.68.09 cut), and the entry's ecology fields are the WG.68.07 spawn profile.]
 
 ### Creature Sprite & Animation Standard (Locomotion vs. Semantic Action Families)
 
@@ -374,6 +396,8 @@ ARCHETYPE                   BEHAVIORAL RESPONSE TO COLONISTS & SETTLEMENTS
 10. MAGIC_ATTRACTED         Drawn to active wizard towers, mana nodes, and enchanted workshops.
 ```
 
+[DEC-073: WG.68.14, which owns these archetypes, is shrunk to people, owned livestock, flora and notable creatures. Whether the archetypes also serve anonymous spawned creatures as behaviour primitives under WG.68.16 is open for the PM.]
+
 ---
 
 ## 12. Terminology Governance
@@ -382,7 +406,7 @@ To maintain pristine narrative and architectural clarity across Project DEUS:
 - **SPECIES / RACE:** Biological classification of living things (e.g. Wolf, Human, Dwarf, Cave Stalker).
 - **CULTURE:** Learned traditions, language, craftsmanship, and customs (e.g. Arthurian Human, Mountain Dwarf).
 - **FACTION:** Political and social organization (e.g. The Iron Vales, Sunken Reach Colony).
-- **Hard Rule:** Wild animals and monstrous beasts must **never** be labeled "factions" unless they possess civilized social/political governance. A pack of wolves is a `pack` or `population`, never a faction.
+- **Hard Rule:** Wild animals and monstrous beasts must **never** be labeled "factions" unless they possess civilized social/political governance. A pack of wolves is a `pack` or `population`, never a faction. [DEC-073: wild creatures are not kept as populations; a wild group is a pack, herd or group.]
 
 ---
 
@@ -391,7 +415,7 @@ To maintain pristine narrative and architectural clarity across Project DEUS:
 Before any wildlife, monster, or domestic animal sprite sheet is submitted to Google Nano Banana Pro (`gemini-3-pro-image`):
 
 - [ ] Species is catalogued in `WG.68.15` with complete physical dimensions and scale class.
-- [ ] Ecology profile defined (biome, Z levels, trophic role, habitat needs).
+- [ ] Ecology profile defined (biome, Z levels, trophic role, habitat needs). [DEC-073: for wildlife and monsters, read this as the spawn profile (WG.68.07): biome, Z levels and habitat needs. Trophic role is no longer a gate item, because there is no food web (WG.68.09 cut).]
 - [ ] Required action sheets specified (Walk mandatory; Attack, Sleep, Corpse as required).
 - [ ] Sheet layout verified against Universal 12-Sprite Matrix ($144 \times 192\text{ px}$ or $288 \times 384\text{ px}$).
 - [ ] Master Palette compliance confirmed (`art/palette/uf.hex`).

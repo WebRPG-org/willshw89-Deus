@@ -14,7 +14,7 @@ Every concept in Project DEUS has exactly ONE authoritative subsystem owner:
 |---|---|---|
 | **WORLD** | `UF_World.js` | XYZ coordinate space, terrain arrays, solid/void definitions, 256×256 area chunk loading, world mutation tracking, passability rules. |
 | **WORLDGEN** | `UF_WorldGen.js`, `UF_Levels.js` | Procedural glade generation, climate, 5-level volumetric stratum, horizontal cave carving, natural resource placement. |
-| **ENTITIES** | `UF_World.js` (registry), `UF_Colonists.js`, `UF_Wildlife.js` | Persistent creature registry, entity IDs, lifecycle state, biological age. |
+| **ENTITIES** | `UF_World.js` (registry), `UF_Colonists.js`, `UF_Wildlife.js` | Persistent registry of people, owned livestock and notable creatures (tamed, captured, named, quest and lair creatures, and any creature carrying items): entity IDs, lifecycle state, biological age. Other wildlife and monsters are transient and have no breeding or birth and death curves; the seeded runtime spawner (NAT.07.04, NAT.07.05, WG.00.47) spawns and despawns them by rule, starting from `DEUS_Ecology.js`'s capped seeded spawn core (DEC-073). |
 | **TIME** | `UF_Time.js`, `UF_TimeSpeed.js` | Multi-domain clocks: Engine (20 Hz computation), Tactical Action (6s d20 round), Historical (1s = 2h aging), Presentation (60m solar cycle). Pause enforcement. |
 | **CAPABILITIES** | `UF_Proficiency.js` | SRD 5.1 ability check engine, bounded proficiency ranks (Untrained to Grandmaster), capability resolution equation, work rate multiplier. |
 | **JOBS** | `UF_Jobs.js` | Job creation, claim/assignment, continuous work accumulation, step execution, physical reservations, completion callbacks. |

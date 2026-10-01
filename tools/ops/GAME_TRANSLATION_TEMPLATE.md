@@ -85,7 +85,7 @@ Proposed scope / acceptance proof:
 Owner approval: NOT YET APPROVED unless an explicit approval is cited.
 ```
 
-For example, a wet permeable formation flooding an excavation while impermeable rock at the same depth does not is a concrete consequence. A disappearing prey population changing predator survival is another. These are illustrative requirements, not assertions about current implementation or new scope approvals.
+For example, a wet permeable formation flooding an excavation while impermeable rock at the same depth does not is a concrete consequence. Heavy hunting thinning an area's creature spawns for a few in-game days before the spawn rules refill it is another (DEC-073). These are illustrative requirements, not assertions about current implementation or new scope approvals.
 
 ## Review and merge record
 
@@ -116,7 +116,7 @@ The coordinator assembles a controlled, reproducible in-engine sequence before f
 | C - Structural physics | Show a safe span surviving, remove critical support, observe collapse and physical rubble, verify mass conservation and persistent collapsed state. |
 | D - Water | Observe surface runoff; inspect pre-existing groundwater, breach a saturated formation, observe inflow/pooling/equilibrium, and verify water-state persistence. Groundwater implementation still needs its own Owner approval. |
 | E - Soil / climate / flora | Compare dry, wet and cold terrain, observe appropriate differences in vegetation suitability, and verify environmental state persistence. |
-| F - Wildlife | Observe habitat/resource dependence and persistent populations rather than arbitrary respawns; verify consequences and persistence. |
+| F - Wildlife and monsters | Observe that spawns obey the cell, danger tier, light, time-of-day, density-cap and distance rules and the V68 passable-cell check, and that hostile monsters stay out of the radius around settlements and starts; that anonymous creatures despawn only when far away and out of sight; that heavy hunting thins an area's spawns and then recovers; that a killed lair boss stays gone while its minions refill; and that tamed, captured, named, quest and lair creatures and creatures carrying items persist with the same IDs across save/load (DEC-073). |
 
 The pasted examples for physical objects, 32-layer worlds, support/collapse and aquifers describe intended game translation, not verification that those features are present. Actual dimensions, consumers and behavior must come from the approved lane contracts and observed runtime. No new art is required or authorized by this proof plan.
 

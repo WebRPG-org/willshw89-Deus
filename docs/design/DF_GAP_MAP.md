@@ -1,5 +1,7 @@
 # DF GAP MAP: every Dwarf Fortress system against UF, with the next waves
 
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** wildlife and monsters are spawned by a seeded runtime spawner around the player and active AI faction settlements, not recovered as populations; they do not breed or migrate. Heavy hunting lowers an area's spawn rate for a few in-game days, then the area refills. For row 2.10 and its §2.10 entry, DF's regional populations moving in and out and the goal of prey recovering toward a population are no longer targets (see the notes there).
+
 **Written by:** Claude Code, 2026-09-19, for the user's instruction of 13:40 ("continue working on pulling DF mechanics, bones, spawns, entities, resources, build/skill/technology trees, etc. Gemini can handle the art") and the request that came with it: "It should also take a different amount of world beats to do different shit. Cooking a smores isnt the same time/difficulty as chopping down a tree or mining ore" (recorded by the lead as VISION V85).
 **What this file is:** a design and status map. It changes no code, data or art. Nothing here authorizes work outside the current slice (AGENTS rule 1); the waves in §10 are an order of work for the user to approve.
 **Rule it keeps (VISION V28, V9, AGENTS rule 7):** DF's mechanics are described in plain words. No DF text, raw tokens, creature names or numbers go into `game/`, and none are proposed here as content. New player-visible names are never decided here.
@@ -34,7 +36,7 @@
 | 2.7 | Temperature | none (a climate field only) | `biomes.all_biomes_reachable` | needs a user decision | 6 |
 | 2.8 | Fire | **done** | `fire` 10/10 | V21, V25 | – |
 | 2.9 | Plant growth and regrowth | partial | `objects.regrow`, `ecology.renewable_timer` | V74, V83 | 1 |
-| 2.10 | Animal population recovery, monster spawns | partial | `ecology.prey_replenishes`, `ecology.monster_replenishes` | V74, V75, V83 | 1 |
+| 2.10 | Animal population recovery, monster spawns [DEC-073: now runtime spawning of wildlife and monsters, with no population recovery] | partial | `ecology.prey_replenishes`, `ecology.monster_replenishes` | V74, V75, V83 | 1 |
 | 3.1 | Wildlife behaviour | **done** | `wildlife` 22/22 (twice, §9 B1) | V24, V48 | – |
 | 3.2 | Vermin | partial | `wildlife.catalog_species` | V24 | 3 |
 | 3.3 | Bodies, tissues and wounds | none | – | **Q12 open** | 5 |
@@ -151,10 +153,10 @@ Counts: 9 done, 29 partial, 27 none (65 rows).
 - **Needs first:** registration of `UF_Ecology` (editor closed); the five levels for the full director.
 
 ### 2.10 Animal population recovery and monster spawns: partial
-- **DF:** wildlife populations per region move in and out over time; monsters appear by region (savagery, evil) and some creatures come up from the caverns.
+- **DF:** wildlife populations per region move in and out over time; monsters appear by region (savagery, evil) and some creatures come up from the caverns. [DEC-073: DF's moving regional populations are not followed; wildlife and monsters do not migrate.]
 - **UF:** `UF_Ecology.js` every six game hours tries the area on screen plus one rotating area: prey recover toward the area's first population, monsters spawn only in biomes and regions the catalog allows, both capped, away from camps, sites, people and the view; spawns go through `UF.World.addUnit` (V68).
 - **Proof:** `ecology.prey_replenishes`, `monster_replenishes`, `hard_cap`, `deterministic_safe_cell`, `bounded_work` (§11); V68 itself: `spawn` (§11).
-- **Missing:** V83's fair service of every `(z, biome)` bucket and distribution telemetry; fish and fliers of the upper air; not registered in `plugins.js`.
+- **Missing:** V83's fair service of every `(z, biome)` bucket and distribution telemetry; fish and fliers of the upper air; not registered in `plugins.js`. [DEC-073: for wildlife and monsters, fair service of every bucket and recovery toward the area's first population are no longer targets. They are spawned around the player and active AI faction settlements, checked against live nearby counts and density caps per cell, and heavy hunting lowers an area's spawn rate for a few in-game days before it refills.]
 - **Governs:** V74, V75, V83. This is the "spawns" part of the user's 13:40 instruction; the DF-mechanics run has claimed it (STATUS, 13:45).
 
 ## 3. Creatures and bodies

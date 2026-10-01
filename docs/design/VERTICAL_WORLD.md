@@ -1,5 +1,7 @@
 # Five-level vertical world
 
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** wildlife and monsters are spawned by a seeded runtime spawner around the player and active AI faction settlements, checked against live nearby counts and density caps per cell. They are not populated in every `(z, biomeRegion)` bucket and do not recover toward targets. Heavy hunting lowers an area's spawn rate for a few in-game days, then the area refills. Superseded for wildlife and monsters: the fauna and enemy populations of §4.1 step 5; the prey and monster replenishment and the enemy population recovery of §4.2; the enemy side of the `vertical.mapwide_ecology` check in §11; and the wildlife tick on every inhabited level in the §13.3 `UF_Wildlife.js` row. Plants, finite geology and the spawn safety rules are unchanged.
+
 **Date:** 2026-09-19  
 **Status:** approved design target from VISION V80-V83 and V91; not implemented
 
@@ -146,7 +148,7 @@ For the three surface levels, generation first derives the shared V91 terrain gr
 2. Allocate all five 256x256 baselines. Materialize `z=0/+1/+2` as one stacked surface column (`solid` below `S`, `floor` or natural `ramp` at `S`, `open` above it), the earth-biome mosaic on `z=-1`, and the deep-biome domains on `z=-2`.
 3. Place aligned surface water on `z=0`, aquifers, underground lakes, magma, caves, openings and connector opportunities. Natural surface ramps join the same connector graph as stairs and constructed ramps; optional cave mouths may lead through raised masses into descent networks.
 4. Place all natural resource sources required by `RESOURCE_ATLAS.md`, with legal geology/habitat and mapwide density rather than one clustered cache. This includes materials and veins inside raised columns, finite face outcrops, and plants/loose resources on eligible `+1/+2` floors.
-5. Populate renewable flora, fauna, fish and enemy populations on every eligible `(z, biomeRegion)` bucket under local and global caps. Upper-level life uses the actual raised-floor or open-air habitat and never duplicates a ground node.
+5. Populate renewable flora, fauna, fish and enemy populations on every eligible `(z, biomeRegion)` bucket under local and global caps. Upper-level life uses the actual raised-floor or open-air habitat and never duplicates a ground node. [DEC-073: for wildlife and monsters this step places spawn designations, lairs, dens and notable creatures, not populations; ordinary creatures are spawned by rule around the player and active AI faction settlements.]
 6. Place settlement starts, roads and V67 starting-resource guarantees on reachable `z=0` ground without overwriting blockers, hazards, raised solid cells or units. The player start and every accepted faction camp keep a usable low disc and kit ring.
 7. Carve and validate at least two separated descent networks from usable ground to `-1`, and at least one reachable but gated route from `-1` into each required `-2` band.
 8. Audit stacked-column validity, slope/region reachability, resource/variant coverage, production-chain satisfiability, water containment, support and faction-start safety. Repair missing coverage deterministically and rerun affected audits.
@@ -160,9 +162,9 @@ For the three surface levels, generation first derives the shared V91 terrain gr
 - `z=+1/+2` contain real hill, terrace and summit floors where the V91 surface rises, solid rock/earth beneath higher floors, and open air only above lower ground. Raised floors receive altitude-legal plants, loose stone and mountain resources; cliff faces can expose finite outcrops. Eligible open cells also contain the upper cells of multi-level trees, suitable nests, products and flying creatures. None of these duplicates a ground resource node.
 - Every DF/U7/OSRS resource input maps through the canonical coverage manifest defined in `RESOURCE_ATLAS.md`; real variants remain variants while duplicated or proprietary names are normalized into original resources.
 
-Finite stone, ore, gems, and fuel obey V74 and do not respawn. Cave plants, fungi, fish, prey, and eligible monsters replenish through the ecology rules when habitat and caps allow.
+Finite stone, ore, gems, and fuel obey V74 and do not respawn. Cave plants, fungi, fish, prey, and eligible monsters replenish through the ecology rules when habitat and caps allow. [DEC-073: prey and monsters do not replenish as populations; the spawner places them by rule, and heavy hunting lowers an area's spawn rate for a few in-game days before the area refills.]
 
-The ecology director rotates fairly through every `(z, biomeRegion)` bucket. Renewable sources and enemy populations recover toward data-driven targets at bounded rates; finite geology receives broad initial distribution but never respawns.
+The ecology director rotates fairly through every `(z, biomeRegion)` bucket. Renewable sources and enemy populations recover toward data-driven targets at bounded rates; finite geology receives broad initial distribution but never respawns. [DEC-073: plants keep this map-wide service. Wildlife and monsters have no populations or targets: they are spawned only around the player and active AI faction settlements, checked against live nearby counts and density caps per cell.]
 
 ### 4.3 Trees across five levels
 
@@ -323,7 +325,7 @@ Every check needs a deliberately provoked failure before its passing result coun
 | `vertical.geology` | Soil/upper stone/aquifer occur in `-1`; deep stone, veins, cavern bands and magma domains occur in `-2` with reachable progression |
 | `vertical.biome_identity` | Surface, upper-earth and deep-world tables remain distinct; required earth and deep biome families all occur |
 | `vertical.resource_coverage` | The complete source manifest is mapped and every required canonical/variant source or production chain is present and legal |
-| `vertical.mapwide_ecology` | Every eligible level/biome bucket receives bounded ecology service; renewable resources and enemies recover toward targets without violating caps or spawn safety |
+| `vertical.mapwide_ecology` | Every eligible level/biome bucket receives bounded ecology service; renewable resources and enemies recover toward targets without violating caps or spawn safety [DEC-073: plants only. For wildlife and monsters nothing recovers toward a target; spawns happen around the player and active AI faction settlements within density caps per cell, and spawn safety still applies.] |
 | `vertical.tree_span` | One tree occupies its configured levels, blocks safe spawning there, and clears/updates every occupied level when felled |
 | `vertical.aquifer_well` | Seeping and pressurized sources behave differently and a well draws only through a valid shaft |
 | `vertical.magma_safe` | Unsafe construction is rejected or fails according to rule; safe construction contains magma |
@@ -396,7 +398,7 @@ Plan §9 registration has no V91 conflict. Registration still waits for the edit
 | §8 owner row | V91 review | Required owner change before the affected feature is accepted |
 |---|---|---|
 | **`UF_Combat.js` tick and `sameArea`** | **Conflict if left at the interim guard.** Combat cannot pause whenever the player views a hill, and the later combat slice must allow legal attacks across open vertical cells rather than rejecting every cross-level pair. | Make same-level simulation independent of the viewed level now; later replace the blanket cross-level guard with V80 line-of-sight/range rules. Drawing remains view-filtered. |
-| **`UF_Wildlife.js`** | **Conflict.** V91 creates walkable, resource-bearing `+1/+2` habitats and natural routes. “Creatures never get a route between levels” is only a temporary V1/V2 limitation. | Tick every inhabited level off screen, use z-aware terrain/peek queries, spawn only on habitat-legal floors, and let capable walkers use natural slopes once raised ecology is enabled. |
+| **`UF_Wildlife.js`** | **Conflict.** V91 creates walkable, resource-bearing `+1/+2` habitats and natural routes. “Creatures never get a route between levels” is only a temporary V1/V2 limitation. | Tick every inhabited level off screen, use z-aware terrain/peek queries, spawn only on habitat-legal floors, and let capable walkers use natural slopes once raised ecology is enabled. [DEC-073: ordinary wildlife and monsters are spawned only around the player and active AI faction settlements and despawn when far away and out of sight; only notable creatures (tamed, captured, named, quest and lair creatures, and any carrying items) persist elsewhere. Habitat-legal spawn floors still apply.] |
 | **`UF_Anim.js`** | No V91 conflict in the proposed change. | Continue filtering visible action overlays and units by `viewLevel()` and target `z`; simulation state must not depend on visibility. |
 | **`UF_Speech.js`** | No V91 conflict. | Use `viewLevel()`/`isDisplayed`; V92 still limits overhead text to dialogue and remarks. |
 | **`UF_Stance.js`** | No V91 conflict. | Draw markers only for units on the viewed level and anchor them to the raised map's rendered cell. |

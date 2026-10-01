@@ -1,4 +1,5 @@
 # People-Side Gap Audit (SIM.50.11)
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** wildlife and monsters are spawned by a seeded runtime spawner, with no breeding, carrying capacity, food webs, migration or persistent populations; WG.68.09, WG.68.11 and SIM.50.07 are cut. Superseded: PROPOSED-DEEP-05 (in part) and gap G10-6 (§3.10), the WG.68.09 row of §3.10's coverage table, the SIM.50.07 row of §4.1, and DEEP-05 in OQ-24. The people-side areas are unchanged. The JSON twin `people_gap_table.json` still carries the old DEEP-05 text.
 
 | | |
 |---|---|
@@ -13,7 +14,6 @@
 | Limits | Section 9. |
 
 ## 0. How to read this audit
-
 - **Rating (planning, not code).** Each area is split into sub-elements (listed in its coverage table). A sub-element is **covered** when a WBS row's own scope text names it, and **nominally covered** when only the row's cited source (for example a `docs/SLICES.md` slice) names it, with no scope or definition of done.
   - **FULLY PLANNED**: every sub-element is covered.
   - **PARTLY PLANNED**: at least one sub-element is covered or nominally covered, and at least one is not.
@@ -40,7 +40,7 @@
 | 7 | Travel and logistics | PARTLY PLANNED | SIM.50.08, WG.00.19, WG.00.20, SIM.00.04, SOC.30.02, SOC.32.01, SOC.33.01, WG.62.02, SIM.30.02 | PARTIAL | No row for caravans, trade routes, off-screen travel between settlements, pack animals or supply; live hauling and autonomous jobs never cross a layer (`DEUS_Jobs.js:1412`) | 5 |
 | 8 | Records and legends | PARTLY PLANNED | SOC.51.01, SIM.10.01, SIM.10.02, WG.63.06, WG.65.16, WG.65.17, SIM.40.08, SIM.50.09 | PARTIAL | No world event log, renown, artifact provenance or legends; the chronicle keeps 400 events (`DEUS_History.js:869`); the history-born character mode is defined nowhere | 7 |
 | 9 | The player's role per mode | PARTLY PLANNED | WG.00.11, SOC.50.01, SIM.00.03, GP.07.01 (nominal) | PARTIAL | WG.00.11 is a one-line row and OD-16 / VISION Q4 are open; **Overlord mode is not mentioned in any repository document** (flagged, not designed) | 9 |
-| 10 | Underground life | PARTLY PLANNED | WG.64.01, WG.64.02, WG.64.06, WG.66.01, WG.66.03, WG.68.07-.10, WG.62.02, SIM.50.02 | PARTIAL | No row for a simulation light field, darkvision, light fuel, cave flora succession or underground farming; darkness changes nothing in the simulation, and pools on the deepest level are always lava (`DEUS_Levels.js:1038`) | 3 |
+| 10 | Underground life | PARTLY PLANNED | WG.64.01, WG.64.02, WG.64.06, WG.66.01, WG.66.03, WG.68.07-.10 [DEC-073: WG.68.09 is cut], WG.62.02, SIM.50.02 | PARTIAL | No row for a simulation light field, darkvision, light fuel, cave flora succession or underground farming; darkness changes nothing in the simulation, and pools on the deepest level are always lava (`DEUS_Levels.js:1038`) | 3 |
 
 No area is FULLY PLANNED and none is MISSING under the rule in section 0. The ratings hide a large difference in depth. For individual minds, one of eleven sub-elements is covered by a row's own scope text; for government, six of thirteen.
 
@@ -1040,9 +1040,9 @@ Code today: **PARTIAL** (Command in practice LIVE; Combat autonomous only; Incar
 | Karst caves, fissures | WG.64.01, WG.64.02 (`docs/worldgen/DEUS_WORLDGEN_WBS.md:223`) | yes |
 | Underground heat | WG.64.06 (`docs/worldgen/DEUS_WORLDGEN_WBS.md:228`) | yes |
 | Aquifers, cave lakes, underground rivers | WG.66.01, WG.66.03 (`docs/worldgen/DEUS_WORLDGEN_WBS.md:270`), SIM.50.02 | yes |
-| Cave creatures, lairs, habitat | WG.68.07-.10 (generic, `docs/worldgen/DEUS_WORLDGEN_WBS.md:308`) | yes (generic) |
+| Cave creatures, lairs, habitat | WG.68.07-.10 (generic, `docs/worldgen/DEUS_WORLDGEN_WBS.md:308`) [DEC-073: WG.68.09 is cut] | yes (generic) |
 | Race home layers | WG.62.02 | yes |
-| Food web base underground | WG.68.09 (generic food web) | nominal |
+| Food web base underground | WG.68.09 (generic food web) [DEC-073: WG.68.09 is cut 2026-10-01; wildlife and monsters need no food web] | nominal |
 | Cave flora and fungus succession | none (WG.68.01-.02 are the five surface biomes) | no |
 | Simulation light field | none (WG.00.22 is presentation catalogue slots for "deep light sources") | no |
 | Vision and darkvision | none | no |
@@ -1086,7 +1086,7 @@ Code today: **PARTIAL** (cave fungus, cave herds, pools and underground homes ex
 | G10-3 | MAJOR | No row plans vision and darkvision rules; they exist only in the disabled fog, and sight is a fixed 8 cells. Three of nine races (including dragonborn, placed on the deepest level) have no darkvision. | DEEP-02 |
 | G10-4 | MAJOR | No row plans light sources and fuel; the only light never burns out, and the torch has no item. | DEEP-03 |
 | G10-5 | MAJOR | No row plans cave flora and fungus succession: WG.68.01-.02 cover the five surface biomes; code grows fungus by floor shape alone. | DEEP-04 |
-| G10-6 | MAJOR | No row plans an underground food web: cave flora feeds nothing, the species list is hardcoded, and there is no underground breeding or arrival. | DEEP-05 |
+| G10-6 | MAJOR | No row plans an underground food web: cave flora feeds nothing, the species list is hardcoded, and there is no underground breeding or arrival. [DEC-073: closed for wildlife and monsters: they are spawned by the biome-depth cell, danger tier and encounter tables (NAT.07.04), so no food web, breeding or arrival is wanted] | DEEP-05 |
 | G10-7 | MINOR | The surface clock drives underground behaviour (animal sleep, work gates). | DEEP-01 |
 
 **Proposed packages.** No package proposes any tint, fog filter, shading overlay or scaling (DEC-011); light is simulation state only. Any art need is a text-only "art slot needed" line for the Owner (DEC-007); none is proposed here.
@@ -1115,9 +1115,9 @@ Code today: **PARTIAL** (cave fungus, cave herds, pools and underground homes ex
   - Acceptance tests: (1) a moist cave with organic input grows fungus and a dry sterile one does not; (2) fungal biomass never exceeds the organic input plus any declared source (mass ledger); (3) a glowing species appears as a light source. Mutant: growth from nothing (today's floor-shape rule) must fail test 2.
   - Tick cost: active cave regions on the slow clock, about 20 regions × 50 µs ÷ 100 ticks ≈ 10 µs per tick. Memory: per active region about 64 B.
 
-- **PROPOSED-DEEP-05 Underground food webs and creatures** (G10-6).
+- **PROPOSED-DEEP-05 Underground food webs and creatures** (G10-6). **[DEC-073, 2026-10-01: superseded in part.]** Wildlife and monsters are spawned, so the food web, breeding, arrivals and crowd counts below are dropped (WG.68.09 and WG.68.11 are cut; SIM.40.10 and SIM.30.02 no longer cover ordinary wildlife; notable creatures stay in SIM.40.10). What stays: underground creatures come from the spawner by the biome-depth cell, danger tier and encounter tables (NAT.07.04, reading NAT.07.01 and NAT.07.03), and lairs and dens are persistent anchors (WG.68.10). Acceptance test (1) is void, and test (2) contradicts DEC-073 item 2: heavy hunting thins an area for a few in-game days, then it recovers. The mutant, the tick cost and the memory of per-species region counts below go with the dropped food web.
   - Scope: WG.68's carrying capacity and food web applied to the two lower bands: cave grazers eat fungus and detritus, predators eat grazers, SRD creatures placed by an Owner-approved habitat table (the SRD has none); breeding and arrivals below ground (SIM.40.10), crowd counts per region.
-  - Depends on: WG.68.07-.11, DEEP-04, SIM.40.10, SIM.30.02.
+  - Depends on: WG.68.07-.11, DEEP-04, SIM.40.10, SIM.30.02. [DEC-073: WG.68.09 and WG.68.11 are cut; the creature part now depends on NAT.07.04 and WG.68.10.]
   - Acceptance tests: (1) removing the fungus lowers grazer counts and then predator counts, in that order; (2) overhunting extirpates locally with no respawn (WG.68.11). Mutant: species counts that ignore food (today's fixed placement) must fail test 1.
   - Tick cost: about 500 occupied underground regions stepped every 100 ticks = 5 × 5 µs = 25 µs per tick. Memory: about 32 B per region per band (8 species × 4 B); at most 1,024 regions × 32 B = 32 KiB per area.
 
@@ -1140,10 +1140,10 @@ Each people area couples to the nine living-world systems (SIM.50.02-.10), to th
 | SIM.50.04 Vegetation (`docs/worldgen/DEUS_WORLDGEN_WBS.md:547`) | Herbs and medicine are harvested flora (HEALTH-05). Cave flora extends succession below ground (DEEP-04). A plant's uses are a technique to discover (KNOW-02). The dormant "nature" need reads green surroundings (MIND-01). | Its test text is surface succession (pioneer to climax forest, canopy). No underground succession, and no yield interface for herbs and food. |
 | SIM.50.05 Fire (`docs/worldgen/DEUS_WORLDGEN_WBS.md:548`) | Fire is a light source that burns fuel (DEEP-01, DEEP-03). Smoke in a closed cave is a hazard to people; the SRD's suffocation rule sits in the same environment entry as vision and light (`game/data/srd51/rules.json:4403`). Arson in raids (WAR-05). Fires are witnessed, feared and logged (MIND-02, REC-01). | No people response: no firefighting or fleeing duty (a SOC.13.01 duty) and no smoke volume (Lane P's G-GAS). |
 | SIM.50.06 Seasons and weather (`docs/worldgen/DEUS_WORLDGEN_WBS.md:549`) | Festivals and the farming calendar (CUL-03, OQ-03). Exposure, where cold and heat damage are already live (`DEUS_Environment.js:651`), and seasonal disease (HEALTH-03). Seasonal route weights (LOG-01). Campaign seasons (WAR-03). Weather as a mood source (MIND-03). | The row shifts temperature "across all 32 layers". Deep layers should follow WG.64.06's underground heat rather than the surface season, and DEEP-01 needs sky exposure, not season. How seasons weaken with depth is not stated. |
-| SIM.50.07 Migration and herds (`docs/worldgen/DEUS_WORLDGEN_WBS.md:550`) | Hunting follows herds. Pack and draft animals come from livestock (LOG-04). Cave fauna moves between regions below ground (DEEP-05). | Written for upland and lowland herds; no underground movement. |
+| SIM.50.07 Migration and herds (`docs/worldgen/DEUS_WORLDGEN_WBS.md:550`) [DEC-073: cut 2026-10-01; wildlife and monsters do not migrate] | Hunting follows herds. Pack and draft animals come from livestock (LOG-04). Cave fauna moves between regions below ground (DEEP-05). | Written for upland and lowland herds; no underground movement. |
 | SIM.50.08 Land reshaping (`docs/worldgen/DEUS_WORLDGEN_WBS.md:551`) | Roads lower route cost (LOG-01); the row makes roads terrain only. Dams, terraces and irrigation are techniques someone must know (KNOW-02). Land claims fall under law (GOV-01). Fortifications and siege tunnels (WAR-05). Mining opens caves, and the ecology design says that mining and torchlight collapse a cave predator's habitat (`docs/worldgen/DEUS_CREATURE_ECOLOGY.md:219`, DEEP-05). | Who decides to reshape, and why. The row depends on SOC.10.03 plan data but names no decision maker (DEC-015 build orders, office duties). |
 | SIM.50.09 Settlement lifecycle (`docs/worldgen/DEUS_WORLDGEN_WBS.md:552`) | The row names its own causes of contraction and abandonment: "war/famine/disease". War beyond defence is WAR-04 and WAR-06, famine comes through supply (LOG-05), and disease is HEALTH-03. SOC.40 plans defence only, and none of the three causes has a row that produces it. Fission and V42 departures found new settlements (GOV-05, MIND-06). Ruins keep their history (REC-04). Abandonment can lose knowledge (KNOW-05). | Every cause it names is unplanned on the people side, so the row cannot meet its own test text without the people packages. |
-| SIM.50.10 Catastrophes (`docs/worldgen/DEUS_WORLDGEN_WBS.md:553`) | Mass injuries (HEALTH-02). Grief and fear in witnesses (MIND-02). Disasters become legends (REC-01, REC-02). A legitimacy shock for the ruler (GOV-04). Cave-ins kill underground populations (DEEP-05, DEEP-06). Sinkholes open new cross-layer connectors (LOG-01). | No people response (evacuation, rescue, rebuilding duties). |
+| SIM.50.10 Catastrophes (`docs/worldgen/DEUS_WORLDGEN_WBS.md:553`) | Mass injuries (HEALTH-02). Grief and fear in witnesses (MIND-02). Disasters become legends (REC-01, REC-02). A legitimacy shock for the ruler (GOV-04). Cave-ins kill underground populations (DEEP-05, DEEP-06). [DEC-073: underground wildlife and monsters are spawned, not kept as populations, so DEEP-05's part is dropped.] Sinkholes open new cross-layer connectors (LOG-01). | No people response (evacuation, rescue, rebuilding duties). |
 
 Every one of the nine rows is physical. None names a consumer on the people side, and none emits events that witnesses, memories or records can use. PROPOSED-REC-01 gives them one event store to write to, and PROPOSED-MIND-02 turns those events into memories.
 
@@ -1256,7 +1256,7 @@ The sum of the tick-cost lines in section 3, at the planning point of section 2.
 | 7 Travel and logistics | about 30 | LOG-01 30 |
 | 8 Records | about 18 | REC-01 13, REC-02 4.5 |
 | 9 Modes | 0 | per command only |
-| 10 Underground | about 98 | DEEP-01 56, DEEP-02 3.5, DEEP-03 3, DEEP-04 10, DEEP-05 25 |
+| 10 Underground | about 98 | DEEP-01 56, DEEP-02 3.5, DEEP-03 3, DEEP-04 10, DEEP-05 25 [DEC-073: the DEEP-05 cost goes with the dropped food web] |
 | **Total** | **about 370 µs** | 11% of the 3.4 ms per-tick budget at 8x, 1.4% of 27 ms at 1x (A-3) |
 
 - Bursts: MIND-08 promotion costs about 50 µs per person, so it is spread over prewarm ticks at no more than 20 promotions (1 ms) per tick. GOV-05's claimant scan costs under 1 ms per office holder's death.
@@ -1296,7 +1296,7 @@ Listed with options, never answered here. No option is marked as recommended. Wh
 | OQ-21 | 9 | Battle screens: DEC-017 keeps them, ADR-001 and V45 say combat stays on the map (`escalation.md` E3, M-05). | MODE-03 | (a) DEC-017 means only "keep the RMMZ shell available"; combat stays on the map. (b) Some fights move to `Scene_Battle`. (c) ADR-001 is superseded. |
 | OQ-22 | 9 | Possession versus command (VISION Q4, OD-16). OD-16 records the default "Both modes, switchable" (`docs/worldgen/DEUS_WORLDGEN_WBS.md:718`) and is `OPEN`. | MODE-01, MODE-04 | (a) Both, switchable. (b) Command only. (c) Possession only. |
 | OQ-23 | 10 | Which people lives in which home layer range at 32 layers? DEC-013 leaves it open (`docs/OWNER_DECISIONS.md:194`), while V132 fixes spawn levels in the 5-level world (M-06). | DEEP-06, WG.62.02 | (a) The Owner assigns the ranges. (b) V132's order stretched over the bands (−2 to Lower-2, −1 to Lower-1, and so on). (c) Placement per seed within Owner bounds. |
-| OQ-24 | 10 | What feeds life in the deep caves? | DEEP-04, DEEP-05, DEEP-06 | (a) Organic input from above only (detritus, remains, matter carried by water). (b) That plus geothermal heat (WG.64.06) as a declared energy source. (c) That plus a magical or glowing source, logged in the ledger like Lane P's conjured matter (its Q1). |
+| OQ-24 | 10 | What feeds life in the deep caves? | DEEP-04, DEEP-05, DEEP-06 [DEC-073: not DEEP-05; spawned creatures need no food web] | (a) Organic input from above only (detritus, remains, matter carried by water). (b) That plus geothermal heat (WG.64.06) as a declared energy source. (c) That plus a magical or glowing source, logged in the ledger like Lane P's conjured matter (its Q1). |
 | OQ-25 | 3, 4 | Is V87 (eleven peoples) superseded by DEC-013's nine races (`escalation.md` E2, M-04)? | WAR-01, CUL-01, MIND-05 | (a) V87 is superseded and `docs/design/PEOPLES.md` is archived. (b) The extra peoples return as creatures or factions that are not races. (c) DEC-013 is amended. |
 | OQ-26 | 10 | Underground darkness on screen. Every view of an underground level gets the midnight screen tone (D-6), a code-applied darkening that DEC-011's amendment holds for an Owner-led review as an off-by-default toggle (`docs/OWNER_DECISIONS.md:157`). | Presentation only; DEEP-01 is simulation state and does not depend on it | (a) Remove the tone now (DEC-011, 1:1). (b) Keep it until the Owner-led review. (c) The Owner-led review decides what darkness looks like. |
 

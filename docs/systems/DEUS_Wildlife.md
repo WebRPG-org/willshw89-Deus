@@ -2,6 +2,8 @@
 
 > Naming normalized 2026-09-30 (OPS.PRUNE.06): canonical plugin `game/js/plugins/DEUS_Wildlife.js`; API namespace `DEUS` (`window.UF` remains the runtime alias in `DEUS_Core.js`). Existing dated results and limitations below are retained, not re-tested by this documentation change.
 
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** wildlife and monsters are to be spawned by a seeded runtime spawner around the player and active AI faction settlements (lane-fe, NAT.07.04; lane-ff, NAT.07.05; lane-fi, WG.00.47, which spawns on the first build of each area and z), rather than placed once at New Game as below. They do not breed or migrate, and that is intended, not a gap. Heavy hunting lowers an area's spawn rate for a few in-game days, then the area refills. This page still describes the code as built; see the notes under Known limits.
+
 Wild creatures from `catalog.wildlife` placed with the world as ordinary world units: herds per area by biome share and region tier (evaluated per sample point), prey herds 24–40 cells from every faction's campfire (`start.kit.wildlife`, VISION V67, since 2026-09-19 afternoon; before, one herd near the start), one monster herd per lair site; no predator or monster within 20 cells of any campfire. At runtime: a seeded, throttled wander AI for every unit with `data.ai === "wander"` (creatures and faction people), prey that steps away from a hunter, `unit.data.tint` applied to unit sprites, and `data.through` fliers that pass through everything.
 Status: built 2026-09-18, kit herds for every campfire 2026-09-19 afternoon, checks: `wildlife` (16 checks) plus `wildlife_seeds` (1 check, on request only). Not yet registered in the real `game/js/plugins.js` (Claude Code registers it after `DEUS_Colonists`, before `DEUS_Stance`; WORLD_ARCHITECTURE §5). Tested on snapshots with `--plugins DEUS_Tiles,DEUS_Objects,DEUS_Items,DEUS_Jobs,DEUS_Wildlife`.
 
@@ -117,10 +119,10 @@ None, aliases only: `Game_Map.prototype.update` (AI ticks), `Sprite_Character.pr
 - The spawn calls `DEUS.Objects.blocksIn` before the map is loaded, which builds the start area once through `peekArea` (about 200 ms); `DataManager.loadMapData` builds it again for the map. The build is deterministic, so both agree.
 - Lair herds need `DEUS.History.sites()` returning `{ kind, area, x, y, ruined }`; when the history plugin doesn't provide it, none are placed (no error).
 - The fallback (a kit herd outside its species' biomes) hasn't been seen in a run; it needs a camp whose whole ring lies in biomes without prey. Giving those biomes some prey in `catalog.wildlife` would remove it.
-- The kit herds are placed at New Game only; nothing keeps prey near a camp afterwards (herds wander within `species.wander` of their centre, and hunted herds aren't replaced).
-- The predator rule holds at placement: a wolf (`wander` 16) whose herd centre is 26 cells from a campfire can later walk to within 10 of it; nothing keeps predators away from camps in play yet.
+- The kit herds are placed at New Game only; nothing keeps prey near a camp afterwards (herds wander within `species.wander` of their centre, and hunted herds aren't replaced). [DEC-073: the planned spawner refills a hunted area after a few in-game days (lane-fe, NAT.07.04).]
+- The predator rule holds at placement: a wolf (`wander` 16) whose herd centre is 26 cells from a campfire can later walk to within 10 of it; nothing keeps predators away from camps in play yet. [DEC-073: the planned spawner keeps hostile monsters out of a radius around settlements and starts.]
 - Corpses: a kill (DEUS_Jobs `hunt`) removes the unit and drops items; there is no dead-animal image yet (AR-401 should include one per prey species).
-- No day/night behavior, no predator hunting of prey, no breeding; herds don't migrate between areas.
+- No day/night behavior, no predator hunting of prey, no breeding; herds don't migrate between areas. [DEC-073: no breeding and no migration are intended for wildlife and monsters, not gaps to fix.]
 
 ## Capture, Domestication & Tamed Creatures (DEC-033)
 - Governed by Owner rulings 2026-09-26 12:59 CT and 13:01 CT (Directive 0096-CS, DEC-033).

@@ -1,4 +1,5 @@
 # ADR-003: Sim/Render Split and Level-of-Detail (LOD) Simulation
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** wildlife and monsters are spawned by a seeded runtime spawner around the player and around active AI faction settlements; there is no breeding, carrying capacity, food web, migration or persistent population vector for them. An ordinary one despawns only when far away and out of sight; tamed, captured, named, quest and lair creatures and any creature carrying items persist with stable IDs. Superseded for wildlife and monsters: the §6 wildlife row; the anonymous-population steps of §7.3, §7.4 and §7.7; Q-POP and the creature matter in Q-MASS (§7.8); spawning as a ledger source and the anonymous-population tolerance (§7.9); the anonymous-animal trade-off of §5.7 and Q4 (§12.3); and, for creatures, G4 of §5.7 and the camera-follow guard test of §19, which hold only if the spawner decides "out of sight" from simulation state (see the notes there). People, owned livestock and flora keep this design.
 
 **Status:** Rev 4, ACCEPTED, together with the "Review of Rev 4" note in the Rev 4 change log below: without that note this status reads PROPOSED. The PM (Claude) signed it on 2026-10-01 under DEC-059 item 3 (`docs/OWNER_DECISIONS.md:991` at `8b235fca`); the Owner can change it. One condition stays: §9.2 is amended with K3 measurements before SIM.00.03 starts (§0 item 12). Rev 3 (Lane M, 2026-09-26) was written by Claude, the Lane M writer, and Grok's adversarial review passed it (`tasks/SIM.00.01/lane-m/review_grok_2e32f596.md:173` at `8b235fca`). Rev 4 applies the braintrust's sign-off amendments (MiniMax M3, 2026-10-01). Grok's review covers Rev 3 only. The PM wrote the Rev 4 edits, so the braintrust work gate judged their text before the PM signed, and the review note says who checked what: no author certifies its own text.
 - Rev 1 (`ddd1b865`) predates the Lane M review checklist (`tasks/SIM.00.01/lane-m/review_checklist.md`).
@@ -24,7 +25,6 @@
 - Commands and exit codes are in Appendix B, `tasks/SIM.00.01/lane-m/notes.md` (Rev 1 and 2) and `tasks/SIM.00.01/lane-m/REPORT_REV3.md` (Rev 3).
 
 ### Rev 4 change log (sign-off, 2026-10-01)
-
 DEC-059 item 3 gives the PM the signature, "from the braintrust recommendations, recording each choice" (`docs/OWNER_DECISIONS.md:991` at `8b235fca`). The braintrust's sign-off review (MiniMax M3, 2026-10-01; kept with the PM's braintrust records, outside the repository) asked for amendments A1 to A15. Each row below says what the PM did with one; rows X1 to X4 are the PM's own consistency edits. Later Owner decisions enter as annotations: no section's design is reopened. Rev 4's new citations read documents at `8b235fca`; code citations stay pinned to `b612bc72`.
 
 | # | Asked for | Decision | Where |
@@ -38,7 +38,7 @@ DEC-059 item 3 gives the PM the signature, "from the braintrust recommendations,
 | A7 | §16.4: rubble is the terminal form | Applied, with how natural rubble is registered | §16.4 |
 | A8 | §18.2: fire is deferred | Applied, and noted at tick step 5 and in the §6 Fire row | §18.2, §3.8, §6 |
 | A9 | §6 Environment and §3.8 step 6: seasons and weather are deferred | Applied, reworded. Seasons and weather are deferred; Environment's per-layer rule stays: its boundary condition, from biome and layer, reads the band table (§5.1), which is not a weather system. The suggested "Environment is built as a stub (calendar + clock)" would also forbid that rule, and the clock and calendar are the kernel's (§3.2) | §6, §3.8 |
-| A10 | §6 wildlife: migration is deferred; seeded placement is the rule | Applied; breeding is noted as refined later (DEC-057 item 2), and the natural-connections row's use of the migration rule is marked | §6 |
+| A10 | §6 wildlife: migration is deferred; seeded placement is the rule | Applied; breeding is noted as refined later (DEC-057 item 2), and the natural-connections row's use of the migration rule is marked [DEC-073: superseded for wildlife and monsters: they do not breed, their migration is cut rather than deferred, and seeded placement becomes a seeded runtime spawner] | §6 |
 | A11 | §7.8: name the causes of the closed water and lava loop | Applied, rewritten. The water and lava causes are named, each a transform between named accounts: evaporation and real exits, return rain, springs, magma outlets and the contact quench. The suggested sentence named a "lava→water quench" and an inverse "water→lava→steam", and deferred springs and rain "with weather". Under DEC-040 rain is the return path of a closed loop, not weather. The Rev 3 example of rain and evaporation as a source and a sink is marked superseded | §7.8, §7.9 |
 | A12 | §7.5: record seeded placement | Applied | §7.5 |
 | A13 | §12.3 Q14: "PARTLY ANSWERED" for monsters, fauna and flora | **Rejected as worded.** Q14 asks only about people. DEC-057 and DEC-058 place monsters, fauna and flora and say nothing about bucketing persons, so no part of Q14 is answered. A note says so | §12.3 |
@@ -49,7 +49,7 @@ DEC-059 item 3 gives the PM the signature, "from the braintrust recommendations,
 | X3 | The Rev 3 change log gives line numbers of "this file" | Pinned to Rev 3 (`647457b2`); Rev 4 moves most lines | Rev 3 change log |
 | X4 | DEC-059 item 3: record each choice | The PM questions of §12.3 are answered, except Q15, which stays open | §12.4 |
 
-**Deferred in the natural-world phase.** DEC-059 item 4 defers fire, seasons and weather, animal migration, rare geological events and structure decay (`docs/OWNER_DECISIONS.md:992` at `8b235fca`). DEC-057 item 1 defers soil and stops collapse at rubble (`docs/OWNER_DECISIONS.md:952` at `8b235fca`). Each design stays here, marked where it stands: fire in §3.8, §6 and §18.2; seasons and weather in §3.8 and §6; migration in §6; decay in §17; rubble and sediment in §7.8, §16.4 and §17.4. Rare geological events have no section in this ADR.
+**Deferred in the natural-world phase.** DEC-059 item 4 defers fire, seasons and weather, animal migration, rare geological events and structure decay (`docs/OWNER_DECISIONS.md:992` at `8b235fca`). [DEC-073: animal migration is now cut, not deferred: wildlife and monsters do not migrate (SIM.50.07 and WG.68.12 are cut). The §6 migration design stays here only as a record.] DEC-057 item 1 defers soil and stops collapse at rubble (`docs/OWNER_DECISIONS.md:952` at `8b235fca`). Each design stays here, marked where it stands: fire in §3.8, §6 and §18.2; seasons and weather in §3.8 and §6; migration in §6; decay in §17; rubble and sediment in §7.8, §16.4 and §17.4. Rare geological events have no section in this ADR.
 
 **Kept as they were.**
 - §9.2 stays PENDING-K3. Lane K's K3 baselines have reached `main` since Rev 3 (merge `5255f1a5`, after Grok's CLEAN PASS at `95c18bfa`, `tasks/WG.00.09b/lane-k/review_grok_95c18bfa.md:234` at `8b235fca`), so the K3 values can now be read. The measured headless values wait for SIM.00.02's headless runner (`docs/worldgen/DEUS_WORLDGEN_WBS.md:539` at `8b235fca`), which is not on `main` yet.
@@ -107,7 +107,7 @@ The Rev 3 brief's other items: DEC-017 → §13; DEC-016, DEC-018 to DEC-022 →
    - Three levels:
      - **L0 full:** every tick.
      - **L1 near:** fine state, stepped in batches every 10 ticks.
-     - **L2 summary:** summary state (anonymous creatures as counts; fluid frozen in place), stepped every 100 ticks (1 game hour).
+     - **L2 summary:** summary state (anonymous creatures as counts; fluid frozen in place), stepped every 100 ticks (1 game hour). [DEC-073: not wildlife and monsters, which are spawned and despawned instead (§6).]
    - Only regions that hold state are ever scheduled. So LOD work grows with occupied regions, not with the layer count (§5.5).
 5. **Conservation.** Every conserved quantity is an integer with a named unit. A ledger records explicit sources and sinks. Promotion and demotion are atomic and checked against the ledger.
 6. **Migration.** The work lands in increments, and the game stays playable after each one.
@@ -820,7 +820,7 @@ The LOD phase evaluates the focus sources every 10 ticks. Each source makes regi
 
 - `lod.mode = "full"` makes every region L0. It is the default through SIM.30.03, and it is the oracle for SIM.30.05.
 - `lod.mode = "lod"` enables §5.2 to §5.5. It is switched on in play only after SIM.30.04, with PM sign-off.
-- `lod.cameraFocus` (default `true`, per DEC-012) can be set to `false` if the Owner prefers strict observer independence (§5.7, Q4).
+- `lod.cameraFocus` (default `true`, per DEC-012) can be set to `false` if the Owner prefers strict observer independence (§5.7, Q4). [DEC-073: for wildlife and monsters the PM reads Q4 as decided in effect (§12.3 Q4 note); Q4 stays open for other anonymous state.]
 
 ### 5.7 What "does not depend on what the player watches" means
 
@@ -831,10 +831,10 @@ DEC-012 makes the camera a focus source: "The active player/camera region simula
 | G1: conserved totals (§7.8) exactly equal, watched or not | yes | yes |
 | G2: tracked units (§7.5) and history persons never lost or duplicated | yes | yes |
 | G3: replay from the seed + command log (focus included) is bit-exact | yes | yes |
-| G4: every unit position and all state is bit-identical whether or not the player watches | **yes**, for the core (SIM.00.04 DoD 1). During the hybrid period it is tested headless, with goals given as commands | only for regions whose L0 comes from non-camera sources |
+| G4: every unit position and all state is bit-identical whether or not the player watches | **yes**, for the core (SIM.00.04 DoD 1). During the hybrid period it is tested headless, with goals given as commands. [DEC-073: an ordinary creature despawns only when far away and out of sight. G4 still holds only if the core works out "out of sight" from simulation state (for example, the sight of the player's and factions' units and the logged `FOCUS_SET`), not from the camera. If that cannot be done, this is an open PM/Owner question.] | only for regions whose L0 comes from non-camera sources |
 | G5: aggregate statistics within tolerance of `full` mode | n/a | yes: SIM.30.05, tolerances in §7.9 |
 
-In `lod` mode with `cameraFocus: true`, watching a remote region promotes it. That changes the dice for anonymous animals there, but never the physics or the totals. The Owner decides whether that trade-off is acceptable (Q4).
+In `lod` mode with `cameraFocus: true`, watching a remote region promotes it. That changes the dice for anonymous animals there, but never the physics or the totals. The Owner decides whether that trade-off is acceptable (Q4). [DEC-073: wildlife and monsters are no longer anonymous L2 state. They are spawned around the player and around active AI faction settlements and despawn only when far away and out of sight, so where they are follows the player and active AI faction settlements by design. Physics and the conserved totals still do not depend on the view; see the G4 note above.]
 
 ---
 
@@ -845,7 +845,7 @@ These are the aggregate representations for L2 regions. "Tracked" and "anonymous
 | System | Fine state (L0/L1) | L2 summary state | Coarse rule (every 100 ticks) |
 |---|---|---|---|
 | **Tracked units and people** | full record: cell, `progress`, path, needs | the same record in *abstract* mode: `{cell, goal, remainingCost, needs}`. Individual, never aggregated. `remainingCost` is the sum of the plan's step costs left, or 1000 × the octile distance if there is no plan | `remainingCost −= speed × Δ` (integer). The abstract `cell` advances along the straight line from the cell where abstract mode began to the goal, in proportion to the cost used; it is only a position, and terrain is re-checked when the unit is placed (§7.3). Needs are integrated in closed form. A job accrues progress if the worker is at the site |
-| **Wildlife and monsters** (anonymous) | unit records; herd membership lives on the unit (`u.data.herd`, `DEUS_Ecology.js:214`, `:672-678`) | **buckets** `count[species][ageBand][sex]` (`Uint16`) per region; herd records `{herdId, species, lastBirth, members per bucket}` keep today's fields (`:722`) | Ecology's rules applied to counts: its hourly breeding (`stepBreeding`, called from `tickHour`, `DEUS_Ecology.js:897-905`) and its six-hourly population roll with caps (`:907-914`); migration between adjacent L2 regions by a deterministic rule; every change goes through the ledger. **Natural-world phase (Rev 4):** migration is deferred (DEC-059 item 4) and breeding is refined later (DEC-057 item 2). Creatures are placed by seeded random rules, deterministic from the world seed, as each level is generated: biome cell (DEC-030), danger field (DEC-050) and bestiary assignment (DEC-053), per DEC-057 item 2 (§7.5) |
+| **Wildlife and monsters** (anonymous) | unit records; herd membership lives on the unit (`u.data.herd`, `DEUS_Ecology.js:214`, `:672-678`) | **buckets** `count[species][ageBand][sex]` (`Uint16`) per region; herd records `{herdId, species, lastBirth, members per bucket}` keep today's fields (`:722`) | Ecology's rules applied to counts: its hourly breeding (`stepBreeding`, called from `tickHour`, `DEUS_Ecology.js:897-905`) and its six-hourly population roll with caps (`:907-914`); migration between adjacent L2 regions by a deterministic rule; every change goes through the ledger. **Natural-world phase (Rev 4):** migration is deferred (DEC-059 item 4) and breeding is refined later (DEC-057 item 2). Creatures are placed by seeded random rules, deterministic from the world seed, as each level is generated: biome cell (DEC-030), danger field (DEC-050) and bestiary assignment (DEC-053), per DEC-057 item 2 (§7.5). [DEC-073, 2026-10-01: superseded for wildlife and monsters. Anonymous ones keep no L2 summary: no buckets, herd records, breeding or migration. The spawner places them around the player and around active AI faction settlements (lane-fe, NAT.07.04), and on the first build of each (area, z) (lane-fi, WG.00.47), where only spawn designations, lairs and dens, the depletion record and notable creatures are registered (DEC-073 item 8). An ordinary creature despawns only when far away and out of sight, instead of being absorbed (lane-ff, NAT.07.05); notable ones stay tracked units (§7.5)] |
 | **Flora and resources** | object grid (seed + `objectDiffs`); sprouts and regrowth records (`blankState`, `DEUS_Ecology.js:127`) | **no summary needed**: objects stay seed + diffs; sprout and regrowth records stay records; a derived per-region count per object type is kept for statistics | sprouts mature by beat count (today's rule, `:772-796`); the ore sprouts (`:736-752`) are Q7 |
 | **Fluids** | packed depth grid: one byte per cell (`DEUS_Fluid.js:127-137`), one `Uint8Array` per level (`DEUS_Fluid.js:179`, `:187-189`); a dirty queue *per region* | **the fine cells are kept but frozen.** A region's grid is at most 2 layers × 32 × 32 = 2,048 bytes at any layer count, and none at all for a chunk with no fluid (§15.3), so dropping it would save nothing. What L2 drops is per-tick stepping. A derived **basin index** sits on top: 4-connected *wet* cells of one fluid type per z (types never mix, `:457-458`), each basin with its volume, free capacity, drain faces to z−1, and faces to neighbouring regions. It is rebuilt from the cells, so it isn't saved (§10.7) | drain through drain faces and settle across linked faces with integer amounts; each transfer is applied to cells in canonical order (a gaining basin fills its lowest-floor cells first, then row-major; a losing basin drains its highest cells first) as a paired integer subtract and add |
 | **Fire** | `W.state.fire.burning` records, integer fuel (`DEUS_Fire.js:214`, `:389`) | **none**: a burning cell is a focus source, so its region is at least L0/L1; demotion waits until no cell burns | — (Rev 4: fire is deferred in the natural-world phase, DEC-059 item 4; §18.2) |
@@ -855,7 +855,7 @@ These are the aggregate representations for L2 regions. "Tracked" and "anonymous
 | **Items and containers** | records with integer `count` (`DEUS_Items.js:304`) | **records unchanged**: never aggregated, and they need no stepping at rest | — |
 | **Environment** | weather per area (`DEUS_Environment.js:88`, `:120`); thermal state per unit | ambient temperature is a boundary condition, derived from season and biome, not a stock; unit thermal stays with the (tracked) unit | re-derived. **Natural-world phase (Rev 4):** seasons and weather are deferred (DEC-059 item 4), and no weather step is migrated or extended. The boundary condition stays, from biome and layer; its per-layer rule reads the band table (§5.1), which is not a weather system |
 | **Factions** | contact checks (`DEUS_Factions.js:656-660`); integer population counters (`:194`, `:594-625`) | contact between tracked units in the same L2 region is resolved at the coarse tick; counters must equal tracked + bucket members (§7.8) | co-location test |
-| **Natural connections** | links (`W.state.naturalConnections`) | links are static. A link inside one slab is movement *within* the region; a link across a slab border is a border crossing (§7.7) | bucket z-distribution within a slab unchanged; cross-slab use by the migration rule (Rev 4: migration is deferred in the natural-world phase, DEC-059 item 4) |
+| **Natural connections** | links (`W.state.naturalConnections`) | links are static. A link inside one slab is movement *within* the region; a link across a slab border is a border crossing (§7.7) | bucket z-distribution within a slab unchanged; cross-slab use by the migration rule (Rev 4: migration is deferred in the natural-world phase, DEC-059 item 4) [DEC-073: no migration for wildlife and monsters; SIM.50.07 and WG.68.12 are cut] |
 
 *"Energy".* DEC-012 says demotion conserves "mass, energy and population". The code has no energy stock. This ADR maps "energy" to fuel (burnable objects and items, plus fire fuel) and to food and drink (items, needs). Temperature is a boundary condition. The Owner confirms or corrects this (Q5).
 
@@ -894,7 +894,7 @@ These are the aggregate representations for L2 regions. "Tracked" and "anonymous
   - The region's inflow buffer (§7.7) is released into its border cells in canonical order, up to each cell's capacity (0..7, `fluidCapacityAt`, `DEUS_Fluid.js:517-532`).
   - If a cell holds more than its capacity, for example because a wall was built while the region was L2, the excess is displaced the way Fluid's reconciliation does it (`DEUS_Fluid.js:896-923`). But an excess that finds no room is kept in the region's **reservoir counter** instead of being dropped. It is never deleted, and it is placed again at the next coarse tick.
   - Inflow buffers and the reservoir are part of Q-WATER / Q-LAVA.
-- **Anonymous populations.** For each bucket count c, c individuals are spawned.
+- **Anonymous populations.** For each bucket count c, c individuals are spawned. [DEC-073: not for wildlife and monsters, which have no buckets; the spawner places new ones by its own rules.]
   - Candidate cells:
     - must be walkable, free, and in the right level for the species' habitat;
     - are chosen outside protected zones, reusing Ecology's `candidateValid` rules (`DEUS_Ecology.js:463-470`);
@@ -914,7 +914,7 @@ These are the aggregate representations for L2 regions. "Tracked" and "anonymous
   - no combat;
   - no job with an assigned worker in the region.
 - **Fluids.** Build the basin index over the region's wet cells. The cells keep their values. The region's fine queue is dropped. Any cell still in it is simply re-queued on promotion (§7.3), so no volume moves on demotion.
-- **Anonymous units.** Absorbed into buckets:
+- **Anonymous units.** Absorbed into buckets: [DEC-073: a wildlife or monster unit is not absorbed; it despawns only when far away and out of sight.]
   - `count += 1`;
   - the record is deleted and its ID *retired*, with reason `ABSORBED`. `nextUnitId` never reuses an ID (`DEUS_World.js:1133`).
   - Absorption **does not emit `world:unitRemoved`**. To legacy listeners that event means the unit has left the world, and Factions lowers its population for a removed unit that is dead or dying (`DEUS_Factions.js:619-625`). An absorbed unit is still in the world, as a bucket member counted in Q-FACTPOP (§7.8). The feed carries `UNIT_REMOVED` with cause `LOD_ABSORB` instead, and the legacy translation (§4.3) maps it to no legacy event.
@@ -934,7 +934,7 @@ A unit is **tracked**, meaning it is never aggregated, if **any** of these hold:
 
 All other units are **anonymous**. Only anonymous units enter buckets. So named units and history persons are never lost or duplicated (SIM.30.03 DoD 3), and the set equality over their IDs is checked on every transition (§7.9).
 
-**Natural-world placement (Rev 4).** DEC-057 item 2 (`docs/OWNER_DECISIONS.md:953-955` at `8b235fca`), built under DEC-058, places monsters, fauna and flora by seeded random rules, deterministic from the world seed, as each level is generated: biome cell (DEC-030), danger field (DEC-050) and bestiary assignment (DEC-053). Placement does not change the rules above: a placed creature is tracked or anonymous by them. Persons stay tracked, and Q14 stays with the Owner.
+**Natural-world placement (Rev 4).** DEC-057 item 2 (`docs/OWNER_DECISIONS.md:953-955` at `8b235fca`), built under DEC-058, places monsters, fauna and flora by seeded random rules, deterministic from the world seed, as each level is generated: biome cell (DEC-030), danger field (DEC-050) and bestiary assignment (DEC-053). Placement does not change the rules above: a placed creature is tracked or anonymous by them. Persons stay tracked, and Q14 stays with the Owner. [DEC-073: for wildlife and monsters the units that persist, with stable IDs, are tamed, captured, named, quest and lair creatures and any creature carrying items; every other one despawns only when far away and out of sight, and never enters a bucket. Placement "as each level is generated" becomes spawning on the first build of each (area, z) (WG.00.47) and around the player and active AI faction settlements.]
 
 Crowd LOD for people (0021-V addendum §9) is an open Owner question (Q14). The bucket keys in §6 can carry its identity axes if it is adopted.
 
@@ -952,10 +952,10 @@ Crowd LOD for people (0021-V addendum §9) is an open Owner question (Q14). The 
 - **Ramps (DEC-020).** A unit walking up a ramp changes `z` to `z + 1` at the top stratum (§3.9). If that crosses a slab border, it is an ordinary border crossing under the rules below; there is no transfer and no pause.
 - **A unit moves from an L0/L1 region into an L2 region:**
   - a tracked unit switches to abstract mode in the destination region;
-  - an anonymous unit is absorbed at the next LOD phase (a ledger `ABSORB` event, as in §7.4).
+  - an anonymous unit is absorbed at the next LOD phase (a ledger `ABSORB` event, as in §7.4). [DEC-073: a wildlife or monster unit is not absorbed; it despawns only when far away and out of sight.]
 - **A unit leaves an L2 region toward an L0/L1 region:**
   - a tracked unit materializes on the first valid border cell on its line toward the goal (canonical order);
-  - an anonymous migration emits an individual on a border cell, with `bucket −= 1` and a new ID.
+  - an anonymous migration emits an individual on a border cell, with `bucket −= 1` and a new ID. [DEC-073: not for wildlife and monsters, which neither migrate nor sit in buckets.]
 - **During a transition** nobody moves, because transitions run in the LOD phase.
 - **Fluid across an L0/L1 ↔ L2 face.** The fine stepper doesn't write into frozen L2 cells. It treats the L2 side as a boundary:
   - volume that would flow across goes into the L2 region's **inflow buffer** for that face, an exact integer;
@@ -969,9 +969,9 @@ Crowd LOD for people (0021-V addendum §9) is an open Owner question (Q14). The 
 |---|---|---|---|
 | Q-WATER | water volume | depth unit (1/7 of a full cell, `DEUS_Fluid.js:9-18`; `DEPTH_MAX = 7`, `:50`). Under DEC-013 a full cell is 5 × 5 × 10 ft, so one unit is 250/7 ft³; the integer unit does not change (§15.0) | low 3 bits of a `Uint8` per cell at every level (L2 keeps the cells, frozen), plus the `Uint32` reservoir and inflow buffers per region |
 | Q-LAVA | lava volume | depth unit | same as Q-WATER |
-| Q-POP[species, ageBand, sex] | anonymous creatures | individuals | unit records / `Uint16` buckets |
+| Q-POP[species, ageBand, sex] | anonymous creatures | individuals | unit records / `Uint16` buckets [DEC-073: removed for wildlife and monsters, which have no buckets; their notable ones are in Q-TRACKED. Spawning or despawning one is a unit-ID event (Q-UNITID), not a change to a conserved stock. PM reading: Q-POP stays only for bucketed populations that remain or that a later ruling creates, such as owned-livestock buckets (SIM.40.10 PROPOSED-W-03, W-05) or people under crowd LOD (Q14)] |
 | Q-TRACKED | tracked units | set of IDs | records, fine or abstract |
-| Q-UNITID | the unit ID space | IDs | `live ∪ retired = [1, nextUnitId)`, disjoint; every retired ID has a reason: `DIED`, `ABSORBED`, `REMOVED_BY_COMMAND` |
+| Q-UNITID | the unit ID space | IDs | `live ∪ retired = [1, nextUnitId)`, disjoint; every retired ID has a reason: `DIED`, `ABSORBED`, `REMOVED_BY_COMMAND` [DEC-073 consequence: a despawned creature's ID is retired for a reason none of these covers; PM proposal: add reason `DESPAWNED`] |
 | Q-FACTPOP[f] | faction population counter | individuals | must equal tracked + bucket members of faction f |
 | Q-ITEM[type, material] | items | count | integer `count` (`DEUS_Items.js:304`) |
 | Q-OBJ[type] | placed objects: flora, boulders, outcrops, structures | objects | `Uint16` object grid + `objectDiffs` |
@@ -979,7 +979,7 @@ Crowd LOD for people (0021-V addendum §9) is an open Owner question (Q14). The 
 | Q-FUEL | burning fuel | fuel units | integer per burning cell (`DEUS_Fire.js:389`) |
 | Q-FOOD, Q-DRINK | nourishment held by units | milli-units | today `foodLb` / `waterGal` are floats rounded to 0.001 (`DEUS_Colonists.js:5389`, `:5410-5411`); the needs sub-lane converts them to integer milli-units |
 | Q-HIST | history person IDs | set of IDs | History `people` records |
-| **Q-MASS[family]** | **total matter per material family** (stone, soil and sediment, wood and organics, each metal element, water, …). This is LIFE-001 as restated by the Owner in 0021-V §8 | mass units (integer; one table per material and form, set by SIM.40.01 with WG.65.15) | Σ over every form the family takes: strata (+ diffs), placed objects, items, rubble and talus, sediment, fluid, and the matter held in creatures |
+| **Q-MASS[family]** | **total matter per material family** (stone, soil and sediment, wood and organics, each metal element, water, …). This is LIFE-001 as restated by the Owner in 0021-V §8 | mass units (integer; one table per material and form, set by SIM.40.01 with WG.65.15) | Σ over every form the family takes: strata (+ diffs), placed objects, items, rubble and talus, sediment, fluid, and the matter held in creatures [DEC-073: except spawned wildlife and monsters. Their bodies are outside this ledger (DEC-040 as clarified 2026-09-29): spawning or despawning one is neither a source nor a sink, a despawning creature drops any conserved world material it carries, and spawned-creature remains never become conserved soil] |
 
 **Q-MASS is the umbrella invariant.**
 - Every other quantity above is a *form* that matter takes.
@@ -988,7 +988,7 @@ Crowd LOD for people (0021-V addendum §9) is an open Owner question (Q14). The 
   - wall → ruin stage → rubble → sediment → stratum (decay and geology, §17);
   - item → soil (rot);
   - metal item → oxidised sediment (rust);
-  - food → body mass → soil (life cycle, 0021-V addendum §9).
+  - food → body mass → soil (life cycle, 0021-V addendum §9). [DEC-073: not for spawned wildlife and monsters; see the Q-MASS row.]
 - Only explicitly modelled flows may change Q-MASS[family] (0021-V §8). Rain and evaporation are the example. They are sources and sinks with a named cause.
 - **Rubble is terminal in the natural-world phase (Rev 4).** Of the transforms above, that phase builds stratum → rubble (collapse, §16.4). Decay (§17) is deferred (DEC-059 item 4), and the rubble → sediment → stratum leg, with every transform that ends in soil, is deferred with soil (DEC-057 item 1, `docs/OWNER_DECISIONS.md:952` at `8b235fca`). So rubble stays rubble in that phase.
 - **Water and lava (Rev 4).** This supersedes the rain and evaporation example above ("Only explicitly modelled flows ..."). DEC-040 (logged 2026-09-28, with its water rule added 2026-09-29, both after Rev 3) makes water a closed loop: water that leaves the simulated world is held and rains back, and there is no water sink (`docs/OWNER_DECISIONS.md:643` at `8b235fca`; no deletion sinks at all, `:624` at `8b235fca`). DEC-038 item 3 makes integer centipounds the authoritative water mass (`:578` at `8b235fca`); the depth unit of the Q-WATER row becomes a view derived from the stored mass, not an inventory. In the natural-world build (DEC-058 D2) water and lava change only by transforms between named accounts, each with its cause: evaporation or a real exit (open water → the water-return account); return rain (the water-return account → an exposed receiving cell); a spring (a finite groundwater account → open water); a magma outlet (a finite magma account → lava); and contact quench (lava → an obsidian deposit, and the water it meets → the water-return account). Lava never becomes water. The first water and magma are registered once, and generating a chunk later never credits them again. So Q-MASS[water] never changes, lava changes form only, and the §7.9 transition check covers each cause.
@@ -999,7 +999,7 @@ Crowd LOD for people (0021-V addendum §9) is an open Owner question (Q14). The 
 ### 7.9 Ledger checks and tolerances
 
 - **Sources and sinks are explicit.** Every event that creates or destroys a conserved quantity calls `ledger.source(q, n, cause)` or `ledger.sink(q, n, cause)`, and the feed carries a `LEDGER` record. Examples:
-  - birth, death, spawn, immigration;
+  - birth, death, spawn, immigration; [DEC-073: spawning or despawning a wildlife or monster creates or destroys no Q-POP or Q-MASS; it allocates or retires a unit ID (Q-UNITID, §7.8).]
   - mining (Q-STRATA → Q-ITEM);
   - felling (Q-OBJ → Q-ITEM);
   - crafting (Q-ITEM → Q-ITEM);
@@ -1027,7 +1027,7 @@ Crowd LOD for people (0021-V addendum §9) is an open Owner question (Q14). The 
   |---|---|
   | All conserved totals | exact |
   | Tracked unit and history ID sets | exact |
-  | Anonymous population per species (mean over the last 10% of the run) | within ±10% |
+  | Anonymous population per species (mean over the last 10% of the run) | within ±10% [DEC-073: wildlife and monsters are left out; they are spawned and despawned, not a conserved population] |
   | Placed object count per type | within ±5% |
   | Water volume per z-level | exact (conserved) |
   | Water per region | not compared |
@@ -1269,7 +1269,7 @@ contents.deusView = { viewLevel, camera, select, plans, fog, minimapDiscovery, a
 
 - **R1. Two clocks during the hybrid period.** Mitigations: explicit time domains (INV-SIM-02), a one-increment grace per system, and rate-parity tests (§8).
 - **R2. Behaviour drift from 10 Hz batching.** Fluid order, job timing and combat pacing will change. Mitigation: each sub-lane converts its constants and checks rates before and after (§3.3). New baselines are recorded, not hidden.
-- **R3. The LOD observer effect in `lod` mode (§5.7).** This is a trade-off for the Owner (Q4).
+- **R3. The LOD observer effect in `lod` mode (§5.7).** This is a trade-off for the Owner (Q4). [DEC-073: for wildlife and monsters the PM reads it as decided in effect (Q4 note, §12.3).]
 - **R4. Losses in legacy save migration:** the sub-minute clock and replanned paths (§11.3).
 - **R5. The cost of accessor calls** compared with direct array reads in hot render loops (the minimap samples 256 cells × 8 chunks per frame). Mitigations: `copyRow` bulk reads, and revision skipping.
 - **R6. Hidden writes into the sim** through facade reads that create state lazily (`DEUS_Environment.js:88`, `:120`; `DEUS_Items.js:163`). The SIM.00.03 lint must also treat lazily created state as a write.
@@ -1291,7 +1291,7 @@ contents.deusView = { viewLevel, camera, select, plans, fog, minimapDiscovery, a
 | Q1 | PM | Move the calendar into the core at SIM.00.02, rather than SIM.00.05 as WBS Rev 24 lists (`docs/worldgen/DEUS_WORLDGEN_WBS.md:523`)? | Yes (Increment 1) |
 | Q2 | PM | Add to SIM.00.05: terrain (the Levels strata writer, World diffs and objects; first, §8), Ownership (`DEUS_Ownership.js:613`), TimeSpeed timers (`DEUS_TimeSpeed.js:84-95`, `:188-203`), the Anim death lifecycle (`DEUS_Anim.js:1504-1522`, `:1605-1631`)? Households runs on events only | Yes |
 | Q3 | Owner | Keep 16x and 32x? | Keep them as best-effort, with the effective rate shown |
-| Q4 | Owner | In `lod` mode, may watching a region change anonymous micro-state (camera as a focus, per DEC-012), or should the camera never change fidelity (`cameraFocus: false`)? | DEC-012 as written (`true`), with the G1-G3 and G5 guarantees |
+| Q4 | Owner | In `lod` mode, may watching a region change anonymous micro-state (camera as a focus, per DEC-012), or should the camera never change fidelity (`cameraFocus: false`)? | DEC-012 as written (`true`), with the G1-G3 and G5 guarantees. [DEC-073, 2026-10-01: decides the creature case in effect (PM reading; DEC-073 does not name Q4). Wildlife and monsters are spawned around the player and around active AI faction settlements, and an ordinary one despawns only when far away and out of sight; physics and the conserved totals stay independent of the observer. Q4 stays open for other anonymous state] |
 | Q5 | Owner | Is "energy" in DEC-012 = fuel + food/drink, with temperature as a boundary condition? | Yes |
 | Q6 | Owner | Deep-history physical traces vs INV-SIM-01 / V134 and `docs/systems/DEUS_History.md:108` (§14.3) | An "aged world" option; the standard New Game stays at Year 0 |
 | Q7 | Owner | Ecology ore sprouts (`DEUS_Ecology.js:736-752`) break INV-SIM-03: remove them, or ledger them as an approved source? | Remove the ore outcomes |
@@ -1324,7 +1324,7 @@ DEC-059 item 3 has the PM record each choice it makes in signing (`docs/OWNER_DE
 | Q13 | Regions are per 2-layer slab; SIM.30.04's bench may change `SLAB_SHIFT` | nothing now |
 | Q15 | Not answered now. SIM.40.01 delivers a design spec, and that design is merged (`docs/worldgen/DEUS_WORLDGEN_WBS.md:554` at `8b235fca`). SIM.40.05's design is merged too, and the decay simulation its row asks for is deferred (DEC-059 item 4; `:558` at `8b235fca`). So a dependency added to either now orders no code. The PM answers Q15 when the first SIM.40 implementation leaf is dispatched | nothing now |
 
-Q9 and Q20 are the Coordinator's; under DEC-048 any edit they lead to on `main` is a PM commit, outside this sign-off. Q12 and Q18 are shared with the Owner, and the Owner's questions (Q3 to Q7, Q14, Q16, Q17, Q19, Q21) stay open: DEC-054 to DEC-064 answer none of them by number.
+Q9 and Q20 are the Coordinator's; under DEC-048 any edit they lead to on `main` is a PM commit, outside this sign-off. Q12 and Q18 are shared with the Owner, and the Owner's questions (Q3 to Q7, Q14, Q16, Q17, Q19, Q21) stay open: DEC-054 to DEC-064 answer none of them by number. [DEC-073 (2026-10-01) decides Q4's creature case in effect, by the PM's reading (§12.3); Q4 stays open for other anonymous state.]
 
 ---
 
@@ -1934,7 +1934,7 @@ The Rev 3 brief asks this ADR to reflect the Owner decisions recorded since Rev 
 | **DEC-021**, "Occlusion Rule for Layer Rendering (Zero-Cost Solid Cover)" (`docs/OWNER_DECISIONS.md:293-300`) | nothing. Occlusion isn't sim state; the core only provides rows and revision counters | the visible-depth mask: per screen cell, from the viewed layer down to the first opaque surface, recomputed per chunk from `CELL_SHAPE` records and `rev()`. The host draws and reads only exposed cells, so `view.read_ms` follows the exposed area, not the layer count (§9.2) | `copyRow` and `rev()` out; the `FOCUS_SET` region set, computed by the shared exposure module, in (§13.2) |
 
 **Tests at this boundary** (guard tests for WG.00.19–.21, §8 row P):
-- The core's checksum over a fixture script is the same with camera follow on and off. Only the logged `FOCUS_SET` records differ, and in `full` LOD mode they change nothing.
+- The core's checksum over a fixture script is the same with camera follow on and off. Only the logged `FOCUS_SET` records differ, and in `full` LOD mode they change nothing. [DEC-073: with the creature spawner this holds only if spawn and despawn read simulation state, not the camera (G4 note, §5.7).]
 - Solid cover: on the DEC-021 scene, `view.read_ms` at 32 layers is within the §9.2 ceiling of the 5-layer value.
 - A unit crossing a ramp's top stratum changes `z` in one step, with no transfer and no pause in the feed. If the step crosses a slab border into an L2 region, it is an ordinary border crossing (§7.7).
 - The purity check (§2.7) already fails on any `$dataSystem` (tile size) or `$gameMap` (camera and scroll) reference in `game/js/sim/**`.

@@ -1,5 +1,7 @@
 # Natural-world WBS id crosswalk (merged D1, WORK-GATE G02)
 
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** section 6's meaning for WG.00.47 (lane-fi). The id stays; lane-fi now runs the creature spawner on the first build of each (area, z) instead of populating wildlife.
+
 **Date:** 2026-10-01 · **Kept by:** the PM (Claude) · **Status:** ready to publish as `docs/worldgen/NW_ID_CROSSWALK.md` (a PM governance edit under DEC-051 item 1; WBS Rev 33 cites that path).
 **Authority:** WORK-GATE G02, merged (braintrust, binding; `C:/Users/snewt/.deus_pm/braintrust/2026-10-01/WORK-GATE-G02_merged_chatgpt_pro.md`, sections 3 and 4). DEC-058 lets the PM settle design open questions; G02 says new ids need "a live-board collision check, not an Owner gate".
 **Why:** the merged D1 design (`C:/Users/snewt/.deus_pm/braintrust/2026-10-01/DESIGN-D1_merged_grok_heavy.md`, sections 3.4 and 4) names its leaves WG.00.18, WG.62.02, WG.62.03, WG.62.04 and WG.62.05. Two of those ids already have other meanings on main. One id must have one completion meaning.
@@ -143,7 +145,7 @@ WORK-GATE G02 section 4, "DEADLINE wave 2": "Reserve the remaining new D1/enabli
 | WG.00.44 | the WBS and this file | the same | the same | none | One sim-module loader, matter-opener registry, harness vm hook (lane-db) | WBS row, registry entry |
 | WG.00.45 | `docs/CANONICAL_ROLES.md`, this file, lane-da's brief | the same | the same | none | Area generation at least twice as fast (lane-dc, CELL part 2) | WBS row, registry entry |
 | WG.00.46 | the roles, the WBS, this file, lane-da's brief, telemetry | the same | the same | none | Lazy area generation and per-area checksums (lane-dd, CELL part 3) | WBS row, registry entry |
-| WG.00.47 | this file | the same | the same | none | Lazy wildlife population (lane-fi) | WBS row, registry entry |
+| WG.00.47 | this file | the same | the same | none | Lazy wildlife population (lane-fi) [DEC-073 (Owner, 2026-10-01): repurposed to the spawner's trigger on the first build of each (area, z); no persistent wildlife population] | WBS row, registry entry |
 | WG.62.03, WG.62.04, WG.62.05 | the roles, the WBS, this file (and lane-da's brief for .03 and .04) | the same | the same | the D1 designs and G02 (and, for .03, the CONFIRM-A verdict), same meaning | D1 caves; magma and core; D1-reg freeze | WBS rows (Rev 33), registry entries (Rev 34) |
 | WG.64.13 | this file | the same | the same | none | D4 home ground guarantee (lane-fn, run as WG.62.03 part 2) | WBS row, registry entry |
 | WG.64.07 to WG.64.12 | the WBS and this file, as aliases | the same | the same | WG.64.08 and WG.64.12 in G02, as aliases | aliases, never leaves (section 1) | none |

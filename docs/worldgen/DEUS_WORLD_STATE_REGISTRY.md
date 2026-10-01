@@ -3,7 +3,7 @@
 **Document ID:** `DEUS-WSR-v1.0`  
 **Integration Authority:** Gemini / Antigravity (DEUS Coordinator)  
 **Approved by Owner Directive:** 2026-09-25  
-
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** wildlife and monsters are spawned by a seeded runtime spawner; there is no breeding, carrying capacity, food web, migration or persistent population for them. Heavy hunting lowers an area's spawn rate for a few in-game days through a per-area depletion record, then the area refills. Superseded in the §3 seed table, as each row's note says: the wildlife grazing and predator density states, the prey-rich and predator-high habitat states as population measures, local extirpation, migration, and overgrazing caused by wild herbivores. The lair state stays: lairs and dens are persistent anchors (WG.68.10).
 ---
 
 ## 1. Executive Purpose & Scope
@@ -150,15 +150,15 @@ The initial registry accounts for all fifteen natural-world systems across Proje
 | `STATE_FIRE_TREE_CHARRED` | `ECOLOGY_WILDFIRE` | Standing dead tree skeleton | `VISUAL_REQUIRED` | `FAM_FIRE_TERRAIN` | `tree_charred_trunk` |
 | `STATE_FIRE_ACTIVE_FRONT` | `ECOLOGY_WILDFIRE` | Active combustion on cell | `VFX_REQUIRED` | `FAM_FIRE_VFX` | `vfx_flame_loop` |
 | `STATE_FIRE_SMOKE_PLUME` | `ECOLOGY_WILDFIRE` | Upward particulate convection column | `VFX_REQUIRED` | `FAM_FIRE_VFX` | `vfx_smoke_plume` |
-| `STATE_WILDLIFE_GRAZING_DENSITY`| `CREATURE_ECOLOGY` | Herbivore biomass per square mile | `SIMULATION_ONLY` | *None* | *None* |
-| `STATE_WILDLIFE_PREDATOR_DENSITY`| `CREATURE_ECOLOGY` | Carnivore/Monster biomass per square mile | `SIMULATION_ONLY` | *None* | *None* |
+| `STATE_WILDLIFE_GRAZING_DENSITY`| `CREATURE_ECOLOGY` | Herbivore biomass per square mile [DEC-073: superseded; wildlife keeps no biomass or population density. The spawner checks live nearby counts against density caps per cell.] | `SIMULATION_ONLY` | *None* | *None* |
+| `STATE_WILDLIFE_PREDATOR_DENSITY`| `CREATURE_ECOLOGY` | Carnivore/Monster biomass per square mile [DEC-073: superseded; predators and monsters keep no biomass or population density. The spawner checks live nearby counts against density caps per cell.] | `SIMULATION_ONLY` | *None* | *None* |
 | `STATE_WILDLIFE_GAME_TRAIL` | `CREATURE_ECOLOGY` | Trampled ground path from frequent animal travel | `VISUAL_REQUIRED` | `FAM_SUCCESSION_STAGE`| `game_trail_trampled`|
-| `STATE_HABITAT_PREY_RICH` | `CREATURE_ECOLOGY` | High density of forage and herbivore prey | `SIMULATION_ONLY` | *None* | *None* |
-| `STATE_HABITAT_PREDATOR_HIGH` | `CREATURE_ECOLOGY` | Dangerous apex or monster hunting grounds | `SIMULATION_ONLY` | *None* | *None* |
-| `STATE_SPECIES_LOCAL_EXTIRPATED`| `CREATURE_ECOLOGY` | Species hunted out or driven from local area | `SIMULATION_ONLY` | *None* | *None* |
-| `STATE_SPECIES_MIGRATING` | `CREATURE_ECOLOGY` | Regional herd/pack seasonal transit | `SIMULATION_ONLY` | *None* | *None* |
+| `STATE_HABITAT_PREY_RICH` | `CREATURE_ECOLOGY` | High density of forage and herbivore prey [DEC-073: no prey population is tracked and there is no food web; how many creatures spawn here comes from the spawn rules and density caps per cell.] | `SIMULATION_ONLY` | *None* | *None* |
+| `STATE_HABITAT_PREDATOR_HIGH` | `CREATURE_ECOLOGY` | Dangerous apex or monster hunting grounds [DEC-073: no predator population is tracked; danger comes from the danger field and tiers (DEC-050, NAT.07.02) that the spawner reads.] | `SIMULATION_ONLY` | *None* | *None* |
+| `STATE_SPECIES_LOCAL_EXTIRPATED`| `CREATURE_ECOLOGY` | Species hunted out or driven from local area [DEC-073: superseded; a species is not hunted out for good. Heavy hunting lowers an area's spawn rate for a few in-game days through a per-area depletion record, then the area refills (WG.68.11 is cut).] | `SIMULATION_ONLY` | *None* | *None* |
+| `STATE_SPECIES_MIGRATING` | `CREATURE_ECOLOGY` | Regional herd/pack seasonal transit [DEC-073: superseded; wildlife and monsters do not migrate (WG.68.12 and SIM.50.07 are cut).] | `SIMULATION_ONLY` | *None* | *None* |
 | `STATE_LAIR_ACTIVE` | `CREATURE_ECOLOGY` | Occupied beast den, monster cavern, or nest | `VISUAL_REQUIRED` | `FAM_HISTORICAL_RUIN` | `lair_beast_entrance` |
-| `STATE_REGION_OVERGRAZED` | `CREATURE_ECOLOGY` | Flora stripped by excess herbivore biomass | `VISUAL_REQUIRED` | `FAM_SUCCESSION_STAGE`| `scrub_dense` |
+| `STATE_REGION_OVERGRAZED` | `CREATURE_ECOLOGY` | Flora stripped by excess herbivore biomass [DEC-073: wildlife keeps no herbivore biomass and there is no food web (WG.68.09 is cut), so wild grazing cannot cause this state.] | `VISUAL_REQUIRED` | `FAM_SUCCESSION_STAGE`| `scrub_dense` |
 | `STATE_SNOW_LIGHT_DUSTING` | `SEASONAL_SNOWPACK` | Snow accumulation `0.1..0.5 ft` | `VISUAL_REQUIRED` | `FAM_SNOW_ACCUMULATION`| `snow_dusting` |
 | `STATE_SNOW_DEEP_STRATUM` | `SEASONAL_SNOWPACK` | Snow accumulation `1.0..3.0 ft` (physical) | `VISUAL_REQUIRED` | `FAM_SNOW_ACCUMULATION`| `snow_deep_stratum` |
 | `STATE_SNOW_SLUSH_THAW` | `SEASONAL_SNOWPACK` | Melting snowpack with mud pools | `VISUAL_REQUIRED` | `FAM_SNOW_ACCUMULATION`| `snow_slush_thaw` |

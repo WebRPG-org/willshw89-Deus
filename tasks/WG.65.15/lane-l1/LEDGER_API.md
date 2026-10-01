@@ -1,5 +1,7 @@
 # WG.65.15 mass ledger: API, tables and hook-up notes
 
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** spawned wildlife and monster bodies sit outside the closed-mass ledger. Spawning or despawning one is neither a source nor a sink, a despawning creature drops any conserved world material it carries, and spawned-creature remains never become conserved soil. Wildlife and monsters do not migrate. For them this supersedes "migrating creatures" in the §7 world-edge source, the §7 rot and remains rule, the `*`/creature body-mass row of §9.2 and the unit-lifecycle hook of §9.3 (see the notes there). The §8 tables are generated from code, so they carry no inline notes: their `remains` row (creature → `humus`) and the "migration" in the `world-edge` source row are superseded the same way for spawned creatures.
+
 | | |
 |---|---|
 | Task | WG.65.15 (Closed-Loop Geomass & Resource Verifier, `docs/worldgen/DEUS_WORLDGEN_WBS.md:254`), widened to a per-material-class conserved-total ledger (SIM.50.01 audit §6 step 2; PM directive 0035-AJ §2(d)) |
@@ -153,10 +155,10 @@ These rows are in the table on purpose; each is one line of data.
 - **Fire keeps all its mass.**
   - `burn` turns `wood` and `biomass` into `ash` and `charcoal` in the same `organic` family. No gas leaves.
   - Lane R's design sends most burned mass to an `AIR` sink ("fire.outgas") and Lane Q adopts it. The brief's default list has no such sink, so none is declared here. See the REPORT, Q5.
-- **Rot keeps all its mass.** `rot` and `remains` turn organics into `humus` with no outgassing, for the same reason.
+- **Rot keeps all its mass.** `rot` and `remains` turn organics into `humus` with no outgassing, for the same reason. [DEC-073: not for spawned wildlife and monsters; their bodies sit outside the ledger and their remains never become conserved soil.]
 - **Metal traces for iron, copper and silver only.** Gold and platinum have no `rust` row (Lane R R-03.6: noble metals never corrode). Electrum has no rust row either.
 - **Soil is mineral; humus is organic.** Lane Q's `soil` mixes both at 950/50 per mille. Here they are two classes, so no transform ever has to cross families.
-- **World-edge source.** It may add any non-ore, non-finite class (river sediment, water, migrating creatures). Traders bringing metal in from off the map would need `allowFinite` (REPORT, Q4).
+- **World-edge source.** It may add any non-ore, non-finite class (river sediment, water, migrating creatures). [DEC-073: not creatures. Wildlife and monsters do not migrate, and spawning or despawning one is neither a source nor a sink.] Traders bringing metal in from off the map would need `allowFinite` (REPORT, Q4).
 - **Debug source.** `debug-explicit` may add any non-ore, non-finite class. Tests that need a finite source build their own config with `allowFinite` (`config_finite_source_needs_flag`).
 
 ## 8. Default tables
@@ -354,7 +356,7 @@ No gameplay file is changed by this package. The later package (PROPOSED-L1-01 i
 | `M_LAVA` and lava depth units | `lava`/fluid; du → mu by a fixed integer ratio (Lane Q §9.1) |
 | `DEUS_Items` records (`Items.create` `DEUS_Items.js:291`, `Items.drop` `:325`, `Items.remove` `:681`) | `<class of item type>`/item, using a per-type mass table |
 | `DEUS_Objects` placed objects (`setIn`, `DEUS_Objects.js:301`) | `<class>`/object; trees and plants are `biomass`/object; ore outcrops are `<m>_ore`/object |
-| carried items, eaten food, body mass | `*`/creature (Owner/PM question Q3: in scope now?) |
+| carried items, eaten food, body mass | `*`/creature (Owner/PM question Q3: in scope now?) [DEC-073: not spawned wildlife and monster bodies, which sit outside the ledger; a despawning creature drops any conserved world material it carries.] |
 
 Mass per stratum is the open question Q2. The legacy engine has 1-ft strata (`DEUS_Levels.js:985`); DEC-013 has 2-ft strata (`docs/OWNER_DECISIONS.md:181`).
 
@@ -368,7 +370,7 @@ The pattern is the same everywhere. The writer that changes matter declares the 
 | item writer wrap | `Items.create` / `Items.drop` / `Items.remove` (`DEUS_Items.js:291`, `:325`, `:681`) | an item appearing or vanishing must match a declared transform (for example strata → item for mining, item → object for building, item → ash/charcoal for fire) or a named source/sink | Dig drops a stone 1 time in 4 (`DEUS_Interact.js:53`, `:167`); fire deletes items (`DEUS_Fire.js:442`, FIR-3); the quarry pays 2 in, 4 out (`game/data/DEUS_WorldCatalog.json:2225`, `:2204`, `:2104`, LAND-1); mining yields fixed counts unrelated to volume (`DEUS_Jobs.js:459`) |
 | object writer wrap | `setIn` (`DEUS_Objects.js:301`) | placing or removing an object must match a declared move. **An ore outcrop placed by anything but world generation is refused** (`E_ORE_OUTPUT`) | the ore sprouts (`DEUS_Ecology.js:736-740` table, placed at `:785`; F-03, LIFE-002); felled trees regrowing on a timer (`DEUS_Ecology.js:407`) show up as an undeclared biomass source; broken doors turning into their catalog ruin (`DEUS_Doors.js:444-445`) must book object → ruin |
 | fluid | `DEUS_Fluid.diagnostics()` totals (`DEUS_Fluid.js:764`, `totalWaterVolume` at `:808`) as the fluid recount; `addFluid` callers | fluid moves are not ledger events (same class and form); fluid created or deleted must be a named source or sink (`rain`, `evaporation`, `world-edge`) or a transform (freeze, drink) | NaturalConnections creates water (`DEUS_NaturalConnections.js:312`, called at `:352-353`; ADR-003 §1.4); Fluid reconciliation drops excess (`DEUS_Fluid.js:896-923`; ADR-003 §1.4) |
-| unit lifecycle | births and deaths (`factions:born`, `DEUS_Factions.js:594`; `world:unitRemoved`, `:619`) | a birth is food → body (`biomass` item → creature); a death leaves remains (creature → humus, or an item) | "births create adults from nothing" (F-04, audit §4.3), if the Owner puts creature matter in scope (Q3) |
+| unit lifecycle | births and deaths (`factions:born`, `DEUS_Factions.js:594`; `world:unitRemoved`, `:619`) | a birth is food → body (`biomass` item → creature); a death leaves remains (creature → humus, or an item) [DEC-073: for spawned wildlife and monsters, spawning and despawning book nothing, and their remains never become conserved soil.] | "births create adults from nothing" (F-04, audit §4.3), if the Owner puts creature matter in scope (Q3) |
 
 The fault injections in `tools/sim/test_ledger_longrun.js` (`unreported_mutation`, `ore_created`, `ore_via_ledger`, `delete_one_unit`, `create_one_unit`, `fire_deletes_items`, `double_yield`) are small models of these leaks. The harness shows that its recount plus `assertBalanced` catches each one.
 

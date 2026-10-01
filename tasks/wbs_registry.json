@@ -79,7 +79,7 @@
         "date": "2026-10-01",
         "by": "PM (Claude) per WORK-GATE G02 section 4 (braintrust verdict, binding) under DEC-057, DEC-058 and DEC-059 item 1",
         "scope": "DEC-057 re-scope: creatures, wildlife and monsters are placed by seeded rules per biome-depth cell (DEC-030) and danger tier (DEC-050); no ecology simulation, breeding, carrying capacity or food webs",
-        "aheadOfPKG04to06": "DEC-057 defers the soil, climate and flora simulations this package was locked behind; seeded placement needs only the biome cell, the danger field and the bestiary"
+        "aheadOfPKG04to06": "DEC-057 defers the soil, climate and flora simulations this package was locked behind; seeded placement needs only the biome cell, the danger field and the bestiary. DEC-073 (Owner, 2026-10-01): the package still needs nothing from PKG-04 to 06, but the spawner also uses the day/light clock (DEUS_DayNight), density caps, the per-area depletion record, and the positions of the player, starts and settlements; season weights stay off while DEC-059 defers seasons"
       },
       "causalOrder": 7,
       "leaves": ["NAT.07.01"]
@@ -249,7 +249,7 @@
       "gateTests": ["tools/check_deus_syntax.js", "tools/test_lazy_area_generation.js", "tools/test_sparse_outer_save.js", "tools/test_area_generation_speed.js", "tools/test_strata_cuts_and_caves.js", "tools/test_sim_loader.js"]
     },
     "WG.00.47": {
-      "title": "Wildlife populates each level on its first build, not every area at world:created",
+      "title": "Creatures spawn on the first build of each (area, z), not at world:created (repurposed 2026-10-01 by DEC-073; was: Wildlife populates each level on its first build, not every area at world:created)",
       "package": null,
       "packageNote": "none: natural-world build leaf (DEC-058); WORK-GATE G02 assigns no package",
       "status": "PLANNED",
@@ -259,7 +259,7 @@
       "writer": "claude",
       "reviewer": "gemini",
       "dependsOn": ["WG.00.44"],
-      "gateTests": ["tools/test_wildlife_lazy_population.js", "tools/test_survival_regressions.js", "tools/test_new_game_year0.js", "tools/test_sim_loader.js", "tools/check_deus_syntax.js"]
+      "gateTests": ["tools/test_creature_spawn_first_build.js", "tools/test_survival_regressions.js", "tools/test_new_game_year0.js", "tools/test_sim_loader.js", "tools/check_deus_syntax.js"]
     },
     "WG.00.30": {
       "title": "Geology-First Worldgen Layer (the merged D1 band milestone)",

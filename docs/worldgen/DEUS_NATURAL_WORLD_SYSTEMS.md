@@ -4,14 +4,18 @@
 **Integration Authority:** Gemini / Antigravity (DEUS Coordinator)  
 **Approved by Owner Directive:** 2026-09-25  
 
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** wildlife and monsters are spawned and despawned by a seeded runtime spawner using intelligent rules, with no population simulation for them (no breeding, carrying capacity, food webs, migration or persistent population vectors). For them this supersedes the wildlife part of the §1 quoted mandate and of §1 principle 1, the population, migration and food-web parts of system F in §2 (lairs and dens stay, WG.68.10), the food-web part of node 7 in §3, the Wildlife row of §4, and the wildlife lines of the daily and seasonal cadences in §5. Vegetation, people and owned livestock are unchanged. Detail: `docs/worldgen/DEUS_CREATURE_ECOLOGY.md` and `docs/OWNER_DECISIONS.md` DEC-073.
+
 ---
 
 ## 1. Executive Mandate & Canonical World Design Principle
 
 > **"DEUS does not merely generate terrain. It generates a physical natural world whose geology, water, climate, soil, vegetation, wildlife, and disturbance systems interact over time. Natural processes should be capable of producing persistent historical consequences after World Year 0."**
 
+[DEC-073: wildlife and monsters do not interact over time as populations; they are spawned by rule. What persists for them is lairs and dens, the per-area depletion record (for a few in-game days), the death of a lair's boss, and notable creatures.]
+
 ### Core Architectural Principles
-1. **World Year 0 Starting Principle (V134):** Every standard DEUS New Game begins at World Year 0. Worldgen creates the initial viable Year-0 physical world (geology, 5 macro-Z levels, 5 physical strata, hydrology, climate, soil, vegetation, wildlife, finite minerals, and 9 faction starting camps of 8 founders = 72 colonists). History is **NOT** pre-materialized (no pre-generating centuries of abandoned mines, ancient ruins, depleted veins, or simulated civilizational detritus). All history emerges through genuine simulation.
+1. **World Year 0 Starting Principle (V134):** Every standard DEUS New Game begins at World Year 0. Worldgen creates the initial viable Year-0 physical world (geology, 5 macro-Z levels, 5 physical strata, hydrology, climate, soil, vegetation, wildlife, finite minerals, and 9 faction starting camps of 8 founders = 72 colonists). History is **NOT** pre-materialized (no pre-generating centuries of abandoned mines, ancient ruins, depleted veins, or simulated civilizational detritus). All history emerges through genuine simulation. [DEC-073: for wildlife, the Year-0 world holds spawn designations, lairs, dens and notable creatures; ordinary creatures are spawned by rule on the first build of each (area, z) (lane-fi, WG.00.47) and register nothing.]
 2. **Emergent Simulation Over Scripted History:** Physical, ecological, and cultural consequences develop naturally through the interaction of simulation systems. A flooded mine, an abandoned quarry, or an overgrown settlement occurs because simulation agents and environmental forces interacted over time, not because a procedural generator planted a generic prefab.
 3. **One Authoritative World & Subsystem Authority:** Worldgen and live simulation operate on one authoritative physical world and the canonical authorities of its subsystems. No separate generated-world and simulation-world representations may compete. Five-strata geometry (`DEUS_Levels.js`) remains authoritative for solid physical terrain. Fluid volume remains governed by the canonical fluid representation (`DEUS_Fluid.js`) reconciled against strata capacity and passage rules. World spatial registry (`DEUS_World.js`) coordinates entity presence.
 4. **Catalogue-First Art Integration:** Any natural-world system that can produce a distinct visible state must have those states formally identified in the **Master Semantic Asset Catalogue** (`WG.20`) before production image generation begins. No ad-hoc artwork may be generated for these systems.
@@ -83,10 +87,12 @@ The fifteen high-value emergent natural-world systems are formally classified in
 - **Visible States:** Scorched black earth, smoldering ground ash, charred standing tree skeleton, fallen burnt log, active flame loop (VFX), smoke plume (VFX), pioneer fireweed regrowth.
 
 #### F. Wildlife Territory, Migration & Food-Web Pressure (WBS `WG.68.07–08`)
-- **Plain Meaning:** Animal populations inhabiting natural habitats, foraging, reproducing, and moving in response to resources, seasons, and predation.
+- **Status note (2026-10-01, DEC-073):** this system is now creature spawning, not population migration and food-web pressure: a spawn profile with no population fields (WG.68.07), spawn eligibility with no carrying-capacity solver (WG.68.08), and lairs and dens as persistent anchors (WG.68.10). WG.68.09 food webs and WG.68.12 migration are cut.
+- **Plain Meaning:** Animal populations inhabiting natural habitats, foraging, reproducing, and moving in response to resources, seasons, and predation. [DEC-073: superseded. Creatures are spawned into suitable places by intelligent rules and despawned only when far away and out of sight; they do not reproduce, migrate or form food webs as populations.]
 - **Physical Model:** Simplified, robust ecological chain:
   $$\text{VEGETATION / WATER} \longrightarrow \text{HERBIVORES (Grazers/Browsers)} \longrightarrow \text{PREDATORS (Carnivores/Pack Hunters)}$$
-- **Behaviors:** Territorial roaming, waterhole convergence, seasonal altitude migration (summer high meadows $\rightarrow$ winter valley bottoms), fleeing wildfires, avoiding human settlements, and population crashes under overhunting.
+  [DEC-073: there is no food chain between wildlife or monster populations (WG.68.09 cut).]
+- **Behaviors:** Territorial roaming, waterhole convergence, seasonal altitude migration (summer high meadows $\rightarrow$ winter valley bottoms), fleeing wildfires, avoiding human settlements, and population crashes under overhunting. [DEC-073: seasonal altitude migration and population crashes under overhunting are cut; instead, heavy hunting lowers an area's spawn rate for a few in-game days, then it recovers. The other behaviours apply only to creatures that have been spawned. Fleeing wildfires was part of WG.68.12, which is cut, so who owns it now is open for the PM.]
 - **Visual Representation:** Handled through living creature charsets and territorial marking props (scat, worn animal trails, trampled water margins), not static terrain.
 
 #### G. Microclimates (WBS `WG.67.04–06`)
@@ -188,6 +194,8 @@ flowchart TD
     DIST & LAND & HYDRO --> HIST
 ```
 
+[DEC-073: node 7 no longer includes food webs (WG.68.09 cut) or wildlife and monster populations. For them it covers the spawner's inputs: the spawn profile (WG.68.07), spawn eligibility (WG.68.08), and lairs and dens (WG.68.10).]
+
 ---
 
 ## 4. WorldGen vs. Live Simulation Ownership
@@ -206,6 +214,8 @@ To guarantee **Lean Architecture**, zero data duplication, and perfect save-stat
 | **Geomorphology** | Carves initial natural cuts, chasms, talus slopes, and riverbeds. | Simulates hydraulic bank collapse, slope creep, quarry stabilization, and sediment deposit over decades. |
 | **Landmarks** | Runs algorithmic detector across Year-0 terrain; assigns immutable Landmark IDs. | Records historical landmark visits, battles fought at landmarks, and landmark discovery by factions. |
 | **Place Names** | Generates primordial topographic descriptors (e.g. *"Great Northern Ridge"*). | Factions assign cultural place names upon founding settlements, exploring, or fighting battles. |
+
+[DEC-073: the population parts of the Wildlife row are superseded (breeding pairs, reproduction, seasonal migration, and hunting mortality as a population effect). WorldGen, at Year 0 and on the first build of each (area, z), places spawn designations (tier, tables, lair and den anchors, caps), lairs and dens, and notable creatures; these must come out identical whether the (area, z) is built at New Game or later (DEC-070 condition C). Live simulation spawns and despawns ordinary creatures by rule around the player and active AI faction settlements, and keeps one small per-area depletion record for hunting. Behaviour of spawned creatures is planned under WG.68.16; WG.68.12, including its disturbance-fleeing part, is cut, and WG.68.14 is shrunk to people, owned livestock, flora and notable creatures.]
 
 ---
 
@@ -237,6 +247,8 @@ TIMESCALE              TYPICAL PROCESSES                           PERFORMANCE S
                        Ruins decay & naturalization                area activation. No per-
                        Mine/quarry stabilization                   frame historical ticks.
 ```
+
+[DEC-073: "Wildlife daily grazing & waterhole visits" is no longer a world-wide daily tick, because ordinary creatures exist only where spawned, around the player and active AI faction settlements. "Wildlife seasonal herd migration" is cut (WG.68.12, SIM.50.07).]
 
 ---
 

@@ -1,5 +1,7 @@
 # PERSONALITY: traits, values, opinions and social life (VISION V94)
 
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** wildlife and monsters are spawned by a seeded runtime spawner; they do not breed and there are no ecology refills. For them, the "births" and "ecology refills" triggers in §4 are superseded (see the note there).
+
 **Decided by the user.** On 2026-09-19 at 14:15 the user said: "I want each creature to have personality shit that factors into their dialogue and how they interact with others" (VISION V94). V94 as recorded: every person has personality traits and values (the ten colonist facets, extended), rolled at birth with culture and family influence; animals and monsters have a temperament; traits and values decide the wording and tone of everything a person says, how often they talk and about what, and how they deal with each other (friends, rivals, partners; helping, gossip, jokes, arguments, comfort, fights; how they take orders); each person remembers others as opinions shaped by shared events; the profile describes the personality in words and lists relationships; only speech appears over heads.
 
 **Other decisions this design follows:** V17 (people act on their own; social life needs no player input), V23 (work and life chosen by personality and skills), V26 (children, growing up), V39 (each culture has a personality bias), V48 (every living thing decides or follows a decision every beat), V50 (measured budgets), V52 (ranks and orders), V59 (the profile shows what a person is doing and is), V62 (speech over heads, U7-style conversations), V71 (ownership; gifts need their own approved rule), V78 (privacy for intimacy), V87 (eleven peoples), V92 (over-head text is speech only).
@@ -173,7 +175,7 @@ Values also steer talk: people chat about what they value (§6.3 chat), share th
 
 ## 4. Animal and monster temperament
 
-Every unit of kind `creature` gets `data.temperament = { bold, aggr, curious, herd, skittish }`, each 0–100, rolled on `world:unitAdded` (spawns, births, ecology refills):
+Every unit of kind `creature` gets `data.temperament = { bold, aggr, curious, herd, skittish }`, each 0–100, rolled on `world:unitAdded` (spawns, births, ecology refills) [DEC-073: for wildlife and monsters the only trigger is the spawner adding a unit; births apply to owned livestock]:
 
 - **Norm per kind** (`personality.temperament.kinds`):
 

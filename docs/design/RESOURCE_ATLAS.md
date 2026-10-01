@@ -1,5 +1,7 @@
 # Five-level resource and biome atlas
 
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** wild fauna and monsters are no longer renewable populations. A seeded runtime spawner places them by intelligent rules around the player and active AI faction settlements, checked against live nearby counts and density caps per cell; heavy hunting lowers an area's spawn rate for a few in-game days, then it recovers. For creatures this supersedes "organism population" in §1.1; the population values, the world population cap, the map-wide service and the recovery toward a region target in §1.2; the fauna and monster populations of §2.1 step 6; "renewable by population rules" and "monster populations" in §4; the population rule for `renewable=true` in §6; the founding populations of §7 step 1; the creature bullets of §8 (its monster caps carry over as density caps per cell); the reproduction and migration attempts and the enemy deficit model of §8.1; and the creature parts of the §11 checks `resources.renewal`, `resources.mapwide_rates` and `resources.save_roundtrip`. Plants and finite minerals are unchanged. The §8.1 enemy eligibility rule (z, biome, depth band, region character, danger tier) can feed WG.68.08's spawn eligibility (proposed for reuse by lane-fe, NAT.07.04); DEC-073 item 1 gives its own list of spawn inputs. Owned livestock keep breeding (civilization phase, SIM.40.10).
+
 **Date:** 2026-09-19
 
 **Status:** approved design target from VISION V82-V83; not implemented
@@ -25,7 +27,7 @@ No source row may silently disappear. A generated coverage report must count all
 ### 1.1 Availability guarantee
 
 - Every canonical raw resource marked `worldRequired` has at least one legal source in every New Game.
-- Every required variant marked `worldRequired` has at least one deposit, organism population or habitat patch. Very rare variants may have only one guarded patch.
+- Every required variant marked `worldRequired` has at least one deposit, organism population or habitat patch. Very rare variants may have only one guarded patch. [DEC-073: for wildlife and monsters there is no persistent organism population; a creature variant is available through spawn designations, lairs and dens (DEC-073 item 8).]
 - Every processed resource has all raw inputs and at least one valid production path available in the world; processed goods do not need to exist before someone makes them.
 - Every skill in V63 has renewable practice material at low levels and appropriate higher-level materials somewhere in the world.
 - Every faction start still receives V67's nearby construction minimum. World coverage is separate from, and much broader than, the start kit.
@@ -37,9 +39,9 @@ Availability is not satisfied by putting every source in one remote pile. Each b
 
 - Common construction, food and fuel sources are distributed through every compatible region, with the stronger V67 guarantee around each faction start.
 - Uncommon resources appear in several separated patches when their biome area permits. Rare resources may be singular, but their scarcity must be intentional and reported by the coverage audit.
-- Enemies are spread across legal danger habitats and levels. One region cannot consume the whole world's population cap.
-- Ongoing ecology services every level and biome region in a seeded weighted round-robin, including off-screen levels. The visible level receives no spawn-rate advantage.
-- Recovery probability rises with the deficit below the region target and stops at the hard cap. This avoids both empty worlds and sudden swarms.
+- Enemies are spread across legal danger habitats and levels. One region cannot consume the whole world's population cap. [DEC-073: wildlife and monsters are not a persistent world population; spawns are limited by density caps per cell, checked against live nearby counts.]
+- Ongoing ecology services every level and biome region in a seeded weighted round-robin, including off-screen levels. The visible level receives no spawn-rate advantage. [DEC-073: superseded for wildlife and monsters; plant regrowth keeps this rule. Creatures are spawned around the player and active AI faction settlements. Ordinary creatures are not kept in areas away from both, because they despawn once far away and out of sight; lairs, dens, the depletion record and notable creatures persist. Hostile monsters are kept out of a radius around settlements and starts.]
+- Recovery probability rises with the deficit below the region target and stops at the hard cap. This avoids both empty worlds and sudden swarms. [DEC-073: plants keep this rule. Wildlife and monsters have no region target; each spawn is checked against live nearby counts and density caps per cell.]
 - New units and blocking plants obey V68, faction-start protection, settlement distance and local line-of-sight/pop-in rules.
 - Open-air cells on `+1/+2` receive only creatures and resources whose movement/habitat allows them there, such as fliers, nests, fruit, branches or canopy growth.
 - Exact numeric rates live in the catalog and are tuned from telemetry. "Reasonable" must be demonstrated with distribution histograms and long seeded simulations, not asserted from a single screenshot.
@@ -67,7 +69,7 @@ The player never enters a partially built world. New Game performs this determin
 3. assign the `z=0`, `z=-1` and `z=-2` biome mosaics, plus derived `z=+1/+2` exposure zones;
 4. place water, magma, caves, openings and vertical connector opportunities as one aligned column system;
 5. place natural resource sources from the manifest's legal level/biome/depth rules;
-6. place renewable flora, fauna, fish and monster populations under habitat caps;
+6. place renewable flora, fauna, fish and monster populations under habitat caps; [DEC-073: for wildlife and monsters this step places spawn designations, lairs, dens and notable creatures; ordinary creatures are spawned by rule and are not placed as populations.]
 7. place faction starts and V67 start guarantees without overwriting natural blockers or units;
 8. run coverage, reachability, containment, spawn-safety and progression audits;
 9. deterministically repair missing coverage using the seed plus an audit salt, then rerun every affected audit;
@@ -172,10 +174,10 @@ The manifest stores individual resources and variants. This table is the mandato
 | Fungi and spores | edible, poisonous, brewable, dye, fiber and timber-scale fungi | shallow caves on `-1`; fungal forest and wet caverns on `-2` |
 | Marine/aquatic plants | seaweed, kelp-like plants, algae and coral/nursery resources | surface marine/freshwater on `0`; deep lake variants on `-2` |
 | Food animals | meat cuts, fish, shellfish, eggs, milk and edible organs | surface and cave fauna, farms, fisheries and marine/deep-water habitats |
-| Animal materials | hide/leather, fur, wool/hair, feathers/down, bone/skull, teeth/tusks, horn/antler, hoof, shell/chitin, scales, sinew, fat/tallow, blood, venom/poison, silk/web, wax/honey, manure and useful organs | creature species on all habitat-bearing levels; renewable by population rules |
+| Animal materials | hide/leather, fur, wool/hair, feathers/down, bone/skull, teeth/tusks, horn/antler, hoof, shell/chitin, scales, sinew, fat/tallow, blood, venom/poison, silk/web, wax/honey, manure and useful organs | creature species on all habitat-bearing levels; renewable by population rules [DEC-073: for wild creatures, renewable by the spawn rules; owned livestock keep breeding] |
 | Water and natural liquids | fresh, brackish and salt water; snow/ice; groundwater; brine; magma | `0`, `-1` and `-2` according to hydrology and heat |
 | Magical reagents | pearl, blood moss, garlic, ginseng, mandrake, nightshade, spider silk/web, volcanic ash/sulfur; generic blood catalyst, arcane scale, frost organ/heart, rune/essence crystal | shore/wetland/crop/forest sources on `0`; webs on `-1/-2`; volcanic and creature sources on `-2` |
-| Monster and Hell yields | chitin, hide, scales, horn, bone, venom, ichor, ash, brimstone, volcanic glass, heat crystal and rare essence roles | monster populations in legal surface/deep habitats; infernal subset only in Hell on `-2` |
+| Monster and Hell yields | chitin, hide, scales, horn, bone, venom, ichor, ash, brimstone, volcanic glass, heat crystal and rare essence roles | monster populations in legal surface/deep habitats; infernal subset only in Hell on `-2` [DEC-073: monsters are spawned by rule in these habitats, not kept as populations] |
 | Fertilizer and chemistry | ash, potash-like salts, lime, saltpeter, charcoal, sulfur/brimstone, guano, manure, soap fat and lye inputs | by-products from wood, animals, caves and `-1/-2` minerals |
 | Archaeological/natural remains | fossils, petrified wood, old bone and shell beds | natural deposits on `-1/-2`; no prebuilt ruins or named artifacts at generation |
 
@@ -264,7 +266,7 @@ Rules:
 - Mineral `hostMaterials` prevent geologically impossible free-floating ore.
 - `minWorldCount > 0` makes the generation audit responsible for availability.
 - `worldRequired=false` is allowed only for optional procedural variants, quest/artifact outputs or future content and needs a reason.
-- `renewable=true` requires a habitat, season/population rule and cap.
+- `renewable=true` requires a habitat, season/population rule and cap. [DEC-073: for wild creatures, the spawn rules and density caps per cell take the place of the population rule.]
 - `renewable=false` mineral nodes never reappear through V74 ecology.
 - Extraction must produce physical items and alter or deplete the source.
 - Placement calls the V68 guard and cannot overlap an impassable entity, a unit, an unsafe faction start or an incompatible liquid/shape.
@@ -273,7 +275,7 @@ Rules:
 
 Normal generation places resources by weighted geology and habitat. The coverage solver then audits the result:
 
-1. count each required natural source and renewable founding population;
+1. count each required natural source and renewable founding population; [DEC-073: wildlife and monsters have no founding populations; their availability comes from spawn designations, lairs and dens (DEC-073 item 8).]
 2. verify each occurrence matches `allowedZ`, biome, host material, cell shape and liquid rules;
 3. verify at least one source is reachable in principle through the approved progression graph;
 4. verify every produced resource has a satisfiable chain back to natural sources;
@@ -293,6 +295,8 @@ The solver guarantees existence, not immediate access. A deep metal may require 
 - Overharvesting can locally exhaust a renewable population. Seed banks, migration, husbandry or habitat recovery can restore it.
 - Hell and deep monster populations also obey caps; rarity is not implemented as an unbounded spawn lottery.
 
+[DEC-073: for wild fauna and monsters, the bullets above on reproduction or respawn under V74/V75 population rules, replenishment through living populations, and local exhaustion restored by migration are superseded. They are spawned by rule, and heavy hunting lowers an area's spawn rate for a few in-game days before it recovers. The monster caps carry over as density caps per cell, so rarity is still not an unbounded spawn lottery. Owned livestock keep breeding (SIM.40.10); plants and finite geology are unchanged.]
+
 ### 8.1 Five-level ecology director
 
 The ecology director maintains a small persisted cursor over `(z, biomeRegion)` buckets. On each scheduled ecology step it advances through a bounded number of buckets rather than scanning all cells.
@@ -301,11 +305,11 @@ For a renewable resource bucket:
 
 1. read the living/mature count and pending regrowth count;
 2. compare it with the biome-specific minimum, target and hard cap;
-3. if below target, schedule a bounded number of germination, growth, migration or reproduction attempts;
+3. if below target, schedule a bounded number of germination, growth, migration or reproduction attempts; [DEC-073: wild fauna and monsters do not migrate or reproduce; they are spawned.]
 4. select seeded habitat candidates from the region index and reject occupied, visible-pop-in, protected or otherwise illegal cells;
 5. persist successes, failures and the next eligible time.
 
-For an enemy bucket, the same deficit model chooses only species allowed by z, biome, depth band, region character and danger tier. Entry may come from a map edge, vertical connector, natural den/habitat or undiscovered space as the species permits. It never appears inside a protected settlement, beside a player character, or on an impassable cell merely to satisfy a quota.
+For an enemy bucket, the same deficit model chooses only species allowed by z, biome, depth band, region character and danger tier. Entry may come from a map edge, vertical connector, natural den/habitat or undiscovered space as the species permits. It never appears inside a protected settlement, beside a player character, or on an impassable cell merely to satisfy a quota. [DEC-073: the deficit model is replaced by a check against live nearby counts and density caps per cell. This species filter and entry list can feed WG.68.08's spawn eligibility (proposed for reuse by lane-fe, NAT.07.04); DEC-073 does not list region character among its inputs and does not rule on map-edge entry, so edge entry is open for lane-fe and WG.68.08. Herds no longer arrive from the edge to recolonize an area (migration is cut).]
 
 Finite geology participates only in initial distribution and depletion telemetry. It has no recovery bucket. If testing shows a finite resource is too scarce, its next generation version changes the initial density or guarantee; a live save does not grow replacement ore from nothing.
 
@@ -350,11 +354,11 @@ Every automated check must first be seen failing after its relevant invariant is
 | `resources.legal_placement` | No deposit/population violates z, biome, host, shape, liquid, occupancy or start-safety constraints |
 | `resources.progression_reachable` | Every required source is reachable in principle; an impossible enclosing barrier fails |
 | `resources.processing_graph` | Every produced resource traces to available raw inputs without a missing or cyclic prerequisite |
-| `resources.renewal` | Eligible populations recover below cap; a finite mineral never respawns |
-| `resources.mapwide_rates` | A long seeded run services every eligible `(z, biomeRegion)` bucket, recovers depleted renewable populations toward target, respects local/global caps and produces no protected/visible/blocked spawn |
+| `resources.renewal` | Eligible populations recover below cap; a finite mineral never respawns [DEC-073: plants only for population recovery. Wildlife and monsters have no population to recover: heavy hunting lowers an area's spawn rate for a few in-game days, then the area refills by the spawn rules.] |
+| `resources.mapwide_rates` | A long seeded run services every eligible `(z, biomeRegion)` bucket, recovers depleted renewable populations toward target, respects local/global caps and produces no protected/visible/blocked spawn [DEC-073: plants keep this check. For wildlife and monsters no bucket is serviced map-wide and nothing recovers toward a target: spawns happen only around the player and active AI faction settlements, checked against live nearby counts and density caps per cell. The ban on protected, visible or blocked spawns still applies to them.] |
 | `resources.distribution` | Common sources occur across compatible regions, rare-source counts match the manifest, and per-level/region histograms expose clumping or empty eligible regions |
 | `resources.seed_repeat` | Same version/seed yields identical level, biome and resource checksums; another seed changes them |
-| `resources.save_roundtrip` | Depletion, regrowth timers, populations and five-level placements survive save/load |
+| `resources.save_roundtrip` | Depletion, regrowth timers, populations and five-level placements survive save/load [DEC-073: for wildlife and monsters there are no populations; their spawn designations, lairs and dens, the per-area depletion record and notable creatures must survive.] |
 | `resources.budgets` | RMMZ playtest records all-level generation time, memory, save size and simulation costs against V50 |
 
 ## 12. Reference evidence and boundaries

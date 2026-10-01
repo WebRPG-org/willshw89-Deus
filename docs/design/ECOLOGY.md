@@ -1,5 +1,7 @@
 # Ecology: census, recovery, monster spawns and plant spread
 
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** wildlife and monsters are spawned by a seeded runtime spawner using intelligent rules, not recovered as populations: no births, herd targets, herds arriving from the edge to recolonize (migration is cut), or fauna census keyed by herd home. Superseded for fauna: §1's "recover toward a target" and its overhunting and edge-arrival lessons; the fauna channels and map-wide creature service in §3; the fauna parts of §4.3 to §4.5 and §5.1 (herd targets, kit herds, `herds`, `inFlight`, `fauna.birth`, `fauna.arrival`, birth tuning); §7.1; §7.2; the `ecology:born` and `ecology:arrived` events in §8; the newborns and arrivals in the §9 hook table; the `recovery` check, the `recovered_herd` screenshot and the fauna side of `ecology_long` in §11; ECO-B and the note on births and arrivals in §12; D4 and D6 in §14; and "wildlife and monsters recover under biome caps" in the §15 plugin description. Kept for the spawner, with limits: from §7.3, only the seeded clock draw and the clearances. The deficit is counted against live nearby counts and density caps per cell, not the bucket census, and the clock runs only around the player and active AI faction settlements, not over every bucket on every level. Light, time-of-day, season and danger-tier rules are added (season weights stay off while DEC-059 defers seasons). §7.3's `"edge"` entry reused §7.2's entry cells; DEC-073 does not rule on map-edge entry, so it is open for lane-fe (NAT.07.04) and WG.68.08. The §4.4 caps (L per bucket; G, C and M per level and world) are kept only as far as WG.68.07 and WG.68.08 adopt them; DEC-073 names density caps per cell. The §7.6 placement gate `canPlaceUnit` is kept. Plant channels (§7.4) and finite minerals (§7.5) are unchanged. In live code, DEUS_Ecology's hourly herd breeding (`stepBreeding`) and its New-Game baseline caps are retired by archiving, not deleting; its capped seeded spawn core (`attemptSpawn`, `candidateValid`, `protectedReason`) is the spawner's start.
+
 **Date:** 2026-09-19
 **Written by:** Claude Code (the "DF mechanics" claim in `docs/STATUS.md`, 13:45)
 **Status:** design only. Nothing in this file is built, registered or measured. It extends the snapshot-only `UF_Ecology.js` version 1 that Codex wrote (STATUS "Verified working", not registered, not F5-tested).
@@ -12,9 +14,9 @@
 
 In Dwarf Fortress each region of the world holds a limited supply of every wild species that suits its climate, its wildness and its good or evil character. The local map never holds that supply all at once. Small groups walk in from the map edge, wander a while and walk out again, and every animal killed on the map is taken off the region's supply, so heavy hunting can empty a region of a species while the tiniest pests never run out. Breeding animals pair up and have young that grow up in stages. Creatures of the underground belong to a depth range and reach the fortress only after digging opens their cavern layer. Rare giant beasts and deep horrors come on their own clock, one at a time, drawn by how long the settlement has stood, how large and rich it has become, and whether the caverns have been opened. Plants run at two speeds. Grass covers open soil and comes back within weeks of grazing or trampling, and shrubs and herbs come up in their season where the biome suits them. Trees spread as saplings on open ground and take a long time to mature, and they never grow through a built floor or into water. Stone, ore and gems are laid down once when the world is made, and once mined they are gone. (Evidence locations are in §16. No text, token, name or number is copied from the DF files.)
 
-**What UF keeps and what it changes.** V74 overrides DF's limited supply: renewable populations **recover toward a target**. UF keeps DF's lessons:
-- Overhunting still bites. A herd hunted out can't breed, so the only way back is a slower arrival from the edge.
-- Newcomers arrive as groups from the edge.
+**What UF keeps and what it changes.** V74 overrides DF's limited supply: renewable populations **recover toward a target**. [DEC-073: wildlife and monsters are spawned, not recovered toward a target; plants keep this rule.] UF keeps DF's lessons:
+- Overhunting still bites. A herd hunted out can't breed, so the only way back is a slower arrival from the edge. [DEC-073: superseded. Wild herds do not breed; heavy hunting lowers an area's spawn rate for a few in-game days, then the spawn rules refill it.]
+- Newcomers arrive as groups from the edge. [DEC-073: superseded. Herds no longer arrive from the edge to recolonize an area (migration is cut: WG.68.12 and SIM.50.07); creatures spawn in herd and group sizes around the player and active AI faction settlements.]
 - Species are tied to levels and depth bands.
 - Monsters come on a seeded clock, one small group at a time.
 - Plants run at two speeds, and trees come back through saplings.
@@ -54,8 +56,8 @@ In Dwarf Fortress each region of the world holds a limited supply of every wild 
 ```
 
 - **Census.** Per bucket: living creatures per species, counted by the herd's home cell, and renewable plants per kind. Events keep it up to date. It is never rebuilt by scanning while the game runs.
-- **Director.** It runs once per game hour and services a fixed number of buckets in a seeded round-robin over every level. The visible level gets no priority (atlas §1.2).
-- **Recovery channels.** Fauna: births near an existing herd, or a herd arriving from the map edge. Monsters: a seeded clock per bucket, with entry from wild habitat or the edge. Plants: spread from a parent, seed rain where a kind died out, saplings that become trees, and same-cell regrowth under caps. Minerals: none.
+- **Director.** It runs once per game hour and services a fixed number of buckets in a seeded round-robin over every level. The visible level gets no priority (atlas §1.2). [DEC-073: plants keep this map-wide service; creatures are spawned only around the player and active AI faction settlements.]
+- **Recovery channels.** Fauna: births near an existing herd, or a herd arriving from the map edge. Monsters: a seeded clock per bucket, with entry from wild habitat or the edge. Plants: spread from a parent, seed rain where a kind died out, saplings that become trees, and same-cell regrowth under caps. Minerals: none. [DEC-073: the fauna channels are superseded (§7.1, §7.2); wildlife and monsters both come from the spawner, which keeps only §7.3's seeded clock draw and clearances, within the limits in the banner.]
 
 ---
 
@@ -142,10 +144,10 @@ G(s, z)         = max(herd(s)[1], ceil(T(s, z) × fauna.globalCapScale))        
 C(z)            = ecology.levels[z].creatureCap ;  C_world = fauna.worldCap           unit budget caps (V50)
 ```
 
-- **A herd's own target.** Every herd is recorded at the census rebuild as `herds[id] = { species, key, size0 }`, where `size0` is its size when placed. It breeds back toward `size0`, or toward `herd[1]` for herds that ecology created.
-- **Kit herds.** Herds carrying `data.kit` (V67) recover toward their `size0` even when it is above the bucket's share, because the start guarantee holds in play too (§14 D4). They still count against G and C.
+- **A herd's own target.** Every herd is recorded at the census rebuild as `herds[id] = { species, key, size0 }`, where `size0` is its size when placed. It breeds back toward `size0`, or toward `herd[1]` for herds that ecology created. [DEC-073: superseded; wild herds do not breed and have no herd target.]
+- **Kit herds.** Herds carrying `data.kit` (V67) recover toward their `size0` even when it is above the bucket's share, because the start guarantee holds in play too (§14 D4). They still count against G and C. [DEC-073: superseded (see D4).]
 
-**Monsters.** The same `share` and `T` formulas, over monster species only. Then `L = min(monsters.bucketCap, max(1, ceil(share × localCapScale)))`, `G = ceil(T × globalCapScale)` and `M(z) = ecology.levels[z].monsterCap`.
+**Monsters.** The same `share` and `T` formulas, over monster species only. Then `L = min(monsters.bucketCap, max(1, ceil(share × localCapScale)))`, `G = ceil(T × globalCapScale)` and `M(z) = ecology.levels[z].monsterCap`. [DEC-073: these caps, and L, G and C above, are kept only as far as WG.68.07 and WG.68.08 adopt them; DEC-073 names density caps per cell, checked against live nearby counts.]
 
 **Plants.** Per bucket and renewable kind:
 - `target(k, b)` = the census count at `world:created` (saved, §4.5), because generation clumps plants and "back to what the land had" is the honest target.
@@ -260,6 +262,8 @@ Every duration is in **world beats** (V85: one beat = one game minute at ×1, so
 }
 ```
 
+[DEC-073: in this block, the `about` text "fauna breed near herds and arrive from the map edge", `fauna.targetScale` (the herd target), `fauna.birth`, `fauna.arrival` and every species' `birthBeats` and `litter` are superseded: wild herds do not breed, and herds do not arrive from the edge to recolonize an area. The fauna and monster cap scales, `worldCap`, `monsters.bucketCap` and the `levels` caps are kept only as far as WG.68.07 and WG.68.08 adopt them (§4.4 note). `monsters.intervalBeats` and `monsters.clearance` stay for the spawner (§7.3 note). For creature spawns, the `seasons` weights stay off while DEC-059 defers seasons. `plants` is unchanged.]
+
 - **`@wildlife`** means every `wildlife.species` entry. Their biome weights make the level-0 table.
 - **`@biomes`** means `biomes[*].plants`, filtered by `isRenewable` (§7.5).
 - **`@column`** means the upper levels take the biome of the ground cell below them (atlas §3.4). Only fliers are listed there ("empty air receives only eligible flying content", V83).
@@ -306,6 +310,8 @@ Every duration is in **world beats** (V85: one beat = one game minute at ×1, so
 
 ### 7.1 Fauna births (herds breed where they live)
 
+[DEC-073: superseded. Wild herds do not breed (WG.68.11 persistent populations is cut). Breeding of owned livestock belongs to the civilization phase (SIM.40.10).]
+
 A bucket service goes through each species with `share > 0` in the bucket:
 
 1. **Caps first.** Nothing happens when any of these holds:
@@ -329,6 +335,8 @@ Newborns are adult-sized. There is no juvenile stage or art (§14 D6).
 
 ### 7.2 Fauna arrivals from the map edge (local extinction and recolonization)
 
+[DEC-073: superseded. Herds no longer arrive from the map edge to recolonize an area, and there is no recolonization by migration (WG.68.12 and SIM.50.07 are cut). After heavy hunting an area's spawn rate stays lower for a few in-game days, then the spawn rules refill it.]
+
 When a species sits below its share in a bucket (`share(s, b) − n(s, b) ≥ 1`), has **no herd there that can breed**, and is below its level target (`n(s, z) < T(s, z)`), an arrival may come:
 - chance `arrival.rate × season × levelDeficit`;
 - at least `cooldownBeats` after the species' last arrival on that level;
@@ -348,7 +356,7 @@ This is the DF lesson: hunting a herd out doesn't end the species, but it comes 
 
 ### 7.3 Monsters (V75): a seeded clock, entry from habitat or edge, clearance, caps
 
-- **Clock.** Each bucket with monster share > 0 keeps `next.monster`. At world creation it is the current hour plus the first seeded draw in `intervalBeats`. It moves forward by a new seeded draw each time it fires, hit or miss. A service at or after that hour rolls `monsters.chance × deficit`, where deficit counts against the bucket's monster share (at least 1 when the share is above 0). `monsterSchedule(key, fromHour, toHour)` is a pure function that returns the due hours, so the check can compare them.
+- **Clock.** Each bucket with monster share > 0 keeps `next.monster`. At world creation it is the current hour plus the first seeded draw in `intervalBeats`. It moves forward by a new seeded draw each time it fires, hit or miss. A service at or after that hour rolls `monsters.chance × deficit`, where deficit counts against the bucket's monster share (at least 1 when the share is above 0). `monsterSchedule(key, fromHour, toHour)` is a pure function that returns the due hours, so the check can compare them. [DEC-073: the seeded draw is kept, but the clock runs only around the player and active AI faction settlements, not for every bucket with a monster share, and the deficit counts against live nearby counts and density caps per cell, not the bucket's monster share. Each spawn is a pure function of the seed, the cell, the tier, z, the time window and an attempt index. Species come from the bestiary rows and encounter tables (NAT.07.01, NAT.07.03).]
 - **Who.** A species pick weighted by its habitat in this bucket. Region rules come from `UF.Wildlife.allowedAt` (minimum wildness and alignment, `UF_Wildlife.js:1224`), and later levels add their depth band.
 - **Where.** `entry: "habitat"` (the default) means a seeded land sample of the bucket, jittered within the lattice stride, that passes the gate in the `monster` role. The monster role adds every clearance in `monsters.clearance`:
   - Euclidean distance from every camp (`UF.Wildlife.camps()`, line 1244), with the player's camp using `playerCamp`;
@@ -356,7 +364,7 @@ This is the DF lesson: hunting a herd out doesn't end the species, but it comes 
   - distance from every colonist or person on that level;
   - never visible.
 
-  The atlas's other entries come later: `"edge"` reuses §7.2's entry cells, and `"connector"` / `"den"` come with the five-level slices.
+  The atlas's other entries come later: `"edge"` reuses §7.2's entry cells, and `"connector"` / `"den"` come with the five-level slices. [DEC-073: §7.2 is superseded, so `"edge"` has no entry cells to reuse. DEC-073 does not rule on map-edge entry; whether spawns may enter from an edge, a connector or a den is open for lane-fe (NAT.07.04) and WG.68.08. The clearances above are kept, and hostile monsters stay out of a radius around settlements and starts.]
 - **How many.** The herd range, clipped by L, G and `M(z)`. Members stand within 3 cells of the first and pass the same gate.
 - **Create** through `unitSpec` and `addUnit`, exactly as in §7.1, with `herd: nextHerd++`. Emit `ecology:spawned` (v1's name) with `kind: "monster"`.
 - **Later (not built, §14 D7):** rarer lone beasts whose clock depends on world age and faction wealth (DF's pattern). They would use only approved monster species. **No new creature is proposed here.**
@@ -421,8 +429,8 @@ When Codex's resource manifest lands (STATUS claim), its `renewable` flag and `r
 |---|---|
 | `ecology:ready` | `{ levels, buckets, ms }` |
 | `ecology:step` | the step report; v1's `ecology:hour` fires too, for compatibility |
-| `ecology:born` | `{ unit, herd, key }` |
-| `ecology:arrived` | `{ units, herd, key, entry }` |
+| `ecology:born` | `{ unit, herd, key }` [DEC-073: superseded; wild herds do not breed.] |
+| `ecology:arrived` | `{ units, herd, key, entry }` [DEC-073: superseded; herds no longer arrive from the edge to recolonize.] |
 | `ecology:spawned` | v1's name: `{ units, species, key, kind: "monster" \| "arrival" }` |
 | `ecology:germinated` | `{ area, z, x, y, kind, key, via: "spread" \| "rain" }` |
 | `ecology:grew` | `{ area, z, x, y, from, to }` |
@@ -450,7 +458,7 @@ UF_Ecology aliases only core methods, as v1 does. Everything else is an event li
 | `UF.Objects.setIn`, `type`, `blocksIn` | `UF_Objects.js:165`, `:674`, `:687` | call | Germination, growth, occupancy |
 | `UF.World.addUnit` | `UF_World.js:797` | call | Every unit (V68) |
 | `UF.World.spawnCellFor`, `cellFree`, `standerAt`, `getObject`, `sendUnit`, `isDisplayed`, `currentArea` | `UF_World.js:725`, `:617`, `:744`, `:536`, `:852`, `:867`, `:319` | call | Gate, plant census, arrivals, view |
-| `UF.Wildlife.unitSpec` | `UF_Wildlife.js:454` (public `:1240`) | call | The exact creature spec, so the wander AI runs newborns, arrivals and monsters |
+| `UF.Wildlife.unitSpec` | `UF_Wildlife.js:454` (public `:1240`) | call | The exact creature spec, so the wander AI runs newborns, arrivals and monsters [DEC-073: newborns and arrivals are superseded; the spec serves spawned wildlife and monsters.] |
 | `UF.Wildlife.species`, `speciesById`, `allowedAt`, `allowedInRegion`, `herdScale`, `camps`, `kitConfig` | `:1182`, `:1183`, `:1224`, `:1229`, `:1233`, `:1244`, `:1242` | call | Species data, region rules, the same K as generation, camp rules |
 | `wildlife:kill` | `UF_Wildlife.js:1078` | listener | `tel.kills` |
 | `UF.History.sites()` | `UF_History.js:1565` | call | Site clearance |
@@ -490,7 +498,7 @@ The provocation scheme is v1's `provoked(check)`, active only under `UF.Test.act
 |---|---|---|
 | `census_sparse` | Over 168 simulated steps (7 game days, `step(h)` called directly): `fullScans` stays at its post-rebuild value; no ecology code runs outside `time:hour` and the census events (an entry counter checked over 600 frames with no hour event is 0); the census equals one brute-force recount taken outside the timed window; worst step ≤ 2 ms, mean ≤ 0.5 ms, **per-beat cost = total ms ÷ (steps × 60) ≤ 0.05 ms**; 1,000 synthetic add/remove events average ≤ 0.01 ms. The message quotes all measured numbers | The provocation makes every step call `recount()`. `fullScans` climbs to 169 and the check fails |
 | `recovery` | A bucket and species with a breeding herd, hunted (`removeUnit`, as a kill does) down to 2 members, rise over simulated days and stop at the herd target. Every newborn came through `addUnit`, carries the herd's id and home and `ai: "wander"`, and stands on a free cell its species allows. With test members added up to `L(s, b)` (built through `unitSpec` + `addUnit`), the same days produce no birth and no arrival. With the whole herd removed and the level below `T`, a herd arrives from an entry cell and heads for the bucket | Two provocations: `ecology.recovery` sets every birth and arrival rate to 0 (no recovery, FAIL); `ecology.recovery_cap` skips the cap test (above-cap growth, FAIL) |
-| `monster_spawns` | Over 30 simulated days on every monster-eligible bucket: each spawn's hour is the first service at or after a due hour from `monsterSchedule`, computed twice and equal. Its cell passes `allowedAt` and was free before the add. It is outside the view, and at least the clearance from every camp (the player's ≥ 60), site and person. Counts stay ≤ L, G and M. A test camp placed on a scheduled cell makes that spawn go elsewhere or skip | The provocation sets every clearance to 0 and picks candidates next to the nearest camp. A monster lands within 40 cells and the check fails |
+| `monster_spawns` | Over 30 simulated days on every monster-eligible bucket: each spawn's hour is the first service at or after a due hour from `monsterSchedule`, computed twice and equal. Its cell passes `allowedAt` and was free before the add. It is outside the view, and at least the clearance from every camp (the player's ≥ 60), site and person. Counts stay ≤ L, G and M. A test camp placed on a scheduled cell makes that spawn go elsewhere or skip [DEC-073: this check follows §7.3 as limited in the banner: spawns only around the player and active AI faction settlements, counted against live nearby counts and density caps per cell.] | The provocation sets every clearance to 0 and picks candidates next to the nearest camp. A monster lands within 40 cells and the check fails |
 | `plant_spread` | In a bucket thinned below target, with test units on 20 candidate cells and a road or floor on others where those plugins are loaded, every germination over N simulated days: sits on a cell of the bucket's biome that was empty, walkable, not a road, floor or job cell, never under a unit when the plant blocks, and outside `campClearance`. Counts stay ≤ hardCap. A sapling becomes its tree after `saplingToTreeBeats`, waits while a unit stands on it, and grows once the unit leaves. `world:objectRefused` count is unchanged | The provocation drops the occupancy test from the gate. The check reads the step's accepted-candidate log and finds a blocking plant chosen on a unit's cell, so it fails |
 | `minerals_finite` | Every catalog object tagged `mineral`, `ore`, `gem`, `stone`, `ruin` or `remains` gives `isRenewable` false. After mining out every mineral in a test block and 60 simulated days of steps, the block's mineral count (counted by the check over that block only) never rises, and no timer targets a mineral id | The provocation makes the `ore` tag renewable. An ironstone timer is scheduled and the outcrop returns, so the check fails |
 | `deterministic` | `dryRun(72)` from the same start state twice gives identical, non-empty event logs. A copy with `seed + 1` gives a different one. The first 24 hours of a real run match the dry run's first 24 | The provocation mixes one `Math.random()` into the candidate pick, so the two logs differ |
@@ -511,7 +519,7 @@ The provocation scheme is v1's `provoked(check)`, active only under `UF.Test.act
   | `bounded_work` | `census_sparse` |
 
 - **Screenshots** (each opened and described before it is cited):
-  - `ecology.recovered_herd.png`: newborns beside their herd, Look tooltip on one;
+  - `ecology.recovered_herd.png`: newborns beside their herd, Look tooltip on one; [DEC-073: superseded; wild herds do not breed.]
   - `ecology.monster_spawned.png`: a spawned monster with the distance to the nearest camp in the message;
   - `ecology.plant_spread.png`: saplings and new grass near their parents.
 - **On-request suite `ecology_long`** (like `wildlife_seeds`). It runs the atlas checks `resources.mapwide_rates` and `resources.distribution` for this system: 60 simulated days on 3 fixed seeds, with the AI paused. It fails when any eligible bucket was never serviced, any cap was exceeded, any protected, visible or blocked placement happened, or a depleted bucket did not move toward its target. It prints per-bucket histograms (initial, current, births, arrivals, monsters, germinations, blocks).
@@ -527,7 +535,7 @@ Placeholders are stock RPG Maker MZ tiles (V9). Each gets a request that names t
 | ECO-A | **Tree sapling, 2 variants:** broadleaf and conifer (tropical and swamp kinds use the broadleaf one with a catalog tint until they get their own) | 48×48 frame, V81 micro scale: about 16–22 px tall against a 46 px person, grounded on row 47, anchor `[24, 47]`, footprint `[1, 1]`, drawn under units, passable. 1 stand frame + 3 sway frames (V60), 8 colours or fewer, `art/palette/uf.hex`, binary alpha; 4× raw on magenta; RMMZ `!$` single-object sheet `!$UF_Sapling.png` / `!$UF_SaplingConifer.png` with sidecars; passes `tools/originality_check.js` and `tools/art_check.js --native` | Catalog `objects` → `sapling`: `"image": "!$UF_Sapling"` replaces the `tile` field (Gemini may edit `objects` per the world-generation handoff). A second object `sapling_conifer` with the same `tags`, if the user wants the conifer variant told apart | REQUESTED (stock `Outside_B` tile 152 "Grass A", tinted `#7fb35a`) |
 | ECO-B | **Newborn and juvenile frames** for the prey species | Not requested now; waits for §14 D6 | — | — |
 
-Nothing else in this design needs art. Births, arrivals and monster spawns reuse the species sheets of AR-401 and AR-402, and plant spread reuses AR-102 and AR-103.
+Nothing else in this design needs art. Births, arrivals and monster spawns reuse the species sheets of AR-401 and AR-402, and plant spread reuses AR-102 and AR-103. [DEC-073: there are no wildlife births or edge arrivals; spawned wildlife and monsters reuse those sheets.]
 
 ---
 
@@ -546,9 +554,9 @@ Nothing else in this design needs art. Births, arrivals and monster spawns reuse
 | D1 | Build v2 in place in Codex's `UF_Ecology.js`, or keep v1 and add a new plugin? | In place: same save key, API and events, with migration. Codex and the user should confirm, because STATUS credits v1 to Codex |
 | D2 | The `sapling` object and the stump → sapling → tree chain appear in CRAFTING.md D9, which isn't approved | Adopt the id and the chain in ecology now. Growth lives in ecology's timers, so UF_Objects needs no `@biome` rule. CRAFTING's times (72 h stump to sapling, 144 h sapling to tree) are used as the initial tuning |
 | D3 | Pulling a stump: v1 keeps the cell's regrowth, CRAFTING cancels it | Cancel it, so cleared land stays cleared. Spread may reseed it later, outside camp clearance |
-| D4 | Do kit herds (V67) breed back to their starting size near camps, above the bucket's share? | Yes: V67's "resources to start building" holds in play, and docs/systems/DEUS_Wildlife.md lists "hunted herds aren't replaced" as a known limit |
+| D4 | Do kit herds (V67) breed back to their starting size near camps, above the bucket's share? | Yes: V67's "resources to start building" holds in play, and docs/systems/DEUS_Wildlife.md lists "hunted herds aren't replaced" as a known limit [DEC-073: superseded; kit herds do not breed. Prey near a start comes from the spawner, which runs around the player and active AI faction settlements.] |
 | D5 | Recovery never happens in view (atlas §8.1), so a herd grazing beside the colony on screen won't show a birth | Keep the atlas rule |
-| D6 | Young animals: newborns are adult-sized with no juvenile art | Keep until the user wants juvenile stages (then request ECO-B) |
+| D6 | Young animals: newborns are adult-sized with no juvenile art | Keep until the user wants juvenile stages (then request ECO-B) [DEC-073: moot for wildlife and monsters, which do not breed.] |
 | D7 | Rare lone beasts on a world-age and wealth clock (DF's pattern) | Later, with approved species only. Nothing built now |
 | D8 | Underground and upper-level ecology tables | Empty and disabled until the vertical run's biome ids and the user's approved underground species exist. Fliers-only tables for ±1 and ±2 are ready |
 | D9 | The five-level run's API | Asked: `UF.Levels.cellInfo(gx, gy, z)` → `{ biomeId, walkable, water, region, depthBand, open }` |
@@ -571,7 +579,7 @@ Nothing else in this design needs art. Births, arrivals and monster spawns reuse
 **Registration** (only with the RMMZ editor closed):
 - `game/js/plugins.js`: `{"name":"UF_Ecology","status":true,"description":"[UF Ecology] Plants spread and regrow; wildlife and monsters recover under biome caps; ore never returns.","parameters":{}}`, placed right after `UF_Wildlife` and before `UF_Stance`.
 - `tools/register_world_plugins.js`: in `ORDER`, insert `"UF_Ecology"` after `"UF_Wildlife"`.
-- `tools/register_world_plugins.js`: in `DESCRIPTIONS`, add `UF_Ecology: "[UF Ecology] Plants spread and regrow; wildlife and monsters recover under biome caps; ore never returns.",`.
+- `tools/register_world_plugins.js`: in `DESCRIPTIONS`, add `UF_Ecology: "[UF Ecology] Plants spread and regrow; wildlife and monsters recover under biome caps; ore never returns.",`. [DEC-073: in both description strings above, "wildlife and monsters recover under biome caps" is superseded; they are spawned by rule.]
 - When UF_Levels lands, UF_Ecology also gets `@orderAfter UF_Levels`.
 
 ---

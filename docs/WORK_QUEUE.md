@@ -1,5 +1,7 @@
 # WORK QUEUE & CONTROL TOWER — Project DEUS
 
+> **Superseded in part by DEC-073 (Owner, 2026-10-01):** Block `WB-003`'s "predator/prey balance" goal. Wildlife and monsters are spawned by a seeded runtime spawner, with no breeding, carrying capacity, food webs or migration for them. See the note in `WB-003`.
+
 **Coordinator:** Gemini  
 **Last Updated:** 2026-09-25 23:45 CT (Directive 001-L)  
 **Active Engine Gate:** Current parallel lanes: Lane H (WG.00.08 Z-2 Cut Proof Hardening), Lane C2b (WG.00.12 Governance Hardening), and Lane E (WG.00.09 Five-Z Depth Renderer Attack Plan). Merged lanes: A, B, C1, C2, C3, F, G. Delivered: Lane D.  
@@ -94,10 +96,10 @@ Every work block MUST declare:
 ---
 
 ### Block `WB-003`: Natural World Autonomous Behavior & Living Ecology
-- **Objective**: Activate the autonomous life and behavior of the natural world (fauna grazing, herd cohesion, predator/prey balance, flee responses, plant/bush ecological regrowth, and diurnal lighting) within strict 60 FPS budgets.
+- **Objective**: Activate the autonomous life and behavior of the natural world (fauna grazing, herd cohesion, predator/prey balance, flee responses, plant/bush ecological regrowth, and diurnal lighting) within strict 60 FPS budgets. [DEC-073 (Owner, 2026-10-01): wildlife and monsters are now spawned and despawned by a seeded runtime spawner (lanes fc, fe, ff and fi), with no breeding, carrying capacity, food webs or migration for them, so "predator/prey balance" is no longer a goal. DEUS_Ecology's hourly herd breeding (`stepBreeding`) and its New-Game baseline caps are to be retired by archiving, not deleting (item 7); its seeded spawn core is the spawner's start. Plant and bush regrowth is unchanged. Spawned creature bodies sit outside the closed-mass ledger: a despawning creature drops any conserved world material it carries, and spawned-creature remains never become conserved soil (item 9).] [PM note, 2026-10-01, not part of the ruling: the live plugin still calls `stepBreeding` from its hourly `tickHour` (`game/js/plugins/DEUS_Ecology.js` line 921 on 2026-10-01) until a lane archives it. Grazing, herd cohesion, flee and sleep would act on spawned creatures, but DEC-073 names no behaviour leaf for them; whether WB-003 stays their home is open, and a new leaf needs Owner approval.]
 - **Priority**: `HIGH`
 - **Status**: `PARKED` (Awaiting PM/Owner assignment)
-- **Dependencies**: None (self-contained living environment substrate).
+- **Dependencies**: None (self-contained living environment substrate). [PM note, 2026-10-01, from DEC-073 items 1 and 6: if WB-003 is activated, it depends on the spawner lanes fc, fe, ff and fi (NAT.07.02, NAT.07.04, NAT.07.05, WG.00.47), because wildlife and monsters now come only from the spawner.]
 - **Allowed Paths**:
   - `game/js/plugins/DEUS_Wildlife.js`
   - `game/js/plugins/DEUS_Ecology.js`

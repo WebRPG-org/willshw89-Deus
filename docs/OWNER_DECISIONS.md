@@ -188,6 +188,7 @@ Every decision item recorded in this log must provide:
   1. **Sim/render split:** The simulation becomes plain JavaScript modules with ZERO dependency on RPG Maker, PIXI, or the DOM. Headless node runs the entire simulation on its own fixed tick (10 Hz). RPG Maker is purely an observer/renderer that consumes state snapshots and issues player orders into a command queue.
   2. **Level-of-Detail (LOD):** The active player/camera region simulates at full tick fidelity. Distant regions simulate as coarse aggregate summaries at reduced frequency (water volume, populations, biomass, temperature). Promotion from coarse to fine is deterministic (same seed + state = identical world); demotion conserves all mass, energy, and population.
   3. **Roadmap:** Implemented in milestone M3 (SIM.00 and SIM.30 packages). Lane M writes the architectural decision record (ADR-003).
+- **Amendment (Owner, 2026-10-01):** in item 2, the coarse population summaries, and the population that demotion conserves, cover only people, owned livestock and notable creatures (tamed, captured, named, quest and lair creatures, and any creature carrying items); flora biomass stays. Anonymous wildlife and monsters are not summarized: they despawn when far away and out of sight, the spawn rules place them again, and they are outside the closed-mass ledger (SIM.30.01-05 shrink to match); see DEC-073.
 
 ---
 
@@ -231,6 +232,7 @@ Every decision item recorded in this log must provide:
   3. **Three-Axis Identity & Obligation Retention:** Crowd counts maintain the SOC.10.01 three-axis identity (`craft`, `civicOffice`, `class`) plus an obligation level (duty to defend or serve), ensuring military levies and labor forces draw from appropriate demographics and casualties feed back accurately into counts.
   4. **Anti-Snowball Pressures:** Large, dominant factions experience emergent counter-pressures: regional rebellions, epidemic disease in dense settlements, supply/logistical strain, and dynastic succession crises, ensuring faction supremacy must be continuously maintained rather than permanently snowballing.
   5. **Monster Origins:** Default rule is that most monsters reproduce biologically like animals; per-species origin settings (`breeds`, `spawned`, `created`, `unique`) are preserved for lore exceptions (Owner assigns).
+- **Amendment (Owner, 2026-10-01):** item 5's default is reversed: wildlife and monsters do not reproduce, and their default origin is `spawned`, placed and removed by the seeded runtime spawn rules. The per-species origin field stays for exceptions, such as a `unique` lair boss that is gone for good once killed; only people and owned livestock keep breeding (civilization phase); see DEC-073.
 
 ---
 
@@ -422,6 +424,7 @@ Every decision item recorded in this log must provide:
      - Metals → rust / scrap or trace mineral veins, never virgin ore veins (finite ore rule DEC-023 preserved).
   3. **Exemptions:** Items stored within active, claimed, or enclosed structures are exempt from reclamation.
   4. **Accounting Authority:** The per-class mass ledger `game/js/sim/ledger*` (`WG.65.15`) is the single authoritative accounting instrument across mining, construction, collapse (`SIM.40.01`), decay (`SIM.40.05`), and reclamation.
+- **Amendment (Owner, 2026-10-01):** in item 2, the remains of spawned wildlife and monsters (corpses, bone) are outside the closed-mass ledger and never reclaim into conserved soil or fertile earth. The other reclamation rules are unchanged; see DEC-073.
 
 ---
 
@@ -557,6 +560,7 @@ Every decision item recorded in this log must provide:
      - **CIVILIZATION:** Frozen. No civilization, farming, faction, or society implementation under this phase.
      - **CUT / superseded:** Allocate no new work.
 - **Focus (Owner, 2026-09-29: "All I want is the solid world generation and physics, water physics, lava, etc"):** engineering work narrows to two things: (1) world generation that fills all 32 layers with real geology by depth band (DEC-030), caves, ravines and the deep magma, and (2) the physics that runs on it: water (one water authority, flow across layers, aquifers, springs), lava (magma, flow, lava meeting water), matter (collapse when support is removed) and soil/sediment movement, each bridged into the running game and visible in F5. Climate, flora, fauna, UI features, society and the art pipeline wait; placeholder art only as far as the physics must be readable.
+- **Amendment (Owner, 2026-10-01):** in item 2's chain, Fauna is no longer a population simulation downstream of Climate and Flora: wildlife and monsters are spawned at runtime from world-generation spawn designations (biome-depth cell, danger tier, encounter tables, lair and den anchors) and live conditions such as light and time of day. The spawner is built now, in its planned waves after the physics lanes it depends on, not after a climate or flora simulation; for the creature spawner this replaces "fauna" in the Focus paragraph's list of work that waits (2026-09-29); see DEC-073.
 
 ---
 
@@ -611,6 +615,7 @@ Every decision item recorded in this log must provide:
      - **Generation Order:** `WORLD SEED -> base terrain -> geology -> water -> soil/environment -> vegetation -> fauna/monsters -> structures/features`. Establishes initial world state.
      - **Regeneration Law:** Regeneration happens ONLY through physical world rules (seed dispersal, suitable soil/light/moisture for plants; breeding/migration for wildlife). Zero magic chunk reload respawning or arbitrary respawn timers. Supernatural entities follow explicit SRD rules.
   5. **Minecraft Rule Record Format:** Every Minecraft-derived DEUS specification must document: `SOURCE`, `REFERENCE BEHAVIOR`, `DEUS TRANSLATION`, and `DEVIATIONS`.
+- **Amendment (Owner, 2026-10-01):** item 4's Regeneration Law no longer applies to wildlife and monsters: they do not regenerate by breeding or migration but are spawned and despawned at runtime, Minecraft-style, by seeded intelligent rules (biome-depth cell, danger tier, encounter tables, light, time of day, season (weights off while DEC-059 defers seasons), density caps, herd sizes, distance from the player, starts and settlements). Plants still regenerate by physical world rules, the ban on chunk-reload respawning and arbitrary respawn timers still holds for everything else, and supernatural entities still follow explicit SRD rules. An area thinned by heavy hunting refills by those rules after a few in-game days, and finite minerals never spawn (DEC-023). In the Generation Order, the fauna/monsters step sets down spawn designations, lairs and dens and notable creatures; ordinary wildlife and monsters are transient spawns, not stored world state; see DEC-073.
 
 ---
 
@@ -642,6 +647,7 @@ Every decision item recorded in this log must provide:
   - **Weight, not chemistry:** the ledger counts weight. Material type, volume and density may change along the way; soil weighs more than sand. This is not a chemistry or physics exercise and must not complicate soil.
   - **Blocking defects:** material or water that appears from nothing, or disappears without a destination.
 - **Water never leaves (Owner, 2026-09-29: "One more rule tho: Any water that leaves the world, rains back into the world"):** water is a closed loop. Water that leaves the simulated world by any route (off a map edge, out of the bottom layer, into a drain or sink, evaporated past the modelled air) is not deleted: its mass is held and returns to the world as rain. There is no water deletion sink anywhere (this retires the "sink" wording in INV-FLD-02).
+- **Amendment (Owner, 2026-10-01):** spawned wildlife and monster bodies sit outside the closed-mass ledger (as the 2026-09-29 clarification puts creatures out of scope), so spawning or despawning one is neither a mass source nor a deletion sink under items 2 and 4. A despawning creature drops any conserved world material it carries, and spawned-creature remains never become conserved soil; see DEC-073.
 
 ---
 
@@ -676,6 +682,7 @@ Every decision item recorded in this log must provide:
      10. Wildlife populations persist and reproduce rather than arbitrarily respawning;
      11. Full region unload and reload reproduces bit-identical state;
      12. Quiescent sleep guarantees zero global full-world per-frame scans.
+- **Amendment (Owner, 2026-10-01):** in item 7, points 9 and 10 (already deferred by DEC-057) are withdrawn for wildlife and monsters: there is no carrying capacity or breeding for them; the seeded spawner places them, they despawn only when far away and out of sight, and tamed, captured, named, quest and lair creatures, and any creature carrying items, persist. Point 11's bit-identical state excludes transient spawned creatures and still includes spawn designations, lairs and dens, the depletion record and notable creatures; see DEC-073.
 
 
 ---
@@ -820,6 +827,7 @@ Every decision item recorded in this log must provide:
   2. **Danger gradient:** creature difficulty is low near every starting area and rises in the pockets between them. Challenge rating is driven by a world danger field that is derived from the starts, deterministic from the seed.
   3. **Bestiary per biome:** all 317 SRD 5.1 creatures (`game/data/srd51/creatures.json`) and the wildlife species are catalogued and assigned to the 30 biome-depth cells of DEC-030: 6 families (VOLCANIC, WET, ARID, TEMPERATE, COLD, WILD) x 5 vertical varieties (Deep Earth, Caverns, Lowlands, Uplands, Highlands). The Owner confirmed this the same day: "There should be 6 biome families, with 5 varieties vertically each." Each creature carries a danger tier from CR. The assignment lives in a DEUS-owned layer keyed by `srd:` ids. `srd51` records are never edited. A record is verified when it is activated for gameplay (SRD policy, 2026-09-22).
   4. **Order (PM default; the Owner may change it):** the layout design (D4) and the bestiary run through the braintrust now. Placement of starts is part of world generation, so it joins D1. Runtime creature spawning follows the physics work (DEC-037 chain) unless the Owner brings it forward.
+- **Amendment (Owner, 2026-10-01):** item 4's "Runtime creature spawning follows the physics work" is replaced: the runtime spawner is the creature model and is built now, in the natural-world build, by lane-fc, lane-fe, lane-ff and lane-fi in their planned waves after the physics lanes they depend on. It picks creatures by the danger tier of item 2 and the biome bestiary of item 3; see DEC-073.
 
 ---
 
@@ -961,6 +969,7 @@ Every decision item recorded in this log must provide:
      - Space, matter, water, lava and collapse stay in scope.
 - **Open:** climate is not named in the ruling. Seeded flora placement does not need a climate engine, so the PM treats climate as deferred with flora unless the Owner says otherwise.
 - **Supersedes in part:** DEC-037's upstream order (Geomorphology/Soil, then Climate, Flora and Fauna as simulations) for this phase, and DEC-041 points 6 and 8-10 as exit criteria.
+- **Amendment (Owner, 2026-10-01):** for wildlife and monsters, item 2's seeded placement becomes a seeded runtime spawner (spawn and despawn during play) that uses the same three inputs plus light, time of day, season (weights off while DEC-059 defers seasons), density caps, herd sizes and distance, and the breeding, carrying capacity and food webs that item 2 left for later (and item 3's persistent breeding wildlife) are dropped, not deferred. Flora physical growth stays deferred as before; see DEC-073.
 
 ---
 
@@ -997,6 +1006,7 @@ Every decision item recorded in this log must provide:
   - Rule 10 escalations (two failed fixes);
   - any change to the read-only engine core (Rule 9);
   - generating all art.
+- **Amendment (Owner, 2026-10-01):** in item 4, animal migration is cut rather than deferred (WG.68.12 and SIM.50.07); seasons stay deferred, so the creature spawner's season weights stay off until seasons open. The other deferred extras are unchanged; see DEC-073.
 
 ---
 
@@ -1163,6 +1173,7 @@ Every decision item recorded in this log must provide:
   5. **Wet collapse is approximate.** Asked "How approximate are we talking?", the Owner answered with the water direction in item 6; the PM chose the approximate option as the one consistent with it (the Owner may revise): strata whose footprint touches fluid collapse by the dry path (lane-ew), and on the following water ticks the water authority moves water out of cells that now hold rubble into the nearest open cells; water stays conserved (moved, never deleted) and pore water stays in the rubble as moisture. lane-fk is re-scoped to this (one M lane, including the in-game collapse_wet proof); lane-fq, lane-fr and lane-fs are withdrawn.
   6. **Water direction (binding on every water lane).** "I want water physics to operate like minecraft but with pressure and realism. So you kno whow minecraft water spreads kinda slow." (a) Water spreads visibly cell by cell over ticks at a slow, Minecraft-like pace; the spread rate is a named tunable in each brief, never instant. (b) Pressure: connected water seeks a common level, pushes up through connections and loads barriers (lane-fj). (c) Realism: water is finite and conserved (closed mass), flows downhill and down levels, and there are no infinite sources. Applies to lane-ec, ec2, ee, ef, eg, ei, ej, em, fj, fm and fk, and to any later water lane.
 - **Records updated with this entry:** `docs/worldgen/DEUS_WORLDGEN_WBS.md` (revision log); the PM's plan of record (lane table); mail to AG.
+- **Amendment (Owner, 2026-10-01):** the four lanes item 2 kept now build the runtime spawner: lane-fc the danger field and tiers (NAT.07.02), lane-fe the spawn rules and draw (NAT.07.04), lane-ff despawn, notable persistence and lair refill (NAT.07.05) and lane-fi spawn on the first build of each (area, z) (WG.00.47). lane-fe's seeded creature placement becomes spawning during play, and lane-fi no longer builds a lazy wildlife population; see DEC-073.
 
 ### Decision `DEC-068`: Every door is two tiles tall and flush with the walls and roof
 - **Date:** 2026-10-01 (~14:05Z)
@@ -1193,6 +1204,7 @@ Every decision item recorded in this log must provide:
   2. **Equal starts.** "I want all of the factions to have requally good starts, we need to balance plant growth and stuff across the biomes." Measurable parity rules (metrics, tolerances, tests, lane placement) come from the braintrust design round DESIGN-NW-1; any new plan leaf it needs goes to the Owner first.
   3. **FPS.** "FPS has to be acceptable. Anything we implement cannot slow FPS to a grind ingame. Part of it is figuring out a solution and another part is streamlining it." Every lane must keep frame time acceptable; the binding frame budget and the per-lane performance gate come from DESIGN-NW-1 and go to the Owner with it.
 - **Records updated with this entry:** a pointer line under DEC-065.
+- **Amendment (Owner, 2026-10-01):** in item 1 condition C, ordinary wildlife registers nothing at first build and needs no catch-up, so lane-fi registers no wildlife against Ecology baselines. Spawn designations (tier, tables, lair and den anchors, caps), lairs and dens, the depletion record and notable creatures must still come out identical whether an (area, z) is built at New Game or later, and per-area checksums exclude transient spawned creatures and include those; see DEC-073.
 
 ### Decision `DEC-071`: The PM makes the fauna in the PixelLab character creator as eight-way still sprites (amends DEC-062 and DEC-063, "no animals")
 - **Date:** 2026-10-01

@@ -17,7 +17,7 @@ This is not a one-time cleanup task. Treat project health as an ongoing system.
 Every major concept has one authoritative subsystem module:
 - **WORLD** (`UF_World.js`): XYZ coordinates, terrain, solid/void, chunks, world mutation.
 - **WORLDGEN** (`UF_WorldGen.js`, `UF_Levels.js`): Climate, biome, geology, elevation, caves, natural resources.
-- **ENTITIES** (`UF_World.js` registry, `UF_Colonists.js`): Creature identity, persistent entity state.
+- **ENTITIES** (`UF_World.js` registry, `UF_Colonists.js`): Creature identity; persistent entity state for people, owned livestock and notable creatures (other wildlife and monsters are transient spawns, DEC-073).
 - **TIME** (`UF_Time.js`, `UF_TimeSpeed.js`): Engine clock, action clock, historical clock, sky/presentation clock.
 - **CAPABILITIES** (`UF_Proficiency.js`): Ability scores, bounded proficiencies, traits, checks, work rate.
 - **JOBS** (`UF_Jobs.js`): Job requests, job assignment, work state, reservations.
@@ -72,7 +72,7 @@ Update systems only as often as gameplay requires:
 - Job Selection: $1\text{ Hz}$ to $2\text{ Hz}$.
 - Household Planning: $0.1\text{ Hz}$ (every $10\text{ s}$).
 - Settlement Strategic Planning: $0.02\text{ Hz}$ (every $50\text{ s}$).
-- Historical Biology & Ecology: batched per historical hour/day.
+- Historical Biology & Ecology (flora regrowth; people and owned livestock lifecycle): batched per historical hour/day. Wildlife and monsters have no population or breeding ticks; creature spawn and despawn checks run on their own tagged cadence around the player and active AI faction settlements (DEC-073).
 
 ## 8. Event-Driven World Mutation & Localized Invalidation
 - When world state changes, dependent systems are explicitly notified via `UF.Events`:
@@ -114,7 +114,7 @@ The simulation must explain itself:
 ## 15. Scalable Levels of Simulation Fidelity
 - High fidelity: visible/nearby entities (precise movement, combat, animations).
 - Medium fidelity: active settlement entities (jobs, needs, production).
-- Coarse fidelity: distant regions and background wildlife (batched statistics).
+- Coarse fidelity: distant regions (batched statistics). Wildlife and monsters have no population or ecology simulation at any fidelity: a seeded runtime spawner places them by rule around the player and active AI faction settlements, and while they exist they run at the fidelity of the area they are in. Notable creatures (tamed, captured, named, quest and lair creatures, and any creature carrying items) persist; all other wildlife and monsters despawn only when far away and out of sight (DEC-073).
 
 ## 16. Save Truth, Rebuild Cache
 - Persist stable world truth (entity state, inventory, skills, building blocks, terrain mutations).
@@ -185,7 +185,7 @@ Implemented + Integrated + Automated Tests Pass + No Known Regressions + Save/Lo
 - Explicit project lifecycle states: `planned`, `active`, `blocked`, `complete`, `canceled`, `abandoned`. Clean up terminal states.
 
 ## 35. Batch Expensive Operations
-- Spread path searches, room checks, ecology ticks, and worldgen across frames.
+- Spread path searches, room checks, ecology ticks (flora), creature spawn checks (DEC-073), and worldgen across frames.
 
 ## 36. Localize Pathfinding
 - Hierarchical routing, chunk borders, cached local routes, and unreachable-area caching.

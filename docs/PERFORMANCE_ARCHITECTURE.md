@@ -100,20 +100,20 @@ To support large-scale settlements and 1,000+ simulated entities, simulation fre
 | **TIER A** | **Visible / Engaged** | Screen viewport + 2-tile margin; actors in active combat or immediate player interaction | Every frame ($60\text{ Hz}$) | Full sensory checks, precise kinematics, real-time animation. |
 | **TIER B** | **Nearby / Relevant** | Current settlement active working radius ($\le 48$ tiles from camera) | Staggered ($15\text{–}20\text{ Hz}$) | Job execution, path following, localized needs evaluation. |
 | **TIER C** | **Remote** | Offscreen entities in loaded active areas | Low frequency ($1\text{–}2\text{ Hz}$) | Coarse movement, statistical production, macro task progression. |
-| **TIER D** | **Dormant / Stable** | Distant wildlife, sleeping colonists, settled resources, deep underground | Event-driven ($\sim 0\text{ Hz}$) | Awoken only by proximity, alarms, schedule triggers, or area events. |
+| **TIER D** | **Dormant / Stable** | Distant notable creatures and owned livestock, sleeping colonists, settled resources, deep underground. Other wildlife and monsters are not kept dormant: they despawn when far away and out of sight (DEC-073). | Event-driven ($\sim 0\text{ Hz}$) | Awoken only by proximity, alarms, schedule triggers, or area events. |
 
-> **Conservation Invariant:** Lower simulation frequencies must **never** alter authoritative simulation outcomes. Systems operating on reduced tiers accumulate elapsed physical time ($\Delta t$) and resolve state changes mathematically rather than dropping calculations.
+> **Conservation Invariant:** Lower simulation frequencies must **never** alter authoritative simulation outcomes. Systems operating on reduced tiers accumulate elapsed physical time ($\Delta t$) and resolve state changes mathematically rather than dropping calculations. Transient spawned wildlife and monsters are not authoritative state, so despawning one is not a dropped calculation; per-area checksums exclude them and include spawn designations, lairs and dens, the depletion record and notable creatures (DEC-073).
 
 ### 5.1 Natural World Systems & Multi-Timescale Performance Standard
 *Governed by [`docs/worldgen/DEUS_NATURAL_WORLD_SYSTEMS.md`](file:///c:/Users/snewt/OneDrive/Desktop/UF/docs/worldgen/DEUS_NATURAL_WORLD_SYSTEMS.md) and [`docs/worldgen/DEUS_WORLD_STATE_REGISTRY.md`](file:///c:/Users/snewt/OneDrive/Desktop/UF/docs/worldgen/DEUS_WORLD_STATE_REGISTRY.md)*
 
-Natural world systems (hydrology, soil, succession, wildfire, wildlife, geomorphology) operate across vast geographic areas but must **never** incur full-world per-frame scans:
+Natural world systems (hydrology, soil, succession, wildfire, geomorphology; not wildlife or monsters, which a seeded spawner places only around the player and active AI faction settlements, DEC-073) operate across vast geographic areas but must **never** incur full-world per-frame scans:
 
 1. **Stable World = Zero Recurring CPU Work:** Undisturbed natural terrain, dormant forests, settled aquifers, and calm lakes consume **0 ms** of recurring simulation time.
 2. **Multi-Timescale Execution Cadences:**
    - **Action Domain (Seconds / Minutes):** Active wildfire fronts, flash flood expansion, and active landslides utilize localized dirty bounding boxes and active-front FIFO queues. Dormant trees and stable slopes are never checked.
-   - **Simulation Domain (Daily Ticks):** Soil moisture evaporation, rain soaking, and wildlife grazing utilize staggered chunk schedulers (e.g. 64 chunks per frame across 60 seconds).
-   - **Historical Domain (Seasonal / Decadal):** Vegetation growth, herd migration, snowpack melt pulses, and river low/high water shifts execute on quarterly macro-ticks.
+   - **Simulation Domain (Daily Ticks):** Soil moisture evaporation and rain soaking utilize staggered chunk schedulers (e.g. 64 chunks per frame across 60 seconds). Wildlife grazing pressure on vegetation is not simulated (no food webs, DEC-073 item 1).
+   - **Historical Domain (Seasonal / Decadal):** Vegetation growth, snowpack melt pulses, and river low/high water shifts execute on quarterly macro-ticks. There is no herd migration (DEC-073).
    - **Century Catch-Up:** Centuries of historical succession, mine stabilization, and geomorphic weathering resolve via closed-form deterministic catch-up equations upon area load; never through frame-by-frame ticking.
 3. **No Unique Graphic Explosion:** Continuous environmental values (soil moisture 0..100, fertility 0..100) map visually into discrete semantic bands (`DRY`, `NORMAL`, `MOIST`, `SATURATED`), preventing asset catalogue bloat.
 4. **Compositional Natural Landmarks:** Exceptional formations (monumental waterfalls, great arches, abyssal chasms) are algorithmically detected world compositions assembled from standard terrain autotiles, strata ledges, and VFX. Zero monolithic single-use landmark sprites.
@@ -350,7 +350,7 @@ Each DEUS engine subsystem adheres to an architectural contract:
 1. **`DEUS_Levels` / Strata**: Static geometry incurs **0 ms** recurring cost. Slice queries $\le 1\ \mu\text{s}$.
 2. **`DEUS_Fluid`**: Settled fluid incurs **0 ms** recurring cost. Cost scales strictly with active cells.
 3. **`DEUS_Depth`**: Renders only exposed viewport surfaces. 0 exposed planes = 0 lower-level draw calls.
-4. **`DEUS_Colonists` / `DEUS_Wildlife`**: Offscreen entities operate on tiered/coarse simulation intervals.
+4. **`DEUS_Colonists` / `DEUS_Wildlife`**: Offscreen people, owned livestock and notable creatures operate on tiered/coarse simulation intervals. Other spawned wildlife and monsters have no population simulation: while they exist (around the player and active AI faction settlements) they run at the tier of the area they are in, and each despawns only when it is far away and out of sight (DEC-073).
 5. **`DEUS_Visuals`**: Offscreen animated decorations are culled. Shared frame phase eliminates per-sprite logic.
 6. **`DEUS_Minimap`**: Chunk-cached. Recomputed only on discovery or cell change.
 7. **`DEUS_Items` / Stockpiles**: Spatial indexing for item queries. Zero full-world container scans per frame.
