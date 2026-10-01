@@ -1,0 +1,23 @@
+{
+ "schemaVersion": 1,
+ "task": "NAT.07.03",
+ "status": "PM_DEFAULT",
+ "note": "Integer weights for the encounter tables (game/js/sim/placement/encounters.js). PM_DEFAULT: set by the writer for the PM to change. Read by buildTables; no plugin loads it yet. See docs/systems/DEUS_Encounters.md.",
+ "frequencyWeight": {
+  "common": 6,
+  "uncommon": 3,
+  "rare": 1,
+  "lair": 1
+ },
+ "tierGapWeight": [32, 4, 1],
+ "tierGapNote": "A table of tier Tn holds rows of tier Tn and below. Index = table tier minus row tier; a row more tiers below the table than the list is long is left out (T0 rows are not in T3 or T4 tables). Entry weight = frequencyWeight x tierGapWeight.",
+ "featureOnly": {
+  "note": "DESIGN-D4 sections 4, 5 and 7 item 9 (settled for this lane): elementals are feature-summoned by their element source, never rolled from a tier table. These rows go only to feature tables.",
+  "ids": [
+   "srd:creature:air-elemental",
+   "srd:creature:earth-elemental",
+   "srd:creature:fire-elemental",
+   "srd:creature:water-elemental"
+  ]
+ }
+}
