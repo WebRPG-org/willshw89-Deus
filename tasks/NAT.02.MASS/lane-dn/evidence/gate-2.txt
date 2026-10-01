@@ -1,0 +1,14 @@
+Date 2026-10-01T08:00:59.126Z
+Writer SHA 42d864f38d422660a46363852af889ec9fde5c0c
+CWD C:\Users\snewt\.deus_worktrees\lane-dn\tasks\NAT.02.MASS\lane-dn\verification-e6E4Xs\gate-2
+Command: node tools/sim/test_units.js
+PASS units_geometry_matches_space
+PASS kg_to_cp_rule
+PASS apportion_exact
+PASS overflow_refused
+PASS water_stratum_is_312000
+PASS gallons_are_derived
+PASS world_bound_safe
+RESULT: 7 passed, 0 failed
+
+EXIT 0

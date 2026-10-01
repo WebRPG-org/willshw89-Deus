@@ -1,0 +1,6 @@
+Date 2026-10-01T07:54:56.684Z
+HEAD 29710b6143449203c1742bfd73a25fbdba1c6407
+MAIN 30e90b7ff204d97ec8c35563ea9eb97077ac5710
+PASS manifest schema, role separation, shared task ID, main brief/manifest match, mutation-sweep gate, post-cu/roles/registration ancestry; all overlapping manifests are merged predecessors.
+lane-co (already merged): tools/sim/test_units.js
+lane-cu (already merged): docs/systems/DEUS_Matter.md

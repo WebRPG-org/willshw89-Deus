@@ -1,0 +1,12 @@
+You are the primary implementer for lane-dn (Task NAT.02.MASS), running as codex.
+Read tasks/NAT.02.MASS/lane-dn/BRIEF.md carefully and follow all instructions within it.
+Your allowed paths are:
+- game/js/sim/units.js
+- tools/sim/test_units.js
+- docs/systems/DEUS_Matter.md
+- tasks/NAT.02.MASS/lane-dn/**
+
+Standing rules:
+1. NO ART (DEC-007). Never generate, request or integrate art, and never tell anyone to.
+2. Run tests in the FOREGROUND. Never end your turn while background jobs or child processes are running. Commit early (WIP commits allowed on your branch). Do not push. Do not merge. Write only inside allowedPaths.
+Commit messages start with '[codex] NAT.02.MASS'.
