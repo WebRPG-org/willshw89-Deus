@@ -1,0 +1,147 @@
+===== bypass_validation =====
+PASS ::nine_starts
+PASS ::fixed_map_assignment
+PASS ::ratio_065_all_walkable
+PASS ::low_ratio_accepts_degraded
+PASS ::shift_passes_bounded
+PASS ::home_band
+PASS ::no_sky
+PASS ::determinism
+PASS ::failsafe_family
+PASS ::failsafe_z
+PASS ::failsafe_centre
+FAIL ::infeasible_throws_underground_only: underground code 
+FAIL ::elevated_home_degrades: elf z 8
+PASS ::order_deepest_first
+PASS ::cost_bound
+PASS ::zrange_clip
+FAIL ::shift_blocked_rejected: dragonborn unstandable 191,128,-13
+PASS ::reader_range_respected
+KILLED bypass_validation -> shift_blocked_rejected
+EXIT:1
+===== hardcode_minus13 =====
+PASS ::nine_starts
+PASS ::fixed_map_assignment
+PASS ::ratio_065_all_walkable
+PASS ::low_ratio_accepts_degraded
+PASS ::shift_passes_bounded
+PASS ::home_band
+PASS ::no_sky
+PASS ::determinism
+PASS ::failsafe_family
+PASS ::failsafe_z
+PASS ::failsafe_centre
+PASS ::infeasible_throws_underground_only
+PASS ::elevated_home_degrades
+PASS ::order_deepest_first
+PASS ::cost_bound
+FAIL ::zrange_clip: reader z -13
+PASS ::shift_blocked_rejected
+FAIL ::reader_range_respected: reader z -13
+KILLED hardcode_minus13 -> reader_range_respected,zrange_clip
+EXIT:1
+===== throw_on_low_ratio =====
+PASS ::nine_starts
+PASS ::fixed_map_assignment
+PASS ::ratio_065_all_walkable
+FAIL ::low_ratio_accepts_degraded: worldgen_infeasible: ? seed 1
+FAIL ::shift_passes_bounded: worldgen_infeasible: ? seed 1
+PASS ::home_band
+PASS ::no_sky
+PASS ::determinism
+PASS ::failsafe_family
+PASS ::failsafe_z
+PASS ::failsafe_centre
+PASS ::infeasible_throws_underground_only
+PASS ::elevated_home_degrades
+PASS ::order_deepest_first
+PASS ::cost_bound
+PASS ::zrange_clip
+FAIL ::shift_blocked_rejected: worldgen_infeasible: ? seed 3
+PASS ::reader_range_respected
+KILLED throw_on_low_ratio -> low_ratio_accepts_degraded
+EXIT:1
+===== no_wrap =====
+PASS ::nine_starts
+PASS ::fixed_map_assignment
+FAIL ::ratio_065_all_walkable: seed 1 ratio 0.48621819164229596
+PASS ::low_ratio_accepts_degraded
+PASS ::shift_passes_bounded
+PASS ::home_band
+PASS ::no_sky
+FAIL ::determinism: 1 dwarf 646,134,-5 ref 634,122,-5
+PASS ::failsafe_family
+FAIL ::failsafe_z: logged home_band_degraded
+PASS ::failsafe_centre
+PASS ::infeasible_throws_underground_only
+PASS ::elevated_home_degrades
+PASS ::order_deepest_first
+PASS ::cost_bound
+PASS ::zrange_clip
+PASS ::shift_blocked_rejected
+PASS ::reader_range_respected
+KILLED no_wrap -> determinism
+EXIT:1
+===== no_z_weight =====
+PASS ::nine_starts
+PASS ::fixed_map_assignment
+FAIL ::ratio_065_all_walkable: seed 1 reported ratio drifted
+PASS ::low_ratio_accepts_degraded
+PASS ::shift_passes_bounded
+PASS ::home_band
+PASS ::no_sky
+FAIL ::determinism: 1 dwarf 634,122,-8 ref 634,122,-5
+PASS ::failsafe_family
+PASS ::failsafe_z
+PASS ::failsafe_centre
+PASS ::infeasible_throws_underground_only
+PASS ::elevated_home_degrades
+PASS ::order_deepest_first
+PASS ::cost_bound
+PASS ::zrange_clip
+PASS ::shift_blocked_rejected
+PASS ::reader_range_respected
+KILLED no_z_weight -> determinism
+EXIT:1
+===== shallow_first =====
+FAIL ::nine_starts: anchor 134,122,-15
+PASS ::fixed_map_assignment
+PASS ::ratio_065_all_walkable
+PASS ::low_ratio_accepts_degraded
+PASS ::shift_passes_bounded
+PASS ::home_band
+PASS ::no_sky
+FAIL ::determinism: 1 elf 640,640,8 ref 634,634,10
+PASS ::failsafe_family
+PASS ::failsafe_z
+PASS ::failsafe_centre
+PASS ::infeasible_throws_underground_only
+PASS ::elevated_home_degrades
+FAIL ::order_deepest_first: order elf,halfling,human,half-orc,half-elf,tiefling,gnome,dwarf,dragonborn
+PASS ::cost_bound
+PASS ::zrange_clip
+PASS ::shift_blocked_rejected
+PASS ::reader_range_respected
+KILLED shallow_first -> order_deepest_first
+EXIT:1
+===== no_shift =====
+PASS ::nine_starts
+PASS ::fixed_map_assignment
+PASS ::ratio_065_all_walkable
+PASS ::low_ratio_accepts_degraded
+FAIL ::shift_passes_bounded: passes 0
+PASS ::home_band
+PASS ::no_sky
+PASS ::determinism
+PASS ::failsafe_family
+PASS ::failsafe_z
+PASS ::failsafe_centre
+PASS ::infeasible_throws_underground_only
+PASS ::elevated_home_degrades
+PASS ::order_deepest_first
+PASS ::cost_bound
+PASS ::zrange_clip
+PASS ::shift_blocked_rejected
+PASS ::reader_range_respected
+KILLED no_shift -> shift_passes_bounded
+EXIT:1

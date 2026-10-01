@@ -1,0 +1,107 @@
+{
+  "id": "race_starts",
+  "task": "WG.62.02",
+  "solver": {
+    "mapSize": 256,
+    "grid": 3,
+    "candidates": 1024,
+    "centreOffset": 128,
+    "centreRadius": 6,
+    "ratioNumerator": 13,
+    "ratioDenominator": 20,
+    "shiftCells": 32,
+    "shiftPasses": 4,
+    "zWeight": 2
+  },
+  "neighbours": {
+    "VOLCANIC": ["COLD", "ARID"],
+    "COLD": ["VOLCANIC", "TEMPERATE", "WET"],
+    "WET": ["COLD", "TEMPERATE", "WILD"],
+    "WILD": ["WET", "TEMPERATE", "ARID"],
+    "ARID": ["WILD", "TEMPERATE", "VOLCANIC"],
+    "TEMPERATE": ["COLD", "WET", "WILD", "ARID"]
+  },
+  "races": [
+    {
+      "id": "dragonborn",
+      "family": "VOLCANIC",
+      "z": [-15, -11],
+      "centre": -13,
+      "map": [0, 0],
+      "salt": 6422529,
+      "elevated": false
+    },
+    {
+      "id": "tiefling",
+      "family": "WILD",
+      "z": [-4, 0],
+      "centre": -2,
+      "map": [1, 0],
+      "salt": 6422530,
+      "elevated": false
+    },
+    {
+      "id": "dwarf",
+      "family": "COLD",
+      "z": [-10, -5],
+      "centre": -8,
+      "map": [2, 0],
+      "salt": 6422531,
+      "elevated": false
+    },
+    {
+      "id": "gnome",
+      "family": "WET",
+      "z": [-8, -4],
+      "centre": -5,
+      "map": [0, 1],
+      "salt": 6422532,
+      "elevated": false
+    },
+    {
+      "id": "half-elf",
+      "family": "WET",
+      "z": [-2, 3],
+      "centre": 0,
+      "map": [1, 1],
+      "salt": 6422533,
+      "elevated": false
+    },
+    {
+      "id": "half-orc",
+      "family": "ARID",
+      "z": [-1, 3],
+      "centre": 1,
+      "map": [2, 1],
+      "salt": 6422534,
+      "elevated": false
+    },
+    {
+      "id": "halfling",
+      "family": "TEMPERATE",
+      "z": [2, 6],
+      "centre": 5,
+      "map": [0, 2],
+      "salt": 6422535,
+      "elevated": true
+    },
+    {
+      "id": "human",
+      "family": "TEMPERATE",
+      "z": [0, 4],
+      "centre": 3,
+      "map": [1, 2],
+      "salt": 6422536,
+      "elevated": false
+    },
+    {
+      "id": "elf",
+      "family": "TEMPERATE",
+      "z": [5, 10],
+      "centre": 8,
+      "map": [2, 2],
+      "salt": 6422537,
+      "elevated": true
+    }
+  ]
+}
