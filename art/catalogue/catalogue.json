@@ -18,7 +18,7 @@
     "sha256": "00cdc8fc7f772a69ac6ee5e68827ccc9e1a347fa7e4678564b627365a65901f9"
   },
   "sources": [
-    {"path":"AGENTS.md","sha256":"f74710ecdb81a829297a9bace2e03101dc8d5d3bfb0e5f5b6841af8c6735669d","role":"CITED"},
+    {"path":"AGENTS.md","sha256":"a8caedf7c0959646ebd5141c8bba4cd65b8d0c800d2d11202ce38bf5f05713ab","role":"CITED"},
     {"path":"art/APPROVALS.md","sha256":"6f09e33162465b176ac4b4d1cfc28f876ca7970c9837dbc23215068a2066fa31","role":"CITED"},
     {"path":"art/catalogue/conflict_claims.json","sha256":"40a1b724a174f94035294805bc163850c4c54fb8672f96bc7fbf92892190cf09","role":"CONFLICT_CLAIMS"},
     {"path":"art/catalogue/geometry.json","sha256":"e6160905b50d025e8b8c68d4f38da2be1e9b45fd90560b78781da02cc8be9c6f","role":"CITED+GEOMETRY"},
@@ -30,7 +30,7 @@
     {"path":"art/palette/uf.hex","sha256":"0ba3b8e49e5b6b9596124e77f1041b2b3b6833368c961d6d0bf25361af040313","role":"UF_PALETTE"},
     {"path":"docs/ASSET_INVENTORY.md","sha256":"1e484e43eb174635de21cb57db068daffa726195f127ce9f582c735378909e17","role":"ASSET_INVENTORY"},
     {"path":"docs/ASSET_MANIFEST.md","sha256":"d3f5a32a5f51ed40ee41206acc14839ae3d398e68a262e7d0e5450c9e551caf7","role":"ASSET_MANIFEST"},
-    {"path":"docs/ASSET_REQUESTS.md","sha256":"e3b25c478192f3bbb1e4c3ef2b3736286e8ac2a0e9791aa482142b68958b2ba1","role":"ASSET_REQUESTS+CITED"},
+    {"path":"docs/ASSET_REQUESTS.md","sha256":"0015e090615617157d48b9c8b9c5d42eb9febd463731a6027f20af8b2175e231","role":"ASSET_REQUESTS+CITED"},
     {"path":"docs/OWNER_DECISIONS.md","sha256":"5332909b16a8d8c6a3d6bd97fb3b6f980fcf195b0cc3d668011df2fdad993e85","role":"CITED"},
     {"path":"docs/PROJECT_DEUS_ART_DIRECTION_SPEC.md","sha256":"ef2b0fe60fb49caf2e89a10bacb5eb27278cbb485d62acd8edc00357d02858c6","role":"CITED"},
     {"path":"docs/RMMZ_ASSET_SPEC.md","sha256":"a1e45f41f4698a255742e353d44d78380c10d26be863d8a04ddc3bc1a2d277be","role":"CITED+RMMZ_SPEC"},
@@ -61,8 +61,8 @@
     {"path":"docs/asset_briefs/SEG-16_ui.md","sha256":"bcf964a93dc12cae336a03d2de834b1e2115509dc9c92a68213c23c4ba1ad1fb","role":"ASSET_BRIEF"},
     {"path":"docs/asset_briefs/SEG-17_equipment_layers_and_effects.md","sha256":"c241520fb2fea26b4635cbbf0b79a9cd0cfed011e10da969607522617593250f","role":"ASSET_BRIEF"},
     {"path":"docs/asset_briefs/SEG-18_combat_gear_and_workshops.md","sha256":"196ead8111e72419e036350a2c620e85f16b8165d3051561ca92e0ebadd04bd6","role":"ASSET_BRIEF"},
-    {"path":"docs/design/SCALE.md","sha256":"1682bcd4ba5f4a6f2902790105946500bd97cdf404366d54c050cdb65cbce9e5","role":"CITED"},
-    {"path":"docs/worldgen/DEUS_WORLDGEN_WBS.md","sha256":"24a48cee6375dbbc31d30c706ea68883a7337c2dde855a4897bf4178da56463d","role":"CITED"},
+    {"path":"docs/design/SCALE.md","sha256":"790530dd141522f35c7977cac358c1894c9e94262bf019192c6d3769f186a2d8","role":"CITED"},
+    {"path":"docs/worldgen/DEUS_WORLDGEN_WBS.md","sha256":"a3e9365fcdb2292d61a97af9e13eb4ed119cbbf6cff278da5a0ab2c94f19d6c1","role":"CITED"},
     {"path":"game/data/DEUS_AssetIndex.json","sha256":"48fe8a838a5e22f8a4cf868d8202d2e194419a3f712230165d10afa05dc57ec3","role":"ASSET_INDEX_STALE_FORK+CITED"},
     {"path":"game/data/DEUS_BiomeRegistry.json","sha256":"e22cf7c15302e064a3d3d5dd4b3aa6318b79bd3411e4a43d776015b510a3675a","role":"BIOME_REGISTRY+CITED"},
     {"path":"game/data/DEUS_PaletteRegistry.json","sha256":"f4c29611019cf3087c7c991b2f71cd393ebbbbabdfc61a681c504205a57919ca","role":"CITED+PALETTE_REGISTRY"},
