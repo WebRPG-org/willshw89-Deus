@@ -34,7 +34,7 @@
         "rebuild": "NAT.02.01 parts 1-6 (lanes en, eo, ep, eq, fv, fr) on the shared leaves NAT.02.MASS and WG.CELL-WRITE"
       },
       "causalOrder": 2,
-      "leaves": ["NAT.02.01", "NAT.02.MASS", "WG.CELL-WRITE"]
+      "leaves": ["NAT.02.01", "NAT.02.MASS", "WG.CELL-WRITE", "NAT.02.01.RUBBLE"]
     },
     {
       "id": "PKG-03",
@@ -144,6 +144,26 @@
         "manifestGate": "tools/test_structural_collapse.js",
         "errata": "this entry said writer 'Claude / Fable', mergedSha 54f67436 (the review commit) and gate tools/test_structural_support.js (never existed)"
       }
+    },
+    "NAT.02.01.RUBBLE": {
+      "title": "Real rubble entities: accounted parcels, capacity-checked piles and re-fall across Z",
+      "package": "PKG-02",
+      "status": "PLANNED",
+      "kind": "NEW leaf of the merged D3 design (role S-ITEM)",
+      "soleWriterOf": ["game/js/sim/world_items/rubble.js"],
+      "scope": "game/js/sim/world_items/rubble.js is the only minter of rubble identities (stable ids that survive save and load): falling, settled and pending states; material slices bound to NAT.02.MASS accounts through ledger transactions, never a private balance; capacity-checked stacking; re-fall across Z. Merged D3 NAT.02.01.RUBBLE tests 1-5.",
+      "lane": "lane-fo",
+      "branch": "task/lane-fo",
+      "laneManifest": "tasks/NAT.02.01.RUBBLE/lane-fo/lane.json",
+      "writer": "claude",
+      "reviewer": "grok",
+      "registeredBefore": "wave 5: the WG.CELL-WRITE host parcels of lane-du carry entityRef, the id rubble.js mints (WORK-GATE G02 section 4, wave 5)",
+      "collisionCheck": "2026-10-01: in 232 refs it occurs only in docs/worldgen/NW_ID_CROSSWALK.md (23 refs; on main in its row of ids still to register, since 32a2fe05, and in section 6's list of ids the D1 reconciliation does not reserve, since 0b4a0689), with this meaning (local and remote branches and tags; rerun 2026-10-01 at main 04b1d509); the lane worktrees hold it only in that file; only braintrust design and verdict files use it, with this meaning",
+      "dependsOn": ["NAT.02.MASS (lanes dq and dr)", "WG.CELL-WRITE (lane-du host parcels)"],
+      "consumers": ["WG.CELL-WRITE lane-du (stores entityRef, the id only)", "NAT.02.01 lanes eq and fv", "NAT.02.01.BRIDGE lane-es (and lane-eu's structural-save hooks call its codec)", "WG.CELL-WRITE lane-fq"],
+      "design": "braintrust DESIGN-D3_merged_chatgpt_pro.md lines 70 and 268 (2026-09-30)",
+      "decisions": ["DEC-040", "DEC-057", "DEC-058"],
+      "gateTests": ["tools/check_deus_syntax.js", "tools/world_items/test_rubble.js", "tools/world_items/test_world_items.js"]
     },
     "NAT.02.MASS": {
       "title": "Shared mass contract: integer centipounds, conversions, ledger and materials",
@@ -345,6 +365,24 @@
       "source": { "path": "docs/design/bestiary/BESTIARY_grok_heavy.md", "sha256": "c6f9d41853f29ecd83b4ffa5cbd26b17d6a1e67f3445bfde29b843c41e740914", "from": "braintrust 2026-09-30, Grok Heavy voice; no BESTIARY-MERGE was run" },
       "openQuestion": "DEC-053 item 1 and DEC-050 item 3 put all 317 creatures in the world's biome-depth cells; the source marks 13 rows EXCLUDE (no cell) and gives srd:creature:solar the Sky only. lane-ex builds from the pinned source as it is (one row each, EXCLUDE rows included; WORK-GATE G02: lane-ex adds no bestiary design). The question goes to the Owner and the PM; an answer lands later as a versioned revision of the source (a new pinned file and hash, a new build). It does not gate lane-ex.",
       "gateTests": ["tools/check_deus_syntax.js", "tools/test_bestiary_adaptation.js", "tools/bestiary/build_bestiary.js --check"]
+    },
+    "ART.NAT.01": {
+      "title": "Natural-phenomena presentation set: catalogue rows, AR entries and Owner generation cards (no generation)",
+      "package": null,
+      "packageNote": "none: DEC-046 item 4 opened it as one presentation set across packages (collapse and barrier indicators for PKG-02, water and lava states for PKG-03, flora for PKG-06, creatures for PKG-07)",
+      "status": "PLANNED",
+      "opened": "DEC-046 item 4 (Owner, 2026-09-29); static first by its 2026-09-30 amendment",
+      "lane": "lane-fl",
+      "branch": "task/lane-fl",
+      "laneManifest": "tasks/ART.NAT.01/lane-fl/lane.json",
+      "writer": "claude",
+      "reviewer": "gemini",
+      "folded": "lane-er (the integrity-ladder rows sound, strained and failing; docs/art/cards/NAT_COLLAPSE_INDICATORS.md; docs/handoffs/HANDOFF_collapse_integrity.md; tools/test_collapse_art_rows.js) folded into lane-fl by WORK-GATE G02 section 1; lane-er is never dispatched",
+      "dependsOn": ["NAT.02.MASS lane-dp (obsidian row; absorbs lane-dt)", "NAT.07.01 lane-ex (bestiary rows)", "the DEC-055 layout the PM records under DEC-059 item 3 (catalogue row kinds)"],
+      "catalogueSlot": "holds the catalogue slot from launch to merge; serialized with external art branches and PM pin refreshes (WORK-GATE G02 section 4, wave 5; docs/STATUS.md section 3). Accepted residual: no tool enforces the slot; the PM runs build_catalogue --check in a clean clone after each pin refresh and each slot-path merge and records the holder on the board",
+      "art": "no lane generates art (DEC-007); the PM records a PM YEA only after a unanimous art-council YES (DEC-056, DEC-062); rows and cards do not gate the physics proof (merged D3 section 3.2)",
+      "collisionCheck": "2026-10-01, rescan of 232 refs at main 04b1d509: every occurrence is DEC-046's meaning (docs/OWNER_DECISIONS.md:730 and its copies; docs/worldgen/NW_ID_CROSSWALK.md, its ART.NAT.01 row and section 6; this file's NAT.07.01 scope, 'Out: ... art rows (ART.NAT.01)'; task/lane-pm-streamline docs/STATUS.md:27). That branch row also names an unopened 'lane-cm / cn (assigned, 0159-E)' for it; lane-cm is WG.00.41 on main (docs/STATUS.md:154). This entry (lane-fl) supersedes that assignment",
+      "gateTests": ["tools/check_deus_syntax.js", "tools/art/build_catalogue.js --check", "tools/art/test_catalogue.js", "tools/test_natural_art_rows.js", "tools/test_collapse_art_rows.js"]
     },
     "WG.00.41": {
       "title": "32-Layer Column Architecture & Region-Seam Continuity",

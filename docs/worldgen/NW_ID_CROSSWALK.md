@@ -60,7 +60,8 @@ Every id in this table had no occurrence in any place scanned, so each is **CLEA
 | NAT.02.MASS | 0 | 0 | 0 | 0 |
 | WG.64.07 to WG.64.13 (aliases; WG.64.13 kept for fn) | 0 | 0 | 0 | 0 |
 | WG.01.01, WG.01.02, WG.01.03 (retired) | 0 | 0 | not scanned | not scanned |
-| NAT.02.01.RUBBLE, NAT.02.01.BRIDGE, NAT.02.01.WET, NAT.02.01.PROOF, SIM.00.02a, NAT.03.04 to NAT.03.07, NAT.07.02 to NAT.07.05 (later waves) | 0 | not scanned | not scanned | not scanned |
+| NAT.02.01.RUBBLE (registered 2026-10-01, before wave 5; rescan with `git grep -F -w` over 232 refs, local and remote branches and tags: only this file, its row of ids still to register and section 6's list, 23 refs) | this row | this row | this row | this row |
+| NAT.02.01.BRIDGE, NAT.02.01.WET, NAT.02.01.PROOF, SIM.00.02a, NAT.03.04 to NAT.03.07, NAT.07.02 to NAT.07.05 (later waves) | 0 | not scanned | not scanned | not scanned |
 
 The `WG.00` sequence has a trap. `docs/worldgen/DEUS_WORLDGEN_WBS.md:5` says "Next free in WG.00 is WG.00.40", but WG.00.40 and WG.00.41 are registry leaves (`tasks/wbs_registry.json:21`, `:122-143`; merges `cdc0fb95` and `a0a44eb8`, follow-up `7bbe7f6c`). WG.00.42 is lane-cx (`tasks/WG.00.42/lane-cx/`, merge `4f16a6c9`; `docs/STATUS.md:144`). None of the three has a WBS row. The first free WG.00 id is WG.00.43. WBS Rev 33 backfills the three rows, mints WG.00.43, and sets the header's next free id to **WG.00.48**, because WG.00.44-.47 are reserved for lanes db, dc, dd and fi and are minted before wave 2. A header that said "next free WG.00.44" while those four are reserved would invite the same collision as WG.00.40.
 
@@ -77,7 +78,7 @@ The `WG.00` sequence has a trap. `docs/worldgen/DEUS_WORLDGEN_WBS.md:5` says "Ne
 | **NAT.07.01** | `tasks/wbs_registry.json:71` (PKG-07 `leaves` only; no task entry). No branch-only file | Fauna and monsters | Same leaf, re-scoped by DEC-057 to the bestiary adaptation layer |
 | **PKG-02 / PKG-07** | `tasks/wbs_registry.json:24,113` / `:67` | Packages 2 and 7 | Reopened / unlocked |
 | **NAT.03.02, NAT.03.03** | Mail only (AG-PRUNE-022: "NAT.03.02 (Unified Hydrology)") | Water authority | Same meaning. NAT.03.02 is registered in `tasks/wbs_registry.json` at the wave-2 D1 reconciliation (section 6; lanes el, ea, ec, ec2, ee, ef); NAT.03.03 is not registered yet. lane-el (wave 1) uses NAT.03.02 |
-| **ART.NAT.01, NAT.02.02** | `docs/OWNER_DECISIONS.md:730` (DEC-046 opens both) | Natural-phenomena presentation set; barrier integrity and breach | Same meaning; not in the registry. Register before lane-fl (wave 5) and lane-fj (wave 17) |
+| **ART.NAT.01, NAT.02.02** | `docs/OWNER_DECISIONS.md:730` (DEC-046 opens both) | Natural-phenomena presentation set; barrier integrity and breach | Same meaning (2026-10-01 rescan of 232 refs at main `04b1d509`: every hit is DEC-046's meaning, in `docs/OWNER_DECISIONS.md`, in this file (this row and section 6's list of ids not reserved there), in the registry's NAT.07.01 scope ("Out: ... art rows (ART.NAT.01)") and in `task/lane-pm-streamline`'s `docs/STATUS.md:27`, whose row also names an unopened "lane-cm / cn (assigned, 0159-E)"; `lane-cm` is WG.00.41 on main, `docs/STATUS.md:154`, and the registry entry supersedes that assignment). ART.NAT.01 registered 2026-10-01 for lane-fl (wave 5, lane-er folded in); NAT.02.02 to register before lane-fj (wave 17) |
 
 ## 3. One primary manifest per dispatch
 
