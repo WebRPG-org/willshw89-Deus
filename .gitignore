@@ -78,3 +78,7 @@
 # Tracked, it made merge_gate refuse with MAIN_DIRTY whenever a worker started or ended mid-run (AUDIT_LOG A13-2).
 docs/telemetry/sessions/active_workers.json
 docs/telemetry/sessions/provider_status.json
+
+# Agent mail is local files on this machine (PM, AG and the workers share one checkout). Not committed: a mail commit moves main and
+# makes merge_gate refuse (MAIN_DIRTY / RACE_REF_MOVED; DEC-085). The README stays tracked.
+docs/agents/mailboxes/**/*.jsonl

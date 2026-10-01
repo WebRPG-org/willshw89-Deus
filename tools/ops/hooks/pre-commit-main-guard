@@ -1,0 +1,11 @@
+#!/bin/sh
+# DEUS pre-commit guard (DEC-085, 2026-10-01): commits on main are made by the PM (author deus-pm) or with DEUS_ALLOW_MAIN=1.
+# Everything else goes through a lane branch and merge_gate (DEC-048). Merges (pre-merge-commit) and other branches are not affected.
+# Install: copy to <git common dir>/hooks/pre-commit. Remove: delete that file.
+b=$(git symbolic-ref --short -q HEAD)
+[ "$b" = "main" ] || exit 0
+[ "$DEUS_ALLOW_MAIN" = "1" ] && exit 0
+an=$(git var GIT_AUTHOR_IDENT | sed 's/ <.*//')
+[ "$an" = "deus-pm" ] && exit 0
+echo "pre-commit: refused. main takes only merges and the PM's commits (DEC-085). Make a lane branch (git worktree add <dir> -b task/<lane> origin/main), or ask the PM. Mail is local files: do not commit it." >&2
+exit 1

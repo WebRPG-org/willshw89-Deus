@@ -2,9 +2,9 @@
 
 Durable mailbox repository adhering to `docs/AGENT_COMMUNICATION_PROTOCOL.md` and `docs/INVARIANT_REGISTRY.md` (`INV-GOV-04`).
 
-## Schedule (DEC-081, Owner 2026-10-01: "We can do the mail on a half hour schedule")
+## Mail is local files, not git (DEC-085, Owner 2026-10-01: "Do everything")
 
-PM and AG mail moves in two windows an hour, at :00 and :30 UTC. In each window, each side reads the other's new lines and commits its own batched lines once. Nothing is committed to the mailboxes between windows. merge_gate runs between windows (not :55-:05 or :25-:35). The Owner's direct instructions to AG are not mail.
+The `*.jsonl` mailboxes below are gitignored. PM, AG and the workers share one checkout on one machine, so each side reads and appends the others' files directly, at any time; nothing is committed. A mail commit would move `main` and make merge_gate refuse (MAIN_DIRTY, RACE_REF_MOVED), which is why the half-hour windows of DEC-081 existed and why they are gone. Append each message as one UTF-8 JSON line (no BOM, ending in LF); in PowerShell 5.1 use `[System.IO.File]::AppendAllText($path, $json + "`n", (New-Object System.Text.UTF8Encoding $false))`, never `>>`, `Out-File` or `Add-Content` (they write UTF-16). Mail what git and telemetry cannot say: a decision needed, a blocker, a ruling. Do not restate lane tips, verdicts or run states.
 
 ## Structure
 

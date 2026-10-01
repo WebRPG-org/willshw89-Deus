@@ -1336,7 +1336,7 @@ Every decision item recorded in this log must provide:
   6. **Unchanged:** DEC-073 items 1, 2, 5 and 7 to 9; DEC-070 condition C as DEC-073 item 8 applies it, with the anchor counts starting full and identical whether an area is first built at New Game or later; the mass rule of DEC-073 item 9.
 - **Records updated with this entry:** a pointer line under DEC-073; `docs/design/SPAWNER_DEC073.md` (a DEC-080 note before section 1); the WG.00.47 row of `docs/worldgen/DEUS_WORLDGEN_WBS.md` (a note); DEC-080 notes on the lines that stated DEC-073 items 3 and 4 in the DEC-012 and DEC-041 amendment lines here, ENGINEERING_STANDARD, ENGINE_RULES, PERFORMANCE_ARCHITECTURE (two lines), ADR-003 (its header and two LOD lines), RESOURCE_ATLAS, WORLD_ARCHITECTURE, DEUS_Ecology and DEUS_CREATURE_ECOLOGY.
 
-### Decision `DEC-081`: Agent mail runs on a half-hour schedule
+### Decision `DEC-081`: Agent mail runs on a half-hour schedule (SUPERSEDED by DEC-085 item 1, 2026-10-01 ~23:50Z)
 - **Date:** 2026-10-01 (~20:07Z)
 - **Decider:** Owner, in chat with the PM.
 - **Status:** `DECIDED`
@@ -1368,3 +1368,18 @@ Every decision item recorded in this log must provide:
   1. MiniMax (minimax provider) is authorized for launches and lane roles again, suspending DEC-076.
 - **Records updated with this entry:** .agents/rules/deus-multiagent-routing.md.
 
+### Decision `DEC-085`: Streamlining: main is touched only by merges, mail leaves git, and six process costs are cut (supersedes DEC-081)
+- **Date:** 2026-10-01 (~23:50Z)
+- **Decider:** Owner, in chat with the PM: "Are there any parts of our process that are beaurocratic and could be cut out to streamline our process"; after the PM's list: "Do everything".
+- **Status:** `DECIDED`
+- **Evidence (2026-10-01, 20:36Z-23:56Z):** 9 merge_gate runs produced 3 merges (dc, gg, do2). Six refused for process reasons, not code defects: 2 flaky strata runs, 1 MAIN_DIRTY from a telemetry write, 2 RACE_REF_MOVED from AG commits on main, 1 MANIFEST_TAMPERED. lane-dm needed a second review and a writer fix run for one MINOR because "PASS WITH MINORS" is not an accepted verdict. lane-do2 needed a full review for a re-cut with an identical tree. The independent reviews caught real defects (lane-gi's scripts all exit 1, lane-cy2's 18 empty ground slots and unnamed D sheet, a writer editing its own manifest, a coordinator-written one-line review): they stay.
+- **Ruling:**
+  1. **Main is touched only by merges and the PM.** Mail, telemetry and tooling edits do not commit to main. Agent mail is local files (`docs/agents/mailboxes/**/*.jsonl`, gitignored; PM, AG and the workers share this machine's checkout). A pre-commit guard (`tools/ops/hooks/pre-commit-main-guard`, installed in `.git/hooks/pre-commit`) refuses commits on `main` unless the author is deus-pm or `DEUS_ALLOW_MAIN=1` is set; merges are not affected. Tooling changes go through a reviewed lane (DEC-048). **The half-hour mail windows of DEC-081 end**: mail at any time, and merge_gate may run at any time.
+  2. **merge_gate accepts "VERDICT: PASS WITH MINORS"** (minors are listed in the review and logged; they do not block), and survives main moving during its run: it re-merges on the new main when the moved paths do not touch the lane's paths. A PM re-cut whose tree equals an already reviewed tip needs no new review. Lane `lane-gk` (OPS.GATE.SMOOTH) builds this, with lane-gj's failed-test log retention.
+  3. **No launch-prompt commits on lane branches.** `launch_worker.ps1` saves the prompt under `~/.deus_ops/prompts/` and records the run in telemetry only; the review file carries the run id. (Lane `lane-gk`.) Two mis-signed launch records needed Owner-approved exceptions tonight.
+  4. **Mail is for what git and telemetry cannot say.** One "needs the PM" note per issue; no restating lane tips, verdicts or run states.
+  5. **The game-translation block and the long report format apply only to lanes whose diff touches `game/`.** Tooling, governance and doc lanes report in one paragraph: what changed, how tested, what was not checked.
+  6. **Art:** the SHA-256 ledger rows and the generated template sidecars for PM-chosen natural-world pieces are produced by script and are not a review gate; machine QA (size, alpha, palette) stays. Size mismatches do not hold art back (DEC-016 amendment).
+  7. **One source for each ruling.** The art banners in AGENTS.md, CLAUDE.md and GEMINI.md become pointers to this decision log's live art rules; a new ruling is one entry here plus the files that act on it, not a sweep of every file that mentions the old one.
+  8. **One status view:** the Build Board. `docs/STATUS.md` and the WBS rows are not updated per lane.
+- **Records updated with this entry:** `.gitignore`; `docs/agents/mailboxes/README.md`; `.agents/rules/deus-multiagent-routing.md`; `tools/ops/hooks/pre-commit-main-guard`; the AG hand-off queue.
