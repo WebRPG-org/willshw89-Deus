@@ -38,7 +38,7 @@ try {
     childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
 } catch (e) {}
 
-const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Test.js');
+const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js');
 let testCode = fs.readFileSync(testJsPath, 'utf8');
 
 const targetHook = 't.screenshot("map");';
@@ -107,7 +107,7 @@ const hookCode = `
         t.screenshot("live_town_center_initial");
 
         // NOTE: We DO NOT call H.reconcile() or H.planSteps() here!
-        // The live simulation engine in UF_Colonists.js scan() must do it autonomously!
+        // The live simulation engine in DEUS_Colonists.js scan() must do it autonomously!
 
         ${mutant === 'block_autonomous_reconcile' ? `
         // Mutant injected: block autonomous reconcile in live scan
@@ -155,9 +155,9 @@ testCode = testCode.replace(targetHook, hookCode);
 fs.writeFileSync(testJsPath, testCode, 'utf8');
 
 // Copy updated plugins to snapshot
-fs.copyFileSync(path.join(ROOT, 'game', 'js', 'plugins', 'UF_Colonists.js'), path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Colonists.js'));
+fs.copyFileSync(path.join(ROOT, 'game', 'js', 'plugins', 'DEUS_Colonists.js'), path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Colonists.js'));
 fs.copyFileSync(path.join(ROOT, 'game', 'js', 'plugins', 'UF_Households.js'), path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Households.js'));
-fs.copyFileSync(path.join(ROOT, 'game', 'js', 'plugins', 'UF_Jobs.js'), path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Jobs.js'));
+fs.copyFileSync(path.join(ROOT, 'game', 'js', 'plugins', 'DEUS_Jobs.js'), path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Jobs.js'));
 
 console.log('Running Live Town Center Progression test harness on snapshot...');
 const nodePath = process.execPath;

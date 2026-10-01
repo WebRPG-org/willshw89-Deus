@@ -190,11 +190,11 @@ function createEnvironment(seed = 4242) {
         ]
     };
 
-    loadPlugin("UF_Factions.js");
-    loadPlugin("UF_History.js");
+    loadPlugin("DEUS_Factions.js");
+    loadPlugin("DEUS_History.js");
     loadPlugin("UF_Households.js");
     loadPlugin("UF_Outposts.js");
-    loadPlugin("UF_Colonists.js");
+    loadPlugin("DEUS_Colonists.js");
 
     return { sandbox, World, Events, units };
 }

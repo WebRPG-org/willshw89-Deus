@@ -2,7 +2,7 @@
 // Contract tests run the real plugin in a VM with explicit legacy/level seams.
 // --mutate-z removes level identity from the source before loading it: must fail.
 const fs = require("fs"), path = require("path"), vm = require("vm"), assert = require("assert");
-let source = fs.readFileSync(path.join(__dirname, "../game/js/plugins/UF_Ownership.js"), "utf8");
+let source = fs.readFileSync(path.join(__dirname, "../game/js/plugins/DEUS_Ownership.js"), "utf8");
 if (process.argv.includes("--mutate-z")) {
     const match = /const zOf = ref => ref && ref\.z !== undefined \? ref\.z\s*: ref && ref\.area && ref\.area\.z !== undefined \? ref\.area\.z : 0;/;
     assert(match.test(source), "mutation target missing");
@@ -52,7 +52,7 @@ function fixture(levels, legacyColonists = false) {
                 target: { area: { x: spec.target.area.x, y: spec.target.area.y }, x: spec.target.x, y: spec.target.y } });
         }
     };
-    vm.runInNewContext(source, ctx, { filename: "UF_Ownership.js" });
+    vm.runInNewContext(source, ctx, { filename: "DEUS_Ownership.js" });
     const own = ctx.UF.Ownership;
     const person = (id, z) => {
         const u = { id, name: `TEST_person_${id}`, area: ground, x: 5, y: 4, data: { kind: "person", needs: { sleep: 90 } } };

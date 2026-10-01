@@ -28,13 +28,13 @@ try {
     childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
 } catch (e) {}
 
-// 2. Inject showcase lineup into UF_Test.js in snapshot
-const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Test.js');
+// 2. Inject showcase lineup into DEUS_Test.js in snapshot
+const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js');
 let testCode = fs.readFileSync(testJsPath, 'utf8');
 
 const targetHook = 't.screenshot("map");';
 if (!testCode.includes(targetHook)) {
-    console.error('Target hook t.screenshot("map") not found in UF_Test.js!');
+    console.error('Target hook t.screenshot("map") not found in DEUS_Test.js!');
     process.exit(1);
 }
 
@@ -145,7 +145,7 @@ const showcaseCode = `
 
 testCode = testCode.replace(targetHook, showcaseCode + '\n        ' + targetHook);
 fs.writeFileSync(testJsPath, testCode);
-console.log('Injected Female 6 Variations lineup into snapshot UF_Test.js');
+console.log('Injected Female 6 Variations lineup into snapshot DEUS_Test.js');
 
 // 3. Run test using run_tests.js against snapshot
 console.log('Running in-engine smoke test on snapshot...');

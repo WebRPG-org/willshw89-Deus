@@ -168,7 +168,7 @@
         if (typeof window !== "undefined" && window.UF && window.UF.Items) return window.UF.Items;
         if (typeof global !== "undefined" && global.UF && global.UF.Items) return global.UF.Items;
         if (typeof require === "function") {
-            const paths = ["./DEUS_Items.js", "./js/plugins/DEUS_Items.js", "./game/js/plugins/DEUS_Items.js", "./UF_Items.js"];
+            const paths = ["./DEUS_Items.js", "./js/plugins/DEUS_Items.js", "./game/js/plugins/DEUS_Items.js"];
             for (const p of paths) {
                 try {
                     const mod = require(p);

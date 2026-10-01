@@ -3162,18 +3162,11 @@
                 // 15. no_math_random: the plugin file has no unseeded randomness.
                 {
                     let text = "";
-                    let pluginFile = "DEUS_Combat.js";
+                    const pluginFile = "DEUS_Combat.js";
                     try {
                         const fs = require("fs"), path = require("path");
                         const p1 = path.join(nw.__dirname || process.cwd(), "js", "plugins", "DEUS_Combat.js");
-                        const p2 = path.join(nw.__dirname || process.cwd(), "js", "plugins", "UF_Combat.js");
-                        if (fs.existsSync(p1)) {
-                            text = fs.readFileSync(p1, "utf8");
-                            pluginFile = "DEUS_Combat.js";
-                        } else {
-                            text = fs.readFileSync(p2, "utf8");
-                            pluginFile = "UF_Combat.js";
-                        }
+                        text = fs.readFileSync(p1, "utf8");
                     } catch (e) {
                         text = "";
                     }

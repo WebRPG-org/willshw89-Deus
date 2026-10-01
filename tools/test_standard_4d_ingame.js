@@ -34,8 +34,8 @@ try {
     childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
 } catch (e) {}
 
-// 2. Inject live 4D Showcase into UF_Test.js in snapshot
-const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Test.js');
+// 2. Inject live 4D Showcase into DEUS_Test.js in snapshot
+const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js');
 let testCode = fs.readFileSync(testJsPath, 'utf8');
 
 const targetHook = 't.screenshot("map");';
@@ -136,7 +136,7 @@ const showcaseCode = `
 
 testCode = testCode.replace(targetHook, `${showcaseCode}\n        ${targetHook}`);
 fs.writeFileSync(testJsPath, testCode);
-console.log('Injected 4D Showcase into UF_Test.js in snapshot.');
+console.log('Injected 4D Showcase into DEUS_Test.js in snapshot.');
 
 // 3. Run NW.js test harness
 console.log('Launching NW.js test harness on snapshot...');

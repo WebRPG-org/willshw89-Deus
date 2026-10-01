@@ -1,0 +1,2 @@
+DEFERRED tools/test_time_domains_proof.js:38 ../game/js/plugins/UF_World.js (L3/lane-cp)
+RESULT: PASS; 41 required archives; 2 protected plugins; 0 violations; 1 L3 deferrals

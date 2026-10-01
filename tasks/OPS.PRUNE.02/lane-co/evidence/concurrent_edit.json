@@ -1,0 +1,8 @@
+{
+  "observedAt": "2026-09-30T22:20:40.073Z",
+  "path": "tools/test_no_loadscript_shims.js",
+  "writerBlob": "46be83287643df9970887db5f84e66b6ba62efaa",
+  "workingSha256": "091d4d393731058c2eed7bf53bd1f86e8ed301369663e85a10661625759f45a6",
+  "unknownEdit": "Five-file CANONICAL_COMPANION_LOADERS allowlist plus skip in check(). Not authored by this writer; authority not supplied in conversation.",
+  "handling": "Strict writer source staged. Concurrent exceptions preserved in working copy and excluded from writer commit."
+}

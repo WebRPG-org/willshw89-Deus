@@ -36,7 +36,7 @@ try {
     childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
 } catch (e) {}
 
-const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Test.js');
+const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js');
 let testCode = fs.readFileSync(testJsPath, 'utf8');
 
 const targetHook = 't.screenshot("map");';
@@ -189,9 +189,9 @@ testCode = testCode.replace(targetHook, hookCode);
 fs.writeFileSync(testJsPath, testCode, 'utf8');
 
 // Copy updated plugins & data to snapshot
-fs.copyFileSync(path.join(ROOT, 'game', 'js', 'plugins', 'UF_Colonists.js'), path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Colonists.js'));
+fs.copyFileSync(path.join(ROOT, 'game', 'js', 'plugins', 'DEUS_Colonists.js'), path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Colonists.js'));
 fs.copyFileSync(path.join(ROOT, 'game', 'js', 'plugins', 'UF_Households.js'), path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Households.js'));
-fs.copyFileSync(path.join(ROOT, 'game', 'js', 'plugins', 'UF_Objects.js'), path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Objects.js'));
+fs.copyFileSync(path.join(ROOT, 'game', 'js', 'plugins', 'DEUS_Objects.js'), path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Objects.js'));
 fs.copyFileSync(path.join(ROOT, 'game', 'js', 'plugins', 'UF_Containers.js'), path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Containers.js'));
 fs.copyFileSync(path.join(ROOT, 'game', 'data', 'UF_WorldCatalog.json'), path.join(SNAPSHOT_DIR, 'data', 'UF_WorldCatalog.json'));
 

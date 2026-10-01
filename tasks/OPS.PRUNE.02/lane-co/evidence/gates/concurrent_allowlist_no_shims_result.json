@@ -1,0 +1,7 @@
+{
+  "command": "node tools/test_no_loadscript_shims.js",
+  "exit": 0,
+  "started": "2026-09-30T22:17:52.961Z",
+  "finished": "2026-09-30T22:17:53.196Z",
+  "log": "tasks/OPS.PRUNE.02/lane-co/evidence/gates/test_no_loadscript_shims.log"
+}

@@ -27,18 +27,18 @@ try {
 
 // Target plugins that alias Game_Map.prototype.update
 const targetPlugins = [
-    'UF_World.js',
-    'UF_Jobs.js',
-    'UF_Colonists.js',
-    'UF_Wildlife.js',
-    'UF_Ecology.js',
-    'UF_Environment.js',
-    'UF_Anim.js',
-    'UF_Combat.js',
-    'UF_TimeSpeed.js',
-    'UF_Ownership.js',
-    'UF_Fire.js',
-    'UF_Fog.js'
+    'DEUS_World.js',
+    'DEUS_Jobs.js',
+    'DEUS_Colonists.js',
+    'DEUS_Wildlife.js',
+    'DEUS_Ecology.js',
+    'DEUS_Environment.js',
+    'DEUS_Anim.js',
+    'DEUS_Combat.js',
+    'DEUS_TimeSpeed.js',
+    'DEUS_Ownership.js',
+    'DEUS_Fire.js',
+    'DEUS_Fog.js'
 ];
 
 for (const p of targetPlugins) {
@@ -67,7 +67,7 @@ for (const p of targetPlugins) {
 }
 
 // Even cleaner: Hook Game_Map.prototype.update dynamically right after each plugin loads!
-// In UF_Test.js, we can define a proxy or we can instrument the plugins directly.
+// In DEUS_Test.js, we can define a proxy or we can instrument the plugins directly.
 // Let's directly instrument each plugin by prepending/appending a timing variable around its body.
 for (const p of targetPlugins) {
     const filePath = path.join(SNAPSHOT_DIR, 'js', 'plugins', p);
@@ -96,8 +96,8 @@ for (const p of targetPlugins) {
     }
 }
 
-// Inject diagnostic suite into UF_Test.js in snapshot
-const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Test.js');
+// Inject diagnostic suite into DEUS_Test.js in snapshot
+const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js');
 let testCode = fs.readFileSync(testJsPath, 'utf8');
 
 const probeCode = `

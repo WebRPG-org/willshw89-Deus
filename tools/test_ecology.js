@@ -3,7 +3,7 @@
 const fs = require("fs"), path = require("path"), vm = require("vm"), assert = require("assert/strict");
 const root = path.resolve(__dirname, "..");
 
-let source = fs.readFileSync(path.join(root, "game/js/plugins/UF_Ecology.js"), "utf8");
+let source = fs.readFileSync(path.join(root, "game/js/plugins/DEUS_Ecology.js"), "utf8");
 const mutant = process.argv.find(a => a.startsWith("--mutant="));
 if (mutant && mutant.endsWith("=finite")) {
     source = source.replace('if (tags.some(t => ["building", "mineral", "ore", "gem", "stone", "ruin"].includes(t))) return false;', '// bypass')

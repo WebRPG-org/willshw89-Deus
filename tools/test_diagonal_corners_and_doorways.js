@@ -16,7 +16,7 @@ const assert = require("assert/strict");
 const root = path.resolve(__dirname, "..");
 const mutant = (process.argv.find(a => a.startsWith("--mutant=")) || "").slice(9);
 
-let movementCode = fs.readFileSync(path.join(root, "game/js/plugins/UF_Movement8D.js"), "utf8");
+let movementCode = fs.readFileSync(path.join(root, "game/js/plugins/DEUS_Movement8D.js"), "utf8");
 
 if (mutant === "allow_corner_cuts") {
     // Mutant: allow cutting obstacle corners unconditionally
