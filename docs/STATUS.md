@@ -163,7 +163,7 @@ Tracked defects, unverified contracts, and quarantined checks:
 | Rule 14 Multi-Domain Time | `game/js/plugins/DEUS_Core.js` | AGENTS.md Rule 14 multi-domain time tags are not implemented by the running clock. | KNOWN DEFECT (Reported, preserved) |
 | Z-2 Cut Proof Quarantine | `tools/test_generated_z2_cut_proof.js` | Quarantined in `gate_tests.json`: exits 1 on main; Lane H rework in progress. | QUARANTINED |
 | ATK-YEAR0-001 | `tasks/WG.00.08/defects.jsonl` | Year 0 world age materialization edge cases. | OPEN |
-| `NAT.02.01` | `tasks/NAT.02.01/lane-bv` | kernel is a stub (no rubble, no ledger posting); review `fdb5c0a0` missed it | NOT DONE |
+| `NAT.02.01` | `tasks/NAT.02.01/lane-bv` | kernel is a stub (no rubble, no ledger posting); review `fdb5c0a0` missed it | REOPENED (2026-10-01, WORK-GATE G02): rebuilt as NAT.02.01 parts 1-6, first lane-en; PKG-02 reopened in `tasks/wbs_registry.json` |
 | `L8 loose files on main` | PM check 2026-09-30 | cited commit does not exist in any repo; AG records NOT DONE | UNPROVED / NOT DONE |
 | Climate Hold Disposition | `tasks/NAT.05.01/lane-bw` | DEC-037 Natural World phase lock: climate deferred pending upstream water/soil authorities per DEC-037 (NAT.03.01 / NAT.04.01); soil itself deferred by DEC-057, climate deferred with flora (DEC-057/059) | FROZEN / PENDING GATES |
 | Legacy unresolved issues | `docs/archive/STATUS_LEDGER_20260930.md#4` | Legacy unresolved issues (ledger section 4): closure UNVERIFIED; migration grants no cleanup permission | UNVERIFIED |

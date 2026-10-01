@@ -1,0 +1,37 @@
+{
+  "lane": "lane-el",
+  "taskId": "NAT.03.02",
+  "branch": "task/lane-el",
+  "writer": "claude",
+  "reviewer": "gemini",
+  "allowedPaths": [
+    "game/js/plugins/DEUS_NaturalConnections.js",
+    "tools/test_natural_connections_no_mint.js",
+    "tools/test_natural_connections.js",
+    "docs/systems/DEUS_NaturalConnections.md",
+    "tasks/NAT.03.02/lane-el/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_natural_connections_no_mint.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_natural_connections.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}

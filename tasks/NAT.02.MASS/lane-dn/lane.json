@@ -1,0 +1,44 @@
+{
+  "lane": "lane-dn",
+  "taskId": "NAT.02.MASS",
+  "branch": "task/lane-dn",
+  "writer": "codex",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "game/js/sim/units.js",
+    "tools/sim/test_units.js",
+    "docs/systems/DEUS_Matter.md",
+    "tasks/NAT.02.MASS/lane-dn/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_units.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_units.js",
+        "--mutation-sweep"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_aquifer_seepage.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}
