@@ -187,3 +187,9 @@ Board: one A4 set at 2x (top block 96x144 above face block 96x96), against the U
 | Gemini (through AG) | pending | |
 
 Result: 3 NO, so fewer than 3 of 4 can say YES: out under the Owner's thresholds. Layered strata is remade with Create Image Pro (RMMZ format reference, U7 style image, pixel sizes in the prompt).
+
+## Owner rulings on the council packet (2026-10-01, ~14:20-14:30Z)
+
+- Cadence: "I want you to send packets out for voting. Generate 10 things and send them a packet" (with "Feel free to generate 10 things at a time on pixellab"): up to 10 PixelLab jobs per round, then one packet with the best candidate of each to all four judges.
+- Third answer: "Also give them the option of accepting the art with a recolor or small correction, tint, etc." From ART-COUNCIL-10 on, each judge answers YES, YES WITH FIX (naming the exact recolour, tint or small correction), or NO with a reason. A YES WITH FIX counts as a YES once the PM has applied that fix by tooling (no new generation) and recorded it here; fixes that conflict between judges go to the Owner. The Owner's thresholds stand: 4 of 4 passes, 3 of 4 goes to the Owner, fewer is out.
+- Method: "I want you to prompt however you were prompting those for things going forward" (said of the ten temperate cliff sets assembled through RMMZ's tables, "I think those all look great"): structured init with exact RMMZ geometry, Bitforge with a same-size U7 style crop, Pixflux clean-up with the piece's own palette, the cliff-set description pattern; every candidate passes the RMMZ-table assembly test before a vote.
