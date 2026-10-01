@@ -1,0 +1,30 @@
+# hand mutations (scratch copies in %TEMP%\laneed_handmut, never committed); script: %TEMP%\laneed_handmut.js
+wake_merge_dropped (target budget_bounds_interfaces): exit=1 TARGET RED
+    FAIL: budget_bounds_interfaces - Assertion failed: cell marked dirty mid-pass was dropped when the pass finished
+cursor_not_loaded (target cursor_survives_save): exit=1 TARGET RED
+    FAIL: cursor_survives_save - Assertion failed: re-save after load differs from the save
+cursor_wrap_not_saved (target cursor_survives_save): exit=1 TARGET RED
+    FAIL: cursor_survives_save - processTick: opts.wrap differs from the wrap of the unfinished pass
+cursor_next_not_saved (target cursor_survives_save): exit=1 TARGET RED
+    FAIL: cursor_survives_save - Assertion failed: mid-pass save holds no resumable cursor: next 0 of 60 edges
+still_dirty_not_saved (target cursor_survives_save): exit=1 TARGET RED
+    FAIL: cursor_survives_save - Assertion failed: resumed-after-load run diverged from 12 unbudgeted ticks
+budget_off_by_one (target budget_bounds_interfaces): exit=1 TARGET RED
+    FAIL: budget_bounds_interfaces - Assertion failed: first budgeted call evaluated 6, expected 5
+    FAIL: budgeted_equals_unbudgeted - Assertion failed: call 1 evaluated 2 interfaces, budget 1
+    FAIL: cursor_survives_save - Assertion failed: call 1 evaluated 5 interfaces, budget 4
+edges_recomputed_each_call (target budgeted_equals_unbudgeted): exit=1 TARGET RED
+    FAIL: budget_bounds_interfaces - Assertion failed: pass did not complete within 1000 calls
+    FAIL: budgeted_equals_unbudgeted - Assertion failed: budgeted run did not finish 30 passes within 100000 calls (finished 0)
+    FAIL: cursor_survives_save - Assertion failed: budgeted run did not finish 12 passes within 100000 calls (finished 0)
+seam_uses_L2 (target wrap_neighbour): exit=1 TARGET RED
+    FAIL: wrap_neighbour - Assertion failed: x seam: wrapped transfer 32 cp, adjacent L=5 pair 12 cp
+wrap_ignored_in_pass (target wrap_neighbour): exit=1 TARGET RED
+    FAIL: budgeted_equals_unbudgeted - Assertion failed: wrapped and open fixtures ended identical: the wrapped runs prove nothing
+    FAIL: wrap_neighbour - Assertion failed: x seam: wrapped pass evaluated 0 interfaces, expected 1
+literal_capacity (target constants_from_units): exit=1 TARGET RED
+    FAIL: constants_from_units - Assertion failed: aquifer MAX_WATER_MASS_PER_STRATUM ignores units.js (got 312000)
+literal_density (target constants_from_units): exit=1 TARGET RED
+    FAIL: constants_from_units - Assertion failed: aquifer WATER_DENSITY ignores units.js (got 6240)
+ALL HAND MUTATIONS TURNED THEIR TARGET RED
+exit=0

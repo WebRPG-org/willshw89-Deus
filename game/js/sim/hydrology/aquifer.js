@@ -12,10 +12,11 @@
  * strictly deterministic, exact integer centipound mass conservation.
  */
 
-// Volume and mass constants
-const VOLUME_PER_STRATUM = 50; // cu ft (5 ft x 5 ft x 2 ft)
-const WATER_DENSITY_CENTIPOUNDS_PER_CUFT = 6240; // 62.4 lbs/cu ft = 6240 centipounds/cu ft
-const MAX_WATER_MASS_PER_STRATUM = VOLUME_PER_STRATUM * WATER_DENSITY_CENTIPOUNDS_PER_CUFT; // 312,000 centipounds
+// Volume and mass constants come from the shared units table (NAT.02.MASS).
+const units = require("../units.js");
+const VOLUME_PER_STRATUM = units.STRATUM_FT3; // 50 cu ft (5 ft x 5 ft x 2 ft)
+const WATER_DENSITY_CENTIPOUNDS_PER_CUFT = units.WATER_CP_PER_FT3; // 62.4 lbs/cu ft = 6240 centipounds/cu ft
+const MAX_WATER_MASS_PER_STRATUM = units.WATER_CP_PER_STRATUM; // 312,000 centipounds
 const POROSITY_MAX = 10000; // basis points (10000 = 100.00%)
 const SATURATION_MAX = 10000; // basis points (10000 = 100.00%)
 const MILLISTRATA_PER_STRATUM = 1000; // 1000 millistrata = 1 stratum = 2 ft
@@ -52,6 +53,32 @@ function canonicalEdgeKey(idA, idB) {
 function calcInterfaceConductivity(kA, kB) {
     if (kA === 0 || kB === 0) return 0;
     return Math.floor((2 * kA * kB) / (kA + kB));
+}
+
+/**
+ * Validate a wrap option: null/undefined (no wrap) or { width, height }, where
+ * each axis is a positive integer cell count or 0/absent for "this axis does not wrap".
+ * Wrapped coordinates must already lie in [0..width) / [0..height).
+ */
+function normalizeWrap(wrap) {
+    if (wrap === undefined || wrap === null) return null;
+    if (typeof wrap !== "object") throw new TypeError("opts.wrap must be { width, height }");
+    const width = wrap.width === undefined ? 0 : wrap.width;
+    const height = wrap.height === undefined ? 0 : wrap.height;
+    if (!Number.isSafeInteger(width) || width < 0 || !Number.isSafeInteger(height) || height < 0) {
+        throw new RangeError("opts.wrap width and height must be nonnegative integers");
+    }
+    if (width === 0 && height === 0) return null;
+    return { width, height };
+}
+
+function sameWrap(a, b) {
+    if (a === null || b === null) return a === b;
+    return a.width === b.width && a.height === b.height;
+}
+
+function wrapAxis(v, size) {
+    return size > 0 ? ((v % size) + size) % size : v;
 }
 
 /**
@@ -121,6 +148,10 @@ class AquiferEngine {
         this.dirtyCells = new Set(); // Set of active cell IDs
         this.ledgerMassWater = 0; // Authoritative groundwater mass in centipounds
         this.ledgerMassVoid = 0;  // Authoritative free fluid mass in centipounds
+        // An unfinished budgeted pass (opts.maxInterfaces): its frozen sorted edge list,
+        // the next edge index, the cells it has found still dirty, the cells marked dirty
+        // since it began, and the wrap it started with. null between passes.
+        this.passCursor = null;
     }
 
     addStratum(stratum) {
@@ -130,34 +161,60 @@ class AquiferEngine {
         } else {
             this.ledgerMassWater += stratum.waterMass;
         }
-        this.dirtyCells.add(stratum.id);
+        this._wake(stratum.id);
+    }
+
+    // Mark one cell dirty. During an unfinished pass the mark is also kept for the
+    // dirty set the pass publishes when it completes.
+    _wake(id) {
+        this.dirtyCells.add(id);
+        if (this.passCursor !== null) this.passCursor.wokenDuringPass.add(id);
     }
 
     getStratum(id) {
         return this.strata.get(id);
     }
 
-    markDirty(x, y, z, s) {
+    markDirty(x, y, z, s, wrap) {
         const id = encodeStratumId(x, y, z, s);
         if (this.strata.has(id)) {
-            this.dirtyCells.add(id);
+            this._wake(id);
             // Wake immediate neighbors
-            const neighbors = this.getNeighbors(id);
+            const neighbors = this.getNeighbors(id, wrap);
             for (let i = 0; i < neighbors.length; i++) {
-                this.dirtyCells.add(neighbors[i]);
+                this._wake(neighbors[i]);
             }
         }
     }
 
-    getNeighbors(id) {
+    /**
+     * Existing neighbours of a stratum. With wrap = { width, height } the horizontal
+     * neighbours of an edge column/row are taken across the world seam (x = width - 1
+     * neighbours x = 0); without it the grid is open, as before.
+     */
+    getNeighbors(id, wrap) {
+        const w = normalizeWrap(wrap);
         const [x, y, z, s] = decodeStratumId(id);
         const neighbors = [];
 
         // Horizontal neighbors (L = 5 ft)
-        neighbors.push(encodeStratumId(x + 1, y, z, s));
-        neighbors.push(encodeStratumId(x - 1, y, z, s));
-        neighbors.push(encodeStratumId(x, y + 1, z, s));
-        neighbors.push(encodeStratumId(x, y - 1, z, s));
+        if (w === null) {
+            neighbors.push(encodeStratumId(x + 1, y, z, s));
+            neighbors.push(encodeStratumId(x - 1, y, z, s));
+            neighbors.push(encodeStratumId(x, y + 1, z, s));
+            neighbors.push(encodeStratumId(x, y - 1, z, s));
+        } else {
+            const horizontal = [
+                encodeStratumId(wrapAxis(x + 1, w.width), y, z, s),
+                encodeStratumId(wrapAxis(x - 1, w.width), y, z, s),
+                encodeStratumId(x, wrapAxis(y + 1, w.height), z, s),
+                encodeStratumId(x, wrapAxis(y - 1, w.height), z, s)
+            ];
+            // A 1- or 2-wide wrapped axis yields the cell itself or one neighbour twice.
+            for (let i = 0; i < horizontal.length; i++) {
+                if (horizontal[i] !== id && neighbors.indexOf(horizontal[i]) < 0) neighbors.push(horizontal[i]);
+            }
+        }
 
         // Vertical neighbors (L = 2 ft)
         if (s === 0) {
@@ -175,45 +232,92 @@ class AquiferEngine {
         return neighbors.filter(nid => this.strata.has(nid));
     }
 
-    isHorizontalNeighbor(idA, idB) {
+    isHorizontalNeighbor(idA, idB, wrap) {
+        const w = normalizeWrap(wrap);
         const [xA, yA, zA, sA] = decodeStratumId(idA);
         const [xB, yB, zB, sB] = decodeStratumId(idB);
-        return zA === zB && sA === sB && (Math.abs(xA - xB) + Math.abs(yA - yB) === 1);
+        let dx = Math.abs(xA - xB);
+        let dy = Math.abs(yA - yB);
+        if (w !== null && w.width > 0) dx = Math.min(dx, w.width - dx);
+        if (w !== null && w.height > 0) dy = Math.min(dy, w.height - dy);
+        return zA === zB && sA === sB && (dx + dy === 1);
     }
 
-    /**
-     * Process one discrete simulation tick across active dirty cells only.
-     * Evaluates canonical undirected edges, signed residuals, and double-sided clamping.
-     */
-    processTick(dt = 1, ledger = null) {
-        if (this.dirtyCells.size === 0) {
-            return {
-                activeCells: 0,
-                interfacesProcessed: 0,
-                transfersExecuted: 0,
-                totalWaterMoved: 0
-            };
-        }
-
-        // Collect unique canonical edges touching currently dirty cells
+    // Start a pass: the sorted canonical edges touching the currently dirty cells.
+    _beginPass(wrap) {
         const activeEdges = new Set();
         for (const cellId of this.dirtyCells) {
-            const neighbors = this.getNeighbors(cellId);
+            const neighbors = this.getNeighbors(cellId, wrap);
             for (let i = 0; i < neighbors.length; i++) {
                 const edgeKey = canonicalEdgeKey(cellId, neighbors[i]);
                 activeEdges.add(edgeKey);
             }
         }
+        return {
+            edges: Array.from(activeEdges).sort(), // deterministic sorted order
+            next: 0,
+            stillDirty: new Set(),
+            wokenDuringPass: new Set(),
+            wrap
+        };
+    }
 
+    /**
+     * Process one discrete simulation tick across active dirty cells only.
+     * Evaluates canonical undirected edges, signed residuals, and double-sided clamping.
+     *
+     * opts (optional):
+     * - maxInterfaces: evaluate at most this many interfaces (edges) in this call. An
+     *   unfinished pass keeps its cursor (saved by serialize) and the next call resumes
+     *   it; the pass publishes its dirty set when its last edge is evaluated. Each edge
+     *   uses the dt of the call that evaluates it. Without it, a call finishes the pass,
+     *   so a call with no unfinished pass is one whole tick, as before.
+     * - wrap: { width, height } for wrapped horizontal neighbours (see getNeighbors).
+     *   A pass keeps the wrap it began with; resuming it with a different wrap throws.
+     */
+    processTick(dt = 1, ledger = null, opts = null) {
+        const options = opts || {};
+        const wrap = normalizeWrap(options.wrap);
+        let budget = Infinity;
+        if (options.maxInterfaces !== undefined && options.maxInterfaces !== Infinity) {
+            if (!Number.isSafeInteger(options.maxInterfaces) || options.maxInterfaces < 1) {
+                throw new RangeError("opts.maxInterfaces must be a positive integer");
+            }
+            budget = options.maxInterfaces;
+        }
+
+        if (this.passCursor === null) {
+            if (this.dirtyCells.size === 0) {
+                return {
+                    activeCells: 0,
+                    interfacesProcessed: 0,
+                    transfersExecuted: 0,
+                    totalWaterMoved: 0,
+                    complete: true,
+                    remainingInterfaces: 0
+                };
+            }
+            this.passCursor = this._beginPass(wrap);
+        } else {
+            if (!sameWrap(this.passCursor.wrap, wrap)) {
+                throw new RangeError("processTick: opts.wrap differs from the wrap of the unfinished pass");
+            }
+            // Negative control mutant 'cursor_reset': a resumed pass restarts at its first edge.
+            const cursorMutant = typeof process !== "undefined" && process.env ? process.env.MUTANT : undefined;
+            if (cursorMutant === "cursor_reset") this.passCursor.next = 0;
+        }
+
+        const cursor = this.passCursor;
+        const sortedEdgeKeys = cursor.edges;
+        const stillDirty = cursor.stillDirty;
         let totalWaterMoved = 0;
         let transfersExecuted = 0;
-        const stillDirty = new Set();
+        let interfacesProcessed = 0;
 
-        // Process edges in deterministic sorted order
-        const sortedEdgeKeys = Array.from(activeEdges).sort();
-
-        for (let i = 0; i < sortedEdgeKeys.length; i++) {
-            const edgeKey = sortedEdgeKeys[i];
+        while (cursor.next < sortedEdgeKeys.length && interfacesProcessed < budget) {
+            const edgeKey = sortedEdgeKeys[cursor.next];
+            cursor.next++;
+            interfacesProcessed++;
             const [idA, idB] = edgeKey.split(":");
             const stratumA = this.strata.get(idA);
             const stratumB = this.strata.get(idB);
@@ -230,7 +334,7 @@ class AquiferEngine {
                 continue;
             }
 
-            const L = this.isHorizontalNeighbor(idA, idB) ? 5 : 2;
+            const L = this.isHorizontalNeighbor(idA, idB, cursor.wrap) ? 5 : 2;
 
             // Darcy flux scaled to integer centipounds per tick
             // Raw flow rate in canonical direction A -> B:
@@ -309,13 +413,20 @@ class AquiferEngine {
             }
         }
 
-        this.dirtyCells = stillDirty;
+        const complete = cursor.next >= sortedEdgeKeys.length;
+        if (complete) {
+            for (const id of cursor.wokenDuringPass) stillDirty.add(id);
+            this.dirtyCells = stillDirty;
+            this.passCursor = null;
+        }
 
         return {
             activeCells: this.dirtyCells.size,
-            interfacesProcessed: sortedEdgeKeys.length,
+            interfacesProcessed,
             transfersExecuted,
-            totalWaterMoved
+            totalWaterMoved,
+            complete,
+            remainingInterfaces: sortedEdgeKeys.length - cursor.next
         };
     }
 
@@ -344,12 +455,20 @@ class AquiferEngine {
         }
         const residualsData = Array.from(this.signedResidualMap.entries());
         const dirtyData = Array.from(this.dirtyCells);
+        const c = this.passCursor;
         return JSON.stringify({
             strata: strataData,
             residuals: residualsData,
             dirty: dirtyData,
             ledgerMassWater: this.ledgerMassWater,
-            ledgerMassVoid: this.ledgerMassVoid
+            ledgerMassVoid: this.ledgerMassVoid,
+            cursor: c === null ? null : {
+                edges: c.edges,
+                next: c.next,
+                stillDirty: Array.from(c.stillDirty),
+                wokenDuringPass: Array.from(c.wokenDuringPass),
+                wrap: c.wrap
+            }
         });
     }
 
@@ -358,6 +477,7 @@ class AquiferEngine {
         this.strata.clear();
         this.signedResidualMap.clear();
         this.dirtyCells.clear();
+        this.passCursor = null;
         this.ledgerMassWater = data.ledgerMassWater;
         this.ledgerMassVoid = data.ledgerMassVoid;
 
@@ -373,6 +493,21 @@ class AquiferEngine {
 
         for (let i = 0; i < data.dirty.length; i++) {
             this.dirtyCells.add(data.dirty[i]);
+        }
+
+        // Saves made before NAT.03.01 lane-ed have no cursor: no unfinished pass.
+        const c = data.cursor;
+        if (c !== undefined && c !== null) {
+            if (!Array.isArray(c.edges) || !Number.isSafeInteger(c.next) || c.next < 0 || c.next > c.edges.length) {
+                throw new RangeError("aquifer save: invalid pass cursor");
+            }
+            this.passCursor = {
+                edges: c.edges.slice(),
+                next: c.next,
+                stillDirty: new Set(c.stillDirty),
+                wokenDuringPass: new Set(c.wokenDuringPass),
+                wrap: normalizeWrap(c.wrap)
+            };
         }
     }
 }

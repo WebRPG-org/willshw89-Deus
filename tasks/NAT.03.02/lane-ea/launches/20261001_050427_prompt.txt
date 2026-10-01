@@ -1,0 +1,13 @@
+You are the primary implementer for lane-ea (Task NAT.03.02), running as claude.
+Read tasks/NAT.03.02/lane-ea/BRIEF.md carefully and follow all instructions within it.
+
+CRITICAL FIRST STEP:
+Record the baseline export list of game/js/sim/hydrology/index.js at the base first (guard ::aquifer_exports_preserved) before making edits.
+Follow all requirements in BRIEF.md.
+
+Your allowed paths are defined in tasks/NAT.03.02/lane-ea/lane.json.
+Standing rules:
+1. NO ART (DEC-007). Never generate, request or integrate art.
+2. Run tests in the FOREGROUND. Never end your turn while background jobs or child processes are running. Commit early (WIP commits allowed on your branch). Do not push. Do not merge. Write only inside allowedPaths.
+Commit messages start with '[claude] NAT.03.02'.
+Write REPORT.md in the AGENTS.md report format with GAME TRANSLATION block.

@@ -120,18 +120,20 @@ Active tasks, open branches, and pending review submissions:
 | `task/lane-co` | `lane-co` (`OPS.PRUNE.02`) | L2: Archive 41 `UF_*.js` shims & retarget tools | In Review: Grok review `cc3f12d1` CLEAN PASS, 10/10 gates PASS |
 | `task/lane-ct` | `lane-ct` (`OPS.PRUNE.05`) | G05: Rule-4 Test Failure Path Fixes across 16 harnesses | In Review: Grok review `4e3f45ee` CLEAN PASS, merge_gate dry-run PASS |
 | `task/lane-cu` | `lane-cu` (`OPS.PRUNE.06`) | G06: L6 Docs Archival & Canonical Renaming (33 live, 15 archive) | In Review: Grok review `190392c5` CLEAN PASS, 15,175 preservation assertions pass |
-| `task/art-temperate-induction` | Parked Induction | 64 temperate batch 1 assets (Outside_A2, Dungeon_A2, V8 props) | PARKED at `90c82ac5` pending QA & Owner YEA |
+| `task/art-temperate-induction` | Parked Induction | 64 temperate batch 1 assets (Outside_A2, Dungeon_A2, V8 props) | PARKED at `90c82ac5` pending QA & Owner YEA; catalogue slot: rebase over the lane-cu merge before its next catalogue write (G02 wave 5) |
 | `task/lane-a` | `lane-a` (`WG.00.08`) | WG.00.08 Exit Criteria | In Review (`16fec107`) |
 | `task/lane-bd` | `lane-bd` (`DEUS-TSK-ZRANGE-HARNESS`) | Z-Range harness verification | In Flight (`3ea1ab69`) |
 | `task/lane-bj` | `lane-bj` | WG.84.01 20-seed procedural worldgen QA | AUDIT DELIVERED / DEFECT EVIDENCE (d134315d) |
 | `task/lane-bp` | `lane-bp` | Fluid boundary review | In Flight (`79bf40be`) |
 | `task/lane-ca` | `lane-ca` | Strata boundary review | In Flight (`000341d8`) |
-| `task/lane-ce` | `lane-ce` | World generation test harness | In Flight (`7d7bba11`) |
+| `task/lane-ce` | `lane-ce` | World generation test harness | In Flight (`7d7bba11`); catalogue slot: it changes catalogue.json, build_catalogue.js, ASSET_REQUESTS.md and UF_WorldCatalog.json, so it rebases over the lane-cu merge and waits for the slot (G02 wave 5) |
 | `task/lane-cf` | `lane-cf` | Natural connections verification | In Flight (`5e60e59b`) |
 | `task/lane-cl` | `lane-cl` | Autotile seam testing | In Flight (`b7d22aaf`) |
 | `task/lane-e` | `lane-e` (`WG.00.09`) | Pre-attack on depth rendering | PAUSED at 05948e9c |
 | `task/lane-h` | `lane-h` (`WG.00.08`) | Z-2 cut proof & fluid hardening | In Review (`e3af4cfa`) |
-| `task/lane-pm-streamline` | `lane-pm-streamline` | PM tooling streamlining | In Flight (`472de247`) |
+| `task/lane-pm-streamline` | `lane-pm-streamline` | PM tooling streamlining | In Flight (`472de247`); catalogue slot: it changes ASSET_REQUESTS.md and 10 other catalogue-pinned files, so it rebases over the lane-cu merge and waits for the slot (G02 wave 5) |
+
+**Catalogue slot (WORK-GATE G02 section 4, wave 5).** One writer at a time changes `art/catalogue/**`, `docs/art/catalogue/**`, `tools/art/build_catalogue.js`, `docs/ASSET_REQUESTS.md`, or a file that `art/catalogue/catalogue.json` pins under `sources` (55 files, among them `AGENTS.md`, `docs/OWNER_DECISIONS.md`, `docs/worldgen/DEUS_WORLDGEN_WBS.md` and `game/data/UF_WorldCatalog.json`). After each such change lands on main, the PM runs `node tools/art/build_catalogue.js --check` in a clean clone of main (in main's working tree the git-ignored `art/prompts/*.json` files make it fail); on DIFF, the next slot write is the PM's pin refresh. merge_gate tests the lane tip, not main after the merge, so nothing else writes the slot while a lane holds it. External branches (`task/art-temperate-induction`, `task/lane-ce`, `task/lane-pm-streamline`; `task/lane-cs` is reference only) rebase over the lane-cu merge before their next slot write and write only as the named holder. Holder: the PM (governance records and pin refreshes). Next: `lane-fl` (ART.NAT.01, wave 5), from launch to merge. **Accepted residual (WORK-GATE verdict on the deadline records, item C):** no tool enforces this one-writer rule. Until one does, the PM's duty after each pin refresh, and after each merge that touches a slot path or a pinned file, is: run `node tools/art/build_catalogue.js --check` in a clean clone of main; record the result and the current holder in this section; and compare `git log -3 --format=%h:%s -- art/catalogue/catalogue.json` with the holder named here. A writer that is not the holder stops that lane until the PM has rebuilt and refreshed the pins.
 
 ### B. Merged or Reference Branches
 | Branch | Lane / Task | Scope | Status |
@@ -142,7 +144,7 @@ Active tasks, open branches, and pending review submissions:
 | `task/lane-cw` | `lane-cw` (`NAT.03.01`) | DEUS_Fluid & sim/hydro correctness (items a-h) | Superseded by `lane-cw2` (manifest tampered) / Reference |
 | `task/lane-cw2` | `lane-cw2` (`NAT.03.01`) | DEUS_Fluid & sim/hydro correctness (items a-h), PM-repackaged | Merged to main `5247cdbd` |
 | `task/lane-cx` | `lane-cx` (`WG.00.42`) | WorldGen quick fixes: start_in_middle, ground-view timeout, one level-key scheme | Merged to main `4f16a6c9` |
-| `task/lane-cs` | `lane-cs` (`WG.20.02`) | CARDS-1 fixes & DEC-045 catalogue moisture rows | Superseded by `lane-cs2` / Reference |
+| `task/lane-cs` | `lane-cs` (`WG.20.02`) | CARDS-1 fixes & DEC-045 catalogue moisture rows | Superseded by `lane-cs2` / Reference; never merged and never writes the catalogue again (G02 wave 5) |
 | `task/lane-b` | `lane-b` (`WG.00.11`) | ATK-YEAR0-001 Hardening | Integrated / Reference (`ed757456`) |
 | `task/lane-bb` | `lane-bb` | Subterranean volume review | Merged to main; worktree pruned |
 | `task/lane-bt` | `lane-bt` | Strata boundary review | Merged to main; worktree pruned |
