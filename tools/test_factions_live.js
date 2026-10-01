@@ -14,8 +14,8 @@ try {
     childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
 } catch (e) {}
 
-// Inject multi-faction dialogue & window test into UF_Test.js in snapshot
-const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Test.js');
+// Inject multi-faction dialogue & window test into DEUS_Test.js in snapshot
+const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js');
 if (fs.existsSync(testJsPath)) {
     let code = fs.readFileSync(testJsPath, 'utf8');
     const hook = 't.check("reached_map", scene instanceof Scene_Map';

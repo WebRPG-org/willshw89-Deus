@@ -19,28 +19,28 @@ const root = path.resolve(__dirname, '..');
 
 console.log('=== Verifying Birth Rate Halved Across Engine Systems ===\n');
 
-// 1. Inspect UF_Colonists.js
-const colonistsCode = fs.readFileSync(path.join(root, 'game/js/plugins/UF_Colonists.js'), 'utf8');
+// 1. Inspect DEUS_Colonists.js
+const colonistsCode = fs.readFileSync(path.join(root, 'game/js/plugins/DEUS_Colonists.js'), 'utf8');
 
 assert.ok(colonistsCode.includes('roll < 0.5 || female.data._forceConceive'),
-    'UF_Colonists.js must check roll < 0.5 for 50% conception rate');
-console.log('PASS: UF_Colonists.js conception chance is 50% (halved from 100%)');
+    'DEUS_Colonists.js must check roll < 0.5 for 50% conception rate');
+console.log('PASS: DEUS_Colonists.js conception chance is 50% (halved from 100%)');
 
 assert.ok(colonistsCode.includes('mother.data.postPartumUntil = ticks() + 120 * 60;'),
-    'UF_Colonists.js must have postPartumUntil at 120s (doubled from 60s)');
-console.log('PASS: UF_Colonists.js post-partum cooldown is 120s (doubled from 60s)');
+    'DEUS_Colonists.js must have postPartumUntil at 120s (doubled from 60s)');
+console.log('PASS: DEUS_Colonists.js post-partum cooldown is 120s (doubled from 60s)');
 
-// 2. Inspect UF_History.js
-const historyCode = fs.readFileSync(path.join(root, 'game/js/plugins/UF_History.js'), 'utf8');
+// 2. Inspect DEUS_History.js
+const historyCode = fs.readFileSync(path.join(root, 'game/js/plugins/DEUS_History.js'), 'utf8');
 assert.ok(historyCode.includes('birthChancePerPair: 0.055'),
-    'UF_History.js must have birthChancePerPair = 0.055 (halved from 0.11)');
-console.log('PASS: UF_History.js birthChancePerPair is 0.055 (halved from 0.11)');
+    'DEUS_History.js must have birthChancePerPair = 0.055 (halved from 0.11)');
+console.log('PASS: DEUS_History.js birthChancePerPair is 0.055 (halved from 0.11)');
 
-// 3. Inspect UF_Ecology.js
-const ecologyCode = fs.readFileSync(path.join(root, 'game/js/plugins/UF_Ecology.js'), 'utf8');
+// 3. Inspect DEUS_Ecology.js
+const ecologyCode = fs.readFileSync(path.join(root, 'game/js/plugins/DEUS_Ecology.js'), 'utf8');
 assert.ok(ecologyCode.includes('0.175 : 0.275'),
-    'UF_Ecology.js must have halved wildlife birth chances (0.175 : 0.275)');
-console.log('PASS: UF_Ecology.js wildlife birth chances are halved (0.175 / 0.275)');
+    'DEUS_Ecology.js must have halved wildlife birth chances (0.175 : 0.275)');
+console.log('PASS: DEUS_Ecology.js wildlife birth chances are halved (0.175 / 0.275)');
 
 // 4. Statistical simulation of conception roll over 10,000 trials
 function hash32(...parts) {

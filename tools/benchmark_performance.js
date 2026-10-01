@@ -36,11 +36,11 @@ global.Spriteset_Map.prototype = { createCharacters: () => {} };
 global.PluginManager = { parameters: () => ({}) };
 
 // Load core simulation plugins
-require("../game/js/plugins/UF_World.js");
+require("../game/js/plugins/DEUS_World.js");
 require("../game/js/plugins/UF_Time.js");
 require("../game/js/plugins/UF_Proficiency.js");
-require("../game/js/plugins/UF_Combat.js");
-require("../game/js/plugins/UF_Colonists.js");
+require("../game/js/plugins/DEUS_Combat.js");
+require("../game/js/plugins/DEUS_Colonists.js");
 
 console.log("=== DEUS Simulation Performance Benchmark ===");
 

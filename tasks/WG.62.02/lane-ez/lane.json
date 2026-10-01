@@ -1,0 +1,30 @@
+{
+  "lane": "lane-ez",
+  "taskId": "WG.62.02",
+  "branch": "task/lane-ez",
+  "writer": "grok",
+  "reviewer": "gemini",
+  "allowedPaths": [
+    "game/js/sim/starts/place_starts.js",
+    "game/data/worldgen/race_starts.json",
+    "docs/systems/DEUS_RaceStarts.md",
+    "tools/test_race_starts.js",
+    "tasks/WG.62.02/lane-ez/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_race_starts.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}

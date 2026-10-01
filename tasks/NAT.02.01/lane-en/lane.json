@@ -1,0 +1,31 @@
+{
+  "lane": "lane-en",
+  "taskId": "NAT.02.01",
+  "branch": "task/lane-en",
+  "writer": "claude",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "game/js/sim/structural/rooted.js",
+    "game/js/sim/structural/reader.js",
+    "game/js/sim/structural/index.js",
+    "tools/test_structural_rooted.js",
+    "docs/systems/DEUS_Structural.md",
+    "tasks/NAT.02.01/lane-en/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_structural_rooted.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}

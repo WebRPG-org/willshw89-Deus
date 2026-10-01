@@ -11,32 +11,32 @@ const gameDir = path.resolve(gameIdx >= 0 ? args[gameIdx + 1] : path.join(__dirn
 const file = path.join(gameDir, "js", "plugins.js");
 const dry = args.includes("--dry");
 // The order after UF_ProcGen. Entries not yet on disk are skipped with a warning.
-const ORDER = ["UF_World", "UF_WorldGen", "UF_Tiles", "UF_Factions", "UF_History", "UF_Objects", "UF_Doors", "UF_Items", "UF_Jobs", "UF_Floors",
-    "UF_Colonists", "UF_Wildlife", "UF_Stance", "UF_Combat", "UF_Anim", "UF_Fog", "UF_DayNight", "UF_TimeSpeed", "UF_Camera", "UF_Speech", "UF_Skills", "UF_Look", "UF_Interact", "UF_Sheet", "UF_Talk", "UF_Fire", "UF_Test"];
-// UF_Combat is listed so the tool keeps it where it already sits in plugins.js (after UF_Stance); entries not in ORDER
-// are moved in front of UF_World. UF_Anim loads after UF_Combat (its @orderAfter); UF_Sheet after UF_Interact.
-// UF_Talk and UF_Fire load after UF_Interact (both wrap it at runtime); UF_Fire is also after UF_Objects, UF_Items, UF_Jobs.
-// UF_Speech loads after UF_Visuals (in front of UF_World) and UF_Camera (its @orderAfter), before UF_Look and UF_Talk.
-// UF_Skills loads after UF_Jobs, UF_Colonists, UF_Combat and UF_Speech (its @orderAfter), before UF_Look (VISION V63).
+const ORDER = ["DEUS_World", "DEUS_WorldGen", "DEUS_Tiles", "DEUS_Factions", "DEUS_History", "DEUS_Objects", "DEUS_Doors", "DEUS_Items", "DEUS_Jobs", "DEUS_Floors",
+    "DEUS_Colonists", "DEUS_Wildlife", "DEUS_Stance", "DEUS_Combat", "DEUS_Anim", "DEUS_Fog", "DEUS_DayNight", "DEUS_TimeSpeed", "DEUS_Camera", "DEUS_Speech", "UF_Skills", "DEUS_Look", "DEUS_Interact", "DEUS_Sheet", "DEUS_Talk", "DEUS_Fire", "DEUS_Test"];
+// DEUS_Combat is listed so the tool keeps it where it already sits in plugins.js (after DEUS_Stance); entries not in ORDER
+// are moved in front of DEUS_World. DEUS_Anim loads after DEUS_Combat (its @orderAfter); DEUS_Sheet after DEUS_Interact.
+// DEUS_Talk and DEUS_Fire load after DEUS_Interact (both wrap it at runtime); DEUS_Fire is also after DEUS_Objects, DEUS_Items, DEUS_Jobs.
+// DEUS_Speech loads after DEUS_Visuals (in front of DEUS_World) and DEUS_Camera (its @orderAfter), before DEUS_Look and DEUS_Talk.
+// UF_Skills loads after DEUS_Jobs, DEUS_Colonists, DEUS_Combat and DEUS_Speech (its @orderAfter), before DEUS_Look (VISION V63).
 const DESCRIPTIONS = {
-    UF_Tiles: "[UF Tiles] Ground kinds drawn in code and the runtime world tileset (91).",
-    UF_Objects: "[UF Objects] Per-cell world objects (plants, stones, buildings): drawing, passability, actions, regrowth.",
-    UF_Doors: "[UF Doors] Faction-aware site and house doors: passage, building, interaction, and damage.",
-    UF_Items: "[UF Items] Items on the ground, in stacks and in inventories.",
-    UF_Jobs: "[UF Jobs] DF-style jobs: walk to a target, work, change the world (gather, chop, haul, build, craft, hunt...).",
-    UF_Floors: "[UF Floors] Enclosed rooms, cultural floor jobs, ground autotiles, and room value.",
-    UF_Colonists: "[UF Colonists] The pair as world units: needs, personality, daily pattern, the society plan.",
-    UF_Wildlife: "[UF Wildlife] Creatures spawned with the map by biome; wander and flee.",
-    UF_Stance: "[UF Stance] Green / yellow / red squares under units by stance toward the colony.",
-    UF_Combat: "[UF Combat] Real-time combat on the map in ticks: accuracy and defence rolls, max hits, attack speeds, combat styles, attack modes, hitsplats and health bars.",
-    UF_Anim: "[UF Anim] Attack, hurt and death animations for every person, animal and monster; the remains lie on the ground for a while.",
-    UF_Speech: "[UF Speech] Remarks, barks, shouts, orders and thoughts float as plain text above the speaker's head (VISION V62).",
+    DEUS_Tiles: "[UF Tiles] Ground kinds drawn in code and the runtime world tileset (91).",
+    DEUS_Objects: "[UF Objects] Per-cell world objects (plants, stones, buildings): drawing, passability, actions, regrowth.",
+    DEUS_Doors: "[UF Doors] Faction-aware site and house doors: passage, building, interaction, and damage.",
+    DEUS_Items: "[UF Items] Items on the ground, in stacks and in inventories.",
+    DEUS_Jobs: "[UF Jobs] DF-style jobs: walk to a target, work, change the world (gather, chop, haul, build, craft, hunt...).",
+    DEUS_Floors: "[UF Floors] Enclosed rooms, cultural floor jobs, ground autotiles, and room value.",
+    DEUS_Colonists: "[UF Colonists] The pair as world units: needs, personality, daily pattern, the society plan.",
+    DEUS_Wildlife: "[UF Wildlife] Creatures spawned with the map by biome; wander and flee.",
+    DEUS_Stance: "[UF Stance] Green / yellow / red squares under units by stance toward the colony.",
+    DEUS_Combat: "[UF Combat] Real-time combat on the map in ticks: accuracy and defence rolls, max hits, attack speeds, combat styles, attack modes, hitsplats and health bars.",
+    DEUS_Anim: "[UF Anim] Attack, hurt and death animations for every person, animal and monster; the remains lie on the ground for a while.",
+    DEUS_Speech: "[UF Speech] Remarks, barks, shouts, orders and thoughts float as plain text above the speaker's head (VISION V62).",
     UF_Skills: "[UF Skills] Every person has skills (trades and the fighting skills) that level from 1 to 99 by doing them; higher levels work faster, yield more and make better things.",
-    UF_Look: "[UF Look] Look label under the mouse: what's there, biome, art file and its status.",
-    UF_Interact: "[UF Interact] Right-click anything for its interaction options; choices become jobs.",
-    UF_Sheet: "[UF Sheet] Left-click anything in the world: a panel shows its inventory grid, equipment, face and stats, or its contents and state.",
-    UF_Talk: "[UF Talk] Right-click a person and choose Talk: a portrait, their line and keywords to click. The world pauses while it is open.",
-    UF_Fire: "[UF Fire] Fire spreads cell to cell by catalog rules and burns out; it hurts units; colonists carry water to put it out."
+    DEUS_Look: "[UF Look] Look label under the mouse: what's there, biome, art file and its status.",
+    DEUS_Interact: "[UF Interact] Right-click anything for its interaction options; choices become jobs.",
+    DEUS_Sheet: "[UF Sheet] Left-click anything in the world: a panel shows its inventory grid, equipment, face and stats, or its contents and state.",
+    DEUS_Talk: "[UF Talk] Right-click a person and choose Talk: a portrait, their line and keywords to click. The world pauses while it is open.",
+    DEUS_Fire: "[UF Fire] Fire spreads cell to cell by catalog rules and burns out; it hurts units; colonists carry water to put it out."
 };
 
 const text = fs.readFileSync(file, "utf8").replace(/^﻿/, "");

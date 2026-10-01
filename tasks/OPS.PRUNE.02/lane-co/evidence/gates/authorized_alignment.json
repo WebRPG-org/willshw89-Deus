@@ -1,0 +1,41 @@
+{
+  "authority": "Owner confirmation 2026-09-30; MSG-PRUNE-PM-059; BRIEF.md; companion loaders belong to L9, not the 41 L2 forwarder shims.",
+  "branch": "task/lane-co",
+  "preCommitHead": "5d319406a40bf6d0333abd866df8204a18a58d0b",
+  "priorWriterCommit": "e12e9e72",
+  "verificationScope": "Three requested commands rerun on the working tree before commit. The other nine passing manifest records retain their original timestamps and logs from e12e9e72; not rerun in this follow-up.",
+  "historicalEvidence": "concurrent_allowlist_* logs, no_shims_mutant_*.log and ../concurrent_edit.json retain the pre-authorization record. Current acceptance uses results.json and the three runs below.",
+  "manifestGates": {
+    "passed": 10,
+    "total": 10
+  },
+  "runs": [
+    {
+      "command": "node tools/test_no_loadscript_shims.js",
+      "sourceBlob": "d0b41df4aecfa929c348259c35022e559ebba194",
+      "sourceSha256": "70168df14ead9fff7a8c7a8c9e4dbda0a46815d8a680ec3251d33dcb0af68698",
+      "exit": 0,
+      "started": "2026-09-30T22:27:52.453Z",
+      "finished": "2026-09-30T22:27:52.681Z",
+      "log": "tasks/OPS.PRUNE.02/lane-co/evidence/gates/test_no_loadscript_shims.log"
+    },
+    {
+      "command": "node tools/test_no_loadscript_shims.js --mutants",
+      "sourceBlob": "d0b41df4aecfa929c348259c35022e559ebba194",
+      "sourceSha256": "70168df14ead9fff7a8c7a8c9e4dbda0a46815d8a680ec3251d33dcb0af68698",
+      "exit": 0,
+      "started": "2026-09-30T22:27:52.682Z",
+      "finished": "2026-09-30T22:27:53.797Z",
+      "log": "tasks/OPS.PRUNE.02/lane-co/evidence/gates/no_shims_mutants.log"
+    },
+    {
+      "command": "node tasks/OPS.PRUNE.02/lane-co/evidence/test_detector.js",
+      "sourceBlob": "d0b41df4aecfa929c348259c35022e559ebba194",
+      "sourceSha256": "70168df14ead9fff7a8c7a8c9e4dbda0a46815d8a680ec3251d33dcb0af68698",
+      "exit": 0,
+      "started": "2026-09-30T22:27:53.797Z",
+      "finished": "2026-09-30T22:27:53.920Z",
+      "log": "tasks/OPS.PRUNE.02/lane-co/evidence/gates/no_shims_detector_fixtures.log"
+    }
+  ]
+}

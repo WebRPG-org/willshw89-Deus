@@ -14,7 +14,7 @@ console.log(`Setting up in-game faction menus test snapshot at: ${SNAPSHOT_DIR}`
 const pluginsJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins.js');
 const pluginsText = fs.readFileSync(pluginsJsPath, 'utf8');
 for (const name of ['FactionMenus', 'Test']) {
-    if (!new RegExp('"name"\\s*:\\s*"(?:DEUS_|UF_)' + name + '"\\s*,\\s*"status"\\s*:\\s*true').test(pluginsText)) {
+    if (!new RegExp('"name"\\s*:\\s*"DEUS_' + name + '"\\s*,\\s*"status"\\s*:\\s*true').test(pluginsText)) {
         throw new Error(`${name} must be enabled in snapshot plugins.js`);
     }
 }

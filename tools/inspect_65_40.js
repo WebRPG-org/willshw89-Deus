@@ -17,10 +17,10 @@ global.ImageManager = { loadTileset: () => ({}) };
 global.Bitmap = class { constructor() { this.context = { putImageData: () => {}, createImageData: () => ({ data: new Uint8ClampedArray(768*768*4) }), drawImage: () => {} }; this._baseTexture = { update: () => {} }; } };
 global.document = { createElement: () => ({ width: 768, height: 768, getContext: () => ({ putImageData: () => {}, createImageData: () => ({ data: new Uint8ClampedArray(768*768*4) }), drawImage: () => {} }) }) };
 global.DataManager = { onLoad: () => {}, isBattleTest: () => false, isEventTest: () => false, _databaseFiles: [] };
-eval(fs.readFileSync('game/js/plugins/UF_Core.js', 'utf8'));
-eval(fs.readFileSync('game/js/plugins/UF_WorldGen.js', 'utf8'));
-eval(fs.readFileSync('game/js/plugins/UF_World.js', 'utf8'));
-eval(fs.readFileSync('game/js/plugins/UF_Tiles.js', 'utf8'));
+eval(fs.readFileSync('game/js/plugins/DEUS_Core.js', 'utf8'));
+eval(fs.readFileSync('game/js/plugins/DEUS_WorldGen.js', 'utf8'));
+eval(fs.readFileSync('game/js/plugins/DEUS_World.js', 'utf8'));
+eval(fs.readFileSync('game/js/plugins/DEUS_Tiles.js', 'utf8'));
 const cat = JSON.parse(fs.readFileSync('game/data/UF_WorldCatalog.json', 'utf8'));
 global.window['$ufWorldCatalog'] = cat;
 

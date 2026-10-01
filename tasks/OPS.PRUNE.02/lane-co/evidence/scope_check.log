@@ -1,0 +1,2 @@
+PASS scope: 85 edited pre-existing source files are within the whitelist; UF namespace references retained outside explicitly removed dead-loader checks; PluginManager.parameters expressions unchanged.
+EXIT=0

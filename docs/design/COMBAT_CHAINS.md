@@ -2,7 +2,7 @@
 
 Written 2026-09-18 (night) by Claude Code. User instruction: "Lets build combat. Including fletching, smithing, etc." (VISION V55). Contract paragraph: `docs/design/WORLD_ARCHITECTURE.md` §2.10 "Combat chains". This file is exact enough to implement phase 2 from without guessing; where a number here and the catalog disagree, the catalog is wrong and gets fixed to this file.
 
-**Status.** Phase 1 (this file, the catalog data, `tools/check_catalog.js`, `docs/CREDITS.md`) landed 2026-09-18 night. **Converted to OSRS-model combat 2026-09-19** (user: "lets drop the d20 combat rule, and adopt OSRS combat"; VISION V64, V47 retired). The weapon, armour, shield and ammunition blocks now carry attack speeds, attack types, styles and equipment bonuses instead of SRD dice and AC (§2, §6). The UF_Combat core is rewritten to that model (`docs/systems/UF_Combat.md`). Phase 2 is still to build: the five equipment slots in UF_Items, crafting quality and material on item records, arming through the society plan (§9).
+**Status.** Phase 1 (this file, the catalog data, `tools/check_catalog.js`, `docs/CREDITS.md`) landed 2026-09-18 night. **Converted to OSRS-model combat 2026-09-19** (user: "lets drop the d20 combat rule, and adopt OSRS combat"; VISION V64, V47 retired). The weapon, armour, shield and ammunition blocks now carry attack speeds, attack types, styles and equipment bonuses instead of SRD dice and AC (§2, §6). The UF_Combat core is rewritten to that model (`docs/systems/DEUS_Combat.md`). Phase 2 is still to build: the five equipment slots in UF_Items, crafting quality and material on item records, arming through the society plan (§9).
 
 **Sources.** The combat rules follow the OSRS model (accuracy and defence rolls from effective levels and equipment bonuses, max hits from effective strength and strength bonus, attack speeds in ticks, combat styles), with our own numbers and words (VISION V64). No SRD dice, armor class or ability scores remain in this file or in the catalog's combat data. The chain itself (ore → bar → blade, hide → leather → armor, log → bow, shaft + tip + feathers → arrow) is Dwarf Fortress's idea with our numbers. No DF, D&D or OSRS name, term or data is used in anything the player reads (AGENTS.md → Reference vs. shipped content; `tools/check_catalog.js` scans every string for the banned list).
 
@@ -112,7 +112,7 @@ A quiver is a stack of arrows in the inventory (§6.5). Bars, charcoal and leath
 
 ## 3. Quality (rolled at craft)
 Revised 2026-09-19 (V63 skills, V64 combat):
-- **Roll:** `UF.Skills.qualityRoll(crafter, recipeId)` → 0-5 from the crafter's skill level for the recipe (level 1 gives 0-2, 50 gives 1-4, 99 gives 3-5; seeded from the world seed, the unit and a saved counter; `docs/systems/UF_Skills.md` → Effects). The old d20 + ability roll and `combat.quality.thresholds` are gone.
+- **Roll:** `UF.Skills.qualityRoll(crafter, recipeId)` → 0-5 from the crafter's skill level for the recipe (level 1 gives 0-2, 50 gives 1-4, 99 gives 3-5; seeded from the world seed, the unit and a saved counter; `docs/archive/systems/UF_Skills.md` → Effects). The old d20 + ability roll and `combat.quality.thresholds` are gone.
 - **Names** (`combat.quality.names`): crude, rough, plain, sound, fine, flawless. Shown on the character sheet and the look label as "a fine iron dagger".
 - **Effects** (`combat.quality.bonus` / `.value`, indexed 0-5): `bonus` `[0.8, 0.9, 1, 1.1, 1.2, 1.3]` multiplies every bonus of the item (UF_Combat reads `record.quality`; arrows' ranged strength too); `value` `[0.5, 0.8, 1, 1.2, 1.5, 2]` × the material's value, for trade later.
 - **Storage:** the item record gains `material` (id) and `quality` (0–5) when the recipe has `quality: true`; `material` comes from `recipe.material`, else the type's `material`. One roll per craft job, applied to the whole output (a batch of 12 arrows shares one quality).
@@ -154,7 +154,7 @@ All are impassable (crafters stand beside them; `workshops_one_cell` in the chec
 ### 6.2 Hands
 - `weapon.hands === 2` (both bows, the iron axe): equipping it unequips the shield; equipping a shield while a two-handed weapon is held fails ("needs both hands"). The d20 `versatile` dice and `thrown` attacks are gone (2026-09-19).
 
-### 6.3 Accuracy (revised 2026-09-19, OSRS model; UF_Combat is the code, `docs/systems/UF_Combat.md` the full rules)
+### 6.3 Accuracy (revised 2026-09-19, OSRS model; UF_Combat is the code, `docs/systems/DEUS_Combat.md` the full rules)
 - **Effective level** = level + style bonus + 8. The level is attack for stab, slash and crush, ranged for ranged, magic for magic. Levels come from UF_Skills (V63) for people and from `wildlife.species[].combat` for creatures.
 - **Style bonus:** accurate +3, controlled +1; aggressive, defensive, rapid and longrange add nothing to accuracy.
 - **A** (max attack roll) = effective level × (the attack bonus of everything worn and held for that attack type + 64).
@@ -195,7 +195,7 @@ All of it is in `UF.Combat.describe(unit)` (2026-09-19); drawing it is the sheet
 | carpenter | carpentry | club, spear_stone, shield_wood |
 | soldier | attack, strength, defence, ranged (V63/V64: the combat style decides which) | (no recipe; jobs `attack`, `guard`; first to be armed) |
 
-`colony.skills` gained `smelting, smithing, bowyery, fletching, tanning, leatherwork, carpentry, fighting, archery` (appended, so existing seeded skills keep their values: `skillsFor` is index-based). Since 2026-09-19 the skills are UF_Skills' (VISION V63, levels 1-99): the old names map onto the new skills there (fighting → attack, strength and defence; archery → ranged; `docs/systems/UF_Skills.md`).
+`colony.skills` gained `smelting, smithing, bowyery, fletching, tanning, leatherwork, carpentry, fighting, archery` (appended, so existing seeded skills keep their values: `skillsFor` is index-based). Since 2026-09-19 the skills are UF_Skills' (VISION V63, levels 1-99): the old names map onto the new skills there (fighting → attack, strength and defence; archery → ranged; `docs/archive/systems/UF_Skills.md`).
 
 **Labor gating (phase 2, V43):** a colonist takes a chain recipe only when `data.labors` includes the recipe's `labor`, or when `data.labors` is absent (everyone may do everything until the labors build assigns them). The planner's weight for a chain job = `culture.priorities[labor.priority] × (culture.chainWeights[labor] ?? 1) × (1 + skill / 20)`.
 
@@ -245,7 +245,7 @@ When a craft step's input is missing and no ground item, object action or prey y
 Crafted weapons, armor, shields and ammunition that a colonist does not equip are hauled to the nearest stockpile whose `stores` include their tag (the `rack` step's `weapon_rack`), the way food goes to the larder (`stock` steps). UF_Colonists registers stockpiles from any built object with the `stockpile` tag, not only `stockpile` itself (today: `if (step.build !== "stockpile") continue;` at UF_Colonists.js ~346).
 
 ## 9. Phase-2 code checklist (build from this, add these checks)
-### 9.1 UF_Items (`docs/systems/UF_Items.md`)
+### 9.1 UF_Items (`docs/systems/DEUS_Items.md`)
 - `slotFor(itemType) → "head" | "weapon" | "shield" | "torso" | "legs" | null` by §6.1.
 - `equip(unitId, itemId) → { ok, reason? }`: item carried; slot from `slotFor`; two-hands rule (§6.2); writes `equipment[slot]`, mirrors `tool`/`clothes` aliases; `wear.tier` → `data.tier` + `UF.Colonists.setTier`; emits `items:equipped(unit, item, slot)`. `unequip(unitId, slot)`; `equipped(unitId) → { slot: item | null }`.
 - (2026-09-19: no `acOf`. The fighting numbers of what a unit wears and holds are `UF.Combat.bonusesOf(unit)` and `UF.Combat.describe(unit)`, which already read the five slots and the `tool`/`clothes` aliases.)
@@ -253,7 +253,7 @@ Crafted weapons, armor, shields and ammunition that a colonist does not equip ar
 - Migration: `equipment: { tool, clothes }` on old saves → `{ head: null, weapon: tool, shield: null, torso: clothes, legs: null, tool, clothes }` on load (`DataManager.extractSaveContents` alias, before UF_Jobs reads it).
 - Checks to add to suite `items`: `slot_for` (each of 5 slots + a null for berries), `equip_two_hands` (a long bow refuses a shield and drops it when equipped after), `quality_stacks` (12 plain + 12 fine arrows stay two stacks; 12 + 12 plain merge to 24), `alias_mirror` (`equipment.tool === equipment.weapon` after `equip`), `save_migrates_equipment`.
 
-### 9.2 UF_Combat (rewritten 2026-09-19 to the OSRS model; `docs/systems/UF_Combat.md`)
+### 9.2 UF_Combat (rewritten 2026-09-19 to the OSRS model; `docs/systems/DEUS_Combat.md`)
 - **Done 2026-09-19:** the attack itself (accuracy and defence rolls from levels, styles and every slot's bonuses; max hit; attack speed in ticks; quality multiplies bonuses once item records carry it); ranged attacks by range with ammunition used per shot and a fall-back to fists; U7 attack modes with OSRS styles; retaliation; `describe(unit)` for the sheet (§6.6); checks `hit_chance`, `max_hit`, `attack_speed`, `styles`, `equipment` (the item tiers and the bow's arrows), `creatures` and ten more.
 - **Still to build:** line of sight (`UF.Combat.lineOfSight(area, x0, y0, x1, y1) → bool`: Bresenham over cells whose objects are impassable and not `under`; trees and walls block, grass, beds and stockpiles do not); switching to a carried melee weapon when out of ammunition (with UF_Items' `equip`); recovering arrows (a miss leaves the arrow within 1 cell of the target, seeded); thrown weapons (a throwing rule first). Checks to add then: `los_blocked_by_tree` (an oak on the line → no shot; tall grass → shot), `out_of_ammo_switches` (0 arrows and a sword in the pack → the sword is equipped and swung), `miss_drops_arrow`.
 
@@ -268,7 +268,7 @@ Crafted weapons, armor, shields and ammunition that a colonist does not equip ar
 
 ### 9.5 Tools and docs
 - `tools/check_catalog.js` stays green and is added to `tools/run_all_suites.js`'s pre-flight. On 2026-09-19 it moved to the OSRS-model blocks: `weapon_dice` became `weapon_blocks`, `armor_slots` and `combat_rules` check bonuses instead of AC, and `creature_combat` is new, for 19 checks. It reports one problem not caused by combat: `workshops_one_cell`, because `farm_plot` is passable. That problem also makes most self-tests fail (each self-test expects only its own check to fail); with `farm_plot` fixed in a scratch copy, 52 of the 53 self-tests pass.
-- `docs/systems/UF_Items.md`, `UF_Jobs.md`, `UF_Colonists.md`, `UF_Combat.md` gain the API lines above; `docs/STATUS.md` records the measured results; `docs/CREDITS.md` is shown in the game's credits before release.
+- `docs/systems/DEUS_Items.md`, `docs/systems/DEUS_Jobs.md`, `docs/systems/DEUS_Colonists.md`, `docs/systems/DEUS_Combat.md` gain the API lines above; `docs/STATUS.md` records the measured results; `docs/CREDITS.md` is shown in the game's credits before release.
 
 ## 10. Known limits (phase 1, and after the 2026-09-19 conversion)
 - The weapon, armour and creature numbers are a first balance pass (the `combat.equipment` and `combat.creatures` checks print what they do); nothing between level 1 and level 40 has been tuned against play.

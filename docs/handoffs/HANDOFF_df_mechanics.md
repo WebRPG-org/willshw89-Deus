@@ -6,7 +6,7 @@
 ---
 
 ## Ecology (`UF_Ecology`, 2026-09-19)
-**What the system does:** harvested plants regrow, plants spread, animals breed and wander back in, monsters come on a seeded clock, ore never returns (`docs/systems/UF_Ecology.md`). A felled tree comes back in three stages: **stump** (exists: AR-021) → **sapling** (new) → the grown tree (exists: AR-102). Births, arrivals and monster spawns reuse the creature sheets of AR-401/AR-402, and plant spread reuses AR-102/AR-103, so the sapling is the only new asset.
+**What the system does:** harvested plants regrow, plants spread, animals breed and wander back in, monsters come on a seeded clock, ore never returns (`docs/systems/DEUS_Ecology.md`). A felled tree comes back in three stages: **stump** (exists: AR-021) → **sapling** (new) → the grown tree (exists: AR-102). Births, arrivals and monster spawns reuse the creature sheets of AR-401/AR-402, and plant spread reuses AR-102/AR-103, so the sapling is the only new asset.
 
 ### AR-1600 Tree sapling (broadleaf and conifer)
 | Item | Spec |

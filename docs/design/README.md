@@ -5,7 +5,7 @@ This folder contains conceptual design whitepapers and early architectural propo
 ### Documentation Hierarchy & Source of Truth:
 1. **Active System Specifications (`docs/systems/`)**:
    - The authoritative source of truth for implemented engine plugins, APIs, data contracts, and automated test criteria.
-   - Example: `docs/systems/UF_Colonists.md`, `docs/systems/AI_ARCHITECTURE.md`, `docs/systems/UF_World.md`.
+   - Example: `docs/systems/DEUS_Colonists.md`, `docs/systems/AI_ARCHITECTURE.md`, `docs/systems/DEUS_World.md`.
 2. **Current Reality & Verification Log (`docs/STATUS.md`)**:
    - The living record of what actually works in-engine, benchmark results, and verified screenshots.
 3. **Core Vision & Decision Log (`docs/VISION.md`)**:

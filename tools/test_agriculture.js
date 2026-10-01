@@ -5,7 +5,7 @@
 const fs = require("fs"), path = require("path"), vm = require("vm"), assert = require("assert/strict");
 const root = path.resolve(__dirname, ".."), read = name => fs.readFileSync(path.join(root, "game/js/plugins", name + ".js"), "utf8");
 let agriculture = read("UF_Agriculture");
-const originals = { UF_Items: read("UF_Items"), UF_Jobs: read("UF_Jobs"), UF_Skills: read("UF_Skills") };
+const originals = { UF_Items: read("DEUS_Items"), UF_Jobs: read("DEUS_Jobs"), UF_Skills: read("UF_Skills") };
 const catalog = JSON.parse(fs.readFileSync(path.join(root, "game/data/UF_WorldCatalog.json"), "utf8"));
 const mutant = (process.argv.find(a => a.startsWith("--mutant=")) || "").slice(9);
 const mutations = {};

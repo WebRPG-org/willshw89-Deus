@@ -614,8 +614,8 @@ Every file here is Claude Code's. Before editing one, the build checks docs/STAT
   - The `stats_and_ranks` check changes to the new numbering: exactly one head per faction (`superior` null), the chronicle's ruler record names it, and, when UF_Command is registered, the counts are 5/2/1 for eight founders. Without UF_Command it keeps its current test.
   - `describeUnit` and the chronicle pages (in the code of 2026-09-19, `rank >= 2` means ruler and `rank >= 1` means leader) use `UF.Command.isHead(u)` and `UF.Command.commands(u)` when UF_Command is present.
   - Optional: `addRuler(factionId, { unitId, name, title, from })`, which closes the open record and pushes the new one. Without it UF_Command writes `state.history.rulers` directly.
-  - `docs/systems/UF_History.md` follows.
-- **UF_Talk.js** (reads the old numbering too): `rulerOf(fid)` becomes the band's head; `nameLine` and `jobLine` use the "ruler" lines for the head, the "leader" lines for other commanders, and the plain lines for rank 1 (left as it is, the new numbering would make every adult claim "The others look to me"); `titleOf` reads `data.title`. The `name_job_bye` fixture that sets a leader to rank 2 sets the head instead. `docs/systems/UF_Talk.md` follows.
+  - `docs/systems/DEUS_History.md` follows.
+- **UF_Talk.js** (reads the old numbering too): `rulerOf(fid)` becomes the band's head; `nameLine` and `jobLine` use the "ruler" lines for the head, the "leader" lines for other commanders, and the plain lines for rank 1 (left as it is, the new numbering would make every adult claim "The others look to me"); `titleOf` reads `data.title`. The `name_job_bye` fixture that sets a leader to rank 2 sets the head instead. `docs/systems/DEUS_Talk.md` follows.
 - **UF_Society.js** (only if registered): when `window.UF.Command` exists, skip its own leader bark for a new house (the commanders' order lines replace it); keep its chronicle line. Its open build jobs go on the task list as `build` tasks (weight 60) with no change there.
 - **tools/register_world_plugins.js**: `UF_Command` in ORDER after UF_Sheet, before UF_Test. The RMMZ editor rule applies (AGENTS.md).
 
@@ -670,7 +670,7 @@ Events emitted: `command:ranks(factionId, { counts, changes })`, `command:review
 ---
 
 ## 7. Checks (suite `command`)
-Run on a snapshot (docs/systems/UF_Test.md): New Game, clock set to 08:00, ×8 where it says so. Each check must be seen failing once. The last column is how the builder provokes that failure (on a snapshot copy only). The tree checks walk the units themselves; they don't call `UF.Command.check`, so a bug in `check` can't hide a broken tree.
+Run on a snapshot (docs/systems/DEUS_Test.md): New Game, clock set to 08:00, ×8 where it says so. Each check must be seen failing once. The last column is how the builder provokes that failure (on a snapshot copy only). The tree checks walk the units themselves; they don't call `UF.Command.check`, so a bug in `check` can't hide a broken tree.
 
 | Check | FAILs when | Seen failing by |
 |---|---|---|

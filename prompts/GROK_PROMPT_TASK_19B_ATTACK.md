@@ -13,7 +13,7 @@ Your mission is to **BREAK** the Natural Cuts and All-Z Cave Networks implementa
 
 You will be provided with:
 1. The raw git diff of the implementation files.
-2. The canonical specification requirements (`docs/systems/UF_Levels.md`, `docs/systems/UF_WorldGen.md`).
+2. The canonical specification requirements (`docs/systems/DEUS_Levels.md`, `docs/systems/DEUS_WorldGen.md`).
 3. The automated test suite (`tools/test_strata_cuts_and_caves.js`).
 
 You must rigorously hunt for edge cases, determinism leaks, memory leaks, algorithmic bugs, floating strata, seam discontinuities, fluid corruption, and mutation vulnerabilities.

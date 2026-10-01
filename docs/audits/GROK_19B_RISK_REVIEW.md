@@ -293,7 +293,7 @@ Gemini runs these against Fable’s commit. A check that reads shape codes, `Flo
 
 **Z+2 cap**
 
-22. The written representation is the top solid prefix of specific Z+2 cave cells in `strata.m`. The commit message or `UF_Levels.md` states material, thickness, HP, and that opacity and support are the existing stratum fields.
+22. The written representation is the top solid prefix of specific Z+2 cave cells in `strata.m`. The commit message or `docs/systems/DEUS_Levels.md` states material, thickness, HP, and that opacity and support are the existing stratum fields.
 23. No `z > 2`, no sixth `levels` entry, no new material id, no cap array in the save.
 24. An ordinary Z+2 hilltop (`S = 2`, not a cave) keeps S1–S4 air, derives `floor` when headroom allows, and `hasOpaqueOverburden` is false.
 25. A capped cave cell: S4 solid, `hasOpaqueOverburden` true from the void, `continuousAirHeight` finite, fluid Up bit **clear**. The adjacent sky cell: Up bit set, clearance unbounded.

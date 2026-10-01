@@ -13,11 +13,11 @@ const readPlugin = name => fs.readFileSync(path.join(root, "game/js/plugins", na
 const catalog = JSON.parse(fs.readFileSync(path.join(root, "game/data/UF_WorldCatalog.json"), "utf8"));
 
 const mutant = (process.argv.find(a => a.startsWith("--mutant=")) || "").slice(9);
-let historyCode = readPlugin("UF_History");
-let colonistsCode = readPlugin("UF_Colonists");
+let historyCode = readPlugin("DEUS_History");
+let colonistsCode = readPlugin("DEUS_Colonists");
 let householdsCode = readPlugin("UF_Households");
-let floorsCode = readPlugin("UF_Floors");
-let environmentCode = readPlugin("UF_Environment");
+let floorsCode = readPlugin("DEUS_Floors");
+let environmentCode = readPlugin("DEUS_Environment");
 
 if (mutant === "no_clock_advance") {
     // Mutant: clock fails to advance

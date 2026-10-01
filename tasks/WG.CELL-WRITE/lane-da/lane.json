@@ -1,0 +1,46 @@
+{
+  "lane": "lane-da",
+  "taskId": "WG.CELL-WRITE",
+  "branch": "task/lane-da",
+  "writer": "grok",
+  "reviewer": "gemini",
+  "allowedPaths": [
+    "game/js/plugins/DEUS_Levels.js",
+    "tools/test_sparse_outer_save.js",
+    "tools/fixtures/levels/save_32_entries_seed18.json",
+    "tools/test_32_levels_generation.js",
+    "docs/systems/DEUS_ZRange.md",
+    "docs/systems/DEUS_Levels.md",
+    "tasks/WG.CELL-WRITE/lane-da/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_sparse_outer_save.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_32_levels_generation.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_strata_cuts_and_caves.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}

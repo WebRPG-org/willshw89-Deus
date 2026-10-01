@@ -534,7 +534,7 @@ These greps over `game/` (excluding shims) have no simulation hits: `erosion|ero
 | `DEUS_Colonists.js:573` | `build: "road", cells: pathCells, exact: true });` | Colony plans post paths to homes... |
 | `DEUS_Colonists.js:3889` | `return { type: "floor", target, params: { kind: "road", item: null, count: 0, force: true, plan: step.id } };` | ...as floor jobs of kind "road" with no material... |
 | `DEUS_Floors.js:33` | `const FLOOR_IDS = ["floor_wood", "floor_stone", "floor_rushes"];` | ...which Floors appears to refuse ("invalid floor kind", line 359). This is an inference; it was not run. |
-| `docs/systems/UF_Roads.md:3` | `Not yet registered in the real` | The roads plugin was never registered and now lives only in `archive/plugins/`... |
+| `docs/archive/systems/UF_Roads.md:3` | `Not yet registered in the real` | The roads plugin was never registered and now lives only in `archive/plugins/`... |
 | `DEUS_Objects.js:193` | `if (R && typeof R.isRoadAt === "function" && R.isRoadAt(lvlArea, x, y)) return true;` | ...but live code still asks for `UF.Roads` (also `DEUS_Ecology.js:259`, `DEUS_World.js:3155`). |
 | `game/data/DEUS_WorldCatalog.json:2225` | `"stone": 2` | A stone wall costs 2 stone... |
 | `game/data/DEUS_WorldCatalog.json:2204` | `"stone": 2` | ...quarrying it yields 2 stone and leaves rubble (line 2206)... |
@@ -765,8 +765,8 @@ These are recommendations to the Coordinator. Claude does not change WBS statuse
 | `docs/AUDIT_LOG.md:87` | `DEUS_Fluid.js` is **MISSING** | The file exists (1,028 lines) and is loaded by `require()`, possibly unbound (section 2.1). |
 | `docs/RISK_REGISTER.md:60` | LIFE-001 `ARCHITECTURALLY_MITIGATED` | Mitigations are PLANNED; several code paths leak mass (F-04). The same holds for LIFE-002 (line 61, VEG-1), LIFE-003 (line 62) and NAT-003 (line 74). |
 | `docs/INVARIANT_REGISTRY.md:53` | INV-SIM-03: finite resources "cannot be fabricated without material cost" | Violated by `DEUS_Interact.js:167`, `DEUS_Ecology.js:739` and the stone-wall quarry. |
-| `docs/systems/UF_Roads.md:3` | Built, "not yet registered" | The plugin is archived; live code still calls `UF.Roads`. |
-| `docs/systems/UF_Ecology.md:8` | A bucket and census director | The code is version 1 (`DEUS_Ecology.js:44`); the catalog's `ecology` v2 keys are unread. |
+| `docs/archive/systems/UF_Roads.md:3` | Built, "not yet registered" | The plugin is archived; live code still calls `UF.Roads`. |
+| `docs/systems/DEUS_Ecology.md:10` | A bucket and census director | The code is version 1 (`DEUS_Ecology.js:44`); the catalog's `ecology` v2 keys are unread. |
 | `game/data/DEUS_ResourceRegistry.json:509` | A conservation rule | Never loaded by any file in `game/js`. |
 | `DEUS_Items.js:7`, `DEUS_Walls.js:7` | "decay rates", "material durability" | No such code. |
 | `DEUS_Wildlife.js:37` | "a throttled wander AI" | Removed (`DEUS_Wildlife.js:1197`). |

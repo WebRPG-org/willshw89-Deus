@@ -87,7 +87,7 @@ console.log(`Setting up animated objects live test snapshot at: ${SNAPSHOT_DIR}`
 
 // Sync game/ to snapshot using robocopy
 
-// Modify UF_Anim.js in snapshot to inject a live scene of all animated object categories
+// Modify DEUS_Anim.js in snapshot to inject a live scene of all animated object categories
 const animJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Anim.js');
 let animJs = fs.readFileSync(animJsPath, 'utf8');
 

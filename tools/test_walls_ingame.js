@@ -19,8 +19,8 @@ try {
     // Robocopy exit code 1 means files copied successfully
 }
 
-// Modify UF_Walls.js ONLY IN SNAPSHOT to wait for area and add full buildings to the test screenshot
-const wallsJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Walls.js');
+// Modify DEUS_Walls.js ONLY IN SNAPSHOT to wait for area and add full buildings to the test screenshot
+const wallsJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Walls.js');
 let wallsJs = fs.readFileSync(wallsJsPath, 'utf8');
 
 const suiteStartHook = 'const W = World(), O = Objects(), area = W && W.currentArea();';
@@ -125,13 +125,13 @@ const customShowcase = `
 `;
 
 if (!wallsJs.includes(targetHook)) {
-    console.error(`Could not find target hook "${targetHook}" in UF_Walls.js`);
+    console.error(`Could not find target hook "${targetHook}" in DEUS_Walls.js`);
     process.exit(1);
 }
 
 wallsJs = wallsJs.replace(targetHook, customShowcase);
 fs.writeFileSync(wallsJsPath, wallsJs, 'utf8');
-console.log('Injected enclosed buildings showcase into snapshot UF_Walls.js');
+console.log('Injected enclosed buildings showcase into snapshot DEUS_Walls.js');
 
 // Run tests on the snapshot
 console.log('Running test harness on snapshot...');

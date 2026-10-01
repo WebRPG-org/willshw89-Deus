@@ -3,7 +3,7 @@
 **Status:** design only, written 2026-09-19 by Claude Code. Nothing described here is built.
 **Implements:** VISION V93 (user, 2026-09-19 14:09: "I want a larger gradient of earth colors/shades across the terrain. I want rolling terrain types/colors").
 **Constrained by:** V2 and ART_STANDARD F1–F5 (pixel art, discrete tones, palette `art/palette/uf.hex`, alpha 0 or 255, no blur, no gradients inside a sprite), V27/V30 (biomes from DF-style fields), V50 (the map builds in ≤ 1.5 s, no per-frame cost, small saves), V80/V91 and `docs/design/TERRAIN_LEVELS.md` (five levels; `z=0`, `+1`, `+2` share tileset 91), `docs/RMMZ_ASSET_SPEC.md` (A2 autotiles).
-**Owner of the build:** Claude Code (claim in `docs/STATUS.md`, "Rolling ground colours"). Files: `UF_Tiles.js` (new section), catalog key `groundShades`, two lines in `UF_WorldGen.js`, `docs/systems/UF_Tiles.md`.
+**Owner of the build:** Claude Code (claim in `docs/STATUS.md`, "Rolling ground colours"). Files: `UF_Tiles.js` (new section), catalog key `groundShades`, two lines in `UF_WorldGen.js`, `docs/systems/DEUS_Tiles.md`.
 
 ---
 
@@ -36,7 +36,7 @@ A scratch probe suite (`UF_ZZ_GroundProbe`, scratchpad only, never in `game/`) r
 The first run (seed 125759190) looked the same. Its border screenshot showed meadow, then a one-cell staircase strip of needle floor, then leaf litter, all outlined.
 
 **Facts from the code and the probe:**
-- One area, 256 × 256 (`UF_World.md` §1), tileset 91. Slots: `["Outside_A1","UF_GenGround_A2","","","","Outside_B","Outside_C","",""]` (probe `info_seed`). TERRAIN_LEVELS §7.1 will fill A4 (`UF_GenTerrain_A4`), A5 (`Outside_A5`) and D (`UF_GenTerrain_D`, tiles 1–8). **E stays free.**
+- One area, 256 × 256 (`docs/systems/DEUS_World.md` §1), tileset 91. Slots: `["Outside_A1","UF_GenGround_A2","","","","Outside_B","Outside_C","",""]` (probe `info_seed`). TERRAIN_LEVELS §7.1 will fill A4 (`UF_GenTerrain_A4`), A5 (`Outside_A5`) and D (`UF_GenTerrain_D`, tiles 1–8). **E stays free.**
 - Ground kinds on the two probed maps: needle floor 26–30 %, meadow 18–26 %, forest floor 11–15 %, tundra 6–9 %, and 6–9 further kinds. Land is 83 % of the map (`info_kinds`).
 - The start is flat by construction: `fieldsFor` blends every field toward `startClimate` with weight 1 within 28 cells and to 0 at 110 cells. The nearest other kind was 34–37 cells from the camp on both runs (`info_border`).
 - Kind borders: UF_WorldGen joins a cell only to neighbours of the same kind (`generate`, line 735). `paintBlock` draws a 1-native-pixel `edge` outline where the kind changes (`UF_Tiles.js` lines 116–126).

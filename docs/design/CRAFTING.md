@@ -19,11 +19,11 @@ It is meant to be precise enough to build from without guessing. **This file own
 
 Its d20 numbers (dice, AC, soak, proficiency) and its random quality (§3) are retired. V64 replaced d20, and V66 replaces quality with material tiers (§5.10 lists every reference to remove).
 
-**Owned elsewhere, used here.** The skill levels, the experience curve and the level-up display are UF_Skills' (V63, `docs/systems/UF_Skills.md`). The accuracy and damage formulas are UF_Combat's (V64, `docs/systems/UF_Combat.md`). This file uses these calls, exactly as UF_Skills builds them (UF_Skills.md → API):
+**Owned elsewhere, used here.** The skill levels, the experience curve and the level-up display are UF_Skills' (V63, `docs/archive/systems/UF_Skills.md`). The accuracy and damage formulas are UF_Combat's (V64, `docs/systems/DEUS_Combat.md`). This file uses these calls, exactly as UF_Skills builds them (docs/archive/systems/UF_Skills.md → API):
 - `UF.Skills.level(unit, id)` → 1–99.
 - `UF.Skills.meets(unit, { skill, level })` → bool. Never `meets(unit, "mining", 14)`: a string argument passes every gate today (§3.12).
 - `UF.Skills.add(unit, id, xp)`.
-- `UF.Skills.rate(unit, jobType, job)` → the V63 work-speed multiplier (1 at level 1, 1.98 at 99). UF_Jobs multiplies every job's progress by it through the hook in UF_Skills.md → "Needs from others".
+- `UF.Skills.rate(unit, jobType, job)` → the V63 work-speed multiplier (1 at level 1, 1.98 at 99). UF_Jobs multiplies every job's progress by it through the hook in docs/archive/systems/UF_Skills.md → "Needs from others".
 
 UF_Combat reads each item's `weapon`, `armor`, `shield` and `ammo` blocks (§5.2).
 
@@ -87,7 +87,7 @@ Candidates for P1:
 | D3 | **Tiers are separate item types** (`falchion_steel`, `log_ash`), not a material field on a record. Stacks merge by type, as UF_Items does today. | OSRS model; no per-record fields to save or compare. |
 | D4 | **Tier ids are neutral and stable:** `meteoric`, `relic` (wreck-metal), `feywood`, `skywood`. Display names come from the `tiers` table. | P1 and P5 can be answered or changed later without touching an item id, a recipe or a save. |
 | D5 | **A failed iron smelt leaves one `slag` item** on the furnace's stand cell (V21: failures are physical). Slag has no use yet; it can be hauled away. | Visible failure, like a burnt fish. |
-| D6 | **Each success drops its yield on the resource's own cell**, exactly where today's single yield lands. Haulers and the colonists' `fetch` move it from there. The job stops at its count, when the resource is spent, or when a need or an order interrupts it. *(Revised: the first draft put yields in the gatherer's inventory.)* | There is no carry limit (UF_Items.md, Known limits), so an inventory rule could never stop the job. `fetch` needs items on the ground (UF_Jobs.md line 26). A miner's pack would hide the ore from the smelter's step, and `jobs.travel_and_work` expects the logs on the oak's cell. |
+| D6 | **Each success drops its yield on the resource's own cell**, exactly where today's single yield lands. Haulers and the colonists' `fetch` move it from there. The job stops at its count, when the resource is spent, or when a need or an order interrupts it. *(Revised: the first draft put yields in the gatherer's inventory.)* | There is no carry limit (docs/systems/DEUS_Items.md, Known limits), so an inventory rule could never stop the job. `fetch` needs items on the ground (docs/systems/DEUS_Jobs.md line 26). A miner's pack would hide the ore from the smelter's step, and `jobs.travel_and_work` expects the logs on the oak's cell. |
 | D7 | **The iron axe becomes one-handed** (the woodcutting tool); the two-handed axe is the new battle axe. COMBAT_CHAINS D5 is withdrawn. | OSRS axes are one-handed tools; the heavy weapon is its own shape. |
 | D8 | **Objects are only appended to `catalog.objects`, never inserted or removed.** | UF_Objects stores each cell's object as `index + 1` in the saved grid; reordering would change what old saves show. |
 | D9 | **Stumps regrow into saplings and saplings into a tree of the cell's biome** (`regrow.to: "@biome"`), rather than one stump type per tree. | Forests come back the DF way without 17 stump types; themed trees return only where their region allows (§1.3). |
@@ -796,7 +796,7 @@ This file pays experience per action, and UF_Skills (as built) already pays on `
    - catalog `skills.effects.quality`, and the `rolls` counter in `state.skills` (keep `version`);
    - the quality half of the check `quality_and_meets` (lines 918–936).
 
-   The check becomes `meets`. Its `meets` cases stay, rewritten with a recipe of this file instead of `sword_short`. UF_Skills.md changes to match: the Effects "Quality" item, the API row, State, the check row and Known limits.
+   The check becomes `meets`. Its `meets` cases stay, rewritten with a recipe of this file instead of `sword_short`. docs/archive/systems/UF_Skills.md changes to match: the Effects "Quality" item, the API row, State, the check row and Known limits.
 5. **New job types → skills** (for `skillOfJob`, level-up lines and the unpaid fallback), in the catalog `skills.list[].jobs` lists:
    - `salvage` → mining; `plant` → farming; `tend` → healing.
    - `fill` goes into `skills.noSkill`.
@@ -929,7 +929,7 @@ Leather factors: leather 1.0, boiled 1.6, serpent 2.3, troll 3.1, chitin 4.0, bo
 **Rule:** every positive bonus of a shape = round(the bronze, leather, linen or common base × the tier's factor); negative numbers (penalties) stay as they are at every tier. Attack speed and attack types don't change with the tier.
 
 ### 5.2 The item schema for combat (UF_Combat's field names)
-Items carry the blocks UF_Combat reads today (UF_Combat.md → Weapons, and the catalog's current `sword_long`, `mail_iron` and `shield_iron`):
+Items carry the blocks UF_Combat reads today (docs/systems/DEUS_Combat.md → Weapons, and the catalog's current `sword_long`, `mail_iron` and `shield_iron`):
 - `weapon { speed, types, styles, hands, reach, bonuses, ranged? }`;
 - `armor { slot, bonuses }`;
 - `shield { bonuses }`;
@@ -1103,7 +1103,7 @@ Remove, when phase C1 lands (line numbers of 2026-09-19):
   - `byMaterial` (line 348);
   - the header line 21 ("+ quality").
 
-  In `docs/systems/UF_Combat.md`: line 28 (`byMaterial`) and line 39 (the quality multiplier).
+  In `docs/systems/DEUS_Combat.md`: line 28 (`byMaterial`) and line 39 (the quality multiplier).
 - **Tools:**
   - `tools/check_catalog.js` (untracked and being edited on 2026-09-19; search for `combat.quality` rather than trusting the numbers): the `combat.quality` checks at lines 299–300 and the `combat_rules` self-test mutation at line 400 are replaced by tier checks (§6.7).
   - `tools/add_combat_chains.js` writes `combat.quality` and `quality: true` flags (lines 61, 78–126). It is retired and must not be run again after C1.
@@ -1112,8 +1112,8 @@ Remove, when phase C1 lands (line numbers of 2026-09-19):
   - `docs/design/COMBAT_CHAINS.md`: D7, D8, §2 (dice, AC and soak columns), §3 (all), §6.3–6.4, §8.2 ("then the highest quality" → the highest tier), §9.1 `quality_stacks` and the quality text in `describe`, §9.2 `material_multiplies` and `quality_to_hit`, §9.3 `craft_rolls_quality`, and a status banner pointing here.
   - `docs/design/WORLD_ARCHITECTURE.md` §2.10 "Combat chains" (line 104: `quality (0–5, rolled at craft …)`, `material`, dice and AC).
   - `docs/handoffs/HANDOFF_combat_chains.md` (the item example's `quality`).
-  - `docs/systems/UF_Skills.md` (Effects "Quality", the API row `qualityRoll`, State `rolls`, the check row `quality_and_meets`, Known limits).
-  - These stay: `docs/design/DF_MECHANICS.md` §2.2 and §9 mention quality as DF's model; they are reference text. "Room quality" in `docs/systems/UF_Floors.md` is a different thing (room value).
+  - `docs/archive/systems/UF_Skills.md` (Effects "Quality", the API row `qualityRoll`, State `rolls`, the check row `quality_and_meets`, Known limits).
+  - These stay: `docs/design/DF_MECHANICS.md` §2.2 and §9 mention quality as DF's model; they are reference text. "Room quality" in `docs/systems/DEUS_Floors.md` is a different thing (room value).
 
 ---
 
@@ -1247,7 +1247,7 @@ Remove, when phase C1 lands (line numbers of 2026-09-19):
 - Walls and doors: wall_plank, wall_ashlar, wall_brick, wall_castle, door_plank, door_ironbound, gate_castle.
 
 ### 6.5 Other catalog sections
-- **colony.skills → V63 skills:** woodcutting → woodcutting; gathering → foraging; stonework → mining (quarry, mine) and crafting (knapping); building → building; hauling → hauling; foraging → foraging; hunting → hunting; crafting → crafting; cooking → cooking; smelting → smithing; smithing → smithing; bowyery → fletching; fletching → fletching; tanning → leatherwork; leatherwork → leatherwork; carpentry → carpentry; fighting → attack, strength, defence (by combat style); archery → ranged. UF_Skills already converts old 0–20 values (UF_Skills.md → The old record).
+- **colony.skills → V63 skills:** woodcutting → woodcutting; gathering → foraging; stonework → mining (quarry, mine) and crafting (knapping); building → building; hauling → hauling; foraging → foraging; hunting → hunting; crafting → crafting; cooking → cooking; smelting → smithing; smithing → smithing; bowyery → fletching; fletching → fletching; tanning → leatherwork; leatherwork → leatherwork; carpentry → carpentry; fighting → attack, strength, defence (by combat style); archery → ranged. UF_Skills already converts old 0–20 values (docs/archive/systems/UF_Skills.md → The old record).
 - **labors:** furnace_operator, weaponsmith, armorsmith → smithing; bowyer, fletcher → fletching; tanner, leatherworker → leatherwork; carpenter → carpentry; soldier → the combat skills. New labors in §6.1.
 - **cultures.<species>.arms.prefer** become shapes, and the arming step takes the highest tier the colony holds:
 
@@ -1298,14 +1298,14 @@ Each phase ends with the Definition of Done:
 
 | Check | Where | What changes |
 |---|---|---|
-| `combat.max_hit` | UF_Combat.js line 1620 | `sword_long` → `longsword_iron`. The expectation reads the catalog's bonus, so only the id changes. UF_Combat.md's "10 with the catalog's +24" becomes 8 with +12. |
+| `combat.max_hit` | UF_Combat.js line 1620 | `sword_long` → `longsword_iron`. The expectation reads the catalog's bonus, so only the id changes. docs/systems/DEUS_Combat.md's "10 with the catalog's +24" becomes 8 with +12. |
 | `combat.styles` | line 1648 | `sword_long` → `longsword_iron` |
 | `combat.equipment` | lines 1679–1703 | Ids: `sword_short` → `sword_iron`, `mace` → `mace_bronze`, `bow_short` → `bow_short_common`, `arrows` → `arrows_stone`. The pairs' bonus order holds under §5.3 and §5.8; the expected damage figures are re-run. |
 | `combat.creatures` | line 1720 | The veteran's `sword_short`, `mail_iron`, `helmet_iron`, `shield_iron` → `sword_iron`, `hauberk_iron`, `helm_iron`, `buckler_iron`. The new iron items are weaker (arming sword strength 6 against 14, hauberk 15/20/10/16 against 18/22/12/18), so the "≥ 80 wins against a wolf" duel is re-run. If it fails, the V64 balance review decides. |
 | `combat.attack_speed` | line 1833 | The one-handed iron axe is 5 ticks (180 updates), not 6 (216). The check uses `battle_axe_iron` (6 ticks) to keep 216. |
 | `combat.death`, `perf` and the other fights | lines 1738, 1884–1886, 1923, 2000 | `sword_short`, `sword_long`, `mail_iron`, `shield_iron`, `mace` → the new ids |
 | `jobs.tool_speeds_work` | UF_Jobs.js line 1081 | It reads `tool.speed` instead of `tool.chop`. A stone axe (1.0) against bare hands (0.5) is still ×2. |
-| `jobs.travel_and_work` | UF_Jobs.md line 58 | "3 logs lie on its cell" → the oak's rolled charges (3–5) in logs lie on its cell (D6). |
+| `jobs.travel_and_work` | docs/systems/DEUS_Jobs.md line 58 | "3 logs lie on its cell" → the oak's rolled charges (3–5) in logs lie on its cell (D6). |
 | `skills.xp_by_doing` | UF_Skills.js lines 803–821 | Paid jobs (chop, `cook_meat`, the `bar_iron` → `smelt_iron` recipe, the stone wall, the hunt) give this file's XP through UF_Jobs and nothing on `jobs:done`. The synthetic-event cases move to unpaid types. |
 | `skills.rate` | — | With P9 A, `rate(chop)` is 1. The check measures a craft instead. |
 | `skills.extra_yield` | — | With P9 A, no gather job gives an extra yield. The check asserts none does, or is removed. |

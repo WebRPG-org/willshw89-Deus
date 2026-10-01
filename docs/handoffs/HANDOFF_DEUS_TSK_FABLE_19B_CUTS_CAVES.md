@@ -334,8 +334,8 @@ Prefer bounded changes to:
 - `game/js/plugins/DEUS_WorldGen.js`
 - `game/js/plugins/DEUS_Levels.js`
 - `tools/test_strata_cuts_and_caves.js` (NEW)
-- `docs/systems/UF_Levels.md`
-- `docs/systems/UF_WorldGen.md`
+- `docs/systems/DEUS_Levels.md`
+- `docs/systems/DEUS_WorldGen.md`
 - `docs/STATUS.md`
 
 If another path is genuinely required: **STOP and report why before broadening ownership.**

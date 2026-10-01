@@ -5,13 +5,13 @@
  * tools/test_ludeon_planning.js
  *
  * In-engine NW.js automated verification for Ludeon Planning Architecture:
- * 1. Player Planning Tool (Orders -> Plan & Remove Plan in UF_Select.js):
+ * 1. Player Planning Tool (Orders -> Plan & Remove Plan in DEUS_Select.js):
  *    - Tool 'plan' (key X, code 88) and 'unplan' (key U, code 85) available.
  *    - Non-destructive plan placement (hasPlan: true).
  *    - Zero resource cost, zero colonist jobs created.
  *    - Replacing with real construction (wall/floor) automatically clears plan.
  *    - Tool 'cancel' / 'unplan' removes plans.
- * 2. Ludeon Reservation Manager (UF_Jobs.js: ReservationManager):
+ * 2. Ludeon Reservation Manager (DEUS_Jobs.js: ReservationManager):
  *    - Unit A reserves target cell / item -> succeeds.
  *    - Unit B attempts to reserve same target -> rejected (isReservedByOther: true).
  *    - Releasing reservation frees target for Unit B.
@@ -47,15 +47,15 @@ try {
     childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
 } catch (e) {}
 
-// Ensure UF_Select and UF_Construction are loaded in the test snapshot plugins.js
+// Ensure DEUS_Select and UF_Construction are loaded in the test snapshot plugins.js
 const pluginsJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins.js');
 let pluginsCode = fs.readFileSync(pluginsJsPath, 'utf8');
-if (!pluginsCode.includes('"UF_Select"')) {
-    pluginsCode = pluginsCode.replace('{"name":"UF_Test"', '{"name":"UF_Select","status":true,"description":"[UF Select] Drag rectangles and tools","parameters":{}},\n{"name":"UF_Test"');
+if (!pluginsCode.includes('"DEUS_Select"')) {
+    pluginsCode = pluginsCode.replace('{"name":"DEUS_Test"', '{"name":"DEUS_Select","status":true,"description":"[UF Select] Drag rectangles and tools","parameters":{}},\n{"name":"DEUS_Test"');
     fs.writeFileSync(pluginsJsPath, pluginsCode, 'utf8');
 }
 
-const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Test.js');
+const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js');
 let testCode = fs.readFileSync(testJsPath, 'utf8');
 
 const targetHook = 't.screenshot("map");';

@@ -53,8 +53,8 @@ It defines:
   - **`docs/design/CLASSES.md`** (V88): which classes exist, what opens them (a temple, a tower, the faction's Building level, rank), their tiers, and who assigns them. Since the review this file uses CLASSES.md's class ids (`faith`, `arcane`, `arms`, `bow`, `grave`, `light`, `brood`); §7.1 keeps the old working ids for reference.
   - **`docs/design/TECH_TREE.md`** (being written by the DF-mechanics run): the faction tree and the personal unlock list of V84. That list *shows* ability unlocks by reading this catalog key. It doesn't copy them, so there is one truth.
   - **`docs/design/PEOPLES.md`**: the ids of the eleven peoples. §1.3 there fixes `starborn`, `swarm` and `undead`, the ids used here. Its §1.1 lists the words and mechanics the star-born and the swarm must never take from their sources.
-  - **UF_Combat** (`docs/systems/UF_Combat.md`): the accuracy and max-hit formulas. Abilities call them and never restate them.
-  - **UF_Skills** (`docs/systems/UF_Skills.md`): the curve and `add`/`level`.
+  - **UF_Combat** (`docs/systems/DEUS_Combat.md`): the accuracy and max-hit formulas. Abilities call them and never restate them.
+  - **UF_Skills** (`docs/archive/systems/UF_Skills.md`): the curve and `add`/`level`.
   - **`docs/design/WORK_TIMING.md`**: the beat and the success/failure model of V85, which ability casts reuse.
 
 **Inspiration, not copying.** Mechanics only, in our own words and numbers:
@@ -277,7 +277,7 @@ Every target is a full `CellRef { area, x, y, z }`. An area effect applies on th
 - **The caster.**
   - It turns to face its target in all eight facings (V3).
   - An instant ability plays `UF.Anim.play(unit, "cast")`: columns 11–13 once, in the facing row.
-  - An ability with `castBeats` > 0 sets `unit.data.casting = abilityId` for the cast. UF_Anim loops columns 11–13 (the `cast` state already exists; UF_Anim.md) and the flag is cleared on resolve or interrupt.
+  - An ability with `castBeats` > 0 sets `unit.data.casting = abilityId` for the cast. UF_Anim loops columns 11–13 (the `cast` state already exists; docs/systems/DEUS_Anim.md) and the flag is cleared on resolve or interrupt.
   - A prayer plays the one-shot when it is switched on.
   - Deeds use the attack frames the attack already plays.
 - **The caster's effect layer** (`fx`): `$UF_fx_<abilityId>_cast.png`, on the AR-600 grid (20 columns × 8 facing rows). Only columns 11–13 are painted. AR-600's compose order already ends in `fx`. UF_Anim draws it as one more layer on the body's current frame while `data.fx` names it. This needs a small UF_Anim change (§11).
@@ -498,7 +498,7 @@ The bar order can be changed there by moving a row up or down. Strangers show on
 ### 6.1 Devotion (skill id `devotion`, display name PROPOSED: **Devotion** · Faith · Worship)
 THEME T23 already proposed a devotion skill, "OSRS's prayer under our own name".
 
-**Catalog entry:** `skills.list` gains `{ "id": "devotion", "name": "TEST_Devotion", "kind": "combat" }` and `jobs: ["rite"]`, and UF_Skills.md's starting-level table gains a devotion column:
+**Catalog entry:** `skills.list` gains `{ "id": "devotion", "name": "TEST_Devotion", "kind": "combat" }` and `jobs: ["rite"]`, and docs/archive/systems/UF_Skills.md's starting-level table gains a devotion column:
 
 | Stage | Devotion levels |
 |---|---|
@@ -530,7 +530,7 @@ When a worship need exists (THEME T21 "later"; DF_GAP_MAP 7.11), a rite also mee
 **The altar.** CRAFTING P20 held the altar back "until a magic design exists". This file is that design: an object tagged `altar` is the devotion refill point. CLASSES §4.1 (CL13) adds a plain altar (`altar_plain`) for temple grades 1–2, keeps CRAFTING's gold-fitted `altar` (§2.9 `altar_stone` and §2.10 there) for grade 3, and tags the stone ring's stones `altar` too. The temple is a room holding one; the stone ring is a yard of stones.
 
 ### 6.2 Magic (skill id `magic`, unchanged name) made trainable
-Today, magic gains experience only from `combat:hit` with `attackType: "magic"`, which only the ice wraith makes. No person can train it (UF_Skills.md; UF_Combat.md, "Not built yet: … spells").
+Today, magic gains experience only from `combat:hit` with `attackType: "magic"`, which only the ice wraith makes. No person can train it (docs/archive/systems/UF_Skills.md; docs/systems/DEUS_Combat.md, "Not built yet: … spells").
 
 **Experience:**
 

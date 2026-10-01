@@ -59,7 +59,7 @@ Everything you need for one asset is in its brief in `art/briefs/<id>.md`; the b
 ## What the engine can show today, and what waits for Claude Code
 
 Said plainly so nobody claims more than the game does:
-- **Objects, items, ground:** the engine reads `image` + sidecar (`frameWidth`, `frameHeight`, `anchor`, `animations.stand[0]`) for objects and items (`docs/systems/UF_Objects.md`, `UF_Items.md`), so those deliveries show in game as soon as the catalog field is switched. The A2 sheet is switched only when all 22 kinds exist (or Claude Code composites the meadow block over the generated sheet).
+- **Objects, items, ground:** the engine reads `image` + sidecar (`frameWidth`, `frameHeight`, `anchor`, `animations.stand[0]`) for objects and items (`docs/systems/DEUS_Objects.md`, `docs/systems/DEUS_Items.md`), so those deliveries show in game as soon as the catalog field is switched. The A2 sheet is switched only when all 22 kinds exist (or Claude Code composites the meadow block over the generated sheet).
 - **People and creatures:** RPG Maker's character sprite reads a 3-column × 4-row `$` sheet. The AR-600 16/17-column sheets are read by the layered renderer, which is "engine side (Claude Code, next build)". Until it lands, Claude Code's export cuts columns 1–3 (step, stand, step = RPG Maker's own walk layout) into a walk sheet for the catalog. The work, carry, attack, cast, sleep and dead frames are delivered now and used then.
 - **Campfire lit / burnt out:** the catalog has one campfire entry and `UF_Objects` draws one frame; the lit loop and the burnt-out state need an engine change (noted in the brief). Deliver all three files anyway (AR-105 asks for them).
 - **Faces:** `catalog.faces` and `UF_Sheet` (V49) do not exist yet; the face sheets wait in `game/img/faces/` until then.
@@ -74,7 +74,7 @@ Said plainly so nobody claims more than the game does:
 ## Decisions needed from the user
 
 - **Icon scale:** ART_STANDARD F2 says 1× native at exactly 3×; RPG Maker's IconSet cell is 32×32. `items_batch1.md` exports the 16×16 master at 2× for the icon (and 3× for the map). Confirm, or choose another rule for UI icons.
-- **AR-034 stance squares:** `docs/systems/UF_Stance.md` says the generated squares "are the design, no art request needed"; `docs/ASSET_REQUESTS.md` AR-034 requests art. The brief follows AR-034. Confirm which stands.
+- **AR-034 stance squares:** `docs/systems/DEUS_Stance.md` says the generated squares "are the design, no art request needed"; `docs/ASSET_REQUESTS.md` AR-034 requests art. The brief follows AR-034. Confirm which stands.
 - **File naming for creatures:** AR-600 names people sheets `$UF_<species>_<gender>_<stage>_body.png` and says creatures are "body layer only"; the briefs use `$UF_<species>_body.png` for creatures (no gender or stage). Confirm.
 - **`ground_meadow` before AR-100 is complete:** switch the A2 sheet only when all 22 kinds are in, or composite the approved block over the generated sheet meanwhile (Claude Code's call unless the user prefers one).
 

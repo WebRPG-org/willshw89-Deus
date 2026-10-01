@@ -1,0 +1,271 @@
+{
+  "task": "OPS.PRUNE.06",
+  "date": "2026-09-30",
+  "baselineCommit": "9271173f2b6a11bf624edfac54df28fe7471357b",
+  "hashNormalization": "UTF-8, CRLF to LF",
+  "live": [
+    {
+      "source": "docs/systems/UF_Anim.md",
+      "target": "docs/systems/DEUS_Anim.md"
+    },
+    {
+      "source": "docs/systems/UF_Camera.md",
+      "target": "docs/systems/DEUS_Camera.md"
+    },
+    {
+      "source": "docs/systems/UF_Colonists.md",
+      "target": "docs/systems/DEUS_Colonists.md"
+    },
+    {
+      "source": "docs/systems/UF_ColonyOverseer.md",
+      "target": "docs/systems/DEUS_ColonyOverseer.md"
+    },
+    {
+      "source": "docs/systems/UF_Combat.md",
+      "target": "docs/systems/DEUS_Combat.md"
+    },
+    {
+      "source": "docs/systems/UF_DayNight.md",
+      "target": "docs/systems/DEUS_DayNight.md"
+    },
+    {
+      "source": "docs/systems/UF_Doors.md",
+      "target": "docs/systems/DEUS_Doors.md"
+    },
+    {
+      "source": "docs/systems/UF_Ecology.md",
+      "target": "docs/systems/DEUS_Ecology.md"
+    },
+    {
+      "source": "docs/systems/UF_Environment.md",
+      "target": "docs/systems/DEUS_Environment.md"
+    },
+    {
+      "source": "docs/systems/UF_Factions.md",
+      "target": "docs/systems/DEUS_Factions.md"
+    },
+    {
+      "source": "docs/systems/UF_Fire.md",
+      "target": "docs/systems/DEUS_Fire.md"
+    },
+    {
+      "source": "docs/systems/UF_Floors.md",
+      "target": "docs/systems/DEUS_Floors.md"
+    },
+    {
+      "source": "docs/systems/UF_History.md",
+      "target": "docs/systems/DEUS_History.md"
+    },
+    {
+      "source": "docs/systems/UF_Interact.md",
+      "target": "docs/systems/DEUS_Interact.md"
+    },
+    {
+      "source": "docs/systems/UF_Items.md",
+      "target": "docs/systems/DEUS_Items.md"
+    },
+    {
+      "source": "docs/systems/UF_Jobs.md",
+      "target": "docs/systems/DEUS_Jobs.md"
+    },
+    {
+      "source": "docs/systems/UF_Levels.md",
+      "target": "docs/systems/DEUS_Levels.md"
+    },
+    {
+      "source": "docs/systems/UF_Look.md",
+      "target": "docs/systems/DEUS_Look.md"
+    },
+    {
+      "source": "docs/systems/UF_NaturalConnections.md",
+      "target": "docs/systems/DEUS_NaturalConnections.md"
+    },
+    {
+      "source": "docs/systems/UF_Objects.md",
+      "target": "docs/systems/DEUS_Objects.md"
+    },
+    {
+      "source": "docs/systems/UF_Ownership.md",
+      "target": "docs/systems/DEUS_Ownership.md"
+    },
+    {
+      "source": "docs/systems/UF_Select.md",
+      "target": "docs/systems/DEUS_Select.md"
+    },
+    {
+      "source": "docs/systems/UF_Sheet.md",
+      "target": "docs/systems/DEUS_Sheet.md"
+    },
+    {
+      "source": "docs/systems/UF_Speech.md",
+      "target": "docs/systems/DEUS_Speech.md"
+    },
+    {
+      "source": "docs/systems/UF_Stance.md",
+      "target": "docs/systems/DEUS_Stance.md"
+    },
+    {
+      "source": "docs/systems/UF_Talk.md",
+      "target": "docs/systems/DEUS_Talk.md"
+    },
+    {
+      "source": "docs/systems/UF_Test.md",
+      "target": "docs/systems/DEUS_Test.md"
+    },
+    {
+      "source": "docs/systems/UF_Tiles.md",
+      "target": "docs/systems/DEUS_Tiles.md"
+    },
+    {
+      "source": "docs/systems/UF_TimeSpeed.md",
+      "target": "docs/systems/DEUS_TimeSpeed.md"
+    },
+    {
+      "source": "docs/systems/UF_Walls.md",
+      "target": "docs/systems/DEUS_Walls.md"
+    },
+    {
+      "source": "docs/systems/UF_Wildlife.md",
+      "target": "docs/systems/DEUS_Wildlife.md"
+    },
+    {
+      "source": "docs/systems/UF_World.md",
+      "target": "docs/systems/DEUS_World.md"
+    },
+    {
+      "source": "docs/systems/UF_WorldGen.md",
+      "target": "docs/systems/DEUS_WorldGen.md"
+    }
+  ],
+  "archived": [
+    {
+      "source": "docs/systems/DEUS_PHYSICAL_WORLD_SIMULATION_SPEC.md",
+      "target": "docs/archive/systems/DEUS_PHYSICAL_WORLD_SIMULATION_SPEC.md",
+      "sha256": "b1bc5aaa4773e0633d8a849077329098e1107bfd72ea27475c17d17123ca91c4"
+    },
+    {
+      "source": "docs/systems/DEUS_VerticalBiomes.md",
+      "target": "docs/archive/systems/DEUS_VerticalBiomes.md",
+      "sha256": "8a445e0786b9bbc41269aebb5e45393b2058499e94ec6ef41c56ec37b1f72ffa"
+    },
+    {
+      "source": "docs/systems/UF_CultureGrowth.md",
+      "target": "docs/archive/systems/UF_CultureGrowth.md",
+      "sha256": "397dc4111f9e23bf72103d86526fe3a24d126c111785c4dcf4d605c4f915d304"
+    },
+    {
+      "source": "docs/systems/UF_Dialogue.md",
+      "target": "docs/archive/systems/UF_Dialogue.md",
+      "sha256": "20e7c40e10cb3de4d2c332f79fd2bdb18d27a3cff398d81544bf2e960c61e903"
+    },
+    {
+      "source": "docs/systems/UF_FarmView.md",
+      "target": "docs/archive/systems/UF_FarmView.md",
+      "sha256": "58936716aa5127abf3ae9b5f54512b57993a5e1aae3ede98508270020998cc48"
+    },
+    {
+      "source": "docs/systems/UF_FireSafety.md",
+      "target": "docs/archive/systems/UF_FireSafety.md",
+      "sha256": "664141773c8e3d658ae18fc2ea404b4bcfcb40ea95f00fd3e018911eb89789c6"
+    },
+    {
+      "source": "docs/systems/UF_Goals.md",
+      "target": "docs/archive/systems/UF_Goals.md",
+      "sha256": "59f86bdc98236f232285db44dad2d42e8af239964e57ae02d2cd5d696b952b2e"
+    },
+    {
+      "source": "docs/systems/UF_Gumps.md",
+      "target": "docs/archive/systems/UF_Gumps.md",
+      "sha256": "ce69b371677b7a19924e1bd51af89405f17d47925bc6c94b9dea116030707aba"
+    },
+    {
+      "source": "docs/systems/UF_History_Profile.md",
+      "target": "docs/archive/systems/UF_History_Profile.md",
+      "sha256": "fc0e030573ad2d2cd0d973d913b79cda47504242a85afc845a4d0857a1e6a032"
+    },
+    {
+      "source": "docs/systems/UF_Outposts.md",
+      "target": "docs/archive/systems/UF_Outposts.md",
+      "sha256": "db08ca830efda3c8048b6e2a650fdbcdce30414b83d5ab5f184d66bad4423946"
+    },
+    {
+      "source": "docs/systems/UF_ProfileTabs.md",
+      "target": "docs/archive/systems/UF_ProfileTabs.md",
+      "sha256": "a725854c73a63fb52c74ffde10d08eef5ad443490a2bfc44536a7ec5f36b6a9c"
+    },
+    {
+      "source": "docs/systems/UF_Roads.md",
+      "target": "docs/archive/systems/UF_Roads.md",
+      "sha256": "cf6e17922de6eb03144c494c6ae4c55e16c0e509825119dec0b74ff96012a331"
+    },
+    {
+      "source": "docs/systems/UF_Skills.md",
+      "target": "docs/archive/systems/UF_Skills.md",
+      "sha256": "53038212b33e9c8688d7679d525bc9ed02643f8726d34227abad5e48a3bdb540"
+    },
+    {
+      "source": "docs/systems/UF_Tech.md",
+      "target": "docs/archive/systems/UF_Tech.md",
+      "sha256": "c70654f9f866178185583f80dff5e0a6b0b69fde8bb20c75f4e37e8465ef1280"
+    },
+    {
+      "source": "docs/systems/UF_AssetInventory.md",
+      "target": "docs/archive/systems/UF_AssetInventory.md",
+      "sha256": "3b6a255410f3246cef4f5da032ac3ed5e591ab65b5a8c59342b3bfde19870446"
+    }
+  ],
+  "protected": [
+    {
+      "path": "docs/systems/UF_Households.md",
+      "sha256": "0df3f2bde0f01ce51d9472b6528aa5ea118f638bc23fb9cac3e73ccc81fe2f73"
+    },
+    {
+      "path": "docs/systems/DEUS_CombatU7.md",
+      "sha256": "3f977ff84b967c79536e95fd5c3363d6f69f01ba0c96c8c757686ed6432b512c"
+    },
+    {
+      "path": "docs/systems/DEUS_DepthDemo.md",
+      "sha256": "34d461ae6e013eab22c09eb40a64156c953ea6084b49b017282d0fdfdc37490c"
+    },
+    {
+      "path": "docs/systems/DEUS_LayerOverlays.md",
+      "sha256": "5564aa0e2f52eb61cec60c8ed26805b5e4d5f9b0409dba53d47f8282e4ffe100"
+    },
+    {
+      "path": "docs/systems/DEUS_MintingEngine.md",
+      "sha256": "07f4b028747b14db0f11192b2f10ebfec0a5592209cc42919a700edf64be13ae"
+    },
+    {
+      "path": "docs/systems/DEUS_Taming.md",
+      "sha256": "946288a4fc33b7d4b075bd5d8df270013effaeb51fab9996523204dd667f7ee3"
+    },
+    {
+      "path": "docs/systems/DEUS_TamedPartyCombat.md",
+      "sha256": "223a9965891d64374445321a46a8beaf71bf6122df8cd604c963485202678368"
+    },
+    {
+      "path": "docs/systems/DEUS_WorldItems.md",
+      "sha256": "5a5cddb2334225faf29cfcab32da739826a618379ed65f9b649213f24b78bde8"
+    },
+    {
+      "path": "docs/systems/DEUS_Minimap.md",
+      "sha256": "a8c7a3d1eab706b01a171147cf61f64cd2df6669c43148f76e56f55dc96e98f4"
+    },
+    {
+      "path": "game/js/plugins/UF_Households.js",
+      "sha256": "a856f003c257d2f3d9db623fb891766ed41e9db8e155b1f058d16820a9daa4ae"
+    }
+  ],
+  "reconciliation": [
+    {
+      "source": "docs/systems/UF_Colonists.md",
+      "target": "docs/archive/systems/UF_Colonists.md",
+      "sha256": "3a7f4937a6470659cb3fd742366822cde4f613befb19d2a7feb3505366a460de"
+    },
+    {
+      "source": "docs/systems/DEUS_Colonists.md",
+      "target": "docs/archive/systems/DEUS_Colonists_reflex_20260924.md",
+      "sha256": "4760842f3d535ebac1854948adcef850b7d73fa64eee2d2365ede2dba30a88f7"
+    }
+  ]
+}

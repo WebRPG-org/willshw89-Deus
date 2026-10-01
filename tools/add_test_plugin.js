@@ -1,4 +1,4 @@
-// Registers plugins (default: UF_Test) at the end of a plugins.js file, in the order given.
+// Registers plugins (default: DEUS_Test) at the end of a plugins.js file, in the order given.
 // For disposable test copies of the game; the real plugins.js is managed by the RMMZ editor.
 // Usage: node tools/add_test_plugin.js <path to plugins.js> [PluginName ...]
 "use strict";
@@ -9,7 +9,7 @@ if (!file) {
     console.error("usage: node tools/add_test_plugin.js <path to plugins.js> [PluginName ...]");
     process.exit(2);
 }
-const wanted = names.length ? names : ["UF_Test"];
+const wanted = names.length ? names : ["DEUS_Test"];
 const text = fs.readFileSync(file, "utf8").replace(/^﻿/, "");
 const plugins = JSON.parse(text.slice(text.indexOf("["), text.lastIndexOf("]") + 1));
 for (const name of wanted) {

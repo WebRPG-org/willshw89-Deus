@@ -3,8 +3,8 @@
 // No renderer, actual generator, autonomous Colonists scan or editor acceptance claim.
 const fs = require("fs"), path = require("path"), vm = require("vm"), assert = require("assert/strict");
 const root = path.resolve(__dirname, ".."), file = name => fs.readFileSync(path.join(root, "game/js/plugins", `${name}.js`), "utf8");
-let safetySource = file("UF_FireSafety"), fireSource = file("UF_Fire");
-const jobsSource = file("UF_Jobs"), mutant = (process.argv.find(a => a.startsWith("--mutant=")) || "").slice(9);
+let safetySource = file("UF_FireSafety"), fireSource = file("DEUS_Fire");
+const jobsSource = file("DEUS_Jobs"), mutant = (process.argv.find(a => a.startsWith("--mutant=")) || "").slice(9);
 const mutations = {
     ordered: ["current.params&&current.params.ordered", "false"],
     second_leg: ["if (!stand || !path(u,plan.stand,stand)) continue;", "if (!stand) continue;"],

@@ -1,0 +1,113 @@
+{
+  "writerSha": "ca0d00948daff2962c492d72f2d9313e243da404",
+  "checkedAt": "2026-09-30T22:32:11.798Z",
+  "runtimeOrArtChanges": [],
+  "protectedChanges": [],
+  "safeArchives": [
+    {
+      "path": "docs/archive/systems/DEUS_PHYSICAL_WORLD_SIMULATION_SPEC.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "b09fa1b386b9409d87c0fa80d20da01fec8b7b61",
+      "archivedBlob": "b09fa1b386b9409d87c0fa80d20da01fec8b7b61",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/DEUS_VerticalBiomes.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "aa8e80193a301b4cb32ad296cd76df6157418cbe",
+      "archivedBlob": "aa8e80193a301b4cb32ad296cd76df6157418cbe",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/UF_CultureGrowth.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "7bf2b1c4ff3b28db81a3a6f98bff48fed1113a9f",
+      "archivedBlob": "7bf2b1c4ff3b28db81a3a6f98bff48fed1113a9f",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/UF_Dialogue.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "880f9f96c22aab5cca3c60831c2fd24665678d03",
+      "archivedBlob": "880f9f96c22aab5cca3c60831c2fd24665678d03",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/UF_FarmView.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "c020d95d31770e22d454d9c781dbc26aeabc3be4",
+      "archivedBlob": "c020d95d31770e22d454d9c781dbc26aeabc3be4",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/UF_FireSafety.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "f46df3f02a270b1cb771192b9da1a1ebc0a489c7",
+      "archivedBlob": "f46df3f02a270b1cb771192b9da1a1ebc0a489c7",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/UF_Goals.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "2d4d3e952ddda4e0b66a3dbc8ac61021dbdf4e0e",
+      "archivedBlob": "2d4d3e952ddda4e0b66a3dbc8ac61021dbdf4e0e",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/UF_Gumps.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "e23e29ee51f522016e290dd8d6bd6d085aeb821f",
+      "archivedBlob": "e23e29ee51f522016e290dd8d6bd6d085aeb821f",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/UF_History_Profile.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "7c42f1e3dae78f552a5303ffb9dc2e95a5d7e45c",
+      "archivedBlob": "7c42f1e3dae78f552a5303ffb9dc2e95a5d7e45c",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/UF_Outposts.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "1305b66d6456ca238b79615a29238ef9df8122a9",
+      "archivedBlob": "1305b66d6456ca238b79615a29238ef9df8122a9",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/UF_ProfileTabs.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "bd781d03023ef50b2052bea4b94ba06e3dae0b44",
+      "archivedBlob": "bd781d03023ef50b2052bea4b94ba06e3dae0b44",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/UF_Roads.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "4f8db0fe37900af78162e7c19348477c8f97a082",
+      "archivedBlob": "4f8db0fe37900af78162e7c19348477c8f97a082",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/UF_Skills.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "09b2297a3f182fe7ecba99796a25353ed9782f03",
+      "archivedBlob": "09b2297a3f182fe7ecba99796a25353ed9782f03",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/UF_Tech.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "1d13c9e2290b3d664964dfac33b486793f1e0d01",
+      "archivedBlob": "1d13c9e2290b3d664964dfac33b486793f1e0d01",
+      "identicalGitBlob": true
+    },
+    {
+      "path": "docs/archive/systems/UF_AssetInventory.md",
+      "identicalToGitBaseline": true,
+      "baselineBlob": "96e56ff932ac4d2e92495ffcaf99bb4f0caa470f",
+      "archivedBlob": "96e56ff932ac4d2e92495ffcaf99bb4f0caa470f",
+      "identicalGitBlob": true
+    }
+  ]
+}

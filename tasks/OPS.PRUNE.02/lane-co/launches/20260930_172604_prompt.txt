@@ -1,0 +1,23 @@
+Task: OPS.PRUNE.02 (L2) - Authorization confirmation and final gate alignment for lane-co.
+Authority: MSG-PRUNE-PM-059 and tasks/OPS.PRUNE.02/lane-co/BRIEF.md.
+
+Dear Codex Writer:
+Answering your explicit question from REPORT.md and handoff:
+"Was this an authorized resolution of the gate-definition question, and may I include it in the lane commit?
+- Yes—keep and include the five canonical-loader exceptions."
+
+YES: Keep and include the five canonical-loader exceptions (`CANONICAL_COMPANION_LOADERS`) in `tools/test_no_loadscript_shims.js`.
+Rationale: As clarified in BRIEF.md, MSG-PRUNE-PM-041, and MSG-PRUNE-PM-059, the lane requirement is archiving the 41 loadScript forwarder shims. The 5 canonical companion loaders (`DEUS_Camera.js`, `DEUS_ColonyOverseer.js`, `DEUS_Core.js`, `DEUS_History.js`, `DEUS_Items.js`) belong to L9 (`game/js/plugins.js` reordering) and are NOT forwarder shims.
+
+Instructions:
+1. Re-run `node tools/test_no_loadscript_shims.js` and `node tools/test_no_loadscript_shims.js --mutants` to confirm CLEAN PASS (exit 0) and 4/4 mutants killed.
+2. Re-run `node tasks/OPS.PRUNE.02/lane-co/evidence/test_detector.js` to verify fixtures pass exit 0.
+3. Update `tasks/OPS.PRUNE.02/lane-co/evidence/gates/results.json`, `REPORT.md`, and `STATE.md` to reflect that all 10/10 gate tests pass exit 0 with the authorized companion-loader exemption.
+4. Verify `git diff --cached --check` and commit:
+   `tools/test_no_loadscript_shims.js`
+   `tasks/OPS.PRUNE.02/lane-co/REPORT.md`
+   `tasks/OPS.PRUNE.02/lane-co/STATE.md`
+   `tasks/OPS.PRUNE.02/lane-co/evidence/gates/`
+   With commit message:
+   `[codex] OPS.PRUNE.02: include canonical companion-loader exceptions in test_no_loadscript_shims (10/10 gates pass)`
+5. Do not merge or push.

@@ -14,8 +14,8 @@ global.Game_Map = { prototype: {} };
 global.Window_Base = class {};
 global.Graphics = { width: 816, height: 624 };
 global.DataManager = { onLoad: () => {}, isBattleTest: () => false, isEventTest: () => false, _databaseFiles: [] };
-eval(fs.readFileSync('game/js/plugins/UF_Core.js', 'utf8'));
-eval(fs.readFileSync('game/js/plugins/UF_WorldGen.js', 'utf8'));
+eval(fs.readFileSync('game/js/plugins/DEUS_Core.js', 'utf8'));
+eval(fs.readFileSync('game/js/plugins/DEUS_WorldGen.js', 'utf8'));
 const cat = JSON.parse(fs.readFileSync('game/data/UF_WorldCatalog.json', 'utf8'));
 global.window['$ufWorldCatalog'] = cat;
 

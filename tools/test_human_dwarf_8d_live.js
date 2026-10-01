@@ -94,8 +94,8 @@ if (catalog.items && Array.isArray(catalog.items.types)) {
 fs.writeFileSync(catalogPath, JSON.stringify(catalog, null, 2) + '\n');
 console.log('Updated catalog in snapshot with human/dwarf sprites and dwarven items.');
 
-// 3. Inject live showcase into UF_Test.js in snapshot
-const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'UF_Test.js');
+// 3. Inject live showcase into DEUS_Test.js in snapshot
+const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js');
 let testCode = fs.readFileSync(testJsPath, 'utf8');
 
 const targetHook = 't.screenshot("map");';

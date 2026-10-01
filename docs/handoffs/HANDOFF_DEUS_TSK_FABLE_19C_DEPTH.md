@@ -121,7 +121,7 @@ Implement the canonical **Global Five-Z Depth Renderer** (`WG.00.09 / FABLE-19C`
 ### Read-Only References:
 - `game/js/plugins/DEUS_Levels.js`
 - `game/js/plugins/DEUS_WorldGen.js`
-- `docs/systems/UF_Levels.md`
+- `docs/systems/DEUS_Levels.md`
 - `docs/PROJECT_DEUS_ART_DIRECTION_SPEC.md`
 - `docs/PERFORMANCE_ARCHITECTURE.md`
 

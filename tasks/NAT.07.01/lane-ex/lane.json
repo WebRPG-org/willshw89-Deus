@@ -1,0 +1,39 @@
+{
+  "lane": "lane-ex",
+  "taskId": "NAT.07.01",
+  "branch": "task/lane-ex",
+  "writer": "claude",
+  "reviewer": "gemini",
+  "allowedPaths": [
+    "docs/design/bestiary/**",
+    "tools/bestiary/build_bestiary.js",
+    "game/data/srd_adaptation/creatures.json",
+    "docs/systems/DEUS_Bestiary.md",
+    "tools/test_bestiary_adaptation.js",
+    "tasks/NAT.07.01/lane-ex/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_bestiary_adaptation.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/bestiary/build_bestiary.js",
+        "--check"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+PASS identity: 41 archive hashes match; UF_Households, UF_Time and L3 test unchanged.
+PASS syntax: 82 changed tools plus the new gate.
+PASS git diff --check
+EXIT=0

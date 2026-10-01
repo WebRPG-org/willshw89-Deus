@@ -8,8 +8,8 @@ const catalog = JSON.parse(fs.readFileSync('game/data/UF_WorldCatalog.json', 'ut
 global.$ufWorldCatalog = catalog;
 window.$ufWorldCatalog = catalog;
 
-eval(fs.readFileSync('game/js/plugins/UF_WorldGen.js', 'utf8'));
-eval(fs.readFileSync('game/js/plugins/UF_World.js', 'utf8'));
+eval(fs.readFileSync('game/js/plugins/DEUS_WorldGen.js', 'utf8'));
+eval(fs.readFileSync('game/js/plugins/DEUS_World.js', 'utf8'));
 
 const W = window.UF.World;
 W.newWorld(12345);

@@ -2,7 +2,7 @@
 // Executable contract checks, not an RMMZ rendering/integration test.
 // --mutate-room-key drops z from cache identity and must exit nonzero.
 const fs = require("fs"), path = require("path"), vm = require("vm");
-let source = fs.readFileSync(path.join(__dirname, "../game/js/plugins/UF_Floors.js"), "utf8");
+let source = fs.readFileSync(path.join(__dirname, "../game/js/plugins/DEUS_Floors.js"), "utf8");
 if (process.argv.includes("--mutate-room-key")) {
     const from = 'const areaKey = a => zOf(a) === 0 ? `${a.x},${a.y}` : `${a.x},${a.y},${zOf(a)}`;';
     if (!source.includes(from)) throw new Error("mutation target not found");
@@ -51,7 +51,7 @@ function setup(levels) {
     };
     ctx.Scene_Boot.prototype.start = function() {};
     ctx.window = ctx;
-    vm.runInNewContext(source, ctx, { filename: "UF_Floors.js" });
+    vm.runInNewContext(source, ctx, { filename: "DEUS_Floors.js" });
     function room(a) {
         for (let y = 3; y <= 7; y++) for (let x = 3; x <= 7; x++) {
             if (x === 3 || y === 3 || x === 7 || y === 7) objects.set(key(a, x, y), { tags: ["wall"], passable: false });
