@@ -1,6 +1,6 @@
 # ADR-003: Sim/Render Split and Level-of-Detail (LOD) Simulation
 
-**Status:** Rev 3, PROPOSED (Lane M, 2026-09-26). Written by Claude, the Lane M writer. Grok reviews it adversarially. It stays PROPOSED until the Owner and the PM sign it off. The author does not self-certify.
+**Status:** Rev 4, ACCEPTED, together with the "Review of Rev 4" note in the Rev 4 change log below: without that note this status reads PROPOSED. The PM (Claude) signed it on 2026-10-01 under DEC-059 item 3 (`docs/OWNER_DECISIONS.md:991` at `8b235fca`); the Owner can change it. One condition stays: §9.2 is amended with K3 measurements before SIM.00.03 starts (§0 item 12). Rev 3 (Lane M, 2026-09-26) was written by Claude, the Lane M writer, and Grok's adversarial review passed it (`tasks/SIM.00.01/lane-m/review_grok_2e32f596.md:173` at `8b235fca`). Rev 4 applies the braintrust's sign-off amendments (MiniMax M3, 2026-10-01). Grok's review covers Rev 3 only. The PM wrote the Rev 4 edits, so the braintrust work gate judged their text before the PM signed, and the review note says who checked what: no author certifies its own text.
 - Rev 1 (`ddd1b865`) predates the Lane M review checklist (`tasks/SIM.00.01/lane-m/review_checklist.md`).
 - Rev 2 (`c456cb73`) added DEC-013 at nine layers (§15), structural integrity and collapse, V137 (§16), decay and reclamation, V138 (§17), regions of one vertical band (§5.1) and the mass-per-material invariant (§7.8). The independent Grok review of Rev 2 (`tasks/SIM.00.01/lane-m/review_grok_c456cb73.md`, committed as `8e2fed13`) returned FAIL.
 - Rev 3 answers that review finding by finding (change log below) and follows `tasks/SIM.00.01/lane-m/BRIEF_REV3.md`. It adds:
@@ -10,6 +10,7 @@
   - DEC-017 as the engine exit path (§13);
   - the other Owner decisions that touch the sim/render boundary, DEC-016 and DEC-019 to DEC-022 (§19);
   - every citation re-checked at `b612bc72` (Appendix C).
+- Rev 4 (2026-10-01) is the sign-off revision. It applies the braintrust's sign-off amendments, corrects three facts the Rev 3 review found, and marks what later Owner decisions defer or supersede (DEC-030, DEC-038, DEC-040, DEC-051, DEC-057 to DEC-059). It changes no design rule that an Owner decision had not already changed. The Rev 4 change log below lists every edit.
 
 **Decision authority:** DEC-012 (Owner, 2026-09-26 00:00 CT, directive 0018-R), recorded in `docs/OWNER_DECISIONS.md:161-168`. This ADR is the detailed design that DEC-012 asks for. It does not reopen DEC-012, and it does not restate or change any other Owner decision; it cites them by id and heading.
 
@@ -22,9 +23,49 @@
 - Plugin paths are relative to `game/js/plugins/` unless a directory is given. `rmmz_*.js` files are in `game/js/`.
 - Commands and exit codes are in Appendix B, `tasks/SIM.00.01/lane-m/notes.md` (Rev 1 and 2) and `tasks/SIM.00.01/lane-m/REPORT_REV3.md` (Rev 3).
 
+### Rev 4 change log (sign-off, 2026-10-01)
+
+DEC-059 item 3 gives the PM the signature, "from the braintrust recommendations, recording each choice" (`docs/OWNER_DECISIONS.md:991` at `8b235fca`). The braintrust's sign-off review (MiniMax M3, 2026-10-01; kept with the PM's braintrust records, outside the repository) asked for amendments A1 to A15. Each row below says what the PM did with one; rows X1 to X4 are the PM's own consistency edits. Later Owner decisions enter as annotations: no section's design is reopened. Rev 4's new citations read documents at `8b235fca`; code citations stay pinned to `b612bc72`.
+
+| # | Asked for | Decision | Where |
+|---|---|---|---|
+| A1 | §18.2 gives the blast resist triple as impact's too (Grok Rev 3 MINOR 1) | Applied: each type's triple is quoted under its name | §18.2 |
+| A2 | §5.5 calls 103 and 11 the region count R (MINOR 2) | Applied: R = 1,024 at 32 layers; 103 and 11 are ⌈R/10⌉ and ⌈R/100⌉ | §5.5 |
+| A3 | §15.3 calls the chunk directory the only per-area structure sized by the layer count (MINOR 3) | Applied: the §5.1 region index grows with it too, and §9.1's heap row now says so as well | §15.3, §9.1 |
+| A4 | Rev 3 change-log row 1: §0 item 7 is at L76, not L75 (MINOR 4) | **Rejected as worded.** At `647457b2`, and at the reviewed `2e32f596`, item 7 starts on line 75; line 76 is its first sub-bullet and line 84 is item 10. The finding does not reproduce, so row 1 stays | none |
+| A5 | §17: structure decay is deferred | Applied | §17 |
+| A6 | §17.4: sediment burial is deferred with soil | Applied, reworded. Lava never becomes water: in the D2 build the contact quench turns the reacting lava into obsidian and sends the water it meets to the water-return account, and ice is not built. The suggested text named a "lava→water quench" and a freeze. Water's causes are A11's subject | §17.4, §7.8 |
+| A7 | §16.4: rubble is the terminal form | Applied, with how natural rubble is registered | §16.4 |
+| A8 | §18.2: fire is deferred | Applied, and noted at tick step 5 and in the §6 Fire row | §18.2, §3.8, §6 |
+| A9 | §6 Environment and §3.8 step 6: seasons and weather are deferred | Applied, reworded. Seasons and weather are deferred; Environment's per-layer rule stays: its boundary condition, from biome and layer, reads the band table (§5.1), which is not a weather system. The suggested "Environment is built as a stub (calendar + clock)" would also forbid that rule, and the clock and calendar are the kernel's (§3.2) | §6, §3.8 |
+| A10 | §6 wildlife: migration is deferred; seeded placement is the rule | Applied; breeding is noted as refined later (DEC-057 item 2), and the natural-connections row's use of the migration rule is marked | §6 |
+| A11 | §7.8: name the causes of the closed water and lava loop | Applied, rewritten. The water and lava causes are named, each a transform between named accounts: evaporation and real exits, return rain, springs, magma outlets and the contact quench. The suggested sentence named a "lava→water quench" and an inverse "water→lava→steam", and deferred springs and rain "with weather". Under DEC-040 rain is the return path of a closed loop, not weather. The Rev 3 example of rain and evaporation as a source and a sink is marked superseded | §7.8, §7.9 |
+| A12 | §7.5: record seeded placement | Applied | §7.5 |
+| A13 | §12.3 Q14: "PARTLY ANSWERED" for monsters, fauna and flora | **Rejected as worded.** Q14 asks only about people. DEC-057 and DEC-058 place monsters, fauna and flora and say nothing about bucketing persons, so no part of Q14 is answered. A note says so | §12.3 |
+| A14 | §0 item 12 and §9.2: make the PENDING-K3 condition auditable | Applied: the sign-off lapses if SIM.00.03 would start without the §9.2 amendment | §0, §9.2 |
+| A15 | A Rev 4 change log | This table, the status line and `docs/adr/README.md`. The SIM.00.01 row of `docs/worldgen/DEUS_WORLDGEN_WBS.md` is not changed ("Review of Rev 4", below) | header |
+| X1 | DEC-051 item 2 has superseded text marked; §5.1 still gives DEC-013's band ranges | Marked superseded by DEC-030 and DEC-038, with the new ranges | §5.1 |
+| X2 | §8 says SIM.00.02 waits on this sign-off | Noted as given | §8 |
+| X3 | The Rev 3 change log gives line numbers of "this file" | Pinned to Rev 3 (`647457b2`); Rev 4 moves most lines | Rev 3 change log |
+| X4 | DEC-059 item 3: record each choice | The PM questions of §12.3 are answered, except Q15, which stays open | §12.4 |
+
+**Deferred in the natural-world phase.** DEC-059 item 4 defers fire, seasons and weather, animal migration, rare geological events and structure decay (`docs/OWNER_DECISIONS.md:992` at `8b235fca`). DEC-057 item 1 defers soil and stops collapse at rubble (`docs/OWNER_DECISIONS.md:952` at `8b235fca`). Each design stays here, marked where it stands: fire in §3.8, §6 and §18.2; seasons and weather in §3.8 and §6; migration in §6; decay in §17; rubble and sediment in §7.8, §16.4 and §17.4. Rare geological events have no section in this ADR.
+
+**Kept as they were.**
+- §9.2 stays PENDING-K3. Lane K's K3 baselines have reached `main` since Rev 3 (merge `5255f1a5`, after Grok's CLEAN PASS at `95c18bfa`, `tasks/WG.00.09b/lane-k/review_grok_95c18bfa.md:234` at `8b235fca`), so the K3 values can now be read. The measured headless values wait for SIM.00.02's headless runner (`docs/worldgen/DEUS_WORLDGEN_WBS.md:539` at `8b235fca`), which is not on `main` yet.
+- §9.1's seed-fixture ceiling (≤ 8 MiB at 32 layers) stays until its first measurement confirms or amends it.
+- Grok's MINOR 5 is about the report, not this file. `tasks/SIM.00.01/lane-m/REPORT_REV3.md:80` at `8b235fca` gives 286, the sub-agents' snapshot count; Appendix C gives the final text's sources, 350 + 247 + 49 = 646 (`tasks/SIM.00.01/lane-m/rev3/verdicts_rev3.md:16` at `8b235fca`). Appendix C is the count of record. The report is task evidence and is not edited.
+
+**Review of Rev 4 (the ACCEPTED status above holds only while this note is in this file).**
+- Authors. Rev 3's author (the Lane M writer) and the PM, who wrote the Rev 4 edits and signs them, are both Claude. Zero self-certification binds the PM too (DEC-042, `docs/OWNER_DECISIONS.md:686` at `8b235fca`), so neither counts as a reviewer of this text.
+- Grok. Grok's adversarial review, `tasks/SIM.00.01/lane-m/review_grok_2e32f596.md`, reviewed Rev 3 only. No Grok lane review has read the Rev 4 edits.
+- The work gate. The braintrust WORK-GATE judge of the PM's deadline records (Grok Heavy, 2026-10-01; record `WORK-GATE-DEADLINE-RECORDS_grok_heavy.md`, kept with the PM's braintrust records outside the repository) read the drafted Rev 4 edits and returned GO WITH CHANGES. Its required changes are in this text: this note; the SIM.00.01 WBS status left as it was (last item); A1-A3, A5, A7, A8, A10, A12, A14 and A15 applied; A6, A9 and A11 reworded (lava never becomes water, the quench makes obsidian; seasons and weather deferred, Environment's per-layer rule kept; the five water and lava causes named); A4 and A13 rejected as worded; Q15 left open; the lapse clause of §0 item 12 kept. The PM applied those changes, and the judge has not read the result.
+- The dispositions. Each A1-A15 disposition was checked against the ADR at the three commits the A4 row cites, `647457b2`, `2e32f596` and `8b235fca`: the file is one blob there (`c54600f0`), and every base line a disposition edits or quotes reads the same at all three. On `main` the file differs from that blob only by twelve citation renames (`b21cfe62`), none on a line Rev 4 edits.
+- The WBS. SIM.00.01's status cell in `docs/worldgen/DEUS_WORLDGEN_WBS.md` is not changed by this revision. The zero-self-certification check reads the row's existing reviewer and definition-of-done text as closers, so a closure commit would fail it for a reason that is not this sign-off. A later status-only commit closes the row and cites this note, once that check reads the row correctly.
+
 ### Rev 3 change log
 
-Each row is one finding of `review_grok_c456cb73.md`, in the review's order, with the Rev 3 answer and where it is. Line numbers are lines of this file. No finding is disputed.
+Each row is one finding of `review_grok_c456cb73.md`, in the review's order, with the Rev 3 answer and where it is. Line numbers are lines of this file at Rev 3 (`647457b2`); Rev 4 moved most of them. No finding is disputed.
 
 | # | Finding (review heading) | Rev 3 answer | Where |
 |---|---|---|---|
@@ -93,6 +134,7 @@ The Rev 3 brief's other items: DEC-017 → §13; DEC-016, DEC-018 to DEC-022 →
     - Storage budgets (memory and save size at 9 and 32 layers) follow from the storage design, so they are set now (§9).
     - Time budgets are design ceilings marked **PENDING-K3**. Each names the Lane K K3 measurement that will fill it. At the time of writing, Lane K's K3 baselines were on a local, unreviewed Lane K commit only, not on `main` (Appendix B).
     - The time ceilings must be amended with measured baselines before SIM.00.03 starts (§9).
+    - The PM signed Rev 4 on that condition (0018-R §3c item 12). If SIM.00.03 is about to start and §9.2 has not been amended, the sign-off lapses: the status goes back to PROPOSED and SIM.00.03 waits.
 
 ### 0.1 Section crosswalk
 
@@ -499,8 +541,8 @@ onFrame(nowMs):
 2. Clock: advance the tick, emit calendar boundaries.
 3. Movement and paths (L0 regions; L1 regions whose batch is due).
 4. Fluid, then natural connections.
-5. Fire.
-6. Environment.
+5. Fire. Deferred in the natural-world phase (DEC-059 item 4): Fire is not migrated or extended until the deferral ends (§18.2).
+6. Environment. Seasons and weather are deferred in the natural-world phase (DEC-059 item 4); the ambient-temperature boundary condition and its per-layer rule stay (§6).
 7. Ecology.
 8. Needs.
 9. Jobs, then projects.
@@ -690,6 +732,7 @@ Cadences are expressed as `(everyTicks, phaseOffset)`, for example needs `(10, 5
   | UPPER1 (low sky, towers, canopy) | +4..+9 | 6 | 10–12 |
   | UPPER2 (high sky, peaks, cloud realm) | +10..+15 | 6 | 13–15 |
 
+  - **Superseded ranges (Rev 4).** DEC-051 item 2 has superseded text marked (`docs/OWNER_DECISIONS.md:836` at `8b235fca`). DEC-030 and DEC-038 item 2 replace the DEC-013 ranges in the table above (`docs/OWNER_DECISIONS.md:439-441` at `8b235fca`; `:568-574` at `8b235fca`): Deep Earth −16..−11, Caverns −10..−5, Lowlands −4..+1, Uplands +2..+6 and Highlands +7..+11, with +12..+15 kept as open air (Sky) and no natural terrain above +11. The core holds the bands as data (next bullet), so only the values change. Every new boundary but one falls on a slab edge; the Uplands/Highlands boundary at +7 splits slab 11 (+6 and +7), where band-keyed rules work per layer, as the bullet after next allows. The table stays as the Rev 3 example, and band names elsewhere in this ADR (LOWER2, SURFACE, UPPER1 and so on) are its names, used in examples whose conclusions do not depend on the exact ranges.
   - In the core the band table is **data**: `bands: [{ id, zMin, zMax }]` in world state, read by biome, home-layer and summary rules. The table above is not written into code.
   - Every default band boundary (−16, −8, 0, +4, +10) is an even offset from −16, so it falls on a slab boundary, and no default slab spans two bands. If the Owner picks a boundary that splits a slab, nothing breaks: band-keyed rules inside that slab work per layer.
   - The 9-layer test configuration carries its own test band table (the Rev 2 one: −4..−3, −2..−1, 0, +1..+2, +3..+4). Its slab 2 (0..+1) spans two bands, so the tests exercise the per-layer rule.
@@ -768,7 +811,7 @@ The LOD phase evaluates the focus sources every 10 ticks. Each source makes regi
   - A dormant region is in no schedule list and costs nothing per tick.
   - It wakes on the same events that feed the dirty queues: a mutation, or a unit or fluid crossing into it.
   - Active L1 and L2 regions sit in 10 and 100 lists keyed by `rk % 10` and `rk % 100`. Each tick visits only the list that is due, in `rk` order. Nothing scans all regions.
-- So on average a tick runs (active L1) / 10 batches and (active L2) / 100 coarse steps. It never runs more than one residue class holds: ⌈R/10⌉ and ⌈R/100⌉, where R is the regions in the area (103 and 11 at 32 layers).
+- So on average a tick runs (active L1) / 10 batches and (active L2) / 100 coarse steps. It never runs more than one residue class holds: ⌈R/10⌉ and ⌈R/100⌉, where R is the regions in the area. At 32 layers R = 1,024, so ⌈R/10⌉ = 103 and ⌈R/100⌉ = 11.
   - Example: 200 active L2 regions in an area average 2 coarse steps per tick, at 9 layers and at 32 alike.
   - Sky above the tallest structure, and rock with no caves, veins or fluid, never becomes active, so it adds nothing to either number.
 - The LOD phase itself runs on `tick % 10 == 9`. It reads the focus sources and the region wake-ups, and doesn't scan all regions either.
@@ -802,17 +845,17 @@ These are the aggregate representations for L2 regions. "Tracked" and "anonymous
 | System | Fine state (L0/L1) | L2 summary state | Coarse rule (every 100 ticks) |
 |---|---|---|---|
 | **Tracked units and people** | full record: cell, `progress`, path, needs | the same record in *abstract* mode: `{cell, goal, remainingCost, needs}`. Individual, never aggregated. `remainingCost` is the sum of the plan's step costs left, or 1000 × the octile distance if there is no plan | `remainingCost −= speed × Δ` (integer). The abstract `cell` advances along the straight line from the cell where abstract mode began to the goal, in proportion to the cost used; it is only a position, and terrain is re-checked when the unit is placed (§7.3). Needs are integrated in closed form. A job accrues progress if the worker is at the site |
-| **Wildlife and monsters** (anonymous) | unit records; herd membership lives on the unit (`u.data.herd`, `DEUS_Ecology.js:214`, `:672-678`) | **buckets** `count[species][ageBand][sex]` (`Uint16`) per region; herd records `{herdId, species, lastBirth, members per bucket}` keep today's fields (`:722`) | Ecology's rules applied to counts: its hourly breeding (`stepBreeding`, called from `tickHour`, `DEUS_Ecology.js:897-905`) and its six-hourly population roll with caps (`:907-914`); migration between adjacent L2 regions by a deterministic rule; every change goes through the ledger |
+| **Wildlife and monsters** (anonymous) | unit records; herd membership lives on the unit (`u.data.herd`, `DEUS_Ecology.js:214`, `:672-678`) | **buckets** `count[species][ageBand][sex]` (`Uint16`) per region; herd records `{herdId, species, lastBirth, members per bucket}` keep today's fields (`:722`) | Ecology's rules applied to counts: its hourly breeding (`stepBreeding`, called from `tickHour`, `DEUS_Ecology.js:897-905`) and its six-hourly population roll with caps (`:907-914`); migration between adjacent L2 regions by a deterministic rule; every change goes through the ledger. **Natural-world phase (Rev 4):** migration is deferred (DEC-059 item 4) and breeding is refined later (DEC-057 item 2). Creatures are placed by seeded random rules, deterministic from the world seed, as each level is generated: biome cell (DEC-030), danger field (DEC-050) and bestiary assignment (DEC-053), per DEC-057 item 2 (§7.5) |
 | **Flora and resources** | object grid (seed + `objectDiffs`); sprouts and regrowth records (`blankState`, `DEUS_Ecology.js:127`) | **no summary needed**: objects stay seed + diffs; sprout and regrowth records stay records; a derived per-region count per object type is kept for statistics | sprouts mature by beat count (today's rule, `:772-796`); the ore sprouts (`:736-752`) are Q7 |
 | **Fluids** | packed depth grid: one byte per cell (`DEUS_Fluid.js:127-137`), one `Uint8Array` per level (`DEUS_Fluid.js:179`, `:187-189`); a dirty queue *per region* | **the fine cells are kept but frozen.** A region's grid is at most 2 layers × 32 × 32 = 2,048 bytes at any layer count, and none at all for a chunk with no fluid (§15.3), so dropping it would save nothing. What L2 drops is per-tick stepping. A derived **basin index** sits on top: 4-connected *wet* cells of one fluid type per z (types never mix, `:457-458`), each basin with its volume, free capacity, drain faces to z−1, and faces to neighbouring regions. It is rebuilt from the cells, so it isn't saved (§10.7) | drain through drain faces and settle across linked faces with integer amounts; each transfer is applied to cells in canonical order (a gaining basin fills its lowest-floor cells first, then row-major; a losing basin drains its highest cells first) as a paired integer subtract and add |
-| **Fire** | `W.state.fire.burning` records, integer fuel (`DEUS_Fire.js:214`, `:389`) | **none**: a burning cell is a focus source, so its region is at least L0/L1; demotion waits until no cell burns | — |
+| **Fire** | `W.state.fire.burning` records, integer fuel (`DEUS_Fire.js:214`, `:389`) | **none**: a burning cell is a focus source, so its region is at least L0/L1; demotion waits until no cell burns | — (Rev 4: fire is deferred in the natural-world phase, DEC-059 item 4; §18.2) |
 | **Geology and terrain** | strata and shapes (Levels) from seed + diffs | **none**: resident in chunk storage at every level (§15.3). A new game or a load builds it from seed + diffs, as today's builds do (`World.buildArea`, `DEUS_World.js:599-689`: generators at `:650`, diffs replayed at `:682-685`; the build cache and `peekArea`, `:800-822`) | changes only through mutation: mining, building, collapse (§16), decay (§17) |
 | **History** | aggregate already: sites, people, dynasties (`History.generate`, `DEUS_History.js:363-410`, which calls `D.step` once per year, `:390-395`; `step` is at `DEUS_HistoricalDemographics.js:468`) | L2-native. It runs at world creation, and nothing steps it during play (the demographics header says "No listeners, automatic generation, live units, terrain edits, or save hooks", `DEUS_HistoricalDemographics.js:8-9`) | §14 |
 | **Jobs and projects** | records (`W.state.jobs`, `DEUS_Jobs.js:101-107`; projects, `DEUS_Projects.js:179-189`) | records unchanged. Jobs with an assigned worker are focus sources (L0). Unassigned jobs need no stepping | non-player factions' jobs (future) accrue abstract work per coarse tick |
 | **Items and containers** | records with integer `count` (`DEUS_Items.js:304`) | **records unchanged**: never aggregated, and they need no stepping at rest | — |
-| **Environment** | weather per area (`DEUS_Environment.js:88`, `:120`); thermal state per unit | ambient temperature is a boundary condition, derived from season and biome, not a stock; unit thermal stays with the (tracked) unit | re-derived |
+| **Environment** | weather per area (`DEUS_Environment.js:88`, `:120`); thermal state per unit | ambient temperature is a boundary condition, derived from season and biome, not a stock; unit thermal stays with the (tracked) unit | re-derived. **Natural-world phase (Rev 4):** seasons and weather are deferred (DEC-059 item 4), and no weather step is migrated or extended. The boundary condition stays, from biome and layer; its per-layer rule reads the band table (§5.1), which is not a weather system |
 | **Factions** | contact checks (`DEUS_Factions.js:656-660`); integer population counters (`:194`, `:594-625`) | contact between tracked units in the same L2 region is resolved at the coarse tick; counters must equal tracked + bucket members (§7.8) | co-location test |
-| **Natural connections** | links (`W.state.naturalConnections`) | links are static. A link inside one slab is movement *within* the region; a link across a slab border is a border crossing (§7.7) | bucket z-distribution within a slab unchanged; cross-slab use by the migration rule |
+| **Natural connections** | links (`W.state.naturalConnections`) | links are static. A link inside one slab is movement *within* the region; a link across a slab border is a border crossing (§7.7) | bucket z-distribution within a slab unchanged; cross-slab use by the migration rule (Rev 4: migration is deferred in the natural-world phase, DEC-059 item 4) |
 
 *"Energy".* DEC-012 says demotion conserves "mass, energy and population". The code has no energy stock. This ADR maps "energy" to fuel (burnable objects and items, plus fire fuel) and to food and drink (items, needs). Temperature is a boundary condition. The Owner confirms or corrects this (Q5).
 
@@ -891,6 +934,8 @@ A unit is **tracked**, meaning it is never aggregated, if **any** of these hold:
 
 All other units are **anonymous**. Only anonymous units enter buckets. So named units and history persons are never lost or duplicated (SIM.30.03 DoD 3), and the set equality over their IDs is checked on every transition (§7.9).
 
+**Natural-world placement (Rev 4).** DEC-057 item 2 (`docs/OWNER_DECISIONS.md:953-955` at `8b235fca`), built under DEC-058, places monsters, fauna and flora by seeded random rules, deterministic from the world seed, as each level is generated: biome cell (DEC-030), danger field (DEC-050) and bestiary assignment (DEC-053). Placement does not change the rules above: a placed creature is tracked or anonymous by them. Persons stay tracked, and Q14 stays with the Owner.
+
 Crowd LOD for people (0021-V addendum §9) is an open Owner question (Q14). The bucket keys in §6 can carry its identity axes if it is adopted.
 
 ### 7.6 In-flight jobs and paths
@@ -945,6 +990,8 @@ Crowd LOD for people (0021-V addendum §9) is an open Owner question (Q14). The 
   - metal item → oxidised sediment (rust);
   - food → body mass → soil (life cycle, 0021-V addendum §9).
 - Only explicitly modelled flows may change Q-MASS[family] (0021-V §8). Rain and evaporation are the example. They are sources and sinks with a named cause.
+- **Rubble is terminal in the natural-world phase (Rev 4).** Of the transforms above, that phase builds stratum → rubble (collapse, §16.4). Decay (§17) is deferred (DEC-059 item 4), and the rubble → sediment → stratum leg, with every transform that ends in soil, is deferred with soil (DEC-057 item 1, `docs/OWNER_DECISIONS.md:952` at `8b235fca`). So rubble stays rubble in that phase.
+- **Water and lava (Rev 4).** This supersedes the rain and evaporation example above ("Only explicitly modelled flows ..."). DEC-040 (logged 2026-09-28, with its water rule added 2026-09-29, both after Rev 3) makes water a closed loop: water that leaves the simulated world is held and rains back, and there is no water sink (`docs/OWNER_DECISIONS.md:643` at `8b235fca`; no deletion sinks at all, `:624` at `8b235fca`). DEC-038 item 3 makes integer centipounds the authoritative water mass (`:578` at `8b235fca`); the depth unit of the Q-WATER row becomes a view derived from the stored mass, not an inventory. In the natural-world build (DEC-058 D2) water and lava change only by transforms between named accounts, each with its cause: evaporation or a real exit (open water → the water-return account); return rain (the water-return account → an exposed receiving cell); a spring (a finite groundwater account → open water); a magma outlet (a finite magma account → lava); and contact quench (lava → an obsidian deposit, and the water it meets → the water-return account). Lava never becomes water. The first water and magma are registered once, and generating a chunk later never credits them again. So Q-MASS[water] never changes, lava changes form only, and the §7.9 transition check covers each cause.
 - **Conjured matter** (*create water*, *wall of stone*) is DEC-018's open sub-question (`docs/OWNER_DECISIONS.md:262`). The ledger supports the PM default as it stands: a magical source or sink with its own cause, like rain. If the Owner rules otherwise, only the cause table changes (§18.6).
 - **Blasts and freezing** are transforms too. A stratum a blast destroys becomes debris at the cell (§18.3). Water that freezes stays Q-MASS[water] in an ice form. Burning stays the named sink it already is (§7.9).
 - **LIFE-002.** No transform may output an *ore* form (`docs/RISK_REGISTER.md:61`). Oxidised metal becomes a trace-mineral sediment form. A test fails any transform table entry whose output is an ore material.
@@ -960,7 +1007,7 @@ Crowd LOD for people (0021-V addendum §9) is an open Owner question (Q14). The 
   - burning (Q-FUEL, Q-OBJ);
   - eating and drinking (Q-ITEM → Q-FOOD/Q-DRINK → a metabolic sink);
   - regrowth (a Q-OBJ source);
-  - springs, rain and drains, if they are ever added (Q-WATER).
+  - springs, rain and drains, if they are ever added (Q-WATER). Rev 4: for water this is superseded by DEC-040; in the natural-world build these are transforms between water accounts, not sources or sinks (§7.8, "Water and lava").
 - **Today's unledgered sources and sinks become defects** under `SIM.90`. Each is fixed or ledgered in its system's sub-lane:
   - NaturalConnections `addFluid`;
   - Fluid reconciliation excess;
@@ -1014,7 +1061,7 @@ Each increment is one lane and one merge. The game boots and plays after each on
 | **R** | WG.00.24 (`docs/worldgen/DEUS_WORLDGEN_WBS.md:112`) | The DEC-017 fallback map renderer, opened only after the Owner's go/no-go (§13) | §13.4 | the host goes back to the stock `Spriteset_Map` |
 
 **Dependencies:** as WBS Rev 24.
-- SIM.00.02 waits on the PM's sign-off of this ADR, the OPS.10.01 merge gate and OPS.50.04 (`docs/worldgen/DEUS_WORLDGEN_WBS.md:520`).
+- SIM.00.02 waits on the PM's sign-off of this ADR, the OPS.10.01 merge gate and OPS.50.04 (`docs/worldgen/DEUS_WORLDGEN_WBS.md:520`). The sign-off was given at Rev 4 (2026-10-01).
 - SIM.00.03 also waits for Lanes N and K (`:521`).
 - WG.61.01/.02 are written against the core after SIM.00.03 (`docs/worldgen/DEUS_WORLDGEN_WBS.md:650`).
 
@@ -1041,7 +1088,7 @@ These don't depend on Lane K. They are ceilings the storage design already impli
 |---|---|---|---|
 | `sim.grid_bytes` | chunk storage of one area (§15.3) | headless: sum of the directory and all chunk array byte lengths; the harness also prints `C`, `M`, `W`, `H` | **Formula**, every fixture, both ranges: ≤ 2 × C + 7,680 × M + 1,024 × W + 5,120 × H + 16 KiB. **Worst case** (every chunk MIXED, wet and damaged): 27 MiB per area at 32 layers. Without damage it is 17 MiB at 32 layers and 4.8 MiB at 9. **Sparse fixture:** `grid_bytes(32) − grid_bytes(9) ≤ 2 × (2,048 − 576) = 2,944 B`. **Seed fixture:** ≤ 8 MiB at 32 layers (a ceiling; the first measurement confirms it or amends this row) |
 | `save.bytes` | size of `deusSim` (§11.2) | headless save, JSON length in bytes | **Fresh world:** the terrain and fluid parts are 0 bytes at both ranges, because a fresh world has no diffs. **Sparse fixture after the play script:** `save.bytes(32) − save.bytes(9) ≤ 256 B` (the range, band table and header differ; untouched chunks aren't saved). **General:** grows only with changed cells, moved fluid and records (§15.5) |
-| `sim.heap_mib` | retained heap of the whole core state (grids, records, history), after GC | headless: `v8.getHeapStatistics().used_heap_size` after `global.gc()` (`--expose-gc`), on the seed fixture at Year 0 and on an age-500 fixture | absolute value PENDING: the first measurement sets it. **Sparse fixture:** `heap(32) − heap(9) ≤ grid_bytes(32) − grid_bytes(9) + 64 KiB`. So no structure other than the chunk directory may be dense in the layer count |
+| `sim.heap_mib` | retained heap of the whole core state (grids, records, history), after GC | headless: `v8.getHeapStatistics().used_heap_size` after `global.gc()` (`--expose-gc`), on the seed fixture at Year 0 and on an age-500 fixture | absolute value PENDING: the first measurement sets it. **Sparse fixture:** `heap(32) − heap(9) ≤ grid_bytes(32) − grid_bytes(9) + 64 KiB`. So no structure other than the chunk directory and the §5.1 region index (Rev 4; §15.3) may be dense in the layer count |
 | `lod.active_regions` | L1 and L2 regions in the schedule lists (§5.5) | core counter | **Sparse fixture:** the same count at 9 and at 32 layers. Dormant regions are never listed |
 | `support.work_per_tick` | support cells re-evaluated in one tick | core counter | 0 while nothing changes (V133); ≤ `SUPPORT_BUDGET` (§16.3) otherwise; the same at 9 and 32 layers on the sparse fixture |
 | `decay.work_per_tick` | structures stepped by decay in one tick | core counter | ≤ ⌈active decaying structures / 2,400⌉ (spread over a game day, §17.4) |
@@ -1054,7 +1101,7 @@ These don't depend on Lane K. They are ceilings the storage design already impli
 - Lane K's K3 harness (`tools/bench_render_layers.js`, 0017-Q §4; the stress scenario, 0019-T §2) writes `tasks/WG.00.09b/lane-k/perf/baseline_<sha8>.json` (normal) and `stress_baseline_<sha8>.json` (stress).
 - At the time of writing (2026-09-26, 02:40 CT), those files existed only on Lane K's local branch, at commit `4da2e734`. That commit wasn't on `origin` and hadn't been reviewed (Appendix B). This ADR doesn't adopt its numbers.
 - The column "K3 measurement" names the field that fills each row. The field names are as in that commit. If the reviewed K3 schema renames them, the amendment uses the reviewed names.
-- **Before SIM.00.03 starts,** this section must be amended with, for each row: the K3 value, the measured headless value, and the budget derived from them. Per 0018-R §3c item 12, the PM may sign off with PENDING-K3 only on that condition.
+- **Before SIM.00.03 starts,** this section must be amended with, for each row: the K3 value, the measured headless value, and the budget derived from them. Per 0018-R §3c item 12, the PM may sign off with PENDING-K3 only on that condition. The PM signed Rev 4 on that condition (§0 item 12). If SIM.00.03 is about to start and this section has not been amended, the sign-off lapses: the status goes back to PROPOSED and SIM.00.03 waits. Lane K's K3 files have reached `main` since Rev 3 (Rev 4 change log), so the K3 values can now be read; the measured headless values wait for SIM.00.02's headless runner. The rows below are still the Rev 3 ceilings.
 - **Benchmark hygiene (DEC-017, `docs/OWNER_DECISIONS.md:247`).** Each perf record notes the concurrent worker count and CPU %, and go/no-go evidence needs one quiet-machine rerun.
 
 | Metric | Definition | Method | Ceiling at 1x | Ceiling at 8x | K3 measurement that fills it |
@@ -1254,7 +1301,7 @@ contents.deusView = { viewLevel, camera, select, plans, fog, minimapDiscovery, a
 | Q11 | PM | Fog-of-war memory: presentation (`deusView`) until a gameplay rule reads it? | Yes |
 | Q12 | Owner/PM | What is a game year? The code has 1 per game day (`DEUS_Core.js:321-325`); `docs/systems/DEUS_History.md:1163` says over 100 real hours at 1x | The calendar owner settles it before SIM.30.05 |
 | Q13 | PM | Regions per 2-layer slab (Rev 3, §5.1) rather than per DEC-013 band (Rev 2) or full-height column (Rev 1)? | Slabs; SIM.30.04's bench may change `SLAB_SHIFT` |
-| Q14 | Owner | Crowd LOD for people (DEC-014, `docs/OWNER_DECISIONS.md:199-208`, OPEN with PM defaults): no population cap; a budget of fully simulated individuals; the rest as counts that keep the three identity axes (craft, civic office, class) and an obligation level (`docs/OWNER_DECISIONS.md:206`). §7.5 keeps every person tracked by default. If the Owner adopts crowd LOD, persons with no history record, household role or reference could be bucketed under those axes, plus this ADR's own bucket keys (species, age band, sex) and faction and settlement, and promotion would rebuild them. History persons always stay individual | Keep persons tracked until the post-split benchmark sizes the budget |
+| Q14 | Owner | Crowd LOD for people (DEC-014, `docs/OWNER_DECISIONS.md:199-208`, OPEN with PM defaults): no population cap; a budget of fully simulated individuals; the rest as counts that keep the three identity axes (craft, civic office, class) and an obligation level (`docs/OWNER_DECISIONS.md:206`). §7.5 keeps every person tracked by default. If the Owner adopts crowd LOD, persons with no history record, household role or reference could be bucketed under those axes, plus this ADR's own bucket keys (species, age band, sex) and faction and settlement, and promotion would rebuild them. History persons always stay individual | Keep persons tracked until the post-split benchmark sizes the budget. Rev 4: DEC-057 and DEC-058 do not settle this; they place monsters, fauna and flora and do not bucket persons (§7.5). It stays with the Owner |
 | Q15 | PM | SIM.40 (§16, §17, §18) runs in the core, so it needs the terrain sub-lane of SIM.00.05 first. Should that dependency be added to SIM.40.01 and .05 (WBS Rev 24 lists WG.00.17 and SIM.00.01, and SIM.40.01 and SIM.00.01: `docs/worldgen/DEUS_WORLDGEN_WBS.md:533`, `:537`)? | Yes |
 | Q16 | Owner | When WG.00.17 raises the range, are existing 5-level saves upgraded to 32 layers (the new layers generated from the seed), or kept at 5? | Keep old saves at 5; new worlds at 32. An upgrade path can come later: the core's range is data (§15.2) |
 | Q17 | Owner | V135 labels the five fluid depth states 1 to 5 ft, for 1 ft strata (`docs/VISION.md:129`). With DEC-013's 2 ft strata the same five states are 2 to 10 ft deep. Keep the five states and relabel them in feet, or change the states? | Keep the states; the feet become 2, 4, 6, 8, 10 |
@@ -1262,6 +1309,22 @@ contents.deusView = { viewLevel, camera, select, plans, fog, minimapDiscovery, a
 | Q19 | Owner | DEC-018's open sub-question: conjured matter versus LIFE-001 (`docs/OWNER_DECISIONS.md:262`) | None from this ADR. The ledger supports the PM default and the alternatives (§7.8) |
 | Q20 | Coordinator | WBS rows WG.00.20, WG.00.21 and GP.07.02 (`docs/worldgen/DEUS_WORLDGEN_WBS.md:108`, `:109`, `:577`) cite DEC-017, DEC-018 and "DEC-019; V148" for the decisions `docs/OWNER_DECISIONS.md` records as DEC-020 (`:282`), DEC-021 (`:293`) and DEC-022 (`:304`), and VISION as V151 (`docs/VISION.md:412`). This ADR cites `docs/OWNER_DECISIONS.md` | Correct the WBS references (`tasks/SIM.00.01/lane-m/escalation.md`) |
 | Q21 | Owner | DEC-019 rules on rises of 1, 2 and 5 strata. What is a rise of 3 or 4 strata (6 or 8 ft): a harder climb, or impassable without stairs, a ladder or a ramp? | WG.00.19 proposes; the Owner confirms |
+
+### 12.4 PM answers at sign-off (Rev 4)
+
+DEC-059 item 3 has the PM record each choice it makes in signing (`docs/OWNER_DECISIONS.md:991` at `8b235fca`); the Owner can change any of them. On the questions §12.3 marks "PM", the PM takes this ADR's recommendation:
+
+| # | Answer | What it changes |
+|---|---|---|
+| Q1 | Yes: the calendar moves into the core at SIM.00.02 (Increment 1) | the SIM.00.02 and SIM.00.05 rows say so when SIM.00.02 is dispatched |
+| Q2 | Yes: terrain (first), Ownership, TimeSpeed timers and the Anim death lifecycle are SIM.00.05 sub-lanes | the SIM.00.05 row, when it is dispatched |
+| Q8 | `tools/bench_history_sim.js` is fixed under the SIM.10.01 retro | nothing now |
+| Q10 | Regions are 32×32; SIM.30.04's bench may still choose 16 (`REGION_SHIFT`) | nothing now |
+| Q11 | Fog-of-war memory is presentation (`deusView`) until a gameplay rule reads it | nothing now |
+| Q13 | Regions are per 2-layer slab; SIM.30.04's bench may change `SLAB_SHIFT` | nothing now |
+| Q15 | Not answered now. SIM.40.01 delivers a design spec, and that design is merged (`docs/worldgen/DEUS_WORLDGEN_WBS.md:554` at `8b235fca`). SIM.40.05's design is merged too, and the decay simulation its row asks for is deferred (DEC-059 item 4; `:558` at `8b235fca`). So a dependency added to either now orders no code. The PM answers Q15 when the first SIM.40 implementation leaf is dispatched | nothing now |
+
+Q9 and Q20 are the Coordinator's; under DEC-048 any edit they lead to on `main` is a PM commit, outside this sign-off. Q12 and Q18 are shared with the Owner, and the Owner's questions (Q3 to Q7, Q14, Q16, Q17, Q19, Q21) stay open: DEC-054 to DEC-064 answer none of them by number.
 
 ---
 
@@ -1495,7 +1558,7 @@ At 32 layers these grow 32/5 times. WG.00.17's row already requires sparse stora
 | **MIXED** | arrays: strata materials (`Uint8`, 5 per cell), connectors (4 bits), objects (`Uint16`), fluid (`Uint8`, allocated only once some cell has fluid), stratum HP (`Uint8` × 5, allocated only once some stratum is damaged) | everything else |
 
 **Behaviour:**
-- **The directory.** Each area keeps 2 bytes per chunk: the kind and, for a UNIFORM chunk, its material. That is 4 KiB per area at 32 layers (2,048 chunks) and 1,152 B at 9. It is the only per-area structure whose size follows the layer count, and it is derived, not saved.
+- **The directory.** Each area keeps 2 bytes per chunk: the kind and, for a UNIFORM chunk, its material. That is 4 KiB per area at 32 layers (2,048 chunks) and 1,152 B at 9. It is derived, not saved. It is not the only per-area structure whose size follows the layer count: the region index of §5.1 grows with it (one level byte per region, 1 KiB at 32 layers and 320 B at 9, plus region bitsets of 128 B and 40 B). §9.1's heap budget allows 64 KiB beyond the directory's growth, which covers the index.
 - **Reads** from a UNIFORM chunk return the uniform value.
 - **The first write** to any cell *splits* the chunk: it allocates MIXED arrays filled with the uniform value, then writes. That costs O(1,024), and it is deterministic.
 - **Classification** happens after generation and after load (baseline from the seed, then saved diffs). It is a cache. It isn't saved.
@@ -1592,6 +1655,7 @@ V137 is at `docs/VISION.md:131` (from directive 0021-V §6). The WBS packages ar
 
 1. **Falling.** An unsupported solid stratum falls straight down to the first stratum that can hold it, within the same tick.
 2. **Conversion.** It becomes rubble or talus of the same material family at the landing cell. It spills to neighbours in canonical order if the landing cell is full. This is `ledger.transform(stratum → rubble)`, and Q-MASS doesn't change (§7.8). It also closes today's "debris only named in an event" hole.
+   - **Natural-world phase (Rev 4):** rubble is the terminal form. DEC-057 item 1 stops collapse at rubble (`docs/OWNER_DECISIONS.md:952` at `8b235fca`), and nothing moves rubble on to sediment while §17 is deferred. The rubble is real and carries its mass. Natural collapse rubble is registered once and marked eligible for reclamation, for when reclamation is built; in this phase that is bookkeeping only and runs nothing.
 3. **Impact (V95).** Units and objects in the fall path take damage from mass × fall height, reduced by armour.
    - Objects break into their catalog remains, which is a transform. The Doors path already does this: `DEUS_Doors.js:444-445`.
    - Units get `UNIT_ANIM` hurt or die records in the feed.
@@ -1630,6 +1694,8 @@ V137 is at `docs/VISION.md:131` (from directive 0021-V §6). The WBS packages ar
 V138 is at `docs/VISION.md:132` (from directive 0021-V §7). The geology end state is directive 0021-V §8. The WBS packages are SIM.40.05–.09 (`docs/worldgen/DEUS_WORLDGEN_WBS.md:537-541`). The risks are LIFE-001..003 (`docs/RISK_REGISTER.md:60-62`).
 
 **Range.** As in §16, nothing here depends on the layer count. The same heaps and rules run on −16..+15, on the test range and on the legacy range.
+
+**Natural-world phase (Rev 4).** Structure decay is deferred (DEC-059 item 4, `docs/OWNER_DECISIONS.md:992` at `8b235fca`), and the soil and sediment steps of reclamation are deferred with soil (DEC-057 item 1). This section stays the design contract for SIM.40.05–.09. No natural-world lane (DEC-058 D1–D4) builds or switches on any part of it; its own WBS leaves build it once the deferral ends. The one exception is bookkeeping: natural collapse rubble is registered as eligible for reclamation (§16.4), and nothing runs reclamation.
 
 ### 17.1 What exists
 
@@ -1672,6 +1738,7 @@ V138 is at `docs/VISION.md:132` (from directive 0021-V §7). The geology end sta
   - Growth spreads only from neighbouring vegetation, and matures by day counts.
   - New growth is Ecology's ledgered regrowth source. Nothing is created from nothing.
 - **Sediment** burial is a transfer. Soil or rubble erodes at an exposed source cell in the same drainage (−k) and deposits at the low cell (+k). Its schedule is "next deposit day", in closed form like `failDay`.
+  - Natural-world phase (Rev 4): deferred with soil (DEC-057 item 1). No rubble or soil becomes sediment in that phase, and the geology end state below waits with it (§7.8, "Rubble is terminal"). Lava never becomes water there either: the quench makes obsidian (§7.8, "Water and lava").
 - **Item weathering** is a set of form transforms, each on its own day, held in a min-heap:
   - organic → soil (rot);
   - iron and copper → oxidised trace-mineral sediment, never ore (LIFE-002, `docs/RISK_REGISTER.md:61`);
@@ -1770,8 +1837,9 @@ effective(T) = dmg(T) × resist[material(T)][damageType]  → HP loss exactly as
 - **Breach, shell by shell.** Targets are processed shell by shell, outward from the centre. Within a shell the order is increasing `d2`, then elevation, then cell index. A stratum destroyed earlier in the same event counts as air for everything after it. So when a blast breaks through a floor, the strata beyond it, on the layer below, take the remainder, attenuated only by what is still standing. This is DEC-013's "damage floors and propagate damage to the layer below depending on floor material, thickness, and attenuation".
 - **Vertical distance and falloff in true feet.** Distance uses 2 ft strata and 10 ft layers (§15.0). The layer below a floor is further from the centre than the floor, so it gets less than the floor did even before attenuation.
 - **Fire versus impact.** The traversal is the same; the tables differ by type.
-  - `impact` and `blast` pass thin or weak strata and break them (today's resist: stone 1, soil 1.5, wood 1.2), and after a breach they carry into the layer below.
+  - `impact` and `blast` pass thin or weak strata and break them (today's resist for `blast`: stone 1, soil 1.5, wood 1.2; for `impact`: stone 0.5, soil 1, wood 1; `DEUS_Levels.js:1005-1007`), and after a breach they carry into the layer below.
   - `fire` barely passes solids (a low `passPm`), hits combustibles hard (today's resist: wood 2, stone 0.1; `DEUS_Levels.js:1005-1007`), and **ignites**. Every combustible stratum or object it reaches above an ignition threshold becomes a Fire record (§18.6). So a fireball on a wooden floor burns through it, and the Fire system can then spread (SIM.50.05).
+    - Natural-world phase (Rev 4): fire is deferred (DEC-059 item 4). This rule stays the design for when SIM.50.05 builds the Fire system; until then no natural-world lane makes volume damage ignite anything or moves Fire into the core (§3.8, step 5).
   - `cold` does no HP damage to strata by default. It freezes the fluid strata it reaches (§18.6).
   - The other SRD damage types map to one of these in the SIM.60.02 schema.
 - **One visit per stratum.** `pass(T)` is built from its parent's value, and the parent is in an inner shell, so it has always been processed first. Each stratum in the blast's box is visited once (`blast.strata_visited`, §9.1). A large blast therefore costs O(strata in its box), not O(strata × radius). The chain of parents approximates the straight line, because each link points at the centre. The tests pin the behaviour down (§18.8).

@@ -1,3 +1,3 @@
 # DEUS Architectural Decision Records (ADRs)
 Authoritative repository of architectural decision records capturing system invariants, trade-offs, and design justifications.
-- [ADR-003: Sim/Render Split and Level-of-Detail Simulation](ADR-003_sim_render_split_and_lod.md): PROPOSED, Rev 3 (Lane M, SIM.00.01, 2026-09-26; implements DEC-012; covers DEC-013 as amended (32 layers), V137, V138, DEC-018, DEC-022; adopts DEC-017 as the engine exit path).
+- [ADR-003: Sim/Render Split and Level-of-Detail Simulation](ADR-003_sim_render_split_and_lod.md): ACCEPTED, Rev 4 (signed by the PM 2026-10-01 under DEC-059 item 3, on condition that §9.2 is amended with K3 measurements before SIM.00.03 starts, and valid only with the ADR's "Review of Rev 4" note; Rev 3 by Lane M, SIM.00.01, 2026-09-26; implements DEC-012; covers DEC-013 as amended (32 layers), V137, V138, DEC-018, DEC-022; adopts DEC-017 as the engine exit path; marks the natural-world deferrals of DEC-057 and DEC-059).
