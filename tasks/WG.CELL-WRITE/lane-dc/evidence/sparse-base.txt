@@ -1,0 +1,10 @@
+sparse outer save
+INFO terrain+range -16..+15 334 (levels 275 zRange 22 fluid 37) -4..+4 332 (levels 275 zRange 20 fluid 37) diff 2
+PASS fresh_save_terrain_range_bound - diff 2 B (bound 256) untouched seed 18 before view or change
+PASS all_32_layers_reconstructible_unchanged - 32 baseline checksums match the lane-base constants
+PASS new_game_core_entries_only - keys [-2,-1,0,1,2]
+PASS view_does_not_save - view {"x":0,"y":0,"z":0} setView -10 true +12 true baselines -10,12 makeSaveContents().ufWorld.levels [-2,-1,0,1,2]
+PASS migration_keeps_real_outer_change - present -10 true 15 true byteIdentical true
+PASS revert_drops_outer_entry - caseA (cell 0,0 dug true hadEntry true revert true entryAfter gone) caseB revert true entryAfter gone keptChecksumBeforeRevert true
+PASS migration_strips_checksum_only_entries - first outer [-10,15] migrations [{"rule":"WG.00.43","stripped":25}]; second outer [-10,15] migrations 1
+RESULT: 7 passed, 0 failed

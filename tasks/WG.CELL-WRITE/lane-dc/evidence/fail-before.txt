@@ -1,0 +1,29 @@
+area generation speed
+FAIL no_rest_parameter_hash_on_generator_path - line 205: spread into hash32; line 205: rest rand/rnd/rint/rfl; line 324: rest-parameter hash32; line 324: spread into hash32; line 617: spread into hash32; line 617: rest rand/rnd/rint/rfl
+one_area_volume_ms sample 1 17912.0 ms
+one_area_volume_ms sample 2 17315.3 ms
+one_area_volume_ms sample 3 15284.4 ms
+one_area_volume_ms samples 17912.0 17315.3 15284.4 median 17315.3
+FAIL one_area_volume_ms - median 17315.3 ms, limit 5000
+checksum gen 1 seed 18 1x1 1972.2 ms z0 0779462c
+checksum gen 2 seed 18 1x1 785.2 ms z0 0779462c
+checksum gen 3 seed 18 1x1 6524.6 ms z0 0779462c
+checksum gen 4 seed 18 1x1 11918.8 ms z0 0779462c
+checksum gen 5 seed 18 1x1 13732.8 ms z0 1f5c2a72
+checksum gen 1 seed 20260927 1x1 1696.7 ms z0 664e5663
+checksum gen 2 seed 20260927 1x1 760.2 ms z0 664e5663
+checksum gen 3 seed 20260927 1x1 6471.6 ms z0 664e5663
+checksum gen 4 seed 20260927 1x1 12007.6 ms z0 664e5663
+checksum gen 5 seed 20260927 1x1 12366.1 ms z0 3bec30ce
+checksum gen 1 seed 18 3x3 15038.0 ms z0 353be9a8
+checksum gen 2 seed 18 3x3 8913.5 ms z0 353be9a8
+checksum gen 3 seed 18 3x3 62991.2 ms z0 353be9a8
+checksum gen 4 seed 18 3x3 119260.8 ms z0 353be9a8
+checksum gen 5 seed 18 3x3 137772.4 ms z0 8c73447f
+checksum gen 1 seed 20260927 3x3 13742.2 ms z0 25482ae8
+checksum gen 2 seed 20260927 3x3 7569.5 ms z0 25482ae8
+checksum gen 3 seed 20260927 3x3 56346.5 ms z0 25482ae8
+checksum gen 4 seed 20260927 3x3 119375.2 ms z0 25482ae8
+checksum gen 5 seed 20260927 3x3 124349.4 ms z0 58c88b58
+PASS core_checksums_bit_identical
+RESULT fail 2

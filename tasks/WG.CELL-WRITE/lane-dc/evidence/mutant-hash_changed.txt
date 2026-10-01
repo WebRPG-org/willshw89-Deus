@@ -1,0 +1,25 @@
+area generation speed mutant hash_changed
+PASS no_rest_parameter_hash_on_generator_path
+one_area_volume_ms SKIP mutant (the mutant's named check is core_checksums_bit_identical)
+checksum gen 1 seed 18 1x1 128.7 ms z0 0779462c
+checksum gen 2 seed 18 1x1 296.3 ms z0 0779462c
+checksum gen 3 seed 18 1x1 277.7 ms z0 0779462c
+checksum gen 4 seed 18 1x1 2008.9 ms z0 0779462c
+checksum gen 5 seed 18 1x1 3015.7 ms z0 108b86e1
+checksum gen 1 seed 20260927 1x1 146.5 ms z0 664e5663
+checksum gen 2 seed 20260927 1x1 349.4 ms z0 664e5663
+checksum gen 3 seed 20260927 1x1 319.2 ms z0 664e5663
+checksum gen 4 seed 20260927 1x1 2493.1 ms z0 664e5663
+checksum gen 5 seed 20260927 1x1 2920.8 ms z0 49fb6e78
+checksum gen 1 seed 18 3x3 1324.6 ms z0 353be9a8
+checksum gen 2 seed 18 3x3 5233.7 ms z0 353be9a8
+checksum gen 3 seed 18 3x3 6390.8 ms z0 353be9a8
+checksum gen 4 seed 18 3x3 33671.2 ms z0 353be9a8
+checksum gen 5 seed 18 3x3 36481.4 ms z0 6a052931
+checksum gen 1 seed 20260927 3x3 1458.7 ms z0 25482ae8
+checksum gen 2 seed 20260927 3x3 4938.8 ms z0 25482ae8
+checksum gen 3 seed 20260927 3x3 6584.0 ms z0 25482ae8
+checksum gen 4 seed 20260927 3x3 35305.8 ms z0 25482ae8
+checksum gen 5 seed 20260927 3x3 39003.9 ms z0 c76e9523
+FAIL core_checksums_bit_identical - g1_s18_1x1 z -2 11dc84dd != f6aad9f4; g1_s18_1x1 z -1 91587e37 != 2ab1e64b; g2_s18_1x1 z -2 7a907a8b != 57f31d52; g2_s18_1x1 z -1 1bc0cfbb != 7d96f971; g3_s18_1x1 z -2 6cd8e088 != 9978c5f8; g3_s18_1x1 z -1 5532e97f != 17ea0567; g4_s18_1x1 z -2 6cd8e088 != 9978c5f8; g4_s18_1x1 z -1 18ac30f7 != f023c77b
+RESULT fail 1
