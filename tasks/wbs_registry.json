@@ -153,7 +153,7 @@
       "soleWriterOf": ["game/js/sim/ledger.js", "game/js/sim/ledger_defaults.js", "game/js/sim/materials.js", "game/data/sim/materials.json", "game/js/sim/reclaim.js", "shared mass arithmetic and conversion helpers"],
       "parts": "7 parts, numbered once at the wave-2 D1 reconciliation (2026-10-01): 1 lane-dn, 2 lane-do, 3 lane-dp (absorbs lane-dt's obsidian row and adds the peridotite band rock row), 4 lane-dr, 5 lane-dq (adds ensureCore/ensureChamber for WG.62.04), 6 lane-ds, 7 lane-fu; manifests tasks/NAT.02.MASS/<lane>/lane.json",
       "design": "braintrust DESIGN-D2_merged_chatgpt_pro.md line 284; DESIGN-D3_merged_chatgpt_pro.md lines 67 and 266 (2026-09-30)",
-      "decisions": ["DEC-038", "DEC-040", "DEC-058"],
+      "decisions": ["DEC-038", "DEC-040", "DEC-058", "DEC-065"],
       "closesWhen": "every part is merged; a first part never closes the leaf"
     },
     "WG.CELL-WRITE": {
@@ -165,7 +165,7 @@
       "ownership": "Only WG.CELL-WRITE parts edit DEUS_Levels.js. D1 Levels work (lanes da, dc, dd, dg, di, dj) runs as WG.CELL-WRITE parts that cross-reference their D1 deliverable; D1-GEO lanes (df, dh, dk, dl, and fn's WG.62.03 part) get no Levels path. Replaces PLAN.md risk 25 (WORK-GATE G02 section 3). Enforced at plan time by the plan validator of the PM, and at merge time also by tools/governance/lane_ownership.js once the Owner has approved its leaf (proposed OPS.10.06, lane-fw) and it has merged.",
       "parts": "15 parts, numbered once at the wave-2 D1 reconciliation (2026-10-01): 1 lane-da (WG.00.43), 2 lane-dc (WG.00.45), 3 lane-dd (WG.00.46), 4 lane-du, 5 lane-dw, 6 lane-dv, 7 lane-dx, 8 lane-dy, 9 lane-dz, 10 lane-fm, 11 lane-dg (WG.00.30), 12 lane-di (WG.62.03), 13 lane-dj (WG.62.04), 14 lane-fq, 15 lane-eg; manifests tasks/WG.CELL-WRITE/<lane>/lane.json",
       "design": "braintrust DESIGN-D2_merged_chatgpt_pro.md line 285; DESIGN-D3_merged_chatgpt_pro.md lines 68 and 267; DESIGN-D1_merged_grok_heavy.md section 3.2",
-      "decisions": ["DEC-037", "DEC-058"],
+      "decisions": ["DEC-037", "DEC-058", "DEC-065"],
       "closesWhen": "every part is merged; a first part never closes the leaf"
     },
     "WG.00.43": {
@@ -213,6 +213,7 @@
     },
     "WG.00.46": {
       "title": "Levels generates an area only when asked: per-area checksums, the areaGenerated event, load-order queueing",
+      "decisions": ["DEC-058", "DEC-065"],
       "package": null,
       "packageNote": "none: natural-world build leaf (DEC-058); WORK-GATE G02 assigns no package",
       "status": "PLANNED",
