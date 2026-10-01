@@ -1,0 +1,16 @@
+{
+  "canonicalId": "UNDERGROUND_FLOOR_MINED-STONE_A2_DEFAULT",
+  "name": "mined_stone",
+  "date": "2026-10-01",
+  "author": "Owner (PixelLab)",
+  "pixellabId": "74a93c7b-3e10-43c5-9c6e-525cbfaf9b28",
+  "fillTile": 0,
+  "palette": "deus_master_world_palette_v1.hex",
+  "dimensions": {
+    "width": 48,
+    "height": 48
+  },
+  "sourceFolder": "C:\\Users\\snewt\\DEUS_backups\\pixellab_2026-09-30\\tiles_pro",
+  "status": "EXISTING_UNAPPROVED",
+  "statusWhy": "Owner source selected for lane-cy2 induction; independent review pending"
+}

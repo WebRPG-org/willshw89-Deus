@@ -4,9 +4,9 @@
 /**
  * tools/art/induct_all_ground_tiles.js
  *
- * Inducts only the Owner's selected 2026-10-01 Tiles Pro sets. Uncovered
- * game slots retain their pre-lane pixels. The gallery holds the 13 selected
- * source swatches, and each source set receives a palette-snapped master.
+ * Places the ground set table from both Owner backup batches. Missing dry and
+ * damp variants borrow their placed base block. The two missing base kinds
+ * retain their pre-lane pixels.
  */
 
 const fs = require('fs');
@@ -202,62 +202,37 @@ function buildA2Block(baseTile, edgeColorHex, highlightHex) {
     return block;
 }
 
-// Only the Owner's 2026-10-01 Tiles Pro folder is an input to this induction.
-// Earlier game pixels are preserved where this limited source batch has no set.
 const KEPT = require('./ground_kept_sets.json');
-const SOURCE_DIR = KEPT.sourceFolder;
 const ALLOWED = new Set(KEPT.allowedIds);
-const SPECS = {
-  dry_grass_damp: { id:'SURFACE_SHARED_TERRAIN_DRY-GRASS_V1_DEFAULT', edge:'#6A5310', hi:'#B09430' },
-  forest_floor_damp: { id:'SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V1_DEFAULT', edge:'#261811', hi:'#5B3A26' },
-  needle_floor_damp: { id:'SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V1_DEFAULT', edge:'#1B110B', hi:'#462C18' },
-  sand_damp: { id:'SURFACE_SHARED_TERRAIN_SAND_V1_DEFAULT', edge:'#6E5536', hi:'#B89C72' },
-  sand_dry: { id:'SURFACE_SHARED_TERRAIN_SAND_V3_DEFAULT', edge:'#B2936B', hi:'#F6DEC0' },
-  stony_dry: { id:'SURFACE_SHARED_TERRAIN_STONY_V3_DEFAULT', edge:'#625852', hi:'#B2A69E' },
-  rock_damp: { id:'SURFACE_SHARED_TERRAIN_ROCK_V1_DEFAULT', edge:'#292929', hi:'#626262' },
-  marsh_mud_base: { id:'SURFACE_SHARED_TERRAIN_MUD_V2_DEFAULT', edge:'#3D281D', hi:'#7D5843' },
-  marsh_mud_dry: { id:'SURFACE_SHARED_TERRAIN_MUD_V3_DEFAULT', edge:'#503527', hi:'#9B7157' },
-  dirt_damp: { id:'SURFACE_SHARED_TERRAIN_DIRT_V1_DEFAULT', edge:'#322213', hi:'#664A2E' },
-  dirt_dry: { id:'SURFACE_SHARED_TERRAIN_DIRT_V3_DEFAULT', edge:'#4D361F', hi:'#8C6741' },
-  road_trail: { id:'SURFACE_SHARED_TERRAIN_ROAD_A2_DEFAULT', edge:'#75583B', hi:'#C09C72' },
-  cave_floor: { id:'ALL_SHARED_TERRAIN_CAVE-FLOOR_A2_DEFAULT', edge:'#2A2A2E', hi:'#62626A' }
-};
-
-const OUTSIDE_SLOTS = {
-  7:'dry_grass_damp', 15:'marsh_mud_base', 18:'dirt_damp', 19:'dirt_dry',
-  20:'forest_floor_damp', 22:'road_trail', 24:'sand_damp', 25:'sand_dry', 28:'rock_damp'
-};
-const DUNGEON_SLOTS = {
-  0:'cave_floor', 5:'stony_dry', 7:'marsh_mud_dry', 9:'rock_damp',
-  12:'dirt_damp', 14:'sand_damp'
-};
-// Keep lane-cy's D swatch positions so existing tile IDs retain their meanings.
-const GALLERY_SLOTS = {
-  dry_grass_damp:3, forest_floor_damp:9, needle_floor_damp:12,
-  sand_damp:15, sand_dry:16, stony_dry:19, rock_damp:21,
-  marsh_mud_base:26, marsh_mud_dry:28, dirt_damp:33, dirt_dry:34,
-  road_trail:38, cave_floor:39
-};
+const SPECS = KEPT.specs;
+const OUTSIDE_SLOTS = KEPT.expectedOutsideSlots;
+const DUNGEON_SLOTS = KEPT.expectedDungeonSlots;
+const GALLERY_SLOTS = KEPT.expectedGallerySlots;
 const STAND_INS = [
-  'Outside A2 slot 6 dry_grass_dry uses the existing dry_grass_base block at slot 2',
-  'Outside A2 unselected base and variant slots retain the pre-lane pixels, including transparent slots',
-  'Dungeon A2 peak_rock_damp/dry, swamp_mud_dry and dug_earth retain the pre-lane stock blocks'
+  'Outside A2 slot 6 dry_grass_dry uses newly placed dry_grass_base block',
+  'Dungeon A2 slots 3 and 4 peak_rock_dry/damp use newly placed peak_rock_base block',
+  'Outside A2 slot 16 swamp_mud_base retains the main pixels: no kept base set',
+  'Dungeon A2 slot 6 swamp_mud_dry retains its stock block (PM exception): no kept base set, and a blank autotile draws nothing',
+  'Dungeon A2 slot 1 dug_earth retains its stock block: no kept set'
 ];
 
+function sourceFile(id,fillTile) {
+  const filename=id+'__'+String(fillTile).padStart(2,'0')+'.png';
+  const matches=KEPT.sourceFolders.map(dir=>path.join(dir,filename)).filter(file=>fs.existsSync(file));
+  if(matches.length!==1) throw Error('source missing or ambiguous: '+filename);
+  return matches[0];
+}
 function validateSources() {
-  const actual = fs.readdirSync(SOURCE_DIR).filter(f=>f.endsWith('.txt')).map(f=>f.slice(0,-4)).sort();
-  if (actual.length !== 15 || actual.some((id,i)=>id!==[...ALLOWED].sort()[i])) throw Error('source folder differs from the 15-ID allowlist');
   if (Object.keys(SPECS).sort().join('|') !== Object.keys(KEPT.selected).sort().join('|')) throw Error('specification/selection mismatch');
   for(const [key,[id,fillTile]] of Object.entries(KEPT.selected)) {
     if(!ALLOWED.has(id) || KEPT.unusedAlternatives.includes(id)) throw Error('unapproved source '+key+': '+id);
     if(fillTile!==0 && fillTile!==15) throw Error('not a solid terrain tile: '+key);
-    const image=path.join(SOURCE_DIR, id+'__'+String(fillTile).padStart(2,'0')+'.png');
-    if(!fs.existsSync(image)) throw Error('missing source: '+image);
+    sourceFile(id,fillTile);
   }
 }
 function selectedTile(key) {
   const [id,fillTile]=KEPT.selected[key];
-  const file=path.join(SOURCE_DIR,id+'__'+String(fillTile).padStart(2,'0')+'.png');
+  const file=sourceFile(id,fillTile);
   const img=decodePNG(fs.readFileSync(file));
   if(img.width!==48 || img.height!==48) throw Error('source dimensions: '+file);
   const seamless=makeSeamless(img.data);
@@ -270,6 +245,11 @@ function selectedTile(key) {
 }
 function blit(dst,dstWidth,src,srcWidth,x0,y0,w,h) {
   for(let y=0;y<h;y++)src.copy(dst,((y0+y)*dstWidth+x0)*4,y*srcWidth*4,(y*srcWidth+w)*4);
+}
+function masterFromBaseline(outside,slot) {
+  const tile=Buffer.alloc(48*48*4),x=slot*96+24,y=72;
+  for(let row=0;row<48;row++)outside.copy(tile,row*48*4,((y+row)*768+x)*4,((y+row)*768+x+48)*4);
+  return tile;
 }
 function baseline(name) {
   // Fixed lane opening SHA is the pre-induction game. It remains available in gate clones.
@@ -285,13 +265,13 @@ function build() {
     const spec=SPECS[key], [id,fillTile]=KEPT.selected[key];
     const tile=selectedTile(key);
     tiles[key]=tile; blocks[key]=buildA2Block(tile,spec.edge,spec.hi);
-    const dir=path.join(ROOT,'art/masters/source_sets',spec.id);
+    const dir=path.join(ROOT,'art/masters/source_sets',spec.canonicalId);
     fs.mkdirSync(dir,{recursive:true});
     writePNG(path.join(dir,'variant_0.png'),48,48,tile);
     fs.writeFileSync(path.join(dir,'manifest.json'),JSON.stringify({
-      canonicalId:spec.id,name:key,date:'2026-10-01',author:'Owner (PixelLab)',
+      canonicalId:spec.canonicalId,name:key,date:'2026-10-01',author:'Owner (PixelLab)',
       pixellabId:id,fillTile,palette:'deus_master_world_palette_v1.hex',
-      dimensions:{width:48,height:48},sourceFolder:SOURCE_DIR,
+      dimensions:{width:48,height:48},sourceFolder:path.dirname(sourceFile(id,fillTile)),
       status:'EXISTING_UNAPPROVED',
       statusWhy:'Owner source selected for lane-cy2 induction; independent review pending',
       ...(key==='cave_floor' ? {runtime:{kind:'RMMZ_TILESET',file:'img/tilesets/Dungeon_A2.png',tileId:2816}} : {})
@@ -301,24 +281,27 @@ function build() {
   const outside=baseline('Outside_A2.png');
   const dungeon=baseline('Dungeon_A2.png');
   for(const [slot,key] of Object.entries(OUTSIDE_SLOTS)) {
+    if(!key || key==='meadow' || key==='tropical_grass')continue;
     const n=Number(slot);blit(outside,768,blocks[key],96,(n%8)*96,Math.floor(n/8)*144,96,144);
   }
-  // The dry variant has no set in the 2026-10-01 folder; use the base block already in the game.
-  const base=Buffer.alloc(96*144*4);
-  for(let y=0;y<144;y++)outside.copy(base,y*96*4,(y*768+2*96)*4,(y*768+3*96)*4);
-  blit(outside,768,base,96,6*96,0,96,144);
   for(const [slot,key] of Object.entries(DUNGEON_SLOTS)) {
+    if(!key)continue;
     const n=Number(slot);blit(dungeon,768,blocks[key],96,(n%8)*96,Math.floor(n/8)*144,96,144);
   }
   const outDir=path.join(ROOT,'game/img/tilesets');
   writePNG(path.join(outDir,'Outside_A2.png'),768,576,outside);
   writePNG(path.join(outDir,'Dungeon_A2.png'),768,576,dungeon);
   const gallery=Buffer.alloc(768*768*4);
-  Object.entries(GALLERY_SLOTS).forEach(([key,i])=>{const x=(i%8)*48,y=Math.floor(i/8)*48;blit(gallery,768,tiles[key],48,x,y,48,48);});
+  tiles.meadow=masterFromBaseline(outside,0);
+  tiles.tropical_grass=masterFromBaseline(outside,1);
+  for(const [index,key] of Object.entries(GALLERY_SLOTS)) {
+    const i=Number(index),x=(i%8)*48,y=Math.floor(i/8)*48;
+    blit(gallery,768,tiles[key],48,x,y,48,48);
+  }
   writePNG(path.join(outDir,'DEUS_GroundVar_D.png'),768,768,gallery);
   writePNG(path.join(outDir,'Outside_D.png'),768,768,gallery);
   STAND_INS.forEach(line=>console.log('STAND_IN',line));
-  console.log('Inducted '+Object.keys(SPECS).length+' selected sets from the 2026-10-01 folder; 2 alternatives unused.');
+  console.log('Inducted '+Object.keys(SPECS).length+' table-selected sets from both Owner backup folders; 2 alternatives unused.');
 }
 if(require.main===module)build();
 module.exports={build,selectedTile,buildA2Block,SPECS,OUTSIDE_SLOTS,DUNGEON_SLOTS,GALLERY_SLOTS,STAND_INS};
