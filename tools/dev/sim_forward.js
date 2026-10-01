@@ -16,7 +16,6 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
-const simHook = require("../lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 function findRoot() {
     const starts = [__dirname];
@@ -35,6 +34,8 @@ function findRoot() {
 }
 
 const ROOT = findRoot();
+// WG.00.44 hook, from the root found above: test_sim_forward_guard runs mutated copies of this file from a temp folder.
+const simHook = require(path.join(ROOT, "tools", "lib", "vm_sim_require"));
 const FORMAT = "deus.sim_forward.v1";
 const PLUGINS = ["DEUS_Core", "DEUS_World", "DEUS_WorldGen", "DEUS_Factions", "DEUS_History", "DEUS_Levels", "DEUS_Dnd5e", "DEUS_Callings", "DEUS_HistoricalDemographics"];
 const SEED_MAX = 0x7fffffff;
