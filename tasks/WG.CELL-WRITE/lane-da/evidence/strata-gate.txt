@@ -1,0 +1,23 @@
+Recorded tip gate. Same clone and blobs as evidence/pass-after.txt.
+command: node tools/test_strata_cuts_and_caves.js
+timeout_ms: 900000
+started: 2026-10-01T09:54:52.253Z
+ended: 2026-10-01T10:03:44.672Z
+elapsed_ms: 532419
+timed_out: false
+exit: 0
+
+Copied from that stdout:
+INFO newWorld seed 18: generator 5 10709 ms, generator 4 (same code, levelsGen 4) 37290 ms, post-WG.00.15 baseline 23573 ms; natural features 427 ms
+INFO seed set built: 18, 3, 21, 4 (218 s)
+PASS clearance_4_5_more - fixture column (64,30): 1 solid + 4 air under solid 4 ft (derived shape floor: the compatibility view; the clearance is the data), 5 air on -2's S4 5, across -1 and the ground 6 (airRunAt 6), up to +1 9, open sky Infinity, a 2 ft slot 2 (shape solid), solid 0, no floor -1; restored records 0; generated floors: 4 ft (176,39,0), 5 ft (167,31,0), > 5 ft 7 ft (175,46,0); 1,000,000 queries 1103 ns each, heap growth 129728 B (checksum 6075000)
+PASS fluid_suite - node tools/test_strata_fluid_reconciliation.js: exit 0 in 414 s; PASSED: 36; FAILED: 0; MUTANT VERIFICATION: 5/5 mutants detected.
+PASS foundation_suite - node tools/test_strata_foundation.js: exit 0 in 532 s; RESULT: 27 passed, 0 failed (exit 0)
+TIME 532.3 s
+RESULT: 30 passed, 0 failed (exit 0)
+
+Earlier runs of the same command on this same clone, not the recorded gate, in order:
+1. While the base strata suite was also running: exit 1, elapsed_ms 507197. FAIL clearance_4_5_more at 2766 ns (bound 2000). FAIL foundation_suite query_cost (the child log kept only the RESULT line: 26 passed, 1 failed - query_cost).
+2. Alone: exit 1, elapsed_ms 629991. PASS clearance_4_5_more at 1848 ns. FAIL foundation_suite query_cost (26 passed, 1 failed).
+3. Alone: exit 1, elapsed_ms 545302. FAIL clearance_4_5_more at 2586 ns. PASS foundation_suite (27 passed, 0 failed).
+The 2000 ns checks moved across the bound. shapeCodeAt is outside this rework's diff against b889de90 (save/init edits, and removal of buildViewBaselines). The recorded gate is the exit 0 run above (1103 ns).

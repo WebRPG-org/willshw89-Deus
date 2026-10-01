@@ -1,0 +1,46 @@
+Corrected tip, fresh clone C:\Users\snewt\AppData\Local\Temp\lane-da-clones\tip-precommit
+Checkout a51e079fa37c06f048f4a5af56a25ad6732287e0 with core.autocrlf=false, then the two corrected files overlaid.
+Blobs: DEUS_Levels.js 14d9ff5da41af959e4e346c05aed24d24c0acc94 ; test_sparse_outer_save.js 0ec9de3fc3f87b61f4682a32be57aa6a7ffb59ba
+timeout_ms: 900000 each. timed_out: false each.
+
+--- node tools/check_deus_syntax.js ---
+started: 2026-10-01T09:23:51.479Z
+ended: 2026-10-01T09:23:57.162Z
+elapsed_ms: 5682
+exit: 0
+Checked 62 DEUS plugin files. Errors: 0
+
+--- node tools/test_sparse_outer_save.js ---
+started: 2026-10-01T09:23:57.203Z
+ended: 2026-10-01T09:24:43.269Z
+elapsed_ms: 46065
+exit: 0
+sparse outer save
+INFO terrain+range -16..+15 334 (levels 275 zRange 22 fluid 37) -4..+4 332 (levels 275 zRange 20 fluid 37) diff 2
+PASS fresh_save_terrain_range_bound - diff 2 B (bound 256) untouched seed 18 before view or change
+PASS all_32_layers_reconstructible_unchanged - 32 baseline checksums match the lane-base constants
+PASS new_game_core_entries_only - keys [-2,-1,0,1,2]
+PASS view_does_not_save - view {"x":0,"y":0,"z":0} setView -10 true +12 true baselines -10,12 makeSaveContents().ufWorld.levels [-2,-1,0,1,2]
+PASS migration_keeps_real_outer_change - present -10 true 15 true byteIdentical true
+PASS revert_drops_outer_entry - caseA (cell 0,0 dug true hadEntry true revert true entryAfter gone) caseB revert true entryAfter gone keptChecksumBeforeRevert true
+PASS migration_strips_checksum_only_entries - first outer [-10,15] migrations [{"rule":"WG.00.43","stripped":25}]; second outer [-10,15] migrations 1
+RESULT: 7 passed, 0 failed
+
+--- node tools/test_32_levels_generation.js ---
+started: 2026-10-01T09:24:43.321Z
+ended: 2026-10-01T09:24:53.866Z
+elapsed_ms: 10545
+exit: 0
+  [PASS] world_default_zrange_is_32
+  [PASS] core_entries_only
+  [PASS] all_32_levels_reconstructible
+  [PASS] core_levels_have_valid_checksums
+  [PASS] core_levels_have_gen
+  [PASS] level_minus_16_baseline_exists
+  [PASS] level_plus_15_baseline_exists
+  [PASS] no_entry_for_unchanged_minus_10
+  [PASS] no_entry_for_unchanged_plus_10
+Results: 9 passed, 0 failed.
+
+--- node tools/test_strata_cuts_and_caves.js ---
+Recorded run: evidence/strata-gate.txt. exit 0, TIME 532.3 s, 30 passed.

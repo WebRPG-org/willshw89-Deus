@@ -1,0 +1,21 @@
+Command: node tools/test_sparse_outer_save.js
+Where: fresh shared clone C:\Users\snewt\AppData\Local\Temp\lane-da-clones\base-b889de90
+Commit: b889de90382b7bdc89ca98b8fb6dbb38beb49ba2 (plugin blob 8076d47cc455996cd4447d78467cf2fc1fa879e7)
+Overlay: corrected tools/test_sparse_outer_save.js and the seed-18 fixture. Plugin not overlaid.
+timeout_ms: 900000
+started: 2026-10-01T09:17:01.880Z
+ended: 2026-10-01T09:17:47.337Z
+elapsed_ms: 45456
+timed_out: false
+exit: 1
+
+sparse outer save
+INFO terrain+range -16..+15 1846 (levels 1787 zRange 22 fluid 37) -4..+4 552 (levels 495 zRange 20 fluid 37) diff 1294
+FAIL fresh_save_terrain_range_bound - diff 1294 B (bound 256) untouched seed 18 before view or change
+PASS all_32_layers_reconstructible_unchanged - 32 baseline checksums match the lane-base constants
+FAIL new_game_core_entries_only - keys [-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+FAIL view_does_not_save - view {"x":0,"y":0,"z":0} setView -10 true +12 true baselines -10,12 makeSaveContents().ufWorld.levels [-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+PASS migration_keeps_real_outer_change - present -10 true 15 true byteIdentical true
+FAIL revert_drops_outer_entry - caseA (cell 0,0 dug true hadEntry true revert true entryAfter ["z","gen","checksum","strata"]) caseB revert true entryAfter ["z","gen","checksum","strata"] keptChecksumBeforeRevert true
+FAIL migration_strips_checksum_only_entries - first outer [-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,3,4,5,6,7,8,9,10,11,12,13,14,15] migrations []; second outer [-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,3,4,5,6,7,8,9,10,11,12,13,14,15] migrations 0
+RESULT: 2 passed, 5 failed (fresh_save_terrain_range_bound, new_game_core_entries_only, view_does_not_save, revert_drops_outer_entry, migration_strips_checksum_only_entries)

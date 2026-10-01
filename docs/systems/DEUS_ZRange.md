@@ -80,10 +80,10 @@ The static half of `tools/test_zrange.js`'s `single_authority` check (`tools/zra
 
 ## 6. Levels and what they hold
 
-- **The core (-2..+2)** is generated exactly as before WG.00.17, for every generator version and at every range. Generator 5 generates and carves the five core levels together in its own frame (elevation 0..24, the core index `z + 2`: frozen with the generator). The checksums are those of the base commit (`old_layers_identical`). Only the core levels have entries in `UF.World.state.levels` from New Game (generator, checksum, changes).
+- **The core (-2..+2)** is generated exactly as before WG.00.17, for every generator version and at every range. Generator 5 generates and carves the five core levels together in its own frame (elevation 0..24, the core index `z + 2`: frozen with the generator). The checksums are those of the base commit (`old_layers_identical`). Only the core levels have entries in `UF.World.state.levels` from New Game (generator, checksum, changes). Building a baseline, at New Game or when the view moves, writes no save entry (WG.00.43).
 - **Below the core:** solid stone. **Above the core:** open air. Generation adds nothing else there: no biomes, caves, veins or bands (WG.62.02 and the band work come later). One exception is the mountain rock that rises above +2. Generator 5's ceiling caps are the record of that rock, and at a range taller than +2 they become strata of +3 and up (`materializeCaps`: a cap of t strata fills S0.. of +3 upward). What doesn't fit under `zMax` stays a cap above the top level. At -16..+15 every cap fits (3..12 strata). At -2..+2 every cap stays a cap, as before. Matter is unchanged: the rock above +2 is 5,160 strata at every range for seed 18 (`matter_unchanged`).
 - **Lava on -2.** The core's lava rule is unchanged (natural pools: water on -1, lava on -2). Whether lava belongs lower now that levels exist below -2 is an open Owner question.
-- **A level outside the core** has no entry in the save until it changes. Its first change writes the entry (`levelEntry`: `{ z, gen: <the ground's>, strata: {} }`), and reverting its last change removes it again (`dropEmptyOuterEntry`).
+- **A level outside the core** has no entry in the save until it changes. Its first change writes the entry (`levelEntry`: `{ z, gen: <the ground's>, strata: {} }`, no checksum), and reverting its last change removes it again (`dropEmptyOuterEntry`). A checksum-only outer entry (keys `z`, `gen`, `checksum`, and `strata` absent or empty; no `caps`) counts as empty. Saves written since a8c1e62a stored one for every level; on load, `migrateSparseOuterSave` deletes those once and records `migrations` rule `WG.00.43`. An outer entry with any strata record, or any caps record, is kept byte for byte, checksum included. A caps-only entry at `zMax` is a real change.
 
 ## 7. Scale and elevation (DEC-013 item 2)
 
@@ -134,12 +134,12 @@ Reads go through `storeLocate` (a mask and a shift for power-of-two sizes; no al
 | Key | Content |
 |---|---|
 | `ufWorld.zRange` | `{ zMin, zMax }` for a world made since WG.00.17. Absent: a legacy world (-2..+2). |
-| `ufWorld.levels[z]` | The core levels always; a level outside the core only while it has a change. `{ z, gen, checksum (core), strata: { "ax,ay": { cell: "<22 hex digits>" } }, caps (top level only) }`. |
+| `ufWorld.levels[z]` | The core levels always; a level outside the core only while it has a change. `{ z, gen, checksum (the core; a kept outer change from an older save may still carry its checksum), strata: { "ax,ay": { cell: "<22 hex digits>" } }, caps (top level only) }`. |
 | `ufWorld.levels[zMax].caps` | Changed ceiling caps (6 hex digits: material, thickness, HP; `"000000"` = breached). `levels["2"].caps` at the legacy range, as before. |
 | `deusFluid` / `ufFluid` | Unchanged: `[ax, ay, z, x, y, type, depth]` records of cells with fluid only. |
 
 - Nothing is saved for an unchanged cell, an unchanged chunk, a level without changes, the chunk directory or the palette.
-- A fresh world's terrain and fluid parts (levels + `zRange` + fluid) measured 5,881 B at -16..+15 against 5,879 B at -4..+4. The 2 B difference is the range's digits; the bound is 256 B (ADR-003 15.5).
+- A fresh world's terrain and fluid parts are `levels` + `zRange` + fluid (`deusFluid`), not the levels JSON alone (ADR-003 15.5). The bound on (-16..+15) minus (-4..+4) is 256 B. Measured 2026-10-01, seed 18, after WG.00.43: 334 B at -16..+15 (levels 275, `zRange` 22, fluid 37) against 332 B at -4..+4 (levels 275, `zRange` 20, fluid 37). The difference is 2 B, the range's digits. Before that change the same measurement was 1,846 B against 552 B (difference 1,294 B): New Game wrote a checksum entry for all 32 levels, and the levels JSON alone at -16..+15 was 1,787 B.
 - A change on +12 and one on -14 each add only their record.
 - A save made by the base commit (5 levels, no `zRange`) loads at -2..+2 with every cell, unit and item identical (`legacy_save_loads`, fixture `tools/zrange/fixtures/legacy_save_5255f1a5_seed18.json.gz`).
 
