@@ -1,0 +1,21 @@
+You are the primary implementer for lane-el (Task NAT.03.02), running as claude.
+Read tasks/NAT.03.02/lane-el/BRIEF.md AND tasks/NAT.03.02/lane-el/BRIEF_AMENDMENT_1.md carefully and follow all instructions within them.
+
+Your allowed paths are:
+- game/js/plugins/DEUS_NaturalConnections.js
+- tools/test_natural_connections_no_mint.js
+- tools/test_natural_connections.js
+- docs/systems/DEUS_NaturalConnections.md
+- tasks/NAT.03.02/lane-el/**
+
+Key instructions from BRIEF_AMENDMENT_1.md:
+1. Ruling: option 1 (a floored natural passage is not a drain; retire private water store; do not mint water).
+2. First step again: run the amended ::authoritative_flow_conserved at the base, commit the base failure output first.
+3. Implement ::floored_passage_is_not_a_drain (at least one seed per link kind: cliff_cave_passage, natural_passage; 6 water at upper endpoint, 400 steps: landing stays 0, upper stays 6).
+4. Implement mutant fake_passage_flow: after stepping, hand-writes +1 water at one passage landing; must turn ::floored_passage_is_not_a_drain red.
+5. In DEUS_NaturalConnections.js: keep check names; liquid_flow_through_connection asserts landing stays dry (debit 0, credit 0). F5 evidence explicitly shows landing dry after upper entrance is wetted.
+
+Standing rules:
+1. NO ART (DEC-007).
+2. Run tests in the FOREGROUND. Never end your turn while background jobs or child processes are running. Commit early. Do not push. Do not merge. Write only inside allowedPaths.
+Commit messages start with '[claude] NAT.03.02'.
