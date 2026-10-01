@@ -1,0 +1,19 @@
+Date 2026-10-01T07:55:19.052Z
+Command: node tools/test_aquifer_seepage.js
+=== NAT.03.01 Aquifer Kernel Gate Tests [BASELINE] ===
+PASS: test_stratum_storage_and_porosity - maxWaterMass=78000, saturation=5000 bps, head=82500 ms
+PASS: test_darcy_cavern_breach - Harmonic K=181818, transferred=36 cp into void, conserved mass=93600 cp
+PASS: test_impermeable_barrier - Zero seepage across K=0 boundary, kInterface=0
+PASS: test_aquifer_drawdown_equilibrium - Equilibrated in 500 ticks, totalMass=100000 cp
+PASS: test_sub_unit_seepage_accumulation - Fractional residuals accumulated across ticks into exact integer transfer without truncation loss
+PASS: test_flow_reversal_residual_cancellation - Signed canonical edge residual canceled forward debt upon head inversion (0.0022 -> -0.0192)
+PASS: test_processing_order_invariance - Forward and reverse neighbor evaluation produced bit-identical mass: 79618, 50127, 20255 cp
+PASS: test_donor_exhaustion_clamp - Zero negative water: donor clamped at exactly 0, transferred 5 cp
+PASS: test_receiver_capacity_clamp - Zero oversaturation: receiver clamped to max capacity 93600 cp
+PASS: test_mass_ledger_conservation - Mass before=100000 cp, after=100000 cp, diff=0 cp (100% conserved)
+PASS: test_save_load_persistence - Serialized/deserialized state bit-identical, mass=90000 cp
+PASS: test_dirty_region_quiescence - Sleeping update cost=3.500 μs, activeCells=0, interfacesProcessed=0
+
+ALL CHECKS PASSED: 12 check(s) verified in 7ms.
+
+EXIT 0

@@ -22,7 +22,11 @@ records that precedence. No art, importers, soil, push, merge or WBS closure.
 - Required post-cu DEUS system documents exist, including archived
   DEUS_VerticalBiomes. All three implementation paths are absent at base.
 - Initial read-only overlap scan hit a BOM in an unrelated historical
-  manifest; retry will strip BOM when parsing, without changing that file.
+  manifest; stripped BOM when parsing, without changing that file. The scan
+  then found lane-co and lane-cu glob matches. Both branch tips are ancestors
+  of this base; no unmerged manifest owns the three implementation paths.
+  A baseline log attempt before its directory existed failed to save output;
+  the recorded baseline runs were rerun after creating the lane evidence folder.
 - Latest audit A11-2 concerns incompatible mass units. This foundation
   addresses the missing shared helpers; migration and audit closure remain
   downstream work. SLICES is an older civilization plan; the direct lane
@@ -35,3 +39,15 @@ Then run all four manifest gates, four behavior mutants and a scratch
 surviving-mutant control. All child processes are synchronous/foreground.
 Fresh-clone validation stays under this lane folder. No F5 evidence is
 required by the brief; no playable behavior is claimed.
+
+## Implementation notes
+
+- Seven default checks now pass and all four required mutants are killed.
+- First implementation test run: six passed, kg_to_cp_rule failed because the
+  maximum-cp decimal fixture was transcribed incorrectly. Corrected the fixture
+  using `9007199254740991n * 45359237n / 10000000000n`; production conversion
+  code was unchanged. Correct maximum is 40855968570201.9984383867 kg.
+- WORLD_BOUND checks DEC-038's 768 x 768 x 32 envelope. The load-time proof is
+  explicitly water-only; a caller-supplied material maximum plus extra reservoir
+  mass permits later importers to check a real whole-world bound without
+  inventing a new material density in this lane.

@@ -1,0 +1,12 @@
+Date 2026-10-01T07:55:19.101Z
+Command: node tools/sim/test_units.js
+FAIL units_geometry_matches_space: MODULE_NOT_FOUND Cannot find module 'C:\Users\snewt\.deus_worktrees\lane-dn\game\js\sim\units.js'
+FAIL kg_to_cp_rule: MODULE_NOT_FOUND Cannot find module 'C:\Users\snewt\.deus_worktrees\lane-dn\game\js\sim\units.js'
+FAIL apportion_exact: MODULE_NOT_FOUND Cannot find module 'C:\Users\snewt\.deus_worktrees\lane-dn\game\js\sim\units.js'
+FAIL overflow_refused: MODULE_NOT_FOUND Cannot find module 'C:\Users\snewt\.deus_worktrees\lane-dn\game\js\sim\units.js'
+FAIL water_stratum_is_312000: MODULE_NOT_FOUND Cannot find module 'C:\Users\snewt\.deus_worktrees\lane-dn\game\js\sim\units.js'
+FAIL gallons_are_derived: MODULE_NOT_FOUND Cannot find module 'C:\Users\snewt\.deus_worktrees\lane-dn\game\js\sim\units.js'
+FAIL world_bound_safe: MODULE_NOT_FOUND Cannot find module 'C:\Users\snewt\.deus_worktrees\lane-dn\game\js\sim\units.js'
+RESULT: 0 passed, 7 failed (module load; absence only)
+
+EXIT 1
