@@ -1,0 +1,20 @@
+PASS ::nine_starts
+PASS ::fixed_map_assignment
+PASS ::ratio_065_all_walkable
+PASS ::low_ratio_accepts_degraded
+PASS ::shift_passes_bounded
+PASS ::home_band
+PASS ::no_sky
+PASS ::determinism
+PASS ::failsafe_family
+PASS ::failsafe_z
+PASS ::failsafe_centre
+PASS ::infeasible_throws_underground_only
+PASS ::elevated_home_degrades
+PASS ::order_deepest_first
+PASS ::cost_bound
+PASS ::zrange_clip
+PASS ::shift_blocked_rejected
+PASS ::reader_range_respected
+ALL CHECKS PASSED
+EXIT:0

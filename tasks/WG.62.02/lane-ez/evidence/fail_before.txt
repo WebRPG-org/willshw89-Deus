@@ -1,0 +1,20 @@
+FAIL ::nine_starts: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::fixed_map_assignment: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::ratio_065_all_walkable: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::low_ratio_accepts_degraded: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::shift_passes_bounded: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::home_band: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::no_sky: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::determinism: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::failsafe_family: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::failsafe_z: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::failsafe_centre: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::infeasible_throws_underground_only: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::elevated_home_degrades: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::order_deepest_first: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::cost_bound: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::zrange_clip: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::shift_blocked_rejected: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAIL ::reader_range_respected: missing C:\Users\snewt\.deus_worktrees\lane-ez\game\js\sim\starts\place_starts.js
+FAILED 18 nine_starts,fixed_map_assignment,ratio_065_all_walkable,low_ratio_accepts_degraded,shift_passes_bounded,home_band,no_sky,determinism,failsafe_family,failsafe_z,failsafe_centre,infeasible_throws_underground_only,elevated_home_degrades,order_deepest_first,cost_bound,zrange_clip,shift_blocked_rejected,reader_range_respected
+EXIT:1

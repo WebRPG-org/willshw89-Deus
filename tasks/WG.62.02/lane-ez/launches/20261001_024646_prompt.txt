@@ -1,0 +1,13 @@
+You are the primary implementer for lane-ez (Task WG.62.02), running as grok.
+Read tasks/WG.62.02/lane-ez/BRIEF.md carefully and follow all instructions within it.
+Your allowed paths are:
+- game/js/sim/starts/place_starts.js
+- game/data/worldgen/race_starts.json
+- docs/systems/DEUS_RaceStarts.md
+- tools/test_race_starts.js
+- tasks/WG.62.02/lane-ez/**
+
+Standing rules:
+1. NO ART (DEC-007). Never generate, request or integrate art, and never tell anyone to.
+2. Run tests in the FOREGROUND. Never end your turn while background jobs or child processes are running. Commit early (WIP commits allowed on your branch). Do not push. Do not merge. Write only inside allowedPaths.
+Commit messages start with '[grok] WG.62.02'.
