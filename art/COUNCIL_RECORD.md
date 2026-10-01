@@ -150,8 +150,27 @@ Applied to each piece's latest round (votes in the tables above):
 | Cliff 10 layered strata (v7) | ART-COUNCIL-7 | 2 YES, 2 NAY | not passed | Grok and MiniMax (see ART-COUNCIL-7) |
 
 Cliffs passed: 8 of 10 (sets 1, 2, 3, 4, 6, 7, 8, 9). Limestone and strata go to ART-COUNCIL-8 as new versions (recoloured from passed sets 7 and 8, zero generations). No piece enters the game until its catalogue row exists (lane-pg) and the PM records its YEA in art/APPROVALS.md.
-- Owner override (2026-10-01, ~13:50Z): "I can also override art council if I like something." A piece the Owner approves passes whatever the council's vote; it is recorded here as an Owner override with his words.
+- Owner override (2026-10-01, ~13:50Z): "I can also override art council if I like something." A piece the Owner approves passes whatever the council's vote; it is recorded here as an Owner override with the Owner's words.
 
 ## Owner override: cliff 5 cave limestone (2026-10-01, ~13:55Z)
 
 Shown the two cave limestone options (the ART-COUNCIL-7 version, 2 YES / 2 NAY, and a new recolour), the Owner chose the ART-COUNCIL-7 version: "I like 1". Cliff 5 cave limestone (v7 face, v5 top) passes by Owner override; the council's NO reasons stay recorded in ART-COUNCIL-7. Cliffs passed: 9 of 10 (all but 10, layered strata).
+
+## Owner rulings (2026-10-01, ~13:50-14:00Z): override withdrawn, new thresholds, the 3-of-4 pieces decided
+
+- Cave limestone: "ACtually I looked again and dont like it." The override above is withdrawn. Cliff 5 cave limestone (v7, 2 of 4) is out.
+- New thresholds, replacing "I will allow you to use art with 3/4": "Only bring me ones that are 3/4. if its 4/4 instapass it, if its 3/4 i will decide, itf its less than that chuck it." A piece with 4 YES of 4 passes; 3 of 4 goes to the Owner, who decides; fewer than 3 is thrown out (never shown to the Owner). Every NO reason stays recorded here.
+- The Owner's decisions on the 3-of-4 pieces (board of the exact versions the council judged): "Lichen rock is good, vienes and stalactites are good. Those trees are dogshit, complete fucking dosgshit."
+
+| Piece (version) | Council | Owner | Result |
+|---|---|---|---|
+| Cliff 6 lichen rock (v7) | 3 of 4 | good | **passed (Owner)** |
+| Hanging vines (v5) | 3 of 4 | good | **passed (Owner)** |
+| Stalactites (v5) | 3 of 4 | good | **passed (Owner)** |
+| Apple A (v7) | 3 of 4 | rejected | out; to be remade |
+| Apple B (v7) | 3 of 4 | rejected | out; to be remade |
+| Cliff 2 soil (v7) | 3 of 4 | not named | not passed unless the Owner keeps it |
+| Cliff 9 red clay (v7) | 3 of 4 | not named | not passed unless the Owner keeps it |
+| Cliff 5 cave limestone (v7) | 2 of 4 | override withdrawn | out; to be remade |
+
+Cliffs passed: 6 of 10 (sets 1, 3, 4, 7, 8 at 4 of 4; set 6 by the Owner). Layered strata (the recolour from set 8) is out to ART-COUNCIL-8. Method for the remakes (Owner, same time): "I think we get the best results using pro with reference and style images. RMMZ reference, U7 style, and make sure fo give Pixel size dimensions on everything."
