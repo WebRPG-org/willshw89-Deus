@@ -1,0 +1,51 @@
+{
+  "base": "54d8e5335818d0df1638891af1469fc1a03af8b6",
+  "file": "game/js/sim/hydrology/index.js",
+  "exports": [
+    {
+      "name": "Stratum",
+      "target": "./aquifer.js#Stratum",
+      "type": "function"
+    },
+    {
+      "name": "AquiferEngine",
+      "target": "./aquifer.js#AquiferEngine",
+      "type": "function"
+    },
+    {
+      "name": "encodeStratumId",
+      "target": "./aquifer.js#encodeStratumId",
+      "type": "function"
+    },
+    {
+      "name": "decodeStratumId",
+      "target": "./aquifer.js#decodeStratumId",
+      "type": "function"
+    },
+    {
+      "name": "canonicalEdgeKey",
+      "target": "./aquifer.js#canonicalEdgeKey",
+      "type": "function"
+    },
+    {
+      "name": "calcInterfaceConductivity",
+      "target": "./aquifer.js#calcInterfaceConductivity",
+      "type": "function"
+    },
+    {
+      "name": "MAX_WATER_MASS_PER_STRATUM",
+      "target": "./aquifer.js#MAX_WATER_MASS_PER_STRATUM",
+      "type": "number"
+    },
+    {
+      "name": "VOLUME_PER_STRATUM",
+      "target": "./aquifer.js#VOLUME_PER_STRATUM",
+      "type": "number"
+    },
+    {
+      "name": "WATER_DENSITY_CENTIPOUNDS_PER_CUFT",
+      "target": "./aquifer.js#WATER_DENSITY_CENTIPOUNDS_PER_CUFT",
+      "type": "number"
+    }
+  ]
+}
