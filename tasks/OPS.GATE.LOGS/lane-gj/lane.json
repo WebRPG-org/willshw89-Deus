@@ -1,0 +1,39 @@
+{
+  "lane": "lane-gj",
+  "taskId": "OPS.GATE.LOGS",
+  "branch": "task/lane-gj",
+  "writer": "gemini",
+  "reviewer": "codex",
+  "push": true,
+  "allowedPaths": [
+    "tools/governance/merge_gate.js",
+    "tools/governance/test_merge_gate.js",
+    "tools/governance/MERGE_GATE.md",
+    "tools/governance/fixtures/**",
+    "tools/test_strata_cuts_and_caves.js",
+    "tasks/OPS.GATE.LOGS/lane-gj/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/governance/test_merge_gate.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_strata_cuts_and_caves.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}
