@@ -1035,3 +1035,7 @@ Every decision item recorded in this log must provide:
   3. **Every no carries its reason.** A NAY or REDO without a reason is incomplete, and the PM goes back to that judge for the reason before the round closes. Every no is recorded with each judge's reason in `art/COUNCIL_RECORD.md`, and rejected pieces get a NAY row in `art/APPROVALS.md` pointing to it.
   4. **Style bar:** strict Ultima VII / EverQuest / English folklore, rendered in a style that is uniquely DEUS: not generic pixel art and not a copy of any of them. Every council prompt and every generation card states this bar.
   5. **The PM keeps generating** (the Owner's direct hand-off under DEC-007; the U7 method of 2026-10-01: PixelLab Bitforge and Pixflux), iterating on the council's reasons and resubmitting until the vote is unanimous.
+- **Amendment (Owner, 2026-10-01, later the same day):** "I simply want the jduges to confirm it is roughly the same quality and consistent as U7 art, that should suffice as long as you can tool it etc?"
+  - Item 4 is replaced. The judges answer one question per piece: **is it roughly the same quality as Ultima VII art, and consistent with it?** YES, or NO with the reason.
+  - The PM confirms each piece can be tooled before it goes to the judges: machine QA of the RMMZ format, seams, anchors, palette and size.
+  - Items 1, 2, 3 and 5 stand: four judges, unanimity, and every NO recorded with its reason. The English folklore / Ultima VII / EverQuest direction (DEC-047) stays the art direction, but it is no longer a separate judging test.

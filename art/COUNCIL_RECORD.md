@@ -4,7 +4,8 @@ Every art-council round, with each judge's vote and the reason for every no (DEC
 
 - **Judges:** the four braintrust chats: ChatGPT Pro, Grok Heavy, Gemini Pro, MiniMax M3.
 - **Rule:** a piece passes only on four YEAs. One NAY or REDO rejects it. A no without a reason is incomplete, and the PM asks that judge again.
-- **Style bar:** strict Ultima VII / EverQuest / English folklore, rendered in a style that is uniquely DEUS.
+- **The question (Owner amendment, 2026-10-01):** is the piece roughly the same quality as Ultima VII art, and consistent with it? YES, or NO with the reason. The PM confirms beforehand that the piece can be tooled (RMMZ format, seams, anchors, palette, size).
+- **ART-COUNCIL-1 was judged against the earlier, stricter bar** (strict Ultima VII / EverQuest / English folklore, uniquely DEUS). Its rejections stand as records; the pieces are re-judged on the new question in ART-COUNCIL-2.
 - **Full verdict texts:** `~/.deus_pm/braintrust/<date>/ART-COUNCIL-<n>_<judge>.md`, local and outside the repo.
 
 ## ART-COUNCIL-1 (2026-10-01): temperate cliffs (RMMZ A4, ten sets) and trees with stumps
