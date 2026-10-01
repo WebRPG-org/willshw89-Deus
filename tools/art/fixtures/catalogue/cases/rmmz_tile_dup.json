@@ -1,0 +1,72 @@
+{
+  "case": "rmmz_tile_dup",
+  "base": "tools/art/fixtures/catalogue/mini/catalogue.json",
+  "context": "tools/art/fixtures/catalogue/mini/context.json",
+  "code": "RMMZ_TILE_DUP",
+  "rule": "two RMMZ forms claim the same cell (a 2x2 grid and a single tile both cover B tile 185)",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "entries",
+        {
+          "id": "SURFACE_SHARED_TREE_OAK_V1_DEFAULT"
+        },
+        "runtime"
+      ],
+      "value": {
+        "kind": "RMMZ_TILESET",
+        "file": "img/tilesets/DEUS_Outside_B.png",
+        "index": null,
+        "tileId": 176,
+        "slotText": "tiles 176, 177, 184, 185",
+        "grid": "2x2"
+      }
+    },
+    {
+      "op": "set",
+      "path": [
+        "entries",
+        {
+          "id": "SURFACE_SHARED_TREE_OAK_V1_DEFAULT"
+        },
+        "rmmzForm"
+      ],
+      "value": {
+        "sheet": "B",
+        "stock": null
+      }
+    },
+    {
+      "op": "set",
+      "path": [
+        "entries",
+        {
+          "id": "ALL_SHARED_ITEM_LOG_V1_DEFAULT"
+        },
+        "runtime"
+      ],
+      "value": {
+        "kind": "RMMZ_TILESET",
+        "file": "img/tilesets/DEUS_Outside_B.png",
+        "index": null,
+        "tileId": 185,
+        "slotText": "tile 185"
+      }
+    },
+    {
+      "op": "set",
+      "path": [
+        "entries",
+        {
+          "id": "ALL_SHARED_ITEM_LOG_V1_DEFAULT"
+        },
+        "rmmzForm"
+      ],
+      "value": {
+        "sheet": "B",
+        "stock": null
+      }
+    }
+  ]
+}
