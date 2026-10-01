@@ -1,0 +1,10160 @@
+{
+ "metadata": {
+  "schemaVersion": 1,
+  "generator": "tools/bestiary/build_bestiary.js",
+  "task": "NAT.07.01",
+  "note": "DEUS bestiary adaptation layer (DEC-050 item 3, DEC-053 item 2, DEC-057): one row per SRD 5.1 creature, keyed by its srd: id. Generated; do not hand-edit. srd51 is never edited. Not loaded by any plugin yet; runtime spawning is a later leaf.",
+  "source": {
+   "file": "docs/design/bestiary/BESTIARY_grok_heavy.md",
+   "sha256": "c6f9d41853f29ecd83b4ffa5cbd26b17d6a1e67f3445bfde29b843c41e740914",
+   "rows": 317
+  },
+  "joins": {
+   "srd": "game/data/srd51/creatures.json",
+   "species": "game/js/sim/rules/species_map.js"
+  },
+  "license": {
+   "id": "CC-BY-4.0",
+   "url": "https://creativecommons.org/licenses/by/4.0/legalcode",
+   "attribution": "This work includes material taken from the System Reference Document 5.1 (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode."
+  },
+  "tierBands": [
+   {
+    "tier": "T0",
+    "crMin": 0,
+    "crMax": 0.25
+   },
+   {
+    "tier": "T1",
+    "crMin": 0.5,
+    "crMax": 2
+   },
+   {
+    "tier": "T2",
+    "crMin": 3,
+    "crMax": 6
+   },
+   {
+    "tier": "T3",
+    "crMin": 7,
+    "crMax": 12
+   },
+   {
+    "tier": "T4",
+    "crMin": 13,
+    "crMax": null
+   }
+  ],
+  "placementRules": {
+   "seeded": "Rolled by the seeded spawner in each of the row's cells, filtered by the cell's danger tier; frequency weights the draw.",
+   "lair": "Source frequency 'lair': anchored to a lair site in one of the row's cells; never a wandering spawn.",
+   "summon": "Source role SUMMON-ONLY: enters the world only when summoned; never rolled by the seeded spawner. Its cells say where it belongs.",
+   "none": "Source role EXCLUDE: no cell; never placed."
+  },
+  "counts": {
+   "entries": 317,
+   "byRole": {
+    "EXCLUDE": 13,
+    "MONSTER": 164,
+    "PEOPLE": 21,
+    "SUMMON-ONLY": 28,
+    "WILDLIFE": 91
+   },
+   "byTier": {
+    "T0": 79,
+    "T1": 95,
+    "T2": 66,
+    "T3": 39,
+    "T4": 38
+   },
+   "byPlacement": {
+    "lair": 29,
+    "none": 13,
+    "seeded": 247,
+    "summon": 28
+   }
+  },
+  "occupancy": {
+   "VOLCANIC/Deep Earth": {
+    "T0": 2,
+    "T1": 3,
+    "T2": 4,
+    "T3": 2,
+    "T4": 7
+   },
+   "VOLCANIC/Caverns": {
+    "T0": 12,
+    "T1": 6,
+    "T2": 8,
+    "T3": 4,
+    "T4": 0
+   },
+   "VOLCANIC/Lowlands": {
+    "T0": 12,
+    "T1": 14,
+    "T2": 9,
+    "T3": 1,
+    "T4": 0
+   },
+   "VOLCANIC/Uplands": {
+    "T0": 8,
+    "T1": 3,
+    "T2": 2,
+    "T3": 2,
+    "T4": 1
+   },
+   "VOLCANIC/Highlands": {
+    "T0": 4,
+    "T1": 3,
+    "T2": 4,
+    "T3": 5,
+    "T4": 2
+   },
+   "WET/Deep Earth": {
+    "T0": 1,
+    "T1": 5,
+    "T2": 4,
+    "T3": 2,
+    "T4": 3
+   },
+   "WET/Caverns": {
+    "T0": 15,
+    "T1": 17,
+    "T2": 6,
+    "T3": 4,
+    "T4": 2
+   },
+   "WET/Lowlands": {
+    "T0": 29,
+    "T1": 36,
+    "T2": 13,
+    "T3": 4,
+    "T4": 7
+   },
+   "WET/Uplands": {
+    "T0": 7,
+    "T1": 5,
+    "T2": 1,
+    "T3": 2,
+    "T4": 3
+   },
+   "WET/Highlands": {
+    "T0": 6,
+    "T1": 3,
+    "T2": 0,
+    "T3": 1,
+    "T4": 2
+   },
+   "ARID/Deep Earth": {
+    "T0": 3,
+    "T1": 3,
+    "T2": 3,
+    "T3": 0,
+    "T4": 4
+   },
+   "ARID/Caverns": {
+    "T0": 7,
+    "T1": 7,
+    "T2": 11,
+    "T3": 3,
+    "T4": 3
+   },
+   "ARID/Lowlands": {
+    "T0": 33,
+    "T1": 22,
+    "T2": 17,
+    "T3": 3,
+    "T4": 2
+   },
+   "ARID/Uplands": {
+    "T0": 8,
+    "T1": 6,
+    "T2": 7,
+    "T3": 2,
+    "T4": 4
+   },
+   "ARID/Highlands": {
+    "T0": 4,
+    "T1": 6,
+    "T2": 4,
+    "T3": 4,
+    "T4": 3
+   },
+   "TEMPERATE/Deep Earth": {
+    "T0": 1,
+    "T1": 2,
+    "T2": 3,
+    "T3": 0,
+    "T4": 1
+   },
+   "TEMPERATE/Caverns": {
+    "T0": 20,
+    "T1": 19,
+    "T2": 11,
+    "T3": 7,
+    "T4": 3
+   },
+   "TEMPERATE/Lowlands": {
+    "T0": 43,
+    "T1": 30,
+    "T2": 17,
+    "T3": 3,
+    "T4": 1
+   },
+   "TEMPERATE/Uplands": {
+    "T0": 17,
+    "T1": 24,
+    "T2": 10,
+    "T3": 6,
+    "T4": 3
+   },
+   "TEMPERATE/Highlands": {
+    "T0": 6,
+    "T1": 8,
+    "T2": 3,
+    "T3": 5,
+    "T4": 6
+   },
+   "COLD/Deep Earth": {
+    "T0": 3,
+    "T1": 3,
+    "T2": 0,
+    "T3": 2,
+    "T4": 3
+   },
+   "COLD/Caverns": {
+    "T0": 1,
+    "T1": 5,
+    "T2": 1,
+    "T3": 2,
+    "T4": 1
+   },
+   "COLD/Lowlands": {
+    "T0": 20,
+    "T1": 18,
+    "T2": 12,
+    "T3": 1,
+    "T4": 1
+   },
+   "COLD/Uplands": {
+    "T0": 4,
+    "T1": 7,
+    "T2": 6,
+    "T3": 2,
+    "T4": 1
+   },
+   "COLD/Highlands": {
+    "T0": 3,
+    "T1": 5,
+    "T2": 2,
+    "T3": 5,
+    "T4": 6
+   },
+   "WILD/Deep Earth": {
+    "T0": 3,
+    "T1": 2,
+    "T2": 0,
+    "T3": 0,
+    "T4": 3
+   },
+   "WILD/Caverns": {
+    "T0": 9,
+    "T1": 8,
+    "T2": 6,
+    "T3": 3,
+    "T4": 0
+   },
+   "WILD/Lowlands": {
+    "T0": 31,
+    "T1": 44,
+    "T2": 18,
+    "T3": 5,
+    "T4": 3
+   },
+   "WILD/Uplands": {
+    "T0": 6,
+    "T1": 15,
+    "T2": 6,
+    "T3": 2,
+    "T4": 2
+   },
+   "WILD/Highlands": {
+    "T0": 6,
+    "T1": 2,
+    "T2": 5,
+    "T3": 5,
+    "T4": 2
+   },
+   "Sky": {
+    "T0": 13,
+    "T1": 7,
+    "T2": 9,
+    "T3": 14,
+    "T4": 26
+   }
+  }
+ },
+ "entries": [
+  {
+   "id": "srd:creature:aboleth",
+   "name": "Aboleth",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 10,
+    "text": "10"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Mind-eel of the oldest drowned hollows",
+   "sourceLine": 3
+  },
+  {
+   "id": "srd:creature:deva",
+   "name": "Deva",
+   "role": "SUMMON-ONLY",
+   "tier": "T3",
+   "cr": {
+    "rating": 10,
+    "text": "10"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned bright messenger of a god's house",
+   "sourceLine": 4
+  },
+  {
+   "id": "srd:creature:planetar",
+   "name": "Planetar",
+   "role": "SUMMON-ONLY",
+   "tier": "T4",
+   "cr": {
+    "rating": 16,
+    "text": "16"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned war-angel of a god's house",
+   "sourceLine": 5
+  },
+  {
+   "id": "srd:creature:solar",
+   "name": "Solar",
+   "role": "SUMMON-ONLY",
+   "tier": "T4",
+   "cr": {
+    "rating": 21,
+    "text": "21"
+   },
+   "cells": [],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Highest summoned servant of a god's house",
+   "sourceLine": 6
+  },
+  {
+   "id": "srd:creature:animated-armor",
+   "name": "Animated Armor",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Barrow harness that walks without a wearer",
+   "sourceLine": 7
+  },
+  {
+   "id": "srd:creature:ankheg",
+   "name": "Ankheg",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "sand_stalker",
+     "kind": "proxy"
+    }
+   ],
+   "note": "Burrowing field-wyrm that hunts from below",
+   "sourceLine": 8
+  },
+  {
+   "id": "srd:creature:flying-sword",
+   "name": "Flying Sword",
+   "role": "MONSTER",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Cursed blade loosed from a barrow hoard",
+   "sourceLine": 9
+  },
+  {
+   "id": "srd:creature:rug-of-smothering",
+   "name": "Rug of Smothering",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Hearth-rug boggart that smothers sleepers",
+   "sourceLine": 10
+  },
+  {
+   "id": "srd:creature:azer",
+   "name": "Azer",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Brass-skinned fire-kin of the deep forges",
+   "sourceLine": 11
+  },
+  {
+   "id": "srd:creature:basilisk",
+   "name": "Basilisk",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Stone-gaze serpent of ruins and scree",
+   "sourceLine": 12
+  },
+  {
+   "id": "srd:creature:behir",
+   "name": "Behir",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 11,
+    "text": "11"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Lightning-jawed cave-wyrm of storm clefts",
+   "sourceLine": 13
+  },
+  {
+   "id": "srd:creature:bugbear",
+   "name": "Bugbear",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Shaggy boggart-kin lurking at the wood-edge",
+   "sourceLine": 14
+  },
+  {
+   "id": "srd:creature:bulette",
+   "name": "Bulette",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Land-shark of broken ground and badlands",
+   "sourceLine": 15
+  },
+  {
+   "id": "srd:creature:centaur",
+   "name": "Centaur",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Horse-folk of meadow fringe and wild downs",
+   "sourceLine": 16
+  },
+  {
+   "id": "srd:creature:chimera",
+   "name": "Chimera",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 6,
+    "text": "6"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Three-headed fell-beast of the high crags",
+   "sourceLine": 17
+  },
+  {
+   "id": "srd:creature:chuul",
+   "name": "Chuul",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 4,
+    "text": "4"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Armoured lake-lobster of drowned caverns",
+   "sourceLine": 18
+  },
+  {
+   "id": "srd:creature:cloaker",
+   "name": "Cloaker",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 8,
+    "text": "8"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Living cave-cloak hanging among the bats",
+   "sourceLine": 19
+  },
+  {
+   "id": "srd:creature:cockatrice",
+   "name": "Cockatrice",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Dunghill bird whose peck turns flesh to stone",
+   "sourceLine": 20
+  },
+  {
+   "id": "srd:creature:couatl",
+   "name": "Couatl",
+   "role": "EXCLUDE",
+   "tier": "T2",
+   "cr": {
+    "rating": 4,
+    "text": "4"
+   },
+   "cells": [],
+   "sky": false,
+   "frequency": null,
+   "placement": "none",
+   "bodies": [],
+   "note": "Mesoamerican feathered serpent, not Emerys",
+   "sourceLine": 21
+  },
+  {
+   "id": "srd:creature:darkmantle",
+   "name": "Darkmantle",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "COLD",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "WILD",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Stalactite-skin that drops upon miners",
+   "sourceLine": 22
+  },
+  {
+   "id": "srd:creature:balor",
+   "name": "Balor",
+   "role": "SUMMON-ONLY",
+   "tier": "T4",
+   "cr": {
+    "rating": 19,
+    "text": "19"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned ruin-prince of a broken crossing",
+   "sourceLine": 23
+  },
+  {
+   "id": "srd:creature:dretch",
+   "name": "Dretch",
+   "role": "SUMMON-ONLY",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Least summoned scrap of a fiend crossing",
+   "sourceLine": 24
+  },
+  {
+   "id": "srd:creature:glabrezu",
+   "name": "Glabrezu",
+   "role": "SUMMON-ONLY",
+   "tier": "T3",
+   "cr": {
+    "rating": 9,
+    "text": "9"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned bargainer with pincer hands",
+   "sourceLine": 25
+  },
+  {
+   "id": "srd:creature:hezrou",
+   "name": "Hezrou",
+   "role": "SUMMON-ONLY",
+   "tier": "T3",
+   "cr": {
+    "rating": 8,
+    "text": "8"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned toad-fiend of drowned crossings",
+   "sourceLine": 26
+  },
+  {
+   "id": "srd:creature:marilith",
+   "name": "Marilith",
+   "role": "SUMMON-ONLY",
+   "tier": "T4",
+   "cr": {
+    "rating": 16,
+    "text": "16"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "lair",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned six-armed war-fiend",
+   "sourceLine": 27
+  },
+  {
+   "id": "srd:creature:nalfeshnee",
+   "name": "Nalfeshnee",
+   "role": "SUMMON-ONLY",
+   "tier": "T4",
+   "cr": {
+    "rating": 13,
+    "text": "13"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned ape-fiend judge of crossings",
+   "sourceLine": 28
+  },
+  {
+   "id": "srd:creature:quasit",
+   "name": "Quasit",
+   "role": "SUMMON-ONLY",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned impish familiar of a crossing",
+   "sourceLine": 29
+  },
+  {
+   "id": "srd:creature:vrock",
+   "name": "Vrock",
+   "role": "SUMMON-ONLY",
+   "tier": "T2",
+   "cr": {
+    "rating": 6,
+    "text": "6"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned vulture-fiend of ash heights",
+   "sourceLine": 30
+  },
+  {
+   "id": "srd:creature:barbed-devil",
+   "name": "Barbed Devil",
+   "role": "SUMMON-ONLY",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned hooked sentinel of a crossing",
+   "sourceLine": 31
+  },
+  {
+   "id": "srd:creature:bearded-devil",
+   "name": "Bearded Devil",
+   "role": "SUMMON-ONLY",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned spear-fiend of ash marches",
+   "sourceLine": 32
+  },
+  {
+   "id": "srd:creature:bone-devil",
+   "name": "Bone Devil",
+   "role": "SUMMON-ONLY",
+   "tier": "T3",
+   "cr": {
+    "rating": 9,
+    "text": "9"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Caverns"
+    },
+    {
+     "family": "COLD",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned bone-hook fiend of ice vaults",
+   "sourceLine": 33
+  },
+  {
+   "id": "srd:creature:chain-devil",
+   "name": "Chain Devil",
+   "role": "SUMMON-ONLY",
+   "tier": "T3",
+   "cr": {
+    "rating": 8,
+    "text": "8"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned chain-warden of a bound crossing",
+   "sourceLine": 34
+  },
+  {
+   "id": "srd:creature:erinyes",
+   "name": "Erinyes",
+   "role": "SUMMON-ONLY",
+   "tier": "T3",
+   "cr": {
+    "rating": 12,
+    "text": "12"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned winged fury of a god's quarrel",
+   "sourceLine": 35
+  },
+  {
+   "id": "srd:creature:horned-devil",
+   "name": "Horned Devil",
+   "role": "SUMMON-ONLY",
+   "tier": "T3",
+   "cr": {
+    "rating": 11,
+    "text": "11"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned horned flyer of ash crossings",
+   "sourceLine": 36
+  },
+  {
+   "id": "srd:creature:ice-devil",
+   "name": "Ice Devil",
+   "role": "SUMMON-ONLY",
+   "tier": "T4",
+   "cr": {
+    "rating": 14,
+    "text": "14"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "lair",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned ice-marshal of frozen crossings",
+   "sourceLine": 37
+  },
+  {
+   "id": "srd:creature:imp",
+   "name": "Imp",
+   "role": "SUMMON-ONLY",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned coal-spark familiar",
+   "sourceLine": 38
+  },
+  {
+   "id": "srd:creature:lemure",
+   "name": "Lemure",
+   "role": "SUMMON-ONLY",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Mindless summoned slag of a fiend crossing",
+   "sourceLine": 39
+  },
+  {
+   "id": "srd:creature:pit-fiend",
+   "name": "Pit Fiend",
+   "role": "SUMMON-ONLY",
+   "tier": "T4",
+   "cr": {
+    "rating": 20,
+    "text": "20"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned pit-prince of a high trespass",
+   "sourceLine": 40
+  },
+  {
+   "id": "srd:creature:doppelganger",
+   "name": "Doppelganger",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Face-thief walking another person's life",
+   "sourceLine": 41
+  },
+  {
+   "id": "srd:creature:plesiosaurus",
+   "name": "Plesiosaurus",
+   "role": "EXCLUDE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [],
+   "sky": false,
+   "frequency": null,
+   "placement": "none",
+   "bodies": [],
+   "note": "Mesozoic sea-reptile, no folklore place",
+   "sourceLine": 42
+  },
+  {
+   "id": "srd:creature:triceratops",
+   "name": "Triceratops",
+   "role": "EXCLUDE",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [],
+   "sky": false,
+   "frequency": null,
+   "placement": "none",
+   "bodies": [],
+   "note": "Mesozoic beast, no folklore place",
+   "sourceLine": 43
+  },
+  {
+   "id": "srd:creature:tyrannosaurus-rex",
+   "name": "Tyrannosaurus Rex",
+   "role": "EXCLUDE",
+   "tier": "T3",
+   "cr": {
+    "rating": 8,
+    "text": "8"
+   },
+   "cells": [],
+   "sky": false,
+   "frequency": null,
+   "placement": "none",
+   "bodies": [],
+   "note": "Mesozoic hunter, no folklore place",
+   "sourceLine": 44
+  },
+  {
+   "id": "srd:creature:ancient-black-dragon",
+   "name": "Ancient Black Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 21,
+    "text": "21"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Ancient fen-wyrm coiled in drowned roots",
+   "sourceLine": 45
+  },
+  {
+   "id": "srd:creature:adult-black-dragon",
+   "name": "Adult Black Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 14,
+    "text": "14"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Adult fen-wyrm of mere and black water",
+   "sourceLine": 46
+  },
+  {
+   "id": "srd:creature:young-black-dragon",
+   "name": "Young Black Dragon",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 7,
+    "text": "7"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Young fen-wyrm haunting reed and pool",
+   "sourceLine": 47
+  },
+  {
+   "id": "srd:creature:ancient-blue-dragon",
+   "name": "Ancient Blue Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 23,
+    "text": "23"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "ARID",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Ancient storm-wyrm of the desert heights",
+   "sourceLine": 48
+  },
+  {
+   "id": "srd:creature:black-dragon-wyrmling",
+   "name": "Black Dragon Wyrmling",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Fen-wyrm hatchling in the rotting banks",
+   "sourceLine": 49
+  },
+  {
+   "id": "srd:creature:adult-blue-dragon",
+   "name": "Adult Blue Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 16,
+    "text": "16"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Adult storm-wyrm of dune and dry lightning",
+   "sourceLine": 50
+  },
+  {
+   "id": "srd:creature:young-blue-dragon",
+   "name": "Young Blue Dragon",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 9,
+    "text": "9"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Young storm-wyrm of the badland clefts",
+   "sourceLine": 51
+  },
+  {
+   "id": "srd:creature:ancient-green-dragon",
+   "name": "Ancient Green Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 22,
+    "text": "22"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Ancient wood-wyrm of the oldest green",
+   "sourceLine": 52
+  },
+  {
+   "id": "srd:creature:blue-dragon-wyrmling",
+   "name": "Blue Dragon Wyrmling",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Storm-wyrm hatchling under sunbaked stone",
+   "sourceLine": 53
+  },
+  {
+   "id": "srd:creature:adult-green-dragon",
+   "name": "Adult Green Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 15,
+    "text": "15"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Adult wood-wyrm coiled in poisoned groves",
+   "sourceLine": 54
+  },
+  {
+   "id": "srd:creature:young-green-dragon",
+   "name": "Young Green Dragon",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 8,
+    "text": "8"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Young wood-wyrm of the deep copse",
+   "sourceLine": 55
+  },
+  {
+   "id": "srd:creature:ancient-red-dragon",
+   "name": "Ancient Red Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 24,
+    "text": "24"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Ancient fire-wyrm of caldera and deep magma",
+   "sourceLine": 56
+  },
+  {
+   "id": "srd:creature:green-dragon-wyrmling",
+   "name": "Green Dragon Wyrmling",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Wood-wyrm hatchling under fairy-ring oaks",
+   "sourceLine": 57
+  },
+  {
+   "id": "srd:creature:adult-red-dragon",
+   "name": "Adult Red Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 17,
+    "text": "17"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Adult fire-wyrm of ash peak and forge-cleft",
+   "sourceLine": 58
+  },
+  {
+   "id": "srd:creature:ancient-white-dragon",
+   "name": "Ancient White Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 20,
+    "text": "20"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Ancient frost-wyrm of glacier and deep ice",
+   "sourceLine": 59
+  },
+  {
+   "id": "srd:creature:red-dragon-wyrmling",
+   "name": "Red Dragon Wyrmling",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 4,
+    "text": "4"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Fire-wyrm hatchling in warm ash vents",
+   "sourceLine": 60
+  },
+  {
+   "id": "srd:creature:young-red-dragon",
+   "name": "Young Red Dragon",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 10,
+    "text": "10"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Young fire-wyrm of the scorched ridges",
+   "sourceLine": 61
+  },
+  {
+   "id": "srd:creature:adult-white-dragon",
+   "name": "Adult White Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 13,
+    "text": "13"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Adult frost-wyrm of the snowfield lairs",
+   "sourceLine": 62
+  },
+  {
+   "id": "srd:creature:ancient-brass-dragon",
+   "name": "Ancient Brass Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 20,
+    "text": "20"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Ancient talkative sand-wyrm of the dunes",
+   "sourceLine": 63
+  },
+  {
+   "id": "srd:creature:white-dragon-wyrmling",
+   "name": "White Dragon Wyrmling",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Caverns"
+    },
+    {
+     "family": "COLD",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Frost-wyrm hatchling in frozen aquifers",
+   "sourceLine": 64
+  },
+  {
+   "id": "srd:creature:young-white-dragon",
+   "name": "Young White Dragon",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 6,
+    "text": "6"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Young frost-wyrm of the ice-fall country",
+   "sourceLine": 65
+  },
+  {
+   "id": "srd:creature:adult-brass-dragon",
+   "name": "Adult Brass Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 13,
+    "text": "13"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Adult sand-wyrm basking on sun-hot rock",
+   "sourceLine": 66
+  },
+  {
+   "id": "srd:creature:brass-dragon-wyrmling",
+   "name": "Brass Dragon Wyrmling",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Sand-wyrm hatchling under warm stone",
+   "sourceLine": 67
+  },
+  {
+   "id": "srd:creature:young-brass-dragon",
+   "name": "Young Brass Dragon",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 6,
+    "text": "6"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Young sand-wyrm of the dry scrub",
+   "sourceLine": 68
+  },
+  {
+   "id": "srd:creature:ancient-bronze-dragon",
+   "name": "Ancient Bronze Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 22,
+    "text": "22"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Ancient shore-wyrm of sea-cliff and ford",
+   "sourceLine": 69
+  },
+  {
+   "id": "srd:creature:adult-bronze-dragon",
+   "name": "Adult Bronze Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 15,
+    "text": "15"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Adult shore-wyrm watching the tidal roads",
+   "sourceLine": 70
+  },
+  {
+   "id": "srd:creature:ancient-copper-dragon",
+   "name": "Ancient Copper Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 21,
+    "text": "21"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Ancient trickster-wyrm of the stone hills",
+   "sourceLine": 71
+  },
+  {
+   "id": "srd:creature:bronze-dragon-wyrmling",
+   "name": "Bronze Dragon Wyrmling",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Shore-wyrm hatchling of tidal cave and gorge",
+   "sourceLine": 72
+  },
+  {
+   "id": "srd:creature:young-bronze-dragon",
+   "name": "Young Bronze Dragon",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 8,
+    "text": "8"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    },
+    {
+     "family": "WET",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Young shore-wyrm of gorge, mere and cliff",
+   "sourceLine": 73
+  },
+  {
+   "id": "srd:creature:adult-copper-dragon",
+   "name": "Adult Copper Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 14,
+    "text": "14"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Adult trickster-wyrm of canyon and tor",
+   "sourceLine": 74
+  },
+  {
+   "id": "srd:creature:young-copper-dragon",
+   "name": "Young Copper Dragon",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 7,
+    "text": "7"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Young trickster-wyrm of the dry hills",
+   "sourceLine": 75
+  },
+  {
+   "id": "srd:creature:ancient-gold-dragon",
+   "name": "Ancient Gold Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 24,
+    "text": "24"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "WET",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Ancient sun-wyrm of the highest good ground",
+   "sourceLine": 76
+  },
+  {
+   "id": "srd:creature:copper-dragon-wyrmling",
+   "name": "Copper Dragon Wyrmling",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Trickster-wyrm hatchling in hill-caves",
+   "sourceLine": 77
+  },
+  {
+   "id": "srd:creature:adult-gold-dragon",
+   "name": "Adult Gold Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 17,
+    "text": "17"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Adult sun-wyrm above river and golden field",
+   "sourceLine": 78
+  },
+  {
+   "id": "srd:creature:gold-dragon-wyrmling",
+   "name": "Gold Dragon Wyrmling",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Sun-wyrm hatchling by holy wells",
+   "sourceLine": 79
+  },
+  {
+   "id": "srd:creature:young-gold-dragon",
+   "name": "Young Gold Dragon",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 10,
+    "text": "10"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Young sun-wyrm of the bright uplands",
+   "sourceLine": 80
+  },
+  {
+   "id": "srd:creature:ancient-silver-dragon",
+   "name": "Ancient Silver Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 23,
+    "text": "23"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Ancient cloud-wyrm of the silver peaks",
+   "sourceLine": 81
+  },
+  {
+   "id": "srd:creature:adult-silver-dragon",
+   "name": "Adult Silver Dragon",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 16,
+    "text": "16"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Adult cloud-wyrm walking the high snow",
+   "sourceLine": 82
+  },
+  {
+   "id": "srd:creature:dragon-turtle",
+   "name": "Dragon Turtle",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 17,
+    "text": "17"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Isle-backed sea-wyrm of the deep meres",
+   "sourceLine": 83
+  },
+  {
+   "id": "srd:creature:silver-dragon-wyrmling",
+   "name": "Silver Dragon Wyrmling",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Cloud-wyrm hatchling on cold ledges",
+   "sourceLine": 84
+  },
+  {
+   "id": "srd:creature:young-silver-dragon",
+   "name": "Young Silver Dragon",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 9,
+    "text": "9"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Young cloud-wyrm of the windy tors",
+   "sourceLine": 85
+  },
+  {
+   "id": "srd:creature:drider",
+   "name": "Drider",
+   "role": "EXCLUDE",
+   "tier": "T2",
+   "cr": {
+    "rating": 6,
+    "text": "6"
+   },
+   "cells": [],
+   "sky": false,
+   "frequency": null,
+   "placement": "none",
+   "bodies": [],
+   "note": "Drow-spider curse, depends on excluded drow",
+   "sourceLine": 86
+  },
+  {
+   "id": "srd:creature:dryad",
+   "name": "Dryad",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Tree-bound fair one of oak and thorn",
+   "sourceLine": 87
+  },
+  {
+   "id": "srd:creature:air-elemental",
+   "name": "Air Elemental",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Awakened wind of ridge, cleft and open air",
+   "sourceLine": 88
+  },
+  {
+   "id": "srd:creature:duergar",
+   "name": "Duergar",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Pale knocker-lords of the deep mines",
+   "sourceLine": 89
+  },
+  {
+   "id": "srd:creature:earth-elemental",
+   "name": "Earth Elemental",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "ARID",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Awakened stone walking from a prepared seam",
+   "sourceLine": 90
+  },
+  {
+   "id": "srd:creature:fire-elemental",
+   "name": "Fire Elemental",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Awakened flame given a body in the caldera",
+   "sourceLine": 91
+  },
+  {
+   "id": "srd:creature:elf-drow",
+   "name": "Elf, Drow",
+   "role": "EXCLUDE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [],
+   "sky": false,
+   "frequency": null,
+   "placement": "none",
+   "bodies": [],
+   "note": "No elf schism among Nelian's people",
+   "sourceLine": 92
+  },
+  {
+   "id": "srd:creature:water-elemental",
+   "name": "Water Elemental",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Awakened water rising from well and aquifer",
+   "sourceLine": 93
+  },
+  {
+   "id": "srd:creature:ettercap",
+   "name": "Ettercap",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Web-tending wood-horror of the old thickets",
+   "sourceLine": 94
+  },
+  {
+   "id": "srd:creature:ettin",
+   "name": "Ettin",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 4,
+    "text": "4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Two-headed hill-giant of the broken ridges",
+   "sourceLine": 95
+  },
+  {
+   "id": "srd:creature:gargoyle",
+   "name": "Gargoyle",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Stone watcher perched on tor and ruin",
+   "sourceLine": 96
+  },
+  {
+   "id": "srd:creature:shrieker",
+   "name": "Shrieker",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "COLD",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Alarm-fungus of the dark damp halls",
+   "sourceLine": 97
+  },
+  {
+   "id": "srd:creature:violet-fungus",
+   "name": "Violet Fungus",
+   "role": "MONSTER",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Lashing cave-fungus among the shriekers",
+   "sourceLine": 98
+  },
+  {
+   "id": "srd:creature:djinni",
+   "name": "Djinni",
+   "role": "SUMMON-ONLY",
+   "tier": "T3",
+   "cr": {
+    "rating": 11,
+    "text": "11"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned air-prince bound at a rare site",
+   "sourceLine": 99
+  },
+  {
+   "id": "srd:creature:efreeti",
+   "name": "Efreeti",
+   "role": "SUMMON-ONLY",
+   "tier": "T3",
+   "cr": {
+    "rating": 11,
+    "text": "11"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned fire-prince bound at a rare site",
+   "sourceLine": 100
+  },
+  {
+   "id": "srd:creature:ghast",
+   "name": "Ghast",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Barrow-ghoul whose stench fouls the hill",
+   "sourceLine": 101
+  },
+  {
+   "id": "srd:creature:ghost",
+   "name": "Ghost",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 4,
+    "text": "4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Unquiet dead bound to a particular place",
+   "sourceLine": 102
+  },
+  {
+   "id": "srd:creature:cloud-giant",
+   "name": "Cloud Giant",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 9,
+    "text": "9"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Sky-walking giant of the clouded peaks",
+   "sourceLine": 103
+  },
+  {
+   "id": "srd:creature:fire-giant",
+   "name": "Fire Giant",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 9,
+    "text": "9"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Forge-giant of caldera and obsidian halls",
+   "sourceLine": 104
+  },
+  {
+   "id": "srd:creature:ghoul",
+   "name": "Ghoul",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Grave-eater risen from a particular burial",
+   "sourceLine": 105
+  },
+  {
+   "id": "srd:creature:frost-giant",
+   "name": "Frost Giant",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 8,
+    "text": "8"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Ice-giant of glacier, taiga and snowfield",
+   "sourceLine": 106
+  },
+  {
+   "id": "srd:creature:hill-giant",
+   "name": "Hill Giant",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Hill-giant of the standing-stone country",
+   "sourceLine": 107
+  },
+  {
+   "id": "srd:creature:stone-giant",
+   "name": "Stone Giant",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 7,
+    "text": "7"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Stone-giant of tor, cliff and silent halls",
+   "sourceLine": 108
+  },
+  {
+   "id": "srd:creature:storm-giant",
+   "name": "Storm Giant",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 13,
+    "text": "13"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Storm-giant of sea-cliff and thunder peak",
+   "sourceLine": 109
+  },
+  {
+   "id": "srd:creature:gibbering-mouther",
+   "name": "Gibbering Mouther",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Many-mouthed barrow-thing of wet dark",
+   "sourceLine": 110
+  },
+  {
+   "id": "srd:creature:gnoll",
+   "name": "Gnoll",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Hyena-folk of the dry scrub and waste",
+   "sourceLine": 111
+  },
+  {
+   "id": "srd:creature:clay-golem",
+   "name": "Clay Golem",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 9,
+    "text": "9"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Clay watcher shaped for a barrow or well",
+   "sourceLine": 112
+  },
+  {
+   "id": "srd:creature:gnome-deep-svirfneblin",
+   "name": "Gnome, Deep (Svirfneblin)",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Underhedge deep-kin tapping behind the ore",
+   "sourceLine": 113
+  },
+  {
+   "id": "srd:creature:goblin",
+   "name": "Goblin",
+   "role": "MONSTER",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Hob-cousin of hedge, barrow and mine-edge",
+   "sourceLine": 114
+  },
+  {
+   "id": "srd:creature:flesh-golem",
+   "name": "Flesh Golem",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Stitched corpse-work walking from a workshop",
+   "sourceLine": 115
+  },
+  {
+   "id": "srd:creature:gorgon",
+   "name": "Gorgon",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Iron-bull whose breath turns flesh to stone",
+   "sourceLine": 116
+  },
+  {
+   "id": "srd:creature:iron-golem",
+   "name": "Iron Golem",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 16,
+    "text": "16"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Forge-built iron watcher of a sealed hold",
+   "sourceLine": 117
+  },
+  {
+   "id": "srd:creature:stone-golem",
+   "name": "Stone Golem",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 10,
+    "text": "10"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Standing-stone given a walking purpose",
+   "sourceLine": 118
+  },
+  {
+   "id": "srd:creature:grick",
+   "name": "Grick",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "COLD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Beaked worm of the cave walls",
+   "sourceLine": 119
+  },
+  {
+   "id": "srd:creature:griffon",
+   "name": "Griffon",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Lion-eagle of the high nesting crags",
+   "sourceLine": 120
+  },
+  {
+   "id": "srd:creature:grimlock",
+   "name": "Grimlock",
+   "role": "MONSTER",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Blind cave-folk hunting by sound alone",
+   "sourceLine": 121
+  },
+  {
+   "id": "srd:creature:green-hag",
+   "name": "Green Hag",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Fen-crone of the will-o'-wisp bogs",
+   "sourceLine": 122
+  },
+  {
+   "id": "srd:creature:night-hag",
+   "name": "Night Hag",
+   "role": "SUMMON-ONLY",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned nightmare-crone of stolen sleep",
+   "sourceLine": 123
+  },
+  {
+   "id": "srd:creature:sea-hag",
+   "name": "Sea Hag",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Sea-crone of drowned caves and foul strands",
+   "sourceLine": 124
+  },
+  {
+   "id": "srd:creature:half-red-dragon-veteran",
+   "name": "Half-Red Dragon Veteran",
+   "role": "EXCLUDE",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [],
+   "sky": false,
+   "frequency": null,
+   "placement": "none",
+   "bodies": [],
+   "note": "D&D dragon-blood hybrid, no Emerys caste",
+   "sourceLine": 125
+  },
+  {
+   "id": "srd:creature:harpy",
+   "name": "Harpy",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Highlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Clifftop singer who lures folk to the fall",
+   "sourceLine": 126
+  },
+  {
+   "id": "srd:creature:hell-hound",
+   "name": "Hell Hound",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Black dog of burnt ground and churchyards",
+   "sourceLine": 127
+  },
+  {
+   "id": "srd:creature:hippogriff",
+   "name": "Hippogriff",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Horse-eagle of the windy uplands",
+   "sourceLine": 128
+  },
+  {
+   "id": "srd:creature:hobgoblin",
+   "name": "Hobgoblin",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Red-capped hob host of the border woods",
+   "sourceLine": 129
+  },
+  {
+   "id": "srd:creature:homunculus",
+   "name": "Homunculus",
+   "role": "SUMMON-ONLY",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Mage-made spy-thing of workshop and tower",
+   "sourceLine": 130
+  },
+  {
+   "id": "srd:creature:hydra",
+   "name": "Hydra",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 8,
+    "text": "8"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Many-headed mere-wyrm of the black pools",
+   "sourceLine": 131
+  },
+  {
+   "id": "srd:creature:invisible-stalker",
+   "name": "Invisible Stalker",
+   "role": "SUMMON-ONLY",
+   "tier": "T2",
+   "cr": {
+    "rating": 6,
+    "text": "6"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned wind-hunter given a name to chase",
+   "sourceLine": 132
+  },
+  {
+   "id": "srd:creature:kobold",
+   "name": "Kobold",
+   "role": "MONSTER",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "ARID",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "WILD",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "COLD",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Knocker-kin tapping warnings in the mines",
+   "sourceLine": 133
+  },
+  {
+   "id": "srd:creature:kraken",
+   "name": "Kraken",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 23,
+    "text": "23"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Oldest sea-wyrm of the drowned deep",
+   "sourceLine": 134
+  },
+  {
+   "id": "srd:creature:lamia",
+   "name": "Lamia",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 4,
+    "text": "4"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Desert enchantress of ruined dry palaces",
+   "sourceLine": 135
+  },
+  {
+   "id": "srd:creature:lich",
+   "name": "Lich",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 21,
+    "text": "21"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "COLD",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Barrow-king who refused the last ending",
+   "sourceLine": 136
+  },
+  {
+   "id": "srd:creature:lizardfolk",
+   "name": "Lizardfolk",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Reed-folk of swamp, fen and drowned cave",
+   "sourceLine": 137
+  },
+  {
+   "id": "srd:creature:werebear",
+   "name": "Werebear",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Bear-skin walker of the northern woods",
+   "sourceLine": 138
+  },
+  {
+   "id": "srd:creature:wereboar",
+   "name": "Wereboar",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 4,
+    "text": "4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Boar-skin walker of the thicket and mire",
+   "sourceLine": 139
+  },
+  {
+   "id": "srd:creature:wererat",
+   "name": "Wererat",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Rat-skin walker of cellar and sewer-cave",
+   "sourceLine": 140
+  },
+  {
+   "id": "srd:creature:weretiger",
+   "name": "Weretiger",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 4,
+    "text": "4"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Tiger-skin walker of the warm wild fringe",
+   "sourceLine": 141
+  },
+  {
+   "id": "srd:creature:werewolf",
+   "name": "Werewolf",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Wolf-skin walker under the changing moon",
+   "sourceLine": 142
+  },
+  {
+   "id": "srd:creature:magmin",
+   "name": "Magmin",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Small fire-kin playing in the ash vents",
+   "sourceLine": 143
+  },
+  {
+   "id": "srd:creature:manticore",
+   "name": "Manticore",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Spiked lion-beast of the dry high crags",
+   "sourceLine": 144
+  },
+  {
+   "id": "srd:creature:dust-mephit",
+   "name": "Dust Mephit",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Dust-sprite of dune, dry cave and deep dust",
+   "sourceLine": 145
+  },
+  {
+   "id": "srd:creature:medusa",
+   "name": "Medusa",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 6,
+    "text": "6"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Stone-gaze guardian of sealed barrow halls",
+   "sourceLine": 146
+  },
+  {
+   "id": "srd:creature:ice-mephit",
+   "name": "Ice Mephit",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Caverns"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Ice-sprite of glacier lip and frozen deep",
+   "sourceLine": 147
+  },
+  {
+   "id": "srd:creature:magma-mephit",
+   "name": "Magma Mephit",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Magma-sprite of vents and cooling crust",
+   "sourceLine": 148
+  },
+  {
+   "id": "srd:creature:steam-mephit",
+   "name": "Steam Mephit",
+   "role": "MONSTER",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Steam-sprite of hot spring and wet gorge",
+   "sourceLine": 149
+  },
+  {
+   "id": "srd:creature:merfolk",
+   "name": "Merfolk",
+   "role": "MONSTER",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Water-folk of lake, river-mouth and mere",
+   "sourceLine": 150
+  },
+  {
+   "id": "srd:creature:merrow",
+   "name": "Merrow",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Ogre of the deep pools and drowned halls",
+   "sourceLine": 151
+  },
+  {
+   "id": "srd:creature:mimic",
+   "name": "Mimic",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Shape-chest boggart of hoard and hearth",
+   "sourceLine": 152
+  },
+  {
+   "id": "srd:creature:minotaur",
+   "name": "Minotaur",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Bull-man of the labyrinthine underways",
+   "sourceLine": 153
+  },
+  {
+   "id": "srd:creature:mummy",
+   "name": "Mummy",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Wrapped barrow-dead of the dry tombs",
+   "sourceLine": 154
+  },
+  {
+   "id": "srd:creature:mummy-lord",
+   "name": "Mummy Lord",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 15,
+    "text": "15"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Dry-tomb king who will not yield the hoard",
+   "sourceLine": 155
+  },
+  {
+   "id": "srd:creature:guardian-naga",
+   "name": "Guardian Naga",
+   "role": "EXCLUDE",
+   "tier": "T3",
+   "cr": {
+    "rating": 10,
+    "text": "10"
+   },
+   "cells": [],
+   "sky": false,
+   "frequency": null,
+   "placement": "none",
+   "bodies": [],
+   "note": "Hindu temple naga, not English wyrm",
+   "sourceLine": 156
+  },
+  {
+   "id": "srd:creature:spirit-naga",
+   "name": "Spirit Naga",
+   "role": "EXCLUDE",
+   "tier": "T3",
+   "cr": {
+    "rating": 8,
+    "text": "8"
+   },
+   "cells": [],
+   "sky": false,
+   "frequency": null,
+   "placement": "none",
+   "bodies": [],
+   "note": "Hindu spirit-naga, not English wyrm",
+   "sourceLine": 157
+  },
+  {
+   "id": "srd:creature:nightmare",
+   "name": "Nightmare",
+   "role": "SUMMON-ONLY",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Burning night-horse reached only by pact",
+   "sourceLine": 158
+  },
+  {
+   "id": "srd:creature:ogre",
+   "name": "Ogre",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Man-eating giant of isolated holdings",
+   "sourceLine": 159
+  },
+  {
+   "id": "srd:creature:oni",
+   "name": "Oni",
+   "role": "EXCLUDE",
+   "tier": "T3",
+   "cr": {
+    "rating": 7,
+    "text": "7"
+   },
+   "cells": [],
+   "sky": false,
+   "frequency": null,
+   "placement": "none",
+   "bodies": [],
+   "note": "Japanese ogre-mage; ettin and troll suffice",
+   "sourceLine": 160
+  },
+  {
+   "id": "srd:creature:black-pudding",
+   "name": "Black Pudding",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 4,
+    "text": "4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Black dissolving slough of the deep dark",
+   "sourceLine": 161
+  },
+  {
+   "id": "srd:creature:gelatinous-cube",
+   "name": "Gelatinous Cube",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Clear corridor-slough that scours the ways",
+   "sourceLine": 162
+  },
+  {
+   "id": "srd:creature:gray-ooze",
+   "name": "Gray Ooze",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "COLD",
+     "band": "Caverns"
+    },
+    {
+     "family": "COLD",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "ARID",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "WILD",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Wet-rock slough mistaken for a puddle",
+   "sourceLine": 163
+  },
+  {
+   "id": "srd:creature:ochre-jelly",
+   "name": "Ochre Jelly",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Ochre climbing slough of cave and cleft",
+   "sourceLine": 164
+  },
+  {
+   "id": "srd:creature:orc",
+   "name": "Orc",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Savage frontier folk of the untamed marches",
+   "sourceLine": 165
+  },
+  {
+   "id": "srd:creature:otyugh",
+   "name": "Otyugh",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Midden-beast of cesspit, spoil and sump",
+   "sourceLine": 166
+  },
+  {
+   "id": "srd:creature:owlbear",
+   "name": "Owlbear",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Owl-headed bear of the deep wood",
+   "sourceLine": 167
+  },
+  {
+   "id": "srd:creature:pegasus",
+   "name": "Pegasus",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Winged white horse of the high clean air",
+   "sourceLine": 168
+  },
+  {
+   "id": "srd:creature:pseudodragon",
+   "name": "Pseudodragon",
+   "role": "MONSTER",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Cat-sized wyrmling companion of lonely hills",
+   "sourceLine": 169
+  },
+  {
+   "id": "srd:creature:purple-worm",
+   "name": "Purple Worm",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 15,
+    "text": "15"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Great boring-wyrm of the deepest stone",
+   "sourceLine": 170
+  },
+  {
+   "id": "srd:creature:rakshasa",
+   "name": "Rakshasa",
+   "role": "EXCLUDE",
+   "tier": "T4",
+   "cr": {
+    "rating": 13,
+    "text": "13"
+   },
+   "cells": [],
+   "sky": false,
+   "frequency": null,
+   "placement": "none",
+   "bodies": [],
+   "note": "Indian tiger-fiend, not English hills",
+   "sourceLine": 171
+  },
+  {
+   "id": "srd:creature:remorhaz",
+   "name": "Remorhaz",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 11,
+    "text": "11"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "COLD",
+     "band": "Caverns"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Heat-bellied ice-wyrm of the frozen deep",
+   "sourceLine": 172
+  },
+  {
+   "id": "srd:creature:roc",
+   "name": "Roc",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 11,
+    "text": "11"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "World-bird that nests upon the highest tors",
+   "sourceLine": 173
+  },
+  {
+   "id": "srd:creature:roper",
+   "name": "Roper",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Living stalagmite that fishes the dark",
+   "sourceLine": 174
+  },
+  {
+   "id": "srd:creature:rust-monster",
+   "name": "Rust Monster",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Ore-eater that unmakes iron in the mines",
+   "sourceLine": 175
+  },
+  {
+   "id": "srd:creature:sahuagin",
+   "name": "Sahuagin",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Sea-reavers of the drowned roads",
+   "sourceLine": 176
+  },
+  {
+   "id": "srd:creature:salamander",
+   "name": "Salamander",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Fire-serpent of magma reservoir and vent",
+   "sourceLine": 177
+  },
+  {
+   "id": "srd:creature:satyr",
+   "name": "Satyr",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Puck-kin piper of grove and fairy ring",
+   "sourceLine": 178
+  },
+  {
+   "id": "srd:creature:shadow",
+   "name": "Shadow",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Unattached shade lingering after a death",
+   "sourceLine": 179
+  },
+  {
+   "id": "srd:creature:shambling-mound",
+   "name": "Shambling Mound",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "bog_horror",
+     "kind": "proxy"
+    }
+   ],
+   "note": "Walking fen-heap of root, reed and rot",
+   "sourceLine": 180
+  },
+  {
+   "id": "srd:creature:shield-guardian",
+   "name": "Shield Guardian",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 7,
+    "text": "7"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Bound construct warding a maker's charge",
+   "sourceLine": 181
+  },
+  {
+   "id": "srd:creature:minotaur-skeleton",
+   "name": "Minotaur Skeleton",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Labyrinth bones still walking the maze",
+   "sourceLine": 182
+  },
+  {
+   "id": "srd:creature:skeleton",
+   "name": "Skeleton",
+   "role": "MONSTER",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Barrow bones raised from a particular grave",
+   "sourceLine": 183
+  },
+  {
+   "id": "srd:creature:specter",
+   "name": "Specter",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Angry shade torn loose from a violent death",
+   "sourceLine": 184
+  },
+  {
+   "id": "srd:creature:warhorse-skeleton",
+   "name": "Warhorse Skeleton",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Dead warhorse still answering an old bridle",
+   "sourceLine": 185
+  },
+  {
+   "id": "srd:creature:androsphinx",
+   "name": "Androsphinx",
+   "role": "EXCLUDE",
+   "tier": "T4",
+   "cr": {
+    "rating": 17,
+    "text": "17"
+   },
+   "cells": [],
+   "sky": false,
+   "frequency": null,
+   "placement": "none",
+   "bodies": [],
+   "note": "Egyptian riddling sphinx, not Emerys",
+   "sourceLine": 186
+  },
+  {
+   "id": "srd:creature:gynosphinx",
+   "name": "Gynosphinx",
+   "role": "EXCLUDE",
+   "tier": "T3",
+   "cr": {
+    "rating": 11,
+    "text": "11"
+   },
+   "cells": [],
+   "sky": false,
+   "frequency": null,
+   "placement": "none",
+   "bodies": [],
+   "note": "Egyptian riddling sphinx, not Emerys",
+   "sourceLine": 187
+  },
+  {
+   "id": "srd:creature:sprite",
+   "name": "Sprite",
+   "role": "MONSTER",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Thumb-high fair folk of ring and hollow hill",
+   "sourceLine": 188
+  },
+  {
+   "id": "srd:creature:stirge",
+   "name": "Stirge",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    },
+    {
+     "family": "WET",
+     "band": "Highlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Blood-bat of marsh, gorge and hanging bog",
+   "sourceLine": 189
+  },
+  {
+   "id": "srd:creature:succubus-incubus",
+   "name": "Succubus/Incubus",
+   "role": "SUMMON-ONLY",
+   "tier": "T2",
+   "cr": {
+    "rating": 4,
+    "text": "4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "summon",
+   "bodies": [],
+   "note": "Summoned night-wooer at a dangerous threshold",
+   "sourceLine": 190
+  },
+  {
+   "id": "srd:creature:tarrasque",
+   "name": "Tarrasque",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 30,
+    "text": "30"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "WILD",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Buried world-hunger from the Making's depth",
+   "sourceLine": 191
+  },
+  {
+   "id": "srd:creature:treant",
+   "name": "Treant",
+   "role": "MONSTER",
+   "tier": "T3",
+   "cr": {
+    "rating": 9,
+    "text": "9"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Walking grove-elder of the oldest wood",
+   "sourceLine": 192
+  },
+  {
+   "id": "srd:creature:troll",
+   "name": "Troll",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "troll",
+     "kind": "direct"
+    }
+   ],
+   "note": "Regenerating bridge- and cave-troll",
+   "sourceLine": 193
+  },
+  {
+   "id": "srd:creature:unicorn",
+   "name": "Unicorn",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Horned horse of the unspoiled wild wood",
+   "sourceLine": 194
+  },
+  {
+   "id": "srd:creature:vampire",
+   "name": "Vampire",
+   "role": "MONSTER",
+   "tier": "T4",
+   "cr": {
+    "rating": 13,
+    "text": "13"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "lair",
+   "placement": "lair",
+   "bodies": [],
+   "note": "Blood-drinker bound to a particular earth",
+   "sourceLine": 195
+  },
+  {
+   "id": "srd:creature:vampire-spawn",
+   "name": "Vampire Spawn",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Newly bound hungry dead of a vampire's earth",
+   "sourceLine": 196
+  },
+  {
+   "id": "srd:creature:wight",
+   "name": "Wight",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Barrow-wight keeping its grave-goods",
+   "sourceLine": 197
+  },
+  {
+   "id": "srd:creature:will-o-wisp",
+   "name": "Will-o’-Wisp",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Wandering light that leads folk into the bog",
+   "sourceLine": 198
+  },
+  {
+   "id": "srd:creature:wraith",
+   "name": "Wraith",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "COLD",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "ice_wraith",
+     "kind": "proxy"
+    }
+   ],
+   "note": "Cold shade of a life emptied of warmth",
+   "sourceLine": 199
+  },
+  {
+   "id": "srd:creature:wyvern",
+   "name": "Wyvern",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 6,
+    "text": "6"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Two-legged sting-wyrm of the high crags",
+   "sourceLine": 200
+  },
+  {
+   "id": "srd:creature:xorn",
+   "name": "Xorn",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "ARID",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Ore-eating earth-kin walking through stone",
+   "sourceLine": 201
+  },
+  {
+   "id": "srd:creature:zombie",
+   "name": "Zombie",
+   "role": "MONSTER",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "restless_dead",
+     "kind": "proxy"
+    }
+   ],
+   "note": "Restless corpse still bound to its last work",
+   "sourceLine": 202
+  },
+  {
+   "id": "srd:creature:ogre-zombie",
+   "name": "Ogre Zombie",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Dead ogre that has not yet lain down",
+   "sourceLine": 203
+  },
+  {
+   "id": "srd:creature:ape",
+   "name": "Ape",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Forest ape of the primeval canopy",
+   "sourceLine": 204
+  },
+  {
+   "id": "srd:creature:awakened-shrub",
+   "name": "Awakened Shrub",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Hedge-spirit shrub that answers a voice",
+   "sourceLine": 205
+  },
+  {
+   "id": "srd:creature:awakened-tree",
+   "name": "Awakened Tree",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Walking grove-spirit loosed from its roots",
+   "sourceLine": 206
+  },
+  {
+   "id": "srd:creature:axe-beak",
+   "name": "Axe Beak",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Flightless plains bird of open grassland",
+   "sourceLine": 207
+  },
+  {
+   "id": "srd:creature:baboon",
+   "name": "Baboon",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Troop primate of dry scrub and cliff",
+   "sourceLine": 208
+  },
+  {
+   "id": "srd:creature:badger",
+   "name": "Badger",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Sett-dwelling digger of bank and wood",
+   "sourceLine": 209
+  },
+  {
+   "id": "srd:creature:bat",
+   "name": "Bat",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": true,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "bat",
+     "kind": "direct"
+    }
+   ],
+   "note": "Cave bat of every dark and the dusk air",
+   "sourceLine": 210
+  },
+  {
+   "id": "srd:creature:black-bear",
+   "name": "Black Bear",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Woodland bear of broadleaf and copse",
+   "sourceLine": 211
+  },
+  {
+   "id": "srd:creature:blink-dog",
+   "name": "Blink Dog",
+   "role": "MONSTER",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Fair-hound that steps between the hills",
+   "sourceLine": 212
+  },
+  {
+   "id": "srd:creature:blood-hawk",
+   "name": "Blood Hawk",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    },
+    {
+     "family": "WET",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "fowl",
+     "kind": "proxy"
+    }
+   ],
+   "note": "Fierce hunting hawk of ridge and scarp",
+   "sourceLine": 213
+  },
+  {
+   "id": "srd:creature:boar",
+   "name": "Boar",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "boar",
+     "kind": "direct"
+    }
+   ],
+   "note": "Wild boar of wood, thicket and marsh-edge",
+   "sourceLine": 214
+  },
+  {
+   "id": "srd:creature:brown-bear",
+   "name": "Brown Bear",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great bear of taiga, wood and upland",
+   "sourceLine": 215
+  },
+  {
+   "id": "srd:creature:camel",
+   "name": "Camel",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Desert camel of dune and dry scrub",
+   "sourceLine": 216
+  },
+  {
+   "id": "srd:creature:cat",
+   "name": "Cat",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Small wildcat of hedge, barn and ruin",
+   "sourceLine": 217
+  },
+  {
+   "id": "srd:creature:constrictor-snake",
+   "name": "Constrictor Snake",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Constricting serpent of swamp and warm scrub",
+   "sourceLine": 218
+  },
+  {
+   "id": "srd:creature:crab",
+   "name": "Crab",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Shore crab of mere, pool and tidal cave",
+   "sourceLine": 219
+  },
+  {
+   "id": "srd:creature:crocodile",
+   "name": "Crocodile",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "River crocodile of fen, lake and drowned cave",
+   "sourceLine": 220
+  },
+  {
+   "id": "srd:creature:death-dog",
+   "name": "Death Dog",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Two-headed black dog of fords and graves",
+   "sourceLine": 221
+  },
+  {
+   "id": "srd:creature:deer",
+   "name": "Deer",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "deer",
+     "kind": "direct"
+    }
+   ],
+   "note": "Woodland deer of meadow, copse and taiga-edge",
+   "sourceLine": 222
+  },
+  {
+   "id": "srd:creature:dire-wolf",
+   "name": "Dire Wolf",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great wolf of the northern and wild woods",
+   "sourceLine": 223
+  },
+  {
+   "id": "srd:creature:draft-horse",
+   "name": "Draft Horse",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Heavy horse of settled lowland and caravan",
+   "sourceLine": 224
+  },
+  {
+   "id": "srd:creature:eagle",
+   "name": "Eagle",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "WET",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "High eagle of tor, cliff and open sky",
+   "sourceLine": 225
+  },
+  {
+   "id": "srd:creature:elephant",
+   "name": "Elephant",
+   "role": "WILDLIFE",
+   "tier": "T2",
+   "cr": {
+    "rating": 4,
+    "text": "4"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great tusker of warm grass and wild fringe",
+   "sourceLine": 226
+  },
+  {
+   "id": "srd:creature:elk",
+   "name": "Elk",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "aurochs",
+     "kind": "proxy"
+    }
+   ],
+   "note": "Elk of upland wood, taiga and wild meadow",
+   "sourceLine": 227
+  },
+  {
+   "id": "srd:creature:flying-snake",
+   "name": "Flying Snake",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Gliding serpent of warm canopy and scrub",
+   "sourceLine": 228
+  },
+  {
+   "id": "srd:creature:frog",
+   "name": "Frog",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Frog of pool, ditch and wet cave lip",
+   "sourceLine": 229
+  },
+  {
+   "id": "srd:creature:giant-ape",
+   "name": "Giant Ape",
+   "role": "WILDLIFE",
+   "tier": "T3",
+   "cr": {
+    "rating": 7,
+    "text": "7"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Primeval ape of the deepest old forest",
+   "sourceLine": 230
+  },
+  {
+   "id": "srd:creature:giant-badger",
+   "name": "Giant Badger",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great sett-dweller of bank and woodland",
+   "sourceLine": 231
+  },
+  {
+   "id": "srd:creature:giant-bat",
+   "name": "Giant Bat",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "COLD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": true,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great cave bat of the dark and dusk",
+   "sourceLine": 232
+  },
+  {
+   "id": "srd:creature:giant-boar",
+   "name": "Giant Boar",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great boar of thicket, marsh-edge and wild",
+   "sourceLine": 233
+  },
+  {
+   "id": "srd:creature:giant-centipede",
+   "name": "Giant Centipede",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "COLD",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "WILD",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Cave centipede of spoil, damp stone and deep",
+   "sourceLine": 234
+  },
+  {
+   "id": "srd:creature:giant-constrictor-snake",
+   "name": "Giant Constrictor Snake",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great constrictor of swamp and drowned hall",
+   "sourceLine": 235
+  },
+  {
+   "id": "srd:creature:giant-crab",
+   "name": "Giant Crab",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great crab of shore, mere and tidal cave",
+   "sourceLine": 236
+  },
+  {
+   "id": "srd:creature:giant-crocodile",
+   "name": "Giant Crocodile",
+   "role": "WILDLIFE",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great crocodile of the oldest meres",
+   "sourceLine": 237
+  },
+  {
+   "id": "srd:creature:giant-eagle",
+   "name": "Giant Eagle",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    },
+    {
+     "family": "WET",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great eagle of the high nesting tors",
+   "sourceLine": 238
+  },
+  {
+   "id": "srd:creature:giant-elk",
+   "name": "Giant Elk",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great elk of upland meadow and taiga",
+   "sourceLine": 239
+  },
+  {
+   "id": "srd:creature:giant-fire-beetle",
+   "name": "Giant Fire Beetle",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Deep Earth"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Glow-beetle of warm caves and magma margins",
+   "sourceLine": 240
+  },
+  {
+   "id": "srd:creature:giant-frog",
+   "name": "Giant Frog",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great frog of fen, pool and wet cave",
+   "sourceLine": 241
+  },
+  {
+   "id": "srd:creature:giant-goat",
+   "name": "Giant Goat",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    },
+    {
+     "family": "WET",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great goat of crag, snowfield and ash slope",
+   "sourceLine": 242
+  },
+  {
+   "id": "srd:creature:giant-hyena",
+   "name": "Giant Hyena",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great hyena of dry scrub and waste",
+   "sourceLine": 243
+  },
+  {
+   "id": "srd:creature:giant-lizard",
+   "name": "Giant Lizard",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great lizard of sun-rock, cave and ash",
+   "sourceLine": 244
+  },
+  {
+   "id": "srd:creature:giant-octopus",
+   "name": "Giant Octopus",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great octopus of drowned cave and deep mere",
+   "sourceLine": 245
+  },
+  {
+   "id": "srd:creature:giant-owl",
+   "name": "Giant Owl",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great owl of the night wood and wild",
+   "sourceLine": 246
+  },
+  {
+   "id": "srd:creature:giant-poisonous-snake",
+   "name": "Giant Poisonous Snake",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great adder of marsh, scrub and cave",
+   "sourceLine": 247
+  },
+  {
+   "id": "srd:creature:giant-rat",
+   "name": "Giant Rat",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great rat of cellar, spoil-heap and cave",
+   "sourceLine": 248
+  },
+  {
+   "id": "srd:creature:giant-scorpion",
+   "name": "Giant Scorpion",
+   "role": "WILDLIFE",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great scorpion of dune, badland and ash",
+   "sourceLine": 249
+  },
+  {
+   "id": "srd:creature:giant-sea-horse",
+   "name": "Giant Sea Horse",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great sea-horse of lake-weed and tidal cave",
+   "sourceLine": 250
+  },
+  {
+   "id": "srd:creature:giant-shark",
+   "name": "Giant Shark",
+   "role": "WILDLIFE",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great shark of the open mere and deep water",
+   "sourceLine": 251
+  },
+  {
+   "id": "srd:creature:giant-spider",
+   "name": "Giant Spider",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "giant_spider",
+     "kind": "direct"
+    }
+   ],
+   "note": "Great web-spider of wood, cave and fen",
+   "sourceLine": 252
+  },
+  {
+   "id": "srd:creature:giant-toad",
+   "name": "Giant Toad",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great toad of bog, pool and wet cave",
+   "sourceLine": 253
+  },
+  {
+   "id": "srd:creature:giant-vulture",
+   "name": "Giant Vulture",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great vulture of desert height and ash peak",
+   "sourceLine": 254
+  },
+  {
+   "id": "srd:creature:giant-wasp",
+   "name": "Giant Wasp",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great wasp of meadow, wild fringe and scrub",
+   "sourceLine": 255
+  },
+  {
+   "id": "srd:creature:giant-weasel",
+   "name": "Giant Weasel",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great weasel of bank, wood and snow-edge",
+   "sourceLine": 256
+  },
+  {
+   "id": "srd:creature:giant-wolf-spider",
+   "name": "Giant Wolf Spider",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Hunting wolf-spider of ground and cave floor",
+   "sourceLine": 257
+  },
+  {
+   "id": "srd:creature:goat",
+   "name": "Goat",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "WET",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "wild_sheep",
+     "kind": "proxy"
+    }
+   ],
+   "note": "Wild goat of hill, crag and ash slope",
+   "sourceLine": 258
+  },
+  {
+   "id": "srd:creature:hawk",
+   "name": "Hawk",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "WET",
+     "band": "Highlands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "hawk",
+     "kind": "direct"
+    }
+   ],
+   "note": "Hawk of field, tor and open sky",
+   "sourceLine": 259
+  },
+  {
+   "id": "srd:creature:hunter-shark",
+   "name": "Hunter Shark",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Hunting shark of deep mere and drowned road",
+   "sourceLine": 260
+  },
+  {
+   "id": "srd:creature:hyena",
+   "name": "Hyena",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Hyena of dry scrub, savanna and waste",
+   "sourceLine": 261
+  },
+  {
+   "id": "srd:creature:jackal",
+   "name": "Jackal",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "jackal",
+     "kind": "direct"
+    },
+    {
+     "species": "fox",
+     "kind": "proxy"
+    },
+    {
+     "species": "arctic_fox",
+     "kind": "proxy"
+    }
+   ],
+   "note": "Jackal of dry country and waste-edge",
+   "sourceLine": 262
+  },
+  {
+   "id": "srd:creature:killer-whale",
+   "name": "Killer Whale",
+   "role": "WILDLIFE",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Great whale of cold mere and deep water",
+   "sourceLine": 263
+  },
+  {
+   "id": "srd:creature:lion",
+   "name": "Lion",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Lion of savanna, scrub and wild fringe",
+   "sourceLine": 264
+  },
+  {
+   "id": "srd:creature:lizard",
+   "name": "Lizard",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Small lizard of sun-warmed stone and ash",
+   "sourceLine": 265
+  },
+  {
+   "id": "srd:creature:mammoth",
+   "name": "Mammoth",
+   "role": "WILDLIFE",
+   "tier": "T2",
+   "cr": {
+    "rating": 6,
+    "text": "6"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Woolly mammoth of tundra and frozen ground",
+   "sourceLine": 266
+  },
+  {
+   "id": "srd:creature:mastiff",
+   "name": "Mastiff",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Mastiff of settled halls and herd-watches",
+   "sourceLine": 267
+  },
+  {
+   "id": "srd:creature:mule",
+   "name": "Mule",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Mule of road, caravan and hill-track",
+   "sourceLine": 268
+  },
+  {
+   "id": "srd:creature:octopus",
+   "name": "Octopus",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Octopus of pool, weed-bed and tidal cave",
+   "sourceLine": 269
+  },
+  {
+   "id": "srd:creature:owl",
+   "name": "Owl",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Owl of wood, barn and the night air",
+   "sourceLine": 270
+  },
+  {
+   "id": "srd:creature:panther",
+   "name": "Panther",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "wildcat",
+     "kind": "proxy"
+    }
+   ],
+   "note": "Panther of deep wood and rocky wild",
+   "sourceLine": 271
+  },
+  {
+   "id": "srd:creature:phase-spider",
+   "name": "Phase Spider",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Between-hills spider stepping out of air",
+   "sourceLine": 272
+  },
+  {
+   "id": "srd:creature:poisonous-snake",
+   "name": "Poisonous Snake",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "serpent",
+     "kind": "proxy"
+    }
+   ],
+   "note": "Adder of meadow, marsh, scrub and wild",
+   "sourceLine": 273
+  },
+  {
+   "id": "srd:creature:polar-bear",
+   "name": "Polar Bear",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Ice-bear of shore, pack-ice and snowfield",
+   "sourceLine": 274
+  },
+  {
+   "id": "srd:creature:pony",
+   "name": "Pony",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Hill-pony of lowland pasture and moor",
+   "sourceLine": 275
+  },
+  {
+   "id": "srd:creature:quipper",
+   "name": "Quipper",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Schooling bite-fish of mere and flooded cave",
+   "sourceLine": 276
+  },
+  {
+   "id": "srd:creature:rat",
+   "name": "Rat",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "rat",
+     "kind": "direct"
+    }
+   ],
+   "note": "Rat of hall, spoil, cave and ash settlement",
+   "sourceLine": 277
+  },
+  {
+   "id": "srd:creature:raven",
+   "name": "Raven",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "WET",
+     "band": "Highlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "songbird",
+     "kind": "proxy"
+    }
+   ],
+   "note": "Raven of field, battlefield and high air",
+   "sourceLine": 278
+  },
+  {
+   "id": "srd:creature:reef-shark",
+   "name": "Reef Shark",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Shore shark of shallow mere and cave mouth",
+   "sourceLine": 279
+  },
+  {
+   "id": "srd:creature:rhinoceros",
+   "name": "Rhinoceros",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Horned grazer of warm grass and scrub",
+   "sourceLine": 280
+  },
+  {
+   "id": "srd:creature:riding-horse",
+   "name": "Riding Horse",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "wild_horse",
+     "kind": "proxy"
+    }
+   ],
+   "note": "Riding horse of open country and road",
+   "sourceLine": 281
+  },
+  {
+   "id": "srd:creature:saber-toothed-tiger",
+   "name": "Saber-Toothed Tiger",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Saber-cat of cold steppe and wild fringe",
+   "sourceLine": 282
+  },
+  {
+   "id": "srd:creature:scorpion",
+   "name": "Scorpion",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Scorpion of sand, dry cave and warm ash",
+   "sourceLine": 283
+  },
+  {
+   "id": "srd:creature:sea-horse",
+   "name": "Sea Horse",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Sea-horse of weed-bed and quiet pool",
+   "sourceLine": 284
+  },
+  {
+   "id": "srd:creature:spider",
+   "name": "Spider",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Common spider of hall, cave and hedge",
+   "sourceLine": 285
+  },
+  {
+   "id": "srd:creature:swarm-of-bats",
+   "name": "Swarm of Bats",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Caverns"
+    },
+    {
+     "family": "WILD",
+     "band": "Caverns"
+    }
+   ],
+   "sky": true,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Bat swarm pouring from cave into dusk",
+   "sourceLine": 286
+  },
+  {
+   "id": "srd:creature:swarm-of-insects",
+   "name": "Swarm of Insects",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Insect swarm of marsh, field, ash and wild",
+   "sourceLine": 287
+  },
+  {
+   "id": "srd:creature:swarm-of-poisonous-snakes",
+   "name": "Swarm of Poisonous Snakes",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Adder swarm of marsh, thicket and warm scrub",
+   "sourceLine": 288
+  },
+  {
+   "id": "srd:creature:swarm-of-quippers",
+   "name": "Swarm of Quippers",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Deep Earth"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Bite-fish swarm of mere and flooded deep",
+   "sourceLine": 289
+  },
+  {
+   "id": "srd:creature:swarm-of-rats",
+   "name": "Swarm of Rats",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Rat swarm of spoil, cellar and cave",
+   "sourceLine": 290
+  },
+  {
+   "id": "srd:creature:swarm-of-ravens",
+   "name": "Swarm of Ravens",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    }
+   ],
+   "sky": true,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Raven swarm of field, gallows-tree and sky",
+   "sourceLine": 291
+  },
+  {
+   "id": "srd:creature:tiger",
+   "name": "Tiger",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Tiger of warm wild wood and rocky fringe",
+   "sourceLine": 292
+  },
+  {
+   "id": "srd:creature:vulture",
+   "name": "Vulture",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Highlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Uplands"
+    }
+   ],
+   "sky": true,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Vulture of desert, ash slope and high air",
+   "sourceLine": 293
+  },
+  {
+   "id": "srd:creature:warhorse",
+   "name": "Warhorse",
+   "role": "WILDLIFE",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Warhorse of settled hosts and open road",
+   "sourceLine": 294
+  },
+  {
+   "id": "srd:creature:weasel",
+   "name": "Weasel",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "hare",
+     "kind": "proxy"
+    }
+   ],
+   "note": "Weasel of bank, wood, hedge and snow-edge",
+   "sourceLine": 295
+  },
+  {
+   "id": "srd:creature:winter-wolf",
+   "name": "Winter Wolf",
+   "role": "MONSTER",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "White fell-wolf of tundra and ice wind",
+   "sourceLine": 296
+  },
+  {
+   "id": "srd:creature:wolf",
+   "name": "Wolf",
+   "role": "WILDLIFE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [
+    {
+     "species": "wolf",
+     "kind": "direct"
+    }
+   ],
+   "note": "Wolf of wood, taiga, wild and winter field",
+   "sourceLine": 297
+  },
+  {
+   "id": "srd:creature:worg",
+   "name": "Worg",
+   "role": "MONSTER",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Fell-wolf ridden by hob and goblin hosts",
+   "sourceLine": 298
+  },
+  {
+   "id": "srd:creature:acolyte",
+   "name": "Acolyte",
+   "role": "PEOPLE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.25,
+    "text": "1/4"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Hearth-rite keeper of the Nine's first fires",
+   "sourceLine": 299
+  },
+  {
+   "id": "srd:creature:archmage",
+   "name": "Archmage",
+   "role": "PEOPLE",
+   "tier": "T3",
+   "cr": {
+    "rating": 12,
+    "text": "12"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Highlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Rare high worker of a people's opened art",
+   "sourceLine": 300
+  },
+  {
+   "id": "srd:creature:assassin",
+   "name": "Assassin",
+   "role": "PEOPLE",
+   "tier": "T3",
+   "cr": {
+    "rating": 8,
+    "text": "8"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Caverns"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Hired knife wearing any of the Nine's faces",
+   "sourceLine": 301
+  },
+  {
+   "id": "srd:creature:bandit",
+   "name": "Bandit",
+   "role": "PEOPLE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Road-taker from any of the Nine peoples",
+   "sourceLine": 302
+  },
+  {
+   "id": "srd:creature:bandit-captain",
+   "name": "Bandit Captain",
+   "role": "PEOPLE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Band-leader of a mixed Nine company",
+   "sourceLine": 303
+  },
+  {
+   "id": "srd:creature:berserker",
+   "name": "Berserker",
+   "role": "PEOPLE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Fury-sworn of half-orc, human or dragonborn",
+   "sourceLine": 304
+  },
+  {
+   "id": "srd:creature:commoner",
+   "name": "Commoner",
+   "role": "PEOPLE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0,
+    "text": "0"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Ordinary soul of any of the Nine peoples",
+   "sourceLine": 305
+  },
+  {
+   "id": "srd:creature:cult-fanatic",
+   "name": "Cult Fanatic",
+   "role": "PEOPLE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Zealot of a crossing-rite gone possessive",
+   "sourceLine": 306
+  },
+  {
+   "id": "srd:creature:cultist",
+   "name": "Cultist",
+   "role": "PEOPLE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Follower of a crossing-rite or hollow bargain",
+   "sourceLine": 307
+  },
+  {
+   "id": "srd:creature:druid",
+   "name": "Druid",
+   "role": "PEOPLE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Grove-keeper standing between people and wild",
+   "sourceLine": 308
+  },
+  {
+   "id": "srd:creature:gladiator",
+   "name": "Gladiator",
+   "role": "PEOPLE",
+   "tier": "T2",
+   "cr": {
+    "rating": 5,
+    "text": "5"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Pit-fighter after halls and keeps exist",
+   "sourceLine": 309
+  },
+  {
+   "id": "srd:creature:guard",
+   "name": "Guard",
+   "role": "PEOPLE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Watch-keeper of fire, ford, hall or gate",
+   "sourceLine": 310
+  },
+  {
+   "id": "srd:creature:knight",
+   "name": "Knight",
+   "role": "PEOPLE",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Oath-bearer after the first halls are raised",
+   "sourceLine": 311
+  },
+  {
+   "id": "srd:creature:mage",
+   "name": "Mage",
+   "role": "PEOPLE",
+   "tier": "T2",
+   "cr": {
+    "rating": 6,
+    "text": "6"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "rare",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Worker of art from any of the Nine",
+   "sourceLine": 312
+  },
+  {
+   "id": "srd:creature:noble",
+   "name": "Noble",
+   "role": "PEOPLE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Claimant of hall and surplus among the Nine",
+   "sourceLine": 313
+  },
+  {
+   "id": "srd:creature:priest",
+   "name": "Priest",
+   "role": "PEOPLE",
+   "tier": "T1",
+   "cr": {
+    "rating": 2,
+    "text": "2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Rite-keeper of hearth, well, stone or plane",
+   "sourceLine": 314
+  },
+  {
+   "id": "srd:creature:scout",
+   "name": "Scout",
+   "role": "PEOPLE",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Highlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Pathfinder of any people on the frontier",
+   "sourceLine": 315
+  },
+  {
+   "id": "srd:creature:spy",
+   "name": "Spy",
+   "role": "PEOPLE",
+   "tier": "T1",
+   "cr": {
+    "rating": 1,
+    "text": "1"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Listener wearing any of the Nine's faces",
+   "sourceLine": 316
+  },
+  {
+   "id": "srd:creature:thug",
+   "name": "Thug",
+   "role": "PEOPLE",
+   "tier": "T1",
+   "cr": {
+    "rating": 0.5,
+    "text": "1/2"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Hired muscle of street, camp and quay",
+   "sourceLine": 317
+  },
+  {
+   "id": "srd:creature:tribal-warrior",
+   "name": "Tribal Warrior",
+   "role": "PEOPLE",
+   "tier": "T0",
+   "cr": {
+    "rating": 0.125,
+    "text": "1/8"
+   },
+   "cells": [
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    }
+   ],
+   "sky": false,
+   "frequency": "common",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Founding-band warrior of the Nine at dawn",
+   "sourceLine": 318
+  },
+  {
+   "id": "srd:creature:veteran",
+   "name": "Veteran",
+   "role": "PEOPLE",
+   "tier": "T2",
+   "cr": {
+    "rating": 3,
+    "text": "3"
+   },
+   "cells": [
+    {
+     "family": "TEMPERATE",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WET",
+     "band": "Lowlands"
+    },
+    {
+     "family": "ARID",
+     "band": "Lowlands"
+    },
+    {
+     "family": "COLD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "VOLCANIC",
+     "band": "Lowlands"
+    },
+    {
+     "family": "WILD",
+     "band": "Lowlands"
+    },
+    {
+     "family": "TEMPERATE",
+     "band": "Uplands"
+    },
+    {
+     "family": "WILD",
+     "band": "Uplands"
+    }
+   ],
+   "sky": false,
+   "frequency": "uncommon",
+   "placement": "seeded",
+   "bodies": [],
+   "note": "Seasoned fighter of any of the Nine peoples",
+   "sourceLine": 319
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "about": "Pin record for the adopted bestiary source of NAT.07.01 (lane-ex). The source file beside this record is a verbatim copy and is never edited. A change to the bestiary is a new source file with a new pin and a new build, never an edit of this one.",
+ "file": "docs/design/bestiary/BESTIARY_grok_heavy.md",
+ "copiedFrom": "C:/Users/snewt/.deus_pm/braintrust/2026-09-30/BESTIARY_grok_heavy.md",
+ "copiedOn": "2026-10-01",
+ "origin": "braintrust 2026-09-30, Grok Heavy voice; no BESTIARY-MERGE was run",
+ "sha256": "c6f9d41853f29ecd83b4ffa5cbd26b17d6a1e67f3445bfde29b843c41e740914",
+ "bytes": 46217,
+ "lineEndings": "LF; the hash is taken over the file with CRLF folded to LF, so a CRLF checkout hashes the same",
+ "pinnedIn": "tasks/wbs_registry.json, tasks.NAT.07.01.source.sha256",
+ "inputs": "Only the 317 srd:creature: rows (source lines 3-319) are build inputs. Sections A (occupancy grid), B (wildlife map) and C (recommendations) are not inputs; see docs/systems/DEUS_Bestiary.md.",
+ "verbatimNotes": "The source spells the world 'Emrys' at lines 21, 125, 186, 187 and 361. The copy keeps that spelling because it is a source record; the generated game/data/srd_adaptation/creatures.json writes 'Emerys' (DEC-054)."
+}

@@ -1078,3 +1078,23 @@ Every decision item recorded in this log must provide:
   11. **Budget.** From 06:22 the PM may spend up to 500 PixelLab generations (Pixflux or Bitforge, 1 each) on natural-world art, to flesh out the world. Every generation still follows item 6 and is logged (AS-GEN-001).
   12. **Catalogue rows.** The PM may add catalogue rows for any asset the world needs without asking each time (06:27). Rows are data, so they go through a reviewed lane (DEC-048, DEC-052), and a row still comes before its generation (DEC-007).
 - **Unchanged:** DEC-007 (catalogue first, SOP prompts, QA), the DEC-046 static-first amendment, and DEC-056 as tightened by DEC-062 and its amendment.
+
+---
+
+### Decision `DEC-064`: "Lets do all these": the PM's nine-item improvement list of 2026-10-01 is approved work
+- **Date:** 2026-10-01
+- **Status:** `DECIDED` (Owner, in chat with Claude Code, 2026-10-01 05:25 UTC)
+- **Source:** Owner, 2026-10-01 05:25 UTC, in chat with Claude Code: the Owner pasted the PM's list "What can still be done, by payoff" and wrote "Lets do all these". The list, as approved (the PM's words, shortened only by dropping the explanations):
+  1. Launch wave 1, then drive to wave 4; lane-cu is the gate.
+  2. lane-cz: mail and telemetry off main.
+  3. Clear the merge backlog: co, then ct and cu; lane-cy needs world-generation integration and a council vote before it can merge.
+  4. Plan deadlines before they bite: by wave 2 the D1 ownership reconciliation; by wave 3 the home-area generation rule and reclaimable collapse rubble; by wave 4 the D1 obligations assigned to their owners; before later consumers, ADR-003's 14 amendments.
+  5. "The other four process lanes from the braintrust review, one at a time": reviewer launches that don't create commits; one manifest contract checked at every step; automatic checking of AG's claims; reliable braintrust delivery.
+  6. Test health: the strata test's timing bounds under load, and the CRLF sensitivity in the gate's fresh clones.
+  7. Commit the pending records: DEC-061/062, the art council record, and the wave-1 governance records.
+  8. Art, when un-paused: the U7 ground method; RMMZ quarter-corner cliff inner corners; the rebuilt stumps and redone trees through the council; the council on the 42 ground tiles.
+  9. "The originality-check deletion lane, after wave 1 launches."
+  The PM also offered a live dashboard page; it was built (the DEUS build board artifact).
+- **Ruling:** the nine items are approved work. This entry records the approval; it is the authority line for the process-lane briefs (lane-cz, lane-pa to lane-pf) and the deadline records.
+- **Not decided by this entry:** exceptions the WORK-GATE of 2026-10-01 says need the Owner: a DEC-048 exception for lane-pa and a separate authorization for lane-pb (merge_gate changes); whether lane-pe may start before natural-world wave 3 (PI-1); lane-pe's repo-wide `.gitattributes` change and Codex writing outside its CANONICAL_ROLES bound. Item 9 states its own timing ("after wave 1 launches"); whether that overrides PI-1's wave-3 hold for lane-pf is also the Owner's to confirm.
+- **Unchanged:** DEC-048, DEC-052 and PI-1 stand except where the Owner rules on the items above.
