@@ -1,0 +1,7 @@
+# base c9f3858b (git archive in %TEMP%\laneed_base) vs tip d7e55287 worktree; script %TEMP%\laneed_nophys.js
+SAME: 20 seeded fixtures x 200 unbudgeted ticks (4000 ticks): return values and serialized state identical (tip cursor field, always null here, removed before comparing)
+exit=0
+
+# control: same comparison against a tip copy with vertical L 2 -> 3 (%TEMP%\laneed_nophys_mut)
+DIFF seed 1 tick 0 transfersExecuted: base 153 tip 139
+exit=1
