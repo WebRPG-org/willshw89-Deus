@@ -1,0 +1,103 @@
+{
+ "phase": "legacy",
+ "made": "2026-10-01T10:08:23.959Z",
+ "env": {
+  "DEUS_Z_RANGE": null
+ },
+ "data": {
+  "tip": true,
+  "range": {
+   "zMin": -16,
+   "zMax": 15
+  },
+  "levels": 32,
+  "seed": 18,
+  "savedZRange": {
+   "zMin": -16,
+   "zMax": 15
+  },
+  "view": {
+   "x": 0,
+   "y": 0,
+   "z": 0,
+   "px": 128,
+   "py": 128
+  },
+  "legacyFirst": {
+   "load": {
+    "timedOut": false,
+    "fp": {
+     "range": {
+      "zMin": -2,
+      "zMax": 2
+     },
+     "stateRange": "absent",
+     "levels": 5
+    },
+    "shown": {
+     "x": 0,
+     "y": 0,
+     "z": 0
+    }
+   },
+   "cellsMatch": true,
+   "changed": {
+    "0": 1,
+    "1": 170,
+    "2": 1,
+    "-2": 0,
+    "-1": 1
+   },
+   "unitsMatch": true,
+   "itemsMatch": true,
+   "unitsOnlyLoaded": [],
+   "unitsOnlyBase": [],
+   "units": 1240,
+   "items": 3302,
+   "cells": {
+    "0": "140bf9dd",
+    "1": "e5c8a6ed",
+    "2": "f9bea4a8",
+    "-2": "1fc9be8d",
+    "-1": "daa6fbb8"
+   },
+   "want": {
+    "0": "140bf9dd",
+    "1": "e5c8a6ed",
+    "2": "f9bea4a8",
+    "-2": "1fc9be8d",
+    "-1": "daa6fbb8"
+   }
+  },
+  "legacySecond": {
+   "load": {
+    "timedOut": false,
+    "fp": {
+     "range": {
+      "zMin": -2,
+      "zMax": 2
+     },
+     "stateRange": "absent",
+     "levels": 5
+    },
+    "shown": {
+     "x": 0,
+     "y": 0,
+     "z": 0
+    }
+   },
+   "cellsSame": true,
+   "unitsSame": true,
+   "itemsSame": true
+  },
+  "errors": {
+   "harness": [],
+   "console": []
+  }
+ },
+ "timing": {
+  "setupNewGameMs": 17253.3,
+  "setupNewGameAtMs": 912.1,
+  "firstMapStartMs": 21078.9
+ }
+}

@@ -3,7 +3,7 @@
   "steps": [
     {
       "op": "set",
-      "path": "catalogue.materials[id=air].massPerSlice",
+      "path": "catalogue.materials[id=air].cpPerStratum",
       "value": 1
     }
   ]

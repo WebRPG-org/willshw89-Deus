@@ -3,8 +3,8 @@
   "steps": [
     {
       "op": "set",
-      "path": "catalogue.materials[id=lava].solidify.duPerBasaltVoxel",
-      "value": 3
+      "path": "catalogue.materials[id=lava].solidify.basaltCp",
+      "value": 1
     }
   ]
 }

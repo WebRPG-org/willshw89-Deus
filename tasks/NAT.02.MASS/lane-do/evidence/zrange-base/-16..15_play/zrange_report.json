@@ -1,0 +1,128 @@
+{
+ "phase": "play",
+ "made": "2026-10-01T10:06:42.802Z",
+ "env": {
+  "DEUS_Z_RANGE": "-16..15"
+ },
+ "data": {
+  "tip": true,
+  "range": {
+   "zMin": -16,
+   "zMax": 15
+  },
+  "levels": 32,
+  "seed": 18,
+  "savedZRange": {
+   "zMin": -16,
+   "zMax": 15
+  },
+  "view": {
+   "x": 0,
+   "y": 0,
+   "z": 0,
+   "px": 128,
+   "py": 128
+  },
+  "saveFresh": {
+   "levels": 7371,
+   "zRange": 22,
+   "fluid": 37,
+   "fluidAlias": 37,
+   "total": 7211214
+  },
+  "saveChanges": {
+   "levels": {
+    "zHi": 12,
+    "zLo": -14
+   },
+   "cell": {
+    "x": 90,
+    "y": 90
+   },
+   "bytes": {
+    "before": 7371,
+    "afterHigh": 7411,
+    "afterLow": 7451
+   },
+   "records": {
+    "high": "{\"z\":12,\"gen\":5,\"checksum\":\"41ba9dc5\",\"strata\":{\"0,0\":{\"23130\":\"00000000000100000000ff\"}}}",
+    "low": "{\"z\":-14,\"gen\":5,\"checksum\":\"93f6b5c4\",\"strata\":{\"0,0\":{\"23130\":\"000101010100ffffffff00\"}}}"
+   },
+   "roundTrip": true
+  },
+  "saveAfterRevert": {
+   "levels": 7371,
+   "entries": [
+    -16,
+    -15,
+    -14,
+    -13,
+    -12,
+    -11,
+    -10,
+    -9,
+    -8,
+    -7,
+    -6,
+    -5,
+    -4,
+    -3,
+    -2,
+    -1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ]
+  },
+  "extreme": {
+   "deck": {
+    "x0": 125,
+    "y0": 126
+   },
+   "rows": [
+    "15: setView true (in place true, frames 0), plate \"+15\", unit walked to (131,128) (event on screen), path 6 cells (scratch on [15]), up past the end refused",
+    "-16: setView true (in place true, frames 0), plate \"-16\", unit walked to (131,128) (event on screen), path 6 cells (scratch on [-16]), down past the end refused"
+   ],
+   "path": {
+    "15": {
+     "length": 6,
+     "layers": [
+      15
+     ]
+    },
+    "-16": {
+     "length": 6,
+     "layers": [
+      -16
+     ]
+    }
+   },
+   "screenshots": [
+    "C:\\Users\\snewt\\.deus_worktrees\\lane-do\\tasks\\NAT.02.MASS\\lane-do\\laneaa_zr_snap\\-16..15_play_33744_1790849200857\\test_output\\zrange.extreme_p15.png",
+    "C:\\Users\\snewt\\.deus_worktrees\\lane-do\\tasks\\NAT.02.MASS\\lane-do\\laneaa_zr_snap\\-16..15_play_33744_1790849200857\\test_output\\zrange.extreme_m16.png"
+   ]
+  },
+  "errors": {
+   "harness": [],
+   "console": []
+  }
+ },
+ "timing": {
+  "setupNewGameMs": 25251.6,
+  "setupNewGameAtMs": 2334.7,
+  "firstMapStartMs": 31201.6
+ }
+}

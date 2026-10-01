@@ -1,0 +1,714 @@
+{
+ "phase": "core",
+ "made": "2026-10-01T10:07:41.172Z",
+ "env": {
+  "DEUS_Z_RANGE": "-16..15"
+ },
+ "data": {
+  "tip": true,
+  "range": {
+   "zMin": -16,
+   "zMax": 15
+  },
+  "levels": 32,
+  "seed": 18,
+  "savedZRange": {
+   "zMin": -16,
+   "zMax": 15
+  },
+  "view": {
+   "x": 0,
+   "y": 0,
+   "z": 0,
+   "px": 128,
+   "py": 128
+  },
+  "heapAfterNewGame": {
+   "gc": true,
+   "usedJSHeapSize": 123000000,
+   "nodeHeapUsed": 42112624
+  },
+  "pathScratchAtStart": {
+   "layersAllocated": 1,
+   "layersWithScratch": [
+    0
+   ],
+   "bytesPerLayer": 1310720,
+   "bytes": 4456544,
+   "lastSearchLayers": [
+    0
+   ],
+   "heapEntries": 262152,
+   "levels": 32
+  },
+  "memory": {
+   "dir": 4096,
+   "strata": 1725440,
+   "connectors": 172544,
+   "shapeGrids": 589824,
+   "biome": 131072,
+   "surface": 65536,
+   "legacyViews": 262144,
+   "dense": 6127616,
+   "caps": 5528,
+   "capEntries": 691,
+   "chunks": 2048,
+   "mixedChunks": 337,
+   "outerMixedChunks": 50,
+   "levels": 32,
+   "total": 9083800
+  },
+  "memoryPerLevel": {
+   "0": {
+    "dir": 128,
+    "strata": 296960,
+    "connectors": 29696,
+    "chunks": 64,
+    "mixedChunks": 58
+   },
+   "1": {
+    "dir": 128,
+    "strata": 317440,
+    "connectors": 31744,
+    "chunks": 64,
+    "mixedChunks": 62
+   },
+   "2": {
+    "dir": 128,
+    "strata": 199680,
+    "connectors": 19968,
+    "chunks": 64,
+    "mixedChunks": 39
+   },
+   "3": {
+    "dir": 128,
+    "strata": 20480,
+    "connectors": 2048,
+    "chunks": 64,
+    "mixedChunks": 4
+   },
+   "4": {
+    "dir": 128,
+    "strata": 20480,
+    "connectors": 2048,
+    "chunks": 64,
+    "mixedChunks": 4
+   },
+   "5": {
+    "dir": 128,
+    "strata": 20480,
+    "connectors": 2048,
+    "chunks": 64,
+    "mixedChunks": 4
+   },
+   "6": {
+    "dir": 128,
+    "strata": 20480,
+    "connectors": 2048,
+    "chunks": 64,
+    "mixedChunks": 4
+   },
+   "7": {
+    "dir": 128,
+    "strata": 20480,
+    "connectors": 2048,
+    "chunks": 64,
+    "mixedChunks": 4
+   },
+   "8": {
+    "dir": 128,
+    "strata": 20480,
+    "connectors": 2048,
+    "chunks": 64,
+    "mixedChunks": 4
+   },
+   "9": {
+    "dir": 128,
+    "strata": 20480,
+    "connectors": 2048,
+    "chunks": 64,
+    "mixedChunks": 4
+   },
+   "10": {
+    "dir": 128,
+    "strata": 20480,
+    "connectors": 2048,
+    "chunks": 64,
+    "mixedChunks": 4
+   },
+   "11": {
+    "dir": 128,
+    "strata": 20480,
+    "connectors": 2048,
+    "chunks": 64,
+    "mixedChunks": 4
+   },
+   "12": {
+    "dir": 128,
+    "strata": 0,
+    "connectors": 0,
+    "chunks": 64,
+    "mixedChunks": 0
+   },
+   "13": {
+    "dir": 128,
+    "strata": 0,
+    "connectors": 0,
+    "chunks": 64,
+    "mixedChunks": 0
+   },
+   "14": {
+    "dir": 128,
+    "strata": 0,
+    "connectors": 0,
+    "chunks": 64,
+    "mixedChunks": 0
+   },
+   "15": {
+    "dir": 128,
+    "strata": 0,
+    "connectors": 0,
+    "chunks": 64,
+    "mixedChunks": 0
+   },
+   "-16": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-15": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-14": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-13": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-12": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-11": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-10": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-9": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-8": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-7": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-6": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-5": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-4": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-3": {
+    "dir": 128,
+    "strata": 5120,
+    "connectors": 512,
+    "chunks": 64,
+    "mixedChunks": 1
+   },
+   "-2": {
+    "dir": 128,
+    "strata": 327680,
+    "connectors": 32768,
+    "chunks": 64,
+    "mixedChunks": 64
+   },
+   "-1": {
+    "dir": 128,
+    "strata": 327680,
+    "connectors": 32768,
+    "chunks": 64,
+    "mixedChunks": 64
+   }
+  },
+  "palette": {
+   "entries": 3,
+   "bytes": 96
+  },
+  "fluid": {
+   "gridsAllocated": 0,
+   "bytes": 0,
+   "areasCount": 1,
+   "activeQueueLength": 0,
+   "cellsProcessedTotal": 648,
+   "cellsProcessedLastTick": 0,
+   "lastTickMs": 0.010000017937272787,
+   "totalWaterVolume": 0,
+   "totalLavaVolume": 0,
+   "totalWaterMass": 0,
+   "totalLavaMass": 0,
+   "queueZMin": null
+  },
+  "levelEntries": [
+   -16,
+   -15,
+   -14,
+   -13,
+   -12,
+   -11,
+   -10,
+   -9,
+   -8,
+   -7,
+   -6,
+   -5,
+   -4,
+   -3,
+   -2,
+   -1,
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15
+  ],
+  "authorityProbe": [
+   "-17: refused",
+   "-16: accepted",
+   "-15: accepted",
+   "-2: accepted",
+   "0: accepted",
+   "2: accepted",
+   "14: accepted",
+   "15: accepted",
+   "16: refused"
+  ],
+  "elevation": {
+   "cell": {
+    "x": 12,
+    "y": 40
+   },
+   "samples": [
+    "-16/S0=0",
+    "-16/S2=2",
+    "-16/S4=4",
+    "-15/S0=5",
+    "-15/S2=7",
+    "-15/S4=9",
+    "-2/S0=70",
+    "-2/S2=72",
+    "-2/S4=74",
+    "-1/S0=75",
+    "-1/S2=77",
+    "-1/S4=79",
+    "0/S0=80",
+    "0/S2=82",
+    "0/S4=84",
+    "1/S0=85",
+    "1/S2=87",
+    "1/S4=89",
+    "2/S0=90",
+    "2/S2=92",
+    "2/S4=94",
+    "14/S0=150",
+    "14/S2=152",
+    "14/S4=154",
+    "15/S0=155",
+    "15/S2=157",
+    "15/S4=159"
+   ],
+   "maxElevation": 159,
+   "topElevation": 159
+  },
+  "blast": {
+   "block": {
+    "x": 20,
+    "y": 20
+   },
+   "center": {
+    "x": 23,
+    "y": 23,
+    "z": -1,
+    "s": 2
+   },
+   "radii": {
+    "3": {
+     "ok": true,
+     "strataDestroyed": 3,
+     "levels": [
+      -1
+     ],
+     "hits": [
+      "0,0,1,1",
+      "0,0,1,2",
+      "0,0,1,3"
+     ]
+    },
+    "5": {
+     "ok": true,
+     "strataDestroyed": 9,
+     "levels": [
+      -1
+     ],
+     "hits": [
+      "-1,0,1,2",
+      "0,-1,1,2",
+      "0,0,1,0",
+      "0,0,1,1",
+      "0,0,1,2",
+      "0,0,1,3",
+      "0,0,1,4",
+      "0,1,1,2",
+      "1,0,1,2"
+     ]
+    },
+    "7": {
+     "ok": true,
+     "strataDestroyed": 27,
+     "levels": [
+      -2,
+      -1,
+      0
+     ],
+     "hits": [
+      "-1,0,1,0",
+      "-1,0,1,1",
+      "-1,0,1,2",
+      "-1,0,1,3",
+      "-1,0,1,4",
+      "0,-1,1,0",
+      "0,-1,1,1",
+      "0,-1,1,2",
+      "0,-1,1,3",
+      "0,-1,1,4",
+      "0,0,0,4",
+      "0,0,1,0",
+      "0,0,1,1",
+      "0,0,1,2",
+      "0,0,1,3",
+      "0,0,1,4",
+      "0,0,2,0",
+      "0,1,1,0",
+      "0,1,1,1",
+      "0,1,1,2",
+      "0,1,1,3",
+      "0,1,1,4",
+      "1,0,1,0",
+      "1,0,1,1",
+      "1,0,1,2",
+      "1,0,1,3",
+      "1,0,1,4"
+     ]
+    }
+   }
+  },
+  "sparse": {
+   "outerLevels": 27,
+   "outerDirBytes": 3456,
+   "outerMixedChunks": 50,
+   "outerMixedBytes": 281600,
+   "capColumns": 691,
+   "chunksPerLevel": 64,
+   "totalBytes": 9345944,
+   "dirBytes": 4096,
+   "mixedBytes": 1897984,
+   "coreMixedChunks": 287
+  },
+  "split": {
+   "level": 12,
+   "cell": {
+    "x": 60,
+    "y": 60
+   },
+   "before": {
+    "split": 0,
+    "mixedNow": 0,
+    "records": 0
+   },
+   "after": {
+    "split": 1,
+    "mixedNow": 1,
+    "records": 1,
+    "changedChunks": [
+     9
+    ]
+   },
+   "entry": "{\"z\":12,\"gen\":5,\"checksum\":\"41ba9dc5\",\"strata\":{\"0,0\":{\"15420\":\"008300000000ff00000000\"}}}",
+   "entryAfterRevert": true
+  },
+  "heapAfterChecks": {
+   "gc": true,
+   "usedJSHeapSize": 123000000,
+   "nodeHeapUsed": 38941764
+  },
+  "pathScratch": {
+   "from": {
+    "x": 78,
+    "y": 4
+   },
+   "pathLength": 20,
+   "stats": {
+    "layersAllocated": 1,
+    "layersWithScratch": [
+     0
+    ],
+    "bytesPerLayer": 1310720,
+    "bytes": 4456544,
+    "lastSearchLayers": [
+     0
+    ],
+    "heapEntries": 262152,
+    "levels": 32
+   }
+  },
+  "core": {
+   "checksums": {
+    "0": "1f5c2a72",
+    "1": "eaf389b9",
+    "2": "9998ffb2",
+    "-2": "95c997d4",
+    "-1": "1ed786a5"
+   },
+   "regenerated": {
+    "0": "1f5c2a72",
+    "1": "eaf389b9",
+    "2": "9998ffb2",
+    "-2": "95c997d4",
+    "-1": "1ed786a5"
+   },
+   "baseline": {
+    "0": "90fbf353",
+    "1": "eaf389b9",
+    "2": "99c985a5",
+    "-2": "32014625",
+    "-1": "aa067190"
+   },
+   "cells": {
+    "0": "1669686e",
+    "1": "cdb703b3",
+    "2": "f9ff0f2e",
+    "-2": "4200a91c",
+    "-1": "7eca1a76"
+   },
+   "shapes": {
+    "0": "b0e8efc2",
+    "1": "4b51f17f",
+    "2": "df0c47cd",
+    "-2": "1f1f2c5e",
+    "-1": "3753eb6c"
+   }
+  },
+  "census": {
+   "strata": {
+    "1": 390890,
+    "2": 369372,
+    "4": 278,
+    "5": 128,
+    "131": 169
+   },
+   "outer": {
+    "-16:1": 327388,
+    "-15:1": 327315,
+    "-14:1": 327315,
+    "-13:1": 327315,
+    "-12:1": 327315,
+    "-11:1": 327315,
+    "-10:1": 327315,
+    "-9:1": 327315,
+    "-8:1": 327315,
+    "-7:1": 327315,
+    "-6:1": 327315,
+    "-5:1": 327315,
+    "-4:1": 327315,
+    "-3:1": 327315,
+    "3:1": 3455,
+    "4:1": 3455,
+    "5:1": 3183,
+    "6:1": 2690,
+    "7:1": 2272,
+    "8:1": 1789,
+    "9:1": 1321,
+    "10:1": 871,
+    "11:1": 372
+   },
+   "objects": {
+    "1": 76,
+    "2": 9,
+    "3": 440,
+    "4": 87,
+    "5": 5,
+    "7": 69,
+    "15": 171,
+    "17": 123,
+    "18": 26,
+    "19": 69,
+    "20": 4,
+    "22": 1389,
+    "23": 49,
+    "24": 187,
+    "25": 2,
+    "26": 71,
+    "27": 2,
+    "28": 139,
+    "29": 373,
+    "30": 71,
+    "31": 8,
+    "32": 1,
+    "33": 325,
+    "35": 51,
+    "36": 5,
+    "37": 6,
+    "39": 3,
+    "41": 1,
+    "63": 25,
+    "64": 20,
+    "65": 3,
+    "66": 33,
+    "67": 18,
+    "88": 1,
+    "89": 1,
+    "90": 1,
+    "91": 1,
+    "92": 1,
+    "93": 1,
+    "94": 1,
+    "95": 1,
+    "96": 1
+   },
+   "items": {
+    "banner_human:0": 1,
+    "banner_elf:0": 1,
+    "banner_halfling:0": 1,
+    "banner_dwarf:-1": 1,
+    "banner_gnome:-1": 1,
+    "banner_dragonborn:-2": 1,
+    "banner_half_elf:0": 1,
+    "banner_half_orc:0": 1,
+    "banner_tiefling:-2": 1,
+    "common_clothes:0": 636,
+    "pouch:0": 636,
+    "gold_coin:0": 9540,
+    "common_clothes:-1": 226,
+    "pouch:-1": 226,
+    "gold_coin:-1": 3390,
+    "common_clothes:-2": 216,
+    "pouch:-2": 216,
+    "gold_coin:-2": 3240
+   },
+   "units": {
+    "elf:0": 103,
+    "gnome:-1": 103,
+    "dwarf:-1": 123,
+    "half-elf:0": 140,
+    "halfling:0": 142,
+    "tiefling:-2": 109,
+    "dragonborn:-2": 107,
+    "human:0": 117,
+    "half-orc:0": 134,
+    "deer:0": 25,
+    "aurochs:0": 15,
+    "wild_horse:0": 9,
+    "wild_sheep:0": 8,
+    "hare:0": 19,
+    "fowl:0": 28,
+    "wolf:0": 8,
+    "jackal:0": 3,
+    "fox:0": 4,
+    "arctic_fox:0": 3,
+    "hawk:0": 2,
+    "songbird:0": 5,
+    "troll:0": 1,
+    "bat:-1": 10,
+    "bog_horror:-1": 1,
+    "troll:-1": 1,
+    "giant_spider:-1": 2,
+    "bat:-2": 6,
+    "giant_spider:-2": 4,
+    "bog_horror:-2": 1,
+    "boar:0": 2
+   },
+   "capStrata": 19408,
+   "capColumns": 0,
+   "fluidStrata": 406,
+   "ms": 1116
+  },
+  "heapAfterCensus": {
+   "gc": true,
+   "usedJSHeapSize": 123000000,
+   "nodeHeapUsed": 38420728
+  },
+  "errors": {
+   "harness": [],
+   "console": []
+  }
+ },
+ "timing": {
+  "setupNewGameMs": 22547.3,
+  "setupNewGameAtMs": 1150.4,
+  "firstMapStartMs": 27125.5
+ }
+}

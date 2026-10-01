@@ -3,7 +3,7 @@
   "steps": [
     {
       "op": "set",
-      "path": "masses.objects.wall_stone.massMu",
+      "path": "masses.objects.wall_stone.massCp",
       "value": 1
     }
   ]

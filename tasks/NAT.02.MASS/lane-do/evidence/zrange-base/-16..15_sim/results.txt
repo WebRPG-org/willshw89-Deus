@@ -1,0 +1,6 @@
+UF_Test run 2026-10-01T10:05:28.358Z args=[]
+DEBUG_SHEET: Scene_Boot.start called
+HARNESS timed out after 11000 ms waiting for 60 frames
+HARNESS current scene: Scene_Map
+SHOT C:\Users\snewt\.deus_worktrees\lane-do\tasks\NAT.02.MASS\lane-do\laneaa_zr_snap\-16..15_sim_33744_1790849125397\test_output\harness.on_failure.png
+RESULT: 0 passed, 0 failed (exit 2)

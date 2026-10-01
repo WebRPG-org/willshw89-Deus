@@ -1,9 +1,10 @@
 {
-  "expect": "E_MU_STATUS",
+  "expect": "E_UNIT_STATUS",
   "steps": [
     {
-      "op": "delete",
-      "path": "masses.muRef"
+      "op": "set",
+      "path": "masses.muRef",
+      "value": { "status": "PM_DEFAULT" }
     }
   ]
 }

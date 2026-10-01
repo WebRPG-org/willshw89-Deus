@@ -3,7 +3,7 @@
   "steps": [
     {
       "op": "set",
-      "path": "masses.items.sword_long.massMu",
+      "path": "masses.items.sword_long.massCp",
       "value": 1
     }
   ]

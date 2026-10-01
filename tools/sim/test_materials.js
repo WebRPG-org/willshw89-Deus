@@ -95,12 +95,13 @@ function purity(src) {
     return bad;
 }
 function ledgerAmt(p) {
+    if (p.cp != null) return p.cp;
     if (p.du != null && p.mu == null) return p.du;
     return p.mu || 0;
 }
 function postingSum(ps) {
     let t = 0;
-    for (let i = 0; i < ps.length; i++) t += ledgerAmt(ps[i]) + (ps[i].unmappedMu || 0);
+    for (let i = 0; i < ps.length; i++) t += ledgerAmt(ps[i]) + (ps[i].unmappedCp != null ? ps[i].unmappedCp : (ps[i].unmappedMu || 0));
     return t;
 }
 // Sum amounts taken from the original source. A later step that moves the same mass is not added again.
@@ -109,8 +110,8 @@ function covered(ps, keys) {
     if (!ps) return 0;
     for (let i = 0; i < ps.length; i++) {
         const p = ps[i];
-        if (!p.class) { t += (p.mu || 0) + (p.du || 0) + (p.unmappedMu || 0); continue; }
-        if (keys[p.fromClass + "|" + p.fromForm]) t += ledgerAmt(p) + (p.unmappedMu || 0);
+        if (!p.class) { t += ledgerAmt(p) + (p.unmappedCp != null ? p.unmappedCp : (p.unmappedMu || 0)); continue; }
+        if (keys[p.fromClass + "|" + p.fromForm]) t += ledgerAmt(p) + (p.unmappedCp != null ? p.unmappedCp : (p.unmappedMu || 0));
     }
     return t;
 }
@@ -152,64 +153,79 @@ function oreBad(ps, source) {
         const p = ps[i];
         if (p.class && oreNames[p.class]) {
             const have = source && source[p.class] ? source[p.class] : 0;
-            if (!(p.sameClass === true && have >= p.mu)) return true;
+            const amt = ledgerAmt(p);
+            if (!(p.sameClass === true && have >= amt)) return true;
         }
     }
     return false;
 }
 catalogue.materials.forEach(function (m) {
-    if (typeof m.massPerSlice !== "number" || m.massless) return;
+    const stratumMass = m.cpPerStratum != null ? m.cpPerStratum : m.massPerSlice;
+    if (typeof stratumMass !== "number" || m.massless) return;
     matter++;
     const y = m.yield && m.yield.postings;
     const c = m.collapse && m.collapse.postings;
     const keys = materialKeys(m);
-    if (!y || !c || covered(y, keys) !== m.massPerSlice || covered(c, keys) !== m.massPerSlice) massLeak++;
+    if (m.ledgerForm !== "fluid" && (!y || !c || covered(y, keys) !== stratumMass || covered(c, keys) !== stratumMass)) massLeak++;
     const src = {};
-    if (m.ledger && m.ledger.class && oreNames[m.ledger.class]) src[m.ledger.class] = m.massPerSlice;
+    if (m.ledger && m.ledger.class && oreNames[m.ledger.class]) src[m.ledger.class] = stratumMass;
     if (oreBad(y, src) || oreBad(c, src)) oreLeak++;
     if (m.reclaim && m.reclaim.ledgerClass && oreNames[m.reclaim.ledgerClass]) oreLeak++;
     if (m.decay && m.decay.outputClass && oreNames[m.decay.outputClass]) oreLeak++;
     if (m.bill && m.bill.lines) {
         let s = 0;
-        m.bill.lines.forEach(function (ln) { s += ln.mu; });
-        if (s !== m.massPerSlice) bomLeak++;
+        m.bill.lines.forEach(function (ln) { s += (ln.cp != null ? ln.cp : ln.mu); });
+        if (s !== stratumMass) bomLeak++;
     }
 });
 Object.keys(masses.objects).forEach(function (id) {
     const o = masses.objects[id];
     if (o.massless) return;
+    const objMass = o.massCp != null ? o.massCp : o.massMu;
     const src = {};
-    (o.lines || []).forEach(function (ln) { if (oreNames[ln.class]) src[ln.class] = (src[ln.class] || 0) + ln.mu; });
+    (o.lines || []).forEach(function (ln) { if (oreNames[ln.class]) src[ln.class] = (src[ln.class] || 0) + (ln.cp != null ? ln.cp : ln.mu); });
     const keys = objectKeys(o);
-    if (!o.yield || !o.collapse || covered(o.yield.postings, keys) !== o.massMu || covered(o.collapse.postings, keys) !== o.massMu) massLeak++;
+    if (!o.yield || !o.collapse || covered(o.yield.postings, keys) !== objMass || covered(o.collapse.postings, keys) !== objMass) massLeak++;
     if (oreBad(o.yield.postings, src) || oreBad(o.collapse.postings, src)) oreLeak++;
     if (o.bill) {
         let s = 0;
-        o.bill.forEach(function (ln) { s += ln.mu; if (ln.count * masses.items[ln.item].massMu !== ln.mu) bomLeak++; });
-        if (s !== o.massMu) bomLeak++;
+        o.bill.forEach(function (ln) {
+            const bAmt = ln.cp != null ? ln.cp : ln.mu;
+            s += bAmt;
+            const itMass = masses.items[ln.item].massCp != null ? masses.items[ln.item].massCp : masses.items[ln.item].massMu;
+            if (ln.count * itMass !== bAmt) bomLeak++;
+        });
+        if (s !== objMass) bomLeak++;
     }
 });
 check("slice_mass_conserved", massLeak === 0 && matter > 0, "leaks " + massLeak + " matter " + matter);
 check("ore_not_emitted", oreLeak === 0, "leaks " + oreLeak);
 check("bills_sum", bomLeak === 0, "leaks " + bomLeak);
+check("postings_close_exactly", massLeak === 0 && bomLeak === 0 && oreLeak === 0);
 
 const liveItems = live.items.types.map(function (i) { return i.id; }).sort();
 const liveObjects = live.objects.map(function (o) { return o.id; }).sort();
 check("catalog_items_covered", JSON.stringify(liveItems) === JSON.stringify(masses.catalogIndex.items.slice().sort()));
 check("catalog_objects_covered", JSON.stringify(liveObjects) === JSON.stringify(masses.catalogIndex.objects.slice().sort()));
 
-check("mu_unconfirmed", catalogue.mu.status === "PM_DEFAULT_UNCONFIRMED" && catalogue.mu.confirmed === false && catalogue.mu.proposalMuPerKg === 1000);
+check("catalogue_is_cp", catalogue.massUnit === "cp" && masses.massUnit === "cp");
+check("cp_rule_every_row", api.material("stone").cpPerStratum === 717825 && api.material("granite").cpPerStratum === 858480);
+check("water_stratum_312000", api.material("water").cpPerStratum === 312000);
+check("lava_equals_basalt_stratum", api.material("lava").cpPerStratum === 905218 && api.material("lava").cpPerStratum === api.material("basalt").cpPerStratum);
+check("bom_exact_after_convert", api.billOfMaterials("wall_stone").totalCp === 6614 && api.billOfMaterials("masonry").totalCp === 215392);
 check("calendar_open", catalogue.calendar.status === "OWNER_OPEN" && catalogue.calendar.dpy == null && catalogue.calendar.tickHz == null);
 check("no_save_migration", catalogue.geometry.legacyHalfSlice.implemented === false && catalogue.exemption.implemented === false);
 check("no_layer_count_field", catalogue.geometry.layerCount == null);
 
-check("granite_slice", api.massOf("granite", "strata", 1) === 3894000);
+check("granite_slice", api.massOf("granite", "strata", 1) === 858480);
 check("granite_by_strata_id", api.material(32).id === "granite");
-check("stone_item", api.massOf("stone", "item", 2) === 30000);
+check("stone_item", api.massOf("stone", "item", 2) === 6614);
 check("stockpile_massless", api.massOf("stockpile", "object", 1) === 0);
-check("water_slice_open", api.massOf("water", "strata", 1) === null);
-check("masonry_bill", api.billOfMaterials("masonry").totalMu === 977000);
-check("wall_stone_bill", api.billOfMaterials("wall_stone").totalMu === 30000 && api.billOfMaterials("wall_stone").elementMu === 30000);
+check("water_slice", api.massOf("water", "strata", 1) === 312000);
+check("ice_slice_cp", api.massOf("ice", "strata", 1) === 312000);
+check("lava_unit_cp", api.material("lava").ledger.unit === "cp" && api.material("lava").cpPerStratum === 905218);
+check("masonry_bill", api.billOfMaterials("masonry").totalCp === 215392 && api.billOfMaterials("masonry").totalMu === 215392);
+check("wall_stone_bill", api.billOfMaterials("wall_stone").totalCp === 6614 && api.billOfMaterials("wall_stone").elementCp === 6614);
 check("reclaim_iron_trace", api.reclaimTarget("iron").ledgerClass === "fe_trace");
 check("reclaim_gold_scrap", api.reclaimTarget("gold").ledgerClass === "au_metal" && api.reclaimTarget("gold").dec028 === "scrap");
 check("reclaim_wood_both", api.reclaimTarget("wood").ledgerClass === "humus" && api.reclaimTarget("wood").dec028 === "soil");
@@ -217,17 +233,27 @@ check("electrum_matches_ledger", JSON.stringify(api.material("electrum").ledger.
 check("lava_ratio", (function () {
     const lava = api.material("lava");
     const basalt = api.material("basalt");
-    return lava.solidify.duPerBasaltVoxel * lava.kgPerDu === basalt.kgPerSlice && lava.solidify.remainderRubbleKg === lava.kgPerDu;
+    return lava.solidify.basaltCp === basalt.cpPerStratum;
 })());
 check("yield_of_granite_sums", (function () {
     const y = api.yieldOf("granite");
-    return postingSum(y.postings) === 3894000;
+    return postingSum(y.postings) === 858480;
 })());
 check("rubble_both_shapes", api.yieldOf("rubble").material && api.yieldOf("rubble").object);
 check("bad_count_throws", (function () {
     try { api.massOf("stone", "item", -1); return false; } catch (e) { return e.code === "E_AMOUNT"; }
 })());
 check("zero_count", api.massOf("log", "item", 0) === 0);
+
+const migrateUnits = require(path.join(ROOT, "tools", "sim", "migrate_mass_units.js"));
+check("migrate_check_clean", migrateUnits.validateCheck().length === 0);
+
+(function () {
+    const legCat = clone(clean);
+    legCat.catalogue.materials[0].massPerSlice = 1000;
+    const errs = errsOf(legCat);
+    check("legacy_mu_fixture_refused", hasCode(errs, "E_UNIT"), errs.join(" | "));
+})();
 
 const files = fs.readdirSync(FIX).filter(function (f) { return f.endsWith(".json"); }).sort();
 check("fixtures_present", files.length >= 16, String(files.length));
@@ -247,29 +273,29 @@ function kill(name, data, code, localBad) {
 (function () {
     const d = bag();
     const g = d.catalogue.materials.filter(function (m) { return m.id === "granite"; })[0];
-    g.yield.postings[0].mu = g.yield.postings[0].mu - 1;
-    kill("mutant_yield_short", d, "E_YIELD_MASS", postingSum(g.yield.postings) !== g.massPerSlice);
+    g.yield.postings[0].cp = g.yield.postings[0].cp - 1;
+    kill("mutant_yield_short", d, "E_YIELD_MASS", postingSum(g.yield.postings) !== g.cpPerStratum);
 })();
 (function () {
     const d = bag();
     const g = d.catalogue.materials.filter(function (m) { return m.id === "granite"; })[0];
-    g.collapse.postings[0].mu = 1;
-    kill("mutant_collapse_short", d, "E_COLLAPSE_MASS", postingSum(g.collapse.postings) !== g.massPerSlice);
+    g.collapse.postings[0].cp = 1;
+    kill("mutant_collapse_short", d, "E_COLLAPSE_MASS", postingSum(g.collapse.postings) !== g.cpPerStratum);
 })();
 (function () {
     const d = bag();
     const g = d.catalogue.materials.filter(function (m) { return m.id === "granite"; })[0];
-    g.yield.postings.push({ process: "mine", fromClass: "fe_ore", fromForm: "strata", class: "fe_ore", form: "item", mu: 1, sameClass: true });
+    g.yield.postings.push({ process: "mine", fromClass: "fe_ore", fromForm: "strata", class: "fe_ore", form: "item", cp: 1, sameClass: true });
     const local = oreBad(g.yield.postings, {});
     kill("mutant_ore_yield", d, "E_ORE_OUTPUT", local);
 })();
 (function () {
     const d = bag();
-    d.masses.objects.wall_stone.massMu += 1;
+    d.masses.objects.wall_stone.massCp += 1;
     const o = d.masses.objects.wall_stone;
     let s = 0;
-    o.bill.forEach(function (ln) { s += ln.mu; });
-    kill("mutant_bom", d, "E_BOM", s !== o.massMu);
+    o.bill.forEach(function (ln) { s += ln.cp; });
+    kill("mutant_bom", d, "E_BOM", s !== o.massCp);
 })();
 (function () {
     const d = bag();
@@ -283,8 +309,8 @@ function kill(name, data, code, localBad) {
 })();
 (function () {
     const d = bag();
-    d.catalogue.mu.confirmed = true;
-    kill("mutant_mu_confirmed", d, "E_MU_STATUS", d.catalogue.mu.confirmed === true);
+    d.catalogue.massUnit = "mu";
+    kill("mutant_mass_unit_bad", d, "E_UNIT_STATUS", d.catalogue.massUnit !== "cp");
 })();
 (function () {
     const d = bag();
@@ -297,8 +323,6 @@ function kill(name, data, code, localBad) {
 function throwsCode(fn, code) {
     try { fn(); return false; } catch (e) { return e.code === code; }
 }
-check("ice_slice_du", api.massOf("ice", "strata", 1) === 1);
-check("lava_unit_mu", api.material("lava").ledger.unit === "mu" && typeof api.material("lava").muPerDu === "number");
 check("reclaim_by_strata_id", api.reclaimTarget(32) && api.reclaimTarget(32).ledgerClass === api.reclaimTarget("granite").ledgerClass);
 check("massof_rejects_iron_strata", throwsCode(function () { api.massOf("iron", "strata", 1); }, "E_FORM"));
 check("massof_rejects_bone_strata", throwsCode(function () { api.massOf("bone", "strata", 1); }, "E_FORM"));
@@ -306,34 +330,27 @@ check("massof_slice_overflow", throwsCode(function () { api.massOf("granite", "s
 check("massof_object_overflow", throwsCode(function () { api.massOf("wall_stone", "object", Math.pow(2, 52)); }, "E_AMOUNT"));
 check("massof_ruin_overflow", throwsCode(function () { api.massOf("wall_stone", "ruin", Math.pow(2, 52)); }, "E_AMOUNT"));
 
-check("water_thaw_du", (function () {
-    const iceDu = api.massOf("ice", "strata", 1);
+check("water_thaw_cp", (function () {
+    const iceCp = api.massOf("ice", "strata", 1);
     const L = createLedger();
-    L.register("water", "fluid", 7, "demo");
+    L.register("water", "fluid", 700000, "demo");
     const afterFluid = L.familyTotal("water");
-    L.register("water", "ice", iceDu, "demo");
+    L.register("water", "ice", iceCp, "demo");
     const afterIce = L.familyTotal("water");
     L.seal();
-    L.transform("water", "ice", "water", "fluid", iceDu, "thaw");
+    L.transform("water", "ice", "water", "fluid", iceCp, "thaw");
     const fluid = L.amount("water", "fluid");
     const ice = L.amount("water", "ice");
     const family = L.familyTotal("water");
     const bal = L.assertBalanced();
-    const families = L.totals().families;
-    const names = Object.keys(families).sort();
-    console.log("iceDu from massOf = " + iceDu);
-    console.log("water family after fluid 7 = " + afterFluid);
-    console.log("water family after one ice slice = " + afterIce);
-    console.log("after thaw water/fluid = " + fluid + " water/ice = " + ice + " water family = " + family);
-    names.forEach(function (f) { console.log("family " + f + " = " + families[f]); });
-    console.log("balanced = " + bal.ok);
-    return iceDu === 1 && afterFluid === 7 && afterIce === 8 && fluid === 8 && ice === 0 && family === 8 && bal.ok === true;
+    return iceCp === 312000 && afterFluid === 700000 && afterIce === 1012000 && fluid === 1012000 && ice === 0 && family === 1012000 && bal.ok === true;
 })());
 
 function materialStart(m) {
     const start = {};
-    let part = m.massPerSlice;
-    if (m.unmapped && typeof m.unmapped.mu === "number") part -= m.unmapped.mu;
+    let part = m.cpPerStratum != null ? m.cpPerStratum : m.massPerSlice;
+    const unmapped = m.unmapped ? (m.unmapped.cp != null ? m.unmapped.cp : m.unmapped.mu) : 0;
+    if (typeof unmapped === "number") part -= unmapped;
     if (part > 0 && m.ledger && m.ledger.class && m.ledgerForm) start[m.ledger.class + "|" + m.ledgerForm] = part;
     return start;
 }
@@ -341,7 +358,7 @@ function objectStart(o) {
     const start = {};
     (o.lines || []).forEach(function (ln) {
         const k = ln.class + "|" + (ln.form || "object");
-        start[k] = (start[k] || 0) + ln.mu;
+        start[k] = (start[k] || 0) + (ln.cp != null ? ln.cp : ln.mu);
     });
     return start;
 }
@@ -374,7 +391,8 @@ function tryPost(label, start, ps) {
     }
 }
 catalogue.materials.forEach(function (m) {
-    if (typeof m.massPerSlice !== "number" || m.massless || !m.yield) return;
+    const mass = m.cpPerStratum != null ? m.cpPerStratum : m.massPerSlice;
+    if (typeof mass !== "number" || m.massless || !m.yield) return;
     tryPost("mat " + m.id, materialStart(m), m.yield.postings);
 });
 Object.keys(masses.objects).forEach(function (id) {

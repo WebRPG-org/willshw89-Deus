@@ -3,8 +3,8 @@
   "steps": [
     {
       "op": "set",
-      "path": "catalogue.materials[id=electrum].massPerSlice",
-      "value": 1
+      "path": "catalogue.materials[id=electrum].cpPerStratum",
+      "value": 4244121
     }
   ]
 }
