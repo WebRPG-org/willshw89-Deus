@@ -23,10 +23,7 @@ All cell references are `{area:{x,y},x,y,z}`. Missing z means Ground; strings, n
 | `reserved(cell)` | True for an endpoint or its one-cell clearance on the same level. A house/build planner can consult this without mutating passage records. |
 | `travel(unitOrId, linkId)` | Assigns a dedicated owned job from the worker's current area and level. Returns the job, including a failed job with a normal reason when planning fails; null for invalid workers/links or an existing job/movement order. Does not silently replace another order. |
 | `traverse(unitOrId, linkOrRoute)` | Universal creature traversal: allows any creature, wildlife, monster, or unit to physically cross between connected layers if at the passage and landing is clear. |
-| `updateFluids()` | Simulates liquid physics through layer connections: if water is present at an upper entrance, it pours down to the lower landing, wetting the lower landing and emitting `naturalConnections:fluidFlow` and `fluids:flow`. |
-| `hasFluid(cell, type="water")` | Checks if dynamic fluid is present at cell. |
-| `addFluid(cell, type="water")` | Marks fluid at cell (and syncs to baseline water if underground). |
-| `clearFluids()` | Clears dynamic fluids and resets modified baselines. |
+| `isWater(cell)` | True when the authorities call the cell water: `Levels.waterAt` (natural pools, UF.Fluid, floods) or `Jobs.isWaterAt`. Read-only; this module stores no water of its own. |
 | `orderSelected(direction=-1)` | Explicit player command. `-1` descends, `1` ascends. Requires a selected player colonist. Searches nearest same-level direction-compatible endpoints, validates the path and landing, then calls `Colonists.order`. Invalid commands preserve the current job. Displays a short bottom-screen notice. |
 | `lastRefusal()` | Last public command/generation refusal string or null. Job failures also have their ordinary `job.reason`. |
 | `markers()` | Visible passage sprites in the current scene; useful for visual tests. Each has `_ufPassage` with its cell. |
@@ -51,11 +48,19 @@ On success the terminal job's target changes to the destination and its result i
 
 Cross-level travel is an explicit job only. Ordinary `World.sendUnit`, AI resource searches, combat, hauling and social target selection keep their existing same-level contracts. No automatic all-world route planner is claimed.
 
+### Water (NAT.03.02, 2026-10-01)
+
+UF.Fluid is the only water store, and it moves water only through its own cell faces. A passage endpoint is standable, so it has a floor stratum, and a floored passage is not a drain: water poured at an upper entrance spreads over its own level and never reaches the landing below (PM ruling on lane-el, option 1). This module moves, mints and stores no water. `dry()` refuses a cell `isWater` reports. Whether stairwells and natural passages should ever carry water is an open design item, not a behaviour of this module.
+
+The private water store that used to live here (`hasFluid`, `addFluid`, `clearFluids`, `updateFluids`, the `Levels.waterAt` wrapper and the frame-30 `updateFluids()` call) was retired on 2026-10-01: it wrote water at a landing without taking any from the entrance. The frame-30 block of `Scene_Map.update` still steps creatures through passages (`stepCreatures`).
+
 ## Events
 
 - Emits `naturalConnections:generated(savedRecord)` after a completed survey.
 - Emits `naturalConnections:traversed(unit, resultCopy)` after a successful physical move.
-- Relies on existing Jobs update/save hooks and `world:unitLevelChanged` consumers; it has no independent simulation timer.
+- Emits `creature:traversed(unit, resultCopy)` as well, after `traverse()`.
+- Emits no fluid events. `naturalConnections:fluidFlow` and `fluids:flow` were retired with the private water store (2026-10-01).
+- Every 30th frame of `Scene_Map.update` steps idle creatures (no job, no goal, not a person or colonist) standing on a passage entrance whose landing is free. Otherwise it relies on existing Jobs update/save hooks and `world:unitLevelChanged` consumers.
 - Aliases `World.newWorld`, `Scene_Boot.start`, `Spriteset_Map.createCharacters/update`, and `Scene_Map.createAllWindows/update`, always calling the original.
 
 ## Save data
@@ -72,15 +77,26 @@ Cross-level travel is an explicit job only. Ordinary `World.sendUnit`, AI resour
 }
 ```
 
+A save made before 2026-10-01 may also hold `fluids: {cells: {"ax,ay:z:x,y": {type, time}}}`, the retired private water record. It is carried through load and save unchanged and inert: nothing reads it as water and nothing credits it into UF.Fluid. Converting it is the fluid save codec's job (lane-ec2, NAT.03.02 part b).
+
 All records are plain serializable data. No renderer or runtime path is saved. In-progress traversal jobs persist through existing Jobs save data and replan on load. Loading does not add links to an old save automatically. A missing or unsupported record yields no usable links.
 
 ## Checks
 
-`node tools/test_natural_connections.js` executes the actual new plugin and actual `DEUS_Jobs`, with terrain, World movement and UI doubles. It covers 22 checks: deterministic pairing on five fixed **mock terrain** seeds; legacy arrays; post-founding protection; planned homes/enclosures and retained annexes; honest blocked results/no carving; water/blocking exclusion; save round-trip and detached queries; z-scoped reservation; real Jobs walk/work/finish; no arbitrary-source transfer; occupied and unsupported landings; late refusal not reported done; existing-order preservation; offscreen reverse travel and inventory ownership; strict adjacency/column; loaded job replanning; valid/invalid explicit player commands; non-player refusal.
+`node tools/test_natural_connections.js` executes the actual new plugin and actual `DEUS_Jobs`, with terrain, World movement and UI doubles. It now has 24 checks (2026-10-01: `liquid_physics_flow` removed with the private store; `liquid_makes_landing_wet_refusing_travel` wets the landing through the fixture's own `Levels.waterAt`). The original 22 checks covered: deterministic pairing on five fixed **mock terrain** seeds; legacy arrays; post-founding protection; planned homes/enclosures and retained annexes; honest blocked results/no carving; water/blocking exclusion; save round-trip and detached queries; z-scoped reservation; real Jobs walk/work/finish; no arbitrary-source transfer; occupied and unsupported landings; late refusal not reported done; existing-order preservation; offscreen reverse travel and inventory ownership; strict adjacency/column; loaded job replanning; valid/invalid explicit player commands; non-player refusal.
 
 Seven in-memory source mutations are available: `--mutant=arrival`, `landing`, `water`, `protection`, `adjacency`, `finish`, `annex`. These alter only the VM source string, never production files.
 
-Runtime suite `natural_connections` forces seed `20260919` only for that exact `--uf-test=natural_connections` launch. It checks generation, dry supported landings, saved links, actual visible marker pixels, physical walking and descent, offscreen deep travel with item holder **and z**, occupied landing refusal, reverse travel, actual F6 invalid-order preservation, Shift+F6 explicit ordering while paused, resume to Ground, and new harness errors. It produces Ground entrance, middle entrance and paused-order screenshots. The editor F5/F8 gate remains separate.
+`node tools/test_natural_connections_no_mint.js` (NAT.03.02) runs the production World, WorldGen, Tiles, Objects, Levels, Floors, Fluid, Jobs and this plugin in a VM on generated worlds (seeds 20260919 and 7), with UF.Fluid alone (sim/hydro off). Checks: `authoritative_flow_conserved` (6 water at every link's upper endpoint, 400 `UF.Fluid.step`s: upper-level debit 0, lower credit 0; an open-column control shows debit 6 = credit 6), `floored_passage_is_not_a_drain` (both link kinds), `creatures_still_stepped`, `link_does_not_mint`, `waterAt_not_wrapped`, `private_store_gone`, `legacy_payload_round_trip`. Mutants: `disable_all_flow`, `fake_passage_flow`, `credit_legacy_payload`, `drop_legacy_payload`, `drop_step_creatures`. "Upper stays 6" is measured on the upper level, not the endpoint cell: UF.Fluid's lateral faces spread the pour over that level.
+
+Runtime suite `natural_connections` forces seed `20260919` only for that exact `--uf-test=natural_connections` launch (`tools/run_tests.js` passes `--deus-test=...`, which does not force it). It checks generation, dry supported landings, saved links, actual visible marker pixels, physical walking and descent, offscreen deep travel with item holder **and z**, occupied landing refusal, reverse travel, actual F6 invalid-order preservation, Shift+F6 explicit ordering while paused, resume to Ground, and new harness errors. It produces Ground entrance, middle entrance and paused-order screenshots. Since 2026-10-01 `liquid_present_at_entrance` puts 6 water at the upper entrance through UF.Fluid and `liquid_flow_through_connection` steps UF.Fluid 400 times and requires Ground debit 0, lower credit 0 and a dry landing; it adds `landing_dry_after_wetting` (level -1) and `entrance_wetted` (Ground) screenshots and then restores every touched Fluid cell through `UF.Fluid.setCell`. The editor F5/F8 gate remains separate.
+
+## Status — 2026-10-01 (NAT.03.02 lane-el)
+
+- `tools/test_natural_connections_no_mint.js`: 7 passed, 0 failed at the tip. At the base (afaeaf69, before the change) the two guards and `creatures_still_stepped` passed and `link_does_not_mint`, `waterAt_not_wrapped`, `private_store_gone` and `legacy_payload_round_trip` failed. Each mutant turns its named check red.
+- `tools/test_natural_connections.js`: 24 passed, 0 failed; its seven mutants still fail.
+- NW.js snapshot, seed 20260919 forced (`--uf-test=natural_connections`): `generated_chain` FAILS at the base and at the tip. The survey tests 0 of 18103 candidates: with no chain yet, the only skip before the tested count in `generate()` is the `levels.waterAt` test on the -1/-2 cells, so every candidate was called wet. (In the node VM on the same seed, Levels' flood fill from Ground water reaches the -1 caves; not checked in NW.js.) The suite returns there. This is not caused by NAT.03.02.
+- NW.js snapshot with the `DEUS_World` Seed parameter set to 7 (snapshot only): 11 passed, 4 failed, at the base and at the tip alike. Both rewritten liquid checks pass (Ground debit 0, lower credit 0, landing dry). `dry_supported_landings`, `invalid_f6_keeps_order`, `reverse_traversal` and `keyboard_order_moves_unit` fail at the base too, and have not been investigated here.
 
 ## Status — 2026-09-19
 

@@ -50,7 +50,7 @@
     }
     function dry(r, unit) {
         if (!validCell(r)) return false;
-        if (hasFluid(r, "water")) return false;
+        if (isWater(r)) return false;
         const levels = L(), z = zOf(r);
         if (z < 0 && (!levels.standableShape(r) || levels.waterAt(r))) return false;
         return W().walkable(r.area.x, r.area.y, r.x, r.y, { z, unit });
@@ -282,90 +282,18 @@
     }
 
     //-------------------------------------------------------------------------
-    // Liquid physics across natural connections
-
-    const fluidKey = r => `${r.area ? r.area.x : 0},${r.area ? r.area.y : 0}:${zOf(r)}:${r.x},${r.y}`;
-
-    function fluidsState() {
-        const s = state();
-        if (!s) return null;
-        if (!s.fluids) s.fluids = { cells: {} };
-        return s.fluids;
-    }
-
-    function hasFluid(r, type = "water") {
-        if (!validCell(r)) return false;
-        const fs = fluidsState();
-        if (fs && fs.cells) {
-            const entry = fs.cells[fluidKey(r)];
-            if (entry && (!type || entry.type === type)) return true;
-        }
-        return false;
-    }
+    // Water at passages. UF.Fluid is the only water store and moves water only through its own faces; a
+    // passage endpoint has a floor, so a passage is not a drain (NAT.03.02, PM ruling 2026-10-01). This module
+    // moves and mints no water. A save may still hold the retired private record naturalConnections.fluids:
+    // it is carried through load and save unchanged and never read as water (its conversion is lane-ec2's).
 
     function isWater(r) {
         if (!validCell(r)) return false;
-        if (hasFluid(r, "water")) return true;
         const levels = L();
         if (levels && typeof levels.waterAt === "function" && levels.waterAt(r)) return true;
         const jobs = J();
         if (jobs && typeof jobs.isWaterAt === "function" && jobs.isWaterAt(r.area || { x: 0, y: 0 }, r.x, r.y)) return true;
         return false;
-    }
-
-    const modifiedBaselines = [];
-    function addFluid(r, type = "water") {
-        if (!validCell(r)) return false;
-        const fs = fluidsState();
-        if (!fs) return false;
-        fs.cells[fluidKey(r)] = { type, time: (UF.Time && typeof UF.Time.ticks === "function") ? UF.Time.ticks() : 0 };
-        const levels = L(), world = W();
-        const z = zOf(r);
-        if (z < 0 && levels && typeof levels.baseline === "function" && world && world.state) {
-            const b = levels.baseline(z, r.area ? r.area.x : 0, r.area ? r.area.y : 0);
-            if (b && b.water) {
-                const idx = r.y * (world.state.size || 24) + r.x;
-                if (!b.water[idx]) {
-                    b.water[idx] = 1;
-                    modifiedBaselines.push({ b, idx });
-                }
-            }
-        }
-        return true;
-    }
-
-    function clearFluids() {
-        const fs = fluidsState();
-        if (fs) fs.cells = {};
-        while (modifiedBaselines.length > 0) {
-            const m = modifiedBaselines.pop();
-            if (m.b && m.b.water) m.b.water[m.idx] = 0;
-        }
-    }
-
-    function updateFluids() {
-        const cList = links();
-        if (!cList.length) return [];
-        const flows = [];
-        const nowTicks = (UF.Time && typeof UF.Time.ticks === "function") ? UF.Time.ticks() : 0;
-
-        for (const link of cList) {
-            const upper = zOf(link.a) > zOf(link.b) ? link.a : link.b;
-            const lower = zOf(link.a) > zOf(link.b) ? link.b : link.a;
-
-            // Liquid flows down only if liquid is actually present at the upper entrance
-            if (isWater(upper)) {
-                addFluid(lower, "water");
-
-                const flow = { linkId: link.id, type: "water", from: copy(upper), to: copy(lower), tick: nowTicks };
-                flows.push(flow);
-                if (UF.Events) {
-                    UF.Events.emit("naturalConnections:fluidFlow", flow);
-                    UF.Events.emit("fluids:flow", flow);
-                }
-            }
-        }
-        return flows;
     }
 
     function stepCreatures() {
@@ -472,7 +400,7 @@
     window.DEUS = window.DEUS || {};
     window.UF = window.DEUS;
     const API = { VERSION, TYPE, SURVEY, generate, list, at, reserved, travel, orderSelected, state, lastRefusal: () => lastRefusal,
-        traverse, updateFluids, hasFluid, addFluid, clearFluids, isWater,
+        traverse, isWater,
         markers: () => { const s = SceneManager._scene; const m = s && s._spriteset && s._spriteset._ufPassageMarkers; return m ? m.pool.filter(p => p.visible) : []; } };
     UF.NaturalConnections = API;
     let hooked = false;
@@ -487,13 +415,6 @@
             if (UF.Test && UF.Test.active && argv.includes("--uf-test=natural_connections") && args[0] === undefined) args[0] = 20260919;
             const result = original.apply(this, args); generate(); return result;
         };
-        if (L() && typeof L().waterAt === "function") {
-            const origWaterAt = L().waterAt;
-            L().waterAt = function(r) {
-                if (hasFluid(r, "water")) return true;
-                return origWaterAt.apply(this, arguments);
-            };
-        }
     }
     const _boot = Scene_Boot.prototype.start;
     Scene_Boot.prototype.start = function() { hook(); if (UF.Test && UF.Test.active) registerChecks(); _boot.call(this); };
@@ -514,10 +435,7 @@
         _sceneUpdate.call(this);
         if (this._ufPassageNotice && this._ufPassageNotice.visible && Graphics.frameCount > feedback.until) this._ufPassageNotice.hide();
         if (shortcut && this.isActive() && Input.isTriggered("uf_naturalPassage") && !$gameMessage.isBusy() && !$gameMap.isEventRunning()) orderSelected(Input.isPressed("shift") ? 1 : -1);
-        if (Graphics.frameCount % 30 === 0) {
-            updateFluids();
-            stepCreatures();
-        }
+        if (Graphics.frameCount % 30 === 0) stepCreatures();
     };
 
     function registerChecks() {
@@ -599,13 +517,41 @@
                     `creature traversal: moved ${travRes && travRes.moved}, z ${testWolf.z} (expected -1)`);
                 world.removeUnit(testWolf.id);
 
-                // Liquid physics check: water flows down connections to lower levels
-                API.addFluid(upper.a, "water");
-                t.check("liquid_present_at_entrance", API.hasFluid(upper.a, "water"), `water added to upper entrance: ${API.hasFluid(upper.a, "water")}`);
-                const flows = API.updateFluids();
-                t.check("liquid_flow_through_connection", flows.length > 0 && API.hasFluid(upper.b, "water"),
-                    `flows ${flows.length}, water reached lower landing: ${API.hasFluid(upper.b, "water")}`);
-                API.clearFluids();
+                // Water is UF.Fluid's alone, and a floored passage is not a drain (NAT.03.02): water put at the upper
+                // entrance through UF.Fluid stays on its level; the landing below stays dry (debit 0, credit 0).
+                const fluid = UF.Fluid, entrance = upper.a, landing = upper.b, area = entrance.area, R = 12, size = world.state.size;
+                const box = [];
+                for (const z of [0, -1, -2]) for (let y = Math.max(0, entrance.y - R); y <= Math.min(size - 1, entrance.y + R); y++)
+                    for (let x = Math.max(0, entrance.x - R); x <= Math.min(size - 1, entrance.x + R); x++)
+                        box.push({ x, y, z, type: fluid.typeAt(area.x, area.y, x, y, z), depth: fluid.depthAt(area.x, area.y, x, y, z) });
+                const levelSum = z => box.reduce((sum, c) => sum + (c.z === z ? fluid.depthAt(area.x, area.y, c.x, c.y, z) : 0), 0);
+                const sums = () => [0, -1, -2].map(levelSum);
+                const landingWater = () => ({ isWater: API.isWater(landing), depth: fluid.depthAt(area.x, area.y, landing.x, landing.y, landing.z) });
+                const dryBefore = landingWater(), sums0 = sums();
+                try {
+                    fluid.setCell(area, entrance.x, entrance.y, 0, "water", fluid.depthAt(area.x, area.y, entrance.x, entrance.y, 0) + 6);
+                    const start = sums(), placed = start[0] - sums0[0];
+                    t.check("liquid_present_at_entrance", placed === 6 && API.isWater(entrance), `UF.Fluid depth +${placed} at the upper entrance (${entrance.x},${entrance.y},0); isWater ${API.isWater(entrance)}`);
+                    for (let i = 0; i < 400; i++) fluid.step(area, 512);
+                    const stepped = sums(), afterSteps = landingWater();
+                    $gameMap.setDisplayPos(landing.x - $gameMap.screenTileX() / 2, landing.y - $gameMap.screenTileY() / 2);
+                    await t.waitFrames(3);
+                    const shotView = world.viewLevel().z;
+                    t.screenshot("landing_dry_after_wetting");
+                    // The wet entrance itself, on Ground, while the landing below stays dry.
+                    levels.setView(0, { center: { x: entrance.x, y: entrance.y } });
+                    await t.waitUntil(() => world.viewLevel().z === 0 && !levels.switching(), 15000, "Ground view of the wet entrance"); await t.waitFrames(3);
+                    t.screenshot("entrance_wetted");
+                    const end = sums(), afterFrames = landingWater(), debit = start[0] - stepped[0], credit = stepped[1] - start[1] + stepped[2] - start[2];
+                    t.check("liquid_flow_through_connection", shotView === -1 && !dryBefore.isWater && !afterSteps.isWater && afterSteps.depth === 0 &&
+                        !afterFrames.isWater && afterFrames.depth === 0 && debit === 0 && credit === 0 && end[1] === start[1] && end[2] === start[2],
+                        `400 UF.Fluid steps: Ground debit ${debit}, lower-level credit ${credit}; landing (${landing.x},${landing.y},${landing.z}) before ${JSON.stringify(dryBefore)}, ` +
+                        `after steps ${JSON.stringify(afterSteps)}, after both screenshots ${JSON.stringify(afterFrames)}; level sums ${JSON.stringify(sums0)} -> ${JSON.stringify(start)} -> ${JSON.stringify(stepped)} -> ${JSON.stringify(end)}; landing shot at view ${shotView}`);
+                } finally {
+                    // Remove the test water through UF.Fluid: every cell of the box back to its depth before.
+                    for (const c of box) if (fluid.depthAt(area.x, area.y, c.x, c.y, c.z) !== c.depth || fluid.typeAt(area.x, area.y, c.x, c.y, c.z) !== c.type)
+                        fluid.setCell(area, c.x, c.y, c.z, c.type || "water", c.depth);
+                }
 
                 t.check("no_errors", t.errorsSoFar().length === errors0, `${t.errorsSoFar().length - errors0} new errors`);
             } finally {

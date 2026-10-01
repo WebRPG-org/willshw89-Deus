@@ -71,7 +71,7 @@ const SOURCE_MUTANTS = {
     drop_step_creatures: src => {
         const i = src.indexOf("Graphics.frameCount % 30 === 0"), j = src.indexOf("stepCreatures();", i);
         if (i < 0 || j < 0) throw new Error("mutation target missing: frame-30 stepCreatures() call");
-        return src.slice(0, j) + src.slice(j + "stepCreatures();".length);
+        return src.slice(0, j) + ";" + src.slice(j + "stepCreatures();".length);   // an empty statement keeps the source valid
     }
 };
 const MUTANTS = { disable_all_flow: true, fake_passage_flow: true, ...SOURCE_MUTANTS };
@@ -297,7 +297,7 @@ check("floored_passage_is_not_a_drain", () => {
 });
 
 // Every fluid record a reader could see: Fluid totals, every Levels baseline water array and the private record.
-function fluidState(env) {
+function fluidState(env, withPrivate = true) {
     const U = env.UF, st = U.World.state, diag = U.Fluid.diagnostics(0, 0), base = [];
     for (let z = -16; z < 0; z++) {
         if (!U.World.inWorld(0, 0, z)) continue;
@@ -305,7 +305,9 @@ function fluidState(env) {
         if (b && b.water) { let n = 0, h = 0; for (let i = 0; i < b.water.length; i++) if (b.water[i]) { n++; h = (Math.imul(h, 31) + i) | 0; } base.push(`${z}:${n}:${h}`); }
     }
     const nc = st.naturalConnections || {};
-    return JSON.stringify({ mass: diag.totalWaterMass, volume: diag.totalWaterVolume, base, fluids: nc.fluids === undefined ? null : nc.fluids });
+    const out = { mass: diag.totalWaterMass, volume: diag.totalWaterVolume, base };
+    if (withPrivate) out.fluids = nc.fluids === undefined ? null : nc.fluids;
+    return JSON.stringify(out);
 }
 function frame30(env) {
     env.Graphics.frameCount = Math.ceil((env.Graphics.frameCount + 1) / 30) * 30;
@@ -413,7 +415,7 @@ check("legacy_payload_round_trip", () => {
     const payload = { cells: {} };
     cells.forEach((c, i) => { payload.cells[cellKey(c)] = { type: "water", time: 7 + i }; });
     const golden = JSON.stringify(payload);
-    const authority0 = fluidState(env);
+    const authority0 = fluidState(env, false);
     const contents = env.JsonEx.parse(env.JsonEx.stringify(env.DataManager.makeSaveContents()));
     contents.ufWorld.naturalConnections.fluids = JSON.parse(golden);
     env.DataManager.extractSaveContents(contents);
@@ -422,8 +424,8 @@ check("legacy_payload_round_trip", () => {
     const read = cells.map(c => ({ c, w: waterReaders(env, c) })).filter(x => x.w.isWater || x.w.waterAt || x.w.fluid);
     if (read.length) problems.push(`payload cells read as water: ${read.map(x => `(${x.c.x},${x.c.y},${x.c.z}) ${JSON.stringify(x.w)}`).join(", ")}`);
     frame30(env);
-    const authority1 = fluidState(env).replace(/"fluids":.*}$/, ""), expected = authority0.replace(/"fluids":.*}$/, "");
-    if (authority1 !== expected) problems.push(`authoritative water changed: ${expected} -> ${authority1}`);
+    const authority1 = fluidState(env, false);
+    if (authority1 !== authority0) problems.push(`authoritative water changed: ${authority0} -> ${authority1}`);
     const saved = env.JsonEx.parse(env.JsonEx.stringify(env.DataManager.makeSaveContents())).ufWorld.naturalConnections.fluids;
     if (JSON.stringify(saved) !== golden) problems.push(`saved again, the payload is ${JSON.stringify(saved)}, expected ${golden}`);
     F.reset();
