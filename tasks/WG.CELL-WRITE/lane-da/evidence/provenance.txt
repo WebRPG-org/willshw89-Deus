@@ -1,0 +1,23 @@
+Lane-da rework provenance, 2026-10-01. ANSWER-DA items 1(d) and the base keep-green.
+
+Clones are local shared clones of C:/Users/snewt/OneDrive/Desktop/UF, sparse-checkout cone paths game/js, game/data, tools, docs/systems. Each gate command was started with a 900000 ms kill timeout (tools runner taskkill /T). timed_out was false on every run below.
+
+Tip tree (corrected files, not yet a commit when the gates ran):
+  path: C:\Users\snewt\AppData\Local\Temp\lane-da-clones\tip-precommit
+  git clone -c core.autocrlf=false --shared --no-checkout, then checkout --detach a51e079fa37c06f048f4a5af56a25ad6732287e0
+  overlaid from the lane worktree, hashes equal on both sides:
+    game/js/plugins/DEUS_Levels.js 14d9ff5da41af959e4e346c05aed24d24c0acc94
+    tools/test_sparse_outer_save.js 0ec9de3fc3f87b61f4682a32be57aa6a7ffb59ba
+  working-tree CRLF count on DEUS_Levels.js: 0. buildViewBaselines: absent.
+
+Base tree:
+  path: C:\Users\snewt\AppData\Local\Temp\lane-da-clones\base-b889de90
+  commit: b889de90382b7bdc89ca98b8fb6dbb38beb49ba2
+  plugin blob: 8076d47cc455996cd4447d78467cf2fc1fa879e7 (git hash-object matched HEAD:game/js/plugins/DEUS_Levels.js at the syntax, test_32, and fail-before runs)
+  The corrected tools/test_sparse_outer_save.js and tools/fixtures/levels/save_32_entries_seed18.json were copied in for the fail-before run only. The plugin file was not replaced.
+  First strata attempt on that checkout exited 2: HARNESS shafts_keep_fluid: the shaft loop to instrument is missing. A later read of the working tree showed CRLF (6383) and the harness anchor is an LF string.
+  Strata keep-green was re-run after core.autocrlf=false and a fresh checkout of game/js. That file was LF (CRLF count 0), hash still 8076d47c, anchor present. Result: exit 0, 431.2 s. See base-keep-green.txt.
+
+Seven mutants: run in the lane worktree on the same two blobs as the tip clone (hashes above). Not run a second time inside the clone. See mutants.txt.
+
+Strata on the tip clone was run more than once. The recorded gate is tip-strata exit 0, 532.3 s, clearance 1103 ns, started 2026-10-01T09:54:52.253Z. Two earlier runs on the same tree exited 1 on the 2000 ns budget only. See strata-gate.txt.

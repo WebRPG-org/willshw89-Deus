@@ -1697,14 +1697,42 @@
     }
     // A level's entry in the save (UF.World.state.levels[z]): the core's exist from New Game; a level outside the core gets
     // one with its first change (WG.00.17: an unchanged level costs 0 bytes in the save) and loses it with its last.
+    // A checksum-only outer entry (z, gen, checksum, and absent or empty strata; no caps) is empty. Saves written since
+    // a8c1e62a stored one for every level; WG.00.43 drops those on load, and a revert drops one the same way.
     function levelEntry(st, z) {
         const key = String(z);
         return st.levels[key] || (st.levels[key] = { z, gen: levelGen(st, 0), strata: {} });
     }
+    function checksumOnlyEntry(L) {
+        if (!L || typeof L !== "object" || Array.isArray(L)) return false;
+        const strata = L.strata;
+        if (strata !== undefined && (strata === null || typeof strata !== "object" || Array.isArray(strata) || Object.keys(strata).length !== 0)) return false;
+        for (const k of Object.keys(L)) {
+            if (k !== "z" && k !== "gen" && k !== "checksum" && k !== "strata") return false;
+        }
+        return true;
+    }
     function dropEmptyOuterEntry(st, z) {
         const L = st.levels[String(z)];
         if (!L || (z >= CORE.zMin && z <= CORE.zMax)) return;
-        if (Object.keys(L).every(k => k === "z" || k === "gen" || (k === "strata" && !Object.keys(L.strata).length))) delete st.levels[String(z)];
+        if (checksumOnlyEntry(L)) delete st.levels[String(z)];
+    }
+    // One shot, on a version-4 load: delete checksum-only entries outside the core. A strata change and a caps-only
+    // entry stay, checksum key included. A second load finds the record and removes nothing.
+    function migrateSparseOuterSave(st) {
+        if (!st || !st.levels || typeof st.levels !== "object") return null;
+        st.migrations = st.migrations || [];
+        if (st.migrations.some(m => m && m.rule === "WG.00.43")) return null;
+        let stripped = 0;
+        for (const key of Object.keys(st.levels)) {
+            const z = Number(key);
+            if (!Number.isInteger(z) || (z >= CORE.zMin && z <= CORE.zMax)) continue;
+            if (checksumOnlyEntry(st.levels[key])) { delete st.levels[key]; stripped++; }
+        }
+        const rec = { rule: "WG.00.43", stripped };
+        st.migrations.push(rec);
+        stats.migrations++;
+        return rec;
     }
     // Store a cell's record (null: back to the baseline) in the decoded maps and the save.
     function putDelta(st, z, ax, ay, i, r) {
@@ -4601,12 +4629,17 @@
         const g = newLevelGen(st, gen);
         const r = zrSync();
         const allLevels = (r && r.levels && r.levels.length > 0) ? r.levels : CORE_LEVELS;
-        for (const z of allLevels) if (!st.levels[String(z)]) st.levels[String(z)] = { z, gen: g, checksum: null, strata: {} };
+        // WG.00.43 entry scope: core only. Mutant checksum_all_levels widens this to every level of the range.
+        const entryLevels = CORE_LEVELS;
+        for (const z of entryLevels) if (!st.levels[String(z)]) st.levels[String(z)] = { z, gen: g, checksum: null, strata: {} };
         for (const z of allLevels) {
             // Allocate Ground too: its checksum still uses its unchanged WorldGen lattice. (Generator 5 makes the area's
-            // levels outside the core with its core, in volumeOf.)
+            // levels outside the core with its core, in volumeOf.) Building a baseline writes no save entry.
             for (let ay = 0; ay < st.areasY; ay++) for (let ax = 0; ax < st.areasX; ax++) baseline(z, ax, ay);
-            if (!st.levels[String(z)].checksum) st.levels[String(z)].checksum = checksumOf(z);
+            if (entryLevels.indexOf(z) >= 0) {
+                const L = st.levels[String(z)];
+                if (L && !L.checksum) L.checksum = checksumOf(z);
+            }
         }
 
         // A new world starts at strata schema 1; a save from before the strata has its level changes converted.
@@ -4685,6 +4718,7 @@
         if (!(st.version >= 4 && st.levels)) migrate(st, { x: $gamePlayer.x, y: $gamePlayer.y });
         else {
             migrateSaveToFiveStrata(st);   // a no-op at schema 1; converts levels[z].cells of a save made before the strata
+            migrateSparseOuterSave(st);    // WG.00.43, once: checksum-only outer entries are not changes
             verifyLevels(st);
         }
         deltaLevels(st);                   // decode the saved strata records now: an unreadable one is reported at load
@@ -4710,8 +4744,9 @@
         return n;
     }
 
-    // New Game: every baseline generated and checksummed before the first frame (RESOURCE_ATLAS section 2). The view is
-    // recorded when the first map starts (UF_History sets where it starts in its own world:created listener).
+    // New Game: every baseline of the range is generated before the first frame (RESOURCE_ATLAS section 2). Save entries
+    // and their checksums are the core only (WG.00.43). The view is recorded when the first map starts (UF_History sets
+    // where it starts in its own world:created listener).
     function onWorldCreated(st) {
         ensureWorldLevels(st);
         if (st.view === undefined) st.view = null;
@@ -5351,6 +5386,7 @@
         UF.Test.suite("natural_walls", naturalWallsSuite, { isDefault: false });
         UF.Test.suite("flooding", floodingSuite, { isDefault: false });
         UF.Test.suite("strata", strataSuite, { isDefault: false });
+        UF.Test.suite("sparse_outer", sparseOuterSuite, { isDefault: false });
     }
 
     async function naturalWallsSuite(t) {
@@ -6379,5 +6415,73 @@
         await t.waitUntil(() => settled() && viewZ() === 0, 20000, "back to the ground").catch(() => {});
         await t.waitFrames(10);
         t.check("no_errors", t.errorsSoFar().length === 0, t.errorsSoFar().length ? `${t.errorsSoFar().length} error(s), first: ${t.errorsSoFar()[0]}` : "none during the strata checks");
+    }
+
+    // WG.00.43, on request (--deus-test=sparse_outer). A New Game at -16..+15 keeps save entries for the core only.
+    // Stepping the view to -10 builds that level and writes no entry. One dug cell on -3 is the only outer entry,
+    // and it is still there after save and load. No '-10'.
+    async function sparseOuterSuite(t) {
+        const W = World();
+        if (!W || !W.state || !W.viewLevel()) { t.check("setup", false, "no world"); return; }
+        const settled = () => SceneManager._scene instanceof Scene_Map && SceneManager._scene.isStarted() && !$gamePlayer.isTransferring() && !pending;
+        await t.waitUntil(settled, 20000, "initial map");
+        if (window.$colonyManager) $colonyManager.cameraFollowUnit = null;
+        const range = W.zRange();
+        const rangeOk = !!range && range.zMin === -16 && range.zMax === 15;
+        if (viewZ() !== 0) {
+            setView(0);
+            await t.waitUntil(() => settled() && viewZ() === 0, 60000, "the ground").catch(() => {});
+        }
+        const st = W.state;
+        setView(-10);
+        let viewed = false;
+        try { await t.waitUntil(() => settled() && viewZ() === -10, 60000, "level -10"); viewed = true; } catch (e) { /* reported in the check */ }
+        const v10 = W.viewLevel();
+        const b10 = v10 ? baseline(-10, v10.x, v10.y) : null;
+        const noMinus10 = st.levels["-10"] === undefined;
+        setView(0);
+        try { await t.waitUntil(() => settled() && viewZ() === 0, 60000, "back to the ground"); } catch (e) { /* reported in the check */ }
+        const v = W.viewLevel() || { x: 0, y: 0 };
+        const area = { x: v.x, y: v.y };
+        let cell = null;
+        const size = st.size;
+        for (let y = 0; y < size && !cell; y++) {
+            for (let x = 0; x < size; x++) {
+                if (W.standerAt(area.x, area.y, x, y, -3)) continue;
+                if (Levels.shapeAt(area.x, area.y, x, y, -3) === "solid") { cell = { x, y }; break; }
+            }
+        }
+        const dug = cell ? setShape({ area, x: cell.x, y: cell.y, z: -3 }, "floor", { material: "stone" }) : false;
+        const keysOf = levels => Object.keys(levels || {}).map(Number).sort((a, b) => a - b);
+        const want = [-3, -2, -1, 0, 1, 2];
+        const keysBefore = keysOf(st.levels);
+        const slot = 18;
+        let saved = false, loaded = false, loadError = null;
+        try {
+            $gameSystem.onBeforeSave();
+            await DataManager.saveGame(slot);
+            saved = true;
+            await DataManager.loadGame(slot);
+            loaded = true;
+            $gameSystem.onAfterLoad();
+        } catch (e) {
+            loadError = e && e.stack ? e.stack.split("\n").slice(0, 3).map(s => s.trim()).join(" | ") : String(e);
+        }
+        const st2 = World().state;
+        const keysAfter = keysOf(st2 && st2.levels);
+        const backOnGround = viewZ() === 0;
+        let shot = "not taken";
+        try { shot = t.screenshot("after_load"); } catch (e) { shot = "failed: " + (e && e.message); }
+        const errors = t.errorsSoFar();
+        t.check("sparse_outer_save",
+            rangeOk && viewed && !!b10 && b10.z === -10 && noMinus10 && dug === true
+                && JSON.stringify(keysBefore) === JSON.stringify(want)
+                && saved && loaded && !loadError && backOnGround
+                && JSON.stringify(keysAfter) === JSON.stringify(want) && st2.levels["-10"] === undefined
+                && errors.length === 0,
+            `zRange ${range && range.zMin}..${range && range.zMax}; viewed -10 ${viewed} baseline ${b10 && b10.z} levels["-10"] ${noMinus10 ? "absent" : "PRESENT"}; ` +
+            `dug ${cell ? cell.x + "," + cell.y : "no solid cell"} on -3 (${dug === true ? "ok" : "refused " + JSON.stringify(Levels.lastRefusal())}); ` +
+            `keys before save ${JSON.stringify(keysBefore)}; slot ${slot} ${saved ? "saved" : "not saved"}, ${loaded ? "loaded" : "not loaded"}${loadError ? " (" + loadError + ")" : ""}; ` +
+            `keys after load ${JSON.stringify(keysAfter)}; errors ${errors.length ? errors[0] : "none"}; shot ${shot}`);
     }
 })();

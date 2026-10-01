@@ -1,0 +1,256 @@
+{
+  "notes": "Captured at the lane base of task/lane-da, before the WG.00.43 save change, from a seed-18 New Game at -16..+15. ensureWorldLevels wrote 32 entries, each with a checksum. One outer entry (z=-10, area 0,0, cell 0,0) then received one real strata change through UF.Levels.setShape to floor. At -16..+15 every generated cap fits under zMax (docs/systems/DEUS_ZRange.md section 6), so generation saves no cap at +15. The +15 cap record was stored by UF.Levels.setCap, which writes writeCap's 6-hex-digit save format. Strata on the +15 entry stay empty, so the entry is caps-only. The other 25 outer entries are the checksum-only entries New Game wrote. verticalBiomeCoupling was set true before ensureWorldLevels, matching the world:initializing listener.",
+  "seed": 18,
+  "zRange": {
+    "zMin": -16,
+    "zMax": 15
+  },
+  "strataSchemaVersion": 1,
+  "version": 4,
+  "strataChange": {
+    "z": -10,
+    "ax": 0,
+    "ay": 0,
+    "x": 0,
+    "y": 0,
+    "shape": "floor"
+  },
+  "capsOnly": {
+    "z": 15,
+    "ax": 0,
+    "ay": 0,
+    "x": 2,
+    "y": 2,
+    "via": "setCap"
+  },
+  "checksumOnlyOuter": [
+    "-16",
+    "-15",
+    "-14",
+    "-13",
+    "-12",
+    "-11",
+    "-9",
+    "-8",
+    "-7",
+    "-6",
+    "-5",
+    "-4",
+    "-3",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14"
+  ],
+  "levels": {
+    "0": {
+      "z": 0,
+      "gen": 5,
+      "checksum": "1f5c2a72",
+      "strata": {}
+    },
+    "1": {
+      "z": 1,
+      "gen": 5,
+      "checksum": "eaf389b9",
+      "strata": {}
+    },
+    "2": {
+      "z": 2,
+      "gen": 5,
+      "checksum": "9998ffb2",
+      "strata": {}
+    },
+    "3": {
+      "z": 3,
+      "gen": 5,
+      "checksum": "00f6a75c",
+      "strata": {}
+    },
+    "4": {
+      "z": 4,
+      "gen": 5,
+      "checksum": "00f6a75c",
+      "strata": {}
+    },
+    "5": {
+      "z": 5,
+      "gen": 5,
+      "checksum": "e8e6b0cc",
+      "strata": {}
+    },
+    "6": {
+      "z": 6,
+      "gen": 5,
+      "checksum": "ac65d04d",
+      "strata": {}
+    },
+    "7": {
+      "z": 7,
+      "gen": 5,
+      "checksum": "7a3adb63",
+      "strata": {}
+    },
+    "8": {
+      "z": 8,
+      "gen": 5,
+      "checksum": "d1f8fbe8",
+      "strata": {}
+    },
+    "9": {
+      "z": 9,
+      "gen": 5,
+      "checksum": "2dc1e0f8",
+      "strata": {}
+    },
+    "10": {
+      "z": 10,
+      "gen": 5,
+      "checksum": "3ae53d0e",
+      "strata": {}
+    },
+    "11": {
+      "z": 11,
+      "gen": 5,
+      "checksum": "8e8f1879",
+      "strata": {}
+    },
+    "12": {
+      "z": 12,
+      "gen": 5,
+      "checksum": "41ba9dc5",
+      "strata": {}
+    },
+    "13": {
+      "z": 13,
+      "gen": 5,
+      "checksum": "41ba9dc5",
+      "strata": {}
+    },
+    "14": {
+      "z": 14,
+      "gen": 5,
+      "checksum": "41ba9dc5",
+      "strata": {}
+    },
+    "15": {
+      "z": 15,
+      "gen": 5,
+      "checksum": "41ba9dc5",
+      "strata": {},
+      "caps": {
+        "0,0": {
+          "514": "0103c8"
+        }
+      }
+    },
+    "-16": {
+      "z": -16,
+      "gen": 5,
+      "checksum": "dc2a7d91",
+      "strata": {}
+    },
+    "-15": {
+      "z": -15,
+      "gen": 5,
+      "checksum": "93f6b5c4",
+      "strata": {}
+    },
+    "-14": {
+      "z": -14,
+      "gen": 5,
+      "checksum": "93f6b5c4",
+      "strata": {}
+    },
+    "-13": {
+      "z": -13,
+      "gen": 5,
+      "checksum": "93f6b5c4",
+      "strata": {}
+    },
+    "-12": {
+      "z": -12,
+      "gen": 5,
+      "checksum": "93f6b5c4",
+      "strata": {}
+    },
+    "-11": {
+      "z": -11,
+      "gen": 5,
+      "checksum": "93f6b5c4",
+      "strata": {}
+    },
+    "-10": {
+      "z": -10,
+      "gen": 5,
+      "checksum": "93f6b5c4",
+      "strata": {
+        "0,0": {
+          "0": "000100000000ff00000000"
+        }
+      }
+    },
+    "-9": {
+      "z": -9,
+      "gen": 5,
+      "checksum": "93f6b5c4",
+      "strata": {}
+    },
+    "-8": {
+      "z": -8,
+      "gen": 5,
+      "checksum": "93f6b5c4",
+      "strata": {}
+    },
+    "-7": {
+      "z": -7,
+      "gen": 5,
+      "checksum": "93f6b5c4",
+      "strata": {}
+    },
+    "-6": {
+      "z": -6,
+      "gen": 5,
+      "checksum": "93f6b5c4",
+      "strata": {}
+    },
+    "-5": {
+      "z": -5,
+      "gen": 5,
+      "checksum": "93f6b5c4",
+      "strata": {}
+    },
+    "-4": {
+      "z": -4,
+      "gen": 5,
+      "checksum": "93f6b5c4",
+      "strata": {}
+    },
+    "-3": {
+      "z": -3,
+      "gen": 5,
+      "checksum": "93f6b5c4",
+      "strata": {}
+    },
+    "-2": {
+      "z": -2,
+      "gen": 5,
+      "checksum": "95c997d4",
+      "strata": {}
+    },
+    "-1": {
+      "z": -1,
+      "gen": 5,
+      "checksum": "1ed786a5",
+      "strata": {}
+    }
+  }
+}

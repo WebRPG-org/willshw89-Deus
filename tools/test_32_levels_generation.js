@@ -1,7 +1,7 @@
-// tools/test_32_levels_generation.js - Headless test suite for 32-layer world generation (Owner Request)
+// tools/test_32_levels_generation.js - Headless checks for 32-layer generation and a core-only save (WG.00.43).
+// --mutant=checksum_all_levels rewrites ensureWorldLevels so it stores an entry for every level, then the vm loads it.
 "use strict";
 
-const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
@@ -10,6 +10,23 @@ console.log("=== DEUS 32-LAYER WORLD GENERATION TEST SUITE ===");
 
 const ROOT = path.resolve(__dirname, "..");
 const cat = JSON.parse(fs.readFileSync(path.join(ROOT, "game/data/UF_WorldCatalog.json"), "utf8"));
+const mutant = (process.argv.find(a => a.startsWith("--mutant=")) || "").slice("--mutant=".length);
+
+function levelsSource() {
+    let source = fs.readFileSync(path.join(ROOT, "game/js/plugins/DEUS_Levels.js"), "utf8");
+    if (!mutant) return source;
+    if (mutant !== "checksum_all_levels") {
+        console.error(`HARNESS unknown mutant ${mutant}`);
+        process.exit(2);
+    }
+    const from = "const entryLevels = CORE_LEVELS;";
+    const to = "const entryLevels = allLevels;";
+    if (!source.includes(from)) {
+        console.error("HARNESS mutant checksum_all_levels: target not found");
+        process.exit(2);
+    }
+    return source.replace(from, to);
+}
 
 function makeEnv() {
     const env = {
@@ -63,8 +80,10 @@ function makeEnv() {
     env.$gameMap = new env.Game_Map();
     env.$gamePlayer = new env.Game_Player();
 
+    const levels = levelsSource();
     ['DEUS_World.js', 'DEUS_WorldGen.js', 'DEUS_Levels.js'].forEach(f => {
-        vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'game/js/plugins', f), 'utf8'), env, { filename: f });
+        const src = f === 'DEUS_Levels.js' ? levels : fs.readFileSync(path.join(ROOT, 'game/js/plugins', f), 'utf8');
+        vm.runInNewContext(src, env, { filename: f });
     });
     return env;
 }
@@ -79,7 +98,10 @@ function check(name, condition, detail) {
     passed++;
 }
 
-// Test Section 1: Default World Generation covers all 32 layers
+const CORE_LEVELS = [-2, -1, 0, 1, 2];
+const ALL_LEVELS = Array.from({ length: 32 }, (_, i) => -16 + i);
+
+// Seed 12345, the suite's own seed. The default Z range inside this vm is -16..+15.
 const env = makeEnv();
 const W = env.UF.World;
 const L = env.UF.Levels;
@@ -89,45 +111,36 @@ check("world_default_zrange_is_32", W.levelCount() === 32 && W.zRange().zMin ===
 
 L.ensureWorldLevels(st);
 
-const keys = Object.keys(st.levels);
-check("ensure_world_levels_generates_all_32_entries", keys.length === 32, `keys count: ${keys.length}`);
+const keys = Object.keys(st.levels).map(Number).sort((a, b) => a - b);
+check("core_entries_only", JSON.stringify(keys) === JSON.stringify(CORE_LEVELS), `keys: ${JSON.stringify(keys)}`);
 
-const sortedZ = keys.map(Number).sort((a, b) => a - b);
-const expectedZ = Array.from({ length: 32 }, (_, i) => -16 + i);
-check("level_entries_span_minus16_to_plus15", JSON.stringify(sortedZ) === JSON.stringify(expectedZ), `got: ${JSON.stringify(sortedZ)}`);
-
-let allChecksummed = true;
-let allGen5 = true;
-for (const z of expectedZ) {
-    const entry = st.levels[String(z)];
-    if (!entry || !entry.checksum || entry.checksum === "n/a" || typeof entry.checksum !== "string") {
-        allChecksummed = false;
-        break;
-    }
-    if (entry.gen !== L.GEN) {
-        allGen5 = false;
-        break;
-    }
+let reconstructible = true;
+for (const z of ALL_LEVELS) {
+    const b = L.baseline(z, 0, 0);
+    if (!b || b.z !== z) { reconstructible = false; break; }
 }
-check("all_32_levels_have_valid_checksums", allChecksummed, "Missing or invalid checksum on a layer");
-check("all_32_levels_have_gen5", allGen5, "Gen version mismatch");
+check("all_32_levels_reconstructible", reconstructible, "a baseline was missing or named the wrong level");
 
-// Test Section 2: Deep levels and extreme levels have baselines and strata
+let checksumsOk = true;
+let gensOk = true;
+for (const z of CORE_LEVELS) {
+    const entry = st.levels[String(z)];
+    if (!entry || typeof entry.checksum !== "string" || entry.checksum === "n/a") checksumsOk = false;
+    if (!entry || entry.gen !== L.GEN) gensOk = false;
+}
+check("core_levels_have_valid_checksums", checksumsOk, "a core entry has no string checksum other than n/a");
+check("core_levels_have_gen", gensOk, `a core entry's gen is not ${L.GEN}`);
+
 const bMinus16 = L.baseline(-16, 0, 0);
 check("level_minus_16_baseline_exists", !!bMinus16 && bMinus16.z === -16, "Level -16 baseline null");
 
 const bPlus15 = L.baseline(15, 0, 0);
 check("level_plus_15_baseline_exists", !!bPlus15 && bPlus15.z === 15, "Level +15 baseline null");
 
-// Test Section 3: Level entries are persistent across level reads
-check("level_entry_minus_10_present", !!st.levels["-10"] && st.levels["-10"].z === -10, "Level -10 missing");
-check("level_entry_plus_10_present", !!st.levels["10"] && st.levels["10"].z === 10, "Level 10 missing");
+L.baseline(-10, 0, 0);
+check("no_entry_for_unchanged_minus_10", st.levels["-10"] === undefined, `entry ${JSON.stringify(st.levels["-10"] && Object.keys(st.levels["-10"]))}`);
 
-// Test Section 4: Rule 4 Mutant Check (proving tests can fail if only core 5 levels are generated)
-const mutantSt = { levels: { "-2": {}, "-1": {}, "0": {}, "1": {}, "2": {} } };
-const mutantKeys = Object.keys(mutantSt.levels);
-const mutantFails = mutantKeys.length !== 32;
-check("mutant_core_only_caught", mutantFails, "Mutant with only 5 levels failed to trigger failure");
+L.baseline(10, 0, 0);
+check("no_entry_for_unchanged_plus_10", st.levels["10"] === undefined, `entry ${JSON.stringify(st.levels["10"] && Object.keys(st.levels["10"]))}`);
 
 console.log(`\nResults: ${passed} passed, 0 failed.`);
-
