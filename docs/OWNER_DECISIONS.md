@@ -258,6 +258,7 @@ Every decision item recorded in this log must provide:
 - **Status:** `DECIDED`
 - **Ruling:** Every catalogue entry's pixel size, envelope, footprint and anchor derive from the scale chart (`art/reference/DEUS_HUMAN_SCALE_STRIP_V1.png`, whose numeric source is `game/data/DEUS_ScaleRegistry.json`; the two are not independent evidence), citing one chart row per entry. The catalogue builder (`tools/art/build_catalogue.js`), template generator (`tools/art/make_blank_templates.js`) and placement validator (`tools/art/validate_art.js`) enforce it. Disagreements with other documents go to the Owner and are never resolved by workers. Sim distances (DEC-013 geometry) govern the simulation. Where geometry and chart imply different px/ft, it is an Owner question (`stratumPx`).
 - **Open:** If "the scale chart" means a different file, the Owner names it and DEC-016 is amended.
+- **Amendment (Owner, 2026-10-01):** nine per-row size overrides for the catalogue-rows lane (lane-pg) are approved; see DEC-066 item 1. Other disagreements still go to the Owner.
 
 ---
 
@@ -1080,6 +1081,7 @@ Every decision item recorded in this log must provide:
   12. **Catalogue rows.** The PM may add catalogue rows for any asset the world needs without asking each time (06:27). Rows are data, so they go through a reviewed lane (DEC-048, DEC-052), and a row still comes before its generation (DEC-007).
 - **Unchanged:** DEC-007 (catalogue first, SOP prompts, QA), the DEC-046 static-first amendment, and DEC-056 as tightened by DEC-062 and its amendment.
 
+- **Amendment (Owner, 2026-10-01):** script work on the PixelLab output of the PM's art may ship; see DEC-066 item 2 (the piece still starts from a Pixflux or Bitforge generation and needs the unanimous council).
 ---
 
 ### Decision `DEC-064`: "Lets do all these": the PM's nine-item improvement list of 2026-10-01 is approved work
@@ -1131,3 +1133,15 @@ Every decision item recorded in this log must provide:
      - lane-dr adds a guard: no runtime file calls the reclaim walk (`note("tick")`, `note("decay")` or a reclaim session's `tick()`), and `note("collapse")` advances no place. The same scan that passes on the runtime files must fail on a file that calls the walk, and a mutant whose `note("collapse")` also runs the walk must fail the guard.
      - ADR-003's sign-off amendments A6 and A7 (rubble is the terminal form under DEC-057) are read together with this item: rubble is terminal in the running game and eligible in the accounts.
 - **Records updated with this entry:** `docs/worldgen/DEUS_WORLDGEN_WBS.md` (section 5.3 rows PM-2 and PM-3, the WG.00.46 row, the revision log) and `tasks/wbs_registry.json` (the `decisions` lists of WG.CELL-WRITE, NAT.02.MASS and WG.00.46). The briefs of lanes dd, dr, de, fb and eq carry it when each lane is dispatched. Drafted as DEC-063 and renamed DEC-065 on 2026-10-01: DEC-063 and DEC-064 are taken on main (the PM's U7 art program; "Lets do all these").
+
+---
+
+### Decision `DEC-066`: Owner rulings of 2026-10-01 on the PM's morning questions: nine size overrides approved; script work on PixelLab output may ship; WG.64.01 and WG.64.02 superseded
+- **Date:** 2026-10-01 (~12:30Z)
+- **Decider:** Owner, in chat with the PM, answering the PM's plain-language questions (`C:/Users/snewt/.deus_ops/MORNING_DECISIONS.md` items 7, 8/18 and 17): "8-18 a 7 yes ... 17 a". Item 19 (the all-32-levels narrowing of DEC-065) is still open: the Owner asked whether factions still develop the same, and the PM is answering that first.
+- **Status:** `DECIDED`
+- **Ruling:**
+  1. **Size overrides (DEC-016), option (a).** The Owner approves the nine per-row size exceptions of the catalogue-rows lane (lane-pg, WG.20.03), measured on 2026-10-01 at the council-passed versions: trees oak 56-89 x 72-96, dead 56-84 x 72-96, birch 44-70 x 76-118, pine 42-96 x 80-132; stumps oak 16-28 x 12-21, swamp 16-40 x 12-34, dead 16-31 x 12-23, pine 16-34 x 12-20, birch 11-28 x 12-20 (px, width x height). Each widens only its own B-sheet row; the scale-chart rows, the charset trees (CAT 7713-7726) and every slot and anchor stay as they are, and each override is listed in `art/catalogue/conflicts.md`. This is lane-pg's precondition 5. Any other override still goes to the Owner under DEC-016.
+  2. **Script work on PixelLab output may ship (question D2), option (a) "yes".** Art the PM makes may ship with pixels that a script changed after the PixelLab generation: cutting and rearranging into RMMZ layouts, transparency clean-up, palette snapping, and recolours or fills that use the piece's own colours (for example the mottled flat fills of cliffs 4, 7 and 8, and stumps cut from their tree before the Pixflux pass). The piece still starts from a PixelLab Pixflux or Bitforge generation (DEC-063 item 3), passes the PM's machine QA, and needs the four-judge unanimous council (DEC-062, strict 4/4) before a PM YEA (DEC-056).
+  3. **WG.64.01 and WG.64.02 are superseded, option (a).** WG.64.01 (karst dissolution and cave architecture) and WG.64.02 (structural fault fractures and chasms) are retired as `SUPERSEDED` by WG.62.03 (D1 caves, ravines and shafts, generated directly at world creation; lane-dh wave 5, lane-fn, lane-di). No process simulation of dissolution or tectonics is planned. Geological events during play (sinkholes, quakes, eruptions) stay deferred under DEC-059 item 4.
+- **Records updated with this entry:** a pointer under DEC-016 and DEC-063; `docs/worldgen/DEUS_WORLDGEN_WBS.md` (WG.64.01 and WG.64.02 `SUPERSEDED`, the WG.62.03 row, Rev 37 and its log row); `docs/worldgen/DEUS_NATURAL_WORLD_SYSTEMS.md` section J; `art/COUNCIL_RECORD.md` (D2 answered).

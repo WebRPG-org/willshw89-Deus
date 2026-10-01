@@ -125,3 +125,7 @@ Versions judged: trees after the U7 canopy pass (birch, swamp, pine and apple re
 ## Owner ruling on splits (2026-10-01, ~12:15Z)
 
 The Owner answered the PM's question "strict 4/4" (amendment line under DEC-062 in `docs/OWNER_DECISIONS.md`). Pieces that did not get four YES votes stay out of the game: cliffs 2, 5, 6, 9 and 10, the hanging vines, the stalactites and both apple trees. The 17 pieces that passed 4 of 4 keep their result; they still wait for their catalogue rows (lane-pg) and the Owner's D2 answer on script-made pixels before any PM YEA.
+
+## Owner ruling on script-made pixels (2026-10-01, ~12:30Z)
+
+The Owner answered question D2 "yes" (DEC-066 item 2): script work on the PixelLab output of the PM's art may ship, so cliffs 4, 7 and 8 (scripted mottled fills) and the stumps (cut from their trees before the Pixflux pass) need no new PixelLab pass. With the nine size overrides also approved (DEC-066 item 1), the 17 passed pieces now wait only for their catalogue rows (lane-pg) before the PM's YEA.
