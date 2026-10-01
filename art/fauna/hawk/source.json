@@ -1,0 +1,17 @@
+{
+  "species": "hawk",
+  "sheet": "game/img/characters/$DEUS_Creature_Hawk.png",
+  "generator": "PixelLab Create Character",
+  "mode": "pro",
+  "view": "high top-down",
+  "pixellabCharacterId": "39e83641-39c6-408e-b695-8eac3a9951dd",
+  "canvas": "32x32px",
+  "correction": null,
+  "council": "ART-COUNCIL-14/15 (art/COUNCIL_RECORD.md)",
+  "decisions": [
+    "DEC-071",
+    "DEC-072",
+    "DEC-056"
+  ],
+  "date": "2026-10-01"
+}

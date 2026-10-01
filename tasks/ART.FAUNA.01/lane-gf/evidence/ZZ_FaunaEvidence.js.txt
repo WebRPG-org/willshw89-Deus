@@ -1,0 +1,31 @@
+//=============================================================================
+// ZZ_FaunaEvidence.js (EVIDENCE ONLY, snapshot copies; never committed to game/)
+// lane-gf (ART.FAUNA.01): place one of each inducted creature beside the camera centre at the closest zoom, facing south and
+// then east, and take screenshots, so the new sheets can be seen drawn by the game. Uses UF.Test, UF.World and UF.Camera.
+//=============================================================================
+(() => {
+    "use strict";
+    const IDS = ["wolf", "fox", "boar", "hare", "fowl", "hawk", "songbird", "bat", "giant_spider", "wild_sheep", "rat", "restless_dead"];
+    const run = () => {
+        if (!window.UF || !UF.Test) return setTimeout(run, 200);
+        UF.Test.suite("fauna_view", async t => {
+            const W = UF.World, cat = window.$deusWorldCatalog || {}, recs = {};
+            (function walk(o) { if (!o || typeof o !== "object") return; if (o.id && o.image && o.biomes && (o.kind || o.combat)) recs[o.id] = o; for (const k in o) walk(o[k]); })(cat);
+            const px0 = $gamePlayer.x - 16, py0 = $gamePlayer.y; $gamePlayer.locate(px0, py0);
+            if (UF.Camera) UF.Camera.setLevel(2);
+            await t.waitFrames(10);
+            const cx = Math.floor($gameMap.displayX() + $gameMap.screenTileX() / 2), cy = Math.floor($gameMap.displayY() + $gameMap.screenTileY() / 2);
+            const added = [];
+            IDS.forEach((id, i) => { const r = recs[id]; if (!r) return; const x = cx - 5 + (i % 6) * 2, y = cy - 1 + Math.floor(i / 6) * 3;
+                added.push(W.addUnit({ name: "EVID_" + id, image: { characterName: r.image, characterIndex: 0 }, area: { x: 0, y: 0 }, x, y, dir: 2, data: { kind: "creature", species: id, ai: null, through: true } })); });
+            await t.waitFrames(60);
+            t.check("placed", added.length === IDS.length, `${added.length}/${IDS.length} placed: ${IDS.map(id => id + "=" + (recs[id] ? recs[id].image : "?")).join(", ")}`);
+            t.screenshot("fauna_view_south");
+            for (const u of added) { const ev = W.eventOf && W.eventOf(u.id); if (ev && ev.setDirection) ev.setDirection(6); }
+            await t.waitFrames(20);
+            t.screenshot("fauna_view_east");
+            for (const u of added) if (W.removeUnit) W.removeUnit(u.id);
+        });
+    };
+    run();
+})();

@@ -1,0 +1,17 @@
+{
+  "species": "bat",
+  "sheet": "game/img/characters/$DEUS_Creature_Bat.png",
+  "generator": "PixelLab Create Character",
+  "mode": "pro",
+  "view": "high top-down",
+  "pixellabCharacterId": "59458253-97f6-4e80-854d-ad35a538aa43",
+  "canvas": "32x32px",
+  "correction": "halved 2x2 majority (scratchpad halve.js)",
+  "council": "ART-COUNCIL-14/15 (art/COUNCIL_RECORD.md)",
+  "decisions": [
+    "DEC-071",
+    "DEC-072",
+    "DEC-056"
+  ],
+  "date": "2026-10-01"
+}

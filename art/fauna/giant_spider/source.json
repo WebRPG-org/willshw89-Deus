@@ -1,0 +1,17 @@
+{
+  "species": "giant_spider",
+  "sheet": "game/img/characters/$DEUS_Creature_GiantSpider.png",
+  "generator": "PixelLab Create Character",
+  "mode": "pro",
+  "view": "high top-down",
+  "pixellabCharacterId": "44be9815-d786-488f-8df2-652ce2d9805e",
+  "canvas": "54x54px",
+  "correction": null,
+  "council": "ART-COUNCIL-14/15 (art/COUNCIL_RECORD.md)",
+  "decisions": [
+    "DEC-071",
+    "DEC-072",
+    "DEC-056"
+  ],
+  "date": "2026-10-01"
+}

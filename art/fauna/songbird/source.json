@@ -1,0 +1,17 @@
+{
+  "species": "songbird",
+  "sheet": "game/img/characters/$DEUS_Creature_Songbird.png",
+  "generator": "PixelLab Create Character",
+  "mode": "pro",
+  "view": "high top-down",
+  "pixellabCharacterId": "049bd73b-86ae-457c-8899-5adae31a6301",
+  "canvas": "32x32px",
+  "correction": "halved 2x2 majority (scratchpad halve.js)",
+  "council": "ART-COUNCIL-14/15 (art/COUNCIL_RECORD.md)",
+  "decisions": [
+    "DEC-071",
+    "DEC-072",
+    "DEC-056"
+  ],
+  "date": "2026-10-01"
+}
