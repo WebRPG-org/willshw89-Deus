@@ -1358,3 +1358,13 @@ Every decision item recorded in this log must provide:
   3. **Then AG may run merge_gate** (amends DEC-048 items 1 and 3, effective when lane-gg merges). Only through merge_gate, with `--no-ff` and never `--force`. Only on a lane whose review is a real launch by a family independent of the writer, and never on a lane AG wrote or reviewed. Merges run between mail windows (DEC-081). Before then, the PM merges.
   4. **Fauna scripts in the repo:** done, `tools/art/fauna/` on lane-gf (`6ae73064`).
 - **Records updated with this entry:** a pointer under DEC-048; `docs/AUDIT_LOG.md` A12-3 (the lane that answers it).
+
+### Decision `DEC-084`: MiniMax re-enabled temporarily
+- **Date:** 2026-10-01 (~18:25 local)
+- **Decider:** Owner
+- **Status:** `DECIDED`
+- **Quote:** "Task out minimac too until that sub runs out"
+- **Ruling:**
+  1. MiniMax (minimax provider) is authorized for launches and lane roles again, suspending DEC-076.
+- **Records updated with this entry:** .agents/rules/deus-multiagent-routing.md.
+
