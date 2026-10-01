@@ -512,7 +512,8 @@ function main() {
     let survivors = 0;
     if (!only && argv.indexOf("--checks-only") < 0) {
         for (const m of MUTANTS) {
-            let src = fs.readFileSync(m.file, "utf8"), bad = null;
+            // Line endings normalized: a Windows clone may check the sources out with CRLF.
+            let src = fs.readFileSync(m.file, "utf8").replace(/\r\n/g, "\n"), bad = null;
             for (const [from, to] of m.edits) {
                 const n = src.split(from).length - 1;
                 if (n !== 1) { bad = "edit target found " + n + " times: " + JSON.stringify(from.slice(0, 60)); break; }
