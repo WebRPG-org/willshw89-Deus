@@ -1330,3 +1330,14 @@ Every decision item recorded in this log must provide:
   5. **The sky view.** At the end of world generation the Owner can scroll across the whole world from the sky. It shows where wildlife and monsters are, how dense they are and where they spawn: anchors by kind, tier, caps, counts and respawn timers, per area and z. The view reads the spawn designations and anchor counts; it does not build terrain for every area. It is part of the spawner build (lanes fc, fe, ff and fi plus one view lane the PM mints when it is briefed, Owner request 2026-10-01). It is also the acceptance view for creature placement in world generation.
   6. **Unchanged:** DEC-073 items 1, 2, 5 and 7 to 9; DEC-070 condition C as DEC-073 item 8 applies it, with the anchor counts starting full and identical whether an area is first built at New Game or later; the mass rule of DEC-073 item 9.
 - **Records updated with this entry:** a pointer line under DEC-073; `docs/design/SPAWNER_DEC073.md` (a DEC-080 note before section 1); the WG.00.47 row of `docs/worldgen/DEUS_WORLDGEN_WBS.md` (a note); DEC-080 notes on the lines that stated DEC-073 items 3 and 4 in the DEC-012 and DEC-041 amendment lines here, ENGINEERING_STANDARD, ENGINE_RULES, PERFORMANCE_ARCHITECTURE (two lines), ADR-003 (its header and two LOD lines), RESOURCE_ATLAS, WORLD_ARCHITECTURE, DEUS_Ecology and DEUS_CREATURE_ECOLOGY.
+
+### Decision `DEC-081`: Agent mail runs on a half-hour schedule
+- **Date:** 2026-10-01 (~20:07Z)
+- **Decider:** Owner, in chat with the PM.
+- **Status:** `DECIDED`
+- **Quote:** "We can do the mail on a half hour schedule" (after the PM reported that AG mail commits had landed on main during merge_gate runs, which refused the lane-db merge twice with MAIN_DIRTY).
+- **Ruling:**
+  1. PM and AG exchange mail twice an hour, in windows at :00 and :30 UTC. In each window each side reads the other's mail and sends what it has batched as one mail commit on main. No mail commits land on main between windows.
+  2. merge_gate runs between windows, never from :55 to :05 or from :25 to :35, so a mail commit cannot land during a merge. A merge, and the PM's telemetry snapshot just before it, are not mail.
+  3. The Owner's own instructions to AG in the Antigravity chat are not mail and are not held for a window.
+- **Records updated with this entry:** `docs/agents/mailboxes/README.md` (a Schedule section); `.agents/rules/deus-multiagent-routing.md` (one line).

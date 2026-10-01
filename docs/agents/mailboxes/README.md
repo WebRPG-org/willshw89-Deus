@@ -2,6 +2,10 @@
 
 Durable mailbox repository adhering to `docs/AGENT_COMMUNICATION_PROTOCOL.md` and `docs/INVARIANT_REGISTRY.md` (`INV-GOV-04`).
 
+## Schedule (DEC-081, Owner 2026-10-01: "We can do the mail on a half hour schedule")
+
+PM and AG mail moves in two windows an hour, at :00 and :30 UTC. In each window, each side reads the other's new lines and commits its own batched lines once. Nothing is committed to the mailboxes between windows. merge_gate runs between windows (not :55-:05 or :25-:35). The Owner's direct instructions to AG are not mail.
+
 ## Structure
 
 ```text
