@@ -234,3 +234,22 @@ Shown the cliff sheet in PixelLab, the Owner: "I want the bottom left 3 here" - 
 ## Owner pick: four more cliff sets from the round-17 sheet B (2026-10-01, ~16:10Z)
 
 Shown cliff sheet B in PixelLab: "I want the top 4 here" - sheet B row 1, sets 1-4: dry grass, forest floor, needle floor, stony, each plateau over its own face and base as drawn. Cut to RMMZ A4 at native scale (sheet-B geometry: plateau rows 50-141 joined on minimum-difference seams; face = centred 96 columns of rows 142-237, keeping the base and avoiding the rounded edges), assembled through RMMZ's autotile tables (round17/final_cliffs/tall_B4.png). They pass by the Owner's pick; with the three sheet-A picks above, dry grass, forest floor and needle floor each have two variants and stony has one. Files staged: scratchpad pixellab/round17/final_cliffs/{drygrass,forest,needle,stony}_B_{top,face}.png. The stony set in ART-COUNCIL-11 (#31) is superseded.
+
+## ART-COUNCIL-10 (2026-10-01, ~15:40-16:20Z): ten flora pieces cut from round-17 Create Image Pro sheet flora_b
+
+First packet in the uniform answer format with the YES WITH FIX answer (DEC-069 item 2). Small items halved by the Owner's ruling ("Half size"). A YES WITH FIX counts once the PM applied it by tooling (round17/fix10.js, zero generations).
+
+| Piece | MiniMax | ChatGPT | Grok | Gemini | Result |
+|---|---|---|---|---|---|
+| Fruit tree A | YES | NO (curling ribbon foliage) | YES WITH FIX | NO (tubular foliage, bauble apples) | out |
+| Fruit tree B | YES | YES | YES WITH FIX | YES WITH FIX | passed after fixes (pillow highlights toned, inner dark rims to leaf, apples to 1-2 px red specks, fruit and glints off the trunk) |
+| Bare fruit tree | YES | YES | NO (thin outlined twigs) | YES | 3 of 4: Owner keeps it |
+| Sapling | YES WITH FIX | YES | YES WITH FIX | YES | passed after fixes (black contour to bark/leaf, three small leaf clusters at the twig tips) |
+| Broadleaf crown | YES | NO (ring highlights) | YES WITH FIX | YES | 3 of 4: Owner keeps it (as drawn) |
+| Fallen log | YES | YES | YES WITH FIX | YES | passed after fix (moss to olive 77,93,40 / 57,69,28; lower-right face one step darker) |
+| Bush | YES | YES | YES WITH FIX | YES | passed after fix (right edge flattened, lightest green upper-left only) |
+| Flower clumps (4) | YES | YES | NO (identical outlined cups) | YES | 3 of 4: Owner keeps them |
+| Grass tufts (4) | YES | YES WITH FIX (tuft 4) | YES WITH FIX (keep tuft 4) | YES | tufts 1-3 passed after fix (black edges to darkest green); tuft 4 fixes conflicted: Owner keeps it as drawn |
+| Mushrooms (2) | YES | YES | YES WITH FIX | YES | passed after fix (black rims to darkest cluster colour) |
+
+Owner decisions (2026-10-01 ~16:20Z, asked on a board of the exact pieces): bare fruit tree, broadleaf crown, flower clumps and grass tuft 4 all go in. Cutting advice received (Gemini): harvest more of the sheet (mossy log row 2, reeds and ferns, all four mushroom clusters). Files staged: scratchpad pixellab/round17/final_flora/.
