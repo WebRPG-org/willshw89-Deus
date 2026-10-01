@@ -790,6 +790,7 @@ Every decision item recorded in this log must provide:
      - Owner-decision commits.
   4. **Machine enforcement:** hooks that make these limits hold without anyone's good behaviour. They are designed through the braintrust, built in one lane under the PM (not by AG), reviewed by a different family, and installed by the PM. Until then the limits bind as rules.
   5. The writer/reviewer family split and merge_gate stay as they are.
+- **Amendment (Owner, 2026-10-01):** once lane-gg (merge_gate authorship check) merges, AG may run merge_gate itself under the limits of DEC-082 item 3; until then the PM merges. See DEC-082.
 
 ---
 
@@ -1341,3 +1342,15 @@ Every decision item recorded in this log must provide:
   2. merge_gate runs between windows, never from :55 to :05 or from :25 to :35, so a mail commit cannot land during a merge. A merge, and the PM's telemetry snapshot just before it, are not mail.
   3. The Owner's own instructions to AG in the Antigravity chat are not mail and are not held for a window.
 - **Records updated with this entry:** `docs/agents/mailboxes/README.md` (a Schedule section); `.agents/rules/deus-multiagent-routing.md` (one line).
+
+### Decision `DEC-082`: AG keeps working when the PM is out of usage: a hand-off queue, a merge_gate authorship check, then AG may run merge_gate (amends DEC-048 once lane-gg merges)
+- **Date:** 2026-10-01 (~19:05Z, recorded ~20:20Z)
+- **Decider:** Owner, answering the PM's question after "When you run out of usage how can AG operate without you".
+- **Status:** `DECIDED`
+- **Owner's choice:** "Do all three": "Hand-off queue now; governance lane for the authorship check (reviewed by an independent family); then AG may run merge_gate itself; fauna scripts moved into tools/art/fauna/."
+- **Ruling:**
+  1. **Hand-off queue.** `C:/Users/snewt/.deus_ops/AG_QUEUE.md` is the PM-offline playbook. It lists what AG may do without the PM (launch ready lanes, request real reviews, mail the Owner) and what waits for the PM (new briefs, rulings, merges until item 3, art choices).
+  2. **Authorship lane.** lane-gg (OPS.GATE.AUTHOR; writer codex, reviewer grok) makes merge_gate refuse a commit whose author is not the identity its tag requires: `deus-<provider>` for workers, `deus-pm` for the PM, `deus-ops` for the coordinator (AUDIT_LOG A12-3).
+  3. **Then AG may run merge_gate** (amends DEC-048 items 1 and 3, effective when lane-gg merges). Only through merge_gate, with `--no-ff` and never `--force`. Only on a lane whose review is a real launch by a family independent of the writer, and never on a lane AG wrote or reviewed. Merges run between mail windows (DEC-081). Before then, the PM merges.
+  4. **Fauna scripts in the repo:** done, `tools/art/fauna/` on lane-gf (`6ae73064`).
+- **Records updated with this entry:** a pointer under DEC-048; `docs/AUDIT_LOG.md` A12-3 (the lane that answers it).
