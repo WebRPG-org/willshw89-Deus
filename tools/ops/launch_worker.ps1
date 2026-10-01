@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Standard DEUS worker launcher (WG.00.12 Lane J).
 
@@ -66,7 +66,7 @@ function Get-DeusProviderFamily([string]$Provider) {
     return $null
 }
 
-function Get-DeusKnownProviders { return @('claude', 'grok', 'codex', 'gemini') }
+function Get-DeusKnownProviders { return @('claude', 'fable', 'opus', 'sonnet', 'haiku', 'grok', 'codex', 'gemini') }
 
 function ConvertTo-DeusArg([string]$Value) {
     # Quote one argument for CommandLineToArgvW / the MSVC runtime.
@@ -86,7 +86,7 @@ function Get-DeusProviderSpec {
     param([string]$Provider, [string]$PromptPath, [switch]$Probe)
     $npm = Join-Path $env:APPDATA 'npm'
     switch ($Provider) {
-        'claude' {
+        'claude', 'fable', 'opus', 'sonnet', 'haiku' {
             $exe = Join-Path $npm 'node_modules\@anthropic-ai\claude-code\bin\claude.exe'
             if (-not (Test-Path -LiteralPath $exe)) {
                 $c = Get-Command claude.exe -ErrorAction SilentlyContinue
@@ -144,6 +144,10 @@ function Resolve-DeusLaunchEffort {
     $names = @('low', 'medium', 'high', 'xhigh', 'max', 'ultra')
     $policy = @{
         claude = @{ Floor = 'high'; Cap = 'max' }
+        fable  = @{ Floor = 'high'; Cap = 'max' }
+        opus   = @{ Floor = 'high'; Cap = 'max' }
+        sonnet = @{ Floor = 'high'; Cap = 'max' }
+        haiku  = @{ Floor = 'high'; Cap = 'max' }
         grok   = @{ Floor = 'xhigh'; Cap = 'max' }
         codex  = @{ Floor = 'xhigh'; Cap = 'ultra' }
         gemini = @{ Floor = 'high'; Cap = 'high' }
@@ -169,7 +173,7 @@ function Add-DeusEffortArgument {
     # for gemini is always high after Resolve-DeusLaunchEffort.
     param([string]$Provider, [string]$ArgLine, [string]$Level)
     switch ($Provider) {
-        'claude' { return "$ArgLine --effort $Level" }
+        'claude', 'fable', 'opus', 'sonnet', 'haiku' { return "$ArgLine --effort $Level" }
         'grok'   { return "$ArgLine --reasoning-effort $Level" }
         'codex'  {
             $flag = '-c ' + (ConvertTo-DeusArg "model_reasoning_effort=`"$Level`"")
@@ -503,6 +507,10 @@ function Get-DeusUsagePatterns([string]$Provider) {
     )
     $specific = @{
         claude = @('(?i)Claude AI usage limit reached', '(?i)(?:5-hour|five-hour|opus|sonnet)\s+limit\s+reached', '(?i)credit balance is too low', '(?i)out of extra usage')
+        fable = @('(?i)Claude AI usage limit reached', '(?i)(?:5-hour|five-hour|opus|sonnet)\s+limit\s+reached', '(?i)credit balance is too low', '(?i)out of extra usage')
+        opus = @('(?i)Claude AI usage limit reached', '(?i)(?:5-hour|five-hour|opus|sonnet)\s+limit\s+reached', '(?i)credit balance is too low', '(?i)out of extra usage')
+        sonnet = @('(?i)Claude AI usage limit reached', '(?i)(?:5-hour|five-hour|opus|sonnet)\s+limit\s+reached', '(?i)credit balance is too low', '(?i)out of extra usage')
+        haiku = @('(?i)Claude AI usage limit reached', '(?i)(?:5-hour|five-hour|opus|sonnet)\s+limit\s+reached', '(?i)credit balance is too low', '(?i)out of extra usage')
         grok   = @('(?i)(?:run|ran)\s+out\s+of\s+credits', '(?i)insufficient\s+(?:credits|balance)', '(?i)spending\s+limit\s+(?:reached|exceeded)', '(?i)resource[_ ]exhausted')
         codex  = @('(?i)exceeded retry limit, last status: 429', '(?i)rate limit reached for', '(?i)usage_limit_reached', '(?i)usage_not_included')
         gemini = @('(?i)\bRESOURCE_EXHAUSTED\b')
