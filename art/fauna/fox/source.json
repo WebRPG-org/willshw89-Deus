@@ -1,0 +1,17 @@
+{
+  "species": "fox",
+  "sheet": "game/img/characters/$DEUS_Creature_Fox.png",
+  "generator": "PixelLab Create Character",
+  "mode": "pro quadruped dog",
+  "view": "high top-down",
+  "pixellabCharacterId": "30b656eb-84f0-4aee-9702-0feb00cf8eee",
+  "canvas": "40x40px",
+  "correction": null,
+  "council": "ART-COUNCIL-14/15 (art/COUNCIL_RECORD.md)",
+  "decisions": [
+    "DEC-071",
+    "DEC-072",
+    "DEC-056"
+  ],
+  "date": "2026-10-01"
+}

@@ -1,0 +1,17 @@
+{
+  "species": "hare",
+  "sheet": "game/img/characters/$DEUS_Creature_Hare.png",
+  "generator": "PixelLab Create Character",
+  "mode": "pro quadruped cat",
+  "view": "high top-down",
+  "pixellabCharacterId": "5fe8bd12-9721-400e-9bbc-9590192c428f",
+  "canvas": "32x32px",
+  "correction": null,
+  "council": "ART-COUNCIL-14/15 (art/COUNCIL_RECORD.md)",
+  "decisions": [
+    "DEC-071",
+    "DEC-072",
+    "DEC-056"
+  ],
+  "date": "2026-10-01"
+}

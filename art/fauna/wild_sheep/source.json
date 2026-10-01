@@ -1,0 +1,17 @@
+{
+  "species": "wild_sheep",
+  "sheet": "game/img/characters/$DEUS_Creature_WildSheep.png",
+  "generator": "PixelLab Create Character",
+  "mode": "pro quadruped dog",
+  "view": "high top-down",
+  "pixellabCharacterId": "db8cf831-be9f-492f-b1d9-f363eb88e3a9",
+  "canvas": "40x40px",
+  "correction": "ART-COUNCIL-14.8 fix (Grok): fleece to 3 browns, checker removed (3x3 majority), lightest brown upper-left only (fix14.js)",
+  "council": "ART-COUNCIL-14/15 (art/COUNCIL_RECORD.md)",
+  "decisions": [
+    "DEC-071",
+    "DEC-072",
+    "DEC-056"
+  ],
+  "date": "2026-10-01"
+}

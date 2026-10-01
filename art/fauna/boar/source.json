@@ -1,0 +1,17 @@
+{
+  "species": "boar",
+  "sheet": "game/img/characters/$DEUS_Creature_Boar.png",
+  "generator": "PixelLab Create Character",
+  "mode": "pro quadruped bear",
+  "view": "high top-down",
+  "pixellabCharacterId": "8bf31712-2f4d-4ca9-9c90-3aa54141c3e7",
+  "canvas": "48x48px",
+  "correction": null,
+  "council": "ART-COUNCIL-14/15 (art/COUNCIL_RECORD.md)",
+  "decisions": [
+    "DEC-071",
+    "DEC-072",
+    "DEC-056"
+  ],
+  "date": "2026-10-01"
+}

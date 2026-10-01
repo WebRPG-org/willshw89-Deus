@@ -1,0 +1,8 @@
+// Minimal PixelLab MCP caller. Usage: node pl.js <tool> '<json args>'  -> prints the text content (images saved as out_<n>.png)
+const fs = require("fs"), https = require("https");
+const token = fs.readFileSync("C:/Users/snewt/OneDrive/Desktop/UF/.pixellab_token", "utf8").trim();
+function rpc(method, params) { return new Promise((res, rej) => { const req = https.request("https://api.pixellab.ai/mcp", { method: "POST", headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json", "Accept": "application/json, text/event-stream" } }, r => { let d = ""; r.on("data", c => d += c); r.on("end", () => { for (const l of d.split("\n")) if (l.startsWith("data: ")) { try { const j = JSON.parse(l.slice(6)); if (j.result !== undefined) return res(j.result); if (j.error) return res({ error: j.error }); } catch (e) {} } try { const j = JSON.parse(d); res(j.result || { error: j.error }); } catch (e) { res({ raw: d.slice(0, 1500) }); } }); }); req.on("error", rej); req.write(JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })); req.end(); }); }
+module.exports = (name, args) => rpc("tools/call", { name, arguments: args });
+module.exports.text = r => (r.content || []).filter(c => c.type === "text").map(c => c.text).join("\n") + (r.raw || "") + (r.error ? JSON.stringify(r.error) : "");
+if (require.main === module) (async () => { const r = await module.exports(process.argv[2], JSON.parse(process.argv[3] || "{}")); console.log(module.exports.text(r));
+  (r.content || []).filter(c => c.type === "image").forEach((c, n) => fs.writeFileSync("out_" + n + ".png", Buffer.from(c.data, "base64"))); })();

@@ -1,0 +1,17 @@
+{
+  "species": "restless_dead",
+  "sheet": "game/img/characters/$DEUS_Creature_RestlessDead.png",
+  "generator": "PixelLab Create Character",
+  "mode": "v3 humanoid",
+  "view": "high top-down",
+  "pixellabCharacterId": "2e9a6ce4-8f69-44c3-820e-0159fce07442",
+  "canvas": "76x76px",
+  "correction": "ART-COUNCIL-15.9 fix (Grok): robe flattened to 2 browns, light step on the upper-left shoulder only (fix14.js)",
+  "council": "ART-COUNCIL-14/15 (art/COUNCIL_RECORD.md)",
+  "decisions": [
+    "DEC-071",
+    "DEC-072",
+    "DEC-056"
+  ],
+  "date": "2026-10-01"
+}

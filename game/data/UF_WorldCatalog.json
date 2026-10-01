@@ -6299,8 +6299,7 @@
       {
         "id": "boar",
         "name": "Boar",
-        "image": "$UF_Stock_Nature_2",
-        "tint": "#7a5a40",
+        "image": "$DEUS_Creature_Boar",
         "kind": "grazer",
         "herd": [
           2,
@@ -6442,7 +6441,7 @@
       {
         "id": "wild_sheep",
         "name": "Wild sheep",
-        "image": "$UF_Stock_Nature_2",
+        "image": "$DEUS_Creature_WildSheep",
         "kind": "grazer",
         "herd": [
           3,
@@ -6479,8 +6478,7 @@
       {
         "id": "hare",
         "name": "Hare",
-        "image": "$UF_Stock_Nature_2",
-        "tint": "#c8a888",
+        "image": "$DEUS_Creature_Hare",
         "kind": "grazer",
         "herd": [
           2,
@@ -6518,8 +6516,7 @@
       {
         "id": "fowl",
         "name": "Wild fowl",
-        "image": "$UF_Stock_Monster_0",
-        "tint": "#f0dcb8",
+        "image": "$DEUS_Creature_Fowl",
         "kind": "grazer",
         "herd": [
           3,
@@ -6557,8 +6554,7 @@
       {
         "id": "rat",
         "name": "Rat",
-        "image": "$UF_Stock_Nature_2",
-        "tint": "#8888a0",
+        "image": "$DEUS_Creature_Rat",
         "kind": "vermin",
         "herd": [
           2,
@@ -6602,7 +6598,7 @@
       {
         "id": "wolf",
         "name": "Wolf",
-        "image": "$UF_Stock_Nature_0",
+        "image": "$DEUS_Creature_Wolf",
         "kind": "predator",
         "herd": [
           2,
@@ -6696,8 +6692,7 @@
       {
         "id": "fox",
         "name": "Fox",
-        "image": "$UF_Stock_Nature_3",
-        "tint": "#ff9a6a",
+        "image": "$DEUS_Creature_Fox",
         "kind": "predator",
         "herd": [
           1,
@@ -6868,8 +6863,7 @@
       {
         "id": "hawk",
         "name": "Hawk",
-        "image": "$UF_Stock_Vehicle_2",
-        "tint": "#c09070",
+        "image": "$DEUS_Creature_Hawk",
         "kind": "flier",
         "herd": [
           1,
@@ -6912,7 +6906,7 @@
       {
         "id": "songbird",
         "name": "Songbird",
-        "image": "$UF_Stock_Nature_5",
+        "image": "$DEUS_Creature_Songbird",
         "kind": "flier",
         "herd": [
           2,
@@ -6950,8 +6944,7 @@
       {
         "id": "bat",
         "name": "Bat",
-        "image": "$UF_Stock_Vehicle_2",
-        "tint": "#585068",
+        "image": "$DEUS_Creature_Bat",
         "kind": "flier",
         "herd": [
           3,
@@ -6992,7 +6985,7 @@
       {
         "id": "giant_spider",
         "name": "Giant spider",
-        "image": "$UF_Stock_SF_Monster_2",
+        "image": "$DEUS_Creature_GiantSpider",
         "kind": "predator",
         "herd": [
           1,
@@ -7207,7 +7200,7 @@
       {
         "id": "restless_dead",
         "name": "Restless dead",
-        "image": "$UF_Stock_Monster_6",
+        "image": "$DEUS_Creature_RestlessDead",
         "kind": "monster",
         "herd": [
           2,

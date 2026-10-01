@@ -128,3 +128,7 @@ None, aliases only: `Game_Map.prototype.update` (AI ticks), `Sprite_Character.pr
 - Governed by Owner rulings 2026-09-26 12:59 CT and 13:01 CT (Directive 0096-CS, DEC-033).
 - Enemies and wildlife can be captured and tamed into four functional domestic categories: pets, mounts, livestock, and work animals.
 - Tamed creatures in the party fight using only their basic SRD 5.1 stat blocks and natural attacks and defenses. No creature armor or equipment slots, no barding, and no crafted creature gear. Riding saddles are visual/cosmetic markers only.
+
+## Creature art (ART.FAUNA.01, 2026-10-01)
+
+Twelve species draw original sheets instead of stock RMMZ sprites: wolf, fox, boar, hare, fowl, hawk, songbird, bat, giant_spider, wild_sheep, rat and restless_dead. Each is `game/img/characters/$DEUS_Creature_<Name>.png`, an RMMZ single-character sheet (3 columns x 4 rows; rows S, W, E, N; the still frame repeats in all three walk columns, DEC-071), in the smallest 48-multiple frame up to 96x96 that holds the creature (DEC-072). Their catalog records carry no `tint`, so the drawing check expects white for them (`speciesById(...).tintValue`). The eight rotations and the source record of each are in `art/fauna/<species>/`; `tools/art/test_fauna_induction.js` checks the sheets and records. The other species keep stock art until their redraws pass the council.

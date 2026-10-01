@@ -1,0 +1,11 @@
+# working data of the fauna scripts (regenerable from PixelLab; the council-approved masters live in art/fauna/<species>/)
+chars/
+sheets/
+u7/
+rmmz/
+ids.txt
+deleted.json
+genlog.jsonl
+batches.log
+*.out
+*.png

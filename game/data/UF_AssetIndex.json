@@ -42,33 +42,13 @@
   "sidecar": false,
   "statusWhy": "row 1 of stock characters/$BigMonster1.png in every facing row, cut by tools/extract_stock_characters.js (pixels match)"
  },
- "$UF_Stock_Monster_0": {
-  "status": "stock RMMZ",
-  "request": "AR-403",
-  "requests": [
-   "AR-403",
-   "AR-401"
-  ],
-  "usedBy": [
-   "creature fowl \"Wild fowl\" (grazer, tint #f0dcb8)"
-  ],
-  "states": [
-   "4 facings × stand/walk (3 columns × 4 rows)",
-   "alive / dead: hunted (work 60, flees the hunter) → drops 1 Raw meat, 4 Feathers"
-  ],
-  "category": "creatures",
-  "file": "img/characters/$UF_Stock_Monster_0.png",
-  "exists": true,
-  "sidecar": false,
-  "statusWhy": "character 0 of stock characters/Monster.png, cut by tools/extract_stock_characters.js (pixels match)"
- },
  "$UF_Stock_Monster_1": {
   "status": "stock RMMZ",
   "request": "AR-401",
   "requests": [
    "AR-401",
-   "AR-402",
-   "AR-600"
+   "AR-600",
+   "AR-402"
   ],
   "usedBy": [
    "creature troll \"Troll\" (monster, tint #c0c8b0)"
@@ -126,49 +106,6 @@
   "sidecar": false,
   "statusWhy": "character 5 of stock characters/Monster.png, cut by tools/extract_stock_characters.js (pixels match)"
  },
- "$UF_Stock_Monster_6": {
-  "status": "stock RMMZ",
-  "request": "AR-401",
-  "requests": [
-   "AR-401",
-   "AR-402"
-  ],
-  "usedBy": [
-   "creature restless_dead \"Restless dead\" (monster)"
-  ],
-  "states": [
-   "4 facings × stand/walk (3 columns × 4 rows)",
-   "alive / dead: hunted (work 200) → drops 3 Bone",
-   "hostile to everyone (red stance square)",
-   "only in cursed regions"
-  ],
-  "category": "creatures",
-  "file": "img/characters/$UF_Stock_Monster_6.png",
-  "exists": true,
-  "sidecar": false,
-  "statusWhy": "character 6 of stock characters/Monster.png, cut by tools/extract_stock_characters.js (pixels match)"
- },
- "$UF_Stock_Nature_0": {
-  "status": "stock RMMZ",
-  "request": "AR-403",
-  "requests": [
-   "AR-403",
-   "AR-401",
-   "AR-600"
-  ],
-  "usedBy": [
-   "creature wolf \"Wolf\" (predator)"
-  ],
-  "states": [
-   "4 facings × stand/walk (3 columns × 4 rows)",
-   "alive / dead: hunted (work 200) → drops 2 Raw meat, 1 Hide"
-  ],
-  "category": "creatures",
-  "file": "img/characters/$UF_Stock_Nature_0.png",
-  "exists": true,
-  "sidecar": false,
-  "statusWhy": "character 0 of stock characters/Nature.png, cut by tools/extract_stock_characters.js (pixels match)"
- },
  "$UF_Stock_Nature_1": {
   "status": "stock RMMZ",
   "request": "AR-403",
@@ -189,97 +126,26 @@
   "sidecar": false,
   "statusWhy": "character 1 of stock characters/Nature.png, cut by tools/extract_stock_characters.js (pixels match)"
  },
- "$UF_Stock_Nature_2": {
-  "status": "stock RMMZ",
-  "request": "AR-403",
-  "requests": [
-   "AR-403",
-   "AR-401",
-   "AR-600"
-  ],
-  "usedBy": [
-   "creature boar \"Boar\" (grazer, tint #7a5a40)",
-   "creature wild_sheep \"Wild sheep\" (grazer)",
-   "creature hare \"Hare\" (grazer, tint #c8a888)",
-   "creature rat \"Rat\" (vermin, tint #8888a0)"
-  ],
-  "states": [
-   "4 facings × stand/walk (3 columns × 4 rows)",
-   "boar: alive / dead: hunted (work 150) → drops 3 Raw meat, 1 Hide",
-   "wild_sheep: alive / dead: hunted (work 100, flees the hunter) → drops 2 Raw meat, 1 Wool",
-   "hare: alive / dead: hunted (work 60, flees the hunter) → drops 1 Raw meat, 1 Hide",
-   "rat: alive / dead: hunted (work 40, flees the hunter) → drops 1 Raw meat"
-  ],
-  "category": "creatures",
-  "file": "img/characters/$UF_Stock_Nature_2.png",
-  "exists": true,
-  "sidecar": false,
-  "statusWhy": "character 2 of stock characters/Nature.png, cut by tools/extract_stock_characters.js (pixels match)"
- },
  "$UF_Stock_Nature_3": {
-  "status": "stock RMMZ",
-  "request": "AR-401",
-  "requests": [
-   "AR-401",
-   "AR-600"
-  ],
-  "usedBy": [
-   "creature deer \"Deer\" (grazer)",
-   "creature jackal \"Jackal\" (predator, tint #b8a890)",
-   "creature fox \"Fox\" (predator, tint #ff9a6a)"
-  ],
-  "states": [
-   "4 facings × stand/walk (3 columns × 4 rows)",
-   "deer: alive / dead: hunted (work 120, flees the hunter) → drops 3 Raw meat, 1 Hide, 2 Bone",
-   "jackal: alive / dead: hunted (work 150, flees the hunter) → drops 1 Raw meat, 1 Hide",
-   "fox: alive / dead: hunted (work 100, flees the hunter) → drops 1 Raw meat, 1 Hide"
-  ],
-  "category": "creatures",
-  "file": "img/characters/$UF_Stock_Nature_3.png",
-  "exists": true,
-  "sidecar": false,
-  "statusWhy": "character 3 of stock characters/Nature.png, cut by tools/extract_stock_characters.js (pixels match)"
- },
- "$UF_Stock_Nature_5": {
   "status": "stock RMMZ",
   "request": "AR-401",
   "requests": [
    "AR-401"
   ],
   "usedBy": [
-   "creature songbird \"Songbird\" (flier)"
+   "creature deer \"Deer\" (grazer)",
+   "creature jackal \"Jackal\" (predator, tint #b8a890)"
   ],
   "states": [
    "4 facings × stand/walk (3 columns × 4 rows)",
-   "alive / dead: hunted (work 90, flees the hunter) → drops 1 Raw meat, 2 Feathers",
-   "flies over objects"
+   "deer: alive / dead: hunted (work 120, flees the hunter) → drops 3 Raw meat, 1 Hide, 2 Bone",
+   "jackal: alive / dead: hunted (work 150, flees the hunter) → drops 1 Raw meat, 1 Hide"
   ],
   "category": "creatures",
-  "file": "img/characters/$UF_Stock_Nature_5.png",
+  "file": "img/characters/$UF_Stock_Nature_3.png",
   "exists": true,
   "sidecar": false,
-  "statusWhy": "character 5 of stock characters/Nature.png, cut by tools/extract_stock_characters.js (pixels match)"
- },
- "$UF_Stock_SF_Monster_2": {
-  "status": "stock RMMZ",
-  "request": "AR-401",
-  "requests": [
-   "AR-401",
-   "AR-600"
-  ],
-  "usedBy": [
-   "creature giant_spider \"Giant spider\" (predator)"
-  ],
-  "states": [
-   "4 facings × stand/walk (3 columns × 4 rows)",
-   "alive / dead: hunted (work 160) → drops 1 Raw meat",
-   "only in wild+ regions"
-  ],
-  "category": "creatures",
-  "file": "img/characters/$UF_Stock_SF_Monster_2.png",
-  "exists": true,
-  "sidecar": false,
-  "statusWhy": "character 2 of stock characters/SF_Monster.png, cut by tools/extract_stock_characters.js (pixels match)"
+  "statusWhy": "character 3 of stock characters/Nature.png, cut by tools/extract_stock_characters.js (pixels match)"
  },
  "$UF_Stock_SF_Monster_6": {
   "status": "stock RMMZ",
@@ -310,17 +176,11 @@
    "AR-401"
   ],
   "usedBy": [
-   "creature serpent \"Serpent\" (predator, tint #70e060)",
-   "creature hawk \"Hawk\" (flier, tint #c09070)",
-   "creature bat \"Bat\" (flier, tint #585068)"
+   "creature serpent \"Serpent\" (predator, tint #70e060)"
   ],
   "states": [
    "4 facings × stand/walk (3 columns × 4 rows)",
-   "serpent: alive / dead: hunted (work 90) → drops 1 Raw meat, 1 Hide",
-   "hawk: alive / dead: hunted (work 150, flees the hunter) → drops 1 Raw meat, 3 Feathers",
-   "hawk: flies over objects",
-   "bat: alive / dead: hunted (work 90, flees the hunter) → drops nothing",
-   "bat: flies over objects"
+   "alive / dead: hunted (work 90) → drops 1 Raw meat, 1 Hide"
   ],
   "category": "creatures",
   "file": "img/characters/$UF_Stock_Vehicle_2.png",
@@ -479,8 +339,9 @@
  },
  "Outside_A2#2816": {
   "status": "generated",
-  "request": "AR-2102",
+  "request": "AR-2200",
   "requests": [
+   "AR-2200",
    "AR-2102",
    "AR-100"
   ],
@@ -520,8 +381,9 @@
  },
  "Outside_A2#2912": {
   "status": "generated",
-  "request": "AR-100",
+  "request": "AR-2200",
   "requests": [
+   "AR-2200",
    "AR-100"
   ],
   "usedBy": [
@@ -560,8 +422,9 @@
  },
  "Outside_A2#3008": {
   "status": "generated",
-  "request": "AR-2102",
+  "request": "AR-2200",
   "requests": [
+   "AR-2200",
    "AR-2102",
    "AR-120"
   ],
@@ -581,8 +444,9 @@
  },
  "Outside_A2#3056": {
   "status": "generated",
-  "request": "AR-100",
+  "request": "AR-2200",
   "requests": [
+   "AR-2200",
    "AR-100"
   ],
   "usedBy": [
@@ -687,8 +551,9 @@
  },
  "Outside_A2#3296": {
   "status": "generated",
-  "request": "AR-2102",
+  "request": "AR-2200",
   "requests": [
+   "AR-2200",
    "AR-2102",
    "AR-100",
    "AR-401",
@@ -710,8 +575,9 @@
  },
  "Outside_A2#3344": {
   "status": "generated",
-  "request": "AR-100",
+  "request": "AR-2200",
   "requests": [
+   "AR-2200",
    "AR-100"
   ],
   "usedBy": [
@@ -730,8 +596,9 @@
  },
  "Outside_A2#3392": {
   "status": "generated",
-  "request": "AR-100",
+  "request": "AR-2200",
   "requests": [
+   "AR-2200",
    "AR-100",
    "AR-1747",
    "AR-1707"
@@ -752,12 +619,14 @@
  },
  "Outside_A2#3440": {
   "status": "generated",
-  "request": "AR-1203",
+  "request": "AR-2200",
   "requests": [
+   "AR-2200",
    "AR-1203",
    "AR-1214",
    "AR-1215",
    "AR-1216",
+   "AR-2205",
    "AR-1200",
    "AR-1202",
    "AR-1217",
@@ -805,8 +674,9 @@
  },
  "Outside_A2#3536": {
   "status": "generated",
-  "request": "AR-100",
+  "request": "AR-2200",
   "requests": [
+   "AR-2200",
    "AR-100"
   ],
   "usedBy": [
@@ -918,6 +788,7 @@
   "request": "AR-120",
   "requests": [
    "AR-120",
+   "AR-2205",
    "AR-2010",
    "AR-100"
   ],
@@ -1032,20 +903,6 @@
   "sidecar": false,
   "statusWhy": "drawn in code (UF_Gen*)"
  },
- "UF_Generator": {
-  "status": "generated",
-  "request": "none yet",
-  "requests": [],
-  "usedBy": [
-   "plugin UF_Generator.js"
-  ],
-  "states": [],
-  "category": "generated",
-  "file": "(drawn in code)",
-  "exists": true,
-  "sidecar": false,
-  "statusWhy": "drawn in code (UF_Gen*)"
- },
  "!$UF_Apothecary_Bench": {
   "status": "original",
   "request": "none yet",
@@ -1125,8 +982,9 @@
  },
  "!$UF_Birch": {
   "status": "original",
-  "request": "AR-102",
+  "request": "AR-2201",
   "requests": [
+   "AR-2201",
    "AR-102"
   ],
   "usedBy": [
@@ -1188,6 +1046,7 @@
   "request": "AR-023",
   "requests": [
    "AR-023",
+   "AR-2202",
    "AR-103"
   ],
   "usedBy": [
@@ -1828,8 +1687,9 @@
  },
  "!$UF_Gravel": {
   "status": "original",
-  "request": "AR-044",
+  "request": "AR-2200",
   "requests": [
+   "AR-2200",
    "AR-044",
    "AR-1901"
   ],
@@ -2322,6 +2182,7 @@
    "AR-200",
    "AR-2000",
    "AR-020",
+   "AR-2201",
    "AR-102"
   ],
   "usedBy": [
@@ -2738,7 +2599,8 @@
   "request": "AR-2000",
   "requests": [
    "AR-2000",
-   "AR-2010"
+   "AR-2010",
+   "AR-2202"
   ],
   "usedBy": [
    "item log \"Log\"",
@@ -2909,8 +2771,9 @@
  },
  "!$UF_Lichen": {
   "status": "original",
-  "request": "AR-103",
+  "request": "AR-2200",
   "requests": [
+   "AR-2200",
    "AR-103",
    "AR-1901"
   ],
@@ -2988,8 +2851,9 @@
  },
  "!$UF_Oak": {
   "status": "original",
-  "request": "AR-021",
+  "request": "AR-2201",
   "requests": [
+   "AR-2201",
    "AR-021",
    "AR-102"
   ],
@@ -3047,8 +2911,9 @@
  },
  "!$UF_Pine": {
   "status": "original",
-  "request": "AR-021",
+  "request": "AR-2201",
   "requests": [
+   "AR-2201",
    "AR-021",
    "AR-102"
   ],
@@ -3285,8 +3150,9 @@
  },
  "!$UF_Stump": {
   "status": "original",
-  "request": "AR-021",
+  "request": "AR-2201",
   "requests": [
+   "AR-2201",
    "AR-021",
    "AR-1600",
    "AR-102",
@@ -3522,8 +3388,9 @@
  },
  "!$UF_Wildflowers": {
   "status": "original",
-  "request": "AR-103",
+  "request": "AR-2202",
   "requests": [
+   "AR-2202",
    "AR-103"
   ],
   "usedBy": [
@@ -3646,6 +3513,248 @@
   "exists": true,
   "sidecar": true,
   "statusWhy": "named or placed like a stock cut, but has a .u7bak.png beside it but equals no stock character"
+ },
+ "$DEUS_Creature_Bat": {
+  "status": "original",
+  "request": "AR-401",
+  "requests": [
+   "AR-401"
+  ],
+  "usedBy": [
+   "creature bat \"Bat\" (flier)"
+  ],
+  "states": [
+   "4 facings × stand/walk (3 columns × 4 rows)",
+   "alive / dead: hunted (work 90, flees the hunter) → drops nothing",
+   "flies over objects"
+  ],
+  "category": "creatures",
+  "file": "img/characters/$DEUS_Creature_Bat.png",
+  "exists": true,
+  "sidecar": false,
+  "statusWhy": "not in 8e5fdc1"
+ },
+ "$DEUS_Creature_Boar": {
+  "status": "original",
+  "request": "AR-401",
+  "requests": [
+   "AR-401",
+   "AR-600"
+  ],
+  "usedBy": [
+   "creature boar \"Boar\" (grazer)"
+  ],
+  "states": [
+   "4 facings × stand/walk (3 columns × 4 rows)",
+   "alive / dead: hunted (work 150) → drops 3 Raw meat, 1 Hide"
+  ],
+  "category": "creatures",
+  "file": "img/characters/$DEUS_Creature_Boar.png",
+  "exists": true,
+  "sidecar": false,
+  "statusWhy": "not in 8e5fdc1"
+ },
+ "$DEUS_Creature_Fowl": {
+  "status": "original",
+  "request": "AR-403",
+  "requests": [
+   "AR-403",
+   "AR-401"
+  ],
+  "usedBy": [
+   "creature fowl \"Wild fowl\" (grazer)"
+  ],
+  "states": [
+   "4 facings × stand/walk (3 columns × 4 rows)",
+   "alive / dead: hunted (work 60, flees the hunter) → drops 1 Raw meat, 4 Feathers"
+  ],
+  "category": "creatures",
+  "file": "img/characters/$DEUS_Creature_Fowl.png",
+  "exists": true,
+  "sidecar": false,
+  "statusWhy": "not in 8e5fdc1"
+ },
+ "$DEUS_Creature_Fox": {
+  "status": "original",
+  "request": "AR-401",
+  "requests": [
+   "AR-401",
+   "AR-600"
+  ],
+  "usedBy": [
+   "creature fox \"Fox\" (predator)"
+  ],
+  "states": [
+   "4 facings × stand/walk (3 columns × 4 rows)",
+   "alive / dead: hunted (work 100, flees the hunter) → drops 1 Raw meat, 1 Hide"
+  ],
+  "category": "creatures",
+  "file": "img/characters/$DEUS_Creature_Fox.png",
+  "exists": true,
+  "sidecar": false,
+  "statusWhy": "not in 8e5fdc1"
+ },
+ "$DEUS_Creature_GiantSpider": {
+  "status": "original",
+  "request": "AR-401",
+  "requests": [
+   "AR-401",
+   "AR-600"
+  ],
+  "usedBy": [
+   "creature giant_spider \"Giant spider\" (predator)"
+  ],
+  "states": [
+   "4 facings × stand/walk (3 columns × 4 rows)",
+   "alive / dead: hunted (work 160) → drops 1 Raw meat",
+   "only in wild+ regions"
+  ],
+  "category": "creatures",
+  "file": "img/characters/$DEUS_Creature_GiantSpider.png",
+  "exists": true,
+  "sidecar": false,
+  "statusWhy": "not in 8e5fdc1"
+ },
+ "$DEUS_Creature_Hare": {
+  "status": "original",
+  "request": "AR-401",
+  "requests": [
+   "AR-401",
+   "AR-600"
+  ],
+  "usedBy": [
+   "creature hare \"Hare\" (grazer)"
+  ],
+  "states": [
+   "4 facings × stand/walk (3 columns × 4 rows)",
+   "alive / dead: hunted (work 60, flees the hunter) → drops 1 Raw meat, 1 Hide"
+  ],
+  "category": "creatures",
+  "file": "img/characters/$DEUS_Creature_Hare.png",
+  "exists": true,
+  "sidecar": false,
+  "statusWhy": "not in 8e5fdc1"
+ },
+ "$DEUS_Creature_Hawk": {
+  "status": "original",
+  "request": "AR-401",
+  "requests": [
+   "AR-401"
+  ],
+  "usedBy": [
+   "creature hawk \"Hawk\" (flier)"
+  ],
+  "states": [
+   "4 facings × stand/walk (3 columns × 4 rows)",
+   "alive / dead: hunted (work 150, flees the hunter) → drops 1 Raw meat, 3 Feathers",
+   "flies over objects"
+  ],
+  "category": "creatures",
+  "file": "img/characters/$DEUS_Creature_Hawk.png",
+  "exists": true,
+  "sidecar": false,
+  "statusWhy": "not in 8e5fdc1"
+ },
+ "$DEUS_Creature_Rat": {
+  "status": "original",
+  "request": "AR-401",
+  "requests": [
+   "AR-401"
+  ],
+  "usedBy": [
+   "creature rat \"Rat\" (vermin)"
+  ],
+  "states": [
+   "4 facings × stand/walk (3 columns × 4 rows)",
+   "alive / dead: hunted (work 40, flees the hunter) → drops 1 Raw meat"
+  ],
+  "category": "creatures",
+  "file": "img/characters/$DEUS_Creature_Rat.png",
+  "exists": true,
+  "sidecar": false,
+  "statusWhy": "not in 8e5fdc1"
+ },
+ "$DEUS_Creature_RestlessDead": {
+  "status": "original",
+  "request": "AR-401",
+  "requests": [
+   "AR-401",
+   "AR-402"
+  ],
+  "usedBy": [
+   "creature restless_dead \"Restless dead\" (monster)"
+  ],
+  "states": [
+   "4 facings × stand/walk (3 columns × 4 rows)",
+   "alive / dead: hunted (work 200) → drops 3 Bone",
+   "hostile to everyone (red stance square)",
+   "only in cursed regions"
+  ],
+  "category": "creatures",
+  "file": "img/characters/$DEUS_Creature_RestlessDead.png",
+  "exists": true,
+  "sidecar": false,
+  "statusWhy": "not in 8e5fdc1"
+ },
+ "$DEUS_Creature_Songbird": {
+  "status": "original",
+  "request": "AR-401",
+  "requests": [
+   "AR-401"
+  ],
+  "usedBy": [
+   "creature songbird \"Songbird\" (flier)"
+  ],
+  "states": [
+   "4 facings × stand/walk (3 columns × 4 rows)",
+   "alive / dead: hunted (work 90, flees the hunter) → drops 1 Raw meat, 2 Feathers",
+   "flies over objects"
+  ],
+  "category": "creatures",
+  "file": "img/characters/$DEUS_Creature_Songbird.png",
+  "exists": true,
+  "sidecar": false,
+  "statusWhy": "not in 8e5fdc1"
+ },
+ "$DEUS_Creature_WildSheep": {
+  "status": "original",
+  "request": "AR-401",
+  "requests": [
+   "AR-401"
+  ],
+  "usedBy": [
+   "creature wild_sheep \"Wild sheep\" (grazer)"
+  ],
+  "states": [
+   "4 facings × stand/walk (3 columns × 4 rows)",
+   "alive / dead: hunted (work 100, flees the hunter) → drops 2 Raw meat, 1 Wool"
+  ],
+  "category": "creatures",
+  "file": "img/characters/$DEUS_Creature_WildSheep.png",
+  "exists": true,
+  "sidecar": false,
+  "statusWhy": "not in 8e5fdc1"
+ },
+ "$DEUS_Creature_Wolf": {
+  "status": "original",
+  "request": "AR-403",
+  "requests": [
+   "AR-403",
+   "AR-401",
+   "AR-600"
+  ],
+  "usedBy": [
+   "creature wolf \"Wolf\" (predator)"
+  ],
+  "states": [
+   "4 facings × stand/walk (3 columns × 4 rows)",
+   "alive / dead: hunted (work 200) → drops 2 Raw meat, 1 Hide"
+  ],
+  "category": "creatures",
+  "file": "img/characters/$DEUS_Creature_Wolf.png",
+  "exists": true,
+  "sidecar": false,
+  "statusWhy": "not in 8e5fdc1"
  },
  "$Eve": {
   "status": "original",
@@ -4301,8 +4410,9 @@
  },
  "Outside_A1#2336": {
   "status": "original",
-  "request": "AR-100",
+  "request": "AR-2201",
   "requests": [
+   "AR-2201",
    "AR-100",
    "AR-101",
    "AR-102",
@@ -4426,12 +4536,14 @@
  },
  "Outside_B": {
   "status": "original",
-  "request": "AR-020",
+  "request": "AR-2201",
   "requests": [
+   "AR-2201",
    "AR-020",
    "AR-021",
    "AR-023",
-   "AR-1600"
+   "AR-1600",
+   "AR-2202"
   ],
   "usedBy": [
    "tile 152 (objects)",
@@ -4449,6 +4561,8 @@
   "request": "AR-1600",
   "requests": [
    "AR-1600",
+   "AR-2202",
+   "AR-2201",
    "AR-1905"
   ],
   "usedBy": [

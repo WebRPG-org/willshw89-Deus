@@ -1,0 +1,17 @@
+{
+  "species": "wolf",
+  "sheet": "game/img/characters/$DEUS_Creature_Wolf.png",
+  "generator": "PixelLab Create Character",
+  "mode": "pro quadruped dog",
+  "view": "high top-down",
+  "pixellabCharacterId": "8cf30e75-34c1-4b9c-855e-beb1ebfd5e3b",
+  "canvas": "48x48px",
+  "correction": null,
+  "council": "ART-COUNCIL-14/15 (art/COUNCIL_RECORD.md)",
+  "decisions": [
+    "DEC-071",
+    "DEC-072",
+    "DEC-056"
+  ],
+  "date": "2026-10-01"
+}

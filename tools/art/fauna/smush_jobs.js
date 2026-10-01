@@ -1,0 +1,7 @@
+// Owner 2026-10-01: "If something appears smushed like the snake or the cat, thats no good". Both were drawn on tiny canvases
+// (32-40 px) where the rotation compresses the shape; draw at 56-64 px and halve with halve.js (2x2 majority) to the target size.
+const T = " Classic 1990s RPG pixel art in the style of Ultima VII, high top-down view, lit from the upper left, highly detailed, crisp pixel clusters, selective outline in its own darkest colours (no black outline), restrained natural earthy colours, natural true-to-life proportions, not squashed or stretched, no ground, no shadow, no text.";
+module.exports = [
+  { tag: "serpent-big", args: { name: "DEUS serpent-big", mode: "pro", size: 56, view: "high top-down", description: "A European adder, a non-humanoid legless snake resting on the ground in a loose round coil with its head slightly raised and turned forward: grey-brown and olive scales with a bold dark zigzag along the back, a small pale belly showing at the edge of the coil, a narrow head with dark eyes. The coil is round and plump, the same thickness all the way around, not a cobra, no hood." + T } },
+  { tag: "wildcat-big", args: { name: "DEUS wildcat-big", mode: "pro", size: 64, view: "high top-down", body_type: "quadruped", template: "cat", description: "A wildcat of English forests standing still: a sturdy compact tabby cat with a broad head, grey-brown fur with dark stripes, a thick blunt ringed tail with a black tip, pale throat, natural cat proportions in every direction." + T } },
+];

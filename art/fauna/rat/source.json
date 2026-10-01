@@ -1,0 +1,17 @@
+{
+  "species": "rat",
+  "sheet": "game/img/characters/$DEUS_Creature_Rat.png",
+  "generator": "PixelLab Create Character",
+  "mode": "pro quadruped cat",
+  "view": "high top-down",
+  "pixellabCharacterId": "2aca6f29-04c3-4b09-83c0-479c5c907b95",
+  "canvas": "32x32px",
+  "correction": "halved 2x2 majority; ART-COUNCIL-14.10 fix (Grok): light-grey pixel upper-left of the body, dark pixel under the belly (fix14.js)",
+  "council": "ART-COUNCIL-14/15 (art/COUNCIL_RECORD.md)",
+  "decisions": [
+    "DEC-071",
+    "DEC-072",
+    "DEC-056"
+  ],
+  "date": "2026-10-01"
+}
