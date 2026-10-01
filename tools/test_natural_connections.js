@@ -81,7 +81,8 @@ function fixture(opts = {}) {
             Time: { ticks: () => ticks }, History: { sites: () => sites, homeSite: () => sites.find(s => s.protected) },
             Levels: { SHAPES: { floor: 2 }, baseline: z => baselines[z],
                 standableShape: r => (shapes.get(key(r.x, r.y, r.z)) || baselines[r.z].shape[r.y * size + r.x]) === 2,
-                waterAt: r => wet.has(key(r.x, r.y, r.z)) || !!(baselines[r.z].water && baselines[r.z].water[r.y * size + r.x]) } } };
+                // Ground has no baseline: like the real Levels.waterAt, it answers there too (dry() asks it through isWater).
+                waterAt: r => wet.has(key(r.x, r.y, r.z)) || !!(baselines[r.z] && baselines[r.z].water && baselines[r.z].water[r.y * size + r.x]) } } };
     if (opts.structures) context.UF.Households = { structures: opts.structures };
     context.DEUS = context.UF;
     context.window = context; vm.createContext(context);
@@ -227,18 +228,12 @@ check("universal_creature_traversal", () => {
     assert.equal(creature.x, link.b.x);
     assert.equal(creature.y, link.b.y);
 });
-check("liquid_physics_flow", () => {
-    const h = fixture(), link = h.N.list().find(l => l.a.z === 0);
-    assert.ok(link);
-    h.N.addFluid(link.a, "water");
-    assert.ok(h.N.hasFluid(link.a, "water"));
-    const flows = h.N.updateFluids();
-    assert.ok(flows.length > 0);
-    assert.ok(h.N.hasFluid(link.b, "water"));
-});
+// Passage water flow moved to tools/test_natural_connections_no_mint.js, which drives the real UF.Fluid (NAT.03.02).
 check("liquid_makes_landing_wet_refusing_travel", () => {
     const h = fixture(), { link, u } = enter(h);
-    h.N.addFluid(link.b, "water");
+    // The landing is wet by the fixture's authoritative water (its Levels.waterAt), not by NaturalConnections.
+    h.wet.add(h.key(link.b.x, link.b.y, link.b.z));
+    assert.equal(h.N.isWater(link.b), true);
     const job = h.N.travel(u, link.id);
     assert.equal(job.state, "failed");
     assert.match(job.reason, /landing/);

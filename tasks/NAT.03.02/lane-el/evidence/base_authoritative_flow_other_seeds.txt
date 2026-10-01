@@ -1,0 +1,72 @@
+# node tools/test_natural_connections_no_mint.js --seed=20260923 --case=authoritative_flow_conserved  (lane base 8a254452)
+FAIL natural_connections_no_mint.authoritative_flow_conserved: 12/12 passages moved no water to the landing level through UF.Fluid (seed 20260923, 12 links {"cliff_cave_passage":12}, Fluid stepped 400x512, hydro absent)
+  cliff_cave_0_0_1 (cliff_cave_passage) upper (239,208,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_2 (cliff_cave_passage) upper (191,33,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_3 (cliff_cave_passage) upper (203,131,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_4 (cliff_cave_passage) upper (36,182,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_5 (cliff_cave_passage) upper (24,182,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_6 (cliff_cave_passage) upper (234,85,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_7 (cliff_cave_passage) upper (209,138,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_8 (cliff_cave_passage) upper (119,162,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_9 (cliff_cave_passage) upper (154,199,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_10 (cliff_cave_passage) upper (5,171,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_11 (cliff_cave_passage) upper (215,147,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_12 (cliff_cave_passage) upper (9,63,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+RESULT: 0 passed, 1 failed
+# exit 1
+# node tools/test_natural_connections_no_mint.js --seed=424242 --case=authoritative_flow_conserved  (lane base 8a254452)
+FAIL natural_connections_no_mint.authoritative_flow_conserved: 20/20 passages moved no water to the landing level through UF.Fluid (seed 424242, 20 links {"cliff_cave_passage":20}, Fluid stepped 400x512, hydro absent)
+  cliff_cave_0_0_1 (cliff_cave_passage) upper (130,182,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_2 (cliff_cave_passage) upper (168,101,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_3 (cliff_cave_passage) upper (36,29,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_4 (cliff_cave_passage) upper (168,179,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_5 (cliff_cave_passage) upper (109,98,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_6 (cliff_cave_passage) upper (120,180,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_7 (cliff_cave_passage) upper (92,132,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_8 (cliff_cave_passage) upper (249,105,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_9 (cliff_cave_passage) upper (96,203,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_10 (cliff_cave_passage) upper (146,202,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_11 (cliff_cave_passage) upper (32,39,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_12 (cliff_cave_passage) upper (116,93,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_13 (cliff_cave_passage) upper (119,186,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_14 (cliff_cave_passage) upper (250,203,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_15 (cliff_cave_passage) upper (135,200,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_16 (cliff_cave_passage) upper (176,176,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_17 (cliff_cave_passage) upper (190,165,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_18 (cliff_cave_passage) upper (172,108,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_19 (cliff_cave_passage) upper (117,198,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_20 (cliff_cave_passage) upper (84,198,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+RESULT: 0 passed, 1 failed
+# exit 1
+# node tools/test_natural_connections_no_mint.js --seed=7 --case=authoritative_flow_conserved  (lane base 8a254452)
+FAIL natural_connections_no_mint.authoritative_flow_conserved: 28/28 passages moved no water to the landing level through UF.Fluid (seed 7, 28 links {"natural_passage":4,"cliff_cave_passage":24}, Fluid stepped 400x512, hydro absent)
+  natural_0_0_1_upper (natural_passage) upper (136,132,0) strata ["soil","air","air","air","air"] passage bits 54 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  natural_0_0_1_lower (natural_passage) upper (136,132,-1) strata ["soil","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  natural_0_0_2_upper (natural_passage) upper (120,84,0) strata ["soil","air","air","air","air"] passage bits 54 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  natural_0_0_2_lower (natural_passage) upper (120,84,-1) strata ["soil","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_1 (cliff_cave_passage) upper (167,123,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_2 (cliff_cave_passage) upper (204,71,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_3 (cliff_cave_passage) upper (46,243,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_4 (cliff_cave_passage) upper (155,221,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_5 (cliff_cave_passage) upper (204,125,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_6 (cliff_cave_passage) upper (120,190,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_7 (cliff_cave_passage) upper (55,243,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_8 (cliff_cave_passage) upper (240,164,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_9 (cliff_cave_passage) upper (164,231,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_10 (cliff_cave_passage) upper (73,106,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_11 (cliff_cave_passage) upper (84,147,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_12 (cliff_cave_passage) upper (209,243,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_13 (cliff_cave_passage) upper (100,233,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_14 (cliff_cave_passage) upper (214,173,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_15 (cliff_cave_passage) upper (228,75,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_16 (cliff_cave_passage) upper (172,144,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_17 (cliff_cave_passage) upper (22,75,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_18 (cliff_cave_passage) upper (247,168,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_19 (cliff_cave_passage) upper (228,250,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_20 (cliff_cave_passage) upper (44,78,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_21 (cliff_cave_passage) upper (56,145,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_22 (cliff_cave_passage) upper (66,35,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_23 (cliff_cave_passage) upper (220,244,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+  cliff_cave_0_0_24 (cliff_cave_passage) upper (78,34,0) strata ["stone","air","air","air","air"] passage bits 38 canPassDown false: placed 6, upper-level debit 0, lower-level credit 0, landing depth 0, conserved true
+RESULT: 0 passed, 1 failed
+# exit 1

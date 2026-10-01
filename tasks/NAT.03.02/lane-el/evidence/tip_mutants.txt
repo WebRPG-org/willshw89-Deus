@@ -1,0 +1,21 @@
+## node tools/test_natural_connections_no_mint.js --mutant=disable_all_flow --case=authoritative_flow_conserved  (tip 941b2052)
+FAIL natural_connections_no_mint.authoritative_flow_conserved: 27/27 floored passages: upper debit 0, lower credit 0; open-column control (40,40) 0 -> -1 did not carry the pour: placed 6, upper cell 6, upper-level debit 0, lower-level credit 0, landing 0, strata ["air","air","air","air","air"], passage bits 47, canPassDown false, conserved true (seed 20260919, 27 links {"cliff_cave_passage":27}, 6 water by UF.Fluid.setCell, UF.Fluid.step x400 (budget 512) alone, hydro absent)
+RESULT: 0 passed, 1 failed (mutant disable_all_flow)
+exit 1
+## node tools/test_natural_connections_no_mint.js --mutant=fake_passage_flow --case=floored_passage_is_not_a_drain  (tip 941b2052)
+FAIL natural_connections_no_mint.floored_passage_is_not_a_drain: seed 20260919: 26/27 {"cliff_cave_passage":27}; seed 7: 28/28 {"natural_passage":4,"cliff_cave_passage":24}; seed 20260919: 1 passages drained:
+  cliff_cave_0_0_1 (cliff_cave_passage) upper (108,173,0) -> landing (108,173,-1): placed 6, upper cell 3, upper-level debit 0, lower-level credit 1, landing 1, strata ["stone","air","air","air","air"], passage bits 38, canPassDown false, conserved false
+RESULT: 0 passed, 1 failed (mutant fake_passage_flow)
+exit 1
+## node tools/test_natural_connections_no_mint.js --mutant=credit_legacy_payload --case=legacy_payload_round_trip  (tip 941b2052)
+FAIL natural_connections_no_mint.legacy_payload_round_trip: payload cells read as water: (108,173,0) {"isWater":true,"waterAt":true,"fluid":1}, (96,27,0) {"isWater":true,"waterAt":true,"fluid":1}; authoritative water changed: {"mass":0,"volume":0,"base":["-2:64:665112608","-1:134:1425508318"]} -> {"mass":2,"volume":2,"base":["-2:64:665112608","-1:134:1425508318"]}
+RESULT: 0 passed, 1 failed (mutant credit_legacy_payload)
+exit 1
+## node tools/test_natural_connections_no_mint.js --mutant=drop_legacy_payload --case=legacy_payload_round_trip  (tip 941b2052)
+FAIL natural_connections_no_mint.legacy_payload_round_trip: after load the payload is undefined, expected {"cells":{"0,0:0:108,173":{"type":"water","time":7},"0,0:0:96,27":{"type":"water","time":8}}}; saved again, the payload is undefined, expected {"cells":{"0,0:0:108,173":{"type":"water","time":7},"0,0:0:96,27":{"type":"water","time":8}}}
+RESULT: 0 passed, 1 failed (mutant drop_legacy_payload)
+exit 1
+## node tools/test_natural_connections_no_mint.js --mutant=drop_step_creatures --case=creatures_still_stepped  (tip 941b2052)
+FAIL natural_connections_no_mint.creatures_still_stepped: after a frame-30 Scene_Map.update (frame 30) the creature is at (136,132,0), not the landing (136,132,-1)
+RESULT: 0 passed, 1 failed (mutant drop_step_creatures)
+exit 1
