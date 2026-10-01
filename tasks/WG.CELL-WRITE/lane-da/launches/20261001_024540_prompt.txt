@@ -1,0 +1,15 @@
+You are the primary implementer for lane-da (Task WG.CELL-WRITE), running as grok.
+Read tasks/WG.CELL-WRITE/lane-da/BRIEF.md carefully and follow all instructions within it.
+Your allowed paths are:
+- game/js/plugins/DEUS_Levels.js
+- tools/test_sparse_outer_save.js
+- tools/fixtures/levels/save_32_entries_seed18.json
+- tools/test_32_levels_generation.js
+- docs/systems/DEUS_ZRange.md
+- docs/systems/DEUS_Levels.md
+- tasks/WG.CELL-WRITE/lane-da/**
+
+Standing rules:
+1. NO ART (DEC-007). Never generate, request or integrate art, and never tell anyone to.
+2. Run tests in the FOREGROUND. Never end your turn while background jobs or child processes are running. Commit early (WIP commits allowed on your branch). Do not push. Do not merge. Write only inside allowedPaths.
+Commit messages start with '[grok] WG.CELL-WRITE'.
