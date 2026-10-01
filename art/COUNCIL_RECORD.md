@@ -129,3 +129,24 @@ The Owner answered the PM's question "strict 4/4" (amendment line under DEC-062 
 ## Owner ruling on script-made pixels (2026-10-01, ~12:30Z)
 
 The Owner answered question D2 "yes" (DEC-066 item 2): script work on the PixelLab output of the PM's art may ship, so cliffs 4, 7 and 8 (scripted mottled fills) and the stumps (cut from their trees before the Pixflux pass) need no new PixelLab pass. With the nine size overrides also approved (DEC-066 item 1), the 17 passed pieces now wait only for their catalogue rows (lane-pg) before the PM's YEA.
+
+## Owner rulings on thresholds (2026-10-01, ~13:20-13:40Z)
+
+- "Actually Id say if art fails 3 times set it aside" (replacing an earlier "10 times"): a piece that fails three full council rounds is set aside with its last version and every NO reason, to be handled later.
+- "I will allow you to use art with 3/4": a piece with three YES of four passes; every NO still carries its reason and stays recorded here. Amends DEC-062's unanimity (the DEC-062 amendment line follows in docs/OWNER_DECISIONS.md once the catalogue slot is free).
+
+Applied to each piece's latest round (votes in the tables above):
+
+| Piece (version) | Latest round | Votes | Result under 3 of 4 | Recorded dissent |
+|---|---|---|---|---|
+| Cliff 2 soil (v7) | ART-COUNCIL-7 | 3 YES, 1 NAY | **passed (3 of 4)** | Gemini: noisy, heavily speckled texture; lacks clean shading bands and defined volumes |
+| Cliff 6 lichen rock (v7) | ART-COUNCIL-7 | 3 YES, 1 NAY | **passed (3 of 4)** | ChatGPT: narrow mid-grey range; insufficient highlight-shadow separation; flat |
+| Cliff 9 red clay (v7) | ART-COUNCIL-7 | 3 YES, 1 NAY | **passed (3 of 4)** | Gemini: excessively chaotic and noisy; lacks smooth shading gradients and crisp edge highlights |
+| Hanging vines (v5) | ART-COUNCIL-7 | 3 YES, 1 NAY | **passed (3 of 4)** | Gemini: overly soft and pillow-shaded; lacks sharp contrast and crisp leaves |
+| Stalactites (v5) | ART-COUNCIL-7 | 3 YES, 1 NAY | **passed (3 of 4)** | Gemini: jagged, messy isolated pixels; lacks smooth volumetric shading |
+| Apple A (v7) | ART-COUNCIL-5 to 6 | 3 YES, 1 NAY | **passed (3 of 4)** | Gemini: harsh dark internal outlines create disjointed blobs; lacks cohesive volumetric shading |
+| Apple B (v7) | ART-COUNCIL-5 to 6 | 3 YES, 1 NAY | **passed (3 of 4)** | Gemini: messy placement, jagged erratic clumps |
+| Cliff 5 cave limestone (v7) | ART-COUNCIL-7 | 2 YES, 2 NAY | not passed | ChatGPT and Gemini (see ART-COUNCIL-7) |
+| Cliff 10 layered strata (v7) | ART-COUNCIL-7 | 2 YES, 2 NAY | not passed | Grok and MiniMax (see ART-COUNCIL-7) |
+
+Cliffs passed: 8 of 10 (sets 1, 2, 3, 4, 6, 7, 8, 9). Limestone and strata go to ART-COUNCIL-8 as new versions (recoloured from passed sets 7 and 8, zero generations). No piece enters the game until its catalogue row exists (lane-pg) and the PM records its YEA in art/APPROVALS.md.
