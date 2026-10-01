@@ -112,7 +112,7 @@
     {
       "cmd": "node",
       "args": [
-        "tools/test_zrange.js"
+        "tools/zrange/scan_z_literals.js"
       ],
       "timeoutSec": 900
     },
