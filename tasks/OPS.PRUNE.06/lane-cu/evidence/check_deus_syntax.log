@@ -1,0 +1,3 @@
+node tools/check_deus_syntax.js
+{"command":"node tools/check_deus_syntax.js","startedAt":"2026-09-30T22:25:04.726Z","finishedAt":"2026-09-30T22:25:08.233Z","exitCode":0,"error":null}
+Checked 62 DEUS plugin files. Errors: 0

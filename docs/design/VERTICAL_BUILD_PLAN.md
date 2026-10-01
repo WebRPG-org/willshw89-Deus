@@ -541,7 +541,7 @@ Memory estimate, **not measured**: 4 baseline pairs of 128 KB each; up to 6 cach
 - **Risk:** the planner is 4-way until V3's engine change. Connector code is 8-way-ready (§6.1), and the corner check tests the rule function directly, so it can FAIL today.
 - **Risk:** reusing a cached build as the screen map (§3.4) depends on refreshing unit events correctly. `vertical.switch_view` covers it, and the fallback is a fresh build (slower, correct).
 - **Risk:** `UF_Test` always starts a New Game (`UF_Test.js:167-171`). The real-save migration check therefore loads the fixture inside its suite with `DataManager.loadGame(19)`, the same code path `Scene_Load` uses.
-- **Risk:** ground stairs use layer 2. A future ground generator that writes layer 2 would need to leave shape-changed cells alone. That goes in UF_World.md next to `registerGenerator`.
+- **Risk:** ground stairs use layer 2. A future ground generator that writes layer 2 would need to leave shape-changed cells alone. That goes in docs/systems/DEUS_World.md next to `registerGenerator`.
 
 ## 13. Not in V1–V3 (VERTICAL_WORLD §10 slices 4–6)
 - Geology, aquifers, depth bands, underground ecology and multi-level trees (checks `vertical.geology`, `vertical.tree_span`).

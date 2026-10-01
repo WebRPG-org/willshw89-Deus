@@ -34,7 +34,7 @@
 ### 1.1 Items (`UF_Items.js`, 799 lines)
 - An item is `{ id, type, count, area: {x,y} | null, x, y, holder: unitId | null }` (L18). On the ground `area` is set and `holder` is null. When carried, `holder` is set and `area` is null. The five-level run adds `item.z` and `Items.moveTo` (`VERTICAL_BUILD_PLAN.md` §5.2).
 - Ground items sit in a per-area cell index rebuilt from the state (L94-132). Only indexed items get sprites (L491-517).
-- `pickUp` (L283) and `putDown` (L299) check neither distance nor capacity. `putDown` merges into the cell's stacks. Inventories keep stacks unmerged "as they came" (UF_Items.md → Rules).
+- `pickUp` (L283) and `putDown` (L299) check neither distance nor capacity. `putDown` merges into the cell's stacks. Inventories keep stacks unmerged "as they came" (docs/systems/DEUS_Items.md → Rules).
 - There are no grid positions and no container holder.
 
 ### 1.2 The panel (`UF_Sheet.js`, 2013 lines when re-read)
@@ -45,7 +45,7 @@
 - The panel on an object cell shows a grid only for stockpiles and workshops. UF_Sheet's private `isContainer` (L365) means "stockpile or workshop", and a chest would be a `building` with state lines and no grid (`cellModel`, L660-721). That name clashes with this design's containers, so the build renames it `isZone`.
 - The V89 load line exists: `loadOf` (L556-586) writes "Carrying 3 logs to the woodpile" for `haul`/`fetch` jobs only, and `placeName` names the destination.
 - The `sheet` suite's synthetic clicks set `TouchInput._newState.triggered` with no held button and no release (`clickScreen`, L1589-1600). They must keep working.
-- UF_Sheet.md → Known limits: "there is no drag and drop between slots, no dropping onto a chosen cell".
+- docs/systems/DEUS_Sheet.md → Known limits: "there is no drag and drop between slots, no dropping onto a chosen cell".
 
 ### 1.3 Jobs (`UF_Jobs.js`)
 - `fetch` (L281) picks an item up. `haul` (L290) picks it up, then puts it down at `params.to`; if cancelled, it puts the item down at the carrier's feet (L313-318).
@@ -175,7 +175,7 @@ A container is a catalog object with a `container` block:
 |---|---|
 | Header (title bar, also the move handle) | The object's own closed frame as a 36 × 36 picture, the name, a close box. Second line: owner ("Owned by <faction>" / "Shared" / "Unowned", P), capacity "7 of 24 slots" (P), level label when it isn't the ground |
 | Filter line | "Holds food and seeds" (P; the `accepts` tags joined), only when `accepts` is set |
-| Grid | `columns × rows` slots of 36 px, drawn with the panel's code-drawn slot frame (AR-701's parts sheet is delivered as `art/masters/ui_character_sheet.png` but nothing reads it yet, UF_Sheet.md L120). Each item sits at its `slot`. Reserved slots (§5.4) show the incoming icon faded |
+| Grid | `columns × rows` slots of 36 px, drawn with the panel's code-drawn slot frame (AR-701's parts sheet is delivered as `art/masters/ui_character_sheet.png` but nothing reads it yet, docs/systems/DEUS_Sheet.md L120). Each item sits at its `slot`. Reserved slots (§5.4) show the incoming icon faded |
 | Footer | The hovered or selected stack ("Log × 5 · wood, fuel, material"), or the last refusal (§6) |
 
 Window width: `columns × 36 + 2 × 12` (a 6-column chest is 240 px).
@@ -429,7 +429,7 @@ Because the drag controller runs in the children update, it reaches the release 
 
 ### 7.4 Double-click
 - Two left clicks on the same map cell within `containers.doubleClickFrames` (30 frames, half a second at 60 fps, which is the Windows default double-click time; P), as seen by UF_Sheet's post handler. The draft's 20 frames (333 ms) is shorter than many people's double-click. UF_Select's replayed slow clicks (SELECTION §3.4) are shifted by the same frame, so the gap is unchanged. A fast click is handled in its own frame without a replay, so a mixed pair is off by one frame, which doesn't matter.
-- The first click still does what a click does: the panel opens on the cell and, with a colonist selected, the Overseer orders a move (today's behaviour, UF_Sheet.md → Known limits). The menu option (§3.5) opens a window without that side effect.
+- The first click still does what a click does: the panel opens on the cell and, with a colonist selected, the Overseer orders a move (today's behaviour, docs/systems/DEUS_Sheet.md → Known limits). The menu option (§3.5) opens a window without that side effect.
 - Double-click inside a window does nothing in this design ("use" is backlog, §17).
 
 ### 7.5 Modifiers
@@ -484,7 +484,7 @@ An omitted `z` means the ground, as VERTICAL_BUILD_PLAN D1 rules.
 
 ### 8.4 Rules
 - Capacity counts stacks per grid. A pack's capacity is `sheet.grid` (8 × 4 = 32). A box's capacity is its `container` grid.
-- **AI jobs keep their old behaviour** (`force`: no capacity check, UF_Items.md → Known limits). Past capacity, `slot` is null and the grid title says "(34 stacks, 32 shown)" as today. When a slot frees up, the oldest overflow stack takes it, so nothing stays hidden for long.
+- **AI jobs keep their old behaviour** (`force`: no capacity check, docs/systems/DEUS_Items.md → Known limits). Past capacity, `slot` is null and the grid title says "(34 stacks, 32 shown)" as today. When a slot frees up, the oldest overflow stack takes it, so nothing stays hidden for long.
 - One stack per slot, at most the type's `stack`. Merges never exceed it.
 - **Slot integrity:** `Items.grid(ref)` treats two records claiming one slot (which only a bug can cause) by keeping the lower id there and moving the other to the first free slot. It counts each repair in `Items.stats().slotRepairs`, and the `items.holder_refs` check requires 0.
 - A unit that leaves the world drops everything, equipped items too (`world:unitRemoved`, L409-412). Slots and equipment keys are cleared.
@@ -580,7 +580,7 @@ These are targets within V50's "≤ 1 ms per plugin per frame". The checks measu
   - the ghost's x, y are set.
 
   `check(order)` and the highlight redraw run only when the hovered target key (window + slot, or cell) changes. The ghost reuses the cached icon and one count bitmap, so **no new Bitmap after the first drag of an item type**. Target ≤ 0.2 ms per frame average over 120 frames of motion across the map at zoom ⅓ with 4 windows open and the world running at ×1.
-- **Floating windows:** the panel's model. The model is rebuilt every 15 frames and redrawn only on a signature change, a click or a hover change. The panel measured 0.111 ms per frame in its worst case (UF_Sheet.md → Efficiency). Target ≤ 0.1 ms per open window and ≤ 0.4 ms for four.
+- **Floating windows:** the panel's model. The model is rebuilt every 15 frames and redrawn only on a signature change, a click or a hover change. The panel measured 0.111 ms per frame in its worst case (docs/systems/DEUS_Sheet.md → Efficiency). Target ≤ 0.1 ms per open window and ≤ 0.4 ms for four.
 - **Box index:** a Map from box key to ids, rebuilt from records on load (O(items)), with O(1) lookups. Boxed items never enter the ground index or the item sprite layer, so they cost nothing to draw. Target: rebuild of 2000 boxed items ≤ 5 ms.
 - **Spill listener:** one Map lookup per `objects:changed`.
 - **`carry` jobs:** the cost of a normal job. They re-plan only for moving recipients, every 30 updates.
@@ -693,7 +693,7 @@ Shared spec as in ASSET_REQUESTS.md: HD pixel art in the manner of Final Fantasy
 | ~~AR-1504~~ | ~~Container window skin~~ | **Withdrawn by the review.** V99 (2026-09-19 14:42, after the draft) gives every faction its own menu skin, and container windows are the player's menus (§3.6). A separate container skin would contradict it. The V99 build's skin requests cover these windows. The number is not used | — |
 | AR-1505 | Drag-and-drop parts | `img/system/UF_DragUI.png`, 144 × 96: slot highlights 36 × 36 at (0, 0) valid, (36, 0) refused, (72, 0) reserved; pending badge 9 × 9 at (108, 0); map target outlines 48 × 48 at (0, 48) in reach, (48, 48) needs a walk, (96, 48) refused; no text | code-drawn |
 
-- **AR-701** (the character-sheet parts: slot frame and equipment frames) is delivered as `art/masters/ui_character_sheet.png` (ASSET_REQUESTS L98), but it isn't in `game/img/system/` and nothing reads it yet (UF_Sheet.md L120). When the sheet integrates it, container grids use the same parts. No new request.
+- **AR-701** (the character-sheet parts: slot frame and equipment frames) is delivered as `art/masters/ui_character_sheet.png` (ASSET_REQUESTS L98), but it isn't in `game/img/system/` and nothing reads it yet (docs/systems/DEUS_Sheet.md L120). When the sheet integrates it, container grids use the same parts. No new request.
 - **AR-510** (existing) covers the weapon rack. With stage 4 it would welcome a "with weapons" frame, which the build adds as a note there.
 - **CRAFTING's Prompt 5** lists "chest (closed, open), barrel". If that prompt runs first, its deliveries satisfy AR-1500/1501. The handoff says so, to avoid double work.
 - **The handoff** (`docs/handoffs/HANDOFF_containers.md`, written with the build) tells Gemini:
@@ -742,7 +742,7 @@ Shared spec as in ASSET_REQUESTS.md: HD pixel art in the manner of Final Fantasy
   Written by a new `tools/add_containers_catalog.js`, which inserts the text without reformatting, as `tools/add_sheet_catalog.js` does, so Gemini's concurrent `objects` edits survive. The catalog isn't editor-managed.
 - `game/js/plugins.js`: register UF_Containers and UF_SheetWindows after UF_Sheet (before UF_Talk, UF_Select, UF_Fire, UF_Test) and set UF_Gumps `status: false` (D12). The RMMZ editor must be closed first (AGENTS → editor safety). `tools/register_world_plugins.js` gets the same order in `ORDER` (§9.1). UF_Gumps isn't in `ORDER`, and the tool keeps an existing entry's `status` (`existing || …`, L55), so the `false` survives a re-run.
 - Docs:
-  - `docs/systems/UF_Containers.md` (new), `docs/systems/UF_Items.md`, `docs/systems/UF_Sheet.md`;
+  - `docs/systems/UF_Containers.md` (new), `docs/systems/DEUS_Items.md`, `docs/systems/DEUS_Sheet.md`;
   - `docs/ASSET_REQUESTS.md` (§13 rows) and `docs/handoffs/HANDOFF_containers.md`;
   - `docs/STATUS.md`: the claim, results, and the UF_Gumps line under "Not swapped yet";
   - `docs/design/SELECTION.md` §2.2 (§7.6).

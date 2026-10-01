@@ -26,7 +26,7 @@ In Dwarf Fortress each region of the world holds a limited supply of every wild 
 
 | Piece | What it already does | What V83 still needs |
 |---|---|---|
-| `UF_Wildlife.js` (claimed by the creature-AI session; **it failed `node --check` at 13:34**: `SyntaxError: Unexpected token ')'` at line 1688, mid-edit) | Places herds at `world:created` by biome and region tier, with kit herds by every campfire and lair herds (`spawnWorld`, line 471). Runs the wander, flee, graze, sleep and predator AI for units with `data.ai === "wander"`. Its public `unitSpec` (line 454, exported at line 1240) builds the exact creature spec. | No births, no migration, no recovery ("hunted herds aren't replaced", UF_Wildlife.md, Known limits). |
+| `UF_Wildlife.js` (claimed by the creature-AI session; **it failed `node --check` at 13:34**: `SyntaxError: Unexpected token ')'` at line 1688, mid-edit) | Places herds at `world:created` by biome and region tier, with kit herds by every campfire and lair herds (`spawnWorld`, line 471). Runs the wander, flee, graze, sleep and predator AI for units with `data.ai === "wander"`. Its public `unitSpec` (line 454, exported at line 1240) builds the exact creature spec. | No births, no migration, no recovery ("hunted herds aren't replaced", docs/systems/DEUS_Wildlife.md, Known limits). |
 | `UF_Objects.js` | Keeps a regrow list, `state.regrow` (line 134). A picked berry bush comes back after 48 h and a picked fruit tree after 72 h. The list is processed on `time:hour` (line 738). | No spread, no caps, and only the "picked" states regrow. |
 | `UF_World.js` | V68 guard. `addUnit` (line 797) seats every unit on a free cell. `setObject` (line 502) refuses a blocking object where a unit stands. `holdOccupiedRegrowth` (line 749) makes UF_Objects' regrowth wait. | Nothing: ecology uses these as they are. |
 | `UF_Ecology.js` v1 (Codex, 779 lines, not registered) | Regrows a felled tree, a gathered bush or a grass tuft on the same cell after 28, 7 or 3 days. Every 6 game hours it rolls prey and monster spawns in the current area plus one rotating area, against a per-area baseline cap. Keeps monster clearance from the start, camps, sites, people and the player. Suite `ecology`, 10 checks (reported 10/10 in STATUS; **not re-run by me**). | Its buckets are areas, not `(z, biome region)`. Its caps are per area and kind, not per species with local and global caps. No births near herds, no edge arrivals, no plant spread, no rejection of visible cells. A felled tree pops back as a grown tree on its stump. The regrowth list is scanned whole every hour and has no size bound. There is no z. |
@@ -94,7 +94,7 @@ Bucket     = { key, z, area:{x,y}, bx, by, biomeId, index,   // index = position
 cell       = packed (y << 8 | x); the tier of each sample lives in a parallel Uint8Array
 ```
 
-- **Region index:** built once per level at `world:created` and after a load. It reads 64 × 64 = 4,096 lattice samples per level through `cellInfoZ`. That is not measured. UF_Wildlife calls `cellInfo` 64 times per area, and UF_WorldGen.md calls it "cheap, no area build".
+- **Region index:** built once per level at `world:created` and after a load. It reads 64 × 64 = 4,096 lattice samples per level through `cellInfoZ`. That is not measured. UF_Wildlife calls `cellInfo` 64 times per area, and docs/systems/DEUS_WorldGen.md calls it "cheap, no area build".
 - A sample goes into `land` if it is walkable, into `water` if its `water` key is set, or into `air` for open cells on ±1 and ±2.
 - Buckets with fewer than 4 land samples get no fauna service. Buckets with fewer than 4 samples of any kind are dropped.
 - **Service order:** the buckets of every level are sorted by `hash32(seed, SALT.order, z, ax, ay, bx, by, biomeIndex)`, so levels and places interleave.
@@ -113,7 +113,7 @@ census = {
 }
 ```
 
-- **Why the home cell:** `data.home` (UF_Wildlife.md, unit record) is fixed when a herd is placed, and no plugin rewrites it for creatures (grep, 2026-09-19). Creatures wander within `species.wander` of it. A census keyed by home only changes on add and remove, so it needs no per-step tracking of movement.
+- **Why the home cell:** `data.home` (docs/systems/DEUS_Wildlife.md, unit record) is fixed when a herd is placed, and no plugin rewrites it for creatures (grep, 2026-09-19). Creatures wander within `species.wander` of it. A census keyed by home only changes on add and remove, so it needs no per-step tracking of movement.
 - **Living:** the same rule as `UF_Combat.js:183`, `!(dead || _isDying || hp <= 0)`. A unit that dies but stays as a corpse (the remains work) is dropped lazily, when its bucket is next serviced (O(members of that bucket)).
 - **Updates:**
 
@@ -454,8 +454,8 @@ UF_Ecology aliases only core methods, as v1 does. Everything else is an event li
 | `UF.Wildlife.species`, `speciesById`, `allowedAt`, `allowedInRegion`, `herdScale`, `camps`, `kitConfig` | `:1182`, `:1183`, `:1224`, `:1229`, `:1233`, `:1244`, `:1242` | call | Species data, region rules, the same K as generation, camp rules |
 | `wildlife:kill` | `UF_Wildlife.js:1078` | listener | `tel.kills` |
 | `UF.History.sites()` | `UF_History.js:1565` | call | Site clearance |
-| `UF.Roads.isRoadAt`, `UF.Floors.kindAt` | `docs/systems/UF_Roads.md:29`, `UF_Floors.md:44` | call | Land in use |
-| `UF.World.state.jobs.list` | UF_Jobs state (`docs/systems/UF_Jobs.md`) | read | Reserved cells |
+| `UF.Roads.isRoadAt`, `UF.Floors.kindAt` | `docs/archive/systems/UF_Roads.md:29`, `docs/systems/DEUS_Floors.md:50` | call | Land in use |
+| `UF.World.state.jobs.list` | UF_Jobs state (`docs/systems/DEUS_Jobs.md`) | read | Reserved cells |
 | living rule | `UF_Combat.js:183` | mirrored | Census counts only the living |
 
 ---
@@ -546,7 +546,7 @@ Nothing else in this design needs art. Births, arrivals and monster spawns reuse
 | D1 | Build v2 in place in Codex's `UF_Ecology.js`, or keep v1 and add a new plugin? | In place: same save key, API and events, with migration. Codex and the user should confirm, because STATUS credits v1 to Codex |
 | D2 | The `sapling` object and the stump → sapling → tree chain appear in CRAFTING.md D9, which isn't approved | Adopt the id and the chain in ecology now. Growth lives in ecology's timers, so UF_Objects needs no `@biome` rule. CRAFTING's times (72 h stump to sapling, 144 h sapling to tree) are used as the initial tuning |
 | D3 | Pulling a stump: v1 keeps the cell's regrowth, CRAFTING cancels it | Cancel it, so cleared land stays cleared. Spread may reseed it later, outside camp clearance |
-| D4 | Do kit herds (V67) breed back to their starting size near camps, above the bucket's share? | Yes: V67's "resources to start building" holds in play, and UF_Wildlife.md lists "hunted herds aren't replaced" as a known limit |
+| D4 | Do kit herds (V67) breed back to their starting size near camps, above the bucket's share? | Yes: V67's "resources to start building" holds in play, and docs/systems/DEUS_Wildlife.md lists "hunted herds aren't replaced" as a known limit |
 | D5 | Recovery never happens in view (atlas §8.1), so a herd grazing beside the colony on screen won't show a birth | Keep the atlas rule |
 | D6 | Young animals: newborns are adult-sized with no juvenile art | Keep until the user wants juvenile stages (then request ECO-B) |
 | D7 | Rare lone beasts on a world-age and wealth clock (DF's pattern) | Later, with approved species only. Nothing built now |
@@ -566,7 +566,7 @@ Nothing else in this design needs art. Births, arrivals and monster spawns reuse
 1. **Catalog.** A node script `tools/add_ecology_catalog.js` adds the `ecology` key and appends `sapling`, preserving the layout and asserting that every other key is unchanged.
 2. **Plugin.** UF_Ecology v2, with helper, index, census, targets and step first; then fauna, monsters, plants and timers; then the checks.
 3. **Test on a snapshot.** Run `tools/test_snapshot.js --name ecology_v2 --plugins UF_Ecology --no-run`, then `tools/run_tests.js ecology --game <dir>`, then `smoke`, then the real title flow (`repro_title.js newgame`).
-4. **Docs.** `docs/systems/UF_Ecology.md`, the ASSET_REQUESTS rows, and the ecology section of `HANDOFF_df_mechanics.md`.
+4. **Docs.** `docs/systems/DEUS_Ecology.md`, the ASSET_REQUESTS rows, and the ecology section of `HANDOFF_df_mechanics.md`.
 
 **Registration** (only with the RMMZ editor closed):
 - `game/js/plugins.js`: `{"name":"UF_Ecology","status":true,"description":"[UF Ecology] Plants spread and regrow; wildlife and monsters recover under biome caps; ore never returns.","parameters":{}}`, placed right after `UF_Wildlife` and before `UF_Stance`.

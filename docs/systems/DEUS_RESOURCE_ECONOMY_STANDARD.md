@@ -7,7 +7,7 @@
 **Date:** 2026-09-24  
 **Author:** Gemini (DEUS Coordinator / Integration Authority)  
 **Status:** FROZEN SYSTEM STANDARD — AWAITING FABLE IMPLEMENTATION (Gated behind FABLE-19 Geometry)  
-**Machine-Readable Registry:** [`game/data/DEUS_ResourceRegistry.json`](file:///c:/Users/snewt/OneDrive/Desktop/UF/game/data/DEUS_ResourceRegistry.json)  
+**Machine-Readable Registry:** [`game/data/DEUS_ResourceRegistry.json`](../../game/data/DEUS_ResourceRegistry.json)
 
 ---
 

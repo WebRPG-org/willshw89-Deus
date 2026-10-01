@@ -1,0 +1,19 @@
+node tools/test_l6_docs_preservation.js
+{"command":"node tools/test_l6_docs_preservation.js","startedAt":"2026-09-30T22:27:02.627Z","finishedAt":"2026-09-30T22:27:34.877Z","exitCode":0}
+Inventory: 33 live, 15 archived, 9 protected docs + Households plugin, 2 Colonists source snapshots
+Links: 307 mutable Markdown documents scanned; 76 relevant destinations checked
+PASS mutant missing_live: exit 1; expected diagnostic missing live:
+PASS mutant missing_archive: exit 1; expected diagnostic missing preserved:
+PASS mutant archive_content: exit 1; expected diagnostic content changed:
+PASS mutant missing_households: exit 1; expected diagnostic missing preserved:
+PASS mutant protected_content: exit 1; expected diagnostic content changed:
+PASS mutant missing_l4: exit 1; expected diagnostic missing preserved:
+PASS mutant corrupt_path: exit 1; expected diagnostic broken Markdown link:
+PASS mutant stale_path: exit 1; expected diagnostic stale documentation path:
+PASS mutant external_link: exit 1; expected diagnostic broken Markdown link:
+PASS mutant reference_link: exit 1; expected diagnostic broken Markdown link:
+PASS mutant corrupt_anchor: exit 1; expected diagnostic broken Markdown anchor:
+PASS mutant lost_live_text: exit 1; expected diagnostic live text lost:
+PASS mutant lost_colonists_reflex: exit 1; expected diagnostic Colonists reflex text lost:
+PASS mutant missing_inventory_row: exit 1; expected diagnostic live inventory mismatch
+RESULT: 15175 passed, 0 failed

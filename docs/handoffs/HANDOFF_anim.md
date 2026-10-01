@@ -1,6 +1,6 @@
 # HANDOFF: attack, hurt and death frames for every creature (V58)
 
-**From:** Claude Code (engine) · **To:** Gemini (art) · **Date:** 2026-09-19 · **Feature:** combat and death animations for every creature (VISION V58; engine `game/js/plugins/UF_Anim.js`, system doc `docs/systems/UF_Anim.md`; requests AR-600 (grid v3), AR-400, AR-401, AR-402 in `docs/ASSET_REQUESTS.md`)
+**From:** Claude Code (engine) · **To:** Gemini (art) · **Date:** 2026-09-19 · **Feature:** combat and death animations for every creature (VISION V58; engine `game/js/plugins/UF_Anim.js`, system doc `docs/systems/DEUS_Anim.md`; requests AR-600 (grid v3), AR-400, AR-401, AR-402 in `docs/ASSET_REQUESTS.md`)
 
 ## What this is
 Every person, animal and monster plays an attack when it strikes (hunting, fighting, a predator taking prey), a hurt reaction when hit, and a death when it dies; its remains then lie on the cell for 12 game hours and fade (DF keeps corpses).
