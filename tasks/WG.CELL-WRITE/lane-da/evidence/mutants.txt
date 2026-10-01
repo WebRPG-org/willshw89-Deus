@@ -1,0 +1,77 @@
+===== MUTANT checksum_all_levels =====
+sparse outer save mutant checksum_all_levels
+PASS all_32_layers_reconstructible_unchanged - 32 baseline checksums match the lane-base constants
+FAIL new_game_core_entries_only - keys [-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+FAIL view_does_not_save - view {"x":0,"y":0,"z":0} setView -10 true +12 true baselines -10,12 keys [-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+INFO terrain+range -16..+15 1790 (levels 1731 zRange 22 fluid 37) -4..+4 552 (levels 495 zRange 20 fluid 37) diff 1238
+FAIL fresh_save_terrain_range_bound - diff 1238 B (bound 256)
+PASS migration_keeps_real_outer_change - present -10 true 15 true byteIdentical true
+PASS revert_drops_outer_entry - caseA (cell 0,0 dug true hadEntry true revert true entryAfter gone) caseB revert true entryAfter gone keptChecksumBeforeRevert true
+PASS migration_strips_checksum_only_entries - first outer [-10,15] migrations [{"rule":"WG.00.43","stripped":25}]; second outer [-10,15] migrations 1
+RESULT: 4 passed, 3 failed (new_game_core_entries_only, view_does_not_save, fresh_save_terrain_range_bound)
+EXIT 1
+===== MUTANT drop_ignores_checksum =====
+sparse outer save mutant drop_ignores_checksum
+PASS all_32_layers_reconstructible_unchanged - 32 baseline checksums match the lane-base constants
+PASS new_game_core_entries_only - keys [-2,-1,0,1,2]
+PASS view_does_not_save - view {"x":0,"y":0,"z":0} setView -10 true +12 true baselines -10,12 keys [-2,-1,0,1,2]
+INFO terrain+range -16..+15 334 (levels 275 zRange 22 fluid 37) -4..+4 332 (levels 275 zRange 20 fluid 37) diff 2
+PASS fresh_save_terrain_range_bound - diff 2 B (bound 256)
+PASS migration_keeps_real_outer_change - present -10 true 15 true byteIdentical true
+FAIL revert_drops_outer_entry - caseA (cell 0,0 dug true hadEntry true revert true entryAfter gone) caseB revert true entryAfter ["z","gen","checksum","strata"] keptChecksumBeforeRevert true
+FAIL migration_strips_checksum_only_entries - first outer [-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,3,4,5,6,7,8,9,10,11,12,13,14,15] migrations [{"rule":"WG.00.43","stripped":0}]; second outer [-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,3,4,5,6,7,8,9,10,11,12,13,14,15] migrations 1
+RESULT: 5 passed, 2 failed (revert_drops_outer_entry, migration_strips_checksum_only_entries)
+EXIT 1
+===== MUTANT strip_all_outer =====
+sparse outer save mutant strip_all_outer
+PASS all_32_layers_reconstructible_unchanged - 32 baseline checksums match the lane-base constants
+PASS new_game_core_entries_only - keys [-2,-1,0,1,2]
+PASS view_does_not_save - view {"x":0,"y":0,"z":0} setView -10 true +12 true baselines -10,12 keys [-2,-1,0,1,2]
+INFO terrain+range -16..+15 334 (levels 275 zRange 22 fluid 37) -4..+4 332 (levels 275 zRange 20 fluid 37) diff 2
+PASS fresh_save_terrain_range_bound - diff 2 B (bound 256)
+FAIL migration_keeps_real_outer_change - present -10 false 15 false byteIdentical false
+FAIL revert_drops_outer_entry - caseA (cell 0,0 dug true hadEntry true revert true entryAfter gone) caseB revert true entryAfter gone keptChecksumBeforeRevert false
+FAIL migration_strips_checksum_only_entries - first outer [] migrations [{"rule":"WG.00.43","stripped":27}]; second outer [] migrations 1
+RESULT: 4 passed, 3 failed (migration_keeps_real_outer_change, revert_drops_outer_entry, migration_strips_checksum_only_entries)
+EXIT 1
+===== MUTANT strip_caps_only =====
+sparse outer save mutant strip_caps_only
+PASS all_32_layers_reconstructible_unchanged - 32 baseline checksums match the lane-base constants
+PASS new_game_core_entries_only - keys [-2,-1,0,1,2]
+PASS view_does_not_save - view {"x":0,"y":0,"z":0} setView -10 true +12 true baselines -10,12 keys [-2,-1,0,1,2]
+INFO terrain+range -16..+15 334 (levels 275 zRange 22 fluid 37) -4..+4 332 (levels 275 zRange 20 fluid 37) diff 2
+PASS fresh_save_terrain_range_bound - diff 2 B (bound 256)
+FAIL migration_keeps_real_outer_change - present -10 true 15 false byteIdentical false
+PASS revert_drops_outer_entry - caseA (cell 0,0 dug true hadEntry true revert true entryAfter gone) caseB revert true entryAfter gone keptChecksumBeforeRevert true
+FAIL migration_strips_checksum_only_entries - first outer [-10] migrations [{"rule":"WG.00.43","stripped":26}]; second outer [-10] migrations 1
+RESULT: 5 passed, 2 failed (migration_keeps_real_outer_change, migration_strips_checksum_only_entries)
+EXIT 1
+===== MUTANT entry_on_view =====
+sparse outer save mutant entry_on_view
+PASS all_32_layers_reconstructible_unchanged - 32 baseline checksums match the lane-base constants
+PASS new_game_core_entries_only - keys [-2,-1,0,1,2]
+FAIL view_does_not_save - view {"x":0,"y":0,"z":0} setView -10 true +12 true baselines -10,12 keys [-10,-2,-1,0,1,2,12]
+INFO terrain+range -16..+15 448 (levels 389 zRange 22 fluid 37) -4..+4 332 (levels 275 zRange 20 fluid 37) diff 116
+PASS fresh_save_terrain_range_bound - diff 116 B (bound 256)
+PASS migration_keeps_real_outer_change - present -10 true 15 true byteIdentical true
+PASS revert_drops_outer_entry - caseA (cell 0,0 dug true hadEntry true revert true entryAfter gone) caseB revert true entryAfter gone keptChecksumBeforeRevert true
+PASS migration_strips_checksum_only_entries - first outer [-10,15] migrations [{"rule":"WG.00.43","stripped":25}]; second outer [-10,15] migrations 1
+RESULT: 6 passed, 1 failed (view_does_not_save)
+EXIT 1
+===== MUTANT outer_baseline_shift =====
+sparse outer save mutant outer_baseline_shift
+FAIL all_32_layers_reconstructible_unchanged - -9:41ba9dc5!=93f6b5c4
+PASS new_game_core_entries_only - keys [-2,-1,0,1,2]
+PASS view_does_not_save - view {"x":0,"y":0,"z":0} setView -10 true +12 true baselines -10,12 keys [-2,-1,0,1,2]
+INFO terrain+range -16..+15 334 (levels 275 zRange 22 fluid 37) -4..+4 332 (levels 275 zRange 20 fluid 37) diff 2
+PASS fresh_save_terrain_range_bound - diff 2 B (bound 256)
+PASS migration_keeps_real_outer_change - present -10 true 15 true byteIdentical true
+PASS revert_drops_outer_entry - caseA (cell 0,0 dug true hadEntry true revert true entryAfter gone) caseB revert true entryAfter gone keptChecksumBeforeRevert true
+PASS migration_strips_checksum_only_entries - first outer [-10,15] migrations [{"rule":"WG.00.43","stripped":25}]; second outer [-10,15] migrations 1
+RESULT: 6 passed, 1 failed (all_32_layers_reconstructible_unchanged)
+EXIT 1
+===== TEST32 MUTANT checksum_all_levels =====
+=== DEUS 32-LAYER WORLD GENERATION TEST SUITE ===
+  [PASS] world_default_zrange_is_32
+EXIT 1  [FAIL] core_entries_only: keys: [-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+
