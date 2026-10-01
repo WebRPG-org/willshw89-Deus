@@ -6190,7 +6190,7 @@
     "provider": "codex",
     "role": "writer",
     "taskId": "WG.00.44",
-    "state": "RUNNING",
+    "state": "COMPLETED",
     "pid": 23540,
     "processStartedAt": "2026-10-01T15:13:58Z",
     "launcherPid": 19040,
@@ -6208,12 +6208,28 @@
     "logPath": "C:\\Users\\snewt\\.deus_worktrees\\logs\\lane-db\\lane-db_20261001_101357.log",
     "launchTimeCT": "2026-10-01 10:13:57 CT",
     "startedAt": "2026-10-01T15:13:57Z",
-    "endedAt": null,
-    "exitCode": null,
+    "endedAt": "2026-10-01T15:53:20Z",
+    "exitCode": 0,
     "timeoutMinutes": 120,
     "baseCommit": "d7cef0d446fe7db100dd6c1bfd2ca92e053f2778",
     "resumeFromSha": "d7cef0d4",
     "pushGuardHooksPath": null,
-    "gitIdentity": "deus-codex"
+    "gitIdentity": "deus-codex",
+    "flags": [],
+    "timedOut": false,
+    "startError": null,
+    "logBytes": 805062,
+    "outputDrained": true,
+    "headCommit": "ecaea43ec9508440bf17b4d615efe15edb231600",
+    "branchAfter": "task/lane-db",
+    "newCommits": 2,
+    "dirtyFiles": [
+      "tasks/WG.00.44/lane-db/launches/20261001_083414_prompt.txt"
+    ],
+    "outOfScope": [],
+    "orphans": [],
+    "orphansKilled": false,
+    "usage": null,
+    "resumeHeadMismatch": false
   }
 ]
