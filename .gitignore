@@ -73,3 +73,8 @@
 **/.env
 **/.env.*
 /game/*.log
+
+# Live worker telemetry, rewritten by tools/ops/launch_worker.ps1 in main's worktree on every launch and exit.
+# Tracked, it made merge_gate refuse with MAIN_DIRTY whenever a worker started or ended mid-run (AUDIT_LOG A13-2).
+docs/telemetry/sessions/active_workers.json
+docs/telemetry/sessions/provider_status.json
