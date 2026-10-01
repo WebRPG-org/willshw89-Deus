@@ -1,0 +1,25 @@
+{
+  "case": "rmmz_size_override",
+  "base": "tools/art/fixtures/catalogue/mini/catalogue.json",
+  "context": "tools/art/fixtures/catalogue/mini/context.json",
+  "code": "SIZE_OUTSIDE_ROW",
+  "rule": "an envelope that does not equal its per-row size override (WG.20.03 D4; the oak override 56-89x72-96 on an envelope left at the chart row 56-80x72-96)",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "entries",
+        {
+          "id": "SURFACE_SHARED_TREE_OAK_V1_DEFAULT"
+        },
+        "envelopeOverride"
+      ],
+      "value": {
+        "wMin": 56,
+        "wMax": 89,
+        "hMin": 72,
+        "hMax": 96
+      }
+    }
+  ]
+}

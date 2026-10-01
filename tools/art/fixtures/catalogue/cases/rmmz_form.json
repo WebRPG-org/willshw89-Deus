@@ -1,0 +1,40 @@
+{
+  "case": "rmmz_form",
+  "base": "tools/art/fixtures/catalogue/mini/catalogue.json",
+  "context": "tools/art/fixtures/catalogue/mini/context.json",
+  "code": "RMMZ_FORM",
+  "rule": "an RMMZ form whose paint slot is not the RMMZ target (a 96x96 slot on a one-cell B tile)",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "entries",
+        {
+          "id": "SURFACE_SHARED_TREE_OAK_V1_DEFAULT"
+        },
+        "runtime"
+      ],
+      "value": {
+        "kind": "RMMZ_TILESET",
+        "file": "img/tilesets/DEUS_Outside_B.png",
+        "index": null,
+        "tileId": 176,
+        "slotText": "tile 176"
+      }
+    },
+    {
+      "op": "set",
+      "path": [
+        "entries",
+        {
+          "id": "SURFACE_SHARED_TREE_OAK_V1_DEFAULT"
+        },
+        "rmmzForm"
+      ],
+      "value": {
+        "sheet": "B",
+        "stock": null
+      }
+    }
+  ]
+}

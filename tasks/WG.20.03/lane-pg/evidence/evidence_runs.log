@@ -1,0 +1,969 @@
+$ (cd base2) node tools/art/test_validate_asset_standard.js
+PASS rows.good
+PASS rows.mutant
+PASS rows-mutant.good
+PASS rows-mutant.mutant
+PASS frame.good
+PASS frame.mutant
+PASS frame-mutant.good
+PASS frame-mutant.mutant
+PASS name.good
+PASS name.mutant
+PASS name-mutant.good
+PASS name-mutant.mutant
+PASS zorder.good
+PASS zorder.mutant
+PASS zorder-mutant.good
+PASS zorder-mutant.mutant
+PASS eight-dir.good
+PASS eight-dir.mutant
+PASS eight-dir-mutant.good
+PASS eight-dir-mutant.mutant
+PASS spell-damage.good
+PASS spell-damage.mutant
+PASS spell-damage-mutant.good
+PASS spell-damage-mutant.mutant
+PASS humanoid-rows.good
+PASS humanoid-rows.mutant
+PASS beast-attack.good
+PASS beast-attack.mutant
+PASS band-vocab.good
+PASS band-vocab.mutant
+PASS band-legacy-unknown
+PASS pose-count.good
+PASS pose-count.mutant
+PASS pose-anchor.good
+PASS pose-anchor.mutant
+PASS pose-angle.good
+PASS pose-angle.mutant
+PASS deforming.good
+PASS deforming.mutant
+PASS face-layers.good
+PASS face-layers.mutant
+PASS face-background.good
+PASS face-background.mutant
+PASS face-expressions.good
+PASS face-expressions.mutant
+PASS face-anchors.good
+PASS face-anchors.mutant
+PASS face-anchor-missing.good
+PASS face-anchor-missing.mutant
+PASS item-id.good
+PASS item-id.mutant
+PASS art-key.good
+PASS art-key.mutant
+PASS icon-size.good
+PASS icon-size.mutant
+PASS icon-rarity.good
+PASS icon-rarity.mutant
+PASS resource.good
+PASS resource.mutant
+PASS animation.good
+PASS animation.mutant
+PASS animation-exception.good
+PASS animation-exception.mutant
+PASS remains.good
+PASS remains.mutant
+PASS carry.good
+PASS carry.mutant
+PASS vehicles.good
+PASS vehicles.mutant
+PASS night.good
+PASS night.mutant
+PASS filename.good
+PASS filename.mutant
+PASS ui-min.good
+PASS ui-min.mutant
+PASS map.good
+PASS map.mutant
+PASS props.good
+PASS props.mutant
+PASS outfit-matrix.good
+PASS outfit-matrix.mutant
+PASS outfit-pixels.good
+PASS outfit-pixels.mutant
+PASS life.good
+PASS life.mutant
+PASS summon-map.good
+PASS summon-map.mutant
+PASS summon-parts.good
+PASS summon-parts.mutant
+PASS skins.good
+PASS skins.mutant
+PASS religion.good
+PASS religion.mutant
+PASS religion-symbol.good
+PASS religion-symbol.mutant
+PASS farm.good
+PASS farm.mutant
+PASS food.good
+PASS food.mutant
+PASS dungeon.good
+PASS dungeon.mutant
+PASS traps.good
+PASS traps.mutant
+PASS lore.good
+PASS lore.mutant
+PASS zones.good
+PASS zones.mutant
+PASS scenes.good
+PASS scenes.mutant
+PASS marketing.good
+PASS marketing.mutant
+PASS tame-art.good
+PASS tame-art.mutant
+PASS tame-slots.good
+PASS tame-slots.mutant
+PASS variety.good
+PASS variety.mutant
+PASS variety-season.good
+PASS variety-season.mutant
+PASS variety-flip.good
+PASS variety-flip.mutant
+PASS genes.good
+PASS genes.mutant
+PASS preset-count.good
+PASS preset-count.mutant
+PASS portrait-method.good
+PASS portrait-method.mutant
+PASS portrait-stack.good
+PASS portrait-stack.mutant
+PASS portrait.good
+PASS portrait.mutant
+PASS portrait-name.good
+PASS portrait-name.mutant
+PASS head-grid.good
+PASS head-grid.mutant
+PASS head-extra.good
+PASS head-extra.mutant
+PASS head-anchor.good
+PASS head-anchor.mutant
+PASS elder-sheet.good
+PASS elder-sheet.mutant
+PASS elder-offset.good
+PASS elder-offset.mutant
+PASS gear.good
+PASS gear.mutant
+PASS mirror.good
+PASS mirror.mutant
+PASS poses.good
+PASS poses.mutant
+PASS biome-set.good
+PASS biome-set.mutant
+PASS biome-docs
+PASS size.good
+PASS size.mutant
+PASS sheet.good
+PASS sheet.mutant
+PASS atlas.good
+PASS atlas.mutant
+PASS pipeline.good
+PASS pipeline.mutant
+PASS prompt-fields.good
+PASS prompt-fields.mutant
+PASS gen-log.good
+PASS gen-log.mutant
+PASS yield.good
+PASS yield.mutant
+PASS prompt-version.good
+PASS prompt-version.mutant
+PASS generators.good
+PASS generators.mutant
+PASS paper-doll-sheet.good
+PASS paper-doll-sheet.mutant
+PASS source-cap.good
+PASS source-cap.mutant
+PASS rmmz-size.good
+PASS rmmz-size.mutant
+PASS stacked-large.good
+PASS stacked-large.mutant
+PASS repo.good
+PASS repo.mutant
+PASS preview.good
+PASS preview.mutant
+PASS generator-mix.good
+PASS generator-mix.mutant
+PASS generator-cap.good
+PASS generator-cap.mutant
+PASS sexed-bodies.good
+PASS sexed-bodies.mutant
+PASS creature-sets.good
+PASS creature-sets.mutant
+PASS creature-none.good
+PASS creature-none.mutant
+PASS creature-file.good
+PASS creature-file.mutant
+PASS slot-grammar.good
+PASS slot-grammar.mutant
+PASS slot-unique.good
+PASS slot-unique.mutant
+PASS slot-retired.good
+PASS slot-retired.mutant
+PASS slot-coverage.good
+PASS slot-coverage.mutant
+PASS slot-catalogue.good
+PASS slot-catalogue.mutant
+PASS slot-resolve.good
+PASS slot-resolve.mutant
+PASS slot-pattern.good
+PASS slot-pattern.mutant
+PASS anchor-reject.good
+PASS anchor-reject.mutant
+PASS anchor-shift.good
+PASS anchor-shift.mutant
+PASS equip-hand.good
+PASS equip-hand.mutant
+PASS equip-draw.good
+PASS equip-draw.mutant
+PASS look.good
+PASS look.mutant
+PASS proj.good
+PASS proj.mutant
+PASS proj-move.good
+PASS proj-move.mutant
+PASS proj-drop.good
+PASS proj-drop.mutant
+PASS proj-retired.good
+PASS proj-retired.mutant
+PASS furn.good
+PASS furn.mutant
+PASS terr.good
+PASS terr.mutant
+PASS track.good
+PASS track.mutant
+PASS glow.good
+PASS glow.mutant
+PASS depth.good
+PASS depth.mutant
+PASS depth-tile.good
+PASS depth-tile.mutant
+PASS world-sprite.good
+PASS world-sprite.mutant
+PASS feature.good
+PASS feature.mutant
+PASS placement.good
+PASS placement.mutant
+PASS container.good
+PASS container.mutant
+PASS scale.good
+PASS scale.mutant
+PASS scale-scope.good
+PASS scale-scope.mutant
+PASS render.good
+PASS render.mutant
+PASS cross-layer.good
+PASS cross-layer.mutant
+PASS quarters.good
+PASS quarters.mutant
+PASS construction.good
+PASS construction.mutant
+PASS readability.good
+PASS readability.mutant
+PASS palette.good
+PASS palette.mutant
+PASS lock-cycle.good
+PASS lock-cycle.mutant
+PASS lock-cap.good
+PASS lock-cap.mutant
+PASS lock-portrait.good
+PASS lock-portrait.mutant
+PASS lock-portrait-cap.good
+PASS lock-portrait-cap.mutant
+PASS lock-portrait-off-master.good
+PASS lock-portrait-off-master.mutant
+PASS portrait-extension
+PASS melee.good
+PASS melee.mutant
+PASS melee-body.good
+PASS melee-body.mutant
+PASS class-kit.good
+PASS class-kit.mutant
+PASS character-map.good
+PASS character-map.mutant
+PASS character-prompt.good
+PASS character-prompt.mutant
+PASS character-shield-id.good
+PASS character-shield-id.mutant
+PASS clip-fixture-good
+PASS clip-fixture-retired
+PASS dwarf-px.good
+PASS dwarf-px.mutant
+PASS pm-mirror.good
+PASS pm-mirror.mutant
+PASS visible-gear.good
+PASS visible-gear.mutant
+PASS faceset-stack.good
+PASS faceset-stack.mutant
+PASS tile-64.good
+PASS tile-64.mutant
+FAIL rule-ids: set mismatch
+PASS no-grimdark
+PASS no-fifth-geometry
+PASS master-file
+PASS legacy-file
+PASS phrase-readable high-contrast fantasy
+PASS phrase-about 1/5
+PASS phrase-RMMZ standard top-down 3/4
+PASS phrase-by row, then by Z layer
+PASS phrase-eight directions
+PASS phrase-3 px per axis
+PASS phrase-square grid
+PASS phrase-symmetric flag
+PASS phrase-tiles-pro
+PASS phrase-dual-grid
+PASS phrase-pebbles, tufts, cracks and leaves
+PASS phrase-skeleton-v3
+PASS phrase-create-character-v3
+PASS phrase-size 42
+PASS phrase-2 px low
+PASS phrase-open test
+PASS phrase-boot, bare, paw and hoof
+PASS phrase-snow, mud, sand, blood and wet
+PASS phrase-additive light layer
+PASS phrase-whole-pixel parallax
+PASS phrase-camera layer easing
+PASS phrase-dithered cutaways
+PASS phrase-100,000
+PASS phrase-6 px cells
+PASS phrase-12, 24 and 48
+PASS phrase-1 cu ft
+PASS phrase-30 lb
+PASS phrase-1.25 ft
+PASS phrase-5-5-5
+PASS phrase-Str × 15
+PASS phrase-4 px per frame
+PASS phrase-6 px per frame
+PASS phrase-nearest-neighbour
+PASS phrase-letterbox
+PASS phrase-wall breaches
+PASS phrase-palette swap
+PASS phrase-scaffolding
+PASS phrase-grayscale
+PASS phrase-gray mush
+PASS phrase-LOCKED
+PASS phrase-15:05 CT
+PASS phrase-about 16
+PASS phrase-about 32
+PASS phrase-about 48
+PASS phrase-1, 2, 1, 0
+PASS phrase-dawn, day, dusk, night and underground
+PASS phrase-colour-blind-safe
+PASS phrase-knockback
+PASS phrase-Owner may override
+PASS phrase-shares a square
+PASS phrase-1.5 layers
+PASS phrase-Mirroring is allowed
+PASS phrase-fortress
+PASS phrase-pixel font
+PASS phrase-no class outfits
+PASS phrase-Facesets never change with gear
+PASS phrase-PixelLab
+PASS phrase-Retro Diffusion
+PASS phrase-Nano Banana Pro
+PASS phrase-36 px
+PASS phrase-not adopted
+PASS phrase-four quarters
+PASS phrase-table-with-items
+PASS phrase-true 2×
+PASS phrase-708
+PASS phrase-660
+PASS phrase-216
+PASS phrase-one complete 144
+PASS phrase-not built from layers
+PASS phrase-up to 64 colours
+PASS phrase-painterly soft shading
+PASS phrase-black contour
+PASS phrase-OWNER_PORTRAIT_STYLE_REF_01.png
+PASS phrase-RAMP_PORTRAIT_SKIN_HAIR
+PASS phrase-separate-generation
+PASS phrase-864
+PASS phrase-6912
+PASS phrase-Selective outline
+PASS phrase-High Top-Down
+PASS phrase-one-hand sword
+PASS phrase-ATK_1H
+PASS phrase-15,200
+PASS phrase-plain language
+PASS phrase-Owner sign-off
+PASS phrase-scale_chart
+PASS phrase-row 6
+PASS phrase-CH.HUMAN.M.MEDIUM
+PASS phrase-48 px canvas
+PASS phrase-weapon length
+PASS view-doc
+PASS view-ban-word
+PASS view-ban-step
+PASS view-ban-glide
+PASS view-ban-axis
+PASS view-ban-move
+PASS view-ban-555
+PASS view-allow-legacy
+PASS proj-ban.good
+PASS proj-ban.mutant
+PASS rule-ids-mutant
+PASS no-write-api
+PASS no-write-call
+PASS cli-strict-clean
+PASS cli-strict-eight
+PASS checks-present
+RESULT: 406 passed, 1 failed
+[exit 1]
+
+$ (cd tip) node tools/art/test_validate_asset_standard.js
+PASS rows.good
+PASS rows.mutant
+PASS rows-mutant.good
+PASS rows-mutant.mutant
+PASS frame.good
+PASS frame.mutant
+PASS frame-mutant.good
+PASS frame-mutant.mutant
+PASS name.good
+PASS name.mutant
+PASS name-mutant.good
+PASS name-mutant.mutant
+PASS zorder.good
+PASS zorder.mutant
+PASS zorder-mutant.good
+PASS zorder-mutant.mutant
+PASS eight-dir.good
+PASS eight-dir.mutant
+PASS eight-dir-mutant.good
+PASS eight-dir-mutant.mutant
+PASS spell-damage.good
+PASS spell-damage.mutant
+PASS spell-damage-mutant.good
+PASS spell-damage-mutant.mutant
+PASS humanoid-rows.good
+PASS humanoid-rows.mutant
+PASS beast-attack.good
+PASS beast-attack.mutant
+PASS band-vocab.good
+PASS band-vocab.mutant
+PASS band-legacy-unknown
+PASS pose-count.good
+PASS pose-count.mutant
+PASS pose-anchor.good
+PASS pose-anchor.mutant
+PASS pose-angle.good
+PASS pose-angle.mutant
+PASS deforming.good
+PASS deforming.mutant
+PASS face-layers.good
+PASS face-layers.mutant
+PASS face-background.good
+PASS face-background.mutant
+PASS face-expressions.good
+PASS face-expressions.mutant
+PASS face-anchors.good
+PASS face-anchors.mutant
+PASS face-anchor-missing.good
+PASS face-anchor-missing.mutant
+PASS item-id.good
+PASS item-id.mutant
+PASS art-key.good
+PASS art-key.mutant
+PASS icon-size.good
+PASS icon-size.mutant
+PASS icon-rarity.good
+PASS icon-rarity.mutant
+PASS resource.good
+PASS resource.mutant
+PASS animation.good
+PASS animation.mutant
+PASS animation-exception.good
+PASS animation-exception.mutant
+PASS remains.good
+PASS remains.mutant
+PASS carry.good
+PASS carry.mutant
+PASS vehicles.good
+PASS vehicles.mutant
+PASS night.good
+PASS night.mutant
+PASS filename.good
+PASS filename.mutant
+PASS ui-min.good
+PASS ui-min.mutant
+PASS map.good
+PASS map.mutant
+PASS props.good
+PASS props.mutant
+PASS outfit-matrix.good
+PASS outfit-matrix.mutant
+PASS outfit-pixels.good
+PASS outfit-pixels.mutant
+PASS life.good
+PASS life.mutant
+PASS summon-map.good
+PASS summon-map.mutant
+PASS summon-parts.good
+PASS summon-parts.mutant
+PASS skins.good
+PASS skins.mutant
+PASS religion.good
+PASS religion.mutant
+PASS religion-symbol.good
+PASS religion-symbol.mutant
+PASS farm.good
+PASS farm.mutant
+PASS food.good
+PASS food.mutant
+PASS dungeon.good
+PASS dungeon.mutant
+PASS traps.good
+PASS traps.mutant
+PASS lore.good
+PASS lore.mutant
+PASS zones.good
+PASS zones.mutant
+PASS scenes.good
+PASS scenes.mutant
+PASS marketing.good
+PASS marketing.mutant
+PASS tame-art.good
+PASS tame-art.mutant
+PASS tame-slots.good
+PASS tame-slots.mutant
+PASS variety.good
+PASS variety.mutant
+PASS variety-season.good
+PASS variety-season.mutant
+PASS variety-flip.good
+PASS variety-flip.mutant
+PASS genes.good
+PASS genes.mutant
+PASS preset-count.good
+PASS preset-count.mutant
+PASS portrait-method.good
+PASS portrait-method.mutant
+PASS portrait-stack.good
+PASS portrait-stack.mutant
+PASS portrait.good
+PASS portrait.mutant
+PASS portrait-name.good
+PASS portrait-name.mutant
+PASS head-grid.good
+PASS head-grid.mutant
+PASS head-extra.good
+PASS head-extra.mutant
+PASS head-anchor.good
+PASS head-anchor.mutant
+PASS elder-sheet.good
+PASS elder-sheet.mutant
+PASS elder-offset.good
+PASS elder-offset.mutant
+PASS gear.good
+PASS gear.mutant
+PASS mirror.good
+PASS mirror.mutant
+PASS poses.good
+PASS poses.mutant
+PASS biome-set.good
+PASS biome-set.mutant
+PASS biome-docs
+PASS size.good
+PASS size.mutant
+PASS sheet.good
+PASS sheet.mutant
+PASS atlas.good
+PASS atlas.mutant
+PASS pipeline.good
+PASS pipeline.mutant
+PASS prompt-fields.good
+PASS prompt-fields.mutant
+PASS gen-log.good
+PASS gen-log.mutant
+PASS yield.good
+PASS yield.mutant
+PASS prompt-version.good
+PASS prompt-version.mutant
+PASS generators.good
+PASS generators.mutant
+PASS paper-doll-sheet.good
+PASS paper-doll-sheet.mutant
+PASS source-cap.good
+PASS source-cap.mutant
+PASS rmmz-size.good
+PASS rmmz-size.mutant
+PASS stacked-large.good
+PASS stacked-large.mutant
+PASS repo.good
+PASS repo.mutant
+PASS preview.good
+PASS preview.mutant
+PASS generator-mix.good
+PASS generator-mix.mutant
+PASS generator-cap.good
+PASS generator-cap.mutant
+PASS sexed-bodies.good
+PASS sexed-bodies.mutant
+PASS creature-sets.good
+PASS creature-sets.mutant
+PASS creature-none.good
+PASS creature-none.mutant
+PASS creature-file.good
+PASS creature-file.mutant
+PASS slot-grammar.good
+PASS slot-grammar.mutant
+PASS slot-unique.good
+PASS slot-unique.mutant
+PASS slot-retired.good
+PASS slot-retired.mutant
+PASS slot-coverage.good
+PASS slot-coverage.mutant
+PASS slot-catalogue.good
+PASS slot-catalogue.mutant
+PASS slot-resolve.good
+PASS slot-resolve.mutant
+PASS slot-pattern.good
+PASS slot-pattern.mutant
+PASS anchor-reject.good
+PASS anchor-reject.mutant
+PASS anchor-shift.good
+PASS anchor-shift.mutant
+PASS equip-hand.good
+PASS equip-hand.mutant
+PASS equip-draw.good
+PASS equip-draw.mutant
+PASS look.good
+PASS look.mutant
+PASS proj.good
+PASS proj.mutant
+PASS proj-move.good
+PASS proj-move.mutant
+PASS proj-drop.good
+PASS proj-drop.mutant
+PASS proj-retired.good
+PASS proj-retired.mutant
+PASS furn.good
+PASS furn.mutant
+PASS terr.good
+PASS terr.mutant
+PASS track.good
+PASS track.mutant
+PASS glow.good
+PASS glow.mutant
+PASS depth.good
+PASS depth.mutant
+PASS depth-tile.good
+PASS depth-tile.mutant
+PASS world-sprite.good
+PASS world-sprite.mutant
+PASS feature.good
+PASS feature.mutant
+PASS placement.good
+PASS placement.mutant
+PASS container.good
+PASS container.mutant
+PASS scale.good
+PASS scale.mutant
+PASS scale-scope.good
+PASS scale-scope.mutant
+PASS render.good
+PASS render.mutant
+PASS cross-layer.good
+PASS cross-layer.mutant
+PASS quarters.good
+PASS quarters.mutant
+PASS construction.good
+PASS construction.mutant
+PASS readability.good
+PASS readability.mutant
+PASS palette.good
+PASS palette.mutant
+PASS lock-cycle.good
+PASS lock-cycle.mutant
+PASS lock-cap.good
+PASS lock-cap.mutant
+PASS lock-portrait.good
+PASS lock-portrait.mutant
+PASS lock-portrait-cap.good
+PASS lock-portrait-cap.mutant
+PASS lock-portrait-off-master.good
+PASS lock-portrait-off-master.mutant
+PASS portrait-extension
+PASS melee.good
+PASS melee.mutant
+PASS melee-body.good
+PASS melee-body.mutant
+PASS class-kit.good
+PASS class-kit.mutant
+PASS character-map.good
+PASS character-map.mutant
+PASS character-prompt.good
+PASS character-prompt.mutant
+PASS character-shield-id.good
+PASS character-shield-id.mutant
+PASS clip-fixture-good
+PASS clip-fixture-retired
+PASS dwarf-px.good
+PASS dwarf-px.mutant
+PASS pm-mirror.good
+PASS pm-mirror.mutant
+PASS visible-gear.good
+PASS visible-gear.mutant
+PASS faceset-stack.good
+PASS faceset-stack.mutant
+PASS tile-64.good
+PASS tile-64.mutant
+FAIL rule-ids: set mismatch
+PASS no-grimdark
+PASS no-fifth-geometry
+PASS master-file
+PASS legacy-file
+PASS phrase-readable high-contrast fantasy
+PASS phrase-about 1/5
+PASS phrase-RMMZ standard top-down 3/4
+PASS phrase-by row, then by Z layer
+PASS phrase-eight directions
+PASS phrase-3 px per axis
+PASS phrase-square grid
+PASS phrase-symmetric flag
+PASS phrase-tiles-pro
+PASS phrase-dual-grid
+PASS phrase-pebbles, tufts, cracks and leaves
+PASS phrase-skeleton-v3
+PASS phrase-create-character-v3
+PASS phrase-size 42
+PASS phrase-2 px low
+PASS phrase-open test
+PASS phrase-boot, bare, paw and hoof
+PASS phrase-snow, mud, sand, blood and wet
+PASS phrase-additive light layer
+PASS phrase-whole-pixel parallax
+PASS phrase-camera layer easing
+PASS phrase-dithered cutaways
+PASS phrase-100,000
+PASS phrase-6 px cells
+PASS phrase-12, 24 and 48
+PASS phrase-1 cu ft
+PASS phrase-30 lb
+PASS phrase-1.25 ft
+PASS phrase-5-5-5
+PASS phrase-Str × 15
+PASS phrase-4 px per frame
+PASS phrase-6 px per frame
+PASS phrase-nearest-neighbour
+PASS phrase-letterbox
+PASS phrase-wall breaches
+PASS phrase-palette swap
+PASS phrase-scaffolding
+PASS phrase-grayscale
+PASS phrase-gray mush
+PASS phrase-LOCKED
+PASS phrase-15:05 CT
+PASS phrase-about 16
+PASS phrase-about 32
+PASS phrase-about 48
+PASS phrase-1, 2, 1, 0
+PASS phrase-dawn, day, dusk, night and underground
+PASS phrase-colour-blind-safe
+PASS phrase-knockback
+PASS phrase-Owner may override
+PASS phrase-shares a square
+PASS phrase-1.5 layers
+PASS phrase-Mirroring is allowed
+PASS phrase-fortress
+PASS phrase-pixel font
+PASS phrase-no class outfits
+PASS phrase-Facesets never change with gear
+PASS phrase-PixelLab
+PASS phrase-Retro Diffusion
+PASS phrase-Nano Banana Pro
+PASS phrase-36 px
+PASS phrase-not adopted
+PASS phrase-four quarters
+PASS phrase-table-with-items
+PASS phrase-true 2×
+PASS phrase-708
+PASS phrase-660
+PASS phrase-216
+PASS phrase-one complete 144
+PASS phrase-not built from layers
+PASS phrase-up to 64 colours
+PASS phrase-painterly soft shading
+PASS phrase-black contour
+PASS phrase-OWNER_PORTRAIT_STYLE_REF_01.png
+PASS phrase-RAMP_PORTRAIT_SKIN_HAIR
+PASS phrase-separate-generation
+PASS phrase-864
+PASS phrase-6912
+PASS phrase-Selective outline
+PASS phrase-High Top-Down
+PASS phrase-one-hand sword
+PASS phrase-ATK_1H
+PASS phrase-15,200
+PASS phrase-plain language
+PASS phrase-Owner sign-off
+PASS phrase-scale_chart
+PASS phrase-row 6
+PASS phrase-CH.HUMAN.M.MEDIUM
+PASS phrase-48 px canvas
+PASS phrase-weapon length
+PASS view-doc
+PASS view-ban-word
+PASS view-ban-step
+PASS view-ban-glide
+PASS view-ban-axis
+PASS view-ban-move
+PASS view-ban-555
+PASS view-allow-legacy
+PASS proj-ban.good
+PASS proj-ban.mutant
+PASS rule-ids-mutant
+PASS no-write-api
+PASS no-write-call
+PASS cli-strict-clean
+PASS cli-strict-eight
+PASS checks-present
+RESULT: 406 passed, 1 failed
+[exit 1]
+
+$ (cd base2) node tools/verify_world_state_registry.js --report /c/Users/snewt/AppData/Local/Temp/lanepg_w/wsr/base --work-dir /c/Users/snewt/AppData/Local/Temp/lanepg_w/wsr
+(trimmed for the repo: only NEW findings, GATE and exit lines of this run are kept; the full output was reproducible with the same command)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0001 [SURFACE_SHARED_TERRAIN_DIRT_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_DIRT_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7629)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0002 [SURFACE_SHARED_TERRAIN_DIRT_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_DIRT_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7630)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0003 [SURFACE_SHARED_TERRAIN_DIRT_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_DIRT_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7631)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0004 [SURFACE_SHARED_TERRAIN_DRY-GRASS_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_DRY-GRASS_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7633)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0005 [SURFACE_SHARED_TERRAIN_DRY-GRASS_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_DRY-GRASS_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7634)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0006 [SURFACE_SHARED_TERRAIN_DRY-GRASS_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_DRY-GRASS_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7635)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0007 [SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7640)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0008 [SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7641)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0009 [SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7642)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0010 [SURFACE_SHARED_TERRAIN_MUD_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_MUD_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7647)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0011 [SURFACE_SHARED_TERRAIN_MUD_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_MUD_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7648)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0012 [SURFACE_SHARED_TERRAIN_MUD_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_MUD_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7649)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0013 [SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7651)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0014 [SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7652)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0015 [SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7653)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0016 [SURFACE_SHARED_TERRAIN_ROCK_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_ROCK_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7658)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0017 [SURFACE_SHARED_TERRAIN_ROCK_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_ROCK_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7659)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0018 [SURFACE_SHARED_TERRAIN_ROCK_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_ROCK_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7660)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0019 [SURFACE_SHARED_TERRAIN_SAND_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_SAND_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7662)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0020 [SURFACE_SHARED_TERRAIN_SAND_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_SAND_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7663)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0021 [SURFACE_SHARED_TERRAIN_SAND_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_SAND_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7664)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0022 [SURFACE_SHARED_TERRAIN_SCREE_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_SCREE_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7666)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0023 [SURFACE_SHARED_TERRAIN_SCREE_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_SCREE_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7667)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0024 [SURFACE_SHARED_TERRAIN_SCREE_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_SCREE_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7668)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0025 [SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7670)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0026 [SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7671)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0027 [SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7672)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0028 [SURFACE_SHARED_TERRAIN_STONY_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_STONY_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7675)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0029 [SURFACE_SHARED_TERRAIN_STONY_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_STONY_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7676)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0030 [SURFACE_SHARED_TERRAIN_STONY_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_STONY_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7677)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0031 [SURFACE_SHARED_TERRAIN_SWAMP-MUD_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_SWAMP-MUD_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7679)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0032 [SURFACE_SHARED_TERRAIN_SWAMP-MUD_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_SWAMP-MUD_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7680)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0033 [SURFACE_SHARED_TERRAIN_SWAMP-MUD_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_SWAMP-MUD_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7681)
+NEW PLACED-IN-SLOT LEDGER_ID_UNKNOWN ALL_SHARED_STONE_COAL-OUTCROP_V1_DEFAULT [6ed72bd12b042d36c19e92e965a26dcd2dd1a9f9afb9602a52a633cf7d4a7514]: YEA row names an id that is neither a catalogue entry nor a catalogue slot (art/APPROVALS.md:42)
+GATE: FAILED (34 new, 983 stale)
+[exit 1]
+$ (cd tip) node tools/verify_world_state_registry.js --report /c/Users/snewt/AppData/Local/Temp/lanepg_w/wsr/tip --work-dir /c/Users/snewt/AppData/Local/Temp/lanepg_w/wsr
+(trimmed for the repo: only NEW findings, GATE and exit lines of this run are kept; the full output was reproducible with the same command)
+NEW WSR-04 SLOT_CLASS_UNDECLARED ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0001 [SOURCE:MARK]: SURFACE_SHARED_MARK_ASH-PATCH_B-V1_DEFAULT is of class SOURCE:MARK; tools/wsr/scope.json declares no scope for this class (art/catalogue/catalogue.json:6484)
+NEW WSR-04 SLOT_CLASS_UNDECLARED ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0002 [SOURCE:MARK]: SURFACE_SHARED_MARK_GROUND-SCAR_B-V1_DEFAULT is of class SOURCE:MARK; tools/wsr/scope.json declares no scope for this class (art/catalogue/catalogue.json:6485)
+NEW WSR-04 SLOT_CLASS_UNDECLARED ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0003 [SOURCE:MARK]: SURFACE_SHARED_MARK_ROCK-FAILING_B-V1_DEFAULT is of class SOURCE:MARK; tools/wsr/scope.json declares no scope for this class (art/catalogue/catalogue.json:6486)
+NEW WSR-04 SLOT_CLASS_UNDECLARED ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0004 [SOURCE:MARK]: SURFACE_SHARED_MARK_ROCK-STRAINED_B-V1_DEFAULT is of class SOURCE:MARK; tools/wsr/scope.json declares no scope for this class (art/catalogue/catalogue.json:6487)
+NEW WSR-04 SLOT_CLASS_UNDECLARED ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0005 [SOURCE:MARK]: SURFACE_SHARED_MARK_SEDIMENT_B-V1_DEFAULT is of class SOURCE:MARK; tools/wsr/scope.json declares no scope for this class (art/catalogue/catalogue.json:6488)
+NEW WSR-04 SLOT_CLASS_UNDECLARED ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0006 [SOURCE:MARK]: SURFACE_SHARED_MARK_SOIL-FAILING_B-V1_DEFAULT is of class SOURCE:MARK; tools/wsr/scope.json declares no scope for this class (art/catalogue/catalogue.json:6489)
+NEW WSR-04 SLOT_CLASS_UNDECLARED ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0007 [SOURCE:MARK]: SURFACE_SHARED_MARK_SOIL-STRAINED_B-V1_DEFAULT is of class SOURCE:MARK; tools/wsr/scope.json declares no scope for this class (art/catalogue/catalogue.json:6490)
+NEW WSR-04 SLOT_NO_STATE ATLAS_ALL_SHARED_TILE_RMMZ01:0001 [ALL_SHARED_TERRAIN_OBSIDIAN_A2_DEFAULT]: ALL_SHARED_TERRAIN_OBSIDIAN_A2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:1798)
+NEW WSR-04 SLOT_NO_STATE ATLAS_ALL_SHARED_TILE_RMMZ01:0002 [ALL_SHARED_WATER_LAVA_A1_DEFAULT]: ALL_SHARED_WATER_LAVA_A1_DEFAULT (SOURCE:WATER, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:1811)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0001 [SURFACE_SHARED_FLORA_BUSH_B-V1_DEFAULT]: SURFACE_SHARED_FLORA_BUSH_B-V1_DEFAULT (SOURCE:FLORA, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:6447)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0002 [SURFACE_SHARED_FLORA_FLOWERS-BLUE_B-V1_DEFAULT]: SURFACE_SHARED_FLORA_FLOWERS-BLUE_B-V1_DEFAULT (SOURCE:FLORA, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:6453)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0003 [SURFACE_SHARED_FLORA_FLOWERS-PURPLE_B-V1_DEFAULT]: SURFACE_SHARED_FLORA_FLOWERS-PURPLE_B-V1_DEFAULT (SOURCE:FLORA, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:6455)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0004 [SURFACE_SHARED_FLORA_FLOWERS-WHITE_B-V1_DEFAULT]: SURFACE_SHARED_FLORA_FLOWERS-WHITE_B-V1_DEFAULT (SOURCE:FLORA, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:6457)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0005 [SURFACE_SHARED_FLORA_FLOWERS_B-V1_DEFAULT]: SURFACE_SHARED_FLORA_FLOWERS_B-V1_DEFAULT (SOURCE:FLORA, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:6459)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0006 [SURFACE_SHARED_FLORA_GRASS-TUFT_B-V1_DEFAULT]: SURFACE_SHARED_FLORA_GRASS-TUFT_B-V1_DEFAULT (SOURCE:FLORA, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:6461)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0007 [SURFACE_SHARED_FLORA_GRASS-TUFT_B-V2_DEFAULT]: SURFACE_SHARED_FLORA_GRASS-TUFT_B-V2_DEFAULT (SOURCE:FLORA, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:6462)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0008 [SURFACE_SHARED_FLORA_GRASS-TUFT_B-V3_DEFAULT]: SURFACE_SHARED_FLORA_GRASS-TUFT_B-V3_DEFAULT (SOURCE:FLORA, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:6463)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0009 [SURFACE_SHARED_FLORA_GRASS-TUFT_B-V4_DEFAULT]: SURFACE_SHARED_FLORA_GRASS-TUFT_B-V4_DEFAULT (SOURCE:FLORA, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:6464)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0010 [SURFACE_SHARED_FLORA_MUSHROOMS_B-V1_DEFAULT]: SURFACE_SHARED_FLORA_MUSHROOMS_B-V1_DEFAULT (SOURCE:FLORA, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:6468)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0011 [SURFACE_SHARED_FLORA_MUSHROOMS_B-V2_DEFAULT]: SURFACE_SHARED_FLORA_MUSHROOMS_B-V2_DEFAULT (SOURCE:FLORA, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:6469)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0012 [SURFACE_SHARED_STONE_GRANITE-BOULDER_B-V1_DEFAULT]: SURFACE_SHARED_STONE_GRANITE-BOULDER_B-V1_DEFAULT (SOURCE:STONE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7663)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0013 [SURFACE_SHARED_STONE_GRANITE-BOULDER_B-V2_DEFAULT]: SURFACE_SHARED_STONE_GRANITE-BOULDER_B-V2_DEFAULT (SOURCE:STONE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7664)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0014 [SURFACE_SHARED_STONE_ROCKS-SMALL_B-V1_DEFAULT]: SURFACE_SHARED_STONE_ROCKS-SMALL_B-V1_DEFAULT (SOURCE:STONE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7667)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0015 [SURFACE_SHARED_TREE_BIRCH_B-V1_DEFAULT]: SURFACE_SHARED_TREE_BIRCH_B-V1_DEFAULT (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7786)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0016 [SURFACE_SHARED_TREE_BIRCH_B-V1_DEPLETED]: SURFACE_SHARED_TREE_BIRCH_B-V1_DEPLETED (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7787)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0017 [SURFACE_SHARED_TREE_CANOPY-BROADLEAF-1X1_B-V1_DEFAULT]: SURFACE_SHARED_TREE_CANOPY-BROADLEAF-1X1_B-V1_DEFAULT (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7789)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0018 [SURFACE_SHARED_TREE_CANOPY-BROADLEAF-2X2_B-V1_DEFAULT]: SURFACE_SHARED_TREE_CANOPY-BROADLEAF-2X2_B-V1_DEFAULT (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7790)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0019 [SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEFAULT]: SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEFAULT (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7791)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0020 [SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEPLETED]: SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEPLETED (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7792)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0021 [SURFACE_SHARED_TREE_FALLEN-LOG_B-V1_DEFAULT]: SURFACE_SHARED_TREE_FALLEN-LOG_B-V1_DEFAULT (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7794)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0022 [SURFACE_SHARED_TREE_FRUIT-TREE-BARE_B-V1_DEFAULT]: SURFACE_SHARED_TREE_FRUIT-TREE-BARE_B-V1_DEFAULT (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7796)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0023 [SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEFAULT]: SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEFAULT (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7798)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0024 [SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEPLETED]: SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEPLETED (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7799)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0025 [SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT]: SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7802)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0026 [SURFACE_SHARED_TREE_OAK_B-V1_DEPLETED]: SURFACE_SHARED_TREE_OAK_B-V1_DEPLETED (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7803)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0027 [SURFACE_SHARED_TREE_PINE_B-V1_DEFAULT]: SURFACE_SHARED_TREE_PINE_B-V1_DEFAULT (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7806)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0028 [SURFACE_SHARED_TREE_PINE_B-V1_DEPLETED]: SURFACE_SHARED_TREE_PINE_B-V1_DEPLETED (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7807)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0029 [SURFACE_SHARED_TREE_SAPLING_B-V1_DEFAULT]: SURFACE_SHARED_TREE_SAPLING_B-V1_DEFAULT (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7809)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0030 [SURFACE_SHARED_TREE_SWAMP_B-V1_DEFAULT]: SURFACE_SHARED_TREE_SWAMP_B-V1_DEFAULT (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7812)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_PROP_RMMZ01:0031 [SURFACE_SHARED_TREE_SWAMP_B-V1_DEPLETED]: SURFACE_SHARED_TREE_SWAMP_B-V1_DEPLETED (SOURCE:TREE, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7813)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0001 [SURFACE_SHARED_TERRAIN_DIRT_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_DIRT_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7702)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0002 [SURFACE_SHARED_TERRAIN_DIRT_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_DIRT_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7703)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0003 [SURFACE_SHARED_TERRAIN_DIRT_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_DIRT_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7704)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0004 [SURFACE_SHARED_TERRAIN_DRY-GRASS_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_DRY-GRASS_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7706)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0005 [SURFACE_SHARED_TERRAIN_DRY-GRASS_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_DRY-GRASS_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7707)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0006 [SURFACE_SHARED_TERRAIN_DRY-GRASS_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_DRY-GRASS_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7708)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0007 [SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7713)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0008 [SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7714)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0009 [SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7715)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0010 [SURFACE_SHARED_TERRAIN_MUD_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_MUD_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7720)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0011 [SURFACE_SHARED_TERRAIN_MUD_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_MUD_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7721)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0012 [SURFACE_SHARED_TERRAIN_MUD_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_MUD_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7722)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0013 [SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7724)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0014 [SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7725)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0015 [SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7726)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0016 [SURFACE_SHARED_TERRAIN_ROCK_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_ROCK_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7731)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0017 [SURFACE_SHARED_TERRAIN_ROCK_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_ROCK_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7732)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0018 [SURFACE_SHARED_TERRAIN_ROCK_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_ROCK_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7733)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0019 [SURFACE_SHARED_TERRAIN_SAND_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_SAND_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7735)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0020 [SURFACE_SHARED_TERRAIN_SAND_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_SAND_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7736)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0021 [SURFACE_SHARED_TERRAIN_SAND_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_SAND_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7737)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0022 [SURFACE_SHARED_TERRAIN_SCREE_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_SCREE_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7739)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0023 [SURFACE_SHARED_TERRAIN_SCREE_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_SCREE_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7740)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0024 [SURFACE_SHARED_TERRAIN_SCREE_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_SCREE_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7741)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0025 [SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7743)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0026 [SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7744)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0027 [SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_SHRUB-SOIL_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7745)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0028 [SURFACE_SHARED_TERRAIN_STONY_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_STONY_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7748)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0029 [SURFACE_SHARED_TERRAIN_STONY_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_STONY_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7749)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0030 [SURFACE_SHARED_TERRAIN_STONY_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_STONY_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7750)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0031 [SURFACE_SHARED_TERRAIN_SWAMP-MUD_V1_DEFAULT]: SURFACE_SHARED_TERRAIN_SWAMP-MUD_V1_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7752)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0032 [SURFACE_SHARED_TERRAIN_SWAMP-MUD_V2_DEFAULT]: SURFACE_SHARED_TERRAIN_SWAMP-MUD_V2_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7753)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_DEC045:0033 [SURFACE_SHARED_TERRAIN_SWAMP-MUD_V3_DEFAULT]: SURFACE_SHARED_TERRAIN_SWAMP-MUD_V3_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7754)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0001 [SURFACE_SHARED_TERRAIN_CLIFF-BANDED-SANDSTONE_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-BANDED-SANDSTONE_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7670)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0002 [SURFACE_SHARED_TERRAIN_CLIFF-BANDED-SANDSTONE_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-BANDED-SANDSTONE_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7671)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0003 [SURFACE_SHARED_TERRAIN_CLIFF-DRY-GRASS_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-DRY-GRASS_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7672)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0004 [SURFACE_SHARED_TERRAIN_CLIFF-DRY-GRASS_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-DRY-GRASS_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7673)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0005 [SURFACE_SHARED_TERRAIN_CLIFF-FOREST-FLOOR_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-FOREST-FLOOR_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7674)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0006 [SURFACE_SHARED_TERRAIN_CLIFF-FOREST-FLOOR_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-FOREST-FLOOR_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7675)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0007 [SURFACE_SHARED_TERRAIN_CLIFF-GRANITE_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-GRANITE_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7676)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0008 [SURFACE_SHARED_TERRAIN_CLIFF-GRANITE_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-GRANITE_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7677)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0009 [SURFACE_SHARED_TERRAIN_CLIFF-LAYERED-STRATA_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-LAYERED-STRATA_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7678)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0010 [SURFACE_SHARED_TERRAIN_CLIFF-LAYERED-STRATA_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-LAYERED-STRATA_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7679)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0011 [SURFACE_SHARED_TERRAIN_CLIFF-LICHEN-ROCK_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-LICHEN-ROCK_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7680)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0012 [SURFACE_SHARED_TERRAIN_CLIFF-LICHEN-ROCK_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-LICHEN-ROCK_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7681)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0013 [SURFACE_SHARED_TERRAIN_CLIFF-LIMESTONE_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-LIMESTONE_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7682)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0014 [SURFACE_SHARED_TERRAIN_CLIFF-LIMESTONE_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-LIMESTONE_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7683)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0015 [SURFACE_SHARED_TERRAIN_CLIFF-MEADOW_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-MEADOW_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7684)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0016 [SURFACE_SHARED_TERRAIN_CLIFF-MEADOW_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-MEADOW_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7685)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0017 [SURFACE_SHARED_TERRAIN_CLIFF-MUD_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-MUD_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7686)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0018 [SURFACE_SHARED_TERRAIN_CLIFF-MUD_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-MUD_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7687)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0019 [SURFACE_SHARED_TERRAIN_CLIFF-NEEDLE-FLOOR_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-NEEDLE-FLOOR_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7688)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0020 [SURFACE_SHARED_TERRAIN_CLIFF-NEEDLE-FLOOR_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-NEEDLE-FLOOR_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7689)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0021 [SURFACE_SHARED_TERRAIN_CLIFF-RED-CLAY_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-RED-CLAY_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7690)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0022 [SURFACE_SHARED_TERRAIN_CLIFF-RED-CLAY_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-RED-CLAY_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7691)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0023 [SURFACE_SHARED_TERRAIN_CLIFF-ROOTED-SOIL_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-ROOTED-SOIL_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7692)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0024 [SURFACE_SHARED_TERRAIN_CLIFF-ROOTED-SOIL_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-ROOTED-SOIL_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7693)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0025 [SURFACE_SHARED_TERRAIN_CLIFF-SAND_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-SAND_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7694)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0026 [SURFACE_SHARED_TERRAIN_CLIFF-SAND_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-SAND_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7695)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0027 [SURFACE_SHARED_TERRAIN_CLIFF-SOIL_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-SOIL_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7696)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0028 [SURFACE_SHARED_TERRAIN_CLIFF-SOIL_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-SOIL_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7697)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0029 [SURFACE_SHARED_TERRAIN_CLIFF-STONY_SIDE_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-STONY_SIDE_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7698)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0030 [SURFACE_SHARED_TERRAIN_CLIFF-STONY_TOP_DEFAULT]: SURFACE_SHARED_TERRAIN_CLIFF-STONY_TOP_DEFAULT (SOURCE:TERRAIN, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7699)
+NEW WSR-04 SLOT_NO_STATE ATLAS_SURFACE_SHARED_TILE_RMMZ01:0031 [SURFACE_SHARED_WATER_WATERFALL_A1_DEFAULT]: SURFACE_SHARED_WATER_WATERFALL_A1_DEFAULT (SOURCE:WATER, NATURAL_WORLD scope) traces to no registry state: no state's visualStateId resolves to it or to a variant derived from it (art/catalogue/catalogue.json:7833)
+NEW PLACED-IN-SLOT LEDGER_ID_UNKNOWN ALL_SHARED_STONE_COAL-OUTCROP_V1_DEFAULT [6ed72bd12b042d36c19e92e965a26dcd2dd1a9f9afb9602a52a633cf7d4a7514]: YEA row names an id that is neither a catalogue entry nor a catalogue slot (art/APPROVALS.md:42)
+GATE: FAILED (105 new, 983 stale)
+[exit 1]

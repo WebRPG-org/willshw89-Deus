@@ -1,0 +1,1691 @@
+base 65e97351 [claude] mail: MSG-PRUNE-PM-092 to AG (usage routing: exhaust codex/grok/MiniMax first; two Codex research tasks); tip e6b5f421 [claude] WG.20.03 WIP: test_rmmz_rows.js (104 checks, 16 mutants), expected fixture from ROWS.md, SCHEMA.md 1.4.0
+$ (cd tip) node tools/check_deus_syntax.js
+Checked 62 DEUS plugin files. Errors: 0
+[exit 0]
+
+$ (cd tip) node tools/test_control_board.js
+=== Control Board & Anti-Regression Verification (FIX-CQ-10) ===
+  [OK] STATUS.md contains Section 1 (Live Systems)
+  [OK] STATUS.md contains Section 2 (Frozen Systems)
+  [OK] STATUS.md contains Section 3 (In Review)
+  [OK] STATUS.md contains Section 4 (Defect / Unproved)
+  [OK] STATUS.md contains Section 5 (Archived Systems)
+  [OK] STATUS.md contains Stand-ins Section
+  [OK] plugins.js discovery found enabled plugins (>0)
+  [OK] All enabled plugins in plugins.js are explicitly recorded in Section 1 tables
+  [OK] DEUS_Core companions discovery found items (>0)
+  [OK] All DEUS_Core companion plugins (11) are explicitly recorded in Section 1 tables
+  [OK] active_lanes.json discovery found active lanes (>0)
+  [OK] All declared active task branches (16) are listed in Section 3
+  [OK] All declared reference branches (16) are listed in Section 3
+  [OK] Section 5 (Archived Systems) discovery found archived rows (>0)
+  [OK] All archived rows in Section 5 contain explicit, valid rulings and non-blank destinations
+  [OK] All items declared in Section 5 (51) have been moved off their original paths
+  [OK] All archive destinations declared in Section 5 (51) exist on disk
+  [OK] Anti-Junk Guard: No unlisted or unauthorized .js files in game/js/plugins (Strict table/list authorization; prose/comments/archive excluded)
+  [OK] Board Truth Integrity: all corrections verified (lane-cs reference, historical CQ hash, climate authorities, clean stand-in notes, canonical stand-in tokens, legacy unresolved row)
+-----------------------------------------------------
+CONTROL BOARD VALIDATION: CLEAN PASS (0 errors)
+[exit 0]
+
+$ (cd tip) node tools/test_palette.js
+Palette loaded successfully
+[exit 0]
+
+$ (cd tip) node tools/governance/test_check_claims.js
+=== check_claims.js tests (WG.00.12 Lanes C2 and C2b) ===
+temp repository: C:\Users\snewt\AppData\Local\Temp\deus-check-claims-zThcgu
+PASS unit_status_allowlist
+PASS unit_status_normalization
+PASS unit_status_arrows_labels_annotations
+PASS unit_reviewers_and_agents
+PASS unit_revision_log
+PASS unit_glob_subtree
+PASS unit_pass_and_fail_outcomes
+PASS unit_json_key_conflicts
+PASS unit_prose_claims
+PASS unit_review_artifact_verdicts
+PASS unit_record_ids_and_tables
+PASS unit_decisions_and_lane_matrix
+PASS unit_pm_agent
+PASS pass_c2_edits_own_tool_branch_identity
+PASS pass_env_lane_b_edits_fix
+PASS pass_subtree_whitelist
+PASS pass_wbs_done_with_commit_and_reviewer
+PASS pass_wbs_done_with_test_log_and_verdict
+PASS pass_wbs_leaf_added_with_rev_and_log
+PASS pass_wbs_status_only_edit_without_rev
+PASS pass_wbs_reopen_done_to_review
+PASS pass_status_negated_closure_word
+PASS pass_status_arrow_to_nonterminal
+PASS pass_status_label_nonterminal
+PASS pass_status_struck_old_value
+PASS pass_status_header_synonym_state
+PASS pass_rev_log_header_synonym
+PASS pass_owner_closure_with_decided_dec
+PASS pass_artifact_scoped_item_verdicts
+PASS pass_pair_column_writer_reviewer
+PASS pass_ledger_closed_by_reviewer_relayed
+PASS pass_ledger_closer_signs_own_closure
+PASS pass_ledger_closer_adds_review_in_same_commit
+PASS pass_ledger_mixed_case_keys_fix_ready
+PASS pass_status_row_closed_backed_by_ledger
+PASS pass_status_prose_unrelated_edit
+PASS pass_clean_merge_by_coordinator
+PASS pass_commit_mode_clean_commit
+PASS pass_commit_merge_without_agent_subject
+PASS pass_lane_given_as_agent_name
+PASS pass_bom_added_to_ledger
+PASS pass_range_row_expanded_with_rev
+PASS pass_range_row_hyphen_for_en_dash
+PASS fail_status_label_prefix
+PASS fail_status_unicode_arrow
+PASS fail_status_ascii_arrow
+PASS fail_status_arrow_to_unknown
+PASS fail_status_zero_width
+PASS fail_status_fullwidth
+PASS fail_status_emphasis_split
+PASS fail_status_emphasis_word
+PASS fail_status_transition_annotation
+PASS fail_status_unlisted_terminal
+PASS fail_status_unknown_word
+PASS fail_status_blanked
+PASS fail_status_html_entity
+PASS fail_status_emoji_mixed_case
+PASS fail_status_check_mark_beside_review
+PASS fail_status_second_table_leaf
+PASS fail_status_leaf_id_with_suffix
+PASS fail_status_blockquote_table_leaf
+PASS fail43_html_table_in_wbs
+PASS fail41_html_table_in_status
+PASS fail41_done_without_evidence
+PASS fail41_fabricated_hash
+PASS fail41_commit_not_reachable
+PASS fail41_failing_test_log
+PASS fail41_test_claim_text_only
+PASS fail41_missing_test_script
+PASS fail41_cited_evidence_file_missing
+PASS fail41_status_table_closed_without_evidence
+PASS fail41_second_defect_table_closed
+PASS fail41_defect_id_cell_suffixed
+PASS fail41_ledger_path_case_variant
+PASS fail41_defect_status_column_renamed
+PASS fail41_ledger_closure_without_evidence
+PASS fail41_ledger_ambiguous_duplicate_keys
+PASS fail41_ledger_status_key_case
+PASS fail42_wbs_done_no_reviewer_committer_is_owner
+PASS fail42_wbs_owner_named_as_reviewer
+PASS fail42_wbs_claude_alias_of_fable_owner
+PASS fail42_wbs_cited_commit_author_as_reviewer
+PASS fail42_typed_closedby_without_artifact
+PASS fail42_artifact_by_another_agent
+PASS fail42_artifact_forged_in_same_commit
+PASS fail42_artifact_missing
+PASS fail42_artifact_does_not_mention_leaf
+PASS fail42_status_document_as_review_artifact
+PASS fail42_script_as_review_artifact
+PASS fail42_artifact_records_failing_verdict
+PASS fail42_artifact_item_verdict_fails
+PASS fail42_pair_column_writer_reviews_own_leaf
+PASS fail42_closer_is_committer
+PASS fail42_unknown_closer_name
+PASS fail42_unknown_closer_beside_valid
+PASS fail42_owner_closure_without_dec
+PASS fail42_owner_closure_dec_open
+PASS fail42_owner_closure_dec_unrelated
+PASS fail42_owner_closure_dec_added_in_same_commit
+PASS fail42_ledger_closedby_is_fixer
+PASS fail42_ledger_fixer_commits_closure
+PASS fail42_ledger_closure_without_closedby
+PASS fail42_ledger_closedby_not_an_agent
+PASS fail42_ledger_typed_closedby_without_artifact
+PASS fail42_ledger_unlisted_terminal_status
+PASS fail42_closure_by_unknown_committer
+PASS fail42_status_row_closed_but_ledger_open
+PASS fail42_status_prose_claim
+PASS fail42_status_prose_task_list_checked
+PASS fail43_leaf_added_without_rev
+PASS fail43_leaf_deleted
+PASS fail43_leaf_renamed
+PASS fail43_leaf_retitled
+PASS fail43_scope_edit_without_rev
+PASS fail43_rev_went_down
+PASS fail43_rev_header_removed
+PASS fail43_rev_up_without_log_row
+PASS fail43_rev_log_gap
+PASS fail43_rev_log_row_deleted
+PASS fail43_rev_log_row_rewritten
+PASS fail43_rev_log_zero_row
+PASS fail43_rev_log_ahead_of_header
+PASS fail43_rev_log_header_renamed
+PASS fail43_rev_log_removed
+PASS fail43_wbs_status_column_renamed
+PASS fail43_duplicate_leaf_id
+PASS fail43_range_row_deleted
+PASS fail43_single_row_inside_range
+PASS fail43_ledger_line_deleted
+PASS fail43_ledger_line_rewritten
+PASS fail44_file_of_another_lane
+PASS fail44_frozen_path_even_for_coordinator
+PASS fail44_path_no_lane_owns
+PASS fail44_commit_widens_own_whitelist
+PASS fail44_no_identity_on_main
+PASS fail44_declared_agent_does_not_hold_lane
+PASS fail44_rename_out_of_lane
+PASS fail44_merge_resolution_edits_other_lane
+PASS fail44_commit_mode_uses_subject_agent
+PASS pass44_grandfathered_pre_epoch
+PASS fail44_post_epoch_not_grandfathered
+PASS fail41_pre_epoch_commit_still_checked
+PASS pass_pm_lane_opening_commit
+PASS pass_pm_status_claim_commit
+PASS pass_pm_staged_on_the_lane_branch
+PASS pass_pm_range_with_head_ref_hint
+PASS pass_pm_records_grok_closure_in_status
+PASS fail44_pm_edits_code
+PASS fail44_pm_writes_lane_files_other_than_the_brief
+PASS fail44_pm_frozen_path_inside_its_whitelist
+PASS fail44_pm_status_row_grants_nothing
+PASS fail44_pm_explicit_lane_not_held
+PASS fail42_pm_self_certifies_in_status
+PASS fail42_pm_named_as_closer_with_its_own_artifact
+PASS fail42_ledger_closedby_pm
+PASS pass_range_gate_clean
+PASS range_gate_flags_out_of_lane_commit
+PASS range_gate_merge_lane_hint
+PASS range_gate_head_ref_hint
+PASS range_gate_rejects_rewritten_base
+PASS range_gate_refuses_symmetric_range
+PASS backfill_clean_ledger_has_no_flags
+PASS backfill_chain_burst_B1
+PASS backfill_batch_burst_B2
+PASS backfill_window_edge_1000ms_not_flagged
+PASS backfill_window_edge_999ms_flagged
+PASS backfill_audit_trail_A1_A2_A3_A4
+PASS hook_install_reject_tamper_accept_failclosed_uninstall
+PASS text_output_pass_fail_result_lines
+PASS real_31676cf_WG.00.08_DONE_without_reviewer_fails_4.2
+PASS real_d1fbeab_ledger_chain_bursts_flagged
+PASS real_integration_merges_and_lane_commits_pass
+PASS real_pm_claim_and_lane_opening_commits_pass
+PASS real_2355931_pre_epoch_lane_commit_grandfathered
+PASS real_epoch_override_cannot_widen
+PASS mutant_4.1_evidence_gate_off_killed
+PASS mutant_4.1_reachability_ignored_killed
+PASS mutant_4.1_text_test_claim_trusted_killed
+PASS mutant_4.1_failing_log_accepted_killed
+PASS mutant_4.1_missing_evidence_files_ignored_killed
+PASS mutant_4.1_defect_status_column_loss_ignored_killed
+PASS mutant_4.1_defect_tables_first_only_killed
+PASS mutant_4.2_wbs_reviewer_not_required_killed
+PASS mutant_4.2_typed_closedby_accepted_killed
+PASS mutant_4.2_artifact_author_unchecked_killed
+PASS mutant_4.2_artifact_same_commit_by_anyone_killed
+PASS mutant_4.2_artifact_id_unchecked_killed
+PASS mutant_4.2_closer_may_be_committer_killed
+PASS mutant_4.2_reviewer_regex_unknown_names_ignored_killed
+PASS mutant_4.2_reviewer_regex_off_killed
+PASS mutant_4.2_reviewer_regex_unnormalized_killed
+PASS mutant_4.2_ledger_closer_not_validated_killed
+PASS mutant_4.2_owner_needs_no_decision_killed
+PASS mutant_4.2_owner_decision_scope_unchecked_killed
+PASS mutant_4.2_status_docs_count_as_review_artifacts_killed
+PASS mutant_4.2_artifact_verdict_unread_killed
+PASS mutant_4.2_artifact_heading_verdict_unread_killed
+PASS mutant_4.2_artifact_verdict_scope_ignored_killed
+PASS mutant_4.2_artifact_verdict_scope_without_item_killed
+PASS mutant_4.2_artifact_table_verdicts_unread_killed
+PASS mutant_4.2_decision_status_ignored_killed
+PASS mutant_4.2_decisions_read_from_new_tree_killed
+PASS mutant_4.2_closer_may_be_fixer_killed
+PASS mutant_4.2_fixer_may_commit_closure_killed
+PASS mutant_4.2_unknown_committer_allowed_killed
+PASS mutant_4.2_status_prose_not_scanned_killed
+PASS mutant_status_allowlist_replaced_by_denylist_killed
+PASS mutant_status_closing_words_ignored_killed
+PASS mutant_status_arrow_targets_unchecked_killed
+PASS mutant_status_negation_ignored_killed
+PASS mutant_status_prose_compounds_claimed_killed
+PASS mutant_status_determiners_ignored_killed
+PASS mutant_status_unicode_arrows_ignored_killed
+PASS mutant_status_ascii_arrows_ignored_killed
+PASS mutant_status_label_not_stripped_killed
+PASS mutant_status_emphasis_not_stripped_killed
+PASS mutant_status_invisible_chars_kept_killed
+PASS mutant_status_no_nfkc_killed
+PASS mutant_status_entities_not_decoded_killed
+PASS mutant_status_strikethrough_kept_killed
+PASS mutant_status_check_marks_ignored_killed
+PASS mutant_leaf_ids_exact_only_killed
+PASS mutant_leaf_sub_ids_read_as_parent_killed
+PASS mutant_defect_sub_ids_read_as_parent_killed
+PASS mutant_pair_columns_read_as_owner_and_reviewer_killed
+PASS mutant_pair_writer_not_an_owner_killed
+PASS mutant_defect_ids_exact_only_killed
+PASS mutant_tables_in_blockquotes_skipped_killed
+PASS mutant_html_tables_allowed_killed
+PASS mutant_status_leaf_tables_need_wbs_header_killed
+PASS mutant_identity_env_overrides_audited_commit_killed
+PASS mutant_identity_shared_lane_agent_dropped_killed
+PASS mutant_bom_not_stripped_killed
+PASS mutant_4.3_rev_increase_not_required_killed
+PASS mutant_4.3_deleted_leaves_allowed_killed
+PASS mutant_4.3_range_expansion_counts_as_deletion_killed
+PASS mutant_4.3_range_overlap_ignored_killed
+PASS mutant_4.3_rev_header_optional_killed
+PASS mutant_4.3_status_column_optional_killed
+PASS mutant_4.3_revlog_contiguity_unchecked_killed
+PASS mutant_4.3_revlog_row_deletion_allowed_killed
+PASS mutant_4.3_revlog_row_rewrite_allowed_killed
+PASS mutant_4.3_revlog_header_synonyms_dropped_killed
+PASS mutant_4.3_revlog_section_detection_off_killed
+PASS mutant_4.3_revlog_table_optional_killed
+PASS mutant_4.3_ledger_append_only_off_killed
+PASS mutant_ledger_keys_case_sensitive_killed
+PASS mutant_ledger_path_case_sensitive_killed
+PASS mutant_ledger_duplicate_keys_allowed_killed
+PASS mutant_ledger_denylist_instead_of_allowlist_killed
+PASS mutant_4.4_whitelist_off_killed
+PASS mutant_4.4_whitelist_read_from_staged_status_killed
+PASS mutant_4.4_frozen_row_ignored_killed
+PASS mutant_4.4_merge_counts_every_merged_path_killed
+PASS mutant_4.4_empty_merge_needs_identity_killed
+PASS mutant_4.4_subtree_glob_off_killed
+PASS mutant_grandfather_every_audited_commit_killed
+PASS mutant_grandfather_nothing_killed
+PASS mutant_grandfather_covers_all_rules_killed
+PASS mutant_epoch_override_may_widen_killed
+PASS mutant_range_base_ancestry_unchecked_killed
+PASS mutant_range_merge_lane_hints_off_killed
+PASS mutant_range_head_ref_hint_off_killed
+PASS mutant_range_symmetric_allowed_killed
+PASS mutant_pm_builtin_whitelist_off_killed
+PASS mutant_pm_whitelist_any_path_killed
+PASS mutant_pm_whitelist_whole_lane_folder_killed
+PASS mutant_pm_alias_of_grok_killed
+PASS mutant_pm_matched_in_free_text_killed
+PASS mutant_pm_lane_hint_honoured_killed
+PASS mutant_pm_explicit_lane_overridden_killed
+PASS mutant_pm_may_close_killed
+PASS mutant_pm_status_closer_rule_off_killed
+PASS mutant_pm_ledger_closer_rule_off_killed
+PASS mutant_backfill_B1_window_zero_killed
+PASS mutant_backfill_B2_off_killed
+PASS mutant_backfill_window_inclusive_killed
+PASS mutant_hook_fails_open_without_checker_killed
+PASS mutant_hook_runs_working_tree_checker_killed
+RESULT: 279 passed, 0 failed
+[exit 0]
+
+$ (cd tip) node tools/art/build_catalogue.js --check
+WARN UNVERIFIED_ABSENT reference/u7_shapes_0_31.png (untracked third-party reference not present in this checkout)
+CHECK: OK (12 generated files match)
+[exit 0]
+
+$ (cd tip) node tools/art/test_catalogue.js
+PASS catalogue.schema: $id deus-art-catalogue/1.4.0; unsupported keywords 0; 10194 entries, 199 sheets: 0 schema errors; broken copy rejected with 2 errors
+PASS catalogue.entry_fields: 10194 entries checked; 0 bad
+PASS catalogue.rebuild_identical: 12 outputs; run1 vs run2 differ: none; fresh build vs committed differ: none; catalogue.json sha256 35a3b9338246acd9...
+PASS catalogue.rule_derived_derived_base: a derivedFrom pointing at a derived base: baseline fixture 0 errors; patched fixture -> 1 DERIVED_BAD_BASE (SURFACE_SHARED_RAMP_MEADOW_N-C3_DEFAULT: derivedFrom LOWER1_SHARED_EDGE_MEADOW_S-H2_DEFAULT is itself derived)
+PASS catalogue.rule_derived_missing_base: a derivedFrom pointing at a missing base: baseline fixture 0 errors; patched fixture -> 1 DERIVED_BAD_BASE (LOWER1_SHARED_EDGE_MEADOW_S-H2_DEFAULT: derivedFrom SURFACE_SHARED_EDGE_NOSUCH_S-H2_DEFAULT is missing)
+PASS catalogue.rule_dup_id: a duplicate id: baseline fixture 0 errors; patched fixture -> 1 DUP_ID (ALL_SHARED_ITEM_LOG_V1_DEFAULT: duplicate entry id)
+PASS catalogue.rule_dup_slot: a duplicate slotId: baseline fixture 0 errors; patched fixture -> 1 DUP_SLOT (ALL_SHARED_ITEM_LOG_V1_DEFAULT: duplicate slotId ATLAS_SURFACE_SHARED_PROP_01:0036)
+PASS catalogue.rule_geom_height: a geometry-derived slot height that is not computed from stratumPx/layerPx: baseline fixture 0 errors; patched fixture -> 1 GEOM_HEIGHT (SURFACE_SHARED_EDGE_MEADOW_S-H2_DEFAULT: height 38/48/48 is not 38/38/39 from stratumPx/layerPx)
+PASS catalogue.rule_missing_anchor: a missing anchor: baseline fixture 0 errors; patched fixture -> 1 MISSING_FIELD (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: missing anchor)
+PASS catalogue.rule_missing_envelope: a missing envelope: baseline fixture 0 errors; patched fixture -> 1 MISSING_FIELD (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: missing envelope)
+PASS catalogue.rule_missing_footprint: a missing footprint: baseline fixture 0 errors; patched fixture -> 1 MISSING_FIELD (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: missing footprint)
+PASS catalogue.rule_missing_ramp: a missing palette ramp: baseline fixture 0 errors; patched fixture -> 1 MISSING_FIELD (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: missing palette ramp)
+PASS catalogue.rule_missing_size: a missing size (frames): baseline fixture 0 errors; patched fixture -> 1 MISSING_FIELD (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: missing size (frames))
+PASS catalogue.rule_no_source: an entry that traces to no source: baseline fixture 0 errors; patched fixture -> 1 NO_SOURCE (ALL_SHARED_ITEM_LOG_V1_DEFAULT: entry traces to no source)
+PASS catalogue.rule_oos_no_reason: an outOfScope row without a reason: baseline fixture 0 errors; patched fixture -> 1 OOS_NO_REASON (skins:human: outOfScope row without a reason)
+PASS catalogue.rule_paperdoll_anchor: a paper-doll part whose anchor differs from its bodyType base: baseline fixture 0 errors; patched fixture -> 1 PAPERDOLL_MISMATCH (ALL_SHARED_EQUIPMENT_STONE-AXE_LAYER_DEFAULT: anchor differs from ALL_SHARED_CHARACTER_HUMAN_MALE-T0_DEFAULT)
+PASS catalogue.rule_paperdoll_frames: a paper-doll part whose frame layout differs from its bodyType base: baseline fixture 0 errors; patched fixture -> 1 PAPERDOLL_MISMATCH (ALL_SHARED_EQUIPMENT_STONE-AXE_LAYER_DEFAULT: frame layout [16,4,["S","W","E","N"]] differs from ALL_SHARED_CHARACTER_HUMAN_MALE-T0_DEFAULT [3,4,["S","W","E","N"]])
+PASS catalogue.rule_ramp_unknown: a ramp id not in the palette registry: baseline fixture 0 errors; patched fixture -> 1 RAMP_UNKNOWN (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: ramp NOT_A_REGISTRY_RAMP is not in the palette registry)
+PASS catalogue.rule_rmmz_form: an RMMZ form whose paint slot is not the RMMZ target (a 96x96 slot on a one-cell B tile): baseline fixture 0 errors; patched fixture -> 1 RMMZ_FORM (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: slot 96x96 is not the RMMZ target 48x48 (1x1 cells of 48 px))
+PASS catalogue.rule_rmmz_size_override: an envelope that does not equal its per-row size override (WG.20.03 D4; the oak override 56-89x72-96 on an envelope left at the chart row 56-80x72-96): baseline fixture 0 errors; patched fixture -> 1 SIZE_OUTSIDE_ROW (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: envelope min/max 56-80x72-96 differ from its envelopeOverride 56-89x72-96)
+PASS catalogue.rule_rmmz_tile_dup: two RMMZ forms claim the same cell (a 2x2 grid and a single tile both cover B tile 185): baseline fixture 0 errors; patched fixture -> 1 RMMZ_TILE_DUP (ALL_SHARED_ITEM_LOG_V1_DEFAULT: img/tilesets/DEUS_Outside_B.png cell 185 is also claimed by SURFACE_SHARED_TREE_OAK_V1_DEFAULT)
+PASS catalogue.rule_scalerow_unknown: a scaleRow not in scale_chart.json: baseline fixture 0 errors; patched fixture -> 1 SCALEROW_UNKNOWN (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: scaleRow TREE_NOT_IN_THE_CHART is not in scale_chart.json or size_classes.json)
+PASS catalogue.rule_sheet_not_grid: a sheet side not a multiple of 48: baseline fixture 0 errors; patched fixture -> 1 SHEET_NOT_GRID (ATLAS_SURFACE_SHARED_PROP_01: atlas 2880x150 is not a multiple of 48)
+PASS catalogue.rule_sheet_too_large: an atlas side over 4096: baseline fixture 0 errors; patched fixture -> 1 SHEET_TOO_LARGE (ATLAS_SURFACE_SHARED_PROP_01: atlas 4128x144 is over 4096)
+PASS catalogue.rule_size_outside_row: a size outside its chart row min/max: baseline fixture 0 errors; patched fixture -> 1 SIZE_OUTSIDE_ROW (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: envelope outside TREE_COMMON_OAK min/max)
+PASS catalogue.rule_slot_off_grid: a slot off the 48 grid: baseline fixture 0 errors; patched fixture -> 1 SLOT_OFF_GRID (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: slot 2071,0 96x96 is off the 48 grid)
+PASS catalogue.rule_slot_outside_sheet: a slot outside its sheet: baseline fixture 0 errors; patched fixture -> 1 SLOT_OUTSIDE_SHEET (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: slot leaves ATLAS_SURFACE_SHARED_PROP_01 (2880x144))
+PASS catalogue.rule_slot_overlap: overlapping slot rects in a sheet: baseline fixture 0 errors; patched fixture -> 1 SLOT_OVERLAP (SURFACE_SHARED_EDGE_MEADOW_S-H2_DEFAULT: overlaps SURFACE_SHARED_RAMP_MEADOW_N-C3_DEFAULT in ATLAS_SURFACE_SHARED_TILE_01)
+PASS catalogue.rule_slot_too_small: a slot smaller than the chart envelope: baseline fixture 0 errors; patched fixture -> 1 SLOT_TOO_SMALL (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: slot cell 96x48 is smaller than the envelope 80x96)
+PASS catalogue.rule_source_dropped: a source id dropped without an outOfScope reason: baseline fixture 0 errors; patched fixture -> 1 SOURCE_DROPPED (objects:fixture_only_id: catalog source id "objects:fixture_only_id" maps to no entry and has no outOfScope reason)
+PASS catalogue.rule_variant_has_slot: a variant (derivedFrom set) with a paint slot: baseline fixture 0 errors; patched fixture -> 1 VARIANT_HAS_SLOT (LOWER1_SHARED_EDGE_MEADOW_S-H2_DEFAULT: a variant row owns a paint slot)
+PASS catalogue.rule_z_out_of_range: a zMin/zMax outside the geometry range: baseline fixture 0 errors; patched fixture -> 1 Z_OUT_OF_RANGE (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: z 0..40 outside -16..15)
+PASS catalogue.rule_coverage: 21 FAIL rules, 29 fixture cases; rules without a case: none
+PASS catalogue.live_catalogue_valid: real build: 10194 entries, 0 rule errors
+PASS catalogue.scale_chart_vs_registry: 39 registry rows for 39 registry classes; 17 STRIP rows (+ 1 tile label); 0 problems
+PASS catalogue.geometry_stratum_sum: stratumPx [19,19,19,19,20] sums to 96 (layerPx 96); geometry errors 0; stratum_invalid_zero rejected, stratum_invalid_sum rejected
+PASS catalogue.geometry_stratum_changes_slots: [40,14,14,14,14]: 4/4 slot heights changed (EDGE_MEADOW_S-H2 48->96, WALLFACE_OPENING_H2 48->96, RAMP_MEADOW_N-C2 96->144, RAMPSIDE_MEADOW_E-H2 48->96); [20,19,19,19,19]: 3/3 target heights changed (19->20, 57->58, 124->125); skewed with the re-forms: RMMZ_FORM SURFACE_SHARED_WALLFACE_OPENING_H2_DEFAULT
+PASS catalogue.geometry_no_literal_layer_count: 0 lines with a literal 9 or 32 in build_catalogue.js
+PASS catalogue.geometry_nine_layers: 9-layer fixture (z -4..4): build OK, 10194 entries, 0 outside z range, 5 bands
+PASS catalogue.size_srd: 9 race rows checked against SRD Size traits and 7 px/ft; 6 ft human = 42 px (humanPx 42); 7 frame-class rows; 0 problems
+PASS catalogue.size_footprint_frame_separate: 129 creature/character/equipment entries carry footprint (squares) and frameClass (px frame) separately; e.g. ALL_SHARED_CREATURE_GIANT-SPIDER_V1_DEFAULT footprint 2x2 squares, frame 96x48 px; 0 problems
+PASS catalogue.size_frame_classes: TINY 8 / LARGE_TALL 6 / LARGE_LONG 6 entries with the right cells; 96x96 Large frames: 0; HUGE/GARGANTUAN null frames without slots; TINY footprint 24x24 in a 48x48 frame: true; 0 problems
+PASS catalogue.size_optional_params: defaults OFF: true; TALL_MEDIUM entries default 0, enabled 5 (slots 144x384); readability floor on: GNOME 21/25/28 -> 26/27/28, HALFLING 21/21/21 -> 26/27/28
+PASS catalogue.size_character_blocks: 129 character/creature/equipment slots in 3x4-frame blocks (144x192, 144x384, 288x192); RMMZ character sheets not 3x4: 0; 0 problems
+PASS catalogue.coverage: WorldCatalog ids 246/246; brief anchor/ui/eq/face ids 36/36; manifest rows 18/18; open AR rows 55/55; addendum family x band cells: 65/65
+PASS catalogue.references_hash: 27 references, 26 tracked re-hashed and matching; 1 untracked (UNVERIFIED_ABSENT); entries with unknown references: 0; 0 problems
+PASS catalogue.depth_no_colours: 7595 DEPTH_<band> rows: 0 colour values, 0 colour keys; 5 depth palette placeholders, 0 with colours; variant rows with a paint slot: 0
+PASS catalogue.no_image_data: image files under art/catalogue, docs/art/catalogue, tools/art/fixtures/catalogue: 0; outputs with embedded image data: 0
+PASS catalogue.schema_doc_terrains: 29 terrains used; SCHEMA.md lists 30; missing none; extra none
+PASS catalogue.conflicts_required: 19/19 required topics present; conflicts.md 147 lines
+
+50/50 checks passed
+[exit 0]
+
+$ (cd tip) node tools/art/test_rmmz_rows.js
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-GRANITE_TOP_DEFAULT: all fields match (A4 slot 0: top kind 0 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0008)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-GRANITE_SIDE_DEFAULT: all fields match (A4 slot 0: side kind 8 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0007)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-SOIL_TOP_DEFAULT: all fields match (A4 slot 1: top kind 1 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0028)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-SOIL_SIDE_DEFAULT: all fields match (A4 slot 1: side kind 9 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0027)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-SAND_TOP_DEFAULT: all fields match (A4 slot 2: top kind 2 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0026)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-SAND_SIDE_DEFAULT: all fields match (A4 slot 2: side kind 10 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0025)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-MUD_TOP_DEFAULT: all fields match (A4 slot 3: top kind 3 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0018)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-MUD_SIDE_DEFAULT: all fields match (A4 slot 3: side kind 11 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0017)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-LIMESTONE_TOP_DEFAULT: all fields match (A4 slot 4: top kind 4 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0014)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-LIMESTONE_SIDE_DEFAULT: all fields match (A4 slot 4: side kind 12 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0013)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-LICHEN-ROCK_TOP_DEFAULT: all fields match (A4 slot 5: top kind 5 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0012)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-LICHEN-ROCK_SIDE_DEFAULT: all fields match (A4 slot 5: side kind 13 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0011)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-ROOTED-SOIL_TOP_DEFAULT: all fields match (A4 slot 6: top kind 6 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0024)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-ROOTED-SOIL_SIDE_DEFAULT: all fields match (A4 slot 6: side kind 14 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0023)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-BANDED-SANDSTONE_TOP_DEFAULT: all fields match (A4 slot 7: top kind 7 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0002)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-BANDED-SANDSTONE_SIDE_DEFAULT: all fields match (A4 slot 7: side kind 15 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0001)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-RED-CLAY_TOP_DEFAULT: all fields match (A4 slot 8: top kind 16 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0022)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-RED-CLAY_SIDE_DEFAULT: all fields match (A4 slot 8: side kind 24 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0021)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-LAYERED-STRATA_TOP_DEFAULT: all fields match (A4 slot 9: top kind 17 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0010)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-LAYERED-STRATA_SIDE_DEFAULT: all fields match (A4 slot 9: side kind 25 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0009)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-MEADOW_TOP_DEFAULT: all fields match (A4 slot 10: top kind 18 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0016)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-MEADOW_SIDE_DEFAULT: all fields match (A4 slot 10: side kind 26 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0015)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-FOREST-FLOOR_TOP_DEFAULT: all fields match (A4 slot 11: top kind 19 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0006)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-FOREST-FLOOR_SIDE_DEFAULT: all fields match (A4 slot 11: side kind 27 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0005)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-DRY-GRASS_TOP_DEFAULT: all fields match (A4 slot 12: top kind 20 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0004)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-DRY-GRASS_SIDE_DEFAULT: all fields match (A4 slot 12: side kind 28 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0003)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-NEEDLE-FLOOR_TOP_DEFAULT: all fields match (A4 slot 13: top kind 21 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0020)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-NEEDLE-FLOOR_SIDE_DEFAULT: all fields match (A4 slot 13: side kind 29 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0019)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-STONY_TOP_DEFAULT: all fields match (A4 slot 14: top kind 22 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0030)
+PASS rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-STONY_SIDE_DEFAULT: all fields match (A4 slot 14: side kind 30 on DEUS_Cliffs_Temperate_A4.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0029)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT: all fields match (tiles 176, 177, 184, 185 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0025)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_SAPLING_B-V1_DEFAULT: all fields match (tiles 157, 165 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0029)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_CANOPY-BROADLEAF-2X2_B-V1_DEFAULT: all fields match (tiles 178, 179, 186, 187 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0018)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_CANOPY-BROADLEAF-1X1_B-V1_DEFAULT: all fields match (tile 158 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0017)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEFAULT: all fields match (tiles 808, 809, 816, 817 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0023)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_FRUIT-TREE-BARE_B-V1_DEFAULT: all fields match (tiles 810, 811, 818, 819 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0022)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_SWAMP_B-V1_DEFAULT: all fields match (tiles 812, 813, 820, 821 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0030)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEFAULT: all fields match (tiles 814, 815, 822, 823 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0019)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_BIRCH_B-V1_DEFAULT: all fields match (tiles 824, 825, 832, 833, 840, 841 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0015)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_PINE_B-V1_DEFAULT: all fields match (tiles 826, 827, 834, 835, 842, 843 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0027)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_OAK_B-V1_DEPLETED: all fields match (tile 156 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0026)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_SWAMP_B-V1_DEPLETED: all fields match (tile 243 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0031)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_BIRCH_B-V1_DEPLETED: all fields match (tile 780 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0016)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_PINE_B-V1_DEPLETED: all fields match (tile 781 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0028)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEPLETED: all fields match (tile 782 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0024)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEPLETED: all fields match (tile 783 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0020)
+PASS rmmz_rows.row_SURFACE_SHARED_FLORA_GRASS-TUFT_B-V1_DEFAULT: all fields match (tile 152 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0006)
+PASS rmmz_rows.row_SURFACE_SHARED_FLORA_GRASS-TUFT_B-V2_DEFAULT: all fields match (tile 153 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0007)
+PASS rmmz_rows.row_SURFACE_SHARED_FLORA_GRASS-TUFT_B-V3_DEFAULT: all fields match (tile 154 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0008)
+PASS rmmz_rows.row_SURFACE_SHARED_FLORA_GRASS-TUFT_B-V4_DEFAULT: all fields match (tile 155 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0009)
+PASS rmmz_rows.row_SURFACE_SHARED_FLORA_FLOWERS_B-V1_DEFAULT: all fields match (tile 160 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0005)
+PASS rmmz_rows.row_SURFACE_SHARED_FLORA_FLOWERS-BLUE_B-V1_DEFAULT: all fields match (tile 161 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0002)
+PASS rmmz_rows.row_SURFACE_SHARED_FLORA_FLOWERS-PURPLE_B-V1_DEFAULT: all fields match (tile 162 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0003)
+PASS rmmz_rows.row_SURFACE_SHARED_FLORA_FLOWERS-WHITE_B-V1_DEFAULT: all fields match (tile 163 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0004)
+PASS rmmz_rows.row_SURFACE_SHARED_STONE_GRANITE-BOULDER_B-V1_DEFAULT: all fields match (tile 159 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0012)
+PASS rmmz_rows.row_SURFACE_SHARED_STONE_GRANITE-BOULDER_B-V2_DEFAULT: all fields match (tile 167 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0013)
+PASS rmmz_rows.row_SURFACE_SHARED_FLORA_BUSH_B-V1_DEFAULT: all fields match (tile 166 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0001)
+PASS rmmz_rows.row_SURFACE_SHARED_STONE_ROCKS-SMALL_B-V1_DEFAULT: all fields match (tile 171 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0014)
+PASS rmmz_rows.row_SURFACE_SHARED_FLORA_MUSHROOMS_B-V1_DEFAULT: all fields match (tile 234 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0010)
+PASS rmmz_rows.row_SURFACE_SHARED_FLORA_MUSHROOMS_B-V2_DEFAULT: all fields match (tile 235 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0011)
+PASS rmmz_rows.row_SURFACE_SHARED_TREE_FALLEN-LOG_B-V1_DEFAULT: all fields match (tiles 800, 801 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_PROP_RMMZ01:0021)
+PASS rmmz_rows.row_SURFACE_SHARED_WATER_WATERFALL_A1_DEFAULT: all fields match (A1 kind 5 (waterfall) on DEUS_Outside_A1.png, slot ATLAS_SURFACE_SHARED_TILE_RMMZ01:0031)
+PASS rmmz_rows.row_ALL_SHARED_WATER_LAVA_A1_DEFAULT: all fields match (A1 kind 4 on DEUS_Dungeon_A1.png, slot ATLAS_ALL_SHARED_TILE_RMMZ01:0002)
+PASS rmmz_rows.row_ALL_SHARED_TERRAIN_OBSIDIAN_A2_DEFAULT: all fields match (A2 kind 16 on DEUS_Dungeon_A2.png, slot ATLAS_ALL_SHARED_TILE_RMMZ01:0001)
+PASS rmmz_rows.row_ALL_SHARED_EFFECT_STEAM_B-V1_DEFAULT: all fields match (tiles 769, 770, 777, 778 on DEUS_Dungeon_E.png, slot ATLAS_ALL_SHARED_EFFECT_RMMZ01:0001)
+PASS rmmz_rows.row_SURFACE_SHARED_MARK_ROCK-STRAINED_B-V1_DEFAULT: all fields match (tile 52 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0004)
+PASS rmmz_rows.row_SURFACE_SHARED_MARK_ROCK-FAILING_B-V1_DEFAULT: all fields match (tile 53 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0003)
+PASS rmmz_rows.row_SURFACE_SHARED_MARK_SOIL-STRAINED_B-V1_DEFAULT: all fields match (tile 54 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0007)
+PASS rmmz_rows.row_SURFACE_SHARED_MARK_SOIL-FAILING_B-V1_DEFAULT: all fields match (tile 55 on DEUS_Outside_B.png, slot ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0006)
+PASS rmmz_rows.row_SURFACE_SHARED_MARK_GROUND-SCAR_B-V1_DEFAULT: all fields match (tile 802 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0002)
+PASS rmmz_rows.row_SURFACE_SHARED_MARK_ASH-PATCH_B-V1_DEFAULT: all fields match (tile 803 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0001)
+PASS rmmz_rows.row_SURFACE_SHARED_MARK_SEDIMENT_B-V1_DEFAULT: all fields match (tile 804 on DEUS_Outside_E.png, slot ATLAS_SURFACE_SHARED_OVERLAY_RMMZ01:0005)
+PASS rmmz_rows.reform_SURFACE_SHARED_SHADE_HEIGHT_H1_DEFAULT: runtime tile 769 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_OVERLAY_01:0025 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_SHADE_HEIGHT_H2_DEFAULT: runtime tile 770 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_OVERLAY_01:0026 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_SHADE_HEIGHT_H3_DEFAULT: runtime tile 771 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_OVERLAY_01:0027 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_SHADE_HEIGHT_H4_DEFAULT: runtime tile 772 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_OVERLAY_01:0028 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_SHADE_HEIGHT_H5_DEFAULT: runtime tile 773 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_OVERLAY_01:0029 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_RIMSHADOW_RIM_E_DEFAULT: runtime tile 774 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_OVERLAY_01:0021 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_RIMSHADOW_RIM_N_DEFAULT: runtime tile 775 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_OVERLAY_01:0022 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_RIMSHADOW_RIM_S_DEFAULT: runtime tile 776 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_OVERLAY_01:0023 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_RIMSHADOW_RIM_W_DEFAULT: runtime tile 777 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_OVERLAY_01:0024 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_WALLFACE_OPENING_H1_DEFAULT: runtime tile 778 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_TILE_01:1718 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_WALLFACE_OPENING_H2_DEFAULT: runtime tile 779 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_TILE_01:1719 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_WALLFACE_OPENING_FULL_DEFAULT: runtime tiles 784, 792 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_TILE_01:1717 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_WALLFACE_OPENING_H3_DEFAULT: runtime tiles 785, 793 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_TILE_01:1720 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_WALLFACE_OPENING_H4_DEFAULT: runtime tiles 786, 794 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_TILE_01:1721 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_WALLFACE_OPENING_H5_DEFAULT: runtime tiles 787, 795 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_TILE_01:1722 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_HANGING_VINES_V1_DEFAULT: runtime tiles 20, 28 on DEUS_Outside_B.png; base slot ATLAS_SURFACE_SHARED_PROP_01:0023 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_HANGING_ROOTS_V1_DEFAULT: runtime tiles 788, 796 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_PROP_01:0021 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_HANGING_DUST_V1_DEFAULT: runtime tiles 789, 797 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_PROP_01:0019 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_SURFACE_SHARED_HANGING_LIGHT-SHAFT_V1_DEFAULT: runtime tiles 790, 798 on DEUS_Outside_E.png; base slot ATLAS_SURFACE_SHARED_PROP_01:0020 kept; every other field equals the comparison build
+PASS rmmz_rows.reform_LOWER1_SHARED_HANGING_STALACTITES_V1_DEFAULT: runtime tiles 771, 779 on DEUS_Dungeon_E.png; base slot ATLAS_LOWER1_SHARED_PROP_01:0008 kept; every other field equals the comparison build
+PASS rmmz_rows.counts: 72 new rows (want 72) by group {"E":3,"C":15,"F":7,"A":30,"B":16,"D":1} (want {"A":30,"B":16,"C":15,"D":1,"E":3,"F":7}); 20 re-forms (want 20)
+PASS rmmz_rows.ar_rows: 6/6 AR rows in docs/ASSET_REQUESTS.md; all open 5-column rows, each naming its runtime files, none out of scope
+PASS rmmz_rows.size_rows: 3/3 derived RMMZ_SPEC rows; RMMZ_AUTOTILE_A4_TOP 96x144 (docs/RMMZ_ASSET_SPEC.md:69 (derived: the A2 block; A4 even block rows use the floor table, game/js/rmmz_core.js:2547-2552)); RMMZ_AUTOTILE_A4_SIDE 96x96 (docs/RMMZ_ASSET_SPEC.md:70 (derived: the A3 block; A4 odd block rows use the wall table, game/js/rmmz_core.js:2547-2552)); RMMZ_TILE_48_2X2 96x96 (docs/RMMZ_ASSET_SPEC.md:11 (derived: 2 x RMMZ_TILE_48, a whole-cell 2x2 stack of B-E cells, game/js/rmmz_core.js:2483-2498))
+PASS rmmz_rows.rulings_cited: quotes at docs/OWNER_DECISIONS.md:1068, :924; 92/92 rows and re-forms present; every reason cites both lines; art/catalogue/rmmz_rows.json pinned (RMMZ_ROWS)
+PASS rmmz_rows.schema_contract: 92 rmmzForm entries (want 92) validate; envelopeOverride + wTarget -> ["$.entries[0].envelopeOverride: unexpected property wTarget"]; footprintOverride + d -> ["$.entries[0].footprintOverride: unexpected property d"]; MARK, the three properties and deus-art-catalogue/1.4.0 in place
+PASS rmmz_rows.envelope_admits_art: 12/12 recorded specimen boxes admitted (recorded dimensions only; no image is read)
+PASS rmmz_rows.size_overrides: 9 entries carry envelopeOverride (want 9); footprintOverride on 0; conflicts.md section present
+PASS rmmz_rows.rmmz_form: 92 rmmzForm entries (want 92); every slot is its RMMZ target
+PASS rmmz_rows.pa_agrees: 72 rows without a grid (want 72) and 20 grid rows (want 20) against tools/art/place_art.js tilesetTarget; all agree, pixel positions as in ROWS.md
+PASS rmmz_rows.tile_unique: 134 claimed cells (want 134); duplicates 0
+PASS rmmz_rows.stock_positions: 28 stock positions (want 28), 30 A4 format examples (want 30); every label is the frozen MZ label; positions and parities hold
+PASS rmmz_rows.append_only: comparison build OK with 10122 entries; 10122 common entries, 0 slots moved; 72 new rows (want 72), all on _RMMZnn sheets
+
+104/104 checks passed
+[exit 0]
+
+$ (cd tip) node tools/art/test_rmmz_rows.js --mutants
+KILLED mutant.drop_one_row: row_SURFACE_SHARED_TREE_OAK_B-V1_DEPLETED FAIL: absent from the catalogue || fresh catalogue.json differs from the committed one (--check would fail)
+KILLED mutant.dup_tile: build errors: RMMZ_TILE_DUP (SURFACE_SHARED_TREE_SAPLING_B-V1_DEFAULT: img/tilesets/DEUS_Outside_B.png cell 156 is also claimed by SURFACE_SHARED_TREE_OAK_B-V1_DEPLETED) || stock_positions FAIL: 28 stock positions (want 28), 30 A4 format examples (want 30); SURFACE_SHARED_TREE_SAPLING_B-V1_DEFAULT: claims 156/164 but names stock Outside_B 157/165
+KILLED mutant.wrong_grid: build errors: RMMZ_FORM (SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT: slot 96x96 is not the RMMZ target 48x48 (1x1 cells of 48 px))
+KILLED mutant.side_on_top_kind: build errors: RMMZ_FORM, RMMZ_TILE_DUP (SURFACE_SHARED_TERRAIN_CLIFF-GRANITE_SIDE_DEFAULT: slot 96x96 is not the RMMZ target 96x144 (A4 kind 16 (RMMZ_AUTOTILE_A4_TOP)))
+KILLED mutant.local_zero: build errors: RMMZ_FORM (ALL_SHARED_EFFECT_STEAM_B-V1_DEFAULT: local tile 0 of sheet E is refused (a DEUS convention, not an RMMZ rule: RMMZ leaves only tileId 0 undrawn, and stock C sheets use their local tile 0))
+KILLED mutant.half_overflow: build errors: RMMZ_FORM, RMMZ_TILE_DUP (SURFACE_SHARED_TREE_CANOPY-BROADLEAF-2X2_B-V1_DEFAULT: grid 2x2 at local tile 183 (column 7, row 6) leaves its 8-column half of 16 rows)
+KILLED mutant.ar_text: build errors: RMMZ_AR_TEXT, COVERAGE, SOURCE_DROPPED (AR-2205: AR-2205 (docs/ASSET_REQUESTS.md:338) does not name DEUS_Outside_E.png)
+KILLED mutant.ruling_missing: build errors: RULING_MISSING, COVERAGE, SOURCE_DROPPED (STANDING_ROWS: quote "You can always open more rows for assets we need" is not in docs/OWNER_DECISIONS.md)
+KILLED mutant.reform_has_runtime: build errors: REFORM_TARGET (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: the target already has runtime kind RMMZ_CHARACTER)
+KILLED mutant.reform_ramp_drift: SURFACE_SHARED_SHADE_HEIGHT_H1_DEFAULT paletteRampIds NEUT_VOID_BLACK -> NEUT_COOL_GRAY; validateCatalogue 0 errors; reform_SURFACE_SHARED_SHADE_HEIGHT_H1_DEFAULT FAIL: paletteRampIds changed (["NEUT_VOID_BLACK"] -> ["NEUT_COOL_GRAY"])
+KILLED mutant.bad_input: build errors: RMMZ_ROWS_INVALID, COVERAGE, SOURCE_DROPPED (rows[5].state: missing key state)
+KILLED mutant.ar_closed: build errors: AR_MISSING, COVERAGE, SOURCE_DROPPED (AR-2204: AR-2204 is closed: CHECKED (docs/ASSET_REQUESTS.md:337))
+KILLED mutant.a4_spec_height: build errors: RMMZ_SPEC (RMMZ_AUTOTILE_A4_SIDE: A4 sheet height 700 (docs/RMMZ_ASSET_SPEC.md:71) is not a whole number of top + side pairs (144 + 96))
+KILLED mutant.drop_override: envelope_admits_art FAIL: 11/12 recorded specimen boxes admitted (recorded dimensions only; no image is read); not admitted: PINE_B-V1_DEFAULT 96x132 (pine_c2d.png) vs envelope 42-64x80-104 || size_overrides FAIL: 8 entries carry envelopeOverride (want 9); footprintOverride on 0; conflicts.md section present; SURFACE_SHARED_TREE_PINE_B-V1_DEFAULT has no envelopeOverride
+KILLED mutant.strip_overrides: envelope_admits_art FAIL: 3/12 recorded specimen boxes admitted (recorded dimensions only; no image is read); not admitted: OAK_B-V1_DEFAULT 89x84 (oak_v7k.png) vs envelope 56-80x72-96; DEAD-TREE_B-V1_DEFAULT 84x89 (dead_v4.png) vs envelope 56-80x72-96; BIRCH_B-V1_DEFAULT 63x118 (birch_v4b.png) vs envelope 44-70x76-100; PINE_B-V1_DEFAULT 96x132 (pine_c2d.png) vs envelope 42-64x80-104; OAK_B-V1_DEPLETED 27x21 (oak_stump10.png) vs envelope 16-28x12-20; SWAMP_B-V1_DEPLETED 40x34 (swamp_stump10.png) vs envelope 16-28x12-20; DEAD-TREE_B-V1_DEPLETED 31x23 (dead_stump10.png) vs envelope 16-28x12-20; PINE_B-V1_DEPLETED 34x18 (pine_stump10.png) vs envelope 16-28x12-20; BIRCH_B-V1_DEPLETED 11x15 (birch_stump10.png) vs envelope 16-28x12-20 || all 9 override rows named: true
+KILLED mutant.bad_override: build errors: RMMZ_ROWS_INVALID, COVERAGE, SOURCE_DROPPED (rows[39].envelopeOverride: min above max (100-96x80-132))
+
+16/16 mutants killed
+[exit 0]
+
+$ (cd tip) node tools/art/test_multi_variant_topology.js
+=== MULTI-VARIANT TOPOLOGY TEST SUITE (TOOL.01.02) ===
+
+PASS schema.exists
+PASS schema.sheet_kind_rmmz_char8
+PASS schema.runtime_kind_rmmz_char8
+PASS schema.topology_variant_8
+PASS schema.topology_oriented_8
+PASS catalogue.granite_exists
+PASS catalogue.granite_topology
+PASS catalogue.granite_variant_count
+PASS catalogue.granite_runtime_kind
+PASS catalogue.granite_source_variants_length
+PASS catalogue.granite_status_approved
+PASS catalogue.fallen_log_exists
+PASS catalogue.fallen_log_topology
+PASS catalogue.fallen_log_semantics
+PASS catalogue.fallen_log_selection
+PASS v8_sheets.found
+PASS v8_sheet.!UF_BerryBushBare_V8.png.sidecar_exists
+PASS v8_sheet.!UF_BerryBushBare_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_BerryBushBare_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_BerryBushBare_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_BerryBushBare_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_BerryBushBare_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_BerryBushBare_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_BerryBush_V8.png.sidecar_exists
+PASS v8_sheet.!UF_BerryBush_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_BerryBush_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_BerryBush_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_BerryBush_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_BerryBush_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_BerryBush_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_BonesPile_V8.png.sidecar_exists
+PASS v8_sheet.!UF_BonesPile_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_BonesPile_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_BonesPile_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_BonesPile_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_BonesPile_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_BonesPile_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_CactusTall_V8.png.sidecar_exists
+PASS v8_sheet.!UF_CactusTall_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_CactusTall_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_CactusTall_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_CactusTall_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_CactusTall_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_CactusTall_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_Cactus_V8.png.sidecar_exists
+PASS v8_sheet.!UF_Cactus_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_Cactus_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_Cactus_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_Cactus_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_Cactus_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_Cactus_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_ClayDeposit_V8.png.sidecar_exists
+PASS v8_sheet.!UF_ClayDeposit_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_ClayDeposit_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_ClayDeposit_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_ClayDeposit_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_ClayDeposit_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_ClayDeposit_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_CoalOutcrop_V8.png.sidecar_exists
+PASS v8_sheet.!UF_CoalOutcrop_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_CoalOutcrop_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_CoalOutcrop_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_CoalOutcrop_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_CoalOutcrop_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_CoalOutcrop_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_CopperOutcrop_V8.png.sidecar_exists
+PASS v8_sheet.!UF_CopperOutcrop_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_CopperOutcrop_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_CopperOutcrop_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_CopperOutcrop_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_CopperOutcrop_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_CopperOutcrop_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_Crystal_V8.png.sidecar_exists
+PASS v8_sheet.!UF_Crystal_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_Crystal_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_Crystal_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_Crystal_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_Crystal_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_Crystal_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_DesertShrub_V8.png.sidecar_exists
+PASS v8_sheet.!UF_DesertShrub_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_DesertShrub_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_DesertShrub_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_DesertShrub_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_DesertShrub_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_DesertShrub_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_FallenLog_V8.png.sidecar_exists
+PASS v8_sheet.!UF_FallenLog_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_FallenLog_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_FallenLog_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_FallenLog_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_FallenLog_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_FallenLog_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_Fern_V8.png.sidecar_exists
+PASS v8_sheet.!UF_Fern_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_Fern_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_Fern_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_Fern_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_Fern_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_Fern_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_FlowersBlue_V8.png.sidecar_exists
+PASS v8_sheet.!UF_FlowersBlue_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_FlowersBlue_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_FlowersBlue_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_FlowersBlue_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_FlowersBlue_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_FlowersBlue_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_FlowersPurple_V8.png.sidecar_exists
+PASS v8_sheet.!UF_FlowersPurple_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_FlowersPurple_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_FlowersPurple_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_FlowersPurple_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_FlowersPurple_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_FlowersPurple_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_FlowersWhite_V8.png.sidecar_exists
+PASS v8_sheet.!UF_FlowersWhite_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_FlowersWhite_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_FlowersWhite_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_FlowersWhite_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_FlowersWhite_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_FlowersWhite_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_ForestMushrooms_V8.png.sidecar_exists
+PASS v8_sheet.!UF_ForestMushrooms_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_ForestMushrooms_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_ForestMushrooms_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_ForestMushrooms_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_ForestMushrooms_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_ForestMushrooms_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_GoldOutcrop_V8.png.sidecar_exists
+PASS v8_sheet.!UF_GoldOutcrop_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_GoldOutcrop_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_GoldOutcrop_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_GoldOutcrop_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_GoldOutcrop_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_GoldOutcrop_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_GraniteBoulder_V8.png.sidecar_exists
+PASS v8_sheet.!UF_GraniteBoulder_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_GraniteBoulder_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_GraniteBoulder_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_GraniteBoulder_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_GraniteBoulder_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_GraniteBoulder_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_Gravel_V8.png.sidecar_exists
+PASS v8_sheet.!UF_Gravel_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_Gravel_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_Gravel_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_Gravel_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_Gravel_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_Gravel_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_Hearth_V8.png.sidecar_exists
+PASS v8_sheet.!UF_Hearth_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_Hearth_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_Hearth_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_Hearth_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_Hearth_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_Hearth_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_IronOutcrop_V8.png.sidecar_exists
+PASS v8_sheet.!UF_IronOutcrop_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_IronOutcrop_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_IronOutcrop_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_IronOutcrop_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_IronOutcrop_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_IronOutcrop_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_LilyPad_V8.png.sidecar_exists
+PASS v8_sheet.!UF_LilyPad_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_LilyPad_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_LilyPad_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_LilyPad_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_LilyPad_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_LilyPad_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_PeatMound_V8.png.sidecar_exists
+PASS v8_sheet.!UF_PeatMound_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_PeatMound_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_PeatMound_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_PeatMound_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_PeatMound_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_PeatMound_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_Reeds_V8.png.sidecar_exists
+PASS v8_sheet.!UF_Reeds_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_Reeds_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_Reeds_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_Reeds_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_Reeds_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_Reeds_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_RocksSmall_V8.png.sidecar_exists
+PASS v8_sheet.!UF_RocksSmall_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_RocksSmall_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_RocksSmall_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_RocksSmall_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_RocksSmall_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_RocksSmall_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_SilverOutcrop_V8.png.sidecar_exists
+PASS v8_sheet.!UF_SilverOutcrop_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_SilverOutcrop_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_SilverOutcrop_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_SilverOutcrop_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_SilverOutcrop_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_SilverOutcrop_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_SulfurCrust_V8.png.sidecar_exists
+PASS v8_sheet.!UF_SulfurCrust_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_SulfurCrust_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_SulfurCrust_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_SulfurCrust_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_SulfurCrust_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_SulfurCrust_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_TinOutcrop_V8.png.sidecar_exists
+PASS v8_sheet.!UF_TinOutcrop_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_TinOutcrop_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_TinOutcrop_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_TinOutcrop_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_TinOutcrop_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_TinOutcrop_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_TreeStump_V8.png.sidecar_exists
+PASS v8_sheet.!UF_TreeStump_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_TreeStump_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_TreeStump_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_TreeStump_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_TreeStump_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_TreeStump_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_WildHemp_V8.png.sidecar_exists
+PASS v8_sheet.!UF_WildHemp_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_WildHemp_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_WildHemp_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_WildHemp_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_WildHemp_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_WildHemp_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_WildHerbs_V8.png.sidecar_exists
+PASS v8_sheet.!UF_WildHerbs_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_WildHerbs_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_WildHerbs_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_WildHerbs_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_WildHerbs_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_WildHerbs_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_WildRoots_V8.png.sidecar_exists
+PASS v8_sheet.!UF_WildRoots_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_WildRoots_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_WildRoots_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_WildRoots_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_WildRoots_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_WildRoots_V8.png.12_cell_uniformity
+PASS v8_sheet.!UF_WildWheat_V8.png.sidecar_exists
+PASS v8_sheet.!UF_WildWheat_V8.png.sidecar_dimensions
+PASS v8_sheet.!UF_WildWheat_V8.png.sidecar_character_count
+PASS v8_sheet.!UF_WildWheat_V8.png.sidecar_cells_per_character
+PASS v8_sheet.!UF_WildWheat_V8.png.sidecar_rmmz_config
+PASS v8_sheet.!UF_WildWheat_V8.png.pixel_dimensions
+PASS v8_sheet.!UF_WildWheat_V8.png.12_cell_uniformity
+PASS frame_for.variant_0.returned
+PASS frame_for.variant_0.sx
+PASS frame_for.variant_0.sy
+PASS frame_for.variant_0.w
+PASS frame_for.variant_0.h
+PASS frame_for.variant_0.variant_field
+PASS frame_for.variant_1.returned
+PASS frame_for.variant_1.sx
+PASS frame_for.variant_1.sy
+PASS frame_for.variant_1.w
+PASS frame_for.variant_1.h
+PASS frame_for.variant_1.variant_field
+PASS frame_for.variant_2.returned
+PASS frame_for.variant_2.sx
+PASS frame_for.variant_2.sy
+PASS frame_for.variant_2.w
+PASS frame_for.variant_2.h
+PASS frame_for.variant_2.variant_field
+PASS frame_for.variant_3.returned
+PASS frame_for.variant_3.sx
+PASS frame_for.variant_3.sy
+PASS frame_for.variant_3.w
+PASS frame_for.variant_3.h
+PASS frame_for.variant_3.variant_field
+PASS frame_for.variant_4.returned
+PASS frame_for.variant_4.sx
+PASS frame_for.variant_4.sy
+PASS frame_for.variant_4.w
+PASS frame_for.variant_4.h
+PASS frame_for.variant_4.variant_field
+PASS frame_for.variant_5.returned
+PASS frame_for.variant_5.sx
+PASS frame_for.variant_5.sy
+PASS frame_for.variant_5.w
+PASS frame_for.variant_5.h
+PASS frame_for.variant_5.variant_field
+PASS frame_for.variant_6.returned
+PASS frame_for.variant_6.sx
+PASS frame_for.variant_6.sy
+PASS frame_for.variant_6.w
+PASS frame_for.variant_6.h
+PASS frame_for.variant_6.variant_field
+PASS frame_for.variant_7.returned
+PASS frame_for.variant_7.sx
+PASS frame_for.variant_7.sy
+PASS frame_for.variant_7.w
+PASS frame_for.variant_7.h
+PASS frame_for.variant_7.variant_field
+PASS frame_for.all_8_variants_distinct
+PASS runtime_lifecycle.setIn_success
+PASS runtime_lifecycle.level_variants_allocated
+PASS runtime_lifecycle.variant_assigned
+PASS runtime_lifecycle.getVariantForCell_matches_state
+PASS runtime_lifecycle.getVariantForCell_idempotent
+PASS runtime_lifecycle.variant_cleared_on_removal
+PASS variant_range.boulder_instance_1000
+PASS variant_range.boulder_instance_1001
+PASS variant_range.boulder_instance_1002
+PASS variant_range.boulder_instance_1003
+PASS variant_range.boulder_instance_1004
+PASS variant_range.boulder_instance_1005
+PASS variant_range.boulder_instance_1006
+PASS variant_range.boulder_instance_1007
+PASS variant_range.boulder_instance_1008
+PASS variant_range.boulder_instance_1009
+PASS variant_range.boulder_instance_1010
+PASS variant_range.boulder_instance_1011
+PASS variant_range.boulder_instance_1012
+PASS variant_range.boulder_instance_1013
+PASS variant_range.boulder_instance_1014
+PASS variant_range.boulder_instance_1015
+PASS variant_range.boulder_instance_1016
+PASS variant_range.boulder_instance_1017
+PASS variant_range.boulder_instance_1018
+PASS variant_range.boulder_instance_1019
+PASS variant_range.boulder_instance_1020
+PASS variant_range.boulder_instance_1021
+PASS variant_range.boulder_instance_1022
+PASS variant_range.boulder_instance_1023
+PASS variant_range.boulder_instance_1024
+PASS variant_range.boulder_instance_1025
+PASS variant_range.boulder_instance_1026
+PASS variant_range.boulder_instance_1027
+PASS variant_range.boulder_instance_1028
+PASS variant_range.boulder_instance_1029
+PASS variant_range.boulder_instance_1030
+PASS variant_range.boulder_instance_1031
+PASS variant_range.boulder_instance_1032
+PASS variant_range.boulder_instance_1033
+PASS variant_range.boulder_instance_1034
+PASS variant_range.boulder_instance_1035
+PASS variant_range.boulder_instance_1036
+PASS variant_range.boulder_instance_1037
+PASS variant_range.boulder_instance_1038
+PASS variant_range.boulder_instance_1039
+PASS variant_range.boulder_instance_1040
+PASS variant_range.boulder_instance_1041
+PASS variant_range.boulder_instance_1042
+PASS variant_range.boulder_instance_1043
+PASS variant_range.boulder_instance_1044
+PASS variant_range.boulder_instance_1045
+PASS variant_range.boulder_instance_1046
+PASS variant_range.boulder_instance_1047
+PASS variant_range.boulder_instance_1048
+PASS variant_range.boulder_instance_1049
+PASS variant_range.boulder_instance_1050
+PASS variant_range.boulder_instance_1051
+PASS variant_range.boulder_instance_1052
+PASS variant_range.boulder_instance_1053
+PASS variant_range.boulder_instance_1054
+PASS variant_range.boulder_instance_1055
+PASS variant_range.boulder_instance_1056
+PASS variant_range.boulder_instance_1057
+PASS variant_range.boulder_instance_1058
+PASS variant_range.boulder_instance_1059
+PASS variant_range.boulder_instance_1060
+PASS variant_range.boulder_instance_1061
+PASS variant_range.boulder_instance_1062
+PASS variant_range.boulder_instance_1063
+PASS variant_range.boulder_instance_1064
+PASS variant_range.boulder_instance_1065
+PASS variant_range.boulder_instance_1066
+PASS variant_range.boulder_instance_1067
+PASS variant_range.boulder_instance_1068
+PASS variant_range.boulder_instance_1069
+PASS variant_range.boulder_instance_1070
+PASS variant_range.boulder_instance_1071
+PASS variant_range.boulder_instance_1072
+PASS variant_range.boulder_instance_1073
+PASS variant_range.boulder_instance_1074
+PASS variant_range.boulder_instance_1075
+PASS variant_range.boulder_instance_1076
+PASS variant_range.boulder_instance_1077
+PASS variant_range.boulder_instance_1078
+PASS variant_range.boulder_instance_1079
+PASS variant_range.boulder_instance_1080
+PASS variant_range.boulder_instance_1081
+PASS variant_range.boulder_instance_1082
+PASS variant_range.boulder_instance_1083
+PASS variant_range.boulder_instance_1084
+PASS variant_range.boulder_instance_1085
+PASS variant_range.boulder_instance_1086
+PASS variant_range.boulder_instance_1087
+PASS variant_range.boulder_instance_1088
+PASS variant_range.boulder_instance_1089
+PASS variant_range.boulder_instance_1090
+PASS variant_range.boulder_instance_1091
+PASS variant_range.boulder_instance_1092
+PASS variant_range.boulder_instance_1093
+PASS variant_range.boulder_instance_1094
+PASS variant_range.boulder_instance_1095
+PASS variant_range.boulder_instance_1096
+PASS variant_range.boulder_instance_1097
+PASS variant_range.boulder_instance_1098
+PASS variant_range.boulder_instance_1099
+PASS variant_range.boulder_instance_1100
+PASS variant_range.boulder_instance_1101
+PASS variant_range.boulder_instance_1102
+PASS variant_range.boulder_instance_1103
+PASS variant_range.boulder_instance_1104
+PASS variant_range.boulder_instance_1105
+PASS variant_range.boulder_instance_1106
+PASS variant_range.boulder_instance_1107
+PASS variant_range.boulder_instance_1108
+PASS variant_range.boulder_instance_1109
+PASS variant_range.boulder_instance_1110
+PASS variant_range.boulder_instance_1111
+PASS variant_range.boulder_instance_1112
+PASS variant_range.boulder_instance_1113
+PASS variant_range.boulder_instance_1114
+PASS variant_range.boulder_instance_1115
+PASS variant_range.boulder_instance_1116
+PASS variant_range.boulder_instance_1117
+PASS variant_range.boulder_instance_1118
+PASS variant_range.boulder_instance_1119
+PASS variant_range.boulder_instance_1120
+PASS variant_range.boulder_instance_1121
+PASS variant_range.boulder_instance_1122
+PASS variant_range.boulder_instance_1123
+PASS variant_range.boulder_instance_1124
+PASS variant_range.boulder_instance_1125
+PASS variant_range.boulder_instance_1126
+PASS variant_range.boulder_instance_1127
+PASS variant_range.boulder_instance_1128
+PASS variant_range.boulder_instance_1129
+PASS variant_range.boulder_instance_1130
+PASS variant_range.boulder_instance_1131
+PASS variant_range.boulder_instance_1132
+PASS variant_range.boulder_instance_1133
+PASS variant_range.boulder_instance_1134
+PASS variant_range.boulder_instance_1135
+PASS variant_range.boulder_instance_1136
+PASS variant_range.boulder_instance_1137
+PASS variant_range.boulder_instance_1138
+PASS variant_range.boulder_instance_1139
+PASS variant_range.boulder_instance_1140
+PASS variant_range.boulder_instance_1141
+PASS variant_range.boulder_instance_1142
+PASS variant_range.boulder_instance_1143
+PASS variant_range.boulder_instance_1144
+PASS variant_range.boulder_instance_1145
+PASS variant_range.boulder_instance_1146
+PASS variant_range.boulder_instance_1147
+PASS variant_range.boulder_instance_1148
+PASS variant_range.boulder_instance_1149
+PASS variant_range.boulder_instance_1150
+PASS variant_range.boulder_instance_1151
+PASS variant_range.boulder_instance_1152
+PASS variant_range.boulder_instance_1153
+PASS variant_range.boulder_instance_1154
+PASS variant_range.boulder_instance_1155
+PASS variant_range.boulder_instance_1156
+PASS variant_range.boulder_instance_1157
+PASS variant_range.boulder_instance_1158
+PASS variant_range.boulder_instance_1159
+PASS variant_range.boulder_instance_1160
+PASS variant_range.boulder_instance_1161
+PASS variant_range.boulder_instance_1162
+PASS variant_range.boulder_instance_1163
+PASS variant_range.boulder_instance_1164
+PASS variant_range.boulder_instance_1165
+PASS variant_range.boulder_instance_1166
+PASS variant_range.boulder_instance_1167
+PASS variant_range.boulder_instance_1168
+PASS variant_range.boulder_instance_1169
+PASS variant_range.boulder_instance_1170
+PASS variant_range.boulder_instance_1171
+PASS variant_range.boulder_instance_1172
+PASS variant_range.boulder_instance_1173
+PASS variant_range.boulder_instance_1174
+PASS variant_range.boulder_instance_1175
+PASS variant_range.boulder_instance_1176
+PASS variant_range.boulder_instance_1177
+PASS variant_range.boulder_instance_1178
+PASS variant_range.boulder_instance_1179
+PASS variant_range.boulder_instance_1180
+PASS variant_range.boulder_instance_1181
+PASS variant_range.boulder_instance_1182
+PASS variant_range.boulder_instance_1183
+PASS variant_range.boulder_instance_1184
+PASS variant_range.boulder_instance_1185
+PASS variant_range.boulder_instance_1186
+PASS variant_range.boulder_instance_1187
+PASS variant_range.boulder_instance_1188
+PASS variant_range.boulder_instance_1189
+PASS variant_range.boulder_instance_1190
+PASS variant_range.boulder_instance_1191
+PASS variant_range.boulder_instance_1192
+PASS variant_range.boulder_instance_1193
+PASS variant_range.boulder_instance_1194
+PASS variant_range.boulder_instance_1195
+PASS variant_range.boulder_instance_1196
+PASS variant_range.boulder_instance_1197
+PASS variant_range.boulder_instance_1198
+PASS variant_range.boulder_instance_1199
+PASS variant_range.boulder_instance_1200
+PASS variant_range.boulder_instance_1201
+PASS variant_range.boulder_instance_1202
+PASS variant_range.boulder_instance_1203
+PASS variant_range.boulder_instance_1204
+PASS variant_range.boulder_instance_1205
+PASS variant_range.boulder_instance_1206
+PASS variant_range.boulder_instance_1207
+PASS variant_range.boulder_instance_1208
+PASS variant_range.boulder_instance_1209
+PASS variant_range.boulder_instance_1210
+PASS variant_range.boulder_instance_1211
+PASS variant_range.boulder_instance_1212
+PASS variant_range.boulder_instance_1213
+PASS variant_range.boulder_instance_1214
+PASS variant_range.boulder_instance_1215
+PASS variant_range.boulder_instance_1216
+PASS variant_range.boulder_instance_1217
+PASS variant_range.boulder_instance_1218
+PASS variant_range.boulder_instance_1219
+PASS variant_range.boulder_instance_1220
+PASS variant_range.boulder_instance_1221
+PASS variant_range.boulder_instance_1222
+PASS variant_range.boulder_instance_1223
+PASS variant_range.boulder_instance_1224
+PASS variant_range.boulder_instance_1225
+PASS variant_range.boulder_instance_1226
+PASS variant_range.boulder_instance_1227
+PASS variant_range.boulder_instance_1228
+PASS variant_range.boulder_instance_1229
+PASS variant_range.boulder_instance_1230
+PASS variant_range.boulder_instance_1231
+PASS variant_range.boulder_instance_1232
+PASS variant_range.boulder_instance_1233
+PASS variant_range.boulder_instance_1234
+PASS variant_range.boulder_instance_1235
+PASS variant_range.boulder_instance_1236
+PASS variant_range.boulder_instance_1237
+PASS variant_range.boulder_instance_1238
+PASS variant_range.boulder_instance_1239
+PASS variant_range.boulder_instance_1240
+PASS variant_range.boulder_instance_1241
+PASS variant_range.boulder_instance_1242
+PASS variant_range.boulder_instance_1243
+PASS variant_range.boulder_instance_1244
+PASS variant_range.boulder_instance_1245
+PASS variant_range.boulder_instance_1246
+PASS variant_range.boulder_instance_1247
+PASS variant_range.boulder_instance_1248
+PASS variant_range.boulder_instance_1249
+PASS variant_range.boulder_instance_1250
+PASS variant_range.boulder_instance_1251
+PASS variant_range.boulder_instance_1252
+PASS variant_range.boulder_instance_1253
+PASS variant_range.boulder_instance_1254
+PASS variant_range.boulder_instance_1255
+PASS variant_range.boulder_instance_1256
+PASS variant_range.boulder_instance_1257
+PASS variant_range.boulder_instance_1258
+PASS variant_range.boulder_instance_1259
+PASS variant_range.boulder_instance_1260
+PASS variant_range.boulder_instance_1261
+PASS variant_range.boulder_instance_1262
+PASS variant_range.boulder_instance_1263
+PASS variant_range.boulder_instance_1264
+PASS variant_range.boulder_instance_1265
+PASS variant_range.boulder_instance_1266
+PASS variant_range.boulder_instance_1267
+PASS variant_range.boulder_instance_1268
+PASS variant_range.boulder_instance_1269
+PASS variant_range.boulder_instance_1270
+PASS variant_range.boulder_instance_1271
+PASS variant_range.boulder_instance_1272
+PASS variant_range.boulder_instance_1273
+PASS variant_range.boulder_instance_1274
+PASS variant_range.boulder_instance_1275
+PASS variant_range.boulder_instance_1276
+PASS variant_range.boulder_instance_1277
+PASS variant_range.boulder_instance_1278
+PASS variant_range.boulder_instance_1279
+PASS variant_range.boulder_instance_1280
+PASS variant_range.boulder_instance_1281
+PASS variant_range.boulder_instance_1282
+PASS variant_range.boulder_instance_1283
+PASS variant_range.boulder_instance_1284
+PASS variant_range.boulder_instance_1285
+PASS variant_range.boulder_instance_1286
+PASS variant_range.boulder_instance_1287
+PASS variant_range.boulder_instance_1288
+PASS variant_range.boulder_instance_1289
+PASS variant_range.boulder_instance_1290
+PASS variant_range.boulder_instance_1291
+PASS variant_range.boulder_instance_1292
+PASS variant_range.boulder_instance_1293
+PASS variant_range.boulder_instance_1294
+PASS variant_range.boulder_instance_1295
+PASS variant_range.boulder_instance_1296
+PASS variant_range.boulder_instance_1297
+PASS variant_range.boulder_instance_1298
+PASS variant_range.boulder_instance_1299
+PASS variant_range.boulder_instance_1300
+PASS variant_range.boulder_instance_1301
+PASS variant_range.boulder_instance_1302
+PASS variant_range.boulder_instance_1303
+PASS variant_range.boulder_instance_1304
+PASS variant_range.boulder_instance_1305
+PASS variant_range.boulder_instance_1306
+PASS variant_range.boulder_instance_1307
+PASS variant_range.boulder_instance_1308
+PASS variant_range.boulder_instance_1309
+PASS variant_range.boulder_instance_1310
+PASS variant_range.boulder_instance_1311
+PASS variant_range.boulder_instance_1312
+PASS variant_range.boulder_instance_1313
+PASS variant_range.boulder_instance_1314
+PASS variant_range.boulder_instance_1315
+PASS variant_range.boulder_instance_1316
+PASS variant_range.boulder_instance_1317
+PASS variant_range.boulder_instance_1318
+PASS variant_range.boulder_instance_1319
+PASS variant_range.boulder_instance_1320
+PASS variant_range.boulder_instance_1321
+PASS variant_range.boulder_instance_1322
+PASS variant_range.boulder_instance_1323
+PASS variant_range.boulder_instance_1324
+PASS variant_range.boulder_instance_1325
+PASS variant_range.boulder_instance_1326
+PASS variant_range.boulder_instance_1327
+PASS variant_range.boulder_instance_1328
+PASS variant_range.boulder_instance_1329
+PASS variant_range.boulder_instance_1330
+PASS variant_range.boulder_instance_1331
+PASS variant_range.boulder_instance_1332
+PASS variant_range.boulder_instance_1333
+PASS variant_range.boulder_instance_1334
+PASS variant_range.boulder_instance_1335
+PASS variant_range.boulder_instance_1336
+PASS variant_range.boulder_instance_1337
+PASS variant_range.boulder_instance_1338
+PASS variant_range.boulder_instance_1339
+PASS variant_range.boulder_instance_1340
+PASS variant_range.boulder_instance_1341
+PASS variant_range.boulder_instance_1342
+PASS variant_range.boulder_instance_1343
+PASS variant_range.boulder_instance_1344
+PASS variant_range.boulder_instance_1345
+PASS variant_range.boulder_instance_1346
+PASS variant_range.boulder_instance_1347
+PASS variant_range.boulder_instance_1348
+PASS variant_range.boulder_instance_1349
+PASS variant_range.boulder_instance_1350
+PASS variant_range.boulder_instance_1351
+PASS variant_range.boulder_instance_1352
+PASS variant_range.boulder_instance_1353
+PASS variant_range.boulder_instance_1354
+PASS variant_range.boulder_instance_1355
+PASS variant_range.boulder_instance_1356
+PASS variant_range.boulder_instance_1357
+PASS variant_range.boulder_instance_1358
+PASS variant_range.boulder_instance_1359
+PASS variant_range.boulder_instance_1360
+PASS variant_range.boulder_instance_1361
+PASS variant_range.boulder_instance_1362
+PASS variant_range.boulder_instance_1363
+PASS variant_range.boulder_instance_1364
+PASS variant_range.boulder_instance_1365
+PASS variant_range.boulder_instance_1366
+PASS variant_range.boulder_instance_1367
+PASS variant_range.boulder_instance_1368
+PASS variant_range.boulder_instance_1369
+PASS variant_range.boulder_instance_1370
+PASS variant_range.boulder_instance_1371
+PASS variant_range.boulder_instance_1372
+PASS variant_range.boulder_instance_1373
+PASS variant_range.boulder_instance_1374
+PASS variant_range.boulder_instance_1375
+PASS variant_range.boulder_instance_1376
+PASS variant_range.boulder_instance_1377
+PASS variant_range.boulder_instance_1378
+PASS variant_range.boulder_instance_1379
+PASS variant_range.boulder_instance_1380
+PASS variant_range.boulder_instance_1381
+PASS variant_range.boulder_instance_1382
+PASS variant_range.boulder_instance_1383
+PASS variant_range.boulder_instance_1384
+PASS variant_range.boulder_instance_1385
+PASS variant_range.boulder_instance_1386
+PASS variant_range.boulder_instance_1387
+PASS variant_range.boulder_instance_1388
+PASS variant_range.boulder_instance_1389
+PASS variant_range.boulder_instance_1390
+PASS variant_range.boulder_instance_1391
+PASS variant_range.boulder_instance_1392
+PASS variant_range.boulder_instance_1393
+PASS variant_range.boulder_instance_1394
+PASS variant_range.boulder_instance_1395
+PASS variant_range.boulder_instance_1396
+PASS variant_range.boulder_instance_1397
+PASS variant_range.boulder_instance_1398
+PASS variant_range.boulder_instance_1399
+PASS variant_range.boulder_instance_1400
+PASS variant_range.boulder_instance_1401
+PASS variant_range.boulder_instance_1402
+PASS variant_range.boulder_instance_1403
+PASS variant_range.boulder_instance_1404
+PASS variant_range.boulder_instance_1405
+PASS variant_range.boulder_instance_1406
+PASS variant_range.boulder_instance_1407
+PASS variant_range.boulder_instance_1408
+PASS variant_range.boulder_instance_1409
+PASS variant_range.boulder_instance_1410
+PASS variant_range.boulder_instance_1411
+PASS variant_range.boulder_instance_1412
+PASS variant_range.boulder_instance_1413
+PASS variant_range.boulder_instance_1414
+PASS variant_range.boulder_instance_1415
+PASS variant_range.boulder_instance_1416
+PASS variant_range.boulder_instance_1417
+PASS variant_range.boulder_instance_1418
+PASS variant_range.boulder_instance_1419
+PASS variant_range.boulder_instance_1420
+PASS variant_range.boulder_instance_1421
+PASS variant_range.boulder_instance_1422
+PASS variant_range.boulder_instance_1423
+PASS variant_range.boulder_instance_1424
+PASS variant_range.boulder_instance_1425
+PASS variant_range.boulder_instance_1426
+PASS variant_range.boulder_instance_1427
+PASS variant_range.boulder_instance_1428
+PASS variant_range.boulder_instance_1429
+PASS variant_range.boulder_instance_1430
+PASS variant_range.boulder_instance_1431
+PASS variant_range.boulder_instance_1432
+PASS variant_range.boulder_instance_1433
+PASS variant_range.boulder_instance_1434
+PASS variant_range.boulder_instance_1435
+PASS variant_range.boulder_instance_1436
+PASS variant_range.boulder_instance_1437
+PASS variant_range.boulder_instance_1438
+PASS variant_range.boulder_instance_1439
+PASS variant_range.boulder_instance_1440
+PASS variant_range.boulder_instance_1441
+PASS variant_range.boulder_instance_1442
+PASS variant_range.boulder_instance_1443
+PASS variant_range.boulder_instance_1444
+PASS variant_range.boulder_instance_1445
+PASS variant_range.boulder_instance_1446
+PASS variant_range.boulder_instance_1447
+PASS variant_range.boulder_instance_1448
+PASS variant_range.boulder_instance_1449
+PASS variant_range.boulder_instance_1450
+PASS variant_range.boulder_instance_1451
+PASS variant_range.boulder_instance_1452
+PASS variant_range.boulder_instance_1453
+PASS variant_range.boulder_instance_1454
+PASS variant_range.boulder_instance_1455
+PASS variant_range.boulder_instance_1456
+PASS variant_range.boulder_instance_1457
+PASS variant_range.boulder_instance_1458
+PASS variant_range.boulder_instance_1459
+PASS variant_range.boulder_instance_1460
+PASS variant_range.boulder_instance_1461
+PASS variant_range.boulder_instance_1462
+PASS variant_range.boulder_instance_1463
+PASS variant_range.boulder_instance_1464
+PASS variant_range.boulder_instance_1465
+PASS variant_range.boulder_instance_1466
+PASS variant_range.boulder_instance_1467
+PASS variant_range.boulder_instance_1468
+PASS variant_range.boulder_instance_1469
+PASS variant_range.boulder_instance_1470
+PASS variant_range.boulder_instance_1471
+PASS variant_range.boulder_instance_1472
+PASS variant_range.boulder_instance_1473
+PASS variant_range.boulder_instance_1474
+PASS variant_range.boulder_instance_1475
+PASS variant_range.boulder_instance_1476
+PASS variant_range.boulder_instance_1477
+PASS variant_range.boulder_instance_1478
+PASS variant_range.boulder_instance_1479
+PASS variant_range.boulder_instance_1480
+PASS variant_range.boulder_instance_1481
+PASS variant_range.boulder_instance_1482
+PASS variant_range.boulder_instance_1483
+PASS variant_range.boulder_instance_1484
+PASS variant_range.boulder_instance_1485
+PASS variant_range.boulder_instance_1486
+PASS variant_range.boulder_instance_1487
+PASS variant_range.boulder_instance_1488
+PASS variant_range.boulder_instance_1489
+PASS variant_range.boulder_instance_1490
+PASS variant_range.boulder_instance_1491
+PASS variant_range.boulder_instance_1492
+PASS variant_range.boulder_instance_1493
+PASS variant_range.boulder_instance_1494
+PASS variant_range.boulder_instance_1495
+PASS variant_range.boulder_instance_1496
+PASS variant_range.boulder_instance_1497
+PASS variant_range.boulder_instance_1498
+PASS variant_range.boulder_instance_1499
+PASS movement_invariance.variant_distribution
+PASS movement_invariance.500_objects_20_hops
+PASS save_load.serialized_not_empty
+PASS save_load.objectVariants_exists
+PASS save_load.level_0_exists
+PASS save_load.level_minus1_exists
+PASS save_load.cell_5130_variant
+PASS save_load.cell_1234_variant
+PASS save_load.cell_8765_variant
+PASS save_load.cell_200_variant
+PASS save_load.cell_400_variant
+PASS save_load.object_count
+PASS save_load.obj_obj_boulder_01.id_match
+PASS save_load.obj_obj_boulder_01.variant_match
+PASS save_load.obj_obj_boulder_01.topology_match
+PASS save_load.obj_obj_fallen_log_01.id_match
+PASS save_load.obj_obj_fallen_log_01.variant_match
+PASS save_load.obj_obj_fallen_log_01.topology_match
+PASS save_load.obj_obj_fallen_log_01.orientation_match
+PASS rmmz_prefix.!UF_BerryBushBare_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_BerryBushBare_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_BerryBush_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_BerryBush_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_BonesPile_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_BonesPile_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_CactusTall_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_CactusTall_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_Cactus_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_Cactus_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_ClayDeposit_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_ClayDeposit_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_CoalOutcrop_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_CoalOutcrop_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_CopperOutcrop_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_CopperOutcrop_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_Crystal_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_Crystal_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_DesertShrub_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_DesertShrub_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_FallenLog_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_FallenLog_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_Fern_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_Fern_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_FlowersBlue_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_FlowersBlue_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_FlowersPurple_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_FlowersPurple_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_FlowersWhite_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_FlowersWhite_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_ForestMushrooms_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_ForestMushrooms_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_GoldOutcrop_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_GoldOutcrop_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_GraniteBoulder_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_GraniteBoulder_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_Gravel_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_Gravel_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_Hearth_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_Hearth_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_IronOutcrop_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_IronOutcrop_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_LilyPad_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_LilyPad_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_PeatMound_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_PeatMound_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_Reeds_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_Reeds_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_RocksSmall_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_RocksSmall_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_SilverOutcrop_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_SilverOutcrop_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_SulfurCrust_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_SulfurCrust_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_TinOutcrop_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_TinOutcrop_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_TreeStump_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_TreeStump_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_WildHemp_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_WildHemp_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_WildHerbs_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_WildHerbs_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_WildRoots_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_WildRoots_V8.png.no_dollar_prefix
+PASS rmmz_prefix.!UF_WildWheat_V8.png.has_exclamation
+PASS rmmz_prefix.!UF_WildWheat_V8.png.no_dollar_prefix
+
+Results: 887 passed, 0 failed.
+[exit 0]
+
+$ (cd tip) node tools/art/test_blank_templates.js
+INFO temp folder C:\Users\snewt\AppData\Local\Temp\deus-blank-templates-test-09VWOX
+INFO fixture: 5 sheets, 28 paint slots, 31 entries, geometry text sha256 a1b95e7eb35208a0d1406a49e04fd7f977999e7751b5f96d20d45bc0a1b60235
+PASS templates.run
+PASS templates.one_per_sheet
+PASS templates.dimensions
+PASS templates.census
+PASS templates.slot_edges
+PASS templates.interior
+PASS templates.free_area
+PASS templates.labels
+PASS templates.sidecar
+PASS templates.png_chunks
+INFO run1 sha256 TEST_ATLAS_SURFACE.png b1d47ceca94393bee4db8aa32690acdbbb50abea80a557ec79399bc121c16e89
+INFO run1 sha256 TEST_A2_SURFACE.png b4ee04a59b6a47265b362b101e7f54415afca885560273b4ec6aa948e8536244
+INFO run1 sha256 $TEST_Human.png a542c5fde1718221c316606cfed3648d7b9359cea7f9cc1d306d3da5e2b3e9b4
+INFO run1 sha256 $TEST_Ogre.png bbf6ff2432161400f5325bb3cec99775db4ab78f0841c368f4f9a78db0064f1d
+INFO run1 sha256 $TEST_Horse.png 8cdcbee81a4675d6428792926ef68ddd516fa67ffe28c72044dccc3a3daef05d
+INFO run2 sha256 $TEST_Horse.png 8cdcbee81a4675d6428792926ef68ddd516fa67ffe28c72044dccc3a3daef05d
+INFO run2 sha256 $TEST_Human.png a542c5fde1718221c316606cfed3648d7b9359cea7f9cc1d306d3da5e2b3e9b4
+INFO run2 sha256 $TEST_Ogre.png bbf6ff2432161400f5325bb3cec99775db4ab78f0841c368f4f9a78db0064f1d
+INFO run2 sha256 TEST_A2_SURFACE.png b4ee04a59b6a47265b362b101e7f54415afca885560273b4ec6aa948e8536244
+INFO run2 sha256 TEST_ATLAS_SURFACE.png b1d47ceca94393bee4db8aa32690acdbbb50abea80a557ec79399bc121c16e89
+PASS templates.determinism
+PASS templates.bg_magenta
+PASS templates.palette
+INFO opaque colours in templates: #00FFFFFF, #FFFF00FF, #FF00FFFF; master palette 226 colours
+PASS templates.stratum_param[changed_split]
+PASS templates.stratum_param[stale_catalogue_refused]
+PASS templates.stratum_param[stale_rects_refused]
+PASS templates.stratum_param[invalid_zero_stratum_refused]
+PASS templates.stratum_param[invalid_sum_not_layerPx_refused]
+PASS templates.stratum_param[invalid_too_few_strata_refused]
+PASS templates.stratum_param[invalid_fractional_refused]
+PASS templates.stratum_param[invalid_not_an_array_refused]
+PASS templates.stratum_param[irregular_split]
+PASS templates.stratum_param[layerPx_param]
+PASS templates.tall_medium[off_by_default]
+PASS templates.tall_medium[on_adds_slots]
+PASS templates.tall_medium[disabled_use_refused]
+PASS templates.readability_floor
+PASS templates.refusals[variant_has_slot]
+PASS templates.refusals[huge_has_slot]
+PASS templates.refusals[slot_overlap]
+PASS templates.refusals[slot_out_of_sheet]
+PASS templates.refusals[slot_too_small]
+PASS templates.refusals[missing_scale_row]
+PASS templates.refusals[duplicate_slot_id]
+PASS templates.refusals[bad_slot_id]
+PASS templates.refusals[unknown_sheet]
+PASS templates.refusals[frame_size_mismatch]
+PASS templates.refusals[frames_do_not_divide]
+PASS templates.refusals[unknown_frame_class]
+PASS templates.refusals[envelope_exceeds_slot]
+PASS templates.refusals[z_out_of_range]
+PASS templates.refusals[old_schema]
+PASS templates.refusals[tile_size_mismatch]
+PASS templates.refusals[character_sheet_size]
+PASS templates.refusals[atlas_too_big]
+PASS templates.refusals[unsafe_sheet_id]
+PASS templates.refusals[sheet_id_case_clash]
+PASS templates.refusals[geometry_missing]
+PASS templates.refusals[palette_missing]
+PASS templates.refusals[grid_colour_in_palette]
+PASS templates.refusals[label_colour_in_palette]
+PASS templates.refusals[magenta_in_palette]
+PASS templates.refusals[unpadded_stratum_slot]
+PASS templates.refusals[usage_no_out]
+PASS templates.refusals[usage_bad_bg]
+PASS templates.out_dir_safety[rerun_keeps_readme_removes_stale]
+PASS templates.out_dir_safety[painted_template_refused]
+PASS templates.out_dir_safety[unknown_file_refused]
+PASS templates.out_dir_safety[unknown_png_refused]
+PASS templates.out_dir_safety[file_as_out_refused]
+PASS templates.no_literals
+INFO literal scan: 118 numeric literals checked against 8,9,10,15,16,19,20,24,26,28,32,42,48,64,96,144,192,288,384
+PASS templates.mutants[control_passes]
+PASS templates.mutants[wrong_sheet_size]
+INFO mutant wrong_sheet_size killed by dimensions: dimensions: TEST_ATLAS_SURFACE: PNG is 4097x4096, catalogue says 4096x4096
+PASS templates.mutants[shifted_slot]
+INFO mutant shifted_slot killed by slot_edges: slot_edges: TEST_ATLAS_SURFACE:0000 (0,0 96x96): 93 boundary pixel(s) not grid colour
+PASS templates.mutants[missing_sheet]
+INFO mutant missing_sheet killed by one_per_sheet: one_per_sheet: missing $TEST_Horse.png
+PASS templates.mutants[extra_colour]
+INFO mutant extra_colour killed by census: census: TEST_ATLAS_SURFACE: 164 pixel(s) outside {bg #00000000, grid #00FFFFFF, label #FFFF00FF}, e.g. (145,116) #010203FF, (146,116) #010203FF, (147,116) #010203FF
+PASS templates.mutants[hardcoded_stratum]
+INFO mutant hardcoded_stratum killed by stratum_param: changed_split: split [20,19,19,19,19]: interior: TEST_ATLAS_SURFACE:0008: 16 interior pixel(s) differ from grid/tick/background e.g. (1,172) #00000000 want #00FFFFFF; sidecar: TEST; literal scan: 19,19,19,19,20
+PASS templates.mutants[sha_check_removed]
+INFO mutant sha_check_removed killed by stratum_param: stale_catalogue_refused: exit 2 codes STRATUM_HEIGHT_MISMATCH stderr: REFUSED STRATUM_HEIGHT_MISMATCH: TEST_SURFACE_B1_RAMP_RISE2_V1_BASE: GEOM_STRATUM_2 needs slot height 96 from 
+PASS templates.mutants[ticks_off]
+INFO mutant ticks_off killed by interior: interior: TEST_ATLAS_SURFACE:0008: 25 interior pixel(s) differ from grid/tick/background e.g. (2,146) #FFFF00FF want #00000000
+PASS templates.mutants[grid_offset]
+INFO mutant grid_offset killed by free_area: free_area: TEST_ATLAS_SURFACE: 681652 pixel(s) outside slots differ from grid/background e.g. (480,1) #00000000 want #00FFFFFF
+PASS templates.mutants[labels_off]
+INFO mutant labels_off killed by labels: labels: TEST_ATLAS_SURFACE:0000: label reads "       " (want "0000 AB"), 68 pixel(s) differ
+PASS templates.mutants[sidecar_xy_swapped]
+INFO mutant sidecar_xy_swapped killed by sidecar: sidecar: TEST_ATLAS_SURFACE:0001: x is 0, want 96
+PASS templates.mutants[variant_slot_allowed]
+INFO mutant variant_slot_allowed killed by refusals: variant_has_slot: want exit 2 codes VARIANT_HAS_SLOT; got exit 0; out written: true
+PASS templates.mutants[palette_check_removed]
+INFO mutant palette_check_removed killed by refusals: grid_colour_in_palette: want exit 2 codes PALETTE_COLLISION; got exit 0; out written: true
+PASS templates.mutants[unpadded_stratum_allowed]
+INFO mutant unpadded_stratum_allowed killed by refusals: unpadded_stratum_slot: want exit 2 codes STRATUM_HEIGHT_MISMATCH; got exit 0; out written: true
+PASS templates.mutants[timestamp_in_sidecar]
+INFO mutant timestamp_in_sidecar killed by determinism: two runs differ
+PASS templates.fixture_contract
+PASS templates.fixture_drift
+PASS templates.repo_untouched
+RESULT: 79 passed, 0 failed
+[exit 0]
+
+$ (cd tip) node tools/art/test_place_art.js
+PASS fixture.json_only_no_png
+PASS fixture.geom_slots_follow_stratumPx
+PASS fixture.catalogue_slots_valid
+PASS static.no_geometry_literals_in_tools
+PASS unit.tileset_targets
+PASS unit.tileset_target_errors
+PASS unit.geometry_rows
+PASS unit.face_targets
+PASS unit.character_targets
+PASS unit.duplicate_inputs
+PASS unit.runtime_file_paths
+PASS validate.good_cells_accepted
+PASS validate.slot_id_approval_warned
+PASS validate.overlay_exempt_from_opacity
+PASS validate.colour_chunk_warned
+PASS validate.ledger_crlf_and_bom
+PASS validate.not_checked_reported
+PASS validate.proposed_frame_class_warned
+PASS validate.tall_medium_enabled_accepts
+PASS validate.stratumPx_changed_heights_follow
+PASS neg.approval_missing
+PASS neg.approval_nay
+PASS neg.approval_hash_of_other_file
+PASS neg.approval_for_other_entry
+PASS neg.approval_conflict_yea_nay
+PASS neg.approval_conflict_variants
+PASS neg.ledger_uppercase_hash
+PASS neg.ledger_short_hash
+PASS neg.ledger_bad_decision
+PASS neg.ledger_bad_date
+PASS neg.ledger_bad_header
+PASS neg.ledger_legacy_rows_only
+PASS neg.ledger_only_in_code_fence
+PASS neg.ledger_heading_twice
+PASS neg.ledger_heading_near_miss
+PASS neg.ledger_row_in_html_comment
+PASS neg.ledger_inside_html_comment
+PASS neg.ledger_row_indented_as_code
+PASS neg.dims_47x48
+PASS neg.alpha_128
+PASS neg.alpha_owner_open_still_binary
+PASS neg.off_palette_pixel
+PASS neg.template_grid_colour_pixel
+PASS neg.template_label_colour_pixel
+PASS neg.template_magenta_bg_pixel
+PASS neg.template_residue_isolated
+PASS neg.template_sidecar_missing
+PASS neg.template_sidecar_wrong_size
+PASS neg.rect_x_plus_1
+PASS neg.rect_x_minus_1
+PASS neg.rect_y_plus_1
+PASS neg.rect_y_minus_1
+PASS neg.tile_with_hole
+PASS neg.png_16bit
+PASS neg.png_corrupt
+PASS neg.png_huge_header_not_decoded
+PASS neg.envelope_w_1px_over_max
+PASS neg.envelope_h_1px_over_max
+PASS neg.envelope_w_1px_under_min
+PASS neg.envelope_one_frame_of_12
+PASS neg.empty_frame
+PASS neg.ground_baseline_1px_high
+PASS neg.ceiling_anchor_1px_low
+PASS neg.large_tall_file_at_48x48
+PASS neg.large_tall_file_at_96x96
+PASS neg.large_long_file_at_48x96
+PASS neg.medium_file_at_48x64
+PASS neg.large_tall_slot_48x48
+PASS neg.large_tall_slot_96x96
+PASS neg.large_long_slot_48x96
+PASS neg.tall_medium_48x64_while_disabled
+PASS neg.huge_frame_owner_open_with_slot
+PASS neg.ramp_height_ignores_stratumPx
+PASS neg.ramp_envelope_ignores_stratumPx
+PASS neg.ramp_drawn_height_not_a_run
+PASS neg.wall_face_height_ignores_layerPx
+PASS neg.stratumPx_changed_old_ramp_refused
+PASS neg.stratumPx_zero_stratum
+PASS neg.stratumPx_sum_not_layerPx
+PASS neg.stratumPx_wrong_count
+PASS neg.geometry_hash_mismatch
+PASS neg.geometry_flag_still_hash_checked
+PASS neg.palette_hash_mismatch
+PASS neg.autotile_with_hole
+PASS neg.frame_class_missing
+PASS neg.ledger_row_without_leading_pipe
+PASS neg.ledger_pipeless_second_table
+PASS neg.png_inflate_bomb
+PASS neg.unknown_entry
+PASS neg.derived_variant_row
+PASS neg.huge_no_slot
+PASS cli.validate_accepts_exit0
+PASS cli.validate_refuses_exit1_with_coords
+PASS cli.validate_json
+PASS cli.validate_usage_exit2
+PASS cli.validate_missing_file_exit2
+PASS place.all_good_exit0
+PASS place.pixel_diff_zero_sheets
+PASS place.transparent_pixel_bytes_kept
+PASS place.pixel_diff_sees_off_by_one
+PASS place.runtime_dims_rmmz_spec
+PASS place.pixel_diff_zero_runtime
+PASS place.coverage_report_exact
+PASS place.coverage_markdown
+PASS place.report_hashes
+PASS place.derived_pending_reported
+PASS place.runtime_pending_reported
+PASS place.runtime_partial_flagged
+PASS place.rerun_sha256_equal
+PASS place.rerun_same_folder_unchanged
+PASS place.replace_overwrites_slot
+PASS place.overwrite_refused
+PASS place.replace_unused_refused
+PASS place.replace_unknown_slot_refused
+PASS place.refusal_writes_nothing
+PASS place.refusal_keeps_existing_out
+PASS place.derived_row_input_refused
+PASS place.unknown_input_refused
+PASS place.catalogue_overlap_refused
+PASS place.runtime_path_escape_refused
+PASS place.runtime_size_mismatch_refused
+PASS place.runtime_kind_unknown_refused
+PASS place.runtime_target_clash_refused
+PASS place.runtime_tile_zero_refused
+PASS place.out_state_tampered
+PASS place.out_state_unlisted_sheet_refused
+PASS place.out_state_pixels_in_empty_slot_refused
+PASS place.replace_with_refused_input_reports_only_the_refusal
+PASS place.template_change_makes_out_stale
+PASS place.out_state_stale
+PASS place.out_dir_not_empty_refused
+PASS place.out_dir_unsafe_refused
+PASS place.approval_revoked_refused
+PASS place.inputs_untouched
+PASS cli.place_exit_codes
+PASS mutant.palette_check_disabled_killed
+  neg.off_palette_pixel on the mutant: accepted; expected OFF_PALETTE
+PASS mutant.approval_check_bypassed_killed
+  neg.approval_missing on the mutant: accepted; expected APPROVAL_MISSING
+PASS mutant.scale_check_disabled_killed
+  neg.envelope_w_1px_over_max on the mutant: accepted; expected SCALE_OUT_OF_ENVELOPE
+PASS mutant.overwrite_guard_removed_killed
+  place.overwrite_refused on the mutant: second placement exit 0, codes []; expected exit 1 OVERWRITE_REFUSED
+PASS mutant.alpha_check_disabled_killed
+  neg.alpha_128 on the mutant: accepted; expected ALPHA_NOT_BINARY
+PASS mutant.template_residue_disabled_killed
+  neg.template_residue_isolated on the mutant: accepted; expected TEMPLATE_RESIDUE
+PASS mutant.slot_rect_check_disabled_killed
+  neg.rect_x_plus_1 on the mutant: accepted; expected SLOT_RECT_MISMATCH
+PASS mutant.ground_anchor_disabled_killed
+  neg.ground_baseline_1px_high on the mutant: accepted; expected ANCHOR_GROUND
+PASS mutant.ceiling_anchor_disabled_killed
+  neg.ceiling_anchor_1px_low on the mutant: accepted; expected ANCHOR_CEILING
+PASS mutant.tile_opacity_disabled_killed
+  neg.tile_with_hole on the mutant: accepted; expected TILE_NOT_OPAQUE
+PASS mutant.frame_class_check_disabled_killed
+  neg.large_tall_slot_96x96 on the mutant: accepted; expected FRAME_CLASS_MISMATCH
+PASS mutant.geom_envelope_check_disabled_killed
+  neg.ramp_envelope_ignores_stratumPx on the mutant: accepted; expected GEOM_HEIGHT_MISMATCH
+PASS mutant.geom_drawn_height_check_disabled_killed
+  neg.ramp_drawn_height_not_a_run on the mutant: accepted; expected GEOM_HEIGHT_MISMATCH
+PASS mutant.tile_class_rows_reduced_to_geom_tile_killed
+  neg.autotile_with_hole on the mutant: accepted; expected TILE_NOT_OPAQUE
+PASS mutant.pipeless_row_check_disabled_killed
+  neg.ledger_row_without_leading_pipe on the mutant: accepted; expected LEDGER_MALFORMED
+PASS mutant.inflate_cap_removed_killed
+  neg.png_inflate_bomb on the mutant: codes [ANCHOR_GROUND,SCALE_OUT_OF_ENVELOPE], expected [PNG_INVALID]: SCALE_OUT_OF_ENVELOPE: 1 of 1 frame(s) outside envelope w 20..32 h 16..24 (scaleRow TEST_CHART_CHEST): frame 0: nothing drawn | ANCHOR_GROUND: 1 frame(s) not standing on the baseline: frame 0: nothing drawn, baseline is 47
+PASS mutant.stratum_sum_check_disabled_killed
+  neg.stratumPx_sum_not_layerPx on the mutant: accepted; expected GEOMETRY_INVALID
+PASS mutant.copy_offset_x_plus_1_killed
+  place.all_good_exit0 on the mutant: exit 1, refusals ["INTERNAL_COPY_MISMATCH","INTERNAL_COPY_MISMATCH","INTERNAL_COPY_MISMATCH","INTERNAL_COPY_MISMATCH","INTERNAL_COPY_MISMATCH","INTERNAL_COPY_MISMATCH","INTERNAL_COPY_MISMATCH","INTERNAL_COPY_MISMATCH","INTERNAL_COPY_MISMATCH","INTERNAL_COPY_MISMATCH","INTERNAL_COPY_MISMATCH","INTERN...
+PASS mutant.copy_offset_x_plus_1_self_check_off_killed
+  place.pixel_diff_zero_sheets on the mutant: pixels differ: ATLAS_TEST_SURFACE_B1: 8030, TS_TEST_SURFACE_B1_A2: 288, TS_TEST_SURFACE_B1_B: 152, CHR_TEST_SURFACE_B1_RAT: 241
+RESULT: 154 passed, 0 failed
+[exit 0]
+

@@ -1,0 +1,35 @@
+scratch copy of the tip with the RMMZ_TILE_DUP rule switched off (git diff below), then --mutants:
+diff --git a/tools/art/build_catalogue.js b/tools/art/build_catalogue.js
+index 7c4bb501..1366b40c 100644
+--- a/tools/art/build_catalogue.js
++++ b/tools/art/build_catalogue.js
+@@ -1472,7 +1472,7 @@ function validateCatalogue(cat, ctx) {
+         if (!e.runtime || !Number.isInteger(e.runtime.tileId)) continue;
+         for (const c of rmmzCells(e.runtime)) {
+             const k = `${e.runtime.file}#${c}`;
+-            if (claims.has(k)) err('RMMZ_TILE_DUP', e.id, `${e.runtime.file} cell ${c} is also claimed by ${claims.get(k)}`);
++            if (false && claims.has(k)) err('RMMZ_TILE_DUP', e.id, `${e.runtime.file} cell ${c} is also claimed by ${claims.get(k)}`);
+             else claims.set(k, e.id);
+         }
+     }
+$ (cd sweep_scratch) node tools/art/test_rmmz_rows.js --mutants
+KILLED mutant.drop_one_row: row_SURFACE_SHARED_TREE_OAK_B-V1_DEPLETED FAIL: absent from the catalogue || fresh catalogue.json differs from the committed one (--check would fail)
+SURVIVED mutant.dup_tile: build errors: none || stock_positions FAIL: 28 stock positions (want 28), 30 A4 format examples (want 30); SURFACE_SHARED_TREE_SAPLING_B-V1_DEFAULT: claims 156/164 but names stock Outside_B 157/165
+KILLED mutant.wrong_grid: build errors: RMMZ_FORM (SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT: slot 96x96 is not the RMMZ target 48x48 (1x1 cells of 48 px))
+KILLED mutant.side_on_top_kind: build errors: RMMZ_FORM (SURFACE_SHARED_TERRAIN_CLIFF-GRANITE_SIDE_DEFAULT: slot 96x96 is not the RMMZ target 96x144 (A4 kind 16 (RMMZ_AUTOTILE_A4_TOP)))
+KILLED mutant.local_zero: build errors: RMMZ_FORM (ALL_SHARED_EFFECT_STEAM_B-V1_DEFAULT: local tile 0 of sheet E is refused (a DEUS convention, not an RMMZ rule: RMMZ leaves only tileId 0 undrawn, and stock C sheets use their local tile 0))
+KILLED mutant.half_overflow: build errors: RMMZ_FORM (SURFACE_SHARED_TREE_CANOPY-BROADLEAF-2X2_B-V1_DEFAULT: grid 2x2 at local tile 183 (column 7, row 6) leaves its 8-column half of 16 rows)
+KILLED mutant.ar_text: build errors: RMMZ_AR_TEXT, COVERAGE, SOURCE_DROPPED (AR-2205: AR-2205 (docs/ASSET_REQUESTS.md:338) does not name DEUS_Outside_E.png)
+KILLED mutant.ruling_missing: build errors: RULING_MISSING, COVERAGE, SOURCE_DROPPED (STANDING_ROWS: quote "You can always open more rows for assets we need" is not in docs/OWNER_DECISIONS.md)
+KILLED mutant.reform_has_runtime: build errors: REFORM_TARGET (SURFACE_SHARED_TREE_OAK_V1_DEFAULT: the target already has runtime kind RMMZ_CHARACTER)
+KILLED mutant.reform_ramp_drift: SURFACE_SHARED_SHADE_HEIGHT_H1_DEFAULT paletteRampIds NEUT_VOID_BLACK -> NEUT_COOL_GRAY; validateCatalogue 0 errors; reform_SURFACE_SHARED_SHADE_HEIGHT_H1_DEFAULT FAIL: paletteRampIds changed (["NEUT_VOID_BLACK"] -> ["NEUT_COOL_GRAY"])
+KILLED mutant.bad_input: build errors: RMMZ_ROWS_INVALID, COVERAGE, SOURCE_DROPPED (rows[5].state: missing key state)
+KILLED mutant.ar_closed: build errors: AR_MISSING, COVERAGE, SOURCE_DROPPED (AR-2204: AR-2204 is closed: CHECKED (docs/ASSET_REQUESTS.md:337))
+KILLED mutant.a4_spec_height: build errors: RMMZ_SPEC (RMMZ_AUTOTILE_A4_SIDE: A4 sheet height 700 (docs/RMMZ_ASSET_SPEC.md:71) is not a whole number of top + side pairs (144 + 96))
+KILLED mutant.drop_override: envelope_admits_art FAIL: 11/12 recorded specimen boxes admitted (recorded dimensions only; no image is read); not admitted: PINE_B-V1_DEFAULT 96x132 (pine_c2d.png) vs envelope 42-64x80-104 || size_overrides FAIL: 8 entries carry envelopeOverride (want 9); footprintOverride on 0; conflicts.md section present; SURFACE_SHARED_TREE_PINE_B-V1_DEFAULT has no envelopeOverride
+KILLED mutant.strip_overrides: envelope_admits_art FAIL: 3/12 recorded specimen boxes admitted (recorded dimensions only; no image is read); not admitted: OAK_B-V1_DEFAULT 89x84 (oak_v7k.png) vs envelope 56-80x72-96; DEAD-TREE_B-V1_DEFAULT 84x89 (dead_v4.png) vs envelope 56-80x72-96; BIRCH_B-V1_DEFAULT 63x118 (birch_v4b.png) vs envelope 44-70x76-100; PINE_B-V1_DEFAULT 96x132 (pine_c2d.png) vs envelope 42-64x80-104; OAK_B-V1_DEPLETED 27x21 (oak_stump10.png) vs envelope 16-28x12-20; SWAMP_B-V1_DEPLETED 40x34 (swamp_stump10.png) vs envelope 16-28x12-20; DEAD-TREE_B-V1_DEPLETED 31x23 (dead_stump10.png) vs envelope 16-28x12-20; PINE_B-V1_DEPLETED 34x18 (pine_stump10.png) vs envelope 16-28x12-20; BIRCH_B-V1_DEPLETED 11x15 (birch_stump10.png) vs envelope 16-28x12-20 || all 9 override rows named: true
+KILLED mutant.bad_override: build errors: RMMZ_ROWS_INVALID, COVERAGE, SOURCE_DROPPED (rows[39].envelopeOverride: min above max (100-96x80-132))
+
+15/16 mutants killed
+[exit 1]
+

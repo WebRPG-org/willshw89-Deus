@@ -190,7 +190,7 @@ for (const cf of caseFiles) {
 }
 // Every FAIL rule of deliverable 4 has at least one fixture case.
 check('rule_coverage', p => {
-    const need = ['DUP_ID', 'DUP_SLOT', 'MISSING_FIELD', 'RAMP_UNKNOWN', 'SCALEROW_UNKNOWN', 'SIZE_OUTSIDE_ROW', 'SLOT_TOO_SMALL', 'SLOT_OVERLAP', 'SLOT_OFF_GRID', 'SLOT_OUTSIDE_SHEET', 'SHEET_TOO_LARGE', 'SHEET_NOT_GRID', 'Z_OUT_OF_RANGE', 'NO_SOURCE', 'SOURCE_DROPPED', 'DERIVED_BAD_BASE', 'VARIANT_HAS_SLOT', 'PAPERDOLL_MISMATCH', 'GEOM_HEIGHT'];
+    const need = ['DUP_ID', 'DUP_SLOT', 'MISSING_FIELD', 'RAMP_UNKNOWN', 'SCALEROW_UNKNOWN', 'SIZE_OUTSIDE_ROW', 'SLOT_TOO_SMALL', 'SLOT_OVERLAP', 'SLOT_OFF_GRID', 'SLOT_OUTSIDE_SHEET', 'SHEET_TOO_LARGE', 'SHEET_NOT_GRID', 'Z_OUT_OF_RANGE', 'NO_SOURCE', 'SOURCE_DROPPED', 'DERIVED_BAD_BASE', 'VARIANT_HAS_SLOT', 'PAPERDOLL_MISMATCH', 'GEOM_HEIGHT', 'RMMZ_FORM', 'RMMZ_TILE_DUP'];
     const have = new Set(caseFiles.map(f => readJson(path.join(FIX, 'cases', f)).code));
     if (p) have.delete('GEOM_HEIGHT');
     const missing = need.filter(c => !have.has(c));
@@ -243,18 +243,27 @@ check('geometry_stratum_sum', p => {
     return { ok: sum === use.layerPx && use.stratumPx.length === use.strataPerLayer && own.length === 0 && rejected.every(x => x.rejected), detail: `stratumPx ${JSON.stringify(use.stratumPx)} sums to ${sum} (layerPx ${use.layerPx}); geometry errors ${own.length}; ${rejected.map(x => `${x.n} ${x.rejected ? 'rejected' : 'NOT rejected'}`).join(', ')}` };
 });
 // Changing stratumPx in a fixture changes the strip / wall / ramp slot heights.
+// WG.20.03: a runtime re-form pins a geometry row to a fixed number of RMMZ cells, so a split that changes that
+// row's slot height must fail RMMZ_FORM (the form has to be re-planned). The slot comparison therefore builds the
+// skewed world without the re-forms (they change runtime only, never a slot) and checks that the real inputs
+// fail on RMMZ_FORM alone.
 check('geometry_stratum_changes_slots', p => {
     const base = realBuild().catalogue;
-    const skew = p ? realBuild() : B.build({ root: ROOT, geometry: geometryWith('stratum_skewed').g });
+    const rowsDoc = readJson(rel(B.SRC.rmmzRows));
+    const noReforms = { [B.SRC.rmmzRows]: JSON.stringify(Object.assign(rowsDoc, { reforms: [] })) };
+    const skewReal = p ? null : B.build({ root: ROOT, geometry: geometryWith('stratum_skewed').g });
+    const skew = p ? realBuild() : B.build({ root: ROOT, geometry: geometryWith('stratum_skewed').g, overrides: noReforms });
     const reord = p ? realBuild() : B.build({ root: ROOT, geometry: geometryWith('stratum_reordered').g });
-    if (!skew.ok || !reord.ok) return { ok: false, detail: 'fixture build failed' };
+    if (!skew.ok || !reord.ok) return { ok: false, detail: `fixture build failed: ${(skew.errors || []).concat(reord.errors || []).slice(0, 3).map(e => e.code + ' ' + e.id).join('; ')}` };
+    const formOnly = !skewReal || (!skewReal.ok && skewReal.errors.length > 0 && skewReal.errors.every(e => e.code === 'RMMZ_FORM'));
+    if (!formOnly) return { ok: false, detail: `skewed build with the re-forms should fail on RMMZ_FORM only; got ${skewReal.ok ? 'OK' : skewReal.errors.slice(0, 3).map(e => e.code + ' ' + e.id).join('; ')}` };
     const ids = ['SURFACE_SHARED_EDGE_MEADOW_S-H2_DEFAULT', 'SURFACE_SHARED_WALLFACE_OPENING_H2_DEFAULT', 'SURFACE_SHARED_RAMP_MEADOW_N-C2_DEFAULT', 'SURFACE_SHARED_RAMPSIDE_MEADOW_E-H2_DEFAULT'];
     const b = byId(base), s = byId(skew.catalogue), r = byId(reord.catalogue);
     const changedSlot = ids.filter(id => b.get(id) && s.get(id) && b.get(id).slot.h !== s.get(id).slot.h);
     const tgtIds = ['SURFACE_SHARED_EDGE_MEADOW_S-H1_DEFAULT', 'SURFACE_SHARED_WALLFACE_OPENING_H3_DEFAULT', 'SURFACE_SHARED_RAMP_MEADOW_N-C4_DEFAULT'];
     const changedTarget = tgtIds.filter(id => b.get(id) && r.get(id) && b.get(id).envelope.hTarget !== r.get(id).envelope.hTarget);
     const d = id => `${id.split('_').slice(2, 5).join('_')} ${b.get(id).slot.h}->${s.get(id) ? s.get(id).slot.h : '?'}`;
-    return { ok: changedSlot.length === ids.length && changedTarget.length === tgtIds.length, detail: `[40,14,14,14,14]: ${changedSlot.length}/${ids.length} slot heights changed (${ids.map(d).join(', ')}); [20,19,19,19,19]: ${changedTarget.length}/${tgtIds.length} target heights changed (${tgtIds.map(id => `${b.get(id).envelope.hTarget}->${r.get(id) ? r.get(id).envelope.hTarget : '?'}`).join(', ')})` };
+    return { ok: changedSlot.length === ids.length && changedTarget.length === tgtIds.length, detail: `[40,14,14,14,14]: ${changedSlot.length}/${ids.length} slot heights changed (${ids.map(d).join(', ')}); [20,19,19,19,19]: ${changedTarget.length}/${tgtIds.length} target heights changed (${tgtIds.map(id => `${b.get(id).envelope.hTarget}->${r.get(id) ? r.get(id).envelope.hTarget : '?'}`).join(', ')})${skewReal ? `; skewed with the re-forms: ${skewReal.errors.map(e => e.code + ' ' + e.id).join(', ')}` : ''}` };
 });
 // No 9 or 32 literal layer count in build_catalogue.js (the layer count is read from geometry.json).
 check('geometry_no_literal_layer_count', p => {

@@ -1,6 +1,6 @@
-# Art catalogue schema `deus-art-catalogue/1.2.0`
+# Art catalogue schema `deus-art-catalogue/1.4.0`
 
-Written 2026-09-26 by Claude (lane-s, WG.20.02); updated to 1.2.0 on 2026-09-28 (lane-bz, TOOL.01.01). Machine form: [`art/catalogue/catalogue.schema.json`](../../../art/catalogue/catalogue.schema.json) (JSON Schema 2020-12, `$id` `deus-art-catalogue/1.2.0`). Counts, coverage and sheets: [INDEX.md](INDEX.md) (generated).
+Written 2026-09-26 by Claude (lane-s, WG.20.02); updated to 1.2.0 on 2026-09-28 (lane-bz, TOOL.01.01) and to 1.4.0 on 2026-10-01 (lane-pg, WG.20.03; 1.3.0 is taken by the unmerged `task/lane-ce`). Machine form: [`art/catalogue/catalogue.schema.json`](../../../art/catalogue/catalogue.schema.json) (JSON Schema 2020-12, `$id` `deus-art-catalogue/1.4.0`). Counts, coverage and sheets: [INDEX.md](INDEX.md) (generated).
 
 **The catalogue contains no image data.** It lists ids, sizes, slots, sources, statuses and references so the Owner can paint into blank templates (Lane T) and approved art can be placed and validated (Lane U). Nothing in this lane draws, generates, edits or requests art (DEC-007).
 
@@ -16,6 +16,7 @@ The contract in `tasks/WG.20.02/lane-s/BRIEF.md` is frozen for lanes S, T and U.
 | `art/catalogue/mapping.json` | input: source id -> scale row, palette ramps, category (MATCH or PROPOSED) | hand |
 | `art/catalogue/reference_inputs.json` | input: pinned sha256 of every reference | hand |
 | `art/catalogue/conflict_claims.json` | input: document claims that disagree, located by literal text | hand |
+| `art/catalogue/rmmz_rows.json` | input: catalogue rows in RMMZ's own sheet formats and runtime re-forms of existing rows (section 12) | hand (WG.20.03) |
 | `art/catalogue/catalogue.schema.json` | the JSON Schema | hand |
 | `art/catalogue/catalogue.json` | output: the catalogue | `tools/art/build_catalogue.js` |
 | `art/catalogue/scale_chart.json` | output: the size rows entries cite | builder |
@@ -28,6 +29,7 @@ The contract in `tasks/WG.20.02/lane-s/BRIEF.md` is frozen for lanes S, T and U.
 node tools/art/build_catalogue.js           rebuild every output (deterministic: no timestamps, fixed key order, stable sort)
 node tools/art/build_catalogue.js --check   rebuild in memory; exit 1 if a committed output differs
 node tools/art/test_catalogue.js            the done tests; UF_TEST_PROVOKE=catalogue.<check> makes one check fail on purpose
+node tools/art/test_rmmz_rows.js            the RMMZ-row tests (section 12); UF_TEST_PROVOKE=rmmz_rows.<check>; --mutants
 ```
 
 The builder reads the sources through one context that records every file it reads or cites; `catalogue.json` `sources[]` lists them with their sha256, so any source change shows up in `--check`.
@@ -66,7 +68,7 @@ Biomes: the 25 biome names and their band assignment are OWNER_OPEN (DEC-013). `
 
 **`scale_chart.json`** (DEC-016: the scale chart governs pixel size, envelope, footprint and anchor). Rows, in order, and nothing else:
 - one row per class of `game/data/DEUS_ScaleRegistry.json` (39): `rowId` = class id, W/H min/target/max, footprint, anchor, `ref` (file:line), `source: STRIP+REGISTRY` when the strip labels it (then also `chartLabel`, `chartHeightPx`, transcribed from the strip) else `REGISTRY_ONLY`;
-- tile-class rows parsed from `docs/RMMZ_ASSET_SPEC.md` (`source: RMMZ_SPEC`): `RMMZ_TILE_48` (48x48; the strip's "48X48 TILE 48 PX" label), `RMMZ_AUTOTILE_A1` 96x144, `RMMZ_AUTOTILE_A2` 96x144, `RMMZ_AUTOTILE_A3` 96x96, `RMMZ_AUTOTILE_A4` 96x120, and `RMMZ_FACE_144` (the 144x144 face cell of §4; needed because face sheets are catalogued);
+- tile-class rows parsed from `docs/RMMZ_ASSET_SPEC.md` (`source: RMMZ_SPEC`): `RMMZ_TILE_48` (48x48; the strip's "48X48 TILE 48 PX" label), `RMMZ_AUTOTILE_A1` 96x144, `RMMZ_AUTOTILE_A2` 96x144, `RMMZ_AUTOTILE_A3` 96x96, `RMMZ_AUTOTILE_A4` 96x120 (legacy; 8 rows still use it), and `RMMZ_FACE_144` (the 144x144 face cell of §4; needed because face sheets are catalogued); and three rows derived from those parsed values (WG.20.03; `docs/RMMZ_ASSET_SPEC.md` is not edited), each `ref` naming its derivation: `RMMZ_AUTOTILE_A4_TOP` = the A2 block (96x144, footprint 2x3; an A4 kind in an even block row draws with the floor table, `game/js/rmmz_core.js:2547-2552`), `RMMZ_AUTOTILE_A4_SIDE` = the A3 block (96x96, 2x2; odd block rows use the wall table) and `RMMZ_TILE_48_2X2` = 2 x `RMMZ_TILE_48` (96x96, 2x2; four whole B-E cells, `game/js/rmmz_core.js:2483-2498`). The build fails with `RMMZ_SPEC` unless the parsed A4 sheet is 8 top widths wide and a whole number of (top + side) pairs high (768 = 8 x 96; 720 = 3 x 240);
 - geometry rows (`source: GEOMETRY`), above.
 
 **`size_classes.json`** (the character-size authority; drawn heights only, the sim keeps true SRD heights): one row per SRD race (`RACE_<NAME>`: `srdSize`, `srdSourceRef` {file, entryId, line, quoted Size trait}, the feet bounds and their relation EQ/LT/GT/NONE/SAME_AS_HUMAN, `drawnHeightPxMin/Max/Target`, `drawnWidthPx` with its source row and status, `frameClass`, `frame`, `footprintSq`, `status: DERIVED` when both bounds are exact SRD feet at 7 px/ft, else `PROPOSED`; Gnome and Halfling carry `readabilityFloorPx {value, enabled:false}`), one row per frame class (`FRAME_TINY` .. `FRAME_GARGANTUAN`: footprint in squares, frame in px or null, RMMZ block, status), the SRD Size Categories table, the 6-ft human check (7 x 6 = 42 = humanPx), and the optional parameters `TALL_MEDIUM` and the small-race floor with `enabled: false`. Every px value is checked against the SRD text; a failed check is written to conflicts.md, never fixed.
@@ -81,7 +83,7 @@ Target height of a race: `humanPx` for Human and Tiefling ("about the same size 
 
 | Field | Contract | Content |
 |---|---|---|
-| `schemaVersion` | yes | `deus-art-catalogue/1.1.0` |
+| `schemaVersion` | yes | `deus-art-catalogue/1.4.0` |
 | `tileSizePx` | yes | 48 (from geometry) |
 | `geometry`, `palette`, `scaleChart` | yes | `{path, sha256}`; palette = `art/palette/deus_master_world_palette_v1.hex` |
 | `sources[]` | yes | `{path, sha256, role}` of every file read or cited |
@@ -100,6 +102,8 @@ Target height of a race: `humanPx` for Human and Tiefling ("about the same size 
 
 **Packing**: every entry with a paint slot, sorted by (band, biome, group type, category, id), is shelf-packed left to right into the atlases of its (band, biome, type) group; a new shelf starts when the row is full, a new sheet when the sheet is full. Deterministic.
 
+**Append-only sheets.** Rows that would renumber existing slots if packed in place go on their own sheets after the main pack: the DEC-045 stamps on `ATLAS_SURFACE_SHARED_TILE_DEC045`, and the RMMZ-format rows of section 12 on `ATLAS_<band>_<biome>_<type>_RMMZ<nn>` (the same shelf algorithm and sort key, packed after the main pack and the DEC-045 block). No existing slot moves when such a row is added, and no `_RMMZ` sheet holds an older row (`rmmz_rows.append_only`).
+
 ## 6. `entries[]`
 
 Contract fields (always present):
@@ -107,13 +111,13 @@ Contract fields (always present):
 | Field | Meaning |
 |---|---|
 | `id` | `BAND_BIOME_CATEGORY_TYPE_VARIANT_STATE`: six fields of `[A-Z0-9]` joined by `_`; inside a field every other character becomes `-` (so `berry_bush` -> `BERRY-BUSH`, biome placeholder `LOWER2_B1` -> `LOWER2-B1`) |
-| `category` | TERRAIN, WATER, TOP, EDGE, RAMP, RAMPSIDE, WALLFACE, CONNECTOR, VEIN, SHADE, RIMSHADOW, DECAY, TREE, FLORA, STONE, REMAINS, STRUCTURE, FURNITURE, WORKSHOP, HANGING, LIGHT, ITEM, CHARACTER, CREATURE, EQUIPMENT, FACE, EFFECT |
+| `category` | TERRAIN, WATER, TOP, EDGE, RAMP, RAMPSIDE, WALLFACE, CONNECTOR, VEIN, SHADE, RIMSHADOW, DECAY, TREE, FLORA, STONE, REMAINS, STRUCTURE, FURNITURE, WORKSHOP, HANGING, LIGHT, ITEM, CHARACTER, CREATURE, EQUIPMENT, FACE, EFFECT, MARK (integrity and aftermath marks; group OVERLAY; 1.4.0) |
 | `band`, `biome` | a geometry band or `ALL`; `SHARED` or a biome id |
 | `zMin`, `zMax` | the band's range (inside the geometry range) |
 | `sizeClass`, `frameClass` | SRD size and frame class for characters and creatures (null otherwise) |
 | `sourceIds` | `{catalog[], assetIndex[], brief[], ar[], manifest[], matrix[], addendum[]}`; catalog ids are prefixed by their list (`objects:oak`, `items:log`, `wildlife:deer`, `people:human`, `groundKinds:meadow`, `water:fresh`, `faces:human`, `skins:human`, `underground:cave_floor`); brief ids are `SEG-nn:<id>` (`SEG-11:<id>:<gender>` for the paired people briefs); addendum ids are `ADD-<FAMILY>` |
 | `scaleRow` | size row (section 3); null only for a creature whose frame class is OWNER_OPEN |
-| `envelope` | `{wMin, wTarget, wMax, hMin, hTarget, hMax}` px, inside the row's min/max |
+| `envelope` | `{wMin, wTarget, wMax, hMin, hTarget, hMax}` px, inside the row's min/max; for an entry with `envelopeOverride`, min/max equal the override's and the targets are the row's (section 12) |
 | `footprint` | `{w, h}` tiles (squares) |
 | `anchor` | `{type, x, y}` px inside one frame cell: GROUND = bottom centre (x = cell/2, y = cell h - 1, e.g. [24,47]); CEILING = top centre; WALL = top centre of a face that hangs from an upper edge; CENTER = cell centre |
 | `paletteRampIds` | ramp ids of `game/data/DEUS_PaletteRegistry.json` (never colours) |
@@ -127,7 +131,7 @@ Contract fields (always present):
 | `alphaMode` | BINARY, or OWNER_OPEN (binary until the Owner rules) for rim shadows, height shading, dust, light shafts, ore veins and hole edges |
 | `status`, `statusWhy` | section 7 |
 
-Optional fields: `family` (SOURCE or the addendum family), `groupType` (the ATLAS group), `mapping {scaleBasis, rampBasis, rule}` (MATCH or PROPOSED and the mapping rule used), `geometryDerived {rule: STRATA_WINDOW|LAYER_FACE|RAMP_CELL, strata}`, `ownerOpen: true`, `notes`, `promptFile` (path to external generation prompt JSON sidecar), `specFile` (path to external production specification JSON sidecar).
+Optional fields: `family` (SOURCE or the addendum family), `groupType` (the ATLAS group), `mapping {scaleBasis, rampBasis, rule}` (MATCH or PROPOSED and the mapping rule used), `geometryDerived {rule: STRATA_WINDOW|LAYER_FACE|RAMP_CELL, strata}`, `ownerOpen: true`, `notes`, `promptFile` (path to external generation prompt JSON sidecar), `specFile` (path to external production specification JSON sidecar); from 1.4.0 (section 12): `rmmzForm {sheet: A1|A2|A3|A4|A5|B|C|D|E, stock: string|null}` (the RMMZ sheet letter of `runtime.file` and the stock RMMZ tile or kind the entry takes, or the stock format example of an A4 row; null for an extension-sheet item), `envelopeOverride {wMin, wMax, hMin, hMax}` and `footprintOverride {w, h}` (a per-row size override; each with exactly these keys).
 
 **Variants.** A row with `derivedFrom` set owns no paint slot (`slot: null`); its base must exist and must not itself be derived. Derived rows are the per-band recolours of tile art (`paletteSwap: DEPTH_<band>`).
 
@@ -196,7 +200,7 @@ Required coverage (100%, printed in INDEX.md): the WorldCatalog ids, the brief `
 | `MISSING_FIELD` | a size (frames), envelope, footprint, anchor or palette ramp is missing |
 | `RAMP_UNKNOWN` | a ramp id is not in the palette registry |
 | `SCALEROW_UNKNOWN` | a scaleRow is not in scale_chart.json or size_classes.json |
-| `SIZE_OUTSIDE_ROW` | an envelope value is outside its row's min/max |
+| `SIZE_OUTSIDE_ROW` | an envelope value is outside its row's min/max; for an entry with `envelopeOverride`: its min/max differ from the override's, or a target lies outside the override (1.4.0) |
 | `SLOT_TOO_SMALL` | a slot cell is smaller than the envelope |
 | `SLOT_OVERLAP` | two slots overlap in a sheet |
 | `SLOT_OFF_GRID`, `SLOT_OUTSIDE_SHEET` | a slot is off the 48 grid or leaves its sheet |
@@ -213,13 +217,43 @@ Required coverage (100%, printed in INDEX.md): the WorldCatalog ids, the brief `
 | `REF_HASH`, `REF_MISSING`, `REF_UNKNOWN` | a tracked reference is missing or does not match its pin; an entry cites an unpinned reference |
 | `SRD_QUOTE`, `SRD_ENTRY`, `SRD_SIZE`, `SIZE_RULE` | size_inputs.json does not match the SRD text, or 7 px x 6 ft is not humanPx |
 | `COVERAGE` | a required source id is uncovered or an addendum family is missing from a band |
-| `MAPPING_MISSING`, `AR_MISSING`, `BAND_UNKNOWN`, `RMMZ_SPEC` | an input the builder needs is missing |
+| `MAPPING_MISSING`, `AR_MISSING`, `BAND_UNKNOWN`, `RMMZ_SPEC` | an input the builder needs is missing; `RMMZ_SPEC` also when the derived A4 rows do not tile the parsed A4 sheet (section 3); `AR_MISSING` also when an AR of `rmmz_rows.json` is closed, withdrawn or matches the interface-art pattern (so it would land in `outOfScope`) |
+| `RMMZ_FORM` | an entry with `rmmzForm` does not sit where RMMZ reads it (section 12) |
+| `RMMZ_TILE_DUP` | two entries with `rmmzForm` claim the same file and cell (every cell of a grid counts) |
+| `RMMZ_ROWS_INVALID` | an item of `rmmz_rows.json` breaks the input contract (section 12); the error names the item index and key |
+| `RMMZ_AR_TEXT` | an AR row does not name the basename of every runtime file its rows use |
+| `RULING_MISSING` | a ruling quote of `rmmz_rows.json` is not found in `docs/OWNER_DECISIONS.md` |
+| `REFORM_TARGET` | a re-form names an entry that does not exist or whose `runtime.kind` is not NONE |
+
+## 12. RMMZ-format rows (`art/catalogue/rmmz_rows.json`, WG.20.03)
+
+Catalogue rows come before any generation (DEC-007). The Owner's rulings of 2026-10-01 (DEC-063) let the PM open rows for the assets it needs ("You can always open more rows for assets we need") and have art delivered in RMMZ's own sheet formats, with RMMZ stock as the format example and Ultima VII as the style example. `rmmz_rows.json` is the hand input for those rows; the builder holds no row data, and a new material, tree or object is one more item plus a line in its AR. The row list and its reasoning are `tasks/WG.20.03/lane-pg/ROWS.md`.
+
+**Input file** (schema `deus-rmmz-rows/1`): `about`; `rulings[] {id, quote, source}` (the two Owner quotes, found in `docs/OWNER_DECISIONS.md` by first-hit line, else `RULING_MISSING`); `sheets[] {file, sheet, size, holds, slotRule}` (each runtime file with its RMMZ letter, which must be the letter its name ends in); `rows[]`; `reforms[]`. A row item has exactly `group, ar, band, category, type, variant, state, scaleRow, anchor, frames, ramps, rampBasis, file, tileId, grid, stock, standardPending, notes`, and optionally `envelopeOverride`, `footprintOverride` and `overrideWhy`. A re-form item has exactly `id, ar, file, tileId, grid, stock`. The builder checks every key (`RMMZ_ROWS_INVALID`, naming the item index and key): the band is a geometry band or ALL, the category is in the category list, state is DEFAULT or DEPLETED, the variant matches `TOP`, `SIDE`, `A1`, `A2` or `B-V<n>` (n from 1), the scale row exists, the anchor is GROUND, CENTER, WALL or CEILING, every ramp is in the palette registry, the file is listed in `sheets`, the grid is null or `WxH` (1 to 8 cells each way). Each AR must be an open, not withdrawn, non-interface row of `docs/ASSET_REQUESTS.md` (`AR_MISSING`) whose text names the basename of every runtime file its rows use (`RMMZ_AR_TEXT`).
+
+**Ids and variant tokens.** Ids follow `makeId`. The variant names the RMMZ form: `TOP` / `SIDE` for an A4 top or side autotile (the AR-1200 split; one material is two rows), `A1` / `A2` for an A1 or A2 kind, `B-V<n>` for a tile object on a B-E sheet (n = the visual variant). A stump is its own tree's `DEPLETED` state (`SURFACE_SHARED_TREE_OAK_B-V1_DEPLETED` is the stump of `SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT`; SOP conflict C16).
+
+**What a new row gets.** `entryBase` + `applySize` as every row, then: `runtime {kind: RMMZ_TILESET, file, index: null, tileId, slotText, grid?}` with `slotText` `A4 slot <s>: top|side kind <k>`, `A1 kind <k>` (+ ` (waterfall)` for the vertical kinds), `A2 kind <k>`, `tile <n>` or `tiles <a>, <b>, ...`; `rmmzForm {sheet, stock}`; `sourceIds.ar = [ar]`; `status: MISSING`; `alphaMode: BINARY`; `references` `pack:WORLD` plus the style pack of its category; `mapping {scaleBasis: MATCH, rampBasis, rule: "<AR> <file> <slotText>"}`; and the reason `<AR> REQUESTED (docs/ASSET_REQUESTS.md:<line>); Owner 2026-10-01 "<standing-rows quote>" (docs/OWNER_DECISIONS.md:<line>), RMMZ format (docs/OWNER_DECISIONS.md:<line>); RMMZ form: <form>; no art yet (DEC-007 catalogue first)`, where `<form>` is `stock <sheet> <tile or kind> "<label>"`, or `<A4 file> slot <s>, format example <sheet> kind <k> "<label>"` for an A4 row, or `DEUS <letter> extension sheet, no stock slot`. Every line number is the real one at build time. The rows take every per-entry pass (sourceIds sort, `promptFile`/`specFile`, style pack, optional-field cleanup, the source-set override of `art/masters/source_sets/<id>/manifest.json`), so a later induction needs no code change. New TERRAIN rows are not added to the terrain list of the TOP/EDGE/RAMP/RAMPSIDE families.
+
+**Re-forms** give an RMMZ home to an existing entry whose `runtime.kind` is NONE (else `REFORM_TARGET`). They change only `runtime`, `rmmzForm`, `sourceIds.ar` (every previous member kept, the AR added) and `statusWhy` (the previous text, then `; ` and the same AR and ruling clause). Slot, envelope, footprint, anchor, ramps, alphaMode, status and every other field stay as the build without the rows and re-forms gives them (`rmmz_rows.reform_<id>`).
+
+**Sheet layout rule.** An item with a stock RMMZ counterpart sits at that stock position on a DEUS sheet named after the stock sheet (`DEUS_Outside_B.png` for Outside_B, `DEUS_Outside_A1.png`, `DEUS_Dungeon_A1.png`, `DEUS_Dungeon_A2.png`). An item with none goes on the DEUS extension sheet E of the same tileset (`DEUS_Outside_E.png`, `DEUS_Dungeon_E.png`; sheet D is taken by DEC-045): local tile L is tileId 768 + L, column L%8 and row floor(L/8) of the left half. A4 materials go on `DEUS_Cliffs_Temperate_A4.png`: material slot s has top kind 16*floor(s/8)+s%8 (96x144) and side kind = top + 8 (96x96); the stock column of an A4 row is a format example on another sheet, checked for its label and its top/side parity, not for its position.
+
+**`RMMZ_FORM`** (every entry with `rmmzForm`): the runtime kind is RMMZ_TILESET; the file ends in a sheet letter and `rmmzForm.sheet` is that letter; the tileId lies in the letter's range (`game/js/rmmz_core.js:2667-2676`: B 0, C 256, D 512, E 768, A5 1536, A1 2048, A2 2816, A3 4352, A4 5888, end 8192); an autotile id is its kind's shape 0 and carries no grid; on a B-E sheet the grid stays inside its 8-column half and 16 rows; and the paint slot equals the RMMZ target. Targets come from the parsed sizes: A1 kinds 0-1 and the even kinds from 4 up are 3 x the A1 block (three frames side by side), the other A1 kinds one A1 block; A2 one A2 block; A4 a TOP block in even block rows and a SIDE block in odd ones; B-E grid x tilePx. A3 and A5 have no target yet and are refused (fail closed) until a lane gives them one. **Local tile 0 of a B-E sheet is refused: a DEUS convention, not an RMMZ rule.** RMMZ leaves only tileId 0 undrawn (`Tilemap.isVisibleTile`; the B sheet's "Transparent" tile), and stock C sheets use their local tile 0 (`Outside_C.txt` line 1, "Obelisk"). **`RMMZ_TILE_DUP`**: no two entries with `rmmzForm` claim the same file and cell; an autotile kind is one claim, a grid claims every cell. A re-form fixes a geometry row to a number of cells, so a stratum split that changes that row's slot height fails `RMMZ_FORM` until the re-form is re-planned.
+
+**Size overrides (decision D4 (a); Owner approval DEC-066 item 1, a pointer under DEC-016).** A row item may carry `envelopeOverride {wMin, wMax, hMin, hMax}` (whole numbers) and `footprintOverride {w, h}` (numbers > 0), each with exactly these keys, and then must carry a non-empty `overrideWhy` naming the measured specimen (file, sha256 prefix, bounding box). The override is the union of the size row's min/max and the specimen's bounding box, so it only widens and the row's targets stay inside it (else `RMMZ_ROWS_INVALID`). The entry's envelope takes min and max from the override and the targets from the row; its footprint is the override's when given; the slot and anchor follow the effective envelope as for every row. The entry also carries copies `envelopeOverride` / `footprintOverride`, its reason ends `; size override of <scaleRow> <row min-max> to <override min-max> (WG.20.03 D4): <overrideWhy>`, and conflicts.md lists it under "Per-row size overrides (DEC-016, open for the Owner)". `SIZE_OUTSIDE_ROW` checks such an entry against its override (min/max equal, targets inside) instead of its chart row; every other entry is checked against its chart row as before. Consumers need no change: `tools/art/validate_art.js` checks placed art against `entry.envelope`, and `tools/art/make_blank_templates.js` sizes frames from it. The fixture's recorded specimen sizes (`rmmz_rows.envelope_admits_art`) are measurements, not image checks: the selected image is checked at induction.
+
+**`mapping.rampBasis` for these rows** (settled 2026-10-01, WORK-GATE lane-pg 2). MATCH means the ramp identifiers are copied unchanged, from `art/catalogue/mapping.json` `terrains.<kind>` or from the existing row of the same species or object when that row is itself MATCH; a stump copies its own tree's bark ramp and takes that tree row's basis. PROPOSED means a PM-selected palette assignment (from `game/data/DEUS_PaletteRegistry.json`, a set the PM changed for a face, side or variant, or a copy of a PROPOSED row). MATCH does not mean that the source art or the palette decision is approved; it records only where the identifiers came from. The rule covers the rows of `rmmz_rows.json` only: existing families are not relabelled (the A2 ground rows keep PROPOSED on their `mapping.json` copies, and re-forms keep their own basis).
+
+**Tests**: `node tools/art/test_rmmz_rows.js` (one check per row and per re-form against `tools/art/fixtures/catalogue/rmmz_rows_expected.json`, an oracle transcribed from ROWS.md and BRIEF.md, plus the named checks; `UF_TEST_PROVOKE=rmmz_rows.<check>`; `--mutants` builds 16 mutants in memory through `build({ overrides })`, the test-only option that replaces input files for every reader, and exits 1 if one survives). `tools/art/test_catalogue.js` checks the rules through the cases `rmmz_form`, `rmmz_tile_dup` and `rmmz_size_override`.
 
 ## Additions to the contract
 
 Optional fields added by lane S (schema 1.1.0): top level `sizeClasses`, `references`, `bands`, `biomes`, `depthPalettes`, `sourceIdIndex`; `outOfScope[].kind`; entries `family`, `groupType`, `mapping`, `geometryDerived`, `ownerOpen`, `notes`; `runtime.tileId`, `runtime.slotText`, `runtime.grid`; geometry `bands[].name`, `biomesPerBand`, `facings`, `atlasMaxPx`; the band value `ALL`. The scale chart row `RMMZ_FACE_144` is an RMMZ_SPEC row beyond the brief's tile-class examples, sourced from `docs/RMMZ_ASSET_SPEC.md` §4.
 
 Optional fields added by lane BZ (schema 1.2.0): entries `promptFile` and `specFile` for linking external prompt and specification artifacts to canonical entries.
+
+Added by lane PG (schema 1.4.0, WG.20.03): the category `MARK`; entries `rmmzForm`, `envelopeOverride`, `footprintOverride`; the scale-chart rows `RMMZ_AUTOTILE_A4_TOP`, `RMMZ_AUTOTILE_A4_SIDE`, `RMMZ_TILE_48_2X2`; the `_RMMZ<nn>` paint sheets; the input `art/catalogue/rmmz_rows.json`; the rules `RMMZ_FORM`, `RMMZ_TILE_DUP` and the override path of `SIZE_OUTSIDE_ROW`; the build errors `RMMZ_ROWS_INVALID`, `RMMZ_AR_TEXT`, `RULING_MISSING`, `REFORM_TARGET`.
 
 ## Choices made here (PROPOSED, listed as Owner questions in conflicts.md)
 

@@ -1,0 +1,110 @@
+base 65e97351 [claude] mail: MSG-PRUNE-PM-092 to AG (usage routing: exhaust codex/grok/MiniMax first; two Codex research tasks); tip e6b5f421 [claude] WG.20.03 WIP: test_rmmz_rows.js (104 checks, 16 mutants), expected fixture from ROWS.md, SCHEMA.md 1.4.0
+$ (cd base2) node tools/art/test_rmmz_rows.js
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-GRANITE_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-GRANITE_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-SOIL_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-SOIL_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-SAND_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-SAND_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-MUD_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-MUD_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-LIMESTONE_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-LIMESTONE_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-LICHEN-ROCK_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-LICHEN-ROCK_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-ROOTED-SOIL_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-ROOTED-SOIL_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-BANDED-SANDSTONE_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-BANDED-SANDSTONE_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-RED-CLAY_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-RED-CLAY_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-LAYERED-STRATA_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-LAYERED-STRATA_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-MEADOW_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-MEADOW_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-FOREST-FLOOR_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-FOREST-FLOOR_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-DRY-GRASS_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-DRY-GRASS_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-NEEDLE-FLOOR_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-NEEDLE-FLOOR_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-STONY_TOP_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TERRAIN_CLIFF-STONY_SIDE_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_SAPLING_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_CANOPY-BROADLEAF-2X2_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_CANOPY-BROADLEAF-1X1_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_FRUIT-TREE-BARE_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_SWAMP_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_BIRCH_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_PINE_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_OAK_B-V1_DEPLETED: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_SWAMP_B-V1_DEPLETED: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_BIRCH_B-V1_DEPLETED: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_PINE_B-V1_DEPLETED: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEPLETED: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEPLETED: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_FLORA_GRASS-TUFT_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_FLORA_GRASS-TUFT_B-V2_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_FLORA_GRASS-TUFT_B-V3_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_FLORA_GRASS-TUFT_B-V4_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_FLORA_FLOWERS_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_FLORA_FLOWERS-BLUE_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_FLORA_FLOWERS-PURPLE_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_FLORA_FLOWERS-WHITE_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_STONE_GRANITE-BOULDER_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_STONE_GRANITE-BOULDER_B-V2_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_FLORA_BUSH_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_STONE_ROCKS-SMALL_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_FLORA_MUSHROOMS_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_FLORA_MUSHROOMS_B-V2_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_TREE_FALLEN-LOG_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_WATER_WATERFALL_A1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_ALL_SHARED_WATER_LAVA_A1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_ALL_SHARED_TERRAIN_OBSIDIAN_A2_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_ALL_SHARED_EFFECT_STEAM_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_MARK_ROCK-STRAINED_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_MARK_ROCK-FAILING_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_MARK_SOIL-STRAINED_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_MARK_SOIL-FAILING_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_MARK_GROUND-SCAR_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_MARK_ASH-PATCH_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.row_SURFACE_SHARED_MARK_SEDIMENT_B-V1_DEFAULT: absent from the catalogue
+FAIL rmmz_rows.reform_SURFACE_SHARED_SHADE_HEIGHT_H1_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":769,"slotText":"tile 769"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_SHADE_HEIGHT_H2_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":770,"slotText":"tile 770"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_SHADE_HEIGHT_H3_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":771,"slotText":"tile 771"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_SHADE_HEIGHT_H4_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":772,"slotText":"tile 772"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_SHADE_HEIGHT_H5_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":773,"slotText":"tile 773"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_RIMSHADOW_RIM_E_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":774,"slotText":"tile 774"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_RIMSHADOW_RIM_N_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":775,"slotText":"tile 775"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_RIMSHADOW_RIM_S_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":776,"slotText":"tile 776"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_RIMSHADOW_RIM_W_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":777,"slotText":"tile 777"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_WALLFACE_OPENING_H1_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":778,"slotText":"tile 778"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_WALLFACE_OPENING_H2_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":779,"slotText":"tile 779"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_WALLFACE_OPENING_FULL_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":784,"slotText":"tiles 784, 792","grid":"1x2"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_WALLFACE_OPENING_H3_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":785,"slotText":"tiles 785, 793","grid":"1x2"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_WALLFACE_OPENING_H4_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":786,"slotText":"tiles 786, 794","grid":"1x2"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_WALLFACE_OPENING_H5_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":787,"slotText":"tiles 787, 795","grid":"1x2"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_HANGING_VINES_V1_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_B.png","index":null,"tileId":20,"slotText":"tiles 20, 28","grid":"1x2"}; rmmzForm undefined != {"sheet":"B","stock":"Outside_B 20/28 \"Vines A\""}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_HANGING_ROOTS_V1_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":788,"slotText":"tiles 788, 796","grid":"1x2"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_HANGING_DUST_V1_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":789,"slotText":"tiles 789, 797","grid":"1x2"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_SURFACE_SHARED_HANGING_LIGHT-SHAFT_V1_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Outside_E.png","index":null,"tileId":790,"slotText":"tiles 790, 798","grid":"1x2"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.reform_LOWER1_SHARED_HANGING_STALACTITES_V1_DEFAULT: runtime {"kind":"NONE","file":null,"index":null} != {"kind":"RMMZ_TILESET","file":"img/tilesets/DEUS_Dungeon_E.png","index":null,"tileId":771,"slotText":"tiles 771, 779","grid":"1x2"}; rmmzForm undefined != {"sheet":"E","stock":null}; absent from the no-rows/no-reforms comparison build
+FAIL rmmz_rows.counts: 0 new rows (want 72) by group {} (want {"A":30,"B":16,"C":15,"D":1,"E":3,"F":7}); 0 re-forms (want 20); no comparison build
+FAIL rmmz_rows.ar_rows: 0/6 AR rows in docs/ASSET_REQUESTS.md; AR-2200 absent; AR-2201 absent; AR-2202 absent; AR-2203 absent; AR-2204 absent; AR-2205 absent
+FAIL rmmz_rows.size_rows: 0/3 derived RMMZ_SPEC rows; RMMZ_AUTOTILE_A4_TOP absent; RMMZ_AUTOTILE_A4_SIDE absent; RMMZ_TILE_48_2X2 absent
+FAIL rmmz_rows.rulings_cited: quotes at docs/OWNER_DECISIONS.md:1068, :924; 20/92 rows and re-forms present; SURFACE_SHARED_TERRAIN_CLIFF-GRANITE_TOP_DEFAULT absent; SURFACE_SHARED_TERRAIN_CLIFF-GRANITE_SIDE_DEFAULT absent; SURFACE_SHARED_TERRAIN_CLIFF-SOIL_TOP_DEFAULT absent; SURFACE_SHARED_TERRAIN_CLIFF-SOIL_SIDE_DEFAULT absent (+109)
+FAIL rmmz_rows.schema_contract: 0 rmmzForm entries (want 92) validate; envelopeOverride + wTarget -> []; footprintOverride + d -> []; MARK not in the category enum; rmmzForm is undefined; envelopeOverride is undefined; footprintOverride is undefined; versions: $id deus-art-catalogue/1.2.0, schemaVersion.const deus-art-catalogue/1.2.0, SCHEMA_VERSION deus-art-catalogue/1.2.0 (want deus-art-catalogue/1.4.0); 1 schema errors on the lane entries (no rmmzForm entries); broken copies gave 0 and 0 errors, want 1 each ()
+FAIL rmmz_rows.envelope_admits_art: 0/12 recorded specimen boxes admitted (recorded dimensions only; no image is read); not admitted: SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT: absent; SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEFAULT: absent; SURFACE_SHARED_TREE_BIRCH_B-V1_DEFAULT: absent; SURFACE_SHARED_TREE_PINE_B-V1_DEFAULT: absent; SURFACE_SHARED_TREE_SWAMP_B-V1_DEFAULT: absent; SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEFAULT: absent; SURFACE_SHARED_TREE_OAK_B-V1_DEPLETED: absent; SURFACE_SHARED_TREE_SWAMP_B-V1_DEPLETED: absent; SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEPLETED: absent; SURFACE_SHARED_TREE_PINE_B-V1_DEPLETED: absent; SURFACE_SHARED_TREE_BIRCH_B-V1_DEPLETED: absent; SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEPLETED: absent
+FAIL rmmz_rows.size_overrides: 0 entries carry envelopeOverride (want 9); footprintOverride on 0; conflicts.md section MISSING; SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT has no envelopeOverride; SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEFAULT has no envelopeOverride; SURFACE_SHARED_TREE_BIRCH_B-V1_DEFAULT has no envelopeOverride; SURFACE_SHARED_TREE_PINE_B-V1_DEFAULT has no envelopeOverride; SURFACE_SHARED_TREE_OAK_B-V1_DEPLETED has no envelopeOverride; SURFACE_SHARED_TREE_SWAMP_B-V1_DEPLETED has no envelopeOverride; SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEPLETED has no envelopeOverride; SURFACE_SHARED_TREE_PINE_B-V1_DEPLETED has no envelopeOverride; SURFACE_SHARED_TREE_BIRCH_B-V1_DEPLETED has no envelopeOverride
+FAIL rmmz_rows.rmmz_form: 0 rmmzForm entries (want 92); every slot is its RMMZ target
+FAIL rmmz_rows.pa_agrees: 0 rows without a grid (want 72) and 0 grid rows (want 20) against tools/art/place_art.js tilesetTarget; all agree, pixel positions as in ROWS.md
+FAIL rmmz_rows.tile_unique: 0 claimed cells (want 134); duplicates 0
+FAIL rmmz_rows.stock_positions: 0 stock positions (want 28), 0 A4 format examples (want 30); every label is the frozen MZ label; positions and parities hold
+FAIL rmmz_rows.append_only: no comparison build
+
+0/104 checks passed
+[exit 1]
+
