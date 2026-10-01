@@ -1,0 +1,24 @@
+{
+  "lane": "lane-gg",
+  "taskId": "OPS.GATE.AUTHOR",
+  "branch": "task/lane-gg",
+  "writer": "codex",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "tools/governance/merge_gate.js",
+    "tools/governance/test_merge_gate.js",
+    "tools/governance/MERGE_GATE.md",
+    "tools/governance/author_rules.json",
+    "tools/governance/fixtures/**",
+    "tasks/OPS.GATE.AUTHOR/lane-gg/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/governance/test_merge_gate.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}

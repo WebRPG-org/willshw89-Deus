@@ -1,0 +1,3 @@
+resume from HEAD a3fd229f; re-read BRIEF and the uncommitted diff first
+
+Execute the writer task for lane-gg based on the OPS.GATE.AUTHOR brief.
