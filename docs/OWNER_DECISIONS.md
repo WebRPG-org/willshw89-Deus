@@ -1044,6 +1044,7 @@ Every decision item recorded in this log must provide:
 - **Amendment (Owner, 2026-10-01, ~12:15Z, answering the PM's question on judges who keep splitting):** "strict 4/4". Unanimity stays strict even when further rounds do not close a split: a piece without four YES votes stays out of the game. The PM had offered three choices (strict 4/4; 3 of 4 with the dissent recorded; the Owner breaks ties) after seven council rounds split on cliffs 2, 5, 6, 9 and 10, the hanging vines, the stalactites and both apple trees (`art/COUNCIL_RECORD.md`).
 
 ---
+- **Amendment (Owner, 2026-10-01):** thresholds (4/4 passes, 3/4 goes to the Owner, fewer is out), Owner override, the YES WITH FIX answer and packets of ten; see DEC-069 items 1-3.
 
 ### Decision `DEC-063`: The U7 method: the PM makes natural-world art in PixelLab Pixflux and Bitforge, in RMMZ's own sheet formats; RMMZ reference, Ultima 7 style; no creatures, faces, character sheets or animations yet; a stump is its own tree cut down
 - **Date:** 2026-10-01
@@ -1083,6 +1084,7 @@ Every decision item recorded in this log must provide:
 
 - **Amendment (Owner, 2026-10-01):** script work on the PixelLab output of the PM's art may ship; see DEC-066 item 2 (the piece still starts from a Pixflux or Bitforge generation and needs the unanimous council).
 ---
+- **Amendment (Owner, 2026-10-01):** Create Image Pro allowed, the cliff-set method is the default, and the PixelLab balance is spent to zero; see DEC-069 items 4-5.
 
 ### Decision `DEC-064`: "Lets do all these": the PM's nine-item improvement list of 2026-10-01 is approved work
 - **Date:** 2026-10-01
@@ -1135,6 +1137,7 @@ Every decision item recorded in this log must provide:
 - **Records updated with this entry:** `docs/worldgen/DEUS_WORLDGEN_WBS.md` (section 5.3 rows PM-2 and PM-3, the WG.00.46 row, the revision log) and `tasks/wbs_registry.json` (the `decisions` lists of WG.CELL-WRITE, NAT.02.MASS and WG.00.46). The briefs of lanes dd, dr, de, fb and eq carry it when each lane is dispatched. Drafted as DEC-063 and renamed DEC-065 on 2026-10-01: DEC-063 and DEC-064 are taken on main (the PM's U7 art program; "Lets do all these").
 
 ---
+- **Amendment (Owner, 2026-10-01):** item 1 holds only under conditions A-C; see DEC-070 item 1.
 
 ### Decision `DEC-066`: Owner rulings of 2026-10-01 on the PM's morning questions: nine size overrides approved; script work on PixelLab output may ship; WG.64.01 and WG.64.02 superseded
 - **Date:** 2026-10-01 (~12:30Z)
@@ -1145,3 +1148,46 @@ Every decision item recorded in this log must provide:
   2. **Script work on PixelLab output may ship (question D2), option (a) "yes".** Art the PM makes may ship with pixels that a script changed after the PixelLab generation: cutting and rearranging into RMMZ layouts, transparency clean-up, palette snapping, and recolours or fills that use the piece's own colours (for example the mottled flat fills of cliffs 4, 7 and 8, and stumps cut from their tree before the Pixflux pass). The piece still starts from a PixelLab Pixflux or Bitforge generation (DEC-063 item 3), passes the PM's machine QA, and needs the four-judge unanimous council (DEC-062, strict 4/4) before a PM YEA (DEC-056).
   3. **WG.64.01 and WG.64.02 are superseded, option (a).** WG.64.01 (karst dissolution and cave architecture) and WG.64.02 (structural fault fractures and chasms) are retired as `SUPERSEDED` by WG.62.03 (D1 caves, ravines and shafts, generated directly at world creation; lane-dh wave 5, lane-fn, lane-di). No process simulation of dissolution or tectonics is planned. Geological events during play (sinkholes, quakes, eruptions) stay deferred under DEC-059 item 4.
 - **Records updated with this entry:** a pointer under DEC-016 and DEC-063; `docs/worldgen/DEUS_WORLDGEN_WBS.md` (WG.64.01 and WG.64.02 `SUPERSEDED`, the WG.62.03 row, Rev 37 and its log row); `docs/worldgen/DEUS_NATURAL_WORLD_SYSTEMS.md` section J; `art/COUNCIL_RECORD.md` (D2 answered).
+
+### Decision `DEC-067`: Natural-world build scope of 2026-10-01: five lanes cut or merged, spawn plumbing kept, start kit and art cards out, wet collapse approximate, Minecraft-like water with pressure
+- **Date:** 2026-10-01 (~14:45-15:05Z)
+- **Decider:** Owner, in chat with the PM, answering the PM's scope review of the 60 unmerged natural-world lanes (the Owner: "If any physics or world generation task sound s silly of out of scope let me know and i will review it. I dont want to spin the wheels on bullshit").
+- **Status:** `DECIDED`
+- **Ruling:**
+  1. **Cuts and merges ("Yes, your proposed strong flags are fine").** lane-ek (NAT.03.06 mixed-LOD water service for remote regions, off by default) is cut. lane-ec2 (fluid save codec) shrinks to the current save format only: no v1 conversion, no legacy hydro stores, because no player saves exist. lane-ds (NAT.02.MASS part 6, one density source enforced by a repo scan) is cut under the Owner's closed-mass scope (a lifecycle weight ledger, not density). lane-fu (NAT.02.MASS part 7, barrier parameters and the versioned head/saturation conversion) folds into lane-fj (NAT.02.02 barrier breach). lane-fv (NAT.02.01 part 5, structural save codec) merges into lane-eu (versioned structural save), which keeps the id.
+  2. **Spawn designations are world generation.** "Spawn designations are part of world generaiton and that means putting them in the correct spots." lane-fc (danger field and tiers T0-T4), lane-fe (seeded creature placement), lane-ff (wildlife spawns) and lane-fi (lazy wildlife population) stay. "build plumbing for things we dont have art for yes": systems are built even where their art does not exist yet.
+  3. **Start kits leave the build.** "We will worry about this layer, this isnt even a worldgen thing." lane-fa (WG.62.01 start kit and Year-0 underground settle) is withdrawn from the natural-world build; WG.62.01 waits for the civilization phase. Equal starts stay with lane-ez (merged), lane-fn, lane-fb and lane-fh.
+  4. **Art rows and cards deferred.** "Yeah, use lessons learned to refine prompts." lane-fl (ART.NAT.01 catalogue rows and Owner cards beyond the indicators) waits until the Owner funds art; the PM's analysis of the 2026-10-01 generations refines the prompts instead.
+  5. **Wet collapse is approximate.** Asked "How approximate are we talking?", the Owner answered with the water direction in item 6; the PM chose the approximate option as the one consistent with it (the Owner may revise): strata whose footprint touches fluid collapse by the dry path (lane-ew), and on the following water ticks the water authority moves water out of cells that now hold rubble into the nearest open cells; water stays conserved (moved, never deleted) and pore water stays in the rubble as moisture. lane-fk is re-scoped to this (one M lane, including the in-game collapse_wet proof); lane-fq, lane-fr and lane-fs are withdrawn.
+  6. **Water direction (binding on every water lane).** "I want water physics to operate like minecraft but with pressure and realism. So you kno whow minecraft water spreads kinda slow." (a) Water spreads visibly cell by cell over ticks at a slow, Minecraft-like pace; the spread rate is a named tunable in each brief, never instant. (b) Pressure: connected water seeks a common level, pushes up through connections and loads barriers (lane-fj). (c) Realism: water is finite and conserved (closed mass), flows downhill and down levels, and there are no infinite sources. Applies to lane-ec, ec2, ee, ef, eg, ei, ej, em, fj, fm and fk, and to any later water lane.
+- **Records updated with this entry:** `docs/worldgen/DEUS_WORLDGEN_WBS.md` (revision log); the PM's plan of record (lane table); mail to AG.
+
+### Decision `DEC-068`: Every door is two tiles tall and flush with the walls and roof
+- **Date:** 2026-10-01 (~14:05Z)
+- **Decider:** Owner, in chat: "I decided all doors in this game are going to be 2 tiles tall and flish with the walls and roof".
+- **Status:** `DECIDED`
+- **Ruling:** Every door is one cell wide and two cells tall (48x96 px), set in the wall plane with no protruding frame, its top meeting the roof line. Doors are civilization art (frozen in the natural-world phase, DEC-037): the ruling is recorded now and applied when doors are built. Any existing door row, request or spec that says otherwise is corrected when that work opens.
+- **Records updated with this entry:** none yet (doors are not in the natural-world build).
+
+### Decision `DEC-069`: The art rules of 2026-10-01: thresholds, the YES WITH FIX answer, packets of ten, the generation method and the budget (amends DEC-062 and DEC-063)
+- **Date:** 2026-10-01 (~12:15-14:50Z)
+- **Decider:** Owner, in chat with the PM (quotes in `art/COUNCIL_RECORD.md`).
+- **Status:** `DECIDED`
+- **Ruling:**
+  1. **Thresholds (amends DEC-062).** Final rule: "if its 4/4 instapass it, if its 3/4 i will decide, itf its less than that chuck it". The Owner may override the council either way ("I can also override art council if I like something"). A piece that fails three full rounds is set aside. Every NO keeps its reason in `art/COUNCIL_RECORD.md`.
+  2. **YES WITH FIX.** "Also give them the option of accepting the art with a recolor or small correction, tint, etc." Judges answer YES, YES WITH FIX (the exact recolour, tint or small correction) or NO with a reason; a YES WITH FIX counts once the PM applies the fix by tooling and records it; conflicting fixes go to the Owner.
+  3. **Cadence.** "Generate 10 things and send them a packet"; "Feel free to generate 10 things at a time on pixellab".
+  4. **Method (amends DEC-063 item 3).** Create Image Pro is allowed ("pro with reference and style images. RMMZ reference, U7 style, and make sure fo give Pixel size dimensions on everything"; "You can also use RMMZ examples + pro to develop entire sheets and tool off of them"; "you can even tool RMMZ assets onto examples that are the same size as the output"); the default is the method of the ten temperate cliff sets ("I want you to prompt however you were prompting those for things going forward"). Repeating tiles state their repeatable middle in the prompt ("Maybe thats something we can indicate in the prompt") and pass the RMMZ-table assembly test before a vote.
+  5. **Budget (amends DEC-063).** "Continue generating art, no limit on generations", then "Use the rest of our generations ... (Ill pay for art after)": the PM spends the PixelLab balance to zero, then reports what worked and prioritizes the remaining art.
+  6. **The ten temperate cliff sets are in game** by the Owner's override ("I think those all look great"; "All 10 go in").
+- **Records updated with this entry:** pointer lines under DEC-062 and DEC-063; `art/COUNCIL_RECORD.md` holds the votes and quotes.
+
+### Decision `DEC-070`: Equal faction starts, acceptable FPS, and the conditions on generating areas on first request (amends DEC-065 item 1)
+- **Date:** 2026-10-01 (~12:45-13:00Z)
+- **Decider:** Owner, in chat with the PM.
+- **Status:** `DECIDED`
+- **Ruling:**
+  1. **Generation on first request, conditional.** "If they develop the same go for it, if it results in factions starting at different times because they werent generated? No way." Binding conditions: (A) no faction starts late: every faction-home area and home floor is generated at New Game, and lane-dd adds a check that all of them exist at tick 0; (B) built-late equals built-at-New-Game: lane-dd adds lazy-vs-eager and build-order permutation checks against lane-dc's eager 3x3 fixture (per-area checksums), and lane-dg repeats them per (area, z) for generator 6; (C) nothing that runs over time may make an area built later differ from one built at New Game: every lane that registers something at first build (lane-fi wildlife against Ecology baselines; water sources and rain targets; barrier pressure; lane-dl magma core funding) registers it at New Game for every area or catches up to the current game time, proven by a lazy-vs-eager test. Where a system cannot meet this, the eager rule (all 32 levels of every area at New Game) applies to that system.
+  2. **Equal starts.** "I want all of the factions to have requally good starts, we need to balance plant growth and stuff across the biomes." Measurable parity rules (metrics, tolerances, tests, lane placement) come from the braintrust design round DESIGN-NW-1; any new plan leaf it needs goes to the Owner first.
+  3. **FPS.** "FPS has to be acceptable. Anything we implement cannot slow FPS to a grind ingame. Part of it is figuring out a solution and another part is streamlining it." Every lane must keep frame time acceptable; the binding frame budget and the per-lane performance gate come from DESIGN-NW-1 and go to the Owner with it.
+- **Records updated with this entry:** a pointer line under DEC-065.
