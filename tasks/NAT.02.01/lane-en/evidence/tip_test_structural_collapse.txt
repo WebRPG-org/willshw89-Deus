@@ -1,0 +1,8 @@
+=== NAT.02.01 Structural Collapse Gate Tests [BASELINE] ===
+PASS: test_vertical_compressive_support - Pillar cell supported vertically: true
+PASS: test_cantilever_short_supported - 1-cell cantilever supported: true, span=1
+PASS: test_cantilever_long_unsupported - 6-cell cantilever unsupported: true, mode=unsupported
+PASS: test_cascading_collapse_execution - Collapsed count: 2, Rubble items created: 2
+PASS: test_mass_conservation_ledger - Displaced mass: 16500 lbs, Rubble in ledger: 16500 lbs (expected 16500 lbs)
+
+ALL CHECKS PASSED: 5 check(s) verified.

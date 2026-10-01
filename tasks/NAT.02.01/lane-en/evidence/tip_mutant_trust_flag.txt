@@ -1,0 +1,14 @@
+PASS: rooted_modules_present - rooted.js and reader.js exist; index.js exports the rooted API
+PASS: rooted_floating_ring_fails
+FAIL: rooted_bearing_needs_root [trust_flag] - X on rubble on a floating block verdict: got "supported", expected "unsupported"; X above the empty half of a deposit verdict: got "supported", expected "unsupported"; X on rubble on a rooted pillar mode: got "foundation", expected "vertical"; X on rubble on a rooted pillar foundation: got "5,5,82", expected "5,5,70" (+3 more)
+PASS: rooted_cross_z_member
+PASS: rooted_rotation_invariant
+PASS: rooted_distance_carried
+PASS: rooted_hp_band_span
+PASS: rooted_unknown_is_pending
+PASS: rooted_catalogue_span
+PASS: rooted_missing_data_errors
+FAIL: rooted_partial_geometry [trust_flag] - block above the deposit's empty half verdict: got "supported", expected "unsupported"
+FAIL: rooted_ops_counted [trust_flag] - rubble-borne member mode: got "foundation", expected "vertical"
+
+RESULT: mutant trust_flag - 3/11 checks failed
