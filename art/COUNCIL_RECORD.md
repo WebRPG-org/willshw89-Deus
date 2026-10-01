@@ -174,3 +174,16 @@ Shown the two cave limestone options (the ART-COUNCIL-7 version, 2 YES / 2 NAY, 
 | Cliff 5 cave limestone (v7) | 2 of 4 | override withdrawn | out; to be remade |
 
 Cliffs passed: 6 of 10 (sets 1, 3, 4, 7, 8 at 4 of 4; set 6 by the Owner). Layered strata (the recolour from set 8) is out to ART-COUNCIL-8. Method for the remakes (Owner, same time): "I think we get the best results using pro with reference and style images. RMMZ reference, U7 style, and make sure fo give Pixel size dimensions on everything."
+
+## ART-COUNCIL-8 (2026-10-01, ~14:00-14:15Z): layered strata recolour (round 9, recoloured from passed set 8)
+
+Board: one A4 set at 2x (top block 96x144 above face block 96x96), against the Ultima VII reference board. Neutral packet, one piece. Asked in each judge's ART-01 thread as a fresh vote.
+
+| Judge | Vote | Reason |
+|---|---|---|
+| Grok Heavy | NO | The face is stacked, similar-sized clods closed by dark contours, so it reads as coursed masonry; the top fill is continuous wavy blue-grey bands (wood-grain contouring, not broken ledges); the cool grey is a hue shift inside tan planes, not a lit cap or a solid shadow face. |
+| MiniMax M3 | NO | Irregular dark stain patches on the top read as dirt smears, not U7's clean planes with edge-defined crevices; the crack lines on the face are denser and darker than the reference (a heavy web instead of 3-5 cracks per boulder), so it reads as procedural noise. |
+| ChatGPT Pro | NO | Dense stippling on top and face competes with the shading; tan and grey surfaces have limited light-shadow separation, so depth depends on dark crack outlines; it reads flatter and more uniformly mottled than the reference. |
+| Gemini (through AG) | pending | |
+
+Result: 3 NO, so fewer than 3 of 4 can say YES: out under the Owner's thresholds. Layered strata is remade with Create Image Pro (RMMZ format reference, U7 style image, pixel sizes in the prompt).
