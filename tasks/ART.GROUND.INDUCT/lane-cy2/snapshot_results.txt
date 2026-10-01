@@ -1,0 +1,10 @@
+UF_Test run 2026-10-01T21:49:41.600Z args=[]
+DEBUG_SHEET: Scene_Boot.start called
+AVAILABLE SUITES: selftest, smoke, perf, native_starting_gear, native_survival_dying, native_perf_4x_benchmark, ground_evidence, select, select, minimap, natural_connections, ownership, ecology, projects, settlement, colonists, overseer, world, spawn, worldgen, biomes, tiles, ground, factions, skins, history, objects, walls, doors, items, jobs, floors, wildlife, wildlife_seeds, stance, combat, anim, fog, daynight, timespeed, camera, culling, speech, overhead, look, sheet, talk, fire, vertical, natural_walls, flooding, strata, sparse_outer, environment, faction_menus, title, load, setup, depth, layers_flat, select, select
+SUITE ground_evidence
+PASS ground_evidence.surface_kinds_at_2x - camera 2, map 256x256, origin 124,125
+SHOT C:\Users\snewt\AppData\Local\Temp\deus_lane_cy2_snapshot_game\test_output\ground_evidence.ground_kinds_2x.png
+PASS ground_evidence.damp_dry_tiles
+SHOT C:\Users\snewt\AppData\Local\Temp\deus_lane_cy2_snapshot_game\test_output\ground_evidence.damp_dry_2x.png
+PASS ground_evidence.no_errors - none
+RESULT: 3 passed, 0 failed (exit 0)
