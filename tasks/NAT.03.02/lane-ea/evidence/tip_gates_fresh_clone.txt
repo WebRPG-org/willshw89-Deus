@@ -1,0 +1,47 @@
+fresh shared clone 2026-10-01T10:19:21Z, HEAD 942da0375abaf348994e3fbc06c533f9e23b7214, node v24.19.0, sparse: /game/js/ /tools/
+=== node tools/check_deus_syntax.js
+Checked 62 DEUS plugin files. Errors: 0
+EXIT 0
+=== node tools/sim/test_water_open_cp.js
+PASS aquifer_exports_preserved - 9 baseline exports re-exported unchanged (62 ms)
+PASS cp_exact_conservation - water 9000000 cp, lava 3000000 cp exact every step; 36309107 cp moved (56 ms)
+PASS cavity_height_depth - cavity d1 / 2 ft, cell d7 / 10 ft, lip surface 7 ft, lava=water volume d3 (2 ms)
+PASS unlike_fluids_kept - lava cell and both water bodies unchanged after settling (2 ms)
+PASS wrap_seam_flow - outer east, internal and outer south seams each split 1560000 cp evenly (1 ms)
+PASS seam_once - one record 0,0,3,0,0|1,0,0,0,0, debit = credit = 312000 cp, order-independent (2 ms)
+PASS budget_bound - work and host probes <= budget for 1, 2, 3, 7, 64 and the default 512 (62 ms)
+PASS no_source_no_mint - unknown source, re-registration, solid target, exhaustion and tampered save all mint 0 cp (2 ms)
+PASS quiescent_zero - settled in 122 steps; 10 further steps cost 0 work, 0 probes (54 ms)
+PASS no_unit_constants - no unit literals; capacity follows units.js (6250 -> 1562500 cp) and host lava density (3 ms)
+PASS serialize_roundtrip_exact - 90-step continuation exact from 5 save points (4 mid-visit) (9 ms)
+RESULT: 11 passed, 0 failed
+KILLED drop_cp -> cp_exact_conservation - water open cp read cell by cell vs running total, step 0
+KILLED no_wrap -> wrap_seam_flow - water crossed the seam into 0,1,0,1,0
+KILLED free_probe -> budget_bound - host probes 5 exceed budget 1 (step 2)
+KILLED depth_quantum -> cavity_height_depth - equal volumes give equal depth views
+KILLED overwrite_type -> unlike_fluids_kept - lava cp untouched
+KILLED seam_key_directional -> seam_once - canonical seam key, lower cell key first
+KILLED mint_without_source -> no_source_no_mint - Missing expected exception: unregistered source refused
+KILLED always_requeue -> quiescent_zero - did not settle within 500 steps (queued 48)
+KILLED density_literal -> no_unit_constants - open.js holds unit literals
+KILLED cursor_not_saved -> serialize_roundtrip_exact - run(90) vs load(save(run(1))) then run(89)
+KILLED export_dropped -> aquifer_exports_preserved - index.js lost the baseline export canonicalEdgeKey
+MUTANTS: 11/11 killed
+EXIT 0
+=== node tools/test_aquifer_seepage.js
+=== NAT.03.01 Aquifer Kernel Gate Tests [BASELINE] ===
+PASS: test_stratum_storage_and_porosity - maxWaterMass=78000, saturation=5000 bps, head=82500 ms
+PASS: test_darcy_cavern_breach - Harmonic K=181818, transferred=36 cp into void, conserved mass=93600 cp
+PASS: test_impermeable_barrier - Zero seepage across K=0 boundary, kInterface=0
+PASS: test_aquifer_drawdown_equilibrium - Equilibrated in 500 ticks, totalMass=100000 cp
+PASS: test_sub_unit_seepage_accumulation - Fractional residuals accumulated across ticks into exact integer transfer without truncation loss
+PASS: test_flow_reversal_residual_cancellation - Signed canonical edge residual canceled forward debt upon head inversion (0.0022 -> -0.0192)
+PASS: test_processing_order_invariance - Forward and reverse neighbor evaluation produced bit-identical mass: 79618, 50127, 20255 cp
+PASS: test_donor_exhaustion_clamp - Zero negative water: donor clamped at exactly 0, transferred 5 cp
+PASS: test_receiver_capacity_clamp - Zero oversaturation: receiver clamped to max capacity 93600 cp
+PASS: test_mass_ledger_conservation - Mass before=100000 cp, after=100000 cp, diff=0 cp (100% conserved)
+PASS: test_save_load_persistence - Serialized/deserialized state bit-identical, mass=90000 cp
+PASS: test_dirty_region_quiescence - Sleeping update cost=1.700 μs, activeCells=0, interfacesProcessed=0
+
+ALL CHECKS PASSED: 12 check(s) verified in 8ms.
+EXIT 0

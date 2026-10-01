@@ -1,0 +1,14 @@
+base 54d8e533 tree + tip test file (git archive into a temp dir)
+PASS aquifer_exports_preserved - 9 baseline exports re-exported unchanged (19 ms)
+FAIL cp_exact_conservation - T.index(...).createWaterAuthority is not a function
+FAIL cavity_height_depth - T.index(...).createWaterAuthority is not a function
+FAIL unlike_fluids_kept - T.index(...).createWaterAuthority is not a function
+FAIL wrap_seam_flow - T.index(...).createWaterAuthority is not a function
+FAIL seam_once - T.index(...).createWaterAuthority is not a function
+FAIL budget_bound - ENOENT: no such file or directory, open 'C:\Users\snewt\AppData\Local\Temp\tmp.983SXXhFe0\game\js\sim\hydrology\open.js'
+FAIL no_source_no_mint - T.index(...).createWaterAuthority is not a function
+FAIL quiescent_zero - T.index(...).createWaterAuthority is not a function
+FAIL no_unit_constants - ENOENT: no such file or directory, open 'C:\Users\snewt\AppData\Local\Temp\tmp.983SXXhFe0\game\js\sim\hydrology\open.js'
+FAIL serialize_roundtrip_exact - T.index(...).createWaterAuthority is not a function
+RESULT: 1 passed, 10 failed
+EXIT 1
