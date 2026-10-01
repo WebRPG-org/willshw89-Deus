@@ -6,6 +6,12 @@
 **Binding:** DEC-073; DEC-070 item 1 condition C and its amendment; DEC-050 items 2-3; DEC-057 item 2; DEC-059 item 4 (seasons stay off); DEC-039 item 5 (Minecraft Rule Record); the DEC-040 and DEC-028 amendments (mass); DEC-023 (finite minerals); VISION V67, V68, V75, V103; AGENTS.md Rule 14 (`AGENTS.md:58`).
 **Line numbers.** Code lines are at main `6c6e4afe`; none of the code files cited here had uncommitted edits when read. Doc lines were read on 2026-10-01 while the DEC-073 sync edits to `docs/` were still uncommitted, so they may move; every doc citation also names its decision, section or row.
 
+**DEC-080 (Owner, 2026-10-01) changes this note in four places; where they differ, DEC-080 wins.**
+- Where: every area keeps its own population, not only the player's surroundings and faction homes. World generation computes every area's spawn designations, including areas whose terrain is not built yet.
+- How creatures arrive: they spawn in at in-world anchors (dens, lairs, burrows, roosts, cave mouths, water edges, area edges) and respawn over time. They never pop in beside the player.
+- Persistence: away from the player, anonymous creatures are counts and timers per anchor; nothing despawns because the player left.
+- A sky view at the end of world generation shows density, anchors, tiers, caps, counts and respawn timers across the whole world (Owner: "scroll across the lands from the sky and see the density of wildlife and enemies and where they spawn"). lane-fi's "first view of each (area, z)" trigger becomes: designations at world generation, units when an area is shown.
+
 ---
 
 ## 1. Purpose and the DEC-073 rules
