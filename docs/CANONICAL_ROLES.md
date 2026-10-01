@@ -57,6 +57,7 @@ $$\textbf{Implementation (the writer named in the lane manifest)} \;\;+\;\; \tex
 
 To ensure zero merge conflicts and preserve codebase integrity during parallel execution:
 - **One Primary Writer per File Set**: Each active task lane possesses exclusive write access to its designated whitelist.
+- **Several lanes per provider** (DEC-078, Owner 2026-10-01: "We can have each AI doing multiple lanes"): a provider may write some lanes and review others at the same time. Every lane whose brief, manifest and dependencies are ready is launched; the file-set rule above and the writer/reviewer family split still hold.
 - **Published Matrix**: Active file ownership must be published in `docs/STATUS.md` prior to launching parallel work lanes.
 - **Migration Freeze Protocol**: Migration or directory restructuring (e.g. copying to `C:\Dev\DEUS`) requires a synchronized **Migration Freeze** where all active lanes commit their work and pause. Zero edits may occur during file migration.
 

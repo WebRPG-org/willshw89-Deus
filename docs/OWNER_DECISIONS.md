@@ -1057,6 +1057,7 @@ Every decision item recorded in this log must provide:
 - **Amendment (Owner, 2026-10-01):** thresholds (4/4 passes, 3/4 goes to the Owner, fewer is out), Owner override, the YES WITH FIX answer and packets of ten; see DEC-069 items 1-3.
 - **Amendment (Owner, 2026-10-01):** the PM makes the fauna (Group 7) in the PixelLab character creator as eight-way still sprites, with no animations; see DEC-071.
 - **Amendment (Owner, 2026-10-01):** MiniMax is removed from the project, so the council is three judges (ChatGPT Pro, Grok Heavy, Gemini Pro): 3/3 passes, 2/3 goes to the Owner, fewer is out; see DEC-076.
+- **Amendment (Owner, 2026-10-01):** the council is suspended for now; the Owner grades the art; see DEC-079.
 
 ### Decision `DEC-063`: The U7 method: the PM makes natural-world art in PixelLab Pixflux and Bitforge, in RMMZ's own sheet formats; RMMZ reference, Ultima 7 style; no creatures, faces, character sheets or animations yet; a stump is its own tree cut down
 - **Date:** 2026-10-01
@@ -1196,6 +1197,7 @@ Every decision item recorded in this log must provide:
   6. **The ten temperate cliff sets are in game** by the Owner's override ("I think those all look great"; "All 10 go in").
 - **Records updated with this entry:** pointer lines under DEC-062 and DEC-063; `art/COUNCIL_RECORD.md` holds the votes and quotes.
 - **Amendment (Owner, 2026-10-01):** item 1 now counts three judges, MiniMax being removed: 3/3 passes, 2/3 goes to the Owner, fewer is out; see DEC-076.
+- **Amendment (Owner, 2026-10-01):** for now the Owner grades the art and item 1's thresholds are not used; see DEC-079.
 
 ### Decision `DEC-070`: Equal faction starts, acceptable FPS, and the conditions on generating areas on first request (amends DEC-065 item 1)
 - **Date:** 2026-10-01 (~12:45-13:00Z)
@@ -1280,7 +1282,7 @@ Every decision item recorded in this log must provide:
   3. **Thresholds on three judges (amends DEC-069 item 1):** 3 of 3 passes; 2 of 3 goes to the Owner; fewer is out. The Owner's override and the YES WITH FIX answer are unchanged.
   4. **Past votes stand.** MiniMax's votes in rounds already tallied stay in `art/COUNCIL_RECORD.md` as history. Open rounds (ART-COUNCIL-16 onward) are tallied on the three judges; in ART-COUNCIL-16 MiniMax voted YES on all eleven pieces, so no outcome changes.
   5. **Braintrust consults** go to every remaining member: Codex (gpt-6-sol, DEC-077), Grok, ChatGPT and Gemini. The Owner's burn order of 2026-10-01 (MiniMax first, Codex second, Grok third) loses its first entry.
-- **Records updated with this entry:** pointer lines under DEC-062 and DEC-069; the art banners in `CLAUDE.md` and `AGENTS.md`; the judges line in `art/COUNCIL_RECORD.md`; `.agents/rules/deus-multiagent-routing.md` (the DEC-075 line withdrawn, the byte-order mark removed); the MiniMax lines in `docs/CANONICAL_ROLES.md` and `tools/ops/ANTIGRAVITY.md`. The launcher and pace changes go to the coordinator (MSG-PRUNE-PM-120).
+- **Records updated with this entry:** pointer lines under DEC-062 and DEC-069; the art banners in `CLAUDE.md` and `AGENTS.md`; the judges line in `art/COUNCIL_RECORD.md`; `.agents/rules/deus-multiagent-routing.md` (the DEC-075 line withdrawn, the byte-order mark removed); the MiniMax lines in `docs/CANONICAL_ROLES.md` and `tools/ops/ANTIGRAVITY.md`. The launcher and pace changes went to the coordinator (MSG-PRUNE-PM-120): `11d7e5c8` (pace, and the gpt-6-sol flag) and `9bb685f0` (the minimax provider removed). Under DEC-048 tooling changes on main are the PM's; the PM's mail asked for these, so that slip is the PM's.
 
 ### Decision `DEC-077`: OpenAI use is capped at gpt-6-sol, at ultra effort
 - **Date:** 2026-10-01 (~19:00Z)
@@ -1292,3 +1294,24 @@ Every decision item recorded in this log must provide:
   2. Effort: ultra (the launcher's Codex cap is already ultra).
 - **Where it is set:** the PM's Codex config (`~/.codex/config.toml`: model and default subagent model gpt-6-sol, effort ultra) and the PM's ask helper. In the main working copy, `tools/ops/launch_worker.ps1` passes `--model gpt-6-sol` to Codex, uncommitted when this entry was written; the coordinator commits it with the DEC-076 launcher change.
 - **Records updated with this entry:** this log; `.agents/rules/deus-multiagent-routing.md` names the cap.
+
+### Decision `DEC-078`: Each AI may work several lanes at once
+- **Date:** 2026-10-01 (~19:50Z)
+- **Decider:** Owner, in chat with the PM.
+- **Status:** `DECIDED`
+- **Quote:** "We can have each AI doing multiple lanes" (after the PM's lane report: wave 2 had run one worker at a time, and 60 of 73 build lanes had not started).
+- **Ruling:**
+  1. A provider (Codex, Grok, Gemini, Claude) may hold several lanes at the same time, as writer in some and reviewer in others. The coordinator launches every lane whose brief, manifest and dependencies are ready, and does not queue a lane behind another lane's unrelated review.
+  2. Unchanged: each lane's writer and reviewer come from different families (DEC-031, DEC-058). Lanes running at the same time do not share files (`docs/CANONICAL_ROLES.md` section 4, one writer per file set; the catalogue slot of WORK-GATE G02 section 4). Reviews are real launches through `tools/ops/launch_worker.ps1` (`docs/AUDIT_LOG.md` A12). Quotas are paced, and OpenAI stays capped at gpt-6-sol (DEC-077).
+- **Records updated with this entry:** `docs/CANONICAL_ROLES.md` section 4; `.agents/rules/deus-multiagent-routing.md`.
+
+### Decision `DEC-079`: The braintrust is dropped for now, and the Owner grades the art (suspends the art council of DEC-062, DEC-069 and DEC-076)
+- **Date:** 2026-10-01 (~19:55Z)
+- **Decider:** Owner, in chat with the PM.
+- **Status:** `DECIDED` ("for now": until the Owner restores the braintrust)
+- **Quotes:** "Drop the braintrust for now"; then "I will grade the art".
+- **Ruling:**
+  1. **No braintrust consults** until the Owner restores them: no chat packets, no Codex or Grok consults, no braintrust WORK-GATE or answerability checks. The PM makes those calls directly and records them. Merges still go through merge_gate with a real cross-family review (DEC-048, `docs/AUDIT_LOG.md` A12).
+  2. **The Owner grades the art.** The art council is suspended. The PM machine-checks each piece (RMMZ format, seams, anchors, palette, size, no squash, door fit), shows the Owner a board of the exact versions, and records the Owner's grade with any reason in `art/COUNCIL_RECORD.md`. The PM YEA or NAY follows in `art/APPROVALS.md`.
+  3. **Rounds in flight.** ART-ANALYSIS-1, sent to ChatGPT, Grok, Gemini (through AG) and Codex at ~19:37Z, is withdrawn, and the PM writes the analysis. ART-COUNCIL-16's votes were cast before this ruling. They are recorded as history, and its pieces go to the Owner for grading.
+- **Records updated with this entry:** pointer lines under DEC-062 and DEC-069; the art banners in `CLAUDE.md`, `AGENTS.md` and `GEMINI.md` (GEMINI.md also gets the DEC-071 and DEC-076 text it had missed); the judges line in `art/COUNCIL_RECORD.md`.
