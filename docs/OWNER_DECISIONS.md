@@ -1218,3 +1218,15 @@ Every decision item recorded in this log must provide:
   3. **Approximate.** Relative sizes follow real proportions only as far as these frames allow; every facing of a sprite must fit its frame.
 - **Records updated with this entry:** amendment notes on AS-GLOBAL-021, AS-PM-001 and AS-SIZE-001 in `docs/art/DEUS_ASSET_STANDARD.md`; DEC-071 item 1.
 - **Amendment (Owner, 2026-10-01, later the same day):** "We dont have to use my sizing rule. I Do want sizing to cap out at 96x96, and doors are going to be 48x96". Item 2 is replaced: the frame-shape rule (48x48 / 96x48 / 48x96, with 96x96 for giants only) no longer binds. Every map sprite, in every facing, fits within 96x96, in the smallest 48-multiple frame that holds it (48x48, 96x48, 48x96 or 96x96), so a long animal that is tall when it faces north or south may use a 96x96 frame. Doors are 48x96 (DEC-068). The heights of item 1 stay as the scale anchors (Owner, same exchange: "yeah keep the height anchors, its so all the humanoids fit inside all doors etc"). Relative sizes follow the art council's ART-SCALE-1 advice under the 96x96 cap. Not yet updated (data, through a reviewed lane): `game/data/DEUS_ScaleRegistry.json`, `art/catalogue/scale_chart.json`, the catalogue frame classes for humanoid rows, and the 42 px wording in `docs/art/TEMPERATE_GENERATION_LIST.md` and `docs/art/TEMPERATE_ART_NEEDS.md`.
+
+### Decision `DEC-074`: Mounting is a feature: ride tamed horses and similar mounts (scheduled after the natural-world phase)
+- **Date:** 2026-10-01
+- **Decider:** Owner, in chat with the PM.
+- **Status:** `DECIDED` (timing: after the world-generation sprint, under DEC-037, unless the Owner moves it earlier)
+- **Quote:** "With hourse being thesize they are, can we have  mounting as a feature" (after DEC-072's 96x96 cap let long animals use full-length 96x96 frames).
+- **Ruling (the PM's answer, recorded as the feature definition):**
+  1. A tamed mount (horse, pony, mule, warhorse, and any SRD creature the rules allow as a mount) carries one rider. Taming follows AS-TAME-001/002 and WG.00.39 (SRD 5.1 stat blocks, no creature gear or barding).
+  2. Map art: the mounted pair is one sprite within 96x96: the mount's eight-direction sprite with a seated rider layered at the `MOUNT_SADDLE` socket (AS-BEAST sockets), using the mount's `SADDLE` variant (AS-SEX-002). Saddled mount variants are fauna art the PM makes (DEC-071); seated-rider poses are people art, made by the Owner.
+  3. Rules: SRD 5.1 Mounted Combat (mounting or dismounting costs half the rider's speed; the mount moves at its own speed; a controlled mount can only Dash, Disengage or Dodge).
+  4. World: a rider dismounts to pass a 48x96 door (DEC-068), a ladder, a shaft or a tight cave; deep water and dense woods restrict or slow a mount.
+  5. Build: a new WBS leaf after the natural-world phase (DEC-037 keeps player and civilization systems frozen until then); it opens with the Owner's go.
