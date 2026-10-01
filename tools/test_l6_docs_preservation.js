@@ -32,9 +32,11 @@ const CORRECTED_CITATIONS = [
     { target: "DEUS_History.md", stale: "102", valid: "104", pattern: /Historical subject identity/i, desc: "historical subject identity" },
     { target: "DEUS_History.md", stale: "106", valid: "108", pattern: /grave|ruin|burial/i, desc: "physical grave ownership gate" },
     { target: "DEUS_History.md", stale: "93", valid: "95", pattern: /graveyard|physical grave|not evidence/i, desc: "graveyard is not evidence of a physical grave" },
+    { target: "DEUS_History.md", stale: "192-201", valid: "196-203", pattern: /Seed|Repeat|Simulation/i, desc: "demographic trajectories deterministic table" },
     { target: "DEUS_History.md", stale: "194-201", valid: "196-203", pattern: /Seed|Repeat|Simulation/i, desc: "demographic trajectories deterministic table" },
     { target: "DEUS_History.md", stale: "207", valid: "209", pattern: /Both repeats|matching state/i, desc: "repeat output checksums match" },
     { target: "DEUS_History.md", stale: "27", valid: "29", pattern: /Final integration artifact|Worker timings/i, desc: "age-500 simulation timing provenance" },
+    { target: "DEUS_History.md", stale: "31-44", valid: "33-46", pattern: /Seed\s*\|\s*Age\s*\|\s*Living|Worker ms/i, desc: "integration matrix timing table" },
     { target: "DEUS_Ecology.md", stale: "8", valid: "10", pattern: /bucket|census|director/i, desc: "census and bucket director" },
     { target: "DEUS_Floors.md", stale: "44", valid: "50", pattern: /kindAt/i, desc: "kindAt definition" },
     { target: "DEUS_World.md", stale: "151", valid: "181", pattern: /selection_square/i, desc: "selection_square failure" }
@@ -45,6 +47,7 @@ const SEMANTIC_LINE_CHECKS = new Map();
 for (const c of CORRECTED_CITATIONS) {
     STALE_LOCATORS.set(`${c.target}:${c.stale}`, `stale line locator: ${c.target}:${c.stale} was corrected to ${c.valid} (${c.desc})`);
     const validStart = parseInt(c.valid.split("-")[0], 10);
+    SEMANTIC_LINE_CHECKS.set(`${c.target}:${c.valid}`, { pattern: c.pattern, desc: c.desc });
     SEMANTIC_LINE_CHECKS.set(`${c.target}:${validStart}`, { pattern: c.pattern, desc: c.desc });
 }
 
@@ -66,6 +69,10 @@ const MUTANTS = {
     engine_rules_typo: { file: "docs/ENGINE_RULES.md", value: s => s.replace("DEUS_World.md", "DEUS_Wor1d.md"), error: "broken-reference diagnostic:" },
     unscanned_inventory_file: { file: "docs/ENGINE_RULES.md", value: s => s, error: "unvalidated inventoried file:" },
     stale_history_1161: { file: "docs/adr/ADR-003_sim_render_split_and_lod.md", value: s => s.replace("DEUS_History.md:1163", "DEUS_History.md:1161"), error: "stale-reference diagnostic:" },
+    stale_history_192: { file: "docs/adr/ADR-003_sim_render_split_and_lod.md", value: s => s.replace("DEUS_History.md:196-203", "DEUS_History.md:192-201"), error: "stale-reference diagnostic:" },
+    stale_shorthand_3144: { file: "docs/adr/ADR-003_sim_render_split_and_lod.md", value: s => s.replace("`:33-46`", "`:31-44`"), error: "stale-reference diagnostic:" },
+    stale_shorthand_108: { file: "docs/adr/ADR-003_sim_render_split_and_lod.md", value: s => s.replace("`:108`", "`:106`"), error: "stale-reference diagnostic:" },
+    stale_shorthand_209: { file: "docs/adr/ADR-003_sim_render_split_and_lod.md", value: s => s.replace("`:209`", "`:207`"), error: "stale-reference diagnostic:" },
     stale_history_locator: { file: "docs/adr/ADR-003_sim_render_split_and_lod.md", value: s => s.replace("DEUS_History.md:108", "DEUS_History.md:106"), error: "stale-reference diagnostic:" },
     stale_ecology_locator: { file: "docs/audits/LIVING_WORLD_GAP_AUDIT.md", value: s => s.replace("DEUS_Ecology.md:10", "DEUS_Ecology.md:8"), error: "stale-reference diagnostic:" },
     stale_floors_locator: { file: "docs/design/ECOLOGY.md", value: s => s.replace("DEUS_Floors.md:50", "DEUS_Floors.md:44"), error: "stale-reference diagnostic:" }
@@ -113,17 +120,20 @@ function preservedLines(source, target, label, skip = 1) {
 }
 function resolveLink(from, url) {
     let decoded;
-    try { decoded = decodeURIComponent(url); } catch { return { target: "INVALID_ENCODING", anchor: "", line: null, rawLine: null }; }
+    try { decoded = decodeURIComponent(url); } catch { return { target: "INVALID_ENCODING", anchor: "", line: null, endLine: null, rawLine: null }; }
     if (/^(?:https?:|mailto:|data:)/i.test(decoded)) return null;
     let [raw, hashPart = ""] = decoded.split("#");
     const clean = raw.split("?")[0].replace(/\\/g, "/");
     let line = null;
+    let endLine = null;
     let rawLine = null;
     const lineMatch = clean.match(/:(\d+(?:-\d+)?)$/);
     let pathOnly = clean;
     if (lineMatch) {
         rawLine = lineMatch[1];
-        line = parseInt(rawLine.split("-")[0], 10);
+        const parts = rawLine.split("-");
+        line = parseInt(parts[0], 10);
+        endLine = parts.length > 1 ? parseInt(parts[1], 10) : line;
         pathOnly = clean.slice(0, lineMatch.index);
     }
     let target;
@@ -131,7 +141,7 @@ function resolveLink(from, url) {
     else if (pathOnly.includes("/docs/")) target = "docs/" + pathOnly.split("/docs/").pop();
     else if (pathOnly.startsWith("docs/")) target = pathOnly;
     else target = path.posix.normalize(path.posix.join(path.posix.dirname(from), pathOnly));
-    return { target, anchor: hashPart, line, rawLine };
+    return { target, anchor: hashPart, line, endLine, rawLine };
 }
 function anchors(text) {
     const counts = new Map();
@@ -193,6 +203,24 @@ function validate() {
         while ((refMatch = docRefRegex.exec(withoutCode)) !== null) {
             urls.push(refMatch[0].replace(/^[`(\[<]/, '').replace(/[`\)\]>]$/, ''));
         }
+        // Also extract same-line shorthand citations (e.g. `docs/systems/DEUS_History.md:29`, `:33-46`)
+        for (const line of withoutCode.split("\n")) {
+            const fileMatches = [...line.matchAll(/(?:(?:\.\.\/)*(?:docs\/)?(?:[A-Za-z0-9_.-]+\/)*([A-Za-z0-9_.-]+\.[A-Za-z0-9]+))(?::\d+(?:-\d+)?)?/g)];
+            const shMatches = [...line.matchAll(/`:(?<spec>\d+(?:-\d+)?)`/g)];
+            if (shMatches.length > 0 && fileMatches.length > 0) {
+                for (const sh of shMatches) {
+                    const prev = fileMatches.filter(m => m.index < sh.index);
+                    if (prev.length > 0) {
+                        const last = prev[prev.length - 1];
+                        const fn = last[1];
+                        if (fn.endsWith('.md')) {
+                            const fullPath = last[0].replace(/:\d+(?:-\d+)?$/, '');
+                            urls.push(`${fullPath}:${sh.groups.spec}`);
+                        }
+                    }
+                }
+            }
+        }
 
         const uniqueUrls = [...new Set(urls)];
         for (const url of uniqueUrls) {
@@ -217,16 +245,19 @@ function validate() {
                 if (link.line !== null) {
                     const targetLines = normalize(destination).split("\n");
                     check(link.line >= 1 && link.line <= targetLines.length, `broken-reference diagnostic: line out of bounds: ${p} -> ${url} (max ${targetLines.length})`);
+                    if (link.endLine !== null) {
+                        check(link.endLine >= link.line && link.endLine <= targetLines.length, `broken-reference diagnostic: range end out of bounds: ${p} -> ${url} (max ${targetLines.length})`);
+                    }
                     const exactKey = `${baseName}:${link.rawLine}`;
                     const lineKey = `${baseName}:${link.line}`;
                     const staleMsg = STALE_LOCATORS.get(exactKey) || STALE_LOCATORS.get(lineKey);
                     if (staleMsg) {
                         check(false, `stale-reference diagnostic: stale line locator: ${p} -> ${url} (${staleMsg})`);
                     }
-                    const checkSpec = SEMANTIC_LINE_CHECKS.get(lineKey);
+                    const checkSpec = SEMANTIC_LINE_CHECKS.get(exactKey) || SEMANTIC_LINE_CHECKS.get(lineKey);
                     if (checkSpec) {
-                        const lineText = targetLines[link.line - 1] || "";
-                        check(checkSpec.pattern.test(lineText), `stale-reference diagnostic: stale line locator content: ${p} -> ${url} (expected ${checkSpec.desc})`);
+                        const targetSlice = targetLines.slice(link.line - 1, link.endLine || link.line).join("\n");
+                        check(checkSpec.pattern.test(targetSlice), `stale-reference diagnostic: stale line locator content: ${p} -> ${url} (expected ${checkSpec.desc})`);
                     }
                 }
             }
