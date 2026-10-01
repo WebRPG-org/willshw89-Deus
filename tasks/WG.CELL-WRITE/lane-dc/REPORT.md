@@ -38,6 +38,12 @@ Tip plugin:
 - `node tools/test_strata_cuts_and_caves.js` exit 0 (153 s). 30 passed. `evidence/strata-gate.txt`.
 - `node tools/test_deep_cuts_and_mountain_cap_wg0041.js` exit 0 (39 s). 11 passed. `evidence/deep-cuts-gate.txt`.
 
+Idle-host rerun, same tip plugin, after the Codex REJECT at `af0dd96a` (median 5,332.9 ms on a shared host). MSG-PRUNE-PM-116 item 2 asks the writer to rerun `node tools/test_area_generation_speed.js` with no other lane process, contract and fixture unchanged. Commits `e86cc7d7` and `ab1e36ec` are not on this branch: MSG-PRUNE-PM-118 voided them because they are authored `deus-ops`. This run is the real writer (`deus-grok`), HEAD `a4587142`, wrapper wall time 154.85 s, exit 0.
+
+- Samples 2,796.2, 3,320.4, 3,228.3 ms, median 3,228.3. Static check green. All 20 fixture cases green, including generator 5 seed 18 1×1 z0 `1f5c2a72` and 3×3 z0 `8c73447f`. `evidence/idle-host-speed.txt`.
+- Median against the base run in this report: 17,315.3 / 3,228.3 = 5.364.
+- Node processes observed immediately before the run: `fetch_char.js` (character fetch) and `ag_watch.js` (mail watch). No strata, foundation, or other lane gate process. Coordinator claude and idle codex app-server processes were up.
+
 NW.js smoke, seed 18, snapshot `C:\Users\snewt\AppData\Local\Temp\lane-dc-f5\game` (img/audio/effects linked, `js` and `data` copied). The snapshot's `plugins.js` sets DEUS_World `Seed` to 18. The snapshot's `DEUS_World.js` adds `seed=` to one existing timing line. Those two edits are not in the repo.
 
 - Base Levels: `node tools/run_tests.js smoke --game <snapshot>` exit 0 (36.4 s). 122 passed. `smoke.no_errors` none. `setupNewGame` exit +17,159.9 ms. `world:created` +16,936.7 ms. Log line `seed=18`. `evidence/f5-base-timing.txt`.
@@ -52,6 +58,7 @@ The runner passes `--deus-test=smoke`. `DEUS_Test.js` treats that flag the same 
 - `evidence/mutant-hash_changed.txt`: guard red.
 - `evidence/capture-fixture.txt`: the 20 capture lines and source SHA `07a94429`.
 - `evidence/sparse-base.txt`, `evidence/sparse-tip.txt`, `evidence/strata-gate.txt`, `evidence/deep-cuts-gate.txt`.
+- `evidence/idle-host-speed.txt`: the MSG-PRUNE-PM-116 rerun. Median 3,228.3 ms, exit 0, fixture green.
 - `evidence/f5-base-timing.txt` and `evidence/f5-tip-timing.txt`: the `[TIMING]` lines. A search of each full runtime log for `Error` and `TypeError` returned no matches. The full logs were about 1.4 MB of history text and were not committed.
 - Screenshot `evidence/f5-base-smoke.map.png`, opened 2026-10-01: the ground after that New Game. Grass field. A crowd of people in rows, each with a green bar. A red banner with a gold emblem near the center. Trees on the left and the right, stumps at the lower corners. Top right plate reads Ground, with pause and 1x Speed. Zoom panel shows 1.0x Normal selected and "Explored: 3% (1793 cells)". A dark minimap sits under the zoom panel. A letter bar runs along the bottom. The picture does not show the seed or the clock.
 - Screenshot `evidence/f5-tip-smoke.map.png`, opened 2026-10-01: the same ground layout after the tip New Game. Same plate, same 3% explored count, same banner, same crowd, same trees and stumps. The picture does not show the seed or the clock. The seed and the clock are the timing lines above.
@@ -59,7 +66,7 @@ The runner passes `--deus-test=smoke`. `DEUS_Test.js` treats that flag the same 
 ## Not done / known problems
 
 - The node gates ran in this worktree. A second clone was not built. `merge_gate` still has to run them in a fresh clone.
-- The slowest tip speed sample is 3,961.1 ms. The limit is 5,000 ms. A busier machine can land above 5,000 on the same code (plan risk 18).
+- The first tip run's slowest sample is 3,961.1 ms. The idle-host rerun's slowest sample is 3,320.4 ms, median 3,228.3. The limit is 5,000 ms. A busier machine can still land above 5,000 on the same code (plan risk 18). The Codex REJECT at `af0dd96a` did, at median 5,332.9 ms, with another lane's strata processes on the host.
 - NW.js New Game on seed 18 moved from 17,159.9 ms to 16,750.9 ms (`setupNewGame` enter to exit). The 4.390× figure is the node vm, where `Math` is a cross-realm copy. The game's own `Math.imul` was already in-realm.
 - `DataManager.saveGame` writing a file and `loadGame` reading it back: not checked. Smoke's `save_serializes` stringifies `makeSaveContents` in the same process.
 - FPS: not measured.
@@ -83,7 +90,7 @@ Approved scope / Owner authorization reference: one-area `volumeOf` at least twi
 Writer SHA / evidence date: Levels blob `e87ff4e0`, docs blob `b932c4da`, harness blob `d424e6a0`, fixture blob `ecf12a1b`. Evidence dated 2026-10-01. The commit that contains this file is the commit of the Levels and docs blobs plus this report. The harness and fixture are `9b2073bb`.
 Translation Class: C. FOUNDATIONAL / INDIRECT
 
-Player / World Effect: A new world is the same cells as before this lane. Building the first area's levels costs less time in the node vm (median 3,944.3 ms against 17,315.3 ms for the same cold `baseline(0,0,0)`). In the running game the New Game clock on seed 18 was 17,159.9 ms at the base and 16,750.9 ms at the tip.
+Player / World Effect: A new world is the same cells as before this lane. Building the first area's levels costs less time in the node vm (first tip median 3,944.3 ms, idle-host rerun median 3,228.3 ms, both against 17,315.3 ms for the same cold `baseline(0,0,0)`). In the running game the New Game clock on seed 18 was 17,159.9 ms at the base and 16,750.9 ms at the tip.
 
 Trigger: New Game calls `World.newWorld`, which emits `world:initializing`. `DEUS_Levels.js` `hookWorld` runs `ensureWorldLevels`, which calls `baseline` for every level of the Z range. That builds one `volumeOf` per area when the generator is 5.
 
@@ -99,7 +106,7 @@ Persistence: Level checksums are the save's check that the regenerated baseline 
 
 Failure Without This Lane: The node harness still spends a median 17,315.3 ms on one cold area, and the rest-parameter hash stays on the generator path. Later lanes that bound area generation against this test (`lane-dd`, `lane-df`) would be measuring that cost. The player's map would still be the same bytes; the New Game clock in NW.js would stay near 17 s, which is where the base already was.
 
-Automated Proof: Commands, exits, and the two medians are in How I tested it. Seed 18 for the speed trials and the NW.js runs. Seeds 18 and 20260927 for the fixture. Headless proof is `node tools/test_area_generation_speed.js` exit 0, and exit 1 on the base plugin and on `--mutant=hash_changed`.
+Automated Proof: Commands, exits, and the medians are in How I tested it. Seed 18 for the speed trials and the NW.js runs. Seeds 18 and 20260927 for the fixture. Headless proof is `node tools/test_area_generation_speed.js` exit 0 (idle-host rerun median 3,228.3 ms in `evidence/idle-host-speed.txt`), and exit 1 on the base plugin and on `--mutant=hash_changed`.
 
 In-Game Proof: RUN on a snapshot, 2026-10-01. Base `2026-10-01T13:29:25.801Z`, tip `2026-10-01T13:30:27.039Z`. Suite `smoke`. Seed 18 in the log. Screenshots `evidence/f5-base-smoke.map.png` and `evidence/f5-tip-smoke.map.png` (opened; described above). Expected: map up, no console error. Observed: 122 passed, 0 failed, `no_errors` none, both runs.
 

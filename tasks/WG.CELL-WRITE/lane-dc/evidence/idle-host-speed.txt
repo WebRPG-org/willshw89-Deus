@@ -1,0 +1,39 @@
+lane-dc idle-host speed gate
+writer identity: deus-grok
+HEAD at run: a4587142295f75084a668ca59b395bbb219f26be
+command: node tools/test_area_generation_speed.js
+exit: 0
+wrapper wall time: 154.85 s
+host: no other lane gate process was running. Node processes observed immediately before the run: pid 24844 fetch_char.js (character fetch), pid 44992 ag_watch.js (mail watch). Coordinator claude and idle codex app-server processes were up. No strata, foundation, or other lane test node process.
+stdout below is that run.
+
+--- command output ---
+area generation speed
+PASS no_rest_parameter_hash_on_generator_path
+one_area_volume_ms sample 1 2796.2 ms
+one_area_volume_ms sample 2 3320.4 ms
+one_area_volume_ms sample 3 3228.3 ms
+one_area_volume_ms samples 2796.2 3320.4 3228.3 median 3228.3
+PASS one_area_volume_ms - median 3228.3 ms, limit 5000
+checksum gen 1 seed 18 1x1 152.8 ms z0 0779462c
+checksum gen 2 seed 18 1x1 314.4 ms z0 0779462c
+checksum gen 3 seed 18 1x1 319.5 ms z0 0779462c
+checksum gen 4 seed 18 1x1 2369.1 ms z0 0779462c
+checksum gen 5 seed 18 1x1 2960.7 ms z0 1f5c2a72
+checksum gen 1 seed 20260927 1x1 150.4 ms z0 664e5663
+checksum gen 2 seed 20260927 1x1 313.1 ms z0 664e5663
+checksum gen 3 seed 20260927 1x1 341.3 ms z0 664e5663
+checksum gen 4 seed 20260927 1x1 2052.0 ms z0 664e5663
+checksum gen 5 seed 20260927 1x1 2466.6 ms z0 3bec30ce
+checksum gen 1 seed 18 3x3 1007.5 ms z0 353be9a8
+checksum gen 2 seed 18 3x3 4465.6 ms z0 353be9a8
+checksum gen 3 seed 18 3x3 5822.7 ms z0 353be9a8
+checksum gen 4 seed 18 3x3 29147.5 ms z0 353be9a8
+checksum gen 5 seed 18 3x3 29868.3 ms z0 8c73447f
+checksum gen 1 seed 20260927 3x3 946.9 ms z0 25482ae8
+checksum gen 2 seed 20260927 3x3 3458.6 ms z0 25482ae8
+checksum gen 3 seed 20260927 3x3 4927.7 ms z0 25482ae8
+checksum gen 4 seed 20260927 3x3 25407.1 ms z0 25482ae8
+checksum gen 5 seed 20260927 3x3 28269.6 ms z0 58c88b58
+PASS core_checksums_bit_identical
+RESULT pass
