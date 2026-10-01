@@ -5,7 +5,6 @@
 - **Reviewed Commit**: `b1edf735724f2cc3e908b005ab5f13249de5878e`
 - **Reviewer**: gemini (independent cross-family reviewer for claude writer)
 - **Date**: 2026-10-01
-VERDICT: CLEAN PASS
 
 ---
 
@@ -32,10 +31,10 @@ Engine core (`game/js/rmmz_*.js`, `game/js/main.js`, `game/js/libs/`) is complet
 
 - **Aquifer Kernel (`game/js/sim/hydrology/aquifer.js`)**:
   - Constants: Lines 16-18 successfully import water density and stratum volume constants from `../units.js` (50 ft3, 6240 cp/ft3, 312000 cp/stratum). `index.js` re-exports are untouched and backward-compatible.
-  - Per-Interface Budgeting: `processTick(dt, ledger, opts)` accepts `opts.maxInterfaces` to bound per-frame computational work. An interrupted pass maintains its iteration cursor, resuming seamlessly on subsequent ticks.
+  - Per-Interface Budgeting: `processTick(dt, ledger, opts)` accepts `opts.maxInterfaces` to cap interface evaluations per call; the pass-start edge collection and sort stay unbudgeted (walks the dirty set). An interrupted pass maintains its iteration cursor, resuming seamlessly on subsequent ticks.
   - State Serialization: Serialized state preserves the active cursor and edge collection, supporting save/load mid-pass without state corruption. Deserialization of prior saves defaults cleanly to an empty cursor.
   - World Wrapping: `opts.wrap = { width, height }` accurately stitches toroidal boundaries at 5 ft spacing. Cells woken mid-pass across seams remain dirty.
-  - Invariance: 20 random seeded configurations over 200 ticks demonstrated bit-identical parity between unbudgeted runs and budgeted/split runs.
+  - Invariance: 20 random seeded configurations over 200 unbudgeted ticks demonstrated bit-identical parity between base kernel and tip kernel (the equivalence of budgeted vs unbudgeted execution is verified by `budgeted_equals_unbudgeted`, while mid-pass save/load resumption is verified by `cursor_survives_save`).
 
 - **Gate Verification & Mutants**:
   - `node tools/check_deus_syntax.js`: PASS (0 errors).
@@ -48,5 +47,5 @@ Engine core (`game/js/rmmz_*.js`, `game/js/main.js`, `game/js/libs/`) is complet
 
 The implementation is verified, preserves physical conservation, integrates clean budgeting and wrapping, and passes all gates.
 
-**VERDICT: CLEAN PASS**
+VERDICT: CLEAN PASS
 Recommended for merge via `merge_gate.js`.
