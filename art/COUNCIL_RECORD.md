@@ -107,3 +107,17 @@ Versions judged: trees after the U7 canopy pass (birch, swamp, pine and apple re
 | Cliff 10 layered strata | NAY | YEA | YEA | YEA | rejected | ChatGPT: grey and tan bands too similar in value; outlines describe the layers but shading gives no depth. |
 
 **Passed tonight (4 of 4):** six stumps (ART-COUNCIL-2), hanging roots, oak, swamp, dead tree, birch, pine, cliffs 1, 3, 4, 7 and 8. None enters the game yet: each waits for its catalogue row (lane-pg, and the Owner's ruling on size envelopes under DEC-016) and for the Owner's D2 ruling on script-processed pixels (cliffs 4, 7 and 8 carry the scripted mottling; the stumps were cut from their trees before the Pixflux pass). The PM's YEA goes in `art/APPROVALS.md` when both are settled.
+
+## ART-COUNCIL-7 (2026-10-01, ~09:25Z): five cliffs reworked for ChatGPT's notes; vines and stalactites reworked
+
+| Piece | ChatGPT | Grok | MiniMax | Gemini | Outcome | Reasons for each no |
+|---|---|---|---|---|---|---|
+| Cliff 2 soil (v7) | YEA | YEA | YEA | NAY | rejected | Gemini: noisy, heavily speckled texture; lacks clean shading bands and defined volumes. |
+| Cliff 5 cave limestone (v7) | NAY | YEA | YEA | NAY | rejected | ChatGPT: parallel streaks with pale patches; texture overwhelms volume. Gemini: stretched vertical streaks look procedural. |
+| Cliff 6 lichen rock (v7) | NAY | YEA | YEA | YEA | rejected | ChatGPT: narrow mid-grey range; insufficient highlight-shadow separation; flat. |
+| Cliff 9 red clay (v7) | YEA | YEA | YEA | NAY | rejected | Gemini: excessively chaotic and noisy; lacks smooth shading gradients and crisp edge highlights. |
+| Cliff 10 layered strata (v7) | YEA | NAY | NAY | YEA | rejected | Grok: repeated block courses and continuous bands read as geometric masonry. MiniMax: geometric layering is a stylistic departure from the reference's organic rocks. |
+| Hanging vines (v5) | YEA | YEA | YEA | NAY | rejected | Gemini: overly soft and pillow-shaded; lacks sharp contrast and crisp leaves. |
+| Stalactites (v5) | YEA | YEA | YEA | NAY | rejected | Gemini: jagged, messy isolated pixels; lacks smooth volumetric shading. |
+
+**PM note.** After seven rounds the remaining pieces fail on judges who contradict each other (strata: ChatGPT and Gemini YES, Grok and MiniMax NO; lichen: three YES, ChatGPT NO; soil, red clay, vines and stalactites: three YES, Gemini NO, with Gemini asking for smoother gradients where it earlier asked for harder clusters). The PM has stopped iterating these until the Owner rules on how the council should handle a split that further passes do not close.
