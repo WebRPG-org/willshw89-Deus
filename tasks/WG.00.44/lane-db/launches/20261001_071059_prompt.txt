@@ -1,0 +1,63 @@
+You are the primary implementer for lane-db (Task WG.00.44), running as claude.
+Read tasks/WG.00.44/lane-db/BRIEF.md carefully and follow all instructions within it.
+Your allowed paths are:
+- game/js/plugins/DEUS_World.js
+- tools/lib/vm_sim_require.js
+- tools/lib/vm_harness_scan.js
+- tools/test_sim_loader.js
+- docs/systems/DEUS_World.md
+- tools/bench_history_demographics.js
+- tools/bench_history_sim.js
+- tools/bench_species_biology.js
+- tools/bench_underground_gen.js
+- tools/bench_vertical_worldgen.js
+- tools/capture_pre_migration_baseline.js
+- tools/dev/sim_forward.js
+- tools/performance/census_boot_load.js
+- tools/profile_historical_demographics.js
+- tools/sim/test_fluid_attach.js
+- tools/sim/test_living_world_rules.js
+- tools/sim/test_sim_forward_guard.js
+- tools/sim/test_underground_year0.js
+- tools/society/test_person_identity.js
+- tools/test_19b_performance_determinism.js
+- tools/test_32_levels_generation.js
+- tools/test_bag_and_racial_banners.js
+- tools/test_combat_dying_integration.js
+- tools/test_deep_cuts_and_mountain_cap_wg0041.js
+- tools/test_duplicate_registration.js
+- tools/test_extraction_difficulty.js
+- tools/test_faction_starting_gear.js
+- tools/test_fluid_correctness_lane_cw.js
+- tools/test_generated_z2_cut_proof.js
+- tools/test_geology_strata.js
+- tools/test_hist_metadata_contracts.js
+- tools/test_historical_carrying_capacity.js
+- tools/test_history_materialization_and_world_age.js
+- tools/test_liquid_depth_simulation.js
+- tools/test_native_survival_soak.js
+- tools/test_natural_connections_no_mint.js
+- tools/test_new_game_year0.js
+- tools/test_production_history_demographics.js
+- tools/test_region_seam_continuity.js
+- tools/test_resource_node_materials.js
+- tools/test_round_world.js
+- tools/test_seamless_map_edges.js
+- tools/test_sparse_outer_save.js
+- tools/test_starter_kit_and_stockpile.js
+- tools/test_strata_cuts_and_caves.js
+- tools/test_strata_fluid_reconciliation.js
+- tools/test_strata_foundation.js
+- tools/test_survival_regressions.js
+- tools/test_volumetric_terrain_column.js
+- tools/test_worldgen_quickfixes.js
+- tools/test_z_flora.js
+- tools/worldgen/test_vertical_biome_coupling.js
+- tools/zrange/bench_queries.js
+- tools/test_area_generation_speed.js
+- tasks/WG.00.44/lane-db/**
+
+Standing rules:
+1. NO ART (DEC-007). Never generate, request or integrate art, and never tell anyone to.
+2. Run tests in the FOREGROUND. Never end your turn while background jobs or child processes are running. Commit early (WIP commits allowed on your branch). Do not push. Do not merge. Write only inside allowedPaths.
+Commit messages start with '[claude] WG.00.44'.
