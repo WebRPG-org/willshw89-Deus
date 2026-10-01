@@ -1,0 +1,17 @@
+report tip 0a6484b0 [claude] WG.20.03 report: REPORT.md, evidence logs (fail-before, gates, provocations, mutants, sweep failure, --check after drop, WSR/slot evidence); STATUS row In Review
+
+$ node tools/art/build_catalogue.js --check
+WARN UNVERIFIED_ABSENT reference/u7_shapes_0_31.png (untracked third-party reference not present in this checkout)
+CHECK: OK (12 generated files match)
+[exit 0]
+
+$ node tools/art/test_rmmz_rows.js
+
+104/104 checks passed
+[exit 0]
+
+$ node tools/art/test_catalogue.js
+
+50/50 checks passed
+[exit 0]
+
