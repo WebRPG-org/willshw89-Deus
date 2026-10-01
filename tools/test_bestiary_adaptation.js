@@ -1,11 +1,12 @@
 // tools/test_bestiary_adaptation.js - checks for the bestiary adaptation layer (NAT.07.01, lane-ex).
 //
-// Usage: node tools/test_bestiary_adaptation.js [--root <dir>] [--no-mutants]
+// Usage: node tools/test_bestiary_adaptation.js [--root <dir>] [--no-mutants] [--mutant <name>]
 //
 // Checks game/data/srd_adaptation/creatures.json against the pinned source rows, which this file parses itself
 // (it does not reuse the builder's parser), against game/data/srd51/creatures.json and against
 // game/js/sim/rules/species_map.js. Then, unless --no-mutants, it copies the inputs to a temp folder, applies
 // each mutant, reruns itself there and requires the mutant's named checks to turn FAIL with exit 1.
+// --mutant <name> runs only that mutant and prints the rerun's full output (evidence for a reviewer).
 // Exit 0 only when every check passes and every mutant is killed.
 "use strict";
 
@@ -19,6 +20,7 @@ const args = process.argv.slice(2);
 const opt = (name, fallback) => { const i = args.indexOf(name); return i >= 0 && args[i + 1] !== undefined ? args[i + 1] : fallback; };
 const ROOT = path.resolve(opt("--root", path.join(__dirname, "..")));
 const RUN_MUTANTS = !args.includes("--no-mutants");
+const ONLY_MUTANT = opt("--mutant", null);
 
 const P = {
     source: "docs/design/bestiary/BESTIARY_grok_heavy.md",
@@ -366,7 +368,9 @@ function runMutants() {
     let killedAll = true;
     const base = fs.mkdtempSync(path.join(os.tmpdir(), "bestiary-mut-"));
     try {
-        for (const m of MUTANTS) {
+        const chosen = ONLY_MUTANT ? MUTANTS.filter(m => m.name === ONLY_MUTANT) : MUTANTS;
+        if (!chosen.length) { console.log(`FAIL ::mutant_${ONLY_MUTANT}_killed: no such mutant`); return false; }
+        for (const m of chosen) {
             const root = path.join(base, m.name);
             copyInto(root);
             let problem = null;
@@ -374,6 +378,9 @@ function runMutants() {
             if (!problem) {
                 const r = spawnSync(process.execPath, [__filename, "--root", root, "--no-mutants"], { encoding: "utf8" });
                 const out = r.stdout || "";
+                if (ONLY_MUTANT) console.log(`--- rerun under mutant ${m.name}, exit ${r.status} ---
+${out.trim()}
+---`);
                 const failed = new Set([...out.matchAll(/^FAIL ::(\w+)/gm)].map(x => x[1]));
                 const passed = new Set([...out.matchAll(/^PASS ::(\w+)/gm)].map(x => x[1]));
                 const missRed = m.red.filter(n => !failed.has(n));
@@ -383,6 +390,7 @@ function runMutants() {
                 else if (missGreen.length) problem = `expected to stay green but did not: ${missGreen.join(", ")}`;
                 if (!problem && m.builderCheckFails) {
                     const b = runBuilder(root, ["--check"]);
+                    if (ONLY_MUTANT) console.log(`build_bestiary --check under mutant ${m.name}: exit ${b.status}; ${(b.stderr || b.stdout).trim()}`);
                     if (b.status !== 1) problem = `build_bestiary --check exit ${b.status}, want 1`;
                 }
                 if (!problem) console.log(`PASS ::mutant_${m.name}_killed (exit 1; red: ${[...failed].join(", ")})`);
