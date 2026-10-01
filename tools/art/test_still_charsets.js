@@ -86,11 +86,11 @@ function check() {
                 const blockStartX = (blockIndex % 4) * 3 * fw;
                 const blockStartY = Math.floor(blockIndex / 4) * 4 * fh;
                 
-                // Check just one cell (top-left of block) to verify master 1
+                // Check all cells in block (4 rows x 3 cols)
                 let matches = true;
-                for (let y = 0; y < fh && matches; y++) {
-                    for (let x = 0; x < fw && matches; x++) {
-                        const mIdx = (y * fw + x) * 4;
+                for (let y = 0; y < 4 * fh && matches; y++) {
+                    for (let x = 0; x < 3 * fw && matches; x++) {
+                        const mIdx = ((y % fh) * fw + (x % fw)) * 4;
                         const sIdx = ((blockStartY + y) * sheetImg.width + blockStartX + x) * 4;
                         if (masterImg.data[mIdx] !== sheetImg.data[sIdx] ||
                             masterImg.data[mIdx+1] !== sheetImg.data[sIdx+1] ||
@@ -109,9 +109,9 @@ function check() {
             
             const masterImg = decodePNG(fs.readFileSync(path.join(approvedDir, item.entryId + '.png')));
             let matches = true;
-            for (let y = 0; y < fh && matches; y++) {
-                for (let x = 0; x < fw && matches; x++) {
-                    const mIdx = (y * fw + x) * 4;
+            for (let y = 0; y < 4 * fh && matches; y++) {
+                for (let x = 0; x < 3 * fw && matches; x++) {
+                    const mIdx = ((y % fh) * fw + (x % fw)) * 4;
                     const sIdx = (y * sheetImg.width + x) * 4;
                     if (masterImg.data[mIdx] !== sheetImg.data[sIdx] ||
                         masterImg.data[mIdx+1] !== sheetImg.data[sIdx+1] ||
