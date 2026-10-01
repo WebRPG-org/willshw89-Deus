@@ -69,7 +69,8 @@ if (mutantArg && !MUTANTS[mutantArg]) {
     process.exit(2);
 }
 
-const read = file => fs.readFileSync(file, "utf8");
+// LF throughout, so the multi-line mutant anchors also match a CRLF checkout (merge_gate's fresh clones).
+const read = file => fs.readFileSync(file, "utf8").replace(/\r\n/g, "\n");
 function applyEdits(src, edits, what) {
     for (const [from, to] of edits || []) {
         const n = src.split(from).length - 1;
