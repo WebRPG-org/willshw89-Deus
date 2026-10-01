@@ -59,7 +59,8 @@ function createTickClock(opts) {
         /**
          * Moves the clock to an absolute game minute and returns the ticks to run now (0..maxTicksPerAdvance).
          * Elapsed seconds = (absMinute - last) * 60 + remainder; whole ticks of it are added to what is owed, and the
-         * call pays up to the cap. An earlier minute re-bases the clock there and returns 0. Unarmed: 0, nothing kept.
+         * call pays up to the cap. An earlier minute re-bases the clock there with a zero remainder, as if armed at it,
+         * adds no ticks and pays only what is already owed. Unarmed: 0, nothing kept.
          */
         advanceToMinute(absMinute) {
             if (!armed) return 0;
@@ -68,6 +69,7 @@ function createTickClock(opts) {
             if (absMinute < last) {
                 rebases++;
                 last = absMinute;
+                remainder = 0;   // as if armed at that minute; owed ticks are kept
                 return payOwed();
             }
             const seconds = (absMinute - last) * 60 + remainder;

@@ -92,3 +92,58 @@ Expected: the count rises about 5 ticks every 3 game minutes while time runs and
 
 ## Decisions needed
 - Whether to open a lane for the undefined `WORK_BEATS_PER_SHARED` in `DEUS_History.js:2591` (present on main).
+
+## Fix after grok review
+
+Grok's review `review_grok_331d61c4.md` (PASS WITH MINORS) had one MINOR, section 3: a move to an earlier absolute minute kept the old remainder, so the next forward minute could emit one extra tick. This fix changes only that rule.
+
+- `game/js/sim/host/tick.js` `advanceToMinute`: when `absMinute < last`, the clock now also sets `remainder = 0`, as if armed at that minute. `rebases` is still counted and owed ticks are still kept and paid (`payOwed()`, unchanged). The function comment now says so; it no longer says the call returns 0, which Grok noted was wrong when ticks are owed.
+- `tools/test_sim_tick.js`: new check `backward_minute_resets_remainder` (Grok's probe: arm 480, minute 481, back to 61, then 62, against a clock armed at 61; plus an owed-ticks case: arm 0, minute 1440, back to 100 pays 100 and leaves 2,200 owed). New mutant `backward_keeps_remainder` removes the reset line in memory and must turn that check red.
+- `docs/systems/DEUS_SimTick.md`: the `advanceToMinute` row, the check table, the mutant list and the SetTime note describe the reset.
+
+Before the fix (`tick.js` as at `38c74ec8`, `evidence/backward_minute_fail_before.txt`):
+
+```text
+FAIL backward_minute_resets_remainder - arm(480), advanceToMinute(481) -> 1 (remainder 24 s); advanceToMinute(61) -> 0, last 61, remainder 24 s, rebases 1; advanceToMinute(62) -> 2 (remainder 12 s); a clock armed at 61: advanceToMinute(62) -> 1 (remainder 24 s); owed across a rebase: arm(0), 1440 then 100 -> 100 paid, owed 2200, rebases 1
+RESULT: 0 passed, 1 failed
+exit 1
+```
+
+After the fix, and under the mutant (`evidence/backward_minute_after_fix.txt`):
+
+```text
+PASS backward_minute_resets_remainder - arm(480), advanceToMinute(481) -> 1 (remainder 24 s); advanceToMinute(61) -> 0, last 61, remainder 0 s, rebases 1; advanceToMinute(62) -> 1 (remainder 24 s); a clock armed at 61: advanceToMinute(62) -> 1 (remainder 24 s); owed across a rebase: arm(0), 1440 then 100 -> 100 paid, owed 2200, rebases 1
+RESULT: 1 passed, 0 failed
+exit 0
+
+$ node tools/test_sim_tick.js --mutant=backward_keeps_remainder --no-nw
+FAIL backward_minute_resets_remainder - ... advanceToMinute(62) -> 2 (remainder 12 s); a clock armed at 61: advanceToMinute(62) -> 1 (remainder 24 s) ...
+RESULT: 10 passed, 1 failed; named check red: backward_minute_resets_remainder
+exit 1
+```
+
+Gate tests from `lane.json`, run one at a time in the foreground in this worktree on 2026-10-01 (full output: `evidence/gates_after_grok_fix.txt`):
+
+```text
+$ node tools/check_deus_syntax.js
+Checked 62 DEUS plugin files. Errors: 0
+exit 0
+
+$ node tools/test_sim_tick.js
+PASS backward_minute_resets_remainder - ...
+PASS nwjs_new_game - run_tests exit 0; 8 sim_tick PASS lines; no FAIL/ERROR lines
+PASS mutant_backward_keeps_remainder - a move to an earlier minute keeps the old remainder: backward_minute_resets_remainder red
+RESULT: 22 passed, 0 failed
+exit 0 (49 s)
+
+$ node tools/test_sim_loader.js
+RESULT: 7 passed, 0 failed
+exit 0 (48 s)
+
+$ node tools/test_new_game_year0.js
+SETUP CONTRACT PASSED: 30 gating checks, 15 mutants caught (ATK-YEAR0-001 closure criterion).
+INV-SIM-01 END-TO-END MET: clock, save and constructor all at year 0.
+exit 0 (15 s)
+```
+
+All 11 earlier checks and 9 earlier mutants still pass (22 = 12 checks + 10 mutants). Not checked: the backward move through the game host (a real `SetTime` backwards in NW.js or F5); the new check drives the pure clock, as Grok's probe did. The `sim_tick.map.png` screenshot was not retaken. Fresh-clone (merge_gate) runs: not checked.

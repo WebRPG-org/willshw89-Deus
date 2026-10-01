@@ -1,0 +1,5 @@
+# before the fix: tick.js at 38c74ec8 (unchanged since ef4d0333), test_sim_tick.js with the new check
+$ node tools/test_sim_tick.js --only=backward_minute_resets_remainder
+FAIL backward_minute_resets_remainder - arm(480), advanceToMinute(481) -> 1 (remainder 24 s); advanceToMinute(61) -> 0, last 61, remainder 24 s, rebases 1; advanceToMinute(62) -> 2 (remainder 12 s); a clock armed at 61: advanceToMinute(62) -> 1 (remainder 24 s); owed across a rebase: arm(0), 1440 then 100 -> 100 paid, owed 2200, rebases 1
+RESULT: 0 passed, 1 failed
+exit 1

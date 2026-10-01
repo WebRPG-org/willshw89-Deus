@@ -55,7 +55,10 @@ const MUTANTS = {
     calendar_required: { kills: ["calendar_stub"], why: "any $ufTime is read as a full calendar",
         world: [["if (!t || typeof t.day !== \"number\" || typeof t.hour !== \"number\" || typeof t.minute !== \"number\") return null;", "if (!t) return null;"]] },
     unordered_handlers: { kills: ["handlers_ordered"], why: "handlers run in registration order",
-        world: [["\n            .sort((a, b) => a.order - b.order || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));", ";"]] }
+        world: [["\n            .sort((a, b) => a.order - b.order || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));", ";"]] },
+    // Grok review of 331d61c4, section 3: the clock as it was before the fix.
+    backward_keeps_remainder: { kills: ["backward_minute_resets_remainder"], why: "a move to an earlier minute keeps the old remainder",
+        tick: [["                remainder = 0;   // as if armed at that minute; owed ticks are kept\n", ""]] }
 };
 
 const args = process.argv.slice(2);
@@ -376,6 +379,31 @@ const checks = {
         const s = rt.sim().tickStats();
         const ok = !err && s.armed && s.originMinute === 0 && s.ticks === 0;
         return [ok, `DEUS_World alone with $ufTime = { year: 1 }: newWorld ${err ? "threw " + err.message : "ran"}; armed ${s.armed} at minute ${s.originMinute}, ${s.ticks} ticks`];
+    },
+
+    // Grok review of 331d61c4, section 3: after a move to an earlier minute (SetTime backwards), the next forward
+    // minute emits what a clock armed at that earlier minute emits. Owed ticks and the rebase count carry over.
+    backward_minute_resets_remainder(mutant) {
+        const c = pureClock(mutant);
+        c.arm(480);
+        const up = c.advanceToMinute(481), remUp = c.stats().remainderSeconds;    // 1 tick, 24 s over
+        const back = c.advanceToMinute(61), sBack = c.stats();
+        const next = c.advanceToMinute(62), sNext = c.stats();
+        const f = pureClock(mutant);
+        f.arm(61);
+        const fresh = f.advanceToMinute(62), sFresh = f.stats();
+        // Owed ticks are still paid across a backward move: 2,300 owed after a day, the rebase pays 100 of them.
+        const o = pureClock(mutant);
+        o.arm(0);
+        o.advanceToMinute(1440);
+        const paid = o.advanceToMinute(100), sO = o.stats();
+        const ok = up === 1 && remUp === 24 && back === 0 && sBack.lastMinute === 61 && sBack.remainderSeconds === 0 && sBack.rebases === 1 &&
+            next === fresh && sNext.remainderSeconds === sFresh.remainderSeconds && sNext.ticks === 1 + fresh &&
+            paid === 100 && sO.owed === 2200 && sO.rebases === 1 && sO.remainderSeconds === 0;
+        return [ok, `arm(480), advanceToMinute(481) -> ${up} (remainder ${remUp} s); advanceToMinute(61) -> ${back}, last ${sBack.lastMinute}, ` +
+            `remainder ${sBack.remainderSeconds} s, rebases ${sBack.rebases}; advanceToMinute(62) -> ${next} (remainder ${sNext.remainderSeconds} s); ` +
+            `a clock armed at 61: advanceToMinute(62) -> ${fresh} (remainder ${sFresh.remainderSeconds} s); owed across a rebase: arm(0), 1440 then 100 -> ` +
+            `${paid} paid, owed ${sO.owed}, rebases ${sO.rebases}`];
     },
 
     nwjs_new_game() {

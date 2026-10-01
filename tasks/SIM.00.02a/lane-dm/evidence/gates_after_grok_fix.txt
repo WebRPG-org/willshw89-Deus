@@ -1,0 +1,113 @@
+# gate tests after the grok-review fix, run one at a time in the foreground, 2026-10-01
+$ node tools/check_deus_syntax.js
+Checked 62 DEUS plugin files. Errors: 0
+exit 0
+
+$ node tools/test_sim_tick.js
+PASS tick_from_game_minutes - pure clock: minutes 1,2,3 -> 1, 2, 2 ticks (remainder 0 s); game: tickCount 0 at world start, after each advanceMinute(1): 1, 3, 5 (expected 1, 3, 5), remainder 0 s, owed 0; console errors 0
+PASS multi_minute_advance - advanceMinute(6): 10 ticks from 1 time:minute event (expected 10 from 1); then AddTime 6 (plugin command): 20 (expected 20); remainder 0 s, owed 0
+PASS history_does_not_tick - year-3 New Game (history years 3): 0 time:minute events from the demographics history, 60 in all during world:created with iterateWorldHistory(state, 3) (stopped by ReferenceError: WORK_BEATS_PER_SHARED is not defined); tickCount 0 and armed false at the end of world:created, 0 when newWorld returned (armed true at minute 840, calendar minute 840, owed 0); advanceMinute(6) afterwards -> 10 (expected 10); 0 console errors; 3003 ms
+PASS bulk_advance_bounded - pure clock: advanceToMinute(1440) -> 100, then 23 drains of at most 100: 2400 in total (expected 2400), owed 0; game: advanceMinute(1440) ran 100 ticks in that call, owed 2300; drained over 24 more minutes (largest step 100): 2440 ticks = 2400 from the bulk advance + 40 from those minutes; catch-ups 24
+PASS paused_zero - 60 running frames: 10 ticks; 600 paused frames: ticks 10 -> 10, calendar minute 486 -> 486, advances 6 -> 6; 600 running frames after: 110 ticks over 66 game minutes (expected 110)
+PASS speed_scales - 600 frames at the default TimeSpeed (1/6 s per game minute): 60 minutes, 100 ticks (expected 100); at TimeSpeed 0.05: 200 minutes, 333 ticks (expected 333)
+PASS handlers_ordered - registered b(10) a(10) c(-5) d(2.5); 5 ticks ran: c1 d1 a1 b1 c2 d2 a2 b2 c3 d3 a3 b3 c4 d4 a4 b4 c5 d5 a5 b5; duplicate "a": UF.Sim.onTick: "a" is already registered; order NaN: TypeError; no fn: TypeError; empty name: TypeError; tickStats().handlers c,d,a,b, domain action
+PASS save_resume_exact - saved ufWorld.simTick {"v":1,"secondsPerTick":36,"armed":true,"origin":480,"last":1921,"remainder":24,"owed":2300,"ticks":101,"advances":2,"catchUps":1,"rebases":0}; loaded clock equals the saved one: true; after 30 x 1 min, 7 min and AddTime 50 in both: original 2546 ticks/0 owed/24 s, loaded 2546/0/24 s; loaded ticks+owed = floor(elapsed/36 s): true; a save without simTick arms at its minute 1921: true
+PASS no_frame_hook - 600 running Scene_Map frames: 60 time:minute events, 60 clock advances (expected one per event); 300 paused frames: 0 advances (expected 0)
+PASS calendar_stub - DEUS_World alone with $ufTime = { year: 1 }: newWorld ran; armed true at minute 0, 0 ticks
+PASS backward_minute_resets_remainder - arm(480), advanceToMinute(481) -> 1 (remainder 24 s); advanceToMinute(61) -> 0, last 61, remainder 0 s, rebases 1; advanceToMinute(62) -> 1 (remainder 24 s); a clock armed at 61: advanceToMinute(62) -> 1 (remainder 24 s); owed across a rebase: arm(0), 1440 then 100 -> 100 paid, owed 2200, rebases 1
+PASS nwjs_new_game - run_tests exit 0; 8 sim_tick PASS lines; no FAIL/ERROR lines
+      PASS sim_tick.uf_sim_tick_present - UF.Sim.tickCount / tickStats from DEUS_World.js
+      PASS sim_tick.ticks_rise_while_running - 180 frames at x1: tickCount 10 -> 40, game minute 486 -> 504
+      PASS sim_tick.advances_only_on_minutes - 18 time:minute events, 18 clock advances (no frame hook: one per event)
+      PASS sim_tick.ticks_fixed_while_paused - 180 paused frames: tickCount 40 -> 40, game minute 504 -> 504, advances 24 -> 24
+      PASS sim_tick.addtime_60_adds_100 - paused, AddTime 60 (plugin command): tickCount 40 -> 140, owed 0 -> 0
+      PASS sim_tick.speed_scales - 2 s at x1: 89 game updates, 9 min, 15 ticks (expected 15); 2 s at x4: 164 game updates, 16 min, 26 ticks (expected 26)
+      PASS sim_tick.ticks_match_elapsed - ticks 181 + owed 0 over 109 game minutes since minute 480
+      PASS sim_tick.no_console_errors - none since TEST_SimTickConsole loaded (plugins.js index 0)
+PASS mutant_frame_hook - a Scene_Map frame hook also calls the minute handler every frame: no_frame_hook red
+PASS mutant_drop_remainder - the seconds past the last whole tick are dropped: tick_from_game_minutes red
+PASS mutant_unsaved_accumulator - the save keeps the tick count but not the remainder or the owed ticks: save_resume_exact red
+PASS mutant_count_events - each time:minute event counts as 60 s, whatever it carried: multi_minute_advance red
+PASS mutant_uncapped_catchup - a bulk advance hands out every due tick at once: bulk_advance_bounded red
+PASS mutant_arm_early - the clock is armed before world:created, so history pre-simulation ticks: history_does_not_tick red
+PASS mutant_frame_rate_ticks - a fixed 10 Hz frame accumulator (a minute every 10 frames) instead of time:minute: paused_zero red, speed_scales red
+PASS mutant_calendar_required - any $ufTime is read as a full calendar: calendar_stub red
+PASS mutant_unordered_handlers - handlers run in registration order: handlers_ordered red
+PASS mutant_backward_keeps_remainder - a move to an earlier minute keeps the old remainder: backward_minute_resets_remainder red
+RESULT: 22 passed, 0 failed
+exit 0 (49 s)
+
+$ node tools/test_sim_loader.js
+PASS vm_loader_loads_ledger - resolve("ledger") = C:\Users\snewt\.deus_worktrees\lane-dm\game\js\sim\ledger.js; exports createLedger: function; same object as Node's require: true; resolve("hydro") = C:\Users\snewt\.deus_worktrees\lane-dm\game\js\sim\hydro\index.js; sandbox require left alone: true
+PASS missing_module_throws - threw DEUS_SIM_MODULE_MISSING: UF.Sim.require("no_such_module_wg0044"): no such sim module; tried C:\Users\snewt\.deus_worktrees\lane-dm\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\.deus_worktrees\lane-dm\game\js\sim\no_such_module_wg0044\index.js, C:\Users\snewt\.deus_worktrees\lane-dm\game\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\.deus_worktrees\lane-dm\game\game\js\sim\no_such_module_wg0044\index.js; "../plugins/DEUS_World" -> TypeError; no host -> UF.Sim.require("ledger"): no such sim module; tried nothing (no require in this host)
+PASS every_vm_harness_installs_hook - 50 hits in 940 files; without the hook: none; planted harness found by the scan: true, refused: true; hooked fixture accepted: true
+PASS scan_finds_known_harnesses - 50 hits; known hits missing: none; excluded files found: none; fixtures classified wrong: none
+PASS opener_registry - order Air, core, water; duplicate "core": UF.Sim.registerMatterOpener: "core" is already registered; bad fn: TypeError; empty name: TypeError; registry after a caller emptied its copy: 3; UF.Levels at register: undefined
+PASS grid_pinned_by_hook - fallback-3 fixture: {} -> 1x1, grid "shipped" -> 3x3, AreasX "2" -> 2x1, PluginManager set after install -> 1x1, legacy UF_World AreasX "4" -> 4x1; real DEUS_World.js -> 1x1; grid "3x3" refused: true
+PASS nwjs_loader - run_tests exit 0; 5 sim_loader PASS lines; no FAIL/ERROR lines; log: 2026-10-01T22:52:51.346Z [SIM] UF.Sim.require("ledger") resolved C:\Users\snewt\AppData\Local\Temp\wg0044-nw-UnalCJ\game\js\sim\ledger.js; expected C:\Users\snewt\AppData\Local\Temp\wg0044-nw-UnalCJ\game\js\sim\ledger.js
+RESULT: 7 passed, 0 failed
+exit 0 (48 s)
+
+$ node tools/test_new_game_year0.js
+=== DEUS NEW GAME YEAR 0 TEST SUITE (INV-SIM-01 / ATK-YEAR0-001) ===
+
+--- Section A: setup window and embark payload (DEUS_FactionMenus.js) ---
+  [PASS] window_default_year_is_0: Window_NewGameSetup.currentYear() === 0 (expected 0)
+  [PASS] embark_year_is_0: UF.NewGameSetup.year === 0 on untouched embark (expected 0)
+  [PASS] fallback_embark_year_is_0: Fallback UF.NewGameSetup.year === 0 when window is null (expected 0)
+  [PASS] key_left_at_0_stays_0: Left arrow at year 0 -> year 0, box "0", 0 cursor sounds (expected 0, "0", 0)
+  [PASS] key_shift_left_clamps_to_0: Shift+Left from year 5 -> year 0, box "0" (expected 0, "0")
+  [PASS] key_pagedown_clamps_to_0: PageDown from 3 -> 0, again -> 0 (expected 0, 0)
+  [PASS] key_left_reaches_0_from_1: Left arrow from year 1 -> 0 (expected 0)
+  [PASS] key_right_left_round_trip: 0 -> Right -> 1 -> Left -> 0 (expected 1, 0)
+  [PASS] key_shift_right_clamps_999: Shift+Right from 995 -> 999 (expected 999)
+  [PASS] set_year_0_is_0: setYear(0) -> 0, box "0" (expected 0, "0")
+  [PASS] set_year_negative_clamps_0: setYear(-10) -> 0 (expected 0)
+  [PASS] set_year_non_numeric_is_0: setYear("abc"/undefined/null/"") -> 0/0/0/0 (expected 0/0/0/0)
+  [PASS] set_year_over_999_clamps: setYear(1200) -> 999 (expected 999)
+  [PASS] typed_0_sets_year_0: Typing "0" over 42 -> _year 0, currentYear 0 (expected 0, 0)
+  [PASS] blur_empty_box_is_0: Clearing the box then leaving it -> 0, box "0" (expected 0, "0")
+  [PASS] blur_negative_or_garbage_is_0: Leaving the box holding "-5"/"abc" -> 0/0 (expected 0/0)
+  [PASS] box_0_overrides_stale_year: Box "0" with stale _year 42 -> currentYear 0 (expected 0)
+  [PASS] embark_payload_shape: Untouched payload {"faction":"human","biome":"grassland_temperate","year":0,"seed":1827888701,"worldSize":256,"fogOfWar":false} (expected keys faction,fogOfWar,seed,worldSize,year; integer year 0; seed 1..2147483646)
+  [PASS] embark_payload_json_round_trip: JSON round trip of payload -> year 0 (expected 0, key present)
+  [PASS] embark_calls_setup_new_game_once: DataManager.setupNewGame called 1 times on one embark (expected 1)
+  [PASS] typed_then_decremented_embarks_0: Typed 3, Left x4, Start -> payload year 0 (expected 0)
+  [PASS] embark_with_box_still_focused_is_0: Typed 12 then 0, Start without leaving the box -> payload year 0, box destroyed true (expected 0, true)
+
+--- Section B: clock save/load keeps year 0 (DEUS_Core.js) ---
+  [PASS] save_writes_year_0: makeSaveContents at year 0 -> deusTime.year 0, ufTime.year 0 (expected 0, 0)
+  [PASS] load_restores_year_0: extractSaveContents of a year-0 save over clock year 7 -> 0 (expected 0)
+  [PASS] legacy_uftime_save_restores_year_0: extractSaveContents of a legacy ufTime-only year-0 save -> 0 (expected 0)
+  [PASS] core_loaded_without_errors: console.error calls while loading DEUS_Core: 0 (expected 0)
+
+--- Section C: headless New Game fed the Section A payload (DEUS_Core.js, DEUS_History.js) ---
+  [PASS] new_game_pipeline_ran: world:created listeners built history (true) with 0 console errors
+  [PASS] new_game_clock_year_is_0: Clock year after a Year 0 New Game: 0 (expected 0)
+  [PASS] new_game_save_year_is_0: deusTime.year in the first save of a Year 0 New Game: 0 (expected 0)
+  [PASS] clock_constructor_keeps_year_0: new Game_DEUSTime() with UF.NewGameSetup.year 0: year 0 (expected 0)
+  history after New Game: {"startYear":0,"years":0,"worldAge":0,"clockYear0":0,"demographicsCurrentYear":0,"demographicsStartYear":0,"units":72} (2907 ms)
+
+--- Section D: Rule 4 mutation checks ---
+  [PASS] mutant default_year_1 caught: 5 failing checks, targeted: window_default_year_is_0, embark_year_is_0
+  [PASS] mutant fallback_year_1 caught: 1 failing checks, targeted: fallback_embark_year_is_0
+  [PASS] mutant change_year_floor_1 caught: 6 failing checks, targeted: key_left_reaches_0_from_1
+  [PASS] mutant change_year_no_floor caught: 4 failing checks, targeted: key_left_at_0_stays_0, key_shift_left_clamps_to_0
+  [PASS] mutant set_year_floor_1 (pre-hardening code) caught: 4 failing checks, targeted: set_year_0_is_0
+  [PASS] mutant current_year_ignores_box_0 (pre-hardening code) caught: 1 failing checks, targeted: box_0_overrides_stale_year
+  [PASS] mutant typed_year_floor_1 caught: 2 failing checks, targeted: typed_0_sets_year_0
+  [PASS] mutant blur_floor_1 caught: 2 failing checks, targeted: blur_empty_box_is_0, blur_negative_or_garbage_is_0
+  [PASS] mutant payload_year_as_string caught: 6 failing checks, targeted: embark_payload_shape
+  [PASS] mutant payload_drops_year_0 caught: 6 failing checks, targeted: embark_payload_json_round_trip
+  [PASS] mutant save_coerces_year_0_to_1 caught: 2 failing checks, targeted: save_writes_year_0
+  [PASS] mutant load_coerces_year_0_to_1 caught: 2 failing checks, targeted: load_restores_year_0, legacy_uftime_save_restores_year_0
+  [PASS] mutant core_restores_or_1 (pre-ATK-YEAR0-002 code) caught: 1 failing checks, targeted: clock_constructor_keeps_year_0
+  [PASS] mutant history_founds_year_0_at_1 caught: 2 failing checks, targeted: new_game_clock_year_is_0, new_game_save_year_is_0
+  [PASS] mutant history_clock_floor_1 caught: 2 failing checks, targeted: new_game_clock_year_is_0, new_game_save_year_is_0
+  [PASS] section_c_checks_can_pass: with the clock fed the setup year, 4/4 Section C checks pass (clock year 0, save year 0; 3079 ms)
+
+==================================================
+SETUP CONTRACT PASSED: 30 gating checks, 15 mutants caught (ATK-YEAR0-001 closure criterion).
+INV-SIM-01 END-TO-END MET: clock, save and constructor all at year 0.
+==================================================
+exit 0 (15 s)

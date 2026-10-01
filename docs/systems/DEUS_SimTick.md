@@ -31,7 +31,7 @@ A clock:
 |---|---|
 | `arm(absMinute)` | Arms (or re-arms) at that minute: 0 ticks, 0 remainder, nothing owed. |
 | `isArmed()` | |
-| `advanceToMinute(absMinute)` | Returns the ticks to run now, 0..`maxTicksPerAdvance`. Elapsed seconds = `(absMinute - last) * 60 + remainder`; `floor(elapsed / 36)` ticks join the owed count, `elapsed % 36` is kept as the remainder, and the call pays `min(owed, cap)`. An earlier minute (SetTime backwards) moves the clock there, counts a rebase and runs no new ticks. Unarmed: 0. |
+| `advanceToMinute(absMinute)` | Returns the ticks to run now, 0..`maxTicksPerAdvance`. Elapsed seconds = `(absMinute - last) * 60 + remainder`; `floor(elapsed / 36)` ticks join the owed count, `elapsed % 36` is kept as the remainder, and the call pays `min(owed, cap)`. An earlier minute (SetTime backwards) moves the clock there, resets the remainder to 0 (as if armed at that minute), counts a rebase and adds no new ticks; ticks already owed are kept and paid as usual. Unarmed: 0. |
 | `drain()` | Pays `min(owed, cap)` owed ticks without moving time. The host does not call it (owed ticks are paid on the next minutes); it is there for tools. |
 | `tickCount()`, `owed()` | |
 | `stats()` | A new object: `armed`, `secondsPerTick`, `maxTicksPerAdvance`, `originMinute`, `lastMinute`, `remainderSeconds`, `owed`, `ticks`, `advances`, `catchUps` (calls that left ticks owed), `rebases`. |
@@ -80,9 +80,10 @@ Listens to `time:minute` (DEUS_Core). Emits none.
 | `save_resume_exact` | A save with a remainder and owed ticks loads into a fresh runtime with the same stats, and both runs stay identical; a save without `simTick` arms at its minute |
 | `no_frame_hook` | Over 600 running frames, one clock advance per time:minute event; none over 300 paused frames |
 | `calendar_stub` | DEUS_World alone with `$ufTime = { year: 1 }`: `newWorld` runs, the clock arms at minute 0 with 0 ticks |
+| `backward_minute_resets_remainder` | Pure clock: arm 480, minute 481 (remainder 24 s), back to 61: remainder 0, one rebase; minute 62 then gives the same ticks and remainder as a clock armed at 61 (1, 24 s); owed ticks are still paid across a rebase (100 paid, 2,200 owed) |
 | `nwjs_new_game` | A snapshot of `game/` in NW.js (Year 0 New Game, `TEST_SimTickSuite`): ticks rise at ×1, one advance per minute event, no tick while paused, `AddTime 60` adds 100, 2 s at ×4 runs more game minutes than 2 s at ×1 with exactly `floor((remainder + 60 × minutes) / 36)` ticks in each, ticks + owed match the elapsed minutes, no console errors, screenshot `sim_tick.map.png` |
 
-Mutants (in memory; each must turn its check red): `frame_hook` → `no_frame_hook`, `drop_remainder` → `tick_from_game_minutes`, `unsaved_accumulator` → `save_resume_exact`, `count_events` → `multi_minute_advance`, `uncapped_catchup` → `bulk_advance_bounded`, and four more for the checks those leave unguarded: `arm_early` → `history_does_not_tick`, `frame_rate_ticks` → `paused_zero` and `speed_scales`, `calendar_required` → `calendar_stub`, `unordered_handlers` → `handlers_ordered`. The default run runs every check and every mutant; `--mutant=<name>` runs the headless checks under one mutant, `--no-nw` skips NW.js, `--save-evidence` copies the NW.js results and screenshot into `tasks/SIM.00.02a/lane-dm/evidence/`.
+Mutants (in memory; each must turn its check red): `frame_hook` → `no_frame_hook`, `drop_remainder` → `tick_from_game_minutes`, `unsaved_accumulator` → `save_resume_exact`, `count_events` → `multi_minute_advance`, `uncapped_catchup` → `bulk_advance_bounded`, and four more for the checks those leave unguarded: `arm_early` → `history_does_not_tick`, `frame_rate_ticks` → `paused_zero` and `speed_scales`, `calendar_required` → `calendar_stub`, `unordered_handlers` → `handlers_ordered`, and `backward_keeps_remainder` → `backward_minute_resets_remainder` (the clock before the Grok review fix). The default run runs every check and every mutant; `--mutant=<name>` runs the headless checks under one mutant, `--no-nw` skips NW.js, `--save-evidence` copies the NW.js results and screenshot into `tasks/SIM.00.02a/lane-dm/evidence/`.
 
 ## 7. Status
 
@@ -93,4 +94,4 @@ Known limits:
 - `no_frame_hook` headless drives only `Scene_Map.prototype.update`; a hook on another frame path is caught by the NW.js check `advances_only_on_minutes`.
 - A handler that throws ends that minute's batch: `UF.Events` logs the error to the console, and the ticks the clock already handed out for that minute are not run again.
 - In NW.js on 2026-10-01, a 2 s window ran 98 game updates at ×1 and 144 at ×4 (the `speed_scales` detail): ×4 is frame-bound on this machine, so the in-game check asserts more minutes at ×4 and exact ticks per minute, not a 4× rate.
-- `SetTime` to an earlier hour re-bases the clock (no ticks for the jump back); `SetTime` forward is caught up on the next minute, capped like any jump.
+- `SetTime` to an earlier hour re-bases the clock (no ticks for the jump back, remainder reset to 0, so the next minute emits what a clock armed at the earlier minute emits; checked by `backward_minute_resets_remainder`); `SetTime` forward is caught up on the next minute, capped like any jump.
