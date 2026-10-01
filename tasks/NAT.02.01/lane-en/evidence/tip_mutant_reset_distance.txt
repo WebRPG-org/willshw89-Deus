@@ -1,0 +1,14 @@
+PASS: rooted_modules_present - rooted.js and reader.js exist; index.js exports the rooted API
+FAIL: rooted_floating_ring_fails [reset_distance] - anchored ring (10,9) dist: got 1, expected 2; anchored ring (11,9) verdict: got "supported", expected "unsupported"; anchored ring (9,10) dist: got 1, expected 2; anchored ring (11,10) verdict: got "supported", expected "unsupported" (+3 more)
+PASS: rooted_bearing_needs_root
+PASS: rooted_cross_z_member
+FAIL: rooted_rotation_invariant [reset_distance] - rotation 0 offset (2,0) dist: got 1, expected 2; rotation 0 offset (3,0) verdict: got "supported", expected "unsupported"; rotation 0 offset (-1,-1) dist: got 1, expected 2; rotation 0 offset (-2,-1) verdict: got "supported", expected "unsupported" (+16 more)
+FAIL: rooted_distance_carried [reset_distance] - ledge cell 2 dist: got 1, expected 2; ledge cell 3 verdict: got "supported", expected "unsupported"; ledge cell 3 reason: got null, expected "no_root"; thick member at distance 2 dist: got 1, expected 2 (+2 more)
+FAIL: rooted_hp_band_span [reset_distance] - far cell at band 4 (spanEff 1) at distance 2 verdict: got "supported", expected "unsupported"
+PASS: rooted_unknown_is_pending
+FAIL: rooted_catalogue_span [reset_distance] - limestone ledge cell 2 verdict: got "supported", expected "unsupported"
+PASS: rooted_missing_data_errors
+PASS: rooted_partial_geometry
+PASS: rooted_ops_counted
+
+RESULT: mutant reset_distance - 5/11 checks failed

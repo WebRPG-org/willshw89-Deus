@@ -1,0 +1,14 @@
+PASS: rooted_modules_present - rooted.js and reader.js exist; index.js exports the rooted API
+PASS: rooted_floating_ring_fails
+PASS: rooted_bearing_needs_root
+PASS: rooted_cross_z_member
+PASS: rooted_rotation_invariant
+PASS: rooted_distance_carried
+PASS: rooted_hp_band_span
+FAIL: rooted_unknown_is_pending [unknown_as_air] - ledge beside unavailable terrain verdict: got "unsupported", expected "pending"; ledge beside unavailable terrain reason: got "no_root", expected "pending_terrain"; block above unavailable terrain verdict: got "unsupported", expected "pending"; block above unavailable terrain reason: got "no_root", expected "pending_terrain" (+5 more)
+PASS: rooted_catalogue_span
+PASS: rooted_missing_data_errors
+PASS: rooted_partial_geometry
+PASS: rooted_ops_counted
+
+RESULT: mutant unknown_as_air - 1/11 checks failed

@@ -1,0 +1,8 @@
+base=196f10eeee32fdefbff865f9f05a42c6f0b8b62a
+collapse.js
+index.js
+support.js
+FAIL: rooted_modules_present - missing game/js/sim/structural/rooted.js; missing game/js/sim/structural/reader.js
+
+RESULT: FAIL (rooted support modules are absent; no other check can run)
+exit=1

@@ -1,0 +1,52 @@
+fresh clone of task/lane-en at 96ec972fb1cb396262c11ab6775f542835252975, core.autocrlf=true (rooted.js checked out with CRLF)
+$ node tools/test_structural_rooted.js
+PASS: rooted_modules_present - rooted.js and reader.js exist; index.js exports the rooted API
+=== NAT.02.01 rooted support: baseline ===
+PASS: rooted_floating_ring_fails
+PASS: rooted_bearing_needs_root
+PASS: rooted_cross_z_member
+PASS: rooted_rotation_invariant
+PASS: rooted_distance_carried
+PASS: rooted_hp_band_span
+PASS: rooted_unknown_is_pending
+PASS: rooted_catalogue_span
+PASS: rooted_missing_data_errors
+PASS: rooted_partial_geometry
+PASS: rooted_ops_counted
+
+=== Negative control: legacy predicate (support.js evalCellSupport, unchanged) ===
+REJECTED: legacy turns rooted_floating_ring_fails red - ring t=1 member (9,9) verdict: got "supported", expected "unsupported"
+REJECTED: legacy turns rooted_bearing_needs_root red - X on rubble on a floating block verdict: got "supported", expected "unsupported"
+REJECTED: legacy turns rooted_cross_z_member red - floating cross-layer column, upper voxel verdict: got "supported", expected "unsupported"
+
+=== Negative controls: source mutants of rooted.js ===
+KILLED: unknown_as_air (unavailable terrain is read as air) turns rooted_unknown_is_pending red - ledge beside unavailable terrain verdict: got "unsupported", expected "pending"
+        unknown_as_air: red checks = rooted_unknown_is_pending
+KILLED: reset_distance (lateral distance restarts at each member) turns rooted_distance_carried red - ledge cell 2 dist: got 1, expected 2
+        reset_distance: red checks = rooted_floating_ring_fails, rooted_rotation_invariant, rooted_distance_carried, rooted_hp_band_span, rooted_catalogue_span
+KILLED: trust_flag (a neighbour's stored supported flag is accepted as bearing) turns rooted_bearing_needs_root red - X on rubble on a floating block verdict: got "supported", expected "unsupported"
+        trust_flag: red checks = rooted_bearing_needs_root, rooted_partial_geometry, rooted_ops_counted
+KILLED: x_only (lateral paths are searched along x only) turns rooted_rotation_invariant red - rotation 0 offset (0,-1) verdict: got "unsupported", expected "supported"
+        x_only: red checks = rooted_floating_ring_fails, rooted_rotation_invariant, rooted_ops_counted
+KILLED: unknown_as_support (unavailable terrain is read as support) turns rooted_unknown_is_pending red - block above unavailable terrain verdict: got "supported", expected "pending"
+        unknown_as_support: red checks = rooted_unknown_is_pending
+KILLED: whole_cell (any occupied voxel is read as a full cell) turns rooted_partial_geometry red - deposit occupied top: got 1728, expected 1692
+        whole_cell: red checks = rooted_bearing_needs_root, rooted_catalogue_span, rooted_partial_geometry
+KILLED: z_local (members stop at layer boundaries) turns rooted_cross_z_member red - upper voxel member key: got "10,10,85", expected "10,10,83"
+        z_local: red checks = rooted_bearing_needs_root, rooted_cross_z_member, rooted_distance_carried, rooted_hp_band_span
+KILLED: no_band (HP band does not reduce the span) turns rooted_hp_band_span red - spanEffOf(2, 4): got 2, expected 1
+        no_band: red checks = rooted_hp_band_span
+KILLED: flat_span (spanBase ignores thickness) turns rooted_catalogue_span red - granite spanBase t=2: got 2, expected 3
+        flat_span: red checks = rooted_cross_z_member, rooted_distance_carried, rooted_catalogue_span
+KILLED: missing_defaults (a missing spanBase defaults to zero instead of failing) turns rooted_missing_data_errors red - material without spanBase throws
+        missing_defaults: red checks = rooted_missing_data_errors
+KILLED: uncharged_read (voxel reads are not charged to Bs) turns rooted_ops_counted red - single voxel ops: got "{\"member\":2,\"bearing\":1,\"lateral\":0,\"total\":3}", expected "{\"member\":4,\"bearing\":1,\"lateral\":4,\"total\":9}"
+        uncharged_read: red checks = rooted_ops_counted
+KILLED: uncharged_relax (lateral-path relaxations are not charged to Bs) turns rooted_ops_counted red - ledge ops: got "{\"member\":10,\"bearing\":3,\"lateral\":13,\"total\":26}", expected "{\"member\":10,\"bearing\":3,\"lateral\":15,\"total\":28}"
+        uncharged_relax: red checks = rooted_ops_counted
+
+RESULT: PASS (12 checks; legacy and 12 mutants rejected)
+exit=0
+$ node tools/check_deus_syntax.js
+Checked 62 DEUS plugin files. Errors: 0
+exit=0

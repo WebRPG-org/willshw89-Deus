@@ -1,0 +1,14 @@
+You are the primary implementer for lane-en (Task NAT.02.01), running as claude.
+Read tasks/NAT.02.01/lane-en/BRIEF.md carefully and follow all instructions within it.
+Your allowed paths are:
+- game/js/sim/structural/rooted.js
+- game/js/sim/structural/reader.js
+- game/js/sim/structural/index.js
+- tools/test_structural_rooted.js
+- docs/systems/DEUS_Structural.md
+- tasks/NAT.02.01/lane-en/**
+
+Standing rules:
+1. NO ART (DEC-007). Never generate, request or integrate art, and never tell anyone to.
+2. Run tests in the FOREGROUND. Never end your turn while background jobs or child processes are running. Commit early (WIP commits allowed on your branch). Do not push. Do not merge. Write only inside allowedPaths.
+Commit messages start with '[claude] NAT.02.01'.

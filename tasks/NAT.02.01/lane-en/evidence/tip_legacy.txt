@@ -1,0 +1,6 @@
+PASS: rooted_modules_present - rooted.js and reader.js exist; index.js exports the rooted API
+FAIL: rooted_floating_ring_fails [legacy] - ring t=1 member (9,9) verdict: got "supported", expected "unsupported"; ring t=1 member (10,9) verdict: got "supported", expected "unsupported"; ring t=1 member (11,9) verdict: got "supported", expected "unsupported"; ring t=1 member (9,10) verdict: got "supported", expected "unsupported" (+20 more)
+FAIL: rooted_bearing_needs_root [legacy] - X on rubble on a floating block verdict: got "supported", expected "unsupported"; X above the empty half of a deposit verdict: got "supported", expected "unsupported"; X on rubble on a rooted pillar dist: got undefined, expected 0; X on rubble on a rooted pillar anchor (itself: it bears vertically): got undefined, expected "5,5,82" (+4 more)
+FAIL: rooted_cross_z_member [legacy] - floating cross-layer column, upper voxel verdict: got "supported", expected "unsupported"; upper voxel member key: got undefined, expected "10,10,83"; lower voxel member key: got undefined, expected "10,10,83"; member z0: got undefined, expected 0 (+13 more)
+
+RESULT: legacy predicate 3/3 checks failed
