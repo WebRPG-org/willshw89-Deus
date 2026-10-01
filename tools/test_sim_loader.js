@@ -13,6 +13,8 @@
 //   return_null_on_missing  UF.Sim.require returns null for a missing module      -> missing_module_throws
 //   fixed_list_scan         the scan is a fixed list of known harnesses           -> every_vm_harness_installs_hook
 //   unpinned_grid           the hook leaves PluginManager alone                   -> grid_pinned_by_hook
+//   hook_wrong_sandbox / hook_unreachable / hook_after_eval: plant invalid installs
+//                                                                            -> every_vm_harness_installs_hook
 
 const fs = require("fs");
 const os = require("os");
@@ -32,7 +34,10 @@ const NW = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RPG Maker MZ\\nwj
 const MUTANTS = {
     return_null_on_missing: "missing_module_throws",
     fixed_list_scan: "every_vm_harness_installs_hook",
-    unpinned_grid: "grid_pinned_by_hook"
+    unpinned_grid: "grid_pinned_by_hook",
+    hook_wrong_sandbox: "every_vm_harness_installs_hook",
+    hook_unreachable: "every_vm_harness_installs_hook",
+    hook_after_eval: "every_vm_harness_installs_hook"
 };
 const args = process.argv.slice(2);
 const arg = name => { const a = args.find(x => x.startsWith(`--${name}=`)); return a ? a.slice(name.length + 3) : null; };
@@ -42,14 +47,15 @@ if (mutant && !MUTANTS[mutant]) {
     process.exit(2);
 }
 const only = arg("only") ? arg("only").split(",") : null;
-const keep = args.includes("--keep");
+const keep = args.includes("--keep") || process.env.WG0044_KEEP_NW_SNAPSHOT === "1";
 
 // The harnesses the plan names (WORK-GATE wave 2B, lane-db change 1) and the ones the rule must leave out.
 const KNOWN_HITS = ["tools/test_new_game_year0.js", "tools/test_worldgen_quickfixes.js", "tools/sim/test_underground_year0.js",
     "tools/test_fluid_correctness_lane_cw.js", "tools/worldgen/test_vertical_biome_coupling.js", "tools/society/test_person_identity.js",
     "tools/sim/test_sim_forward_guard.js", "tools/dev/sim_forward.js", "tools/bench_underground_gen.js", "tools/bench_vertical_worldgen.js"];
 const KNOWN_NOT_HITS = ["tools/test_autonomous_project_dispatch.js", "tools/test_project_construction_loop.js",
-    "tools/test_settlement_projects.js", "tools/test_survival_needs_loop.js", "tools/sim/test_units.js"];
+    "tools/test_settlement_projects.js", "tools/test_survival_needs_loop.js", "tools/sim/test_units.js",
+    "tools/bench_history_demographics.js"];
 
 const read = file => fs.readFileSync(file, "utf8");
 function replaceOnce(source, from, to, what) {
@@ -117,11 +123,16 @@ function makeEnv(parameters) {
     return env;
 }
 
-/** DEUS_World.js evaluated in a fresh context; hookOpts null = no hook. Returns the sandbox. */
+/** DEUS_World.js evaluated in a fresh, hooked context. Returns the sandbox. */
 function loadWorld({ hookOpts = {}, parameters = null, edit = null, before = null } = {}) {
     const env = makeEnv(parameters);
-    if (hookOpts && mutant === "unpinned_grid") loadHook().install(env, hookOpts);
-    else if (hookOpts) simHook.install(env, hookOpts);
+    const originalManager = env.PluginManager;
+    simHook.install(env, hookOpts);
+    if (mutant === "unpinned_grid") {
+        // Remove the real hook's pin before exercising the mutated hook. Keep the normal load path unconditional.
+        Object.defineProperty(env, "PluginManager", { value: originalManager, writable: true, configurable: true });
+        loadHook().install(env, hookOpts);
+    }
     if (before) before(env);
     vm.createContext(env);
     vm.runInContext(worldSource(edit), env, { filename: "DEUS_World.js" });
@@ -130,16 +141,9 @@ function loadWorld({ hookOpts = {}, parameters = null, edit = null, before = nul
 
 const thrown = fn => { try { fn(); return null; } catch (e) { return e; } };
 
-/** True when a harness binds tools/lib/vm_sim_require with require() and calls .install on it (code, not comments). */
+/** Every whole-target evaluation needs a prior install on the same sandbox. */
 function installsHook(scanMod, source) {
-    const { code, literals } = scanMod.tokenize(source);
-    const bind = /\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\s*\(([^;]*?)\)\s*[;\n]/g;
-    let m;
-    while ((m = bind.exec(code))) {
-        const named = [...m[2].matchAll(/__S(\d+)__/g)].some(p => /(?:^|[\/\\])?vm_sim_require(?:\.js)?$/.test(literals[Number(p[1])].value));
-        if (named && new RegExp(`(?<![\\w$.])${m[1].replace(/\$/g, "\\$")}\\s*\\.\\s*install\\s*\\(`).test(code)) return true;
-    }
-    return false;
+    return scanMod.classify(source).hit && scanMod.hookFailures(source).length === 0;
 }
 
 const PLANTED = `"use strict";
@@ -151,6 +155,52 @@ vm.createContext(env);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "game", "js", "plugins", "DEUS_World.js"), "utf8"), env);
 `;
 const PLANTED_HOOKED = PLANTED.replace(`env.window = env;\n`, `env.window = env;\nconst simHook = require("./lib/vm_sim_require");\nsimHook.install(env);\n`);
+
+const HOOK_PROVOCATIONS = {
+    hook_wrong_sandbox: PLANTED_HOOKED.replace("simHook.install(env);", "simHook.install({});"),
+    hook_unreachable: PLANTED_HOOKED.replace("simHook.install(env);", "if (false) simHook.install(env);"),
+    hook_after_eval: PLANTED_HOOKED.replace("simHook.install(env);\n", "") + "\nsimHook.install(env);\n"
+};
+
+/** Small programs, not filename exceptions: each is classified by its evaluated source. */
+function scannerFixtures() {
+    const pre = 'const vm = require("vm"), fs = require("fs");\n';
+    const readWhole = 'fs.readFileSync("game/js/plugins/DEUS_World.js", "utf8")';
+    const source = pre + 'const src = ' + readWhole + ';\n';
+    const cases = {
+        wrapped_whole: [true, source + 'vm.runInNewContext(`(function(){\\n${src}\\n})();`, {});'],
+        wrapped_partial: [false, source + 'vm.runInNewContext(`${src.slice(1)}`, {});'],
+        hash_only_with_vm: [false, source + 'require("crypto").createHash("sha256").update(src).digest("hex"); vm.runInNewContext("1+1", {});'],
+        hash_and_whole_eval: [true, source + 'require("crypto").createHash("sha256").update(src).digest("hex"); vm.runInNewContext(src, {});'],
+        mention_not_read: [false, pre + 'const name = "DEUS_World.js"; vm.runInNewContext("1+1", {});'],
+        two_sources_partial_only: [false, source + 'const other = fs.readFileSync("helpers.js", "utf8"); vm.runInNewContext(other + src.slice(1, 30), {});'],
+        script_evaluated: [true, source + 'const script = new vm.Script(src); script.runInNewContext({});'],
+        script_compiled_only: [false, source + 'const script = new vm.Script(src);'],
+        helper_return: [true, pre + 'function readWorld(){ return ' + readWhole + '; } vm.runInNewContext(readWorld(), {});'],
+        alias_full: [true, source + 'const a = src, b = a; vm.runInNewContext(b, {});']
+    };
+    for (const [name, want, suffix] of [
+        ['slice_empty', true, '.slice()'],
+        ['slice_zero', true, '.slice(0)'],
+        ['slice_length', true, '.slice(0, src.length)'],
+        ['slice_infinity', true, '.slice(0, Infinity)'],
+        ['slice_start', false, '.slice(1)'],
+        ['slice_end', false, '.slice(0, -1)'],
+        ['substring_full', true, '.substring(0)'],
+        ['substring_partial', false, '.substring(1)'],
+        ['substr_full', true, '.substr(0)'],
+        ['substr_partial', false, '.substr(1, 10)'],
+        ['match_whole', true, '.match(/^[\\s\\S]*$/)[0]'],
+        ['match_partial', false, '.match(/const Space = [\\s\\S]*?Space\\.Z_STEP_FEET/)[0]']
+    ]) {
+        cases[name + '_separated'] = [want, source + 'const part = src' + suffix + '; vm.runInNewContext(part, {});'];
+        const inlineSuffix = suffix.replace('src.length', readWhole + '.length');
+        cases[name + '_chained'] = [want, pre + 'vm.runInNewContext(' + readWhole + inlineSuffix + ', {});'];
+    }
+    cases.exec_whole = [true, source + 'const all = /^[\\s\\S]*$/.exec(src); vm.runInNewContext(all[0], {});'];
+    cases.exec_partial = [false, source + 'const part = /const Space = [\\s\\S]*?Space\\.Z_STEP_FEET/.exec(src); vm.runInNewContext(part[0], {});'];
+    return cases;
+}
 
 const checks = {
     vm_loader_loads_ledger() {
@@ -180,7 +230,15 @@ const checks = {
         const named = !!err && expect.every(p => String(err.message).includes(p) && (err.tried || []).includes(p));
         const bad = thrown(() => sim.require("../plugins/DEUS_World"));
         // No hook and no require (a plain browser): still a throw, never null.
-        const bare = loadWorld({ hookOpts: null });
+        // This browser-only probe evaluates just the loader block, not the whole target plugin.
+        // Every whole-plugin load in this harness still has an unconditional hook.
+        const source = worldSource();
+        const start = source.indexOf("    const SIM_NAME =");
+        const end = source.indexOf("    // World creation", start);
+        if (start < 0 || end <= start) throw new Error("HARNESS missing Sim block boundaries");
+        const bare = { UF: {} };
+        bare.window = bare;
+        vm.runInNewContext(source.slice(start, end), bare);
         let bareGot;
         const bareErr = thrown(() => { bareGot = bare.UF.Sim.require("ledger"); });
         const ok = named && err.code === "DEUS_SIM_MODULE_MISSING" && got === undefined &&
@@ -192,25 +250,48 @@ const checks = {
     every_vm_harness_installs_hook() {
         const scanMod = loadScan();
         const real = scanMod.scan({ root: ROOT });
-        const missing = real.hits.filter(h => !installsHook(scanMod, read(path.join(ROOT, h.file)))).map(h => h.file);
-        // Provocation: a planted harness without the hook must be found and refused; one with the hook passes.
+        const missing = real.hits.flatMap(h => (h.hookFailures || scanMod.hookFailures(read(path.join(ROOT, h.file)),
+            { root: ROOT, filename: path.join(ROOT, h.file) }))
+            .map(problem => h.file + ": " + JSON.stringify(problem)));
+        // Each fixture is discovered by the real directory scan. The mutant path plants a bad install
+        // as a required harness, so the named check itself (not only an inverted assertion) turns red.
         const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "wg0044-plant-"));
-        let plantedFound = false, plantedRefused = false, hookedAccepted = false;
+        const fixtureResults = [];
         try {
             fs.mkdirSync(path.join(tmp, "tools"));
-            fs.writeFileSync(path.join(tmp, "tools", "test_planted_wg0044.js"), PLANTED);
-            fs.writeFileSync(path.join(tmp, "tools", "test_planted_hooked_wg0044.js"), PLANTED_HOOKED);
-            const planted = scanMod.scan({ root: tmp });
-            const files = planted.hits.map(h => h.file);
-            plantedFound = files.includes("tools/test_planted_wg0044.js") && files.includes("tools/test_planted_hooked_wg0044.js");
-            plantedRefused = !installsHook(scanMod, PLANTED);
-            hookedAccepted = installsHook(scanMod, PLANTED_HOOKED);
+            const fixtures = { missing: [PLANTED, false], hooked: [PLANTED_HOOKED, true],
+                context_alias: [PLANTED_HOOKED.replace("vm.createContext(env);", "const ctx = vm.createContext(env);")
+                    .replace('"utf8"), env);', '"utf8"), ctx);'), true],
+                wrong_context_alias: [PLANTED_HOOKED.replace("vm.createContext(env);", "const ctx = vm.createContext({});")
+                    .replace('"utf8"), env);', '"utf8"), ctx);'), false],
+                shadowed_sandbox: [PLANTED_HOOKED.replace("simHook.install(env);", "{ const env = {}; simHook.install(env); }"), false],
+                reassigned_sandbox: [PLANTED_HOOKED.replace("const env =", "let env =")
+                    .replace("simHook.install(env);", "simHook.install(env); env = {};"), false],
+                dormant_install: [PLANTED_HOOKED.replace("simHook.install(env);", "function neverCalled() { simHook.install(env); }"), false],
+                conditional_install: [PLANTED_HOOKED.replace("simHook.install(env);", "if (process.env.TEST_HOOK) simHook.install(env);"), false],
+                ...Object.fromEntries(Object.entries(HOOK_PROVOCATIONS).map(([k, src]) => [k, [src, false]])) };
+            for (const [name, [source, expected]] of Object.entries(fixtures)) {
+                const file = "tools/test_" + name + ".js";
+                fs.writeFileSync(path.join(tmp, file), source);
+                const found = scanMod.scan({ root: tmp }).hits.some(h => h.file === file);
+                const accepted = installsHook(scanMod, source);
+                fixtureResults.push({ name, found, accepted, expected });
+            }
+            if (HOOK_PROVOCATIONS[mutant]) {
+                const file = "tools/test_required_provocation.js";
+                fs.writeFileSync(path.join(tmp, file), HOOK_PROVOCATIONS[mutant]);
+                const hit = scanMod.scan({ root: tmp }).hits.find(h => h.file === file);
+                if (!hit) missing.push(mutant + ": planted target evaluation not discovered");
+                else missing.push(...scanMod.hookFailures(read(path.join(tmp, file)))
+                    .map(problem => mutant + ": " + JSON.stringify(problem)));
+            }
         } finally {
             fs.rmSync(tmp, { recursive: true, force: true });
         }
-        const ok = real.hits.length > 0 && missing.length === 0 && plantedFound && plantedRefused && hookedAccepted;
-        return [ok, `${real.hits.length} hits in ${real.scanned} files; without the hook: ${missing.length ? missing.join(", ") : "none"}; ` +
-            `planted harness found by the scan: ${plantedFound}, refused: ${plantedRefused}; hooked fixture accepted: ${hookedAccepted}`];
+        const ok = real.hits.length > 0 && missing.length === 0 &&
+            fixtureResults.every(r => r.found && r.accepted === r.expected);
+        return [ok, real.hits.length + " hits in " + real.scanned + " files; hook proof failures: " +
+            (missing.join(" | ") || "none") + "; fixtures: " + JSON.stringify(fixtureResults)];
     },
 
     scan_finds_known_harnesses() {
@@ -228,10 +309,11 @@ const checks = {
             comment_only: [false, `const vm = require("vm");\n// stands in for DEUS_World ("DEUS_World.js")\nvm.runInNewContext("1 + 1", {});\n`],
             no_vm: [false, `const fs = require("fs");\nconst src = fs.readFileSync("game/js/plugins/DEUS_World.js", "utf8");\nconsole.log(src.length);\n`]
         };
+        Object.assign(cases, scannerFixtures());
         const ruleWrong = Object.entries(cases).filter(([, [want, src]]) => scanMod.classify(src).hit !== want).map(([k]) => k);
         const ok = files.length > 0 && absent.length === 0 && wrong.length === 0 && ruleWrong.length === 0;
         return [ok, `${files.length} hits; known hits missing: ${absent.join(", ") || "none"}; excluded files found: ${wrong.join(", ") || "none"}; ` +
-            `fixtures classified wrong: ${ruleWrong.join(", ") || "none"}`];
+            `fixtures: ${Object.keys(cases).length}; classified wrong: ${ruleWrong.join(", ") || "none"}`];
     },
 
     opener_registry() {

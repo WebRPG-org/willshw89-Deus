@@ -8,7 +8,6 @@ const fs = require("fs"), path = require("path"), vm = require("vm"), os = requi
 const crypto = require("crypto");
 const { performance } = require("perf_hooks");
 const { spawnSync } = require("child_process");
-const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 const ROOT = path.resolve(__dirname, "..");
 const OUTPUT = path.join(ROOT, "game/test_output/bench_history_demographics.json");
 const BASELINE = "6941395";
@@ -62,9 +61,7 @@ function bundle() {
     const helpers = source.slice(source.indexOf(begin), source.indexOf(end));
     const math = Object.create(Math);
     math.random = () => { throw new Error("Unseeded Math.random forbidden"); };
-    // The scan counts this bench (it hashes DEUS_World.js for provenance), so the hook's globals are in scope of the
-    // one thing it evaluates; the PRNG slice reads none of them.
-    const rng = vm.compileFunction(helpers + "\nreturn {hash32, mulberry32};", ["Math"], { contextExtensions: [simHook.install({})] })(math);
+    const rng = vm.compileFunction(helpers + "\nreturn {hash32, mulberry32};", ["Math"])(math);
     const catalog = JSON.parse(texts[2]), f = catalog.factions.founders;
     const config = {
         model: "TEST_demographics_v1", domain: "historical", cultures: catalog.factions.species.map(s => s.id),
