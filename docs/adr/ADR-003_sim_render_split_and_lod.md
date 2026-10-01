@@ -1,5 +1,7 @@
 # ADR-003: Sim/Render Split and Level-of-Detail (LOD) Simulation
 > **Superseded in part by DEC-073 (Owner, 2026-10-01):** wildlife and monsters are spawned by a seeded runtime spawner around the player and around active AI faction settlements; there is no breeding, carrying capacity, food web, migration or persistent population vector for them. An ordinary one despawns only when far away and out of sight; tamed, captured, named, quest and lair creatures and any creature carrying items persist with stable IDs. Superseded for wildlife and monsters: the §6 wildlife row; the anonymous-population steps of §7.3, §7.4 and §7.7; Q-POP and the creature matter in Q-MASS (§7.8); spawning as a ledger source and the anonymous-population tolerance (§7.9); the anonymous-animal trade-off of §5.7 and Q4 (§12.3); and, for creatures, G4 of §5.7 and the camera-follow guard test of §19, which hold only if the spawner decides "out of sight" from simulation state (see the notes there). People, owned livestock and flora keep this design.
+>
+> **Amended by DEC-080 (Owner, 2026-10-01):** every area keeps its own wildlife and monster population, not only the player's surroundings. Creatures spawn in at in-world anchors and respawn. Away from the player they are kept as counts and respawn timers per anchor, not as live units, and nothing despawns because the player left. A sky view at the end of world generation shows their density and spawn points.
 
 **Status:** Rev 4, ACCEPTED, together with the "Review of Rev 4" note in the Rev 4 change log below: without that note this status reads PROPOSED. The PM (Claude) signed it on 2026-10-01 under DEC-059 item 3 (`docs/OWNER_DECISIONS.md:991` at `8b235fca`); the Owner can change it. One condition stays: §9.2 is amended with K3 measurements before SIM.00.03 starts (§0 item 12). Rev 3 (Lane M, 2026-09-26) was written by Claude, the Lane M writer, and Grok's adversarial review passed it (`tasks/SIM.00.01/lane-m/review_grok_2e32f596.md:173` at `8b235fca`). Rev 4 applies the braintrust's sign-off amendments (MiniMax M3, 2026-10-01). Grok's review covers Rev 3 only. The PM wrote the Rev 4 edits, so the braintrust work gate judged their text before the PM signed, and the review note says who checked what: no author certifies its own text.
 - Rev 1 (`ddd1b865`) predates the Lane M review checklist (`tasks/SIM.00.01/lane-m/review_checklist.md`).
@@ -914,7 +916,7 @@ These are the aggregate representations for L2 regions. "Tracked" and "anonymous
   - no combat;
   - no job with an assigned worker in the region.
 - **Fluids.** Build the basin index over the region's wet cells. The cells keep their values. The region's fine queue is dropped. Any cell still in it is simply re-queued on promotion (§7.3), so no volume moves on demotion.
-- **Anonymous units.** Absorbed into buckets: [DEC-073: a wildlife or monster unit is not absorbed; it despawns only when far away and out of sight.]
+- **Anonymous units.** Absorbed into buckets: [DEC-073: a wildlife or monster unit is not absorbed; it despawns only when far away and out of sight. DEC-080 amends this: away from the player it is kept as a count at its spawn anchor, and its area refills by respawn.]
   - `count += 1`;
   - the record is deleted and its ID *retired*, with reason `ABSORBED`. `nextUnitId` never reuses an ID (`DEUS_World.js:1133`).
   - Absorption **does not emit `world:unitRemoved`**. To legacy listeners that event means the unit has left the world, and Factions lowers its population for a removed unit that is dead or dying (`DEUS_Factions.js:619-625`). An absorbed unit is still in the world, as a bucket member counted in Q-FACTPOP (§7.8). The feed carries `UNIT_REMOVED` with cause `LOD_ABSORB` instead, and the legacy translation (§4.3) maps it to no legacy event.
@@ -952,7 +954,7 @@ Crowd LOD for people (0021-V addendum §9) is an open Owner question (Q14). The 
 - **Ramps (DEC-020).** A unit walking up a ramp changes `z` to `z + 1` at the top stratum (§3.9). If that crosses a slab border, it is an ordinary border crossing under the rules below; there is no transfer and no pause.
 - **A unit moves from an L0/L1 region into an L2 region:**
   - a tracked unit switches to abstract mode in the destination region;
-  - an anonymous unit is absorbed at the next LOD phase (a ledger `ABSORB` event, as in §7.4). [DEC-073: a wildlife or monster unit is not absorbed; it despawns only when far away and out of sight.]
+  - an anonymous unit is absorbed at the next LOD phase (a ledger `ABSORB` event, as in §7.4). [DEC-073: a wildlife or monster unit is not absorbed; it despawns only when far away and out of sight. DEC-080 amends this: away from the player it is kept as a count at its spawn anchor, and its area refills by respawn.]
 - **A unit leaves an L2 region toward an L0/L1 region:**
   - a tracked unit materializes on the first valid border cell on its line toward the goal (canonical order);
   - an anonymous migration emits an individual on a border cell, with `bucket −= 1` and a new ID. [DEC-073: not for wildlife and monsters, which neither migrate nor sit in buckets.]

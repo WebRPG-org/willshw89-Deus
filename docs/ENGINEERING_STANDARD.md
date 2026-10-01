@@ -114,7 +114,7 @@ The simulation must explain itself:
 ## 15. Scalable Levels of Simulation Fidelity
 - High fidelity: visible/nearby entities (precise movement, combat, animations).
 - Medium fidelity: active settlement entities (jobs, needs, production).
-- Coarse fidelity: distant regions (batched statistics). Wildlife and monsters have no population or ecology simulation at any fidelity: a seeded runtime spawner places them by rule around the player and active AI faction settlements, and while they exist they run at the fidelity of the area they are in. Notable creatures (tamed, captured, named, quest and lair creatures, and any creature carrying items) persist; all other wildlife and monsters despawn only when far away and out of sight (DEC-073).
+- Coarse fidelity: distant regions (batched statistics). Wildlife and monsters have no population or ecology simulation at any fidelity: a seeded runtime spawner places them by rule around the player and active AI faction settlements, and while they exist they run at the fidelity of the area they are in. Notable creatures (tamed, captured, named, quest and lair creatures, and any creature carrying items) persist; all other wildlife and monsters despawn only when far away and out of sight (DEC-073). [DEC-080 (Owner, 2026-10-01): every area keeps its own population, not only the player's surroundings; creatures spawn in at anchors and respawn; away from the player they are kept as counts per anchor, and nothing despawns because the player left; a sky view shows density and spawn points.]
 
 ## 16. Save Truth, Rebuild Cache
 - Persist stable world truth (entity state, inventory, skills, building blocks, terrain mutations).
