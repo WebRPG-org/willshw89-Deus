@@ -1,0 +1,4 @@
+# node tools/test_natural_connections_no_mint.js --mutant=disable_all_flow --case=control_open_column_flows  (lane base 8a254452)
+FAIL natural_connections_no_mint.control_open_column_flows: open column: placed 6, debit 0, credit 0, landing 0, canPassDown false, conserved true
+RESULT: 0 passed, 1 failed (mutant disable_all_flow)
+# exit 1
