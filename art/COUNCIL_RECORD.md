@@ -76,3 +76,34 @@ Versions judged: trees after the U7 canopy pass (birch, swamp, pine and apple re
 **Conflict between judges, for the next pass:** MiniMax's round-1 NOs on the cliffs ("flat fills read as modern pixel art") led to the mottling that Gemini now rejects as "uniform pixel noise". Gemini asks for bold chunky clusters with high-contrast directional light (bright highlights, near-black shadows). The PM is calibrating with Gemini on one cliff and one tree before reworking all seventeen pieces.
 
 **After the council:** the six stumps passed. They do not enter the game yet: their catalogue rows (the trees' DEPLETED rows) come with lane-pg, and they wait on the Owner's D2 ruling (may script-cut pixels ship after a Pixflux pass?). The PM's YEA goes in `art/APPROVALS.md` when both are settled.
+
+## ART-COUNCIL-3 to 6 (2026-10-01, 07:55-09:10Z): hanging pieces; trees and cliffs re-rendered
+
+**Packet lesson.** ART-COUNCIL-4's packet quoted one judge's criteria and named the generator; Grok then rejected all ten cliffs and Gemini rejected every piece, including an oak byte-identical to one Gemini had passed twenty minutes earlier in calibration. From ART-COUNCIL-5 every packet carries only the Owner's question. The ART-COUNCIL-4 votes are kept in the verdict files but are not used for outcomes.
+
+**Final versions judged (ART-COUNCIL-5/5b/6):** oak v7 (PixelLab Pixflux toward larger leaf masses), swamp, dead and birch v4 (Bitforge with a U7 tree as style image), pine v3, apples v7 (irregular crowns); cliffs: sets 1, 2, 3, 5, 6 and 10 v5 (Pixflux toward broad lit masses), set 9 v5 face with the v3 top, sets 4, 7 and 8 v3.
+
+| Piece | ChatGPT | Grok | MiniMax | Gemini | Outcome | Reasons for each no |
+|---|---|---|---|---|---|---|
+| Hanging roots | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Hanging vines | YEA | NAY | YEA | NAY | rejected | Grok: evenly spaced strands, leaf blobs repeat as near-identical stamps. Gemini: uniform pixel noise without volumetric leaf clusters. |
+| Stalactites | YEA | NAY | YEA | NAY | rejected | Grok: soft vertical gradients, smoother edges; U7 rocks are faceted with hard highlights. Gemini: highlights are scattered single pixels rather than planar light shapes. |
+| Oak (v7) | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Swamp tree | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Dead tree | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Birch | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Pine | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Apple A (v7) | YEA | YEA | YEA | NAY | rejected | Gemini: harsh dark internal outlines create disjointed blobs; lacks cohesive volumetric shading (earlier version: a perfect sphere). |
+| Apple B (v7) | YEA | YEA | YEA | NAY | rejected | Gemini: messy placement, jagged erratic clumps (earlier: a spherical duplicate of A). |
+| Cliff 1 granite | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Cliff 2 soil | NAY | YEA | YEA | YEA | rejected | ChatGPT: fine mottling overwhelms the larger clods; granular noise rather than shaded earth masses. |
+| Cliff 3 sand over sandstone | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Cliff 4 mud | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Cliff 5 cave limestone | NAY | YEA | YEA | YEA | rejected | ChatGPT: smeared grey streaks and scattered white blotches, no readable rock planes. |
+| Cliff 6 lichen rock | NAY | YEA | YEA | YEA | rejected | ChatGPT: thin crack outlines dominate near-uniform grey; flat and etched. |
+| Cliff 7 rooted soil | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Cliff 8 banded sandstone | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Cliff 9 red clay | NAY | YEA | YEA | YEA | rejected | ChatGPT: dense dark crack-webbing overwhelms the highlights; outlined texture rather than modelled clay. |
+| Cliff 10 layered strata | NAY | YEA | YEA | YEA | rejected | ChatGPT: grey and tan bands too similar in value; outlines describe the layers but shading gives no depth. |
+
+**Passed tonight (4 of 4):** six stumps (ART-COUNCIL-2), hanging roots, oak, swamp, dead tree, birch, pine, cliffs 1, 3, 4, 7 and 8. None enters the game yet: each waits for its catalogue row (lane-pg, and the Owner's ruling on size envelopes under DEC-016) and for the Owner's D2 ruling on script-processed pixels (cliffs 4, 7 and 8 carry the scripted mottling; the stumps were cut from their trees before the Pixflux pass). The PM's YEA goes in `art/APPROVALS.md` when both are settled.
