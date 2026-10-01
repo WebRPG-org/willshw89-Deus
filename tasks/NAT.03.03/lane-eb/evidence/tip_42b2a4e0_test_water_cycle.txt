@@ -1,0 +1,23 @@
+# tip 42b2a4e0 (42b2a4e0a8b45d46ac73b1ed6f8e28011802b5f4), worktree, 2026-10-01T07:46:04-05:00, node v24.19.0
+$ node tools/sim/test_water_cycle.js
+PASS exit_rains_remote_nonlake - 9147 cp from an outlet and a holding in area (0,0) rained on 4 receivers; far dry receiver got 1535 cp (23 ms)
+PASS full_receivers_retain - 130 steps against 6 full receivers kept 50000 cp; 700 cp of room took 700 cp (5 ms)
+PASS lava_never_returns - lava from a holding, a cell and steam refused (E_CLASS); 400 steps of evaporation and rain left lava 1600000 cp (5 ms)
+PASS evaporation_save_load_cycle - 420-step evaporation/rain/flow continuation exact from 6 save points (3 mid-pass, 6 with return water) (216 ms)
+PASS rotation_deterministic - 12 rain visits in rotation order over 6 receivers in 5 areas (full receiver skipped, wraps) (4 ms)
+PASS due_not_early - rain first at step 100, 237, 10 (delay 7) and 110 (evaporation at step 10) (3 ms)
+PASS rain_charges_budget - work and host + provider calls <= budget for 1, 2, 3, 7, 64 and 512 with 40 full receivers (45 ms)
+PASS transfer_records_balance - 279 records over 27 accounts balance; rows 1..279 (10 ms)
+PASS no_surface_is_base - members, steps, records, totals and save of the checkpoint unchanged without a surface (7 ms)
+RESULT: 9 passed, 0 failed
+KILLED lakes_only -> exit_rains_remote_nonlake - the dry receiver in the far area (2,2) got rain: 0 cp
+KILLED drop_on_full -> full_receivers_retain - the return inventory keeps every cp, step 100
+KILLED lava_as_water -> lava_never_returns - Missing expected exception: lava credit refused (exit from holding:magma-hold)
+KILLED free_probe -> rain_charges_budget - host + surface calls 43 exceed budget 3 (step 101)
+KILLED rain_cursor_not_saved -> evaporation_save_load_cycle - run(420) vs load(save(run(124))) then run(296)
+KILLED cursor_reset -> rotation_deterministic - rain follows the rotation across areas, skipping the full receiver
+KILLED due_one_early -> due_not_early - credit before step 0 rains at step 100
+KILLED evaporation_unrecorded -> transfer_records_balance - records for water|return sum to -43744, the account changed by 35350
+KILLED credit_without_surface -> no_surface_is_base - the checkpoint authority's members
+MUTANTS: 9/9 killed
+exit 0
