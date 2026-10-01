@@ -193,3 +193,22 @@ Result: 3 NO, so fewer than 3 of 4 can say YES: out under the Owner's thresholds
 - Cadence: "I want you to send packets out for voting. Generate 10 things and send them a packet" (with "Feel free to generate 10 things at a time on pixellab"): up to 10 PixelLab jobs per round, then one packet with the best candidate of each to all four judges.
 - Third answer: "Also give them the option of accepting the art with a recolor or small correction, tint, etc." From ART-COUNCIL-10 on, each judge answers YES, YES WITH FIX (naming the exact recolour, tint or small correction), or NO with a reason. A YES WITH FIX counts as a YES once the PM has applied that fix by tooling (no new generation) and recorded it here; fixes that conflict between judges go to the Owner. The Owner's thresholds stand: 4 of 4 passes, 3 of 4 goes to the Owner, fewer is out.
 - Method: "I want you to prompt however you were prompting those for things going forward" (said of the ten temperate cliff sets assembled through RMMZ's tables, "I think those all look great"): structured init with exact RMMZ geometry, Bitforge with a same-size U7 style crop, Pixflux clean-up with the piece's own palette, the cliff-set description pattern; every candidate passes the RMMZ-table assembly test before a vote.
+
+## Owner override: all ten temperate cliff sets (2026-10-01, ~14:30Z)
+
+The PM showed the Owner all ten sets assembled through RMMZ's own autotile tables (a 4-wide plateau over a 3-tile cliff; scratchpad pixellab/round14/assemble/assemble_10.png) and noted where the repeating middles show (03 and 07 faces, 09 top). The Owner: "I think those all look great", then, asked whether all ten go in game as they are (including the four left out earlier today), chose "All 10 go in". Owner override for cliffs 2, 5, 9 and 10; cliffs 1, 3, 4, 7, 8 passed 4 of 4 and 6 by the Owner earlier. The council's NO reasons stay recorded above.
+
+| Set | Top | Face | Basis |
+|---|---|---|---|
+| 01 granite | v6 | v6 | council 4 of 4 |
+| 02 soil | v7 | v7 | Owner override |
+| 03 sand over sandstone | v6 | v6 | council 4 of 4 |
+| 04 mud | v6 | v6 | council 4 of 4 |
+| 05 cave limestone | v5 | v7 | Owner override |
+| 06 lichen rock | v6 | v7 | Owner (3 of 4) |
+| 07 rooted soil | v6 | v6 | council 4 of 4 |
+| 08 banded sandstone | v6 | v6 | council 4 of 4 |
+| 09 red clay | v6 | v7 | Owner override |
+| 10 layered strata | v7 | v7 | Owner override |
+
+Cliffs passed: 10 of 10. The round 12-14 limestone and strata remakes become spares. Next: the PM's YEA rows in art/APPROVALS.md and archiving the files into the repo with their catalogue rows.
