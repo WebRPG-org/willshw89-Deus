@@ -253,3 +253,50 @@ First packet in the uniform answer format with the YES WITH FIX answer (DEC-069 
 | Mushrooms (2) | YES | YES | YES WITH FIX | YES | passed after fix (black rims to darkest cluster colour) |
 
 Owner decisions (2026-10-01 ~16:20Z, asked on a board of the exact pieces): bare fruit tree, broadleaf crown, flower clumps and grass tuft 4 all go in. Cutting advice received (Gemini): harvest more of the sheet (mossy log row 2, reeds and ferns, all four mushroom clusters). Files staged: scratchpad pixellab/round17/final_flora/.
+
+## ART-COUNCIL-11 (2026-10-01, sent ~15:40Z, tallied ~17:40Z): cliff sets, boulders, small rocks, steam vent, seven ground marks, lava
+
+YES WITH FIX counts once the PM applies the fix by tooling (DEC-069 item 2). The four cliff sets are the Owner's own picks (Owner picks of ~16:05Z and ~16:10Z), so the vote is recorded only.
+
+| Piece | MiniMax | ChatGPT | Grok | Gemini | Result |
+|---|---|---|---|---|---|
+| Dry-grass cliff | YES | NO (stippling overwhelms earth planes) | NO (repeating vertical U-stamp, no 12-24 px lobes) | YES | Owner pick stands |
+| Forest-floor cliff | YES | NO (wiry roots and litter obscure volume) | NO (same U-stamp; dotted green lip) | YES | Owner pick stands |
+| Needle-floor cliff | YES | NO (black voids and flecks obscure masses) | NO (orange dither top, face sunk in near-black noise) | YES | Owner pick stands |
+| Stony cliff | YES | NO (scribbled highlights obscure stone planes) | NO (grey chevron repeat, dark lip seam) | YES | Owner pick stands |
+| Large mossy boulder | YES | YES | YES WITH FIX | YES | passes after fix (black outline to adjacent grey; lightest grey to the upper-left edge only) |
+| Granite boulders | YES | YES | YES WITH FIX | YES | passes after fix (outlines to each stone's darkest grey; lightest pixels to the upper-left rim) |
+| Small rocks | YES | YES | YES WITH FIX | YES | passes after fix (outlines to dark grey; three values, light pixel upper-left) |
+| Steam vent | YES | NO (flat white lobes clash with textured rock) | YES WITH FIX | YES | 3 of 4: Owner decides |
+| Rock strained | YES | YES WITH FIX | YES WITH FIX | YES | passes after fixes (upper-left slab to granite mid-light grey; outline to the stone's darkest grey) |
+| Rock failing | YES | YES WITH FIX | NO (plates split by thick black gaps and stick spikes) | YES | 3 of 4: Owner decides |
+| Soil strained | YES | YES | NO (brown asterisk, not soil) | YES | 3 of 4: Owner decides |
+| Soil failing | YES | YES | NO (button clods with centred dots and black cracks) | YES | 3 of 4: Owner decides |
+| Ground scar | YES | YES | YES WITH FIX | YES | passes after fix (yellow rim and three floating dots to the scar's lightest brown) |
+| Ash patch | YES | YES | NO (soft white cloud with punched black holes) | YES | 3 of 4: Owner decides |
+| Sediment | YES | YES WITH FIX | NO (oval frame of evenly spaced pebbles) | YES | 3 of 4: Owner decides |
+| Lava (round 18) | YES | NO (red contours enclose underdeveloped black interiors) | NO (closed rectangular crack circuit, neon cores) | YES | out (replaced by the ART-COUNCIL-13 lava) |
+
+Cutting advice received: ChatGPT (cut sheet B's faces intact; C10 flora second-row left tree); Gemini (harvest the split boulder, the monolith, four more granite boulders and five pebble clusters; keep the steam vent's fuller plume, frame 4); MiniMax (re-cut the sapling with leaf clusters; re-cut the needle-floor face 8 px higher).
+
+## ART-COUNCIL-12 (2026-10-01, sent ~16:00Z, tallied ~17:40Z): eleven underground pieces cut from three Create Image Pro sheets
+
+| Piece | MiniMax | ChatGPT | Grok | Gemini | Result |
+|---|---|---|---|---|---|
+| Stairs up | YES | YES | YES WITH FIX | YES | passes after fix (each tread two values; green edge pixels to the stone) |
+| Stairs down | YES | YES | YES WITH FIX | YES | passes after fix (pale lip on the upper steps; flat black to the steps' darkest grey) |
+| Earth ramp up | YES | YES | NO (speckle slope, no 12-24 px plane) | YES | 3 of 4: Owner decides |
+| Earth ramp down | YES | YES | YES WITH FIX | YES | passes after fix (pale crack lines to the rim's darkest grey) |
+| Pit wall | YES | YES | YES WITH FIX | YES | passes after fix (crack ink to the wall's darkest grey; lightest pixels to the upper-left edges) |
+| Ladder | YES | YES | YES WITH FIX | YES | passes after fix (black contour to the rails' darkest brown; light value on each rung's top row only) |
+| Ladder top | YES | YES | YES WITH FIX | YES | passes after fix (black shaft sides to two greys, lit left, shadow right) |
+| Rope ladder | YES | YES | YES WITH FIX | YES | passes after fix (each rope two browns, light left, dark right; outline to the darkest brown) |
+| Waterfall | YES | YES | NO (smooth cyan tube, white core the full height) | YES | 3 of 4: Owner decides |
+| Light shaft | YES | YES WITH FIX | NO (beige airbrush cone, soft edges) | YES | 3 of 4: Owner decides |
+| Dust | YES | YES | NO (even radial spray of identical dots, stray dark blob) | YES | 3 of 4: Owner decides |
+
+Cutting advice received: ChatGPT (rock row 4 col 2 quieter ramp; wood top row col 3; falls lower light-beam row col 4); Grok (stairs up: the mossy cell right of the clean one; ramp down: row 4 rightmost mouth; pit wall: bottom-row mossy left cell); Gemini (vined and crumbled stairs; mossy pit walls; crooked-rung and knotted rope ladders); MiniMax (dust from the denser cluster two positions right).
+
+## ART-COUNCIL-13 (2026-10-01, sent ~16:05Z): lava, obsidian, four tree crowns
+
+MiniMax 6 YES; Gemini 6 YES; Grok 6 YES WITH FIX (lava: yellow cores to the crack's mid orange; obsidian: lighten only each facet's upper-left edge; crowns: palest green to the upper-left only, lower-right rim one step darker). ChatGPT's answer did not arrive; re-asked ~17:20Z. Tally pending.
