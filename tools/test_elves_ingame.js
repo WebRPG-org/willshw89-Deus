@@ -1,20 +1,15 @@
 const fs = require('fs');
 const path = require('path');
-const childProcess = require('child_process');
-const os = require('os');
 const { decodePNG } = require('./png_read');
 const { writePNG } = require('./png_util');
 
+const { runMain, createSnapshot, replaceOnce, runSuite } = require('./test_all_animated_objects_live');
+
+runMain(() => {
 const ROOT = path.resolve(__dirname, '..');
-const SNAPSHOT_DIR = path.join(os.tmpdir(), 'uf_snapshots', 'elf_live');
+const SNAPSHOT_DIR = createSnapshot(ROOT, 'elf_live');
 
 console.log(`Setting up Elf in-game test snapshot at: ${SNAPSHOT_DIR}`);
-fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
-
-// 1. Sync game/ to snapshot using robocopy
-try {
-    childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
-} catch (e) {}
 
 // 2. Update catalog in snapshot ONLY
 const catalogPath = path.join(SNAPSHOT_DIR, 'data', 'UF_WorldCatalog.json');
@@ -155,19 +150,13 @@ const elfShowcaseCode = `
 
         ${targetHook}`;
 
-testCode = testCode.replace(targetHook, elfShowcaseCode);
+testCode = replaceOnce(testCode, targetHook, elfShowcaseCode);
 fs.writeFileSync(testJsPath, testCode);
 console.log('Injected Elf faction showcase into snapshot test suite.');
 
 // 4. Run snapshot smoke test
 console.log('Launching NW.js test harness on snapshot...');
-try {
-    const out = childProcess.execSync(`"${process.execPath}" tools/run_tests.js smoke --game "${SNAPSHOT_DIR}"`, { cwd: ROOT, encoding: 'utf8' });
-    console.log(out);
-} catch (err) {
-    console.error('Test stdout:', err.stdout);
-    console.error('Test stderr:', err.stderr);
-}
+runSuite(ROOT, SNAPSHOT_DIR, "smoke", ["elf_faction_live_ingame_closeup","elf_faction_live_ingame","elf_faction_live_ingame_wide"]);
 
 // 5. Copy captured screenshots back to game/test_output/ and brain folder
 const outDir = path.join(ROOT, 'game', 'test_output');
@@ -180,7 +169,7 @@ if (fs.existsSync(snapOutDir)) {
         if (f.startsWith('smoke.elf_') && f.endsWith('.png')) {
             const cleanName = f.replace('smoke.', '');
             fs.copyFileSync(path.join(snapOutDir, f), path.join(outDir, cleanName));
-            fs.copyFileSync(path.join(snapOutDir, f), path.join(brainDir, cleanName));
+            if (fs.existsSync(brainDir)) fs.copyFileSync(path.join(snapOutDir, f), path.join(brainDir, cleanName));
             console.log(`Copied in-game screenshot to: game/test_output/${cleanName} and brain folder`);
         }
     }
@@ -211,7 +200,7 @@ if (fs.existsSync(closeupPath)) {
 
     const cropOutPath = path.join(outDir, 'elf_combat_live_ingame_crop.png');
     writePNG(cropOutPath, cropW, cropH, cropped);
-    fs.copyFileSync(cropOutPath, path.join(brainDir, 'elf_combat_live_ingame_crop.png'));
+    if (fs.existsSync(brainDir)) fs.copyFileSync(cropOutPath, path.join(brainDir, 'elf_combat_live_ingame_crop.png'));
 
     // Scale 2x for showcase
     const scale2x = Buffer.alloc(cropW * 2 * cropH * 2 * 4);
@@ -229,8 +218,10 @@ if (fs.existsSync(closeupPath)) {
     }
     const crop2xOutPath = path.join(outDir, 'elf_combat_live_ingame_crop_2x.png');
     writePNG(crop2xOutPath, cropW * 2, cropH * 2, scale2x);
-    fs.copyFileSync(crop2xOutPath, path.join(brainDir, 'elf_combat_live_ingame_crop_2x.png'));
+    if (fs.existsSync(brainDir)) fs.copyFileSync(crop2xOutPath, path.join(brainDir, 'elf_combat_live_ingame_crop_2x.png'));
     console.log('Saved 2x cropped in-game combat screenshot!');
 }
 
 console.log('=== Elf Live In-Game Test Complete ===');
+
+});

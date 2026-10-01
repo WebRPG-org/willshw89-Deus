@@ -13,26 +13,18 @@
 
 const fs = require('fs');
 const path = require('path');
-const childProcess = require('child_process');
-const os = require('os');
 const { decodePNG } = require('./png_read');
 const { writePNG } = require('./png_util');
 
+const { runMain, createSnapshot, replaceOnce, runSuite } = require('./test_all_animated_objects_live');
+
+runMain(() => {
 const ROOT = path.resolve(__dirname, '..');
-const SNAPSHOT_DIR = path.join(os.tmpdir(), 'uf_snapshots', 'standard_4d_live');
+const SNAPSHOT_DIR = createSnapshot(ROOT, 'standard_4d_live');
 const BRAIN_DIR = 'C:/Users/snewt/.gemini/antigravity/brain/e6a9a54f-2cc6-432e-b7ec-5affda42dd85';
 const REVIEW_DIR = path.join(ROOT, 'art', 'review');
 
 console.log(`Setting up 4D Standard in-game test snapshot at: ${SNAPSHOT_DIR}`);
-try {
-    fs.rmSync(SNAPSHOT_DIR, { recursive: true, force: true });
-} catch (e) {}
-fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
-
-// 1. Sync game/ to snapshot using robocopy
-try {
-    childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
-} catch (e) {}
 
 // 2. Inject live 4D Showcase into DEUS_Test.js in snapshot
 const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js');
@@ -134,23 +126,16 @@ const showcaseCode = `
         t.screenshot("elf_male_live_normal");
 `;
 
-testCode = testCode.replace(targetHook, `${showcaseCode}\n        ${targetHook}`);
+testCode = replaceOnce(testCode, targetHook, `${showcaseCode}\n        ${targetHook}`);
 fs.writeFileSync(testJsPath, testCode);
 console.log('Injected 4D Showcase into DEUS_Test.js in snapshot.');
 
 // 3. Run NW.js test harness
 console.log('Launching NW.js test harness on snapshot...');
-const nodePath = process.execPath;
-try {
-    const out = childProcess.execSync(`"${nodePath}" tools/run_tests.js smoke --game "${SNAPSHOT_DIR}"`, { cwd: ROOT, encoding: 'utf8' });
-    console.log(out);
-} catch (err) {
-    console.error('Harness output:', err.stdout || err.message);
-}
+runSuite(ROOT, SNAPSHOT_DIR, "smoke", ["elf_male_live_closeup","elf_male_live_normal"]);
 
 // 4. Collect and save screenshots
 fs.mkdirSync(REVIEW_DIR, { recursive: true });
-fs.mkdirSync(BRAIN_DIR, { recursive: true });
 
 const snapOutDir = path.join(SNAPSHOT_DIR, 'test_output');
 if (fs.existsSync(snapOutDir)) {
@@ -160,10 +145,12 @@ if (fs.existsSync(snapOutDir)) {
             const clean = f.replace('smoke.', '');
             const src = path.join(snapOutDir, f);
             fs.copyFileSync(src, path.join(REVIEW_DIR, clean));
-            fs.copyFileSync(src, path.join(BRAIN_DIR, clean));
+            if (fs.existsSync(BRAIN_DIR)) fs.copyFileSync(src, path.join(BRAIN_DIR, clean));
             console.log(`Saved screenshot: art/review/${clean}`);
         }
     }
 }
 
 console.log('\n=== In-Engine 4D Live Test Complete! ===');
+
+});

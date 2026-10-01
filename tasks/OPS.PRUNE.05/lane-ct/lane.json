@@ -1,0 +1,58 @@
+{
+  "lane": "lane-ct",
+  "taskId": "OPS.PRUNE.05",
+  "branch": "task/lane-ct",
+  "writer": "codex",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "docs/STATUS.md",
+    "tasks/OPS.PRUNE.05/lane-ct/**",
+    "tools/ops/active_lanes.json",
+    "tools/ops/pm_launch/test_top_models_effort.ps1",
+    "tools/test_all_animated_objects_live.js",
+    "tools/test_all_faction_menus.js",
+    "tools/test_creatures_ingame.js",
+    "tools/test_dwarves_ingame.js",
+    "tools/test_elves_ingame.js",
+    "tools/test_golden_art_review_live.js",
+    "tools/test_light_wall_occlusion_live.js",
+    "tools/test_sack_ui_and_loose_items.js",
+    "tools/test_standard_4d_ingame.js",
+    "tools/test_standard_8d_ingame.js",
+    "tools/test_temperate_arid_transition_live.js",
+    "tools/test_tilesets_live.js",
+    "tools/test_title_menu.js",
+    "tools/test_underground_room.js",
+    "tools/test_water_ingame.js"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_control_board.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_palette.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/governance/test_check_claims.js"
+      ],
+      "timeoutSec": 600
+    }
+  ]
+}

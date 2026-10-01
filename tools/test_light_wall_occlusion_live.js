@@ -10,34 +10,22 @@
 
 const fs = require('fs');
 const path = require('path');
-const childProcess = require('child_process');
-const os = require('os');
 
+const { runMain, createSnapshot, replaceOnce, runSuite } = require('./test_all_animated_objects_live');
+
+runMain(() => {
 const ROOT = path.resolve(__dirname, '..');
-const SNAPSHOT_DIR = path.join(os.tmpdir(), 'uf_snapshots', 'light_wall_occlusion_test');
+const SNAPSHOT_DIR = createSnapshot(ROOT, 'light_wall_occlusion_test');
 const BRAIN_DIR = 'C:/Users/snewt/.gemini/antigravity/brain/e6a9a54f-2cc6-432e-b7ec-5affda42dd85';
 const REVIEW_DIR = path.join(ROOT, 'art', 'review');
 
 console.log(`Setting up Light Wall Occlusion Live In-Game test snapshot at: ${SNAPSHOT_DIR}`);
-try {
-    fs.rmSync(SNAPSHOT_DIR, { recursive: true, force: true });
-} catch (e) {}
-fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
-
-// 1. Sync game/ to snapshot using robocopy
-try {
-    childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
-} catch (e) {}
 
 // 2. Inject occlusion test into DEUS_Test.js in snapshot
 const testJsPath = path.join(SNAPSHOT_DIR, 'js', 'plugins', 'DEUS_Test.js');
 let testCode = fs.readFileSync(testJsPath, 'utf8');
 
 const targetHook = 't.screenshot("map");';
-if (!testCode.includes(targetHook)) {
-    console.error('Target hook t.screenshot("map") not found in DEUS_Test.js!');
-    process.exit(1);
-}
 
 const occlusionTestCode = `
         // --- Live In-Game Wall Light Occlusion Test ---
@@ -150,20 +138,14 @@ const occlusionTestCode = `
         t.check("doorway_allows_light_spill", doorwaySpillAlpha > 0, "Open doorway light spill alpha: " + doorwaySpillAlpha + " (expected > 0)");
 `;
 
-testCode = testCode.replace(targetHook, occlusionTestCode + '\n        ' + targetHook);
+testCode = replaceOnce(testCode, targetHook, occlusionTestCode + '\n        ' + targetHook);
 fs.writeFileSync(testJsPath, testCode);
 console.log('Injected Wall Light Occlusion test into snapshot DEUS_Test.js');
 
 // 3. Run test using run_tests.js against snapshot
 console.log('Running in-engine smoke test on snapshot...');
-const testResult = childProcess.spawnSync(
-    'C:\\Program Files\\nodejs\\node.exe',
-    ['tools/run_tests.js', 'smoke', '--game', SNAPSHOT_DIR],
-    { cwd: ROOT, encoding: 'utf8' }
-);
-
-console.log(testResult.stdout || '');
-if (testResult.stderr) console.error(testResult.stderr);
+runSuite(ROOT, SNAPSHOT_DIR, "smoke", ["wall_occlusion_closed_door","wall_occlusion_open_doorway"]);
+fs.mkdirSync(path.join(ROOT, 'art', 'review'), { recursive: true });
 
 // 4. Copy screenshots to art/review/ and brain artifacts
 const snapOut = path.join(SNAPSHOT_DIR, 'test_output');
@@ -173,7 +155,7 @@ const shotOpen = path.join(snapOut, 'smoke.wall_occlusion_open_doorway.png');
 if (fs.existsSync(shotClosed)) {
     const destClosed = path.join(REVIEW_DIR, 'wall_occlusion_closed_door.png');
     fs.copyFileSync(shotClosed, destClosed);
-    fs.copyFileSync(shotClosed, path.join(BRAIN_DIR, 'wall_occlusion_closed_door.png'));
+    if (fs.existsSync(BRAIN_DIR)) fs.copyFileSync(shotClosed, path.join(BRAIN_DIR, 'wall_occlusion_closed_door.png'));
     console.log(`Saved closed door screenshot: ${destClosed}`);
 } else {
     console.warn(`Missing closed door screenshot: ${shotClosed}`);
@@ -182,10 +164,12 @@ if (fs.existsSync(shotClosed)) {
 if (fs.existsSync(shotOpen)) {
     const destOpen = path.join(REVIEW_DIR, 'wall_occlusion_open_doorway.png');
     fs.copyFileSync(shotOpen, destOpen);
-    fs.copyFileSync(shotOpen, path.join(BRAIN_DIR, 'wall_occlusion_open_doorway.png'));
+    if (fs.existsSync(BRAIN_DIR)) fs.copyFileSync(shotOpen, path.join(BRAIN_DIR, 'wall_occlusion_open_doorway.png'));
     console.log(`Saved open doorway screenshot: ${destOpen}`);
 } else {
     console.warn(`Missing open doorway screenshot: ${shotOpen}`);
 }
 
 console.log('=== Light Wall Occlusion Live In-Game test complete ===');
+
+});

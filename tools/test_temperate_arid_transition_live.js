@@ -15,26 +15,20 @@
 
 const fs = require('fs');
 const path = require('path');
-const childProcess = require('child_process');
-const os = require('os');
 const { buildCompositeSheets } = require('./build_composite_transition_tileset');
 
+const { runMain, createSnapshot, replaceOnce, runSuite } = require('./test_all_animated_objects_live');
+
+runMain(() => {
 const ROOT = path.resolve(__dirname, '..');
-const SNAPSHOT_DIR = path.join(os.tmpdir(), 'uf_snapshots', 'temp_arid_live');
+const SNAPSHOT_DIR = createSnapshot(ROOT, 'temp_arid_live');
 const REVIEW_DIR = path.join(ROOT, 'art', 'review');
 const BRAIN_DIR = 'C:/Users/snewt/.gemini/antigravity/brain/7d7882c9-e557-404d-b5c5-5f27d0d37964';
 
 console.log(`Setting up in-game test snapshot at: ${SNAPSHOT_DIR}`);
-try {
-    fs.rmSync(SNAPSHOT_DIR, { recursive: true, force: true });
-} catch (e) {}
-fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
 
 // 1. Sync game/ to snapshot using robocopy
 console.log('Syncing game directory to snapshot...');
-try {
-    childProcess.execSync(`robocopy "${path.join(ROOT, 'game')}" "${SNAPSHOT_DIR}" /E /NDL /NFL /NJH /NJS /nc /ns /np`, { stdio: 'ignore' });
-} catch (e) {}
 
 // 2. Build and copy composite tileset sheets into snapshot
 console.log('Building composite tilesets in snapshot...');
@@ -296,25 +290,27 @@ const suiteCode = `
         await t.waitFrames(15);
         t.screenshot("live_temperate_arid_ecotone_focus");
 
-        t.check("temperate_arid_transition_verified", true, "In-engine RMMZ cross-biome transition rendered at locked 1.00x camera");
+        // Inspect the live map after frame settling, including both endpoint regions.
+        const groundKinds = new Set();
+        for (let y = 0; y < Math.min(height, 13); y++) {
+            for (let x = 2; x < Math.min(width, 17); x++) groundKinds.add(map.tileId(x, y, 0));
+        }
+        const west = map.tileId(3, 0, 0), east = map.tileId(16, 0, 0);
+        const transitionValid = width >= 17 && height >= 13 &&
+            [2862, 2910, 2958, 3006, 3054, 3102].every(id => groundKinds.has(id)) &&
+            west === 2862 && [3054, 3102].includes(east);
+        t.check("temperate_arid_transition_verified", transitionValid,
+            "Live ground kinds=" + Array.from(groundKinds).join(',') + "; west=" + west + "; east=" + east);
     });
 `;
 
-testCode = testCode.replace('Test.suite("smoke",', `${suiteCode}\n    Test.suite("smoke",`);
+testCode = replaceOnce(testCode, 'Test.suite("smoke",', `${suiteCode}\n    Test.suite("smoke",`);
 fs.writeFileSync(testJsPath, testCode, 'utf8');
 console.log('Injected temperate_arid_live suite into DEUS_Test.js in snapshot.');
 
 // 5. Run NW.js test harness
 console.log('Launching NW.js test harness on snapshot...');
-const nodePath = process.execPath;
-try {
-    const out = childProcess.execSync(`"${nodePath}" tools/run_tests.js temperate_arid_live --game "${SNAPSHOT_DIR}"`, { cwd: ROOT, encoding: 'utf8' });
-    console.log(out);
-} catch (err) {
-    console.error('Harness output:', err.stdout || err.message);
-    if (err.stderr) console.error('Harness stderr:', err.stderr);
-    process.exit(1);
-}
+runSuite(ROOT, SNAPSHOT_DIR, "temperate_arid_live", ["live_temperate_arid_gameplay_1x","live_temperate_arid_ecotone_focus"]);
 
 // 6. Collect screenshots
 fs.mkdirSync(REVIEW_DIR, { recursive: true });
@@ -323,13 +319,15 @@ const shot2 = path.join(SNAPSHOT_DIR, 'test_output', 'temperate_arid_live.live_t
 
 if (fs.existsSync(shot1)) {
     fs.copyFileSync(shot1, path.join(REVIEW_DIR, 'live_temperate_arid_gameplay_1x.png'));
-    fs.copyFileSync(shot1, path.join(BRAIN_DIR, 'live_temperate_arid_gameplay_1x.png'));
+    if (fs.existsSync(BRAIN_DIR)) fs.copyFileSync(shot1, path.join(BRAIN_DIR, 'live_temperate_arid_gameplay_1x.png'));
     console.log('Saved screenshot: art/review/live_temperate_arid_gameplay_1x.png');
 }
 if (fs.existsSync(shot2)) {
     fs.copyFileSync(shot2, path.join(REVIEW_DIR, 'live_temperate_arid_ecotone_focus.png'));
-    fs.copyFileSync(shot2, path.join(BRAIN_DIR, 'live_temperate_arid_ecotone_focus.png'));
+    if (fs.existsSync(BRAIN_DIR)) fs.copyFileSync(shot2, path.join(BRAIN_DIR, 'live_temperate_arid_ecotone_focus.png'));
     console.log('Saved screenshot: art/review/live_temperate_arid_ecotone_focus.png');
 }
 
 console.log('\n=== In-Engine Cross-Biome Live Test Complete! ===\n');
+
+});
