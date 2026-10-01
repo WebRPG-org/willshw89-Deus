@@ -1,0 +1,10 @@
+You are the primary implementer for lane-fd (Task NAT.07.03), running as claude.
+Read tasks/NAT.07.03/lane-fd/BRIEF.md carefully and follow all instructions within it.
+Note: lane-fd uses the bestiary rows merged with lane-ex 02496b6c.
+
+Your allowed paths are defined in tasks/NAT.07.03/lane-fd/lane.json.
+Standing rules:
+1. NO ART (DEC-007). Never generate, request or integrate art.
+2. Run tests in the FOREGROUND. Never end your turn while background jobs or child processes are running. Commit early (WIP commits allowed on your branch). Do not push. Do not merge. Write only inside allowedPaths.
+Commit messages start with '[claude] NAT.07.03'.
+Write REPORT.md in the AGENTS.md report format with GAME TRANSLATION block.
