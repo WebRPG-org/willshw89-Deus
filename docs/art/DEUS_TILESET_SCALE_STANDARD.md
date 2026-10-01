@@ -1,8 +1,8 @@
 # DEUS — Tileset Asset Size, Dimensions & Proportions Standard v1
 **Document ID:** `DEUS-TILE-SCALE-01`  
 **Status:** Authoritative Dimension & Proportions Specification (Frozen V1 Standard)  
-**Authority:** Gemini (Full-Stack Coordinator & Art Authority) & Project DEUS Art Direction  
-**Applicability:** Master Charter Task Family `WORLDART-BIOMES`, Google Nano Banana Pro generation prompts, `tools/art_check.js`, `tools/pack_deus_tileset.js`  
+**Authority:** Owner rulings; the PM picks the art after the PM's tool check and a unanimous art-council YEA (DEC-056, DEC-062)  
+**Applicability:** Master Charter Task Family `WORLDART-BIOMES`, generation cards and PixelLab Pixflux/Bitforge prompts (AS-GEN-004, DEC-063), `tools/art_check.js`, `tools/pack_deus_tileset.js`  
 
 ---
 
@@ -12,7 +12,7 @@ $$\textbf{SCALE READABILITY TRUMPS ILLUSTRATIVE SET-PIECES AT 1.00x CAMERA.}$$
 
 > [!WARNING]
 > **SUPERSEDED SPECIFICATIONS NOTICE:**
-> Any previous pilot report, candidate matrix, or draft prompt describing the initial ~140 px (3-tile) oak as an approved "common tree" standard is **STALE AND FORMALLY SUPERSEDED**. That ~140 px asset is reclassified strictly as a rare **Hero / Landmark Tree** ($\le 3\%$ map density). The authoritative common overworld tree standard is locked at **72–96 px** (canonical reference: **~84 px Oak**, **~88 px Birch**, **~92 px Pine**; $\approx 1.75\times$ to $2.25\times$ the 42 px Human). Nano Banana Pro prompt compilation must never retrieve the obsolete 140 px common tree scale.
+> Any previous pilot report, candidate matrix, or draft prompt describing the initial ~140 px (3-tile) oak as an approved "common tree" standard is **STALE AND FORMALLY SUPERSEDED**. That ~140 px asset is reclassified strictly as a rare **Hero / Landmark Tree** ($\le 3\%$ map density). The authoritative common overworld tree standard is locked at **72–96 px** (canonical reference: **~84 px Oak**, **~88 px Birch**, **~92 px Pine**; $\approx 1.75\times$ to $2.25\times$ the 42 px Human). Prompt and card writing must never retrieve the obsolete 140 px common tree scale.
 
 At the official locked **1.00x camera**, the overworld must read cleanly as a playable tactical simulation map. Trees, rocks, and clutter must never overpower the ground or swallow the silhouettes of colonists and items.
 
@@ -68,21 +68,21 @@ $$\text{Human Colonist} = \mathbf{42\text{ px}}$$
   - *Main Paved Highway:* $36–44\text{ px}$ track width.
 
 ### 4.2 Low Vegetation & Ground Clutter (Sheet B)
-- **Grass Tufts (Animated 3 frames, 3 variations):**
+- **Grass Tufts (Static now, 3 variations; a 3-frame loop is planned, DEC-046 amendment):**
   - *Visual Size:* $14–24\text{ px wide} \times 12–24\text{ px tall}$. Footprint: $1\times 1$. Anchored at $y=47$.
-- **Tall Grass / Reeds (Animated 3 frames, 3 variations):**
+- **Tall Grass / Reeds (Static now, 3 variations; a 3-frame loop is planned, DEC-046 amendment):**
   - *Visual Size:* $16–28\text{ px wide} \times 20–36\text{ px tall}$. Footprint: $1\times 1$. Anchored at $y=47$.
-- **Wildflowers (Animated 3 frames, 3 variations):**
+- **Wildflowers (Static now, 3 variations; a 3-frame loop is planned, DEC-046 amendment):**
   - *Cluster Size:* $10–20\text{ px wide} \times 12–22\text{ px tall}$. Footprint: $1\times 1$. Anchored at $y=47$.
 - **Mushrooms / Fungi (Static):**
   - *Size:* $8–18\text{ px wide} \times 8–16\text{ px tall}$. Clusters of 2–4 caps.
 
 ### 4.3 Shrubs & Bushes (Sheet B)
-- **Small Bush (Animated 3 frames, 3 variations):**
+- **Small Bush (Static now, 3 variations; a 3-frame loop is planned, DEC-046 amendment):**
   - *Visual Size:* $20–32\text{ px wide} \times 14–24\text{ px tall}$ (Knee height). Footprint: $1\times 1$.
-- **Medium Bush (Animated 3 frames, 3 variations):**
+- **Medium Bush (Static now, 3 variations; a 3-frame loop is planned, DEC-046 amendment):**
   - *Visual Size:* $28–44\text{ px wide} \times 20–32\text{ px tall}$ (Waist to chest height). Footprint: $1\times 1$.
-- **Large Thicket (Animated 3 frames, 3 variations):**
+- **Large Thicket (Static now, 3 variations; a 3-frame loop is planned, DEC-046 amendment):**
   - *Visual Size:* $40–60\text{ px wide} \times 28–42\text{ px tall}$ (Head height). Footprint: $1\times 1$ (rare $2\times 1$ visual). Use sparingly.
 
 ### 4.4 Rocks & Geological Debris (Sheet B / E)
@@ -93,7 +93,7 @@ $$\text{Human Colonist} = \mathbf{42\text{ px}}$$
 - **Hero Outcrop / Crag Fragment (Static):** $48–80\text{ px wide} \times 32–56\text{ px tall}$. Footprint: $2\times 1$ or $2\times 2$. Rare.
 
 ### 4.5 Woodland Objects (Sheet B)
-- **Tree Stumps (Static):** $16–24\text{ px wide} \times 12–18\text{ px tall}$. Footprint: $1\times 1$.
+- **Tree Stumps (Static):** one per tree species and variant: THAT tree's own trunk base and root flare at the cut, on the tree's anchor (the tree node's `depleted` state, AS-NODE-001; DEC-063 item 5). Width is that tree's trunk width at the cut plus its root flare; height is 12–20 px. Footprint: $1\times 1$.
 - **Fallen Branch / Log Fragment (Static):** $24–40\text{ px wide} \times 8–16\text{ px tall}$. Footprint: $1\times 1$.
 - **Full Fallen Log (Static):** $40–72\text{ px wide} \times 12–20\text{ px tall}$. Footprint: $1\times 1$ small, $2\times 1$ large.
 
@@ -115,12 +115,12 @@ $$\textbf{CRITICAL REVISION: TREES ARE DIVIDED INTO THREE RIGID CLASSES.}$$
 
 | Sheet | Purpose | Dimensions | Grid | Layout Rules & Anchor Standards |
 | :--- | :--- | :--- | :--- | :--- |
-| **A1** | Water / Liquids | **768 × 576 px** | 16 × 12 tiles | 16 autotile blocks. 3-frame animation. Waterfalls animate vertically. |
+| **A1** | Water / Liquids | **768 × 576 px** | 16 × 12 tiles | 16 autotile blocks. Static now; a 3-frame loop and vertical waterfall animation are planned (DEC-046 amendment). |
 | **A2** | Ground Autotiles | **768 × 576 px** | 16 × 12 tiles | 32 autotiles (96×144 px each). Seamless terrain and edge blends. |
 | **A3** | Roofs / Overhangs | **768 × 384 px** | 16 × 8 tiles | 32 autotiles (96×96 px each). Eaves overhang 4–8 px. Medium pattern frequency. |
-| **A4** | Walls & Cliffs | **768 × 720 px** | 16 × 15 tiles | 48 autotiles (96×120 px each). 48 px top cap obeys **DF Black Wall-Top Convention**. |
+| **A4** | Walls & Cliffs | **768 × 720 px** | 16 × 15 tiles | 48 autotiles, 8 per row; rows alternate 96×144 top blocks and 96×96 face blocks (RMMZ A4). Natural cliff tops are walkable ground drawn in the Ultima VII manner on the RMMZ layout (DEC-063). The DF black wall-top cap came from suspended Rule 13 and is not applied to natural cliffs. |
 | **A5** | Normal Ground | **384 × 768 px** | 8 × 16 tiles | 128 single static tiles of 48×48 px. Stone shelves, stairs, pits. |
 | **B** | Clutter, Flora, Rocks | **768 × 768 px** | 16 × 16 tiles | Cell [0,0] strictly transparent `rgba(0,0,0,0)`. Flora grounded at baseline $y=47$. |
 | **C** | Modular Trees | **768 × 768 px** | 16 × 16 tiles | Standard trees ($72–96\text{ px}$), composite trunks and canopies. |
-| **D** | Biome Edge Overlays | **768 × 768 px** | 16 × 16 tiles | 48×48 dithered transition fringes bridging neighbor biomes. |
+| **D** | Ground variants (DEC-045) | **768 × 768 px** | 16 × 16 tiles | 48×48 damp/base/dry variant stamps on map layer 1, ids 512+4k+j. Biome-edge fringes move to A5 when they exist. |
 | **E** | Micro-Geology / Ruins | **768 × 768 px** | 16 × 16 tiles | Stalagmites, crystals, mineral seams, neutral ruins. |

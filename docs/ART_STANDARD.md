@@ -1,5 +1,7 @@
 # ART STANDARD: 16-Bit Pixel Art in Pure 2D Serious Chibi Style (FF5 / FF6 Western Grimdark) — Project DEUS
 
+> **Superseded for new art** by `docs/art/DEUS_ASSET_STANDARD.md` (the SOP, DEC-007), DEC-061 (no originality check), DEC-062 (art council) and DEC-063 (PixelLab Pixflux and Bitforge). Kept as history.
+
 **Set 2026-09-19 & 2026-09-22 by user decision (VISION V115, V116, V131):** earlier 2.5D axonometric projection and real-time shadow systems are retired. The look is **pure 2D top-down Western pixel grimdark art** (weathered, gritty medieval fantasy, serious chibi proportions ~3.0–3.2 heads tall, grounded in 1 tile height: 40–44 px in RMMZ with large creatures at **2 tiles in height (96 px in RMMZ)**) generated exclusively with **Google Nano Banana Pro** (`gemini-3-pro-image` / `generate_image`). Sprites are organized **12 sprites at a time on a 3×4 grid (3 Down, 3 Left, 3 Right, 3 Up)**, with a dedicated 12-sprite sheet for each action (Walk, Melee, Ranged, Magic, Haul, Work, Downed).
 
 ## 1. The view and the look

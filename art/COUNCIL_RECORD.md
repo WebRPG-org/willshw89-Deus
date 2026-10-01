@@ -10,7 +10,7 @@ Every art-council round, with each judge's vote and the reason for every no (DEC
 
 ## ART-COUNCIL-1 (2026-10-01): temperate cliffs (RMMZ A4, ten sets) and trees with stumps
 
-The boards were made with PixelLab Bitforge (Ultima VII style images) and Pixflux. Gemini Pro and MiniMax M3 were still judging when this record was opened. Every piece below already has at least one no, so **nothing in this round passes**.
+The boards were made with PixelLab Bitforge (Ultima VII style images) and Pixflux. Gemini Pro and MiniMax M3 verdicts had not been collected when ART-COUNCIL-2 went out. The oak, swamp and dead trees (two YEAs each) have not passed and are re-judged in ART-COUNCIL-2. Every other piece below already has at least one no, so **nothing in this round passes**.
 
 ### Cliffs
 
@@ -33,9 +33,9 @@ The boards were made with PixelLab Bitforge (Ultima VII style images) and Pixflu
 
 | Piece | ChatGPT | Grok | Outcome | Reasons for each no |
 |---|---|---|---|---|
-| Oak tree | YEA | YEA | awaiting Gemini, MiniMax | — |
-| Swamp tree | YEA | YEA | awaiting Gemini, MiniMax | — |
-| Dead tree | YEA | YEA | awaiting Gemini, MiniMax | — |
+| Oak tree | YEA | YEA | not passed (2 of 4); re-judged in ART-COUNCIL-2 | — |
+| Swamp tree | YEA | YEA | not passed (2 of 4); re-judged in ART-COUNCIL-2 | — |
+| Dead tree | YEA | YEA | not passed (2 of 4); re-judged in ART-COUNCIL-2 | — |
 | Pine tree | REDO | YEA | rejected | ChatGPT: flat foliage plates and black internal outlines read as a diagram rather than a living tree. |
 | Birch tree | REDO | REDO | rejected | Both: a sparse lollipop canopy with harsh lime greens and flat cut-out leaves. |
 | Apple tree | REDO | REDO | rejected | Both: a toy-round crown with lime highlights and apples stuck on the surface, in a farm-game register. |

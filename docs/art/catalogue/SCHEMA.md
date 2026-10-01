@@ -141,7 +141,7 @@ Optional fields: `family` (SOURCE or the addendum family), `groupType` (the ATLA
 | `EXISTING_UNAPPROVED` | our own art on disk (inventory "original", or a file present for faces, layers, effects, manifest pieces) |
 | `STAND_IN` | a code-drawn placeholder (inventory "generated"), a U7 stand-in, or an id that borrows another id's original image (tinted or not its first user) |
 | `STOCK` | stock RMMZ art in use (inventory "stock RMMZ", manifest prompt "stock", or an AR row naming the stock placeholder) |
-| `APPROVED` | not used yet: art/APPROVALS.md rows predate DEC-007; the Owner confirms which approvals stand (conflicts.md question Q-APPROVED) |
+| `APPROVED` | a YEA row in `art/APPROVALS.md`: a PM YEA (DEC-056; from 2026-10-01 only after the PM's tool check and a unanimous council YEA, DEC-062) or an Owner YEA; statusWhy cites the row. Whether the PM YEAs of 2026-09-30 need a council round is still open |
 | `OUT_OF_SCOPE` | not used for entries (out-of-scope sources go to `outOfScope[]`) |
 
 Status comes from `docs/ASSET_INVENTORY.md` (and `game/data/UF_AssetIndex.json`; any disagreement goes to conflicts.md).
