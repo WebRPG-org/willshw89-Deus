@@ -9,6 +9,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const simHook = require("../lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.join(__dirname, "..", "..");
 const FIXTURE = path.join(ROOT, "tools", "sim", "fixtures", "living_world", "ranges.json");
@@ -151,6 +152,7 @@ function engineSandbox() {
 
 function loadScript(sandbox, file) {
     const src = fs.readFileSync(path.join(ROOT, "game", "js", "plugins", file), "utf8");
+    simHook.install(sandbox);
     vm.createContext(sandbox);
     vm.runInContext(src, sandbox, { filename: file, timeout: 30000 });
 }
@@ -345,6 +347,7 @@ function fluidGrids(range) {
     const sandbox = box.sandbox;
     const src = fs.readFileSync(path.join(ROOT, "game", "js", "plugins", "DEUS_Fluid.js"), "utf8");
     try {
+        simHook.install(sandbox);
         vm.createContext(sandbox);
         vm.runInContext(src, sandbox, { filename: "DEUS_Fluid.js", timeout: 10000 });
     } catch (e) {
@@ -705,6 +708,7 @@ function f04(range) {
 // --- F-05. require() publishes the solver, and flood fills do not create water. ---
 
 function loadFluidRequire(src, sandbox) {
+    simHook.install(sandbox);
     vm.createContext(sandbox);
     const module = { exports: {} };
     const wrapper = "(function (exports, require, module, __filename, __dirname) {\n" + src + "\n})";

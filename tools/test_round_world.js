@@ -1,6 +1,7 @@
 "use strict";
 // test_round_world.js - Automated verification of round / toroidal world wrapping
 const fs = require("fs"), path = require("path"), vm = require("vm");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 let passed = 0, failed = 0, skipped = 0;
 function check(name, cond, info) {
@@ -174,6 +175,7 @@ const worldSrc = fs.readFileSync(path.join(gameDir, "js/plugins/DEUS_World.js"),
 const objSrc = fs.readFileSync(path.join(gameDir, "js/plugins/DEUS_Objects.js"), "utf8");
 const genSrc = fs.readFileSync(path.join(gameDir, "js/plugins/DEUS_WorldGen.js"), "utf8");
 
+simHook.install(sandbox);
 vm.createContext(sandbox);
 vm.runInContext(worldSrc, sandbox, { filename: "DEUS_World.js" });
 vm.runInContext(objSrc, sandbox, { filename: "DEUS_Objects.js" });

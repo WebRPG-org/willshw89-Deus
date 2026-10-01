@@ -16,6 +16,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const simHook = require("../lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 function findRoot() {
     const starts = [__dirname];
@@ -159,6 +160,7 @@ function loadHeadless() {
     for (const source of sources) for (const m of source.matchAll(protoRe)) {
         if (m[2]) env[m[1]].prototype[m[2]] = () => { throw new Error("Unexpected engine method " + m[1] + "." + m[2]); };
     }
+    simHook.install(env);
     const ctx = vm.createContext(env);
     vm.runInContext(["Math", "Object", "Array", "Number", "String", "Boolean", "Map", "Set", "JSON", "Date",
         "Uint8Array", "Uint16Array", "Int32Array", "Float32Array", "performance", "window"]

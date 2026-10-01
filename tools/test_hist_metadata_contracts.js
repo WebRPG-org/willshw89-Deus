@@ -6,6 +6,7 @@ const path = require("path");
 const vm = require("vm");
 const crypto = require("crypto");
 const { spawnSync } = require("child_process");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.resolve(__dirname, "..");
 const PLUGIN = path.join(ROOT, "game/js/plugins/DEUS_HistoricalDemographics.js");
@@ -38,6 +39,7 @@ function loadEngine() {
         env[m[1]].prototype[m[2]] = () => {};
     }
 
+    simHook.install(env);
     sources.forEach((src, i) => vm.runInNewContext(src, env, { filename: filePaths[i] }));
     const world = env.UF.World.newWorld(20260923);
     env.UF.Levels.ensureWorldLevels(world);

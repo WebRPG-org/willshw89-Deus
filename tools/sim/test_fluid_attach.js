@@ -11,6 +11,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const simHook = require("../lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.join(__dirname, "..", "..");
 const SRC = fs.readFileSync(path.join(ROOT, "game", "js", "plugins", "DEUS_Fluid.js"), "utf8");
@@ -63,6 +64,7 @@ function stopTimers(sandbox) {
 }
 
 function loadAsRequire(src, sandbox) {
+    simHook.install(sandbox);
     vm.createContext(sandbox);
     const module = { exports: {} };
     const wrapper = "(function (exports, require, module, __filename, __dirname) {\n" + src + "\n})";
@@ -285,6 +287,7 @@ stopTimers(sandbox);
     const marker = { marker: true };
     classic.DEUS = marker;
     classic.UF = marker;
+    simHook.install(classic);
     vm.createContext(classic);
     vm.runInContext(SRC, classic, { filename: "DEUS_Fluid.js", timeout: 10000 });
     stopTimers(classic);

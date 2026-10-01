@@ -9,6 +9,7 @@ const path = require("path");
 const vm = require("vm");
 const { createRequire } = require("module");
 const { spawnSync } = require("child_process");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 const ROOT = path.resolve(__dirname, "..");
 const FLUID = path.join(ROOT, "game/js/plugins/DEUS_Fluid.js");
 const HYDRO = path.join(ROOT, "game/js/sim/hydro/index.js");
@@ -107,6 +108,7 @@ function environment(options = {}) {
         require() { counts.requires++; if (!hydroMod) throw Error("TEST_hydro_require_failed"); return hydroMod; }
     };
     sandbox.window = sandbox;
+    simHook.install(sandbox);
     vm.runInNewContext(source(FLUID, "fluid"), sandbox, { filename: FLUID });
     const fluid = ns.Fluid;
     function carve(ax, ay, x, y, z, pass = 7, perm = 0) { cells.set(key(ax, ay, x, y, z), { pass, perm }); }

@@ -5,6 +5,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const isMutant = process.argv.includes("--mutant");
 
@@ -126,6 +127,7 @@ sandbox.Game_Map.prototype.setup = () => {};
 sandbox.Game_Map.prototype.update = () => {};
 sandbox.window = sandbox;
 
+simHook.install(sandbox);
 vm.createContext(sandbox);
 
 // Execute plugins in sandbox

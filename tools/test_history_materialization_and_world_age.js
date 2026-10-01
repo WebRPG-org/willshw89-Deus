@@ -6,6 +6,7 @@
 const fs = require("fs"), path = require("path"), os = require("os"), vm = require("vm"), crypto = require("crypto");
 const { performance } = require("perf_hooks");
 const { spawnSync } = require("child_process");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 const ROOT = path.resolve(__dirname, "..");
 const MODULES = ["World", "WorldGen", "Factions", "Dnd5e", "Callings", "HistoricalDemographics", "History", "Levels"];
 const COLONY_MODULES = ["Objects", "Items", "Containers", "Stockpiles", "Colonists"];
@@ -57,6 +58,7 @@ function load(bundle, { colonyBootstrap = false } = {}) {
     env.Game_Player.prototype.direction = () => 2;
     env.$gameMap = new env.Game_Map(); env.$gameMap._events = [];
     env.$gamePlayer = new env.Game_Player(); env.$gamePlayer.x = 0; env.$gamePlayer.y = 0;
+    simHook.install(env);
     const context = vm.createContext(env);
     // Native lexical bindings prevent VM host-proxy overhead in annual loops.
     vm.runInContext(["Math", "Object", "Array", "Number", "String", "Boolean", "Map", "Set", "JSON", "Date", "Uint8Array", "Uint16Array", "Int32Array", "Float32Array", "performance", "window"]

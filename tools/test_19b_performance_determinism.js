@@ -23,6 +23,7 @@ const path = require("path");
 const vm = require("vm");
 const v8 = require("v8");
 const { performance } = require("perf_hooks");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.resolve(__dirname, "..");
 const PLUGINS = path.join(ROOT, "game", "js", "plugins");
@@ -96,6 +97,7 @@ function createVM(options = {}) {
     env.Sprite = vm.runInNewContext(`(function Sprite(){ this.children = []; })`);
     env.Bitmap = vm.runInNewContext(`(function Bitmap(){})`);
 
+    simHook.install(env);
     const files = ["DEUS_World.js", "DEUS_WorldGen.js", "DEUS_Tiles.js", "DEUS_Objects.js", "DEUS_Levels.js", "DEUS_Floors.js"];
     for (const f of files) {
         const full = path.join(PLUGINS, f);

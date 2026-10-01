@@ -11,6 +11,7 @@ const crypto = require("crypto");
 const { performance } = require("perf_hooks");
 const { setImmediate } = require("timers");
 const { spawn, spawnSync } = require("child_process");
+const simHook = require(path.join(__dirname, "lib", "vm_sim_require")); // WG.00.44 (by __dirname: the nw-native run loads a copy of this file)
 const ROOT = path.resolve(__dirname, "..");
 const OUTPUT = path.join(ROOT, "game/test_output/bench_vertical_worldgen.json");
 const SIZE = 256, ZS = [-2, -1, 0, 1, 2];
@@ -259,6 +260,7 @@ function loadWorld(bundle, mode, probe, detailed = true) {
     })];
     const bindings = ["Math", "Object", "Array", "Number", "String", "Boolean", "Map", "Set", "JSON", "Date",
         "performance", "window", "Tilemap", "$ufWorldCatalog", "$deusWorldCatalog", "$dataTilesets", "__probe", ...Object.keys(probe.types)];
+    simHook.install(env);
     if (mode === "node-vm") {
         const context = vm.createContext(env);
         // Contextified Math lookups distort CPU measurements. Bind the same

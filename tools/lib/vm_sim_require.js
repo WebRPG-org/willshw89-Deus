@@ -3,7 +3,7 @@
 // DEUS_Fluid (tools/lib/vm_harness_scan.js finds them; tools/test_sim_loader.js checks each one calls install()).
 //
 //   const simHook = require("./lib/vm_sim_require");    // path relative to the harness
-//   simHook.install(sandbox);                            // after the sandbox has its PluginManager, before the plugins
+//   simHook.install(sandbox);                            // before the target plugins are evaluated
 //   simHook.install(sandbox, { grid: "shipped" });       // grid tests only
 //
 // install() does two things:
@@ -11,9 +11,12 @@
 //    the working directory, no runtime log), which DEUS_World's UF.Sim reads in place of a global require. The
 //    sandbox's own require, process and __dirname are left as the harness made them, so plugins that probe those
 //    (DEUS_Fluid's optional hydro session, for one) behave as before.
-// 2. The world grid stays 1x1. The sandbox's PluginManager is replaced by one whose parameters("DEUS_World") reads
-//    AreasX and AreasY "1" when the harness passes none (an explicit value is kept), so a change of the JS default in
-//    DEUS_World.js changes no harness silently (plan risk 10). { grid: "shipped" } leaves PluginManager untouched.
+// 2. The world grid stays 1x1. The sandbox's PluginManager (the one it has now, or one set later: install() makes it
+//    an accessor) is seen through a wrapper whose parameters("DEUS_World") reads AreasX and AreasY "1" when the
+//    harness passes none (an explicit value is kept), so a change of the JS default in DEUS_World.js changes no
+//    harness silently (plan risk 10). The wrapper delegates everything else to the harness's object.
+//    { grid: "shipped" } leaves PluginManager untouched. A PluginManager declared by a script inside the context
+//    (class PluginManager in rmmz_managers.js) is a lexical binding the hook can't see; no harness does that today.
 //
 // API and rules: docs/systems/DEUS_World.md -> UF.Sim.
 
@@ -60,11 +63,15 @@ function install(sandbox, opts) {
     }
     sandbox.DEUS_SIM_HOST = host();
     if (grid === "pinned") {
-        const pm = sandbox.PluginManager;
-        if (!pm || typeof pm.parameters !== "function") {
-            throw new Error("vm_sim_require.install: the sandbox has no PluginManager.parameters yet; install the hook after setting it");
-        }
-        sandbox.PluginManager = pinGrid(pm);
+        // An accessor, so a PluginManager the harness sets after install() (or replaces) is pinned too.
+        const wrap = v => (v && (typeof v === "object" || typeof v === "function") ? pinGrid(v) : v);
+        let pm = wrap(sandbox.PluginManager);
+        Object.defineProperty(sandbox, "PluginManager", {
+            configurable: true,
+            enumerable: true,
+            get: () => pm,
+            set: v => { pm = wrap(v); }
+        });
     }
     return sandbox;
 }

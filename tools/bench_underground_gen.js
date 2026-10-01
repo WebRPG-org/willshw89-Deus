@@ -36,6 +36,7 @@ const crypto = require("crypto");
 const { performance } = require("perf_hooks");
 const { setImmediate } = require("timers");
 const { spawn, spawnSync } = require("child_process");
+const simHook = require(path.join(__dirname, "lib", "vm_sim_require")); // WG.00.44 (by __dirname: the nw-native run loads a copy of this file)
 const ROOT = path.resolve(__dirname, "..");
 const OUTPUT = path.join(ROOT, "game", "test_output", "bench_underground_gen.json");
 const DEFAULT_NW = "C:/Program Files (x86)/Steam/steamapps/common/RPG Maker MZ/nwjs-win/nw.exe";
@@ -183,6 +184,7 @@ function environment(bundle, probe, instrumented) {
 function loadGenerator(bundle, mode, instrumented, probe) {
     const env = environment(bundle, probe, instrumented);
     const source = prepareSource(bundle.source, instrumented);
+    simHook.install(env);
     if (mode === "node-vm") {
         const context = vm.createContext(env);
         // Same objects, faster lexical lookup. No noise formula/seed alteration.

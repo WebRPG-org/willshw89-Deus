@@ -20,6 +20,7 @@ const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
 const { performance } = require("perf_hooks");
+const simHook = require("../lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const PLUGINS = path.join(ROOT, "game", "js", "plugins");
@@ -73,6 +74,7 @@ function loadRuntime(overridesByPlugin) {
     for (const s of sources) for (const m of s.matchAll(protoRe)) {
         if (m[2]) env[m[1]].prototype[m[2]] = function() {};
     }
+    simHook.install(env);
     const ctx = vm.createContext(env);
     vm.runInContext(["Math", "Object", "Array", "Number", "String", "Boolean", "Map", "Set", "JSON", "Date",
         "Uint8Array", "Uint16Array", "Int16Array", "Int32Array", "Float32Array", "performance", "window"]

@@ -1,0 +1,2 @@
+2026-10-01T12:45:00.424Z [CORE] UF_Core plugin loaded successfully!
+2026-10-01T12:45:37.867Z [SIM] UF.Sim.require("ledger") resolved C:\Users\snewt\AppData\Local\Temp\wg0044-nw-mmkcPk\game\js\sim\ledger.js

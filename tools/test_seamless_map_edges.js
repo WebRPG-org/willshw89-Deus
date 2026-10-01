@@ -1,6 +1,7 @@
 "use strict";
 // test_seamless_map_edges.js - Automated verification of seamless map edge alignment and toroidal continuity
 const fs = require("fs"), path = require("path"), vm = require("vm");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 let passed = 0, failed = 0;
 function check(name, cond, info) {
@@ -145,6 +146,7 @@ const genSrc = fs.readFileSync(path.join(gameDir, "js/plugins/DEUS_WorldGen.js")
 const tileSrc = fs.readFileSync(path.join(gameDir, "js/plugins/DEUS_Tiles.js"), "utf8");
 const fogSrc = fs.readFileSync(path.join(gameDir, "js/plugins/DEUS_Fog.js"), "utf8");
 
+simHook.install(sandbox);
 vm.createContext(sandbox);
 vm.runInContext(worldSrc, sandbox, { filename: "DEUS_World.js" });
 vm.runInContext(objSrc, sandbox, { filename: "DEUS_Objects.js" });

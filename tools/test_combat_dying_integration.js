@@ -20,6 +20,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 
 const mutant = (process.argv.find(a => a.startsWith("--mutant=")) || "").slice(9);
 const ROOT = path.resolve(__dirname, "..");
@@ -146,6 +147,7 @@ function makeSandbox() {
         rulesSrc = rulesSrc.replace("const isProf = skill ? profs.includes(String(skill).toLowerCase()) : false;", "const isProf = true;");
     }
 
+    simHook.install(sandbox);
     vm.runInNewContext(coreSrc, sandbox, { filename: "DEUS_Core.js" });
     vm.runInNewContext(rulesSrc, sandbox, { filename: "DEUS_Dnd5e.js" });
     vm.runInNewContext(worldSrc, sandbox, { filename: "DEUS_World.js" });

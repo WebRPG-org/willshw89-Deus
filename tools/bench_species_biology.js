@@ -6,6 +6,7 @@
 const fs = require("fs"), path = require("path"), vm = require("vm"), crypto = require("crypto"), os = require("os");
 const { performance } = require("perf_hooks");
 const { spawnSync } = require("child_process");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid in the vm
 const ROOT = path.resolve(__dirname, "..");
 const BASE = "4af58ddd486b8e5d97d24877fd1b826131724c1d";
 const DISPATCH_BASELINE = "c49a142cd087b6b95cb7d7acef07dbf97d5698c1";
@@ -151,6 +152,7 @@ function load(data, seed) {
     for (const name of classes) env[name] = function() { throw new Error(`Unexpected engine constructor ${name}`); };
     for (const source of code) for (const m of source.matchAll(/\b((?:Game|Scene|Window|Spriteset|Sprite)_[A-Za-z0-9_]+)\.prototype\.([A-Za-z0-9_]+)/g))
         env[m[1]].prototype[m[2]] = () => { throw new Error("Unexpected engine method"); };
+    simHook.install(env);
     const context = vm.createContext(env);
     // Native lexical bindings avoid host-proxy lookup overhead; source is unmodified.
     vm.runInContext(["Math", "Object", "Array", "Number", "String", "Boolean", "Map", "Set", "JSON", "Date", "Uint8Array", "Uint16Array", "Int32Array", "Float32Array", "performance", "window"]
