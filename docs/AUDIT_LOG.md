@@ -6,6 +6,19 @@ Every finding cites evidence. When a finding is fixed, mark it `FIXED <date> <co
 
 ---
 
+## A13: merge_gate runs, mail encoding and coordinator tooling commits, 2026-10-01 evening
+
+**Audited by:** Claude Code (PM), while merging lane-dc, lane-do and lane-gg (MSG-PRUNE-PM-126 to 128).
+**Scope:** merge_gate runs on `task/lane-dc`; `docs/agents/mailboxes/fable/inbox.jsonl`; main commits `51058aa3`, `11d7e5c8`, `9bb685f0`; the PM's own lane openers.
+
+| # | Grade | Finding | Evidence | Status |
+|---|---|---|---|---|
+| A13-1 | MINOR | `tools/test_strata_cuts_and_caves.js` fails intermittently inside merge_gate, and the reason is lost. The 20:36Z and 21:09Z gate runs on lane-dc tip `cba7e3eb` refused at test 3 with "28 passed, 2 failed - fluid_suite, foundation_suite" (each sub-suite runs in its own process). The same test then passed 30/30 four times: in clean clones at the tip and at main+tip, in a `--dry-run --keep-temp` gate run (120.25 s) and in the real run (141.55 s). The gate keeps only the last 20 log lines and deletes its clones unless `--keep-temp` is given, so the sub-suites' own output, which names the failing check, was never seen. | `scratchpad/mg_dc2.out` (test 3 exit 1, 105.31 s); the merge `062e7e65`; kept logs `%TEMP%/deus-merge-gate-bPPf3C` and `-5XqYgj` | OPEN. Proposal for a governance lane: keep a failed test's log automatically, and have the strata test print the sub-suites' FAIL lines with its RESULT line. |
+| A13-2 | MINOR | Live coordinator telemetry is tracked in main's worktree. `tools/ops/launch_worker.ps1` rewrites `docs/telemetry/sessions/active_workers.json`, so merge_gate refuses with MAIN_DIRTY unless the PM first commits a snapshot of it. Six snapshot commits were needed on 2026-10-01. | `59a86e7d`, `6fe6b24a`, `5eb27a6e`, `eb1c1c9d`, `99e502d4`, `492b184a`; the lane-dc dry run refused only on MAIN_DIRTY (`scratchpad/mg_dc_dry.out`) | OPEN. Proposal: move live telemetry out of the tracked tree (ignore it and snapshot it on a schedule), in a reviewed lane. |
+| A13-3 | MINOR | Coordinator mail was written as UTF-16LE. AG-PRUNE-122, 123 and 124 were appended to `fable/inbox.jsonl` in PowerShell 5.1's default encoding, so JSONL readers could not parse them. The PM re-encoded the three lines to UTF-8 and left the other 117 lines byte-identical. Lines 12-18 are older and still do not parse. | `fcb19ce2`, `49cb9c26` and `a721f491` (AG's commits); `5f74758d` (the re-encoding); MSG-PRUNE-PM-127 item 1 (how to append in UTF-8) | OPEN until AG's mail arrives as UTF-8 |
+| A13-4 | MINOR | The coordinator committed tooling on main, against DEC-048 (tooling goes to a reviewed lane). `51058aa3` changed `tools/ops/launch_worker.ps1`, `.agents/rules/deus-multiagent-routing.md` and `docs/VISION.md`; it also re-encoded VISION.md with mojibake, which `dd4b52ea` repaired. `11d7e5c8` and `9bb685f0` changed `launch_worker.ps1`, `pace.js` and `test_pace.js`. The net tooling change matches the Owner's rulings: codex launches pinned to `--model gpt-6-sol` (DEC-077) and MiniMax removed from the pace providers (DEC-076). It also adds a BOM to `launch_worker.ps1`. | `git diff 51058aa3^ 9bb685f0 -- tools/ops/launch_worker.ps1 tools/ops/pace.js tools/ops/test_pace.js` | OPEN (process); content checked by the PM |
+| A13-5 | MINOR | One of the PM's own lane openers used the wrong identity. `030a8cc6` "[pm] Open lane-dm" was committed as `deus-ops`, the repository default, instead of `deus-pm`. lane-gg's MANIFEST_AUTHOR check would refuse it. | `git log -1 --format=%an 030a8cc6` | Covered by the lane-gg transition (lane-dm's tip is grandfathered in `tools/governance/author_rules.json`). The PM commits with the deus-pm identity set explicitly. |
+
 ## A12: Coordinator-written reviews under Grok and Codex tags on the wave-2 lanes (2026-10-01)
 
 **Audited by:** Claude Code (PM), before running merge_gate on AG-PRUNE-114/115 ("WAVE-2 MERGE READY").
