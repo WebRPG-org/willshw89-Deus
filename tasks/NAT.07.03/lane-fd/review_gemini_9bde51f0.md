@@ -5,7 +5,6 @@
 - **Reviewed Commit**: `9bde51f0d969c6f8d8778595cf5c8020baeb4357`
 - **Reviewer**: gemini (independent cross-family reviewer for claude writer)
 - **Date**: 2026-10-01
-VERDICT: CLEAN PASS
 
 ---
 
@@ -49,5 +48,5 @@ Engine core (`game/js/rmmz_*.js`, `game/js/main.js`, `game/js/libs/`) is complet
 
 The implementation satisfies all brief deliverables, provides robust automated verification, kills all designed mutants, and adheres to zero self-certification governance.
 
-**VERDICT: CLEAN PASS**
+VERDICT: CLEAN PASS
 Recommended for merge via `merge_gate.js`.
