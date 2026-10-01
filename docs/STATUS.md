@@ -1,7 +1,8 @@
 # STATUS: Project DEUS Control Board
 
 **Project Formal Name:** DEUS  
-**Last Updated:** 2026-09-30 (Owner Prune Ruling)  
+**Last Updated:** 2026-09-30 (DEC-054..059)  
+**Phase:** Natural World v1 build, straight through with no per-package Owner gate (DEC-058/059). The world is named Emerys (DEC-054). Soil deferred; flora, fauna and monsters placed by seeded rules per biome cell and danger tier (DEC-057). Fire, seasons/weather, migration, rare geological events and structure decay deferred (DEC-059). Art: PixelLab-native layout (DEC-055), the PM picks what goes in game (DEC-056), the Owner generates all art (DEC-007).  
 **PM & Integration Authority:** Claude; **Coordinator / Proposer:** Gemini / Antigravity (DEC-042/DEC-048)  
 **Historical Ledger:** Pre-prune operational history is archived in [`docs/archive/STATUS_LEDGER_20260930.md`](archive/STATUS_LEDGER_20260930.md) (and [`docs/archive/STATUS_LEDGER_20260925.md`](archive/STATUS_LEDGER_20260925.md)).
 
@@ -114,15 +115,11 @@ The following 41 sixteen-line `PluginManager.loadScript` forwarders remain in `g
 Active tasks, open branches, and pending review submissions:
 
 ### A. Active Lanes in Review / In Flight
-
 | Branch | Lane / Task | Scope | Status |
 |---|---|---|---|
-| `task/lane-cq` | `lane-cq` (`OPS.PRUNE.01`) | L1: Rebuild STATUS.md control board + `tools/test_control_board.js` | Historical reviews at 4a5fc62a / 6f53ca64 / 4f92e516; in closure review (FIX-CQ-10) |
-| `task/lane-co` | `lane-co` (`OPS.PRUNE.02`) | L2: Archive 41 `UF_*.js` shims & retarget tools | In Flight (`90af963f`) |
-| `task/lane-ct` | `lane-ct` (`OPS.PRUNE.05`) | G05: Rule-4 failure path fixes for 16 test harnesses | Writer submitted 78da5333; Grok review pending; 246 fixture cases pass, NW.js/F5 not run ([report](../tasks/OPS.PRUNE.05/lane-ct/REPORT.md)) |
-| `task/lane-cr` | `lane-cr` (`OPS.PRUNE.PACE`) | PACE telemetry & budget rate governor (`tools/ops/pace.js`) | Grok CLEAN PASS at f78c554b; MERGE-READY |
-| `task/lane-cs2` | `lane-cs2` (`WG.20.02`) | FIX-CS: Clean manifest & review for CARDS-1 / DEC-045 rows | Grok CLEAN PASS at aa47b74f; awaiting PM answerability |
-| `task/lane-cw` | `lane-cw` (`NAT.03.01`) | DEUS_Fluid & sim/hydro correctness (items a-h) | Grok CLEAN PASS at 28fe2614; awaiting PM answerability |
+| `task/lane-co` | `lane-co` (`OPS.PRUNE.02`) | L2: Archive 41 `UF_*.js` shims & retarget tools | In Review: Grok review `cc3f12d1` CLEAN PASS, 10/10 gates PASS |
+| `task/lane-ct` | `lane-ct` (`OPS.PRUNE.05`) | G05: Rule-4 Test Failure Path Fixes across 16 harnesses | In Review: Grok review `4e3f45ee` CLEAN PASS, merge_gate dry-run PASS |
+| `task/lane-cu` | `lane-cu` (`OPS.PRUNE.06`) | G06: L6 Docs Archival & Canonical Renaming (33 live, 15 archive) | In Review: Grok review `190392c5` CLEAN PASS, 15,175 preservation assertions pass |
 | `task/art-temperate-induction` | Parked Induction | 64 temperate batch 1 assets (Outside_A2, Dungeon_A2, V8 props) | PARKED at `90c82ac5` pending QA & Owner YEA |
 | `task/lane-a` | `lane-a` (`WG.00.08`) | WG.00.08 Exit Criteria | In Review (`16fec107`) |
 | `task/lane-bd` | `lane-bd` (`DEUS-TSK-ZRANGE-HARNESS`) | Z-Range harness verification | In Flight (`3ea1ab69`) |
@@ -139,6 +136,12 @@ Active tasks, open branches, and pending review submissions:
 ### B. Merged or Reference Branches
 | Branch | Lane / Task | Scope | Status |
 |---|---|---|---|
+| `task/lane-cq` | `lane-cq` (`OPS.PRUNE.01`) | L1: STATUS.md control board + `tools/test_control_board.js` | Merged to main `1b1ee241` (historical reviews 4a5fc62a / 6f53ca64 / 4f92e516) |
+| `task/lane-cr` | `lane-cr` (`OPS.PRUNE.PACE`) | PACE telemetry & budget rate governor (`tools/ops/pace.js`) | Merged to main `cb3428f8` |
+| `task/lane-cs2` | `lane-cs2` (`WG.20.02`) | CARDS-1 fixes & DEC-045 catalogue moisture rows | Merged to main `29e33685` |
+| `task/lane-cw` | `lane-cw` (`NAT.03.01`) | DEUS_Fluid & sim/hydro correctness (items a-h) | Superseded by `lane-cw2` (manifest tampered) / Reference |
+| `task/lane-cw2` | `lane-cw2` (`NAT.03.01`) | DEUS_Fluid & sim/hydro correctness (items a-h), PM-repackaged | Merged to main `5247cdbd` |
+| `task/lane-cx` | `lane-cx` (`WG.00.42`) | WorldGen quick fixes: start_in_middle, ground-view timeout, one level-key scheme | Merged to main `4f16a6c9` |
 | `task/lane-cs` | `lane-cs` (`WG.20.02`) | CARDS-1 fixes & DEC-045 catalogue moisture rows | Superseded by `lane-cs2` / Reference |
 | `task/lane-b` | `lane-b` (`WG.00.11`) | ATK-YEAR0-001 Hardening | Integrated / Reference (`ed757456`) |
 | `task/lane-bb` | `lane-bb` | Subterranean volume review | Merged to main; worktree pruned |
@@ -160,9 +163,9 @@ Tracked defects, unverified contracts, and quarantined checks:
 | Rule 14 Multi-Domain Time | `game/js/plugins/DEUS_Core.js` | AGENTS.md Rule 14 multi-domain time tags are not implemented by the running clock. | KNOWN DEFECT (Reported, preserved) |
 | Z-2 Cut Proof Quarantine | `tools/test_generated_z2_cut_proof.js` | Quarantined in `gate_tests.json`: exits 1 on main; Lane H rework in progress. | QUARANTINED |
 | ATK-YEAR0-001 | `tasks/WG.00.08/defects.jsonl` | Year 0 world age materialization edge cases. | OPEN |
-| `NAT.02.01` | `tasks/NAT.02.01/lane-bv` | kernel is a stub (no rubble, no ledger posting); review `fdb5c0a0` missed it | NOT DONE |
+| `NAT.02.01` | `tasks/NAT.02.01/lane-bv` | kernel is a stub (no rubble, no ledger posting); review `fdb5c0a0` missed it | REOPENED (2026-10-01, WORK-GATE G02): rebuilt as NAT.02.01 parts 1-6, first lane-en; PKG-02 reopened in `tasks/wbs_registry.json` |
 | `L8 loose files on main` | PM check 2026-09-30 | cited commit does not exist in any repo; AG records NOT DONE | UNPROVED / NOT DONE |
-| Climate Hold Disposition | `tasks/NAT.05.01/lane-bw` | DEC-037 Natural World phase lock: climate deferred pending upstream water/soil authorities per DEC-037 (NAT.03.01 / NAT.04.01) | FROZEN / PENDING GATES |
+| Climate Hold Disposition | `tasks/NAT.05.01/lane-bw` | DEC-037 Natural World phase lock: climate deferred pending upstream water/soil authorities per DEC-037 (NAT.03.01 / NAT.04.01); soil itself deferred by DEC-057, climate deferred with flora (DEC-057/059) | FROZEN / PENDING GATES |
 | Legacy unresolved issues | `docs/archive/STATUS_LEDGER_20260930.md#4` | Legacy unresolved issues (ledger section 4): closure UNVERIFIED; migration grants no cleanup permission | UNVERIFIED |
 
 ---
