@@ -449,3 +449,4 @@ Append only, newest at the bottom.
   - fire, seasons/weather, migration, rare geological events and structure decay are deferred.
   The final NW v1 sign-off stays with the user.
 - 2026-10-01: The user moved temperate Group 3 (cliffs, edges, ramps, natural walls) to Nano Banana Pro, generated and judged by the PM, and allowed A2 conversion for the ground-tile induction for now (DEC-060).
+- 2026-10-01: The user removed the originality check entirely (DEC-061) and made the art council unanimous: one NAY rejects a piece, every NAY carries its reason, and the style bar is strict Ultima VII / EverQuest / English folklore, uniquely DEUS (DEC-062).
