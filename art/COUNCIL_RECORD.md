@@ -42,3 +42,37 @@ The boards were made with PixelLab Bitforge (Ultima VII style images) and Pixflu
 | All twelve stumps (two per tree) | REDO | YEA for oak L, oak R and dead L; REDO or NAY for the rest | rejected | Both: generic cylinders with horizontal roots instead of THAT tree's own lower trunk and root flare. Grok voted NAY on both birch stumps: "not a stump", a tiny nub at one third of the trunk's girth. |
 
 **Next:** the stumps are rebuilt from each tree's own trunk and root pixels; the birch, pine and apple trees are redone from these notes; and future rounds attach a real Ultima VII reference board.
+
+## ART-COUNCIL-2 (2026-10-01): the same pieces on the simplified question, current versions
+
+Versions judged: trees after the U7 canopy pass (birch, swamp, pine and apple recoloured to their U7 tree's canopy palette, apple B reflipped); stumps after the Pixflux pass (init 700, each cut from its own tree); cliffs v3 (sets 3, 8 and 9 rebuilt on set 1's structure with their own ramps; every flat fill mottled with each set's own tones; cliff 8 with a wider five-step ramp). Earlier rounds on older versions (ChatGPT round 1 and deltas, Grok deltas, MiniMax round 1) are in the verdict files; this table shows each judge's vote on the versions above.
+
+| Piece | ChatGPT | Grok | MiniMax | Gemini | Outcome | Reasons for each no |
+|---|---|---|---|---|---|---|
+| Oak stump | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Swamp stump | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Dead stump | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Birch stump | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Apple stump | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Pine stump | YEA | YEA | YEA | YEA | **passed (4 of 4)** | — |
+| Oak tree | YEA | YEA | YEA | NAY | rejected | Gemini: foliage relies on uniform noisy texture rather than distinct, high-contrast leaf clusters and deep shadows. |
+| Swamp tree | YEA | YEA | YEA | NAY | rejected | Gemini: spherical pillow shading; lacks chunky, separated foliage volumes. |
+| Dead tree | YEA | YEA | YEA | NAY | rejected | Gemini: branches too thin and uniformly shaded, missing the thick, gnarled, high-contrast look of U7 dead wood. |
+| Birch tree | YEA | YEA | YEA | NAY | rejected | Gemini: canopy shading flat and noisy, lacking directional lighting. |
+| Apple tree A | YEA | YEA | YEA | NAY | rejected | Gemini: extreme pillow shading reads as a flat sphere. |
+| Apple tree B | YEA | YEA | YEA | NAY | rejected | Gemini: still too spherical and homogeneously textured. |
+| Pine tree | YEA | YEA | YEA | NAY | rejected | Gemini: too symmetrical and smoothly shaded; U7 conifers have irregular, highly contrasted needle tiers. |
+| Cliff 1 granite | YEA | YEA | YEA | NAY | rejected | Gemini: top dominated by uniform pixel noise, lacking bold, chunky highlights and deep shadows. |
+| Cliff 2 soil | YEA | YEA | YEA | NAY | rejected | Gemini: uniformly noisy texture, no distinct hand-pixelled volumes. |
+| Cliff 3 sand over sandstone | YEA | YEA | YEA | NAY | rejected | Gemini: the top fill reads as a flat, noisy pattern without strong directional lighting. |
+| Cliff 4 mud | YEA | YEA | YEA | NAY | rejected | Gemini: muddy shadows, lacking crisp, high-contrast dithering. |
+| Cliff 5 cave limestone | YEA | YEA | YEA | NAY | rejected | Gemini: better face shapes, but lacks the deep, punchy shadows of U7. |
+| Cliff 6 lichen rock | YEA | YEA | YEA | NAY | rejected | Gemini: relies on random pixel noise rather than defined clusters of light and dark. |
+| Cliff 7 rooted soil | YEA | YEA | YEA | NAY | rejected | Gemini: detail density too homogeneous; needs chunkier focal points. |
+| Cliff 8 banded sandstone | YEA | YEA | YEA | NAY | rejected | Gemini: banding too uniform; lacks the rugged, irregular volume of U7 rocks. |
+| Cliff 9 red clay | YEA | YEA | YEA | NAY | rejected | Gemini: flat shading on the top surfaces with uniform texturing. |
+| Cliff 10 layered strata | YEA | YEA | YEA | NAY | rejected | Gemini: lighting too flat; lacks U7's harsh directional highlights. |
+
+**Conflict between judges, for the next pass:** MiniMax's round-1 NOs on the cliffs ("flat fills read as modern pixel art") led to the mottling that Gemini now rejects as "uniform pixel noise". Gemini asks for bold chunky clusters with high-contrast directional light (bright highlights, near-black shadows). The PM is calibrating with Gemini on one cliff and one tree before reworking all seventeen pieces.
+
+**After the council:** the six stumps passed. They do not enter the game yet: their catalogue rows (the trees' DEPLETED rows) come with lane-pg, and they wait on the Owner's D2 ruling (may script-cut pixels ship after a Pixflux pass?). The PM's YEA goes in `art/APPROVALS.md` when both are settled.
