@@ -130,10 +130,10 @@
 
 (() => {
     "use strict";
-    if (!Uint16Array.prototype.toJSON) Uint16Array.prototype.toJSON = function() { return Array.from(this); };
-    if (!Float32Array.prototype.toJSON) Float32Array.prototype.toJSON = function() { return Array.from(this); };
-    if (!Int32Array.prototype.toJSON) Int32Array.prototype.toJSON = function() { return Array.from(this); };
-    if (!Uint8Array.prototype.toJSON) Uint8Array.prototype.toJSON = function() { return Array.from(this); };
+    if (!Uint16Array.prototype.toJSON) Uint16Array.prototype.toJSON = function() { return btoa(String.fromCharCode.apply(null, new Uint8Array(this.buffer))); };
+    if (!Float32Array.prototype.toJSON) Float32Array.prototype.toJSON = function() { return btoa(String.fromCharCode.apply(null, new Uint8Array(this.buffer))); };
+    if (!Int32Array.prototype.toJSON) Int32Array.prototype.toJSON = function() { return btoa(String.fromCharCode.apply(null, new Uint8Array(this.buffer))); };
+    if (!Uint8Array.prototype.toJSON) Uint8Array.prototype.toJSON = function() { return btoa(String.fromCharCode.apply(null, new Uint8Array(this.buffer))); };
 
 
     const P = (PluginManager.parameters("DEUS_World") && Object.keys(PluginManager.parameters("DEUS_World")).length ? PluginManager.parameters("DEUS_World") : PluginManager.parameters("UF_World"));
@@ -3887,7 +3887,10 @@
         if (World.state && World.state.gridData) {
             for (const name of Object.keys(World.state.gridData)) {
                 for (const key of Object.keys(World.state.gridData[name])) {
-                    if (Array.isArray(World.state.gridData[name][key])) {
+                    if (typeof World.state.gridData[name][key] === 'string') {
+                        const bytes = Uint8Array.from(atob(World.state.gridData[name][key]), c => c.charCodeAt(0));
+                        World.state.gridData[name][key] = new Uint16Array(bytes.buffer);
+                    } else if (Array.isArray(World.state.gridData[name][key])) {
                         World.state.gridData[name][key] = new Uint16Array(World.state.gridData[name][key]);
                     }
                 }
