@@ -12,7 +12,20 @@ const { executeCollapse, CELL_VOLUME_CUFT } = require("./collapse.js");
 const rooted = require("./rooted.js");
 const reader = require("./reader.js");
 
+const connectivity = require("./connectivity.js");
+const fall = require("./fall.js");
+const queue = require("./queue.js");
+
 module.exports = {
+    // Pure connectivity (DEC-083)
+    createHeldJob: connectivity.createHeldJob,
+    evaluateHeld: connectivity.evaluateHeld,
+    wouldBeHeld: connectivity.wouldBeHeld,
+    createFallJob: fall.createFallJob,
+    planFall: fall.planFall,
+    createQueue: queue.createQueue,
+    createService: queue.createService,
+
     evalCellSupport,
     executeCollapse,
     CELL_VOLUME_CUFT,
