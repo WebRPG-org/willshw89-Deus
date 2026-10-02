@@ -344,7 +344,7 @@
     // switch happens in place (SIM.00.00): the spriteset, its root and their canvases stay.
 
     const canvasPool = [];
-    const POOL_MAX = 4; // two planes x two layers
+    const POOL_MAX = 64; // two planes x two layers
     function takeCanvas(width, height) {
         for (let i = canvasPool.length - 1; i >= 0; i--) {
             const b = canvasPool[i];
@@ -1562,8 +1562,7 @@
             }
             stats.unitsScanned = cands.length;
         }
-        if (a) a.endScan();
-        if (b) b.endScan();
+        for (const p of activePlanes) p.endScan();
     };
     /** The units that can be on a bound plane (K4): made from the world's list when that list changes (a unit added or
      *  removed makes a new array), when a unit changes level or area, when the planes are bound again, and at least once a
