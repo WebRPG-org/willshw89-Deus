@@ -21,6 +21,7 @@
     "game/img/characters/!UF_GrassTuft_V8.png",
     "game/img/characters/!UF_GrassTuft_V8.json",
     "game/data/DEUS_WorldCatalog.json",
+    "tools/art/build_still_charsets.js",
     "tools/art/still_charsets.json",
     "tools/art/contact_sheet_still_charsets.js",
     "tools/art/test_still_charsets.js",
