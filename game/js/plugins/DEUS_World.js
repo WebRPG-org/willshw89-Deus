@@ -130,10 +130,10 @@
 
 (() => {
     "use strict";
-    if (!Uint16Array.prototype.toJSON) Uint16Array.prototype.toJSON = function() { return btoa(String.fromCharCode.apply(null, new Uint8Array(this.buffer))); };
-    if (!Float32Array.prototype.toJSON) Float32Array.prototype.toJSON = function() { return btoa(String.fromCharCode.apply(null, new Uint8Array(this.buffer))); };
-    if (!Int32Array.prototype.toJSON) Int32Array.prototype.toJSON = function() { return btoa(String.fromCharCode.apply(null, new Uint8Array(this.buffer))); };
-    if (!Uint8Array.prototype.toJSON) Uint8Array.prototype.toJSON = function() { return btoa(String.fromCharCode.apply(null, new Uint8Array(this.buffer))); };
+    if (!Uint16Array.prototype.toJSON) Uint16Array.prototype.toJSON = function() { let s = ''; const u8 = new Uint8Array(this.buffer); const len = u8.byteLength; for (let i = 0; i < len; i++) s += String.fromCharCode(u8[i]); return window.btoa(s); };
+    if (!Float32Array.prototype.toJSON) Float32Array.prototype.toJSON = function() { let s = ''; const u8 = new Uint8Array(this.buffer); const len = u8.byteLength; for (let i = 0; i < len; i++) s += String.fromCharCode(u8[i]); return window.btoa(s); };
+    if (!Int32Array.prototype.toJSON) Int32Array.prototype.toJSON = function() { let s = ''; const u8 = new Uint8Array(this.buffer); const len = u8.byteLength; for (let i = 0; i < len; i++) s += String.fromCharCode(u8[i]); return window.btoa(s); };
+    if (!Uint8Array.prototype.toJSON) Uint8Array.prototype.toJSON = function() { let s = ''; const u8 = new Uint8Array(this.buffer); const len = u8.byteLength; for (let i = 0; i < len; i++) s += String.fromCharCode(u8[i]); return window.btoa(s); };
 
 
     const P = (PluginManager.parameters("DEUS_World") && Object.keys(PluginManager.parameters("DEUS_World")).length ? PluginManager.parameters("DEUS_World") : PluginManager.parameters("UF_World"));
