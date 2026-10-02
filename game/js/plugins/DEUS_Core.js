@@ -59,6 +59,7 @@
     // User specification: 1 real minute = 1 season (6h), 1 day/night cycle (24h) = 1 in-game year (4 real minutes), 1 real hour = 15 years.
     // 240 real seconds / 1440 game minutes = 1/6 real seconds per game minute (10 frames at 60 FPS).
     const timeSpeed = params["TimeSpeed"] && params["TimeSpeed"] !== "1.0" ? parseFloat(params["TimeSpeed"]) : (1.0 / 6.0);
+    const FRAME_DT = 1 / 60;
     const startHour = parseInt(params["StartHour"] || 8, 10);
     const startMinute = parseInt(params["StartMinute"] || 0, 10);
     const defaultShowHUD = (params["ShowClockHUD"] || "true") === "true";
@@ -78,7 +79,8 @@
                     "ImageManager", "SoundManager", "Graphics", "PluginManager", "DataManager",
                     "StorageManager", "TextManager", "ColorManager", "Window", "Point"
                 ];
-                for (const k of rmmzGlobals) {
+                for (let gi = 0; gi < rmmzGlobals.length; gi++) {
+                    const k = rmmzGlobals[gi];
                     if (window[k] && !global[k]) {
                         global[k] = window[k];
                     }
@@ -102,14 +104,16 @@
                 // is closed and drop this line.
                 "UF_Households"
             ];
-            for (const name of companionPlugins) {
+            for (let pi = 0; pi < companionPlugins.length; pi++) {
+                const name = companionPlugins[pi];
                 const paths = [
                     `./js/plugins/${name}.js`,
                     `./game/js/plugins/${name}.js`,
                     `./${name}.js`
                 ];
                 let loaded = false, lastError = null;
-                for (const p of paths) {
+                for (let pj = 0; pj < paths.length; pj++) {
+                    const p = paths[pj];
                     try {
                         require(p);
                         log(`[CORE] Synchronously loaded companion plugin ${name}`);
@@ -157,7 +161,15 @@
                 const nwArgs = (typeof nw !== 'undefined' && nw.App && nw.App.argv) ? nw.App.argv : [];
                 const procArgs = (typeof process !== 'undefined' && process.argv) ? process.argv : [];
                 log(`[ARGV] nwArgs: ${JSON.stringify(nwArgs)}, procArgs: ${JSON.stringify(procArgs)}`);
-                isAutoTest = nwArgs.some(a => a.includes('autotest')) || procArgs.some(a => a.includes('autotest'));
+                isAutoTest = false;
+                for (let ai = 0; ai < nwArgs.length; ai++) {
+                    if (nwArgs[ai].indexOf("autotest") >= 0) { isAutoTest = true; break; }
+                }
+                if (!isAutoTest) {
+                    for (let ai = 0; ai < procArgs.length; ai++) {
+                        if (procArgs[ai].indexOf("autotest") >= 0) { isAutoTest = true; break; }
+                    }
+                }
                 if (isAutoTest) {
                     log("[AUTOTEST] Automatically triggering New Game in 500ms...");
                     setTimeout(() => {
@@ -204,7 +216,10 @@
                     }
                     if (isAutoTest && frameCount === 60) {
                         try {
-                            for (const ev of $gameMap.events()) {
+                            const evs = $gameMap._events;
+                            for (let ei = 0; ei < evs.length; ei++) {
+                                const ev = evs[ei];
+                                if (!ev) continue;
                                 log(`[SNAPSHOT_POS] Event ${ev.eventId()} (${ev.event().name}): pos=(${ev.x},${ev.y}), screen=(${ev.screenX()},${ev.screenY()}), charName="${ev.characterName()}"`);
                             }
                             const snap = SceneManager.snap();
@@ -274,15 +289,22 @@
             (this._listeners[event] = this._listeners[event] || []).push(callback);
         },
         off(event, callback) {
-            if (!this._listeners[event]) return;
-            this._listeners[event] = this._listeners[event].filter(cb => cb !== callback);
+            const list = this._listeners[event];
+            if (!list) return;
+            let w = 0;
+            for (let i = 0; i < list.length; i++) {
+                if (list[i] !== callback) list[w++] = list[i];
+            }
+            list.length = w;
         },
-        emit(event, ...args) {
-            if (!this._listeners[event]) return;
-            for (let i = 0; i < this._listeners[event].length; i++) {
-                const cb = this._listeners[event][i];
+        // Fixed arity: a rest parameter would allocate an array on every time:minute tick.
+        emit(event, a1, a2, a3, a4, a5, a6) {
+            const list = this._listeners[event];
+            if (!list) return;
+            for (let i = 0; i < list.length; i++) {
+                const cb = list[i];
                 const t0 = performance.now();
-                try { cb(...args); } catch (err) { console.error(err); }
+                try { cb(a1, a2, a3, a4, a5, a6); } catch (err) { console.error(err); }
                 const dur = performance.now() - t0;
                 if (dur > 20 || (typeof event === "string" && event.startsWith("world:"))) {
                     const name = cb.name || `anon_${i}`;
@@ -311,22 +333,27 @@
             this._timer = 0;
             this.isPaused = false;
             this.showHUD = defaultShowHUD;
+            this._timeStr = "";
+            this._timeStrHour = -1;
+            this._timeStrMinute = -1;
         }
 
         /** New Game: the calendar back to its start at the setup year. Pause and HUD are left to their owners. */
         resetCalendar() {
-            const fresh = new Game_UFTime();
-            this.hour = fresh.hour;
-            this.minute = fresh.minute;
-            this.day = fresh.day;
-            this.monthIndex = fresh.monthIndex;
-            this.year = fresh.year;
+            this.hour = startHour;
+            this.minute = startMinute;
+            this.day = 1;
+            this.monthIndex = 0;
+            const setupYear = window.UF && UF.NewGameSetup ? UF.NewGameSetup.year : undefined;
+            this.year = Number.isInteger(setupYear) && setupYear >= 0 ? setupYear : 0;
             this._timer = 0;
+            this._timeStrHour = -1;
+            this._timeStrMinute = -1;
         }
 
         update() {
             if (this.isPaused || $gameMessage.isBusy()) return;
-            this._timer += 1 / 60; // Assuming 60fps
+            this._timer += FRAME_DT;
             if (this._timer >= timeSpeed) {
                 this._timer -= timeSpeed;
                 this.advanceMinute(1);
@@ -386,9 +413,14 @@
         }
 
         get timeString() {
-            const hh = String(this.hour).padStart(2, "0");
-            const mm = String(this.minute).padStart(2, "0");
-            return `${hh}:${mm}`;
+            if (this._timeStrHour !== this.hour || this._timeStrMinute !== this.minute) {
+                this._timeStrHour = this.hour;
+                this._timeStrMinute = this.minute;
+                const hh = this.hour < 10 ? "0" + this.hour : String(this.hour);
+                const mm = this.minute < 10 ? "0" + this.minute : String(this.minute);
+                this._timeStr = hh + ":" + mm;
+            }
+            return this._timeStr;
         }
 
         get dateString() {
@@ -528,8 +560,9 @@
     Scene_Map.prototype.update = function() {
         _Scene_Map_update.call(this);
         $ufTime.update();
-        if (window.UF && UF.Time && typeof UF.Time.update === "function") {
-            UF.Time.update(1 / 60);
+        const timeApi = window.UF && UF.Time;
+        if (timeApi && typeof timeApi.update === "function") {
+            timeApi.update(FRAME_DT);
         }
     };
 
