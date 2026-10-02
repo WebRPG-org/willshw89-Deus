@@ -1425,3 +1425,5 @@ Every decision item recorded in this log must provide:
 1. **Drop Mandatory LLM Reviewers for Non-Core Logic:** If a lane passes the automated test suites in merge_gate.js (which verifies scope and tests), it is eligible for immediate merge.
 2. **PM Hotfix Authority:** The Coordinator (PM) is granted authority to make direct commits on main for minor bug fixes, doc updates, and test harness tweaks, bypassing the full worktree and lane lifecycle.
 3. **Single-Source Testing:** For lanes that still require an architectural review, the LLM reviewer is no longer required to manually run tests. merge_gate.js serves as the sole enforcer of passing tests.
+
+- **DEC-092 (2026-10-02): Pre-Implementation Deep Research Mandate.** The Owner mandates that deep research must be conducted before *any* task is implemented. The PM and all agents must actively research and incorporate industry experience, best practices, and optimal mathematical models (drawing from *Factorio*, *Minecraft*, *Dwarf Fortress*, *RimWorld*) before writing engine code. No "shooting in the dark"; all features must be architected for optimal V8/Node.js performance before execution.

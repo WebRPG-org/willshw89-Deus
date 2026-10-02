@@ -1,0 +1,8 @@
+{
+  "lane": "lane-kernel",
+  "taskId": "WG.00.41",
+  "branch": "task/lane-kernel",
+  "writer": "grok",
+  "gateTests": [],
+  "allowedPaths": ["game/js/plugins/DEUS_Core.js", "game/js/sim/structural/index.js"]
+}
