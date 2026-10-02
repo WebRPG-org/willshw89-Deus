@@ -5,8 +5,8 @@
  * tools/art/induct_all_ground_tiles.js
  *
  * Places the ground set table from both Owner backup batches. Missing dry and
- * damp variants borrow their placed base block. The two missing base kinds
- * retain their pre-lane pixels.
+ * damp variants borrow their placed base block. The two base grasses come
+ * from the Owner masters carried over from lane-cy.
  */
 
 const fs = require('fs');
@@ -215,6 +215,10 @@ const STAND_INS = [
   'Dungeon A2 slot 6 swamp_mud_dry retains its stock block (PM exception): no kept base set, and a blank autotile draws nothing',
   'Dungeon A2 slot 1 dug_earth retains its stock block: no kept set'
 ];
+const OWNER_MASTERS = {
+  meadow: {folder:'SURFACE_SHARED_TERRAIN_MEADOW_V1_DEFAULT',edge:'#26421C',hi:'#5D7139'},
+  tropical_grass: {folder:'SURFACE_SHARED_TERRAIN_TROPICAL-GRASS_V1_DEFAULT',edge:'#1B3B18',hi:'#6E8A38'}
+};
 
 function sourceFile(id,fillTile) {
   const filename=id+'__'+String(fillTile).padStart(2,'0')+'.png';
@@ -246,10 +250,11 @@ function selectedTile(key) {
 function blit(dst,dstWidth,src,srcWidth,x0,y0,w,h) {
   for(let y=0;y<h;y++)src.copy(dst,((y0+y)*dstWidth+x0)*4,y*srcWidth*4,(y*srcWidth+w)*4);
 }
-function masterFromBaseline(outside,slot) {
-  const tile=Buffer.alloc(48*48*4),x=slot*96+24,y=72;
-  for(let row=0;row<48;row++)outside.copy(tile,row*48*4,((y+row)*768+x)*4,((y+row)*768+x+48)*4);
-  return tile;
+function ownerMasterTile(key) {
+  const file=path.join(ROOT,'art/masters/source_sets',OWNER_MASTERS[key].folder,'variant_0.png');
+  const img=decodePNG(fs.readFileSync(file));
+  if(img.width!==48 || img.height!==48) throw Error('Owner master dimensions: '+file);
+  return Buffer.from(img.data);
 }
 function baseline(name) {
   // Fixed lane opening SHA is the pre-induction game. It remains available in gate clones.
@@ -278,10 +283,15 @@ function build() {
     },null,2)+'\n');
     console.log('SOURCE',key,id,fillTile);
   }
+  for(const [key,spec] of Object.entries(OWNER_MASTERS)) {
+    tiles[key]=ownerMasterTile(key);
+    blocks[key]=buildA2Block(tiles[key],spec.edge,spec.hi);
+    console.log('OWNER_MASTER',key,spec.folder);
+  }
   const outside=baseline('Outside_A2.png');
   const dungeon=baseline('Dungeon_A2.png');
   for(const [slot,key] of Object.entries(OUTSIDE_SLOTS)) {
-    if(!key || key==='meadow' || key==='tropical_grass')continue;
+    if(!key)continue;
     const n=Number(slot);blit(outside,768,blocks[key],96,(n%8)*96,Math.floor(n/8)*144,96,144);
   }
   for(const [slot,key] of Object.entries(DUNGEON_SLOTS)) {
@@ -292,8 +302,6 @@ function build() {
   writePNG(path.join(outDir,'Outside_A2.png'),768,576,outside);
   writePNG(path.join(outDir,'Dungeon_A2.png'),768,576,dungeon);
   const gallery=Buffer.alloc(768*768*4);
-  tiles.meadow=masterFromBaseline(outside,0);
-  tiles.tropical_grass=masterFromBaseline(outside,1);
   for(const [index,key] of Object.entries(GALLERY_SLOTS)) {
     const i=Number(index),x=(i%8)*48,y=Math.floor(i/8)*48;
     blit(gallery,768,tiles[key],48,x,y,48,48);
