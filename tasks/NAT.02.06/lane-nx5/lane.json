@@ -1,0 +1,23 @@
+{
+    "lane": "lane-nx5",
+    "taskId": "NAT.02.06",
+    "branch": "task/lane-nx5",
+    "writer": "claude",
+    "reviewer": "codex",
+    "push": true,
+    "allowedPaths": [
+        "game/js/plugins/DEUS_Jobs.js",
+        "game/js/plugins/DEUS_Interact.js",
+        "game/js/plugins/DEUS_Floors.js",
+        "game/js/plugins/DEUS_Colonists.js",
+        "tools/test_build_vertical.js",
+        "tasks/NAT.02.06/lane-nx5/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": ["tools/test_build_vertical.js"],
+            "timeoutSec": 600
+        }
+    ]
+}
