@@ -1,0 +1,14 @@
+Resume lane-dm (SIM.00.02a) at HEAD 38c74ec8 on task/lane-dm. Fix the one MINOR from grok's review tasks/SIM.00.02a/lane-dm/review_grok_331d61c4.md, section 3 ("a backward minute keeps the old remainder"). Change nothing else.
+
+In game/js/sim/host/tick.js, advanceToMinute: when absMinute < last, the clock rebases. It sets last but keeps remainder, so the next forward minute can emit one extra tick. Grok's probe:
+- arm(480); advanceToMinute(481) -> 1 tick, remainder 24;
+- advanceToMinute(61) -> 0 ticks, last 61;
+- the next forward minute emits 2 ticks, against 1 from a clock armed at 61.
+
+On a backward move, reset the remainder as if the clock were newly armed at that minute. Keep the owed-tick and rebase counting as they are.
+
+Add a check to tools/test_sim_tick.js, for example `backward_minute_resets_remainder`, built on grok's probe: after a backward move, the next forward minute emits the same ticks as a clock armed at the new minute. Show it failing before your change (git stash, or a named mutant) and passing after, and quote both outputs. Keep every existing check passing.
+
+Then run each gateTests command in tasks/SIM.00.02a/lane-dm/lane.json in the foreground, one at a time, and quote the result lines. Append a short "Fix after grok review" section to tasks/SIM.00.02a/lane-dm/REPORT.md. Also update docs/systems/DEUS_SimTick.md if it describes the backward-move rule.
+
+Commit with the [claude] tag, staging only the manifest's paths, and push task/lane-dm. Do not touch lane.json, BRIEF.md or any review file. Never start a command in the background. Commit before you end your turn, and end with FINAL SHA.

@@ -538,6 +538,72 @@
     Object.assign(Sim, { require: simRequire, resolve: simResolve, registerMatterOpener, matterOpeners });
 
     //-------------------------------------------------------------------------
+    // The shared simulation tick (SIM.00.02a; ADR-003 §3): 1 tick = 36 game-seconds, from the absolute game minute.
+    // It moves only on DEUS_Core's time:minute (no frame hook), so it stops while the clock is paused and follows
+    // TimeSpeed. The clock (game/js/sim/host/tick.js) is armed when world:created returns, so history pre-simulation
+    // runs no ticks; it is saved in UF.World.state.simTick. Handlers run in (order, name), domain "action".
+
+    const SIM_TICK = Object.freeze({ secondsPerTick: 36, maxTicksPerAdvance: 100 });
+    const SIM_TICK_DOMAIN = "action";
+    let simClock = null;       // the live world's armed clock; null between worlds and before world:created returns
+    let simTickHandlers = [];  // frozen { name, order, fn }, sorted by (order, name); replaced, never edited, on register
+    let simTicking = false;    // true while handlers run: a handler that moves the calendar is picked up next minute
+
+    let simTickMod = null;     // host/tick, loaded once (simRequire looks at the disk on every call)
+    function simTickModule() { return simTickMod || (simTickMod = simRequire("host/tick")); }
+    /** The calendar's absolute minute; null with no calendar (no $ufTime, or a harness stub without day/hour/minute). */
+    function simAbsMinute() {
+        const t = window.$ufTime;
+        if (!t || typeof t.day !== "number" || typeof t.hour !== "number" || typeof t.minute !== "number") return null;
+        return simTickModule().absoluteMinute(t.day, t.hour, t.minute);
+    }
+    function armSimClock() {
+        const m = simAbsMinute();
+        simClock = simTickModule().createTickClock(SIM_TICK);
+        simClock.arm(m === null ? 0 : m);
+    }
+    function runSimTicks(n) {
+        if (n <= 0) return;
+        simTicking = true;
+        try {
+            const first = simClock.tickCount() - n + 1;
+            const list = simTickHandlers;
+            for (let t = first; t < first + n; t++) {
+                for (let i = 0; i < list.length; i++) list[i].fn(t);
+            }
+        } finally {
+            simTicking = false;
+        }
+    }
+    function onSimMinute() {
+        if (!simClock || simTicking) return;
+        const m = simAbsMinute();
+        if (m !== null) runSimTicks(simClock.advanceToMinute(m));
+    }
+
+    /** fn(tick) on every tick, in (order, name) order. The name is unique; order is a finite number. */
+    function onTick(name, order, fn) {
+        if (typeof name !== "string" || name === "") throw new TypeError("UF.Sim.onTick: the name must be a non-empty string");
+        if (typeof order !== "number" || !Number.isFinite(order)) throw new TypeError(`UF.Sim.onTick("${name}"): order must be a finite number`);
+        if (typeof fn !== "function") throw new TypeError(`UF.Sim.onTick("${name}"): the handler must be a function`);
+        if (simTickHandlers.some(h => h.name === name)) throw new Error(`UF.Sim.onTick: "${name}" is already registered`);
+        simTickHandlers = simTickHandlers.concat(Object.freeze({ name, order, fn }))
+            .sort((a, b) => a.order - b.order || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    }
+    /** Ticks run since the live world's clock was armed (0 with no world). */
+    function tickCount() { return simClock ? simClock.tickCount() : 0; }
+    /** A new object: the clock's counters, owed ticks and catch-ups, the domain and the handler names in run order. */
+    function tickStats() {
+        const s = simClock ? simClock.stats() : { armed: false, secondsPerTick: SIM_TICK.secondsPerTick, maxTicksPerAdvance: SIM_TICK.maxTicksPerAdvance,
+            originMinute: 0, lastMinute: 0, remainderSeconds: 0, owed: 0, ticks: 0, advances: 0, catchUps: 0, rebases: 0 };
+        s.domain = SIM_TICK_DOMAIN;
+        s.handlers = simTickHandlers.map(h => h.name);
+        return s;
+    }
+    Object.assign(Sim, { onTick, tickCount, tickStats });
+    if (window.UF.Events && UF.Events.on) UF.Events.on("time:minute", onSimMinute);
+
+    //-------------------------------------------------------------------------
     // World creation
 
     /**
@@ -605,6 +671,7 @@
         }
         const worldSize = 256;
         const zRange = newWorldZRange();
+        simClock = null; // history pre-simulation inside world:created runs no ticks
         this.state = {
             version: 4,
             zRange: { zMin: zRange.zMin, zMax: zRange.zMax },   // the world's levels (WG.00.17): saved, never changed afterwards
@@ -637,6 +704,7 @@
             seatLater = null;
         }
         emit("world:created", this.state);
+        armSimClock();
         if (typeof require !== 'undefined') {
             try { require('fs').appendFileSync('game_runtime.log', `${new Date().toISOString()} [TIMING] emit world:created done\n`); } catch (_) {}
         }
@@ -3369,6 +3437,7 @@
     DataManager.createGameObjects = function() {
         _DataManager_createGameObjects.call(this);
         World.state = null;
+        simClock = null;
         zResync();
         buildCache.clear();
         clearPaths(true);
@@ -3418,6 +3487,7 @@
     const _DataManager_makeSaveContents = DataManager.makeSaveContents;
     DataManager.makeSaveContents = function() {
         const contents = _DataManager_makeSaveContents.call(this);
+        if (World.state && simClock) World.state.simTick = simClock.serialize();
         contents.ufWorld = World.state;
         return contents;
     };
@@ -3426,6 +3496,14 @@
     DataManager.extractSaveContents = function(contents) {
         _DataManager_extractSaveContents.call(this, contents);
         World.state = contents.ufWorld || null;
+        // The tick clock resumes from the save; a save from before SIM.00.02a arms it at the loaded calendar minute.
+        simClock = null;
+        if (World.state && World.state.simTick) {
+            simClock = simTickModule().createTickClock(SIM_TICK);
+            simClock.restore(World.state.simTick);
+        } else if (World.state) {
+            armSimClock();
+        }
         zResync();
         if (World.state && !World.state.objectDiffs) World.state.objectDiffs = {};
         spawnStats = newSpawnStats();
