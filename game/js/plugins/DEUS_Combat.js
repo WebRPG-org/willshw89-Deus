@@ -134,7 +134,7 @@
     const levelArea = u => ({ x: u.area.x, y: u.area.y, z: zOf(u) });
     const viewArea = w => typeof w.viewLevel === "function" ? w.viewLevel() : w.currentArea();
     const sameArea = (a, b) => (Space() ? Space().sameArea(a, b) : (!!a && !!b && !!a.area && !!b.area && a.area.x === b.area.x && a.area.y === b.area.y && zOf(a) === zOf(b)));
-    const nowMs = () => performance.now();
+    const nowMs = () => (window.UF && window.UF.Time && typeof window.UF.Time.ticks === "function" ? window.UF.Time.ticks() * (1000 / 60) : (window.UF && window.UF.World && window.UF.World._frame ? window.UF.World._frame * (1000 / 60) : performance.now()));
 
     const Combat = {
         enabled: true,
