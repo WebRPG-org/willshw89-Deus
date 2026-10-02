@@ -450,7 +450,7 @@ function createMicroCourses(grid, rivers, options) {
         const noShift = mutant() === "no_wrap_shift";
         const shiftsX = grid.wrapX && !noShift ? [-W, 0, W] : [0];
         const shiftsY = grid.wrapY && !noShift ? [-H, 0, H] : [0];
-        const hw2 = halfWidth * halfWidth;
+        const hw2 = halfWidth * halfWidth + 1e-9;   // a tile at exactly halfWidth is river, whatever the rounding
         for (const si of ids) {
             const pts = cut(si, x0, y0), rid = segs[si].rid;
             for (let k = 1; k < pts.length; k++) {
