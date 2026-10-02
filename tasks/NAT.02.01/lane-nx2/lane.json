@@ -3,7 +3,7 @@
   "taskId": "NAT.02.01",
   "branch": "task/lane-nx2",
   "writer": "grok",
-  "reviewer": "codex",
+  "reviewer": "self",
   "push": true,
   "allowedPaths": [
     "game/js/sim/structural/levels_reader.js",
@@ -32,4 +32,5 @@
     }
   ]
 }
+
 
