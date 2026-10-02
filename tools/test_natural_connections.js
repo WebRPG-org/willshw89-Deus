@@ -19,7 +19,7 @@ if (mutant) { assert.ok(mutations[mutant], "known mutation"); const [a, b] = mut
 let passed = 0, failed = 0;
 function check(name, fn) { try { fn(); passed++; console.log(`PASS natural_connections.${name}`); } catch (e) { failed++; console.error(`FAIL natural_connections.${name}: ${e.stack}`); } }
 function fixture(opts = {}) {
-    const events = new Map(), blocks = new Set(), wet = new Set(), shapes = new Map(), baselines = {}, moves = [], sent = [], notices = [], sites = [], settlements = [];
+    const events = new Map(), blocks = new Set(), wet = new Set(), lava = new Set(), shapes = new Map(), baselines = {}, moves = [], sent = [], notices = [], sites = [], settlements = [];
     let view = { x: 0, y: 0, z: 0 }, nextId = 1, ticks = 0;
     const key = (x, y, z) => `${z}:${x},${y}`;
     const emit = (name, ...args) => { for (const f of events.get(name) || []) f(...args); };
@@ -79,8 +79,9 @@ function fixture(opts = {}) {
         DataManager: { extractSaveContents(contents) { W.state = contents.ufWorld; } }, Input: { keyMapper: {} }, Graphics: { frameCount: 0 }, SceneManager: {},
         UF: { World: W, Colonists: C, Events: { emit, on }, Items: { get: id => W.state.items[id], type: () => null },
             Time: { ticks: () => ticks }, History: { sites: () => sites, homeSite: () => sites.find(s => s.protected) },
-            Levels: { SHAPES: { floor: 2 }, baseline: z => baselines[z],
+            Levels: { SHAPES: { floor: 2 }, baseline: z => baselines[z], cliffCaveMouths: () => opts.mouths || [],
                 standableShape: r => (shapes.get(key(r.x, r.y, r.z)) || baselines[r.z].shape[r.y * size + r.x]) === 2,
+                isLavaAt: (ax, ay, z, x, y) => lava.has(key(x, y, z)),
                 // Ground has no baseline: like the real Levels.waterAt, it answers there too (dry() asks it through isWater).
                 waterAt: r => wet.has(key(r.x, r.y, r.z)) || !!(baselines[r.z] && baselines[r.z].water && baselines[r.z].water[r.y * size + r.x]) } } };
     if (opts.structures) context.UF.Households = { structures: opts.structures };
@@ -97,7 +98,7 @@ function fixture(opts = {}) {
             context.UF.Jobs.update();
         }
     }
-    return { context, W, J: context.UF.Jobs, N: context.UF.NaturalConnections, unit, tick, blocks, wet, shapes, baselines, moves, sent, sites, settlements, key, notices, setView: z => { view = { x: 0, y: 0, z }; } };
+    return { context, W, J: context.UF.Jobs, N: context.UF.NaturalConnections, unit, tick, blocks, wet, lava, shapes, baselines, moves, sent, sites, settlements, key, notices, setView: z => { view = { x: 0, y: 0, z }; } };
 }
 function enter(h, z = 0) { const link = h.N.list().find(l => l.a.z === z); assert.ok(link); const u = h.unit(link.a.x, link.a.y, z); return { link, u }; }
 check("seeded_mock_determinism_and_pairing", () => {
@@ -237,5 +238,22 @@ check("liquid_makes_landing_wet_refusing_travel", () => {
     const job = h.N.travel(u, link.id);
     assert.equal(job.state, "failed");
     assert.match(job.reason, /landing/);
+});
+check("cliff_mouth_rejects_wet_landing", () => {
+    const h = fixture({ mouths: [{ terminus: { x: 3, y: 3 } }] });
+    h.wet.add(h.key(3, 3, -1));
+    delete h.W.state.naturalConnections;
+    const links = h.N.generate().links;
+    assert.equal(links.filter(l => l.kind === "cliff_cave_passage").length, 0,
+        "a saved cliff mouth cannot land in water");
+});
+check("deep_chain_rejects_lava_landing", () => {
+    const h = fixture();
+    const landing = h.N.list().find(l => l.a.z === -1).b;
+    h.lava.add(h.key(landing.x, landing.y, landing.z));
+    delete h.W.state.naturalConnections;
+    const links = h.N.generate().links;
+    assert.ok(links.every(l => [l.a, l.b].every(e => !h.lava.has(h.key(e.x, e.y, e.z)))),
+        "a saved chain cannot put a worker on lethal lava");
 });
 console.log(`RESULT: ${passed} passed, ${failed} failed`); process.exitCode = failed ? 1 : 0;
