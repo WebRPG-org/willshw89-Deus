@@ -1,0 +1,32 @@
+{
+    "lane": "lane-nx3",
+    "taskId": "NAT.02.01.BRIDGE",
+    "branch": "task/lane-nx3",
+    "writer": "claude",
+    "reviewer": "grok",
+    "push": true,
+    "allowedPaths": [
+        "game/js/plugins/DEUS_Structural.js",
+        "tools/test_structural_runtime.js",
+        "tools/test_collapse_ingame.js",
+        "game/js/sim/structural/rooted.js",
+        "game/js/sim/structural/support.js",
+        "game/js/sim/structural/collapse.js",
+        "tools/test_package_proofs_ingame.js",
+        "tools/test_structural_support.js",
+        "tasks/NAT.02.01/lane-nx3/**",
+        "docs/archive/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": ["tools/test_structural_runtime.js"],
+            "timeoutSec": 600
+        },
+        {
+            "cmd": "node",
+            "args": ["tools/test_collapse_ingame.js"],
+            "timeoutSec": 1200
+        }
+    ]
+}
