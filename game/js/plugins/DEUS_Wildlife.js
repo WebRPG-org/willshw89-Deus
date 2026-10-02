@@ -96,7 +96,6 @@ window.UF.ECS = window.UF.ECS || {
     const PREY_KINDS = Object.freeze(["grazer", "vermin", "flier"]);
     const DANGEROUS_KINDS = Object.freeze(["predator", "monster"]);
     const KINDS = Object.freeze(PREY_KINDS.concat(DANGEROUS_KINDS));
-    const DIRS4 = Object.freeze([[1, 0, 6], [-1, 0, 4], [0, 1, 2], [0, -1, 8]]);
 
     //-------------------------------------------------------------------------
     // Deterministic hashing (the same FNV + mix as UF_WorldGen). Never Math.random.
@@ -111,14 +110,21 @@ window.UF.ECS = window.UF.ECS || {
         }
         return h;
     }
-    function hash32(...parts) {
-        let h = FNV_OFFSET;
-        for (const p of parts) h = fnv(h, p);
+    function mix32(h) {
         h ^= h >>> 15;
         h = Math.imul(h, 0x2c1b3c6d) >>> 0;
         return (h ^ (h >>> 12)) >>> 0;
     }
+    function hash32(...parts) {
+        let h = FNV_OFFSET;
+        for (const p of parts) h = fnv(h, p);
+        return mix32(h);
+    }
     const unit01 = (...parts) => hash32(...parts) / 4294967296;
+    // Fixed-arity hash32 for the AI ticks (the rest-parameter form builds an array per call): the same numbers.
+    const hash4 = (a, b, c, d) => mix32(fnv(fnv(fnv(fnv(FNV_OFFSET, a), b), c), d));
+    const hash5 = (a, b, c, d, e) => mix32(fnv(fnv(fnv(fnv(fnv(FNV_OFFSET, a), b), c), d), e));
+    const unit01x4 = (a, b, c, d) => hash4(a, b, c, d) / 4294967296;
     function mulberry32(a) {
         return () => {
             a = (a + 0x6D2B79F5) | 0;
@@ -126,6 +132,14 @@ window.UF.ECS = window.UF.ECS || {
             t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
             return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
         };
+    }
+    // mulberry32 over one module state (seed it by setting rngA): the AI ticks' generator, no closure per draw.
+    let rngA = 0;
+    function rngNext() {
+        rngA = (rngA + 0x6D2B79F5) | 0;
+        let t = Math.imul(rngA ^ (rngA >>> 15), 1 | rngA);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     }
     const tintValue = hex => parseInt(String(hex).replace("#", ""), 16);
 
@@ -153,9 +167,23 @@ window.UF.ECS = window.UF.ECS || {
     };
     const wildlifeConfig = () => (catalog() && catalog().wildlife) || {};
 
-    // Region tiers from the catalog, in order (tame < wild < primeval).
-    const tierIds = key => (((catalog() || {}).regions || {})[key] || []).map(t => t.id);
-    const tierIndex = (key, id) => tierIds(key).indexOf(id);
+    // Region tiers from the catalog, in order (tame < wild < primeval): tier id -> index, one map per key and
+    // catalog regions object (built on first use, so the AI ticks look tiers up without building arrays).
+    let tierCache = null;
+    function tierIndex(key, id) {
+        const cat = catalog();
+        const regions = (cat && cat.regions) || null;
+        const m = (tierCache && tierCache.regions === regions && tierCache.byKey.get(key)) || tierMap(key, regions);
+        const i = m.get(id);
+        return i === undefined ? -1 : i;
+    }
+    function tierMap(key, regions) {
+        if (!tierCache || tierCache.regions !== regions) tierCache = { regions, byKey: new Map() };
+        const m = new Map();
+        ((regions && regions[key]) || []).forEach((t, i) => { if (!m.has(t.id)) m.set(t.id, i); });
+        tierCache.byKey.set(key, m);
+        return m;
+    }
 
     /** True when the species may live in a region { savagery, alignment }: minSavagery met, alignment matched. */
     function allowedInRegion(sp, region) {
@@ -570,16 +598,6 @@ window.UF.ECS = window.UF.ECS || {
 
     function spawnWorld(st) {
         const W = World();
-        if (W && !W._ecsWildlifeHooked && window.UF && window.UF.Events) {
-            W._ecsWildlifeHooked = true;
-            window.UF.Events.on("world:unitAdded", (u) => {
-                if (u && u.data && u.data.kind === "creature") window.UF.ECS.isWildlife[u.id] = 1;
-            });
-            window.UF.Events.on("world:unitRemoved", (uOrId) => {
-                const id = (typeof uOrId === 'object' && uOrId ? uOrId.id : uOrId);
-                if (id != null) window.UF.ECS.isWildlife[id] = 0;
-            });
-        }
         const t0 = now();
         const report = { herds: 0, creatures: 0, dropped: 0, lairs: 0, lairsSkipped: 0, kit: null, kits: [], placed: [], kitFallback: false, bySpecies: {}, samples: {}, ms: 0, error: null };
         Wildlife.lastSpawn = report;
@@ -747,13 +765,15 @@ window.UF.ECS = window.UF.ECS || {
     const cellCache = new Map();
     function cellGroundAndBiome(gx, gy) {
         const key = (gy << 16) | (gx & 0xffff);
-        let val = cellCache.get(key);
-        if (!val) {
-            const WG = WorldGen();
-            const c = WG && WG.cellInfo ? WG.cellInfo(gx, gy) : null;
-            val = c ? { ground: c.ground, biomeId: c.biomeId, walkable: !!c.walkable, region: c.region } : null;
-            cellCache.set(key, val);
-        }
+        const val = cellCache.get(key);
+        return val ? val : cellFill(key, gx, gy);
+    }
+    // Cache fill: the one allocation on the AI path, once per cell per world (FAUNA.ECS).
+    function cellFill(key, gx, gy) {
+        const WG = WorldGen();
+        const c = WG && WG.cellInfo ? WG.cellInfo(gx, gy) : null;
+        const val = c ? { ground: c.ground, biomeId: c.biomeId, walkable: !!c.walkable, region: c.region } : null;
+        cellCache.set(key, val);
         return val;
     }
 
@@ -789,6 +809,16 @@ window.UF.ECS = window.UF.ECS || {
         return !!(J && typeof J.of === "function" && J.of(u.id));
     }
 
+    // $gameMap.eventsXyNt(x, y).length > 0 without the two arrays that call filters.
+    function eventAtNt(x, y) {
+        const evs = $gameMap._events;
+        for (let i = 0; i < evs.length; i++) {
+            const ev = evs[i];
+            if (ev && ev.posNt(x, y)) return true;
+        }
+        return false;
+    }
+
     // Can this unit stand on / step to (x, y) of its area? Fliers may go anywhere inside the area. On screen the
     // map answers (tile flags, objects, water, other characters); off screen the pure cell classification does.
     function walkableFor(W, u, area, x, y) {
@@ -797,7 +827,7 @@ window.UF.ECS = window.UF.ECS || {
         if (u.data && u.data.through) return true;
         if (W.isDisplayed(u) && sameArea(area, u.area) && window.$gameMap && window.$dataMap) {
             if (!$gameMap.isPassable(x, y, 2) || Tilemap.isWaterTile($gameMap.tileId(x, y, 0))) return false;
-            return $gameMap.eventsXyNt(x, y).length === 0;
+            return !eventAtNt(x, y);
         }
         const gx = area.x * size + x, gy = area.y * size + y;
         const c = cellGroundAndBiome(gx, gy);
@@ -805,138 +835,331 @@ window.UF.ECS = window.UF.ECS || {
         return !(window.UF.Objects && UF.Objects.blocksIn && UF.Objects.blocksIn(area, x, y));
     }
 
-    // A seeded cell within `wander` of home that the unit can reach, or null (then it stays put this time).
+    //-------------------------------------------------------------------------
+    // ECS state (FAUNA.ECS, 2026-10-02). A creature's behaviour is three numbers per unit id in the UF.ECS typed
+    // arrays. The tick functions below read and write only those; from the unit they read its position, species
+    // and spawn data (ai, home, wander, herd, kit), and they move it through UF.World.sendUnit.
+    //   stance[id]  bits 0-2: the behaviour (STANCES); bits 3-30: the frame it was last alarmed, mod 2^28 (0 = never)
+    //   hunger[id]  0 = just ate, HUNGER_MAX = hungry. A grazer gains GRAZE_HUNGER per graze tick and grazes only at
+    //               HUNGER_MAX; a predator gains FEED_HUNGER per predator tick and feeds (does not hunt) below it.
+    //   hp[id]      hit points: unit.data.hp, else the catalog combat.hitpoints, else 2. UF_Combat still keeps
+    //               unit.data.hp, so the strike reads that number first and writes the result back (readPreyHp).
+    // Same cadence as the unit.data timers they replace: a kill feeds for one predator tick (was feedUntil +90);
+    // a graze blocks the next two graze ticks (grazeCooldown +240), a miss or no food the next one (+180).
+    // GRAZE lasts until the next wander decision or an alarm: the old grazeUntil (+45) always ran out by the
+    // wander tick, which comes 45 frames after the graze tick.
+    // DEUS_Colonists replaces the UF.ECS arrays on load, so every function takes them from UF.ECS when it starts.
+
+    const ST_IDLE = 0, ST_WANDER = 1, ST_GRAZE = 2, ST_SLEEP = 3, ST_FLEE = 4, ST_HUNT = 5, ST_FEED = 6, ST_RETALIATE = 7;
+    const STANCES = Object.freeze(["idle", "wander", "graze", "sleep", "flee", "hunt", "feed", "retaliate"]);
+    const STANCE_MASK = 7, STAMP_SHIFT = 3, STAMP_MASK = 0x0fffffff;
+    const HUNGER_MAX = 100;
+    const GRAZE_HUNGER = 40;
+    const GRAZE_RETRY = HUNGER_MAX - 2 * GRAZE_HUNGER;
+    const FEED_HUNGER = 50;
+    const GRAZE_CHANCE = 0.40;
+    const SLEEP_AFTER_ALARM = 180; // frames an alarmed creature stays awake
+    const FLEE_CALM = 90;          // frames after the last alarm a fleeing creature calms down
+    const HERD_REALARM = 60;       // frames before a herdmate can be alarmed again
+    const ASLEEP_FEAR_RANGE = 3;   // cells: prey flees a sleeping predator only this close
+    const THREAT_PREDATOR = 1, THREAT_ASLEEP = 2, THREAT_PERSON = 3;
+    const CHUNK_SHIFT = 4;         // 16x16-cell chunks for the threat and prey lists
+    const DIR_DX = Int8Array.of(1, -1, 0, 0), DIR_DY = Int8Array.of(0, 0, 1, -1), DIR_CODE = Int8Array.of(6, 4, 2, 8);
+    const NO_TARGETS = Object.freeze([]);
+    const ECS_SCHEMA = 1;          // contents.ufWildlifeEcs: saves whose creatures keep their behaviour in UF.ECS
+
+    // Stance kernels: an Int32 stance in, the next stance out.
+    const withState = (s, st) => (s & ~STANCE_MASK) | st;
+    const alarmedNow = (frame, st) => ((frame & STAMP_MASK) << STAMP_SHIFT) | st;
+    function alarmedWithin(s, frame, frames) {
+        const stamp = s >>> STAMP_SHIFT;
+        return stamp !== 0 && (((frame & STAMP_MASK) - stamp) & STAMP_MASK) < frames;
+    }
+    function calmedAfter(s, frame, frames) {
+        const stamp = s >>> STAMP_SHIFT;
+        return stamp === 0 || (((frame & STAMP_MASK) - stamp) & STAMP_MASK) > frames;
+    }
+    // Activity cycle: sleep through the wrong half of the day, unless alarmed or busy fleeing, hunting or fighting.
+    function sleepRule(s, cycle, phase, frame) {
+        const st = s & STANCE_MASK;
+        if (cycle === "all_active" || cycle === "crepuscular") return st === ST_SLEEP ? withState(s, ST_IDLE) : s;
+        const wants = (cycle === "diurnal" && phase === "night") || (cycle === "nocturnal" && phase === "day");
+        if (st === ST_SLEEP) return wants ? s : withState(s, ST_IDLE);
+        if (!wants || alarmedWithin(s, frame, SLEEP_AFTER_ALARM)) return s;
+        if (st === ST_FLEE || st === ST_HUNT || st === ST_RETALIATE) return s;
+        return withState(s, ST_SLEEP);
+    }
+    function grazeReady(s, hunger) {
+        const st = s & STANCE_MASK;
+        return st !== ST_SLEEP && st !== ST_FLEE && st !== ST_RETALIATE && hunger >= HUNGER_MAX;
+    }
+    function wanderReady(s) {
+        const st = s & STANCE_MASK;
+        return st !== ST_SLEEP && st !== ST_FLEE && st !== ST_HUNT && st !== ST_FEED && st !== ST_RETALIATE;
+    }
+    // No threat: a fleeing creature calms down FLEE_CALM frames after its last alarm.
+    const calmRule = (s, frame) => ((s & STANCE_MASK) === ST_FLEE && calmedAfter(s, frame, FLEE_CALM) ? withState(s, ST_IDLE) : s);
+    // A threat: alarmed now; a sleeper wakes.
+    const alarmRule = (s, frame) => alarmedNow(frame, (s & STANCE_MASK) === ST_SLEEP ? ST_IDLE : s & STANCE_MASK);
+    // A herdmate's alarm: alarmed now; a sleeper wakes, a grazer looks up.
+    function herdAlarmRule(s, frame) {
+        const st = s & STANCE_MASK;
+        return alarmedNow(frame, st === ST_SLEEP || st === ST_GRAZE ? ST_IDLE : st);
+    }
+
+    function catalogHp(sp) {
+        const n = sp && sp.combat && sp.combat.hitpoints;
+        return (typeof n === "number" && Number.isFinite(n)) ? n : 2;
+    }
+    function stanceName(u) {
+        const E = window.UF.ECS;
+        if (!u || !E || !Number.isInteger(u.id) || u.id < 0 || u.id >= E.stance.length || !E.isWildlife[u.id]) return "idle";
+        return STANCES[E.stance[u.id] & STANCE_MASK];
+    }
+
+    // The unit.data fields the ECS slots replace (saves from before FAUNA.ECS, and specs that set a starting state).
+    const LEGACY_FIELDS = Object.freeze(["state", "alarmedAt", "grazeUntil", "grazeCooldown", "feedUntil", "targetPreyId"]);
+    /** Write a creature's ECS slots from its unit data and drop the legacy fields. keepEcsHp: a loaded slot above 0 stays. */
+    function seedCreature(u, frame, keepEcsHp) {
+        const E = window.UF.ECS, id = u.id, d = u.data;
+        if (!E || !d || !Number.isInteger(id) || id < 0 || id >= E.stance.length) return;
+        const st = STANCES.indexOf(d.state);
+        const alarm = Number(d.alarmedAt) > 0 ? (d.alarmedAt & STAMP_MASK) : 0;
+        E.isWildlife[id] = 1;
+        E.stance[id] = (alarm << STAMP_SHIFT) | (st > 0 ? st : ST_IDLE);
+        E.hunger[id] = d.feedUntil > frame ? 0 : d.grazeCooldown > frame ? GRAZE_RETRY : HUNGER_MAX;
+        if (typeof d.hp === "number" && Number.isFinite(d.hp)) E.hp[id] = d.hp;
+        else if (!(keepEcsHp && E.hp[id] > 0)) E.hp[id] = catalogHp(speciesOf(u));
+        for (let i = 0; i < LEGACY_FIELDS.length; i++) delete d[LEGACY_FIELDS[i]];
+        if (id + 1 > ecsBound) ecsBound = id + 1;
+    }
+    const worldFrame = () => {
+        const W = World();
+        return W && Number.isFinite(W._frame) ? W._frame : 0;
+    };
+
+    // isWildlife is rebuilt from the units whenever UF.World.state is a different object (a new world, a load, a
+    // test's world), so it never carries another world's ids; world:unitAdded / unitRemoved keep it current between.
+    // A creature that still has a legacy field was added without world:unitAdded (a host without UF.Events): seeded here.
+    let flagState = null;
+    let ecsBound = 0; // 1 + the highest unit id seen
+    function syncFlags(W) {
+        if (W.state === flagState) return;
+        flagState = W.state;
+        cellCache.clear();
+        const isWild = window.UF.ECS.isWildlife;
+        isWild.fill(0);
+        ecsBound = 0;
+        const list = W.units();
+        for (let i = 0; i < list.length; i++) {
+            const u = list[i];
+            if (!u || !Number.isInteger(u.id) || u.id < 0 || u.id >= isWild.length) continue;
+            if (u.id + 1 > ecsBound) ecsBound = u.id + 1;
+            if (!u.data || u.data.kind !== "creature") continue;
+            isWild[u.id] = 1;
+            if (hasLegacyFields(u.data)) seedCreature(u, Number.isFinite(W._frame) ? W._frame : 0, false);
+        }
+    }
+    function hasLegacyFields(d) {
+        for (let i = 0; i < LEGACY_FIELDS.length; i++) if (d[LEGACY_FIELDS[i]] !== undefined) return true;
+        return false;
+    }
+    function idBound(W) {
+        const n = Math.max(W.state.nextUnitId | 0, ecsBound);
+        const cap = window.UF.ECS.isWildlife.length;
+        return n < cap ? n : cap;
+    }
+
+    // UF.World.currentArea() builds an object per call; this keeps the last one per map and world.
+    let areaMemoMap = NaN, areaMemoState = null, areaMemo = null;
+    function viewArea(W) {
+        const mapId = window.$gameMap ? $gameMap.mapId() : -1;
+        if (areaMemo && mapId === areaMemoMap && W.state === areaMemoState) return areaMemo;
+        areaMemoMap = mapId;
+        areaMemoState = W.state;
+        areaMemo = W.currentArea();
+        return areaMemo;
+    }
+
+    // Scratch, reused by every tick: per-id links for the threat, prey and herd lists, per-cell occupancy marks,
+    // per-chunk list heads, the hunt-job map, the goal handed to sendUnit (it copies it) and the kill event.
+    let scratchCap = 0, threatNext = null, threatKind = null, preyNext = null, herdNext = null;
+    let occMark = null, occSerial = 0, occSize = 0, chunkHead = null, chunkW = 0;
+    const herdHead = new Map();
+    const huntersScratch = new Map();
+    const goalScratch = { area: { x: 0, y: 0 }, x: 0, y: 0 };
+    const killEvent = { predator: null, prey: null };
+    // Growth only: allocates when the world outgrows the buffers.
+    function ensureScratch(n, size) {
+        if (n > scratchCap) {
+            let cap = scratchCap || 1024;
+            while (cap < n) cap *= 2;
+            threatNext = new Int32Array(cap);
+            threatKind = new Uint8Array(cap);
+            preyNext = new Int32Array(cap);
+            herdNext = new Int32Array(cap);
+            scratchCap = cap;
+        }
+        if (size !== occSize) {
+            occSize = size;
+            occMark = new Int32Array(size * size);
+            occSerial = 0;
+            chunkW = (size + (1 << CHUNK_SHIFT) - 1) >> CHUNK_SHIFT;
+            chunkHead = new Int32Array(chunkW * chunkW);
+        }
+    }
+    const onGrid = (x, y) => x >= 0 && y >= 0 && x < occSize && y < occSize;
+    function occupy(x, y) {
+        if (onGrid(x, y)) occMark[y * occSize + x] = occSerial;
+    }
+    function vacate(x, y) {
+        if (onGrid(x, y)) occMark[y * occSize + x] = 0;
+    }
+    const occupied = (x, y) => onGrid(x, y) && occMark[y * occSize + x] === occSerial;
+    function chunkPush(next, x, y, id) {
+        const cx = x >> CHUNK_SHIFT, cy = y >> CHUNK_SHIFT;
+        if (cx < 0 || cy < 0 || cx >= chunkW || cy >= chunkW) return false;
+        const k = cy * chunkW + cx;
+        next[id] = chunkHead[k];
+        chunkHead[k] = id;
+        return true;
+    }
+    function sendTo(W, u, x, y) {
+        const g = goalScratch;
+        g.area.x = u.area.x;
+        g.area.y = u.area.y;
+        g.x = x;
+        g.y = y;
+        return W.sendUnit(u.id, g);
+    }
+    function emitKill(predator, prey) {
+        const Ev = window.UF && UF.Events;
+        if (!Ev || !Ev.emit) return;
+        killEvent.predator = predator;
+        killEvent.prey = prey;
+        Ev.emit("wildlife:kill", killEvent);
+    }
+
+    // A seeded cell within `wander` of home that the unit can reach, written to goalScratch; false: it stays put.
     function wanderGoal(W, u, frame) {
-        const home = u.data.home || { x: u.x, y: u.y };
-        const r = Math.max(1, u.data.wander | 0);
-        const rng = mulberry32(hash32(W.state.seed, SALT.wanderGoal, u.id, frame));
+        const d = u.data;
+        const hx = d.home ? d.home.x : u.x, hy = d.home ? d.home.y : u.y;
+        const r = Math.max(1, d.wander | 0);
+        rngA = hash4(W.state.seed, SALT.wanderGoal, u.id, frame);
         const sp = speciesOf(u);
         for (let t = 0; t < 6; t++) {
-            const a = rng() * Math.PI * 2, dist = Math.sqrt(rng()) * r;
-            const x = Math.round(home.x + Math.cos(a) * dist), y = Math.round(home.y + Math.sin(a) * dist);
+            const a = rngNext() * Math.PI * 2, dist = Math.sqrt(rngNext()) * r;
+            const x = Math.round(hx + Math.cos(a) * dist), y = Math.round(hy + Math.sin(a) * dist);
             if (x === u.x && y === u.y) continue;
-            if (!allowedCell(W, sp, u.area, x, y, !!u.data.kitFallback)) continue;
+            if (!allowedCell(W, sp, u.area, x, y, !!d.kitFallback)) continue;
             if (!walkableFor(W, u, u.area, x, y)) continue;
-            return { area: { x: u.area.x, y: u.area.y }, x, y };
+            goalScratch.area.x = u.area.x;
+            goalScratch.area.y = u.area.y;
+            goalScratch.x = x;
+            goalScratch.y = y;
+            return true;
         }
-        return null;
+        return false;
     }
 
     function sleepTick(W, frame) {
-        const cur = W.currentArea();
+        const cur = viewArea(W);
         if (!cur) return;
+        syncFlags(W);
+        const E = window.UF.ECS, stance = E.stance, isWild = E.isWildlife;
         const phase = currentDayPhase();
-        const maxEcs = W.state.nextUnitId;
-        for (let i = 0; i < maxEcs; i++) {
-            if (!window.UF.ECS.isWildlife[i]) continue;
-            const u = W.unit(i);
+        const n = idBound(W);
+        for (let id = 0; id < n; id++) {
+            if (!isWild[id]) continue;
+            const u = W.unit(id);
             if (!u) continue;
-
             const d = u.data;
-            if (!d || d.kind !== "creature" || d.ai !== "wander") continue;
-            if (!sameArea(u.area, cur)) continue;
+            if (!d || d.kind !== "creature" || d.ai !== "wander" || !sameArea(u.area, cur)) continue;
             const sp = speciesOf(u);
             if (!sp) continue;
-
-            const cycle = activityOf(sp.id);
-            if (cycle === "all_active" || cycle === "crepuscular") {
-                if (d.state === "sleep") d.state = "idle";
-                continue;
-            }
-            const wantsSleep = (cycle === "diurnal" && phase === "night") || (cycle === "nocturnal" && phase === "day");
-            if (d.state === "sleep") {
-                if (!wantsSleep) d.state = "idle";
-                continue;
-            }
-
-            if (wantsSleep) {
-                if (d.alarmedAt && frame - d.alarmedAt < 180) continue;
-                if (d.state === "flee" || d.state === "hunt" || d.state === "retaliate") continue;
-                d.state = "sleep";
-                if (u.goal) u.goal = null;
-            }
+            const s0 = stance[id], s1 = sleepRule(s0, activityOf(sp.id), phase, frame);
+            if (s1 === s0) continue;
+            stance[id] = s1;
+            if ((s1 & STANCE_MASK) === ST_SLEEP && u.goal) u.goal = null;
         }
     }
 
-    function grazeTick(W, frame) {
-        const cur = W.currentArea();
-        if (!cur) return;
-        const maxEcs = W.state.nextUnitId;
-        for (let i = 0; i < maxEcs; i++) {
-            if (!window.UF.ECS.isWildlife[i]) continue;
-            const u = W.unit(i);
-            if (!u) continue;
+    // The facing (2/4/6/8) of edible vegetation next to the unit, 0 when it stands on some, -1 when there is none.
+    function foodDirection(u) {
+        if (isVegetationAt(u.area, u.x, u.y)) return 0;
+        for (let k = 0; k < 4; k++) {
+            if (isVegetationAt(u.area, u.x + DIR_DX[k], u.y + DIR_DY[k])) return DIR_CODE[k];
+        }
+        return -1;
+    }
 
+    function grazeTick(W, frame) {
+        const cur = viewArea(W);
+        if (!cur) return;
+        syncFlags(W);
+        const E = window.UF.ECS, stance = E.stance, hunger = E.hunger, isWild = E.isWildlife;
+        const n = idBound(W);
+        for (let id = 0; id < n; id++) {
+            if (!isWild[id]) continue;
+            const u = W.unit(id);
+            if (!u) continue;
             const d = u.data;
-            if (!d || d.kind !== "creature" || d.ai !== "wander") continue;
-            if (!sameArea(u.area, cur)) continue;
+            if (!d || d.kind !== "creature" || d.ai !== "wander" || !sameArea(u.area, cur)) continue;
             const sp = speciesOf(u);
             if (!sp || sp.kind !== "grazer") continue;
-            if (d.state === "sleep" || d.state === "flee" || d.state === "retaliate") continue;
-            if (d.grazeUntil && d.grazeUntil > frame) continue;
-            if (d.grazeCooldown && d.grazeCooldown > frame) continue;
+            const h = hunger[id] + GRAZE_HUNGER;
+            hunger[id] = h < HUNGER_MAX ? h : HUNGER_MAX;
+            if (!grazeReady(stance[id], hunger[id])) continue;
             if (u.goal || hasJob(u)) continue;
-
-            let hasFood = isVegetationAt(u.area, u.x, u.y);
-            let foodDir = null;
-            if (!hasFood) {
-                for (const [dx, dy, dir] of DIRS4) {
-                    if (isVegetationAt(u.area, u.x + dx, u.y + dy)) {
-                        hasFood = true;
-                        foodDir = dir;
-                        break;
-                    }
-                }
-            }
-            if (!hasFood) {
-                d.grazeCooldown = frame + 180;
+            const dir = foodDirection(u);
+            if (dir < 0) {
+                hunger[id] = GRAZE_RETRY;
                 continue;
             }
-
-            if (unit01(W.state.seed, SALT.graze, u.id, frame) < 0.40) {
-                d.state = "graze";
-                d.grazeUntil = frame + 45;
-                d.grazeCooldown = frame + 240;
-                if (foodDir && W.isDisplayed(u)) {
-                    const ev = W.eventOf(u.id);
-                    if (ev && typeof ev.setDirection === "function") ev.setDirection(foodDir);
+            if (unit01x4(W.state.seed, SALT.graze, id, frame) < GRAZE_CHANCE) {
+                stance[id] = withState(stance[id], ST_GRAZE);
+                hunger[id] = 0;
+                if (dir > 0 && W.isDisplayed(u)) {
+                    const ev = W.eventOf(id);
+                    if (ev && typeof ev.setDirection === "function") ev.setDirection(dir);
                 }
             } else {
-                d.grazeCooldown = frame + 180;
+                hunger[id] = GRAZE_RETRY;
             }
         }
     }
 
     function wanderTick(W, frame) {
-        const cur = W.currentArea();
+        const cur = viewArea(W);
         if (!cur) return;
-        const maxEcs = W.state.nextUnitId;
-        for (let i = 0; i < maxEcs; i++) {
-            if (!window.UF.ECS.isWildlife[i]) continue;
-            const u = W.unit(i);
+        syncFlags(W);
+        const E = window.UF.ECS, stance = E.stance, isWild = E.isWildlife;
+        const n = idBound(W);
+        for (let id = 0; id < n; id++) {
+            if (!isWild[id]) continue;
+            const u = W.unit(id);
             if (!u) continue;
-
             const d = u.data;
             if (!d || d.ai !== "wander" || u.goal) continue;
-            if (d.state === "sleep" || d.state === "flee" || d.state === "hunt" || d.state === "feed" || d.state === "retaliate") continue;
-            if (d.grazeUntil && d.grazeUntil > frame) continue;
+            if (!wanderReady(stance[id])) continue;
             if (Math.abs(u.area.x - cur.x) > 1 || Math.abs(u.area.y - cur.y) > 1) continue;
             if (hasJob(u)) continue;
-            if (unit01(W.state.seed, SALT.wander, u.id, frame) >= WANDER_CHANCE) continue;
-            const goal = wanderGoal(W, u, frame);
-            if (goal) {
-                d.state = "wander";
-                W.sendUnit(u.id, goal);
+            if (unit01x4(W.state.seed, SALT.wander, id, frame) >= WANDER_CHANCE) continue;
+            if (wanderGoal(W, u, frame)) {
+                stance[id] = withState(stance[id], ST_WANDER);
+                W.sendUnit(id, goalScratch);
             }
         }
     }
 
-    /** prey unit id -> the hunter unit, from the "hunt" jobs in UF.World.state.jobs (UF_Jobs' state shape). */
+    /** prey unit id -> the hunter unit, from the "hunt" jobs in UF.World.state.jobs (UF_Jobs' state shape). A reused Map. */
     function huntersByPrey(W) {
-        const jobs = W.state.jobs && Array.isArray(W.state.jobs.list) ? W.state.jobs.list : [];
-        if (!jobs.length) return new Map();
-        const out = new Map();
-        for (const j of jobs) {
+        const out = huntersScratch;
+        out.clear();
+        const jobs = W.state.jobs && Array.isArray(W.state.jobs.list) ? W.state.jobs.list : null;
+        if (!jobs) return out;
+        for (let i = 0; i < jobs.length; i++) {
+            const j = jobs[i];
             if (!j || j.type !== "hunt" || !j.params || j.params.unitId === undefined) continue;
             if (j.state === "done" || j.state === "failed" || j.state === "cancelled") continue;
             const hunter = j.assigned ? W.unit(j.assigned) : null;
@@ -945,94 +1168,141 @@ window.UF.ECS = window.UF.ECS || {
         return out;
     }
 
-    // The 4-neighbor that gains the most distance from the hunter and can be stepped to, or null (cornered).
-    function fleeStep(W, u, hunter, occupiedSet) {
-        const dist2 = (x, y) => (x - hunter.x) ** 2 + (y - hunter.y) ** 2;
+    // The 4-neighbour of u that gains the most distance from (hx, hy) and can be stepped to, packed (y << 16) | x,
+    // or -1 (cornered).
+    function fleeStep(W, u, hx, hy) {
         const sp = speciesOf(u);
         const isThrough = !!(u.data && u.data.through);
-        let best = null, bestD = dist2(u.x, u.y);
-        for (const [dx, dy, dir] of DIRS4) {
-            const x = u.x + dx, y = u.y + dy;
-            const dd = dist2(x, y);
+        const ux = u.x, uy = u.y;
+        let best = -1, bestD = (ux - hx) * (ux - hx) + (uy - hy) * (uy - hy);
+        for (let k = 0; k < 4; k++) {
+            const x = ux + DIR_DX[k], y = uy + DIR_DY[k];
+            const dd = (x - hx) * (x - hx) + (y - hy) * (y - hy);
             if (dd <= bestD) continue;
             if (!allowedCell(W, sp, u.area, x, y, true)) continue;
             if (!isThrough) {
-                if (occupiedSet && occupiedSet.has((y << 16) | (x & 0xffff))) continue;
+                if (occupied(x, y)) continue;
                 if (window.$gameMap) {
                     if (Tilemap.isWaterTile($gameMap.tileId(x, y, 0))) continue;
-                    if (!$gameMap.isPassable(u.x, u.y, dir)) continue;
+                    if (!$gameMap.isPassable(ux, uy, DIR_CODE[k])) continue;
                 }
                 if (window.UF.Objects && UF.Objects.blocksIn && UF.Objects.blocksIn(u.area, x, y)) continue;
             }
-            best = { x, y };
+            best = (y << 16) | x;
             bestD = dd;
         }
         return best;
     }
 
+    function threatKindOf(o, d, isWild, stance) {
+        const osp = speciesOf(o);
+        if ((osp && (osp.kind === "predator" || osp.kind === "monster")) || (d.tags && d.tags.includes("hostile"))) {
+            return isWild[o.id] && (stance[o.id] & STANCE_MASK) === ST_SLEEP ? THREAT_ASLEEP : THREAT_PREDATOR;
+        }
+        if (d.kind === "colonist" || d.faction === "player") return THREAT_PERSON;
+        return 0;
+    }
+
+    // The closest threat in u's chunk and the eight around it, within its kind's fear range (Chebyshev), or null.
+    function nearestThreat(W, u) {
+        let best = null, closestD = Infinity;
+        const ucx = u.x >> CHUNK_SHIFT, ucy = u.y >> CHUNK_SHIFT;
+        for (let dy = -1; dy <= 1; dy++) {
+            const cy = ucy + dy;
+            if (cy < 0 || cy >= chunkW) continue;
+            for (let dx = -1; dx <= 1; dx++) {
+                const cx = ucx + dx;
+                if (cx < 0 || cx >= chunkW) continue;
+                for (let tid = chunkHead[cy * chunkW + cx]; tid >= 0; tid = threatNext[tid]) {
+                    if (tid === u.id) continue;
+                    const t = W.unit(tid);
+                    if (!t) continue;
+                    const kind = threatKind[tid];
+                    const r = kind === THREAT_PREDATOR ? PREDATOR_FEAR_RANGE : kind === THREAT_ASLEEP ? ASLEEP_FEAR_RANGE : COLONIST_FEAR_RANGE;
+                    const tdx = Math.abs(u.x - t.x), tdy = Math.abs(u.y - t.y);
+                    if (tdx > r || tdy > r) continue;
+                    const dist = tdx > tdy ? tdx : tdy;
+                    if (dist < closestD) {
+                        closestD = dist;
+                        best = t;
+                    }
+                }
+            }
+        }
+        return best;
+    }
+
+    // u fled from threat: its herdmates within HERD_ALARM_RANGE are alarmed, wake or look up, and flee if they flee.
+    function alarmHerd(W, u, herd, threat, frame, stance) {
+        let mid = herdHead.get(herd);
+        if (mid === undefined) return;
+        for (; mid >= 0; mid = herdNext[mid]) {
+            if (mid === u.id) continue;
+            const o = W.unit(mid);
+            if (!o || o.goal) continue;
+            const s = stance[mid];
+            if (alarmedWithin(s, frame, HERD_REALARM)) continue;
+            if (cheb(u, o) > HERD_ALARM_RANGE) continue;
+            stance[mid] = herdAlarmRule(s, frame);
+            const osp = speciesOf(o);
+            if (!osp || !osp.hunt || !osp.hunt.flees) continue;
+            const step = fleeStep(W, o, threat.x, threat.y);
+            if (step < 0) continue;
+            const sx = step & 0xffff, sy = step >> 16;
+            stance[mid] = withState(stance[mid], ST_FLEE);
+            vacate(o.x, o.y);
+            occupy(sx, sy);
+            sendTo(W, o, sx, sy);
+        }
+    }
+
     function fleeTick(W, frame) {
-        const cur = W.currentArea();
+        const cur = viewArea(W);
         if (!cur) return;
+        syncFlags(W);
+        const E = window.UF.ECS, stance = E.stance, isWild = E.isWildlife;
+        const n = idBound(W);
+        ensureScratch(n, W.state.size);
         const hunters = huntersByPrey(W);
 
-        // Pre-gather potential environmental threats, unit occupancy, and herd members in one pass
-        const threats = [];
-        const occupiedSet = new Set();
-        const herdMap = new Map();
-        const maxEcs = W.state.nextUnitId;
-        for (let i = 0; i < maxEcs; i++) {
-            const o = W.unit(i);
+        // One pass over the area on screen, highest id first so each list below runs in ascending id order:
+        // occupied cells, threats per 16x16 chunk, herd members.
+        if (++occSerial > 0x3fffffff) {
+            occMark.fill(0);
+            occSerial = 1;
+        }
+        chunkHead.fill(-1);
+        herdHead.clear();
+        let threats = 0;
+        for (let id = n - 1; id >= 0; id--) {
+            const o = W.unit(id);
             if (!o) continue;
             const d = o.data;
             if (!d || !sameArea(o.area, cur)) continue;
-
-            if (!d.through) {
-                occupiedSet.add((o.y << 16) | (o.x & 0xffff));
-            }
-
+            if (!d.through) occupy(o.x, o.y);
             if (!d.dead && !d._isDying) {
-                const osp = speciesOf(o);
-                if ((osp && (osp.kind === "predator" || osp.kind === "monster")) || (d.tags && d.tags.includes("hostile"))) {
-                    threats.push({ unit: o, isPredator: true, sleep: d.state === "sleep" });
-                } else if (d.kind === "colonist" || d.faction === "player") {
-                    threats.push({ unit: o, isPredator: false, sleep: false });
+                const kind = threatKindOf(o, d, isWild, stance);
+                if (kind && chunkPush(threatNext, o.x, o.y, id)) {
+                    threatKind[id] = kind;
+                    threats++;
                 }
             }
-
             if (d.kind === "creature" && d.herd) {
-                let arr = herdMap.get(d.herd);
-                if (!arr) {
-                    arr = [];
-                    herdMap.set(d.herd, arr);
-                }
-                arr.push(o);
+                const head = herdHead.get(d.herd);
+                herdNext[id] = head === undefined ? -1 : head;
+                herdHead.set(d.herd, id);
             }
         }
 
-        // Fast path: if no hunters and no threats, simply clear old flee states
-        if (!hunters.size && !threats.length) {
-            for (let i = 0; i < allUnits.length; i++) {
-                const d = allUnits[i].data;
-                if (d && d.state === "flee" && (!d.alarmedAt || frame - d.alarmedAt > 90)) {
-                    d.state = "idle";
-                }
-            }
+        // Nothing to fear anywhere: fleeing creatures calm down.
+        if (!hunters.size && !threats) {
+            for (let id = 0; id < n; id++) if (isWild[id]) stance[id] = calmRule(stance[id], frame);
             return;
         }
 
-        // Spatial hash threats into 16x16 chunks so prey only inspect nearby candidates
-        const threatGrid = new Map();
-        for (let i = 0; i < threats.length; i++) {
-            const th = threats[i];
-            const cx = th.unit.x >> 4, cy = th.unit.y >> 4;
-            const key = (cy << 8) | cx;
-            let arr = threatGrid.get(key);
-            if (!arr) { arr = []; threatGrid.set(key, arr); }
-            arr.push(th);
-        }
-
-        for (let i = 0; i < maxEcs; i++) {
-            const u = W.unit(i);
+        for (let id = 0; id < n; id++) {
+            if (!isWild[id]) continue;
+            const u = W.unit(id);
             if (!u) continue;
             const d = u.data;
             if (!d || d.kind !== "creature" || !sameArea(u.area, cur)) continue;
@@ -1042,46 +1312,18 @@ window.UF.ECS = window.UF.ECS || {
             if (!sp.prey && sp.hunt.flees) continue;
 
             let threat = null;
-            const hunter = hunters.get(u.id);
-            if (hunter && sameArea(u.area, hunter.area) && cheb(u, hunter) <= FLEE_RANGE) {
-                threat = hunter;
-            } else if (d.ai === "wander") {
-                let closestD = Infinity;
-                const ucx = u.x >> 4, ucy = u.y >> 4;
-                for (let dy = -1; dy <= 1; dy++) {
-                    for (let dx = -1; dx <= 1; dx++) {
-                        const cellThreats = threatGrid.get(((ucy + dy) << 8) | (ucx + dx));
-                        if (!cellThreats) continue;
-                        for (let i = 0; i < cellThreats.length; i++) {
-                            const th = cellThreats[i];
-                            if (th.unit.id === u.id) continue;
-                            const r = th.isPredator ? (th.sleep ? 3 : PREDATOR_FEAR_RANGE) : COLONIST_FEAR_RANGE;
-                            const tdx = Math.abs(u.x - th.unit.x), tdy = Math.abs(u.y - th.unit.y);
-                            if (tdx > r || tdy > r) continue;
-                            const dist = Math.max(tdx, tdy);
-                            if (dist < closestD) {
-                                closestD = dist;
-                                threat = th.unit;
-                            }
-                        }
-                    }
-                }
-            }
-
+            const hunter = hunters.get(id);
+            if (hunter && sameArea(u.area, hunter.area) && cheb(u, hunter) <= FLEE_RANGE) threat = hunter;
+            else if (d.ai === "wander") threat = nearestThreat(W, u);
             if (!threat) {
-                if (d.state === "flee" && (!d.alarmedAt || frame - d.alarmedAt > 90)) {
-                    d.state = "idle";
-                }
+                stance[id] = calmRule(stance[id], frame);
                 continue;
             }
-
-            if (d.state === "sleep") d.state = "idle";
-            if (d.grazeUntil) d.grazeUntil = 0;
-            d.alarmedAt = frame;
+            stance[id] = alarmRule(stance[id], frame);
 
             if (!sp.hunt.flees) {
                 if (d.ai === "wander" && cheb(u, threat) <= 2) {
-                    d.state = "retaliate";
+                    stance[id] = withState(stance[id], ST_RETALIATE);
                     if (cheb(u, threat) <= 1) {
                         const C = window.UF && UF.Combat;
                         if (C && typeof C.engage === "function" && C.enabled) C.engage(u, threat);
@@ -1090,39 +1332,14 @@ window.UF.ECS = window.UF.ECS || {
                 continue;
             }
 
-            const step = fleeStep(W, u, threat, occupiedSet);
-            if (step) {
-                d.state = "flee";
-                occupiedSet.delete((u.y << 16) | (u.x & 0xffff));
-                occupiedSet.add((step.y << 16) | (step.x & 0xffff));
-                W.sendUnit(u.id, { area: { x: u.area.x, y: u.area.y }, x: step.x, y: step.y });
-                const members = d.herd ? herdMap.get(d.herd) : null;
-                if (members) {
-                    for (let m = 0; m < members.length; m++) {
-                        const o = members[m];
-                        if (o.id === u.id || o.goal) continue;
-                        const od = o.data;
-                        if (od.alarmedAt && frame - od.alarmedAt < 60) continue;
-                        if (cheb(u, o) <= HERD_ALARM_RANGE) {
-                            od.alarmedAt = frame;
-                            if (od.state === "sleep" || od.state === "graze") {
-                                od.state = "idle";
-                                if (od.grazeUntil) od.grazeUntil = 0;
-                            }
-                            const osp = speciesOf(o);
-                            if (osp && osp.hunt && osp.hunt.flees) {
-                                const hstep = fleeStep(W, o, threat, occupiedSet);
-                                if (hstep) {
-                                    od.state = "flee";
-                                    occupiedSet.delete((o.y << 16) | (o.x & 0xffff));
-                                    occupiedSet.add((hstep.y << 16) | (hstep.x & 0xffff));
-                                    W.sendUnit(o.id, { area: { x: o.area.x, y: o.area.y }, x: hstep.x, y: hstep.y });
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            const step = fleeStep(W, u, threat.x, threat.y);
+            if (step < 0) continue;
+            const sx = step & 0xffff, sy = step >> 16;
+            stance[id] = withState(stance[id], ST_FLEE);
+            vacate(u.x, u.y);
+            occupy(sx, sy);
+            sendTo(W, u, sx, sy);
+            if (d.herd) alarmHerd(W, u, d.herd, threat, frame, stance);
         }
     }
 
@@ -1132,81 +1349,63 @@ window.UF.ECS = window.UF.ECS || {
         return (typeof n === "number" && Number.isFinite(n)) ? n : 6;
     }
 
-    function readPreyHp(prey, psp) {
-        if (prey && prey.data && typeof window.UF.ECS.hp[prey.id] === "number" && Number.isFinite(window.UF.ECS.hp[prey.id])) return window.UF.ECS.hp[prey.id];
-        const cat = psp && psp.combat && psp.combat.hitpoints;
-        return (typeof cat === "number" && Number.isFinite(cat)) ? cat : 2;
+    // The prey's hit points. UF_Combat keeps unit.data.hp (Combat.engage may have just set it): when it is a number
+    // it is the newer one and goes into UF.ECS.hp. A slot at 0 or below on a living creature was never seeded (a
+    // save from before FAUNA.ECS): the catalog answers.
+    function readPreyHp(prey, psp, hp) {
+        const id = prey.id;
+        const v = prey.data ? prey.data.hp : undefined;
+        if (typeof v === "number" && Number.isFinite(v)) {
+            if (id < hp.length) hp[id] = v;
+            return v;
+        }
+        const e = id < hp.length ? hp[id] : 0;
+        return e > 0 ? e : catalogHp(psp);
     }
 
     // Same mapping Combat.resolveWeaponKey uses for a natural attack.
+    const weaponSpec = { natural: true, types: [""] };
     function huntWeaponKey(sp) {
         const C = window.UF && UF.Combat;
         const type = (sp && sp.combat && sp.combat.attackType) || "crush";
         if (C && typeof C.resolveWeaponKey === "function") {
-            return C.resolveWeaponKey({ natural: true, types: [type] });
+            weaponSpec.types[0] = type;
+            return C.resolveWeaponKey(weaponSpec);
         }
         if (type === "stab") return "bite";
         if (type === "slash") return "claws";
         return "unarmed";
     }
 
-    // dice.js createSeededRng. The copy below is that function, for a host
-    // whose require cannot see game/js/sim/rules/dice.js.
-    function rulesRng(seed) {
-        const dice = rulesDice();
-        if (dice && typeof dice.createSeededRng === "function") return dice.createSeededRng(seed >>> 0);
-        let a = seed >>> 0;
-        return function rng() {
-            a = (a + 0x6D2B79F5) >>> 0;
-            let t = Math.imul(a ^ (a >>> 15), 1 | a);
-            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-        };
+    // dice.js createSeededRng, as one function over a reseeded state (no closure per strike): the same numbers.
+    let strikeA = 0;
+    function strikeRng() {
+        strikeA = (strikeA + 0x6D2B79F5) >>> 0;
+        let t = Math.imul(strikeA ^ (strikeA >>> 15), 1 | strikeA);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     }
-    function rulesDice() {
-        if (rulesDice.mod !== undefined) return rulesDice.mod;
-        rulesDice.mod = null;
-        try {
-            if (typeof require !== "function") return null;
-            const path = require("path");
-            const fs = require("fs");
-            const candidates = [];
-            if (typeof __dirname === "string") candidates.push(path.join(__dirname, "..", "sim", "rules", "dice.js"));
-            if (typeof process !== "undefined" && process.cwd) candidates.push(path.join(process.cwd(), "game", "js", "sim", "rules", "dice.js"));
-            for (let i = 0; i < candidates.length; i++) {
-                if (candidates[i] && fs.existsSync(candidates[i])) {
-                    rulesDice.mod = require(candidates[i]);
-                    return rulesDice.mod;
-                }
-            }
-        } catch (e) {
-            rulesDice.mod = null;
-        }
-        return rulesDice.mod;
-    }
+    const strikeOpts = { rng: strikeRng };
 
     function huntSeed(W, predator, prey, frame) {
         const worldSeed = W && W.state && W.state.seed ? (W.state.seed >>> 0) : 0;
-        return hash32(worldSeed, SALT.predator, predator.id >>> 0, prey.id >>> 0, frame >>> 0);
+        return hash5(worldSeed, SALT.predator, predator.id >>> 0, prey.id >>> 0, frame >>> 0);
     }
 
-    // One SRD attack, then its damage. A rules error whiffs this swing
+    // One SRD attack, then its damage: the damage dealt, 0 on a miss. A rules error whiffs this swing
     // (it does not fall back onto the catalog, which would be a second law).
     function strikeDamage(W, predator, prey, sp, frame) {
         const Rules = window.UF && UF.Rules;
-        if (!Rules || typeof Rules.attack !== "function" || typeof Rules.damage !== "function") {
-            return { hit: true, damage: catalogAttack(sp), law: "catalog" };
-        }
-        const rng = rulesRng(huntSeed(W, predator, prey, frame));
+        if (!Rules || typeof Rules.attack !== "function" || typeof Rules.damage !== "function") return catalogAttack(sp);
+        strikeA = huntSeed(W, predator, prey, frame);
         try {
-            const att = Rules.attack(predator, prey, huntWeaponKey(sp), { rng: rng });
-            if (!att || !att.hit) return { hit: false, damage: 0, law: "rules" };
-            const dmg = Rules.damage(predator, prey, att, { rng: rng });
-            const amount = dmg && typeof dmg.damage === "number" && Number.isFinite(dmg.damage) ? dmg.damage : 0;
-            return { hit: true, damage: amount, law: "rules" };
+            const att = Rules.attack(predator, prey, huntWeaponKey(sp), strikeOpts);
+            if (!att || !att.hit) return 0;
+            const dmg = Rules.damage(predator, prey, att, strikeOpts);
+            return dmg && typeof dmg.damage === "number" && Number.isFinite(dmg.damage) ? dmg.damage : 0;
         } catch (e) {
             if (!e || e.name !== "RulesError") throw e;
-            return { hit: false, damage: 0, law: "rules", error: e.code };
+            return 0;
         }
     }
 
@@ -1223,138 +1422,149 @@ window.UF.ECS = window.UF.ECS || {
         if (!Number.isFinite(c.nextAttackTick) || c.nextAttackTick < next) c.nextAttackTick = next;
     }
 
+    // The nearest prey this predator eats, within PREDATOR_SIGHT, from the chunk lists predatorTick built; or null.
+    function nearestPreyOf(W, u, sp) {
+        const targets = PREDATOR_PREY[sp.id] || (sp.kind === "monster" ? null : NO_TARGETS);
+        let best = null, bestDist = Infinity;
+        const ucx = u.x >> CHUNK_SHIFT, ucy = u.y >> CHUNK_SHIFT;
+        for (let dy = -1; dy <= 1; dy++) {
+            const cy = ucy + dy;
+            if (cy < 0 || cy >= chunkW) continue;
+            for (let dx = -1; dx <= 1; dx++) {
+                const cx = ucx + dx;
+                if (cx < 0 || cx >= chunkW) continue;
+                for (let pid = chunkHead[cy * chunkW + cx]; pid >= 0; pid = preyNext[pid]) {
+                    if (pid === u.id) continue;
+                    const p = W.unit(pid); // null when another predator killed it this tick
+                    if (!p) continue;
+                    if (targets !== null && !targets.includes(p.data.species)) continue;
+                    if (!allowedCell(W, sp, u.area, p.x, p.y, true)) continue;
+                    const dist = cheb(u, p);
+                    if (dist <= PREDATOR_SIGHT && dist < bestDist) {
+                        bestDist = dist;
+                        best = p;
+                    }
+                }
+            }
+        }
+        return best;
+    }
+
+    // Adjacent: one strike. A kill drops the yields, removes the prey, emits wildlife:kill and feeds the predator.
+    function strikePrey(W, u, sp, prey, frame, stance, hunger, hp) {
+        const C = window.UF && UF.Combat;
+        const combatReady = !!(C && C.enabled && typeof C.engage === "function");
+        const psp = speciesOf(prey);
+        const attacksBefore = combatReady && C.stats ? (C.stats.attacks | 0) : 0;
+        if (combatReady) C.engage(u, prey);
+        const engageRolled = !!(combatReady && C.stats && (C.stats.attacks | 0) !== attacksBefore);
+        const hpNow = readPreyHp(prey, psp, hp);
+        let remainingHp;
+        if (engageRolled) {
+            // Combat.resolveAttack already wrote this swing.
+            remainingHp = hpNow;
+        } else {
+            const dealt = strikeDamage(W, u, prey, sp, frame);
+            remainingHp = hpNow - dealt;
+            if (prey.id < hp.length) hp[prey.id] = remainingHp;
+            // UF_Combat reads unit.data.hp: keep it in step (the write this plugin made before FAUNA.ECS).
+            if (prey.data && (dealt !== 0 || typeof prey.data.hp === "number")) prey.data.hp = remainingHp;
+        }
+        holdPredatorSwing(u, sp);
+        if (remainingHp > 0) return;
+
+        const pd = prey.data;
+        if (!(pd && (pd.dead || pd._isDying))) {
+            const I = window.UF && UF.Items;
+            const yields = psp && psp.yields;
+            if (yields && I && typeof I.drop === "function") {
+                for (const it in yields) I.drop(prey.area, prey.x, prey.y, it, yields[it] | 0);
+            }
+            W.removeUnit(prey.id);
+        }
+        emitKill(u, prey);
+        stance[u.id] = withState(stance[u.id], ST_FEED);
+        hunger[u.id] = 0;
+    }
+
+    // Not adjacent: walk to the prey's free side nearest the predator (or onto its cell).
+    function stalk(W, u, sp, prey) {
+        let bx = 0, by = 0, bestD = Infinity;
+        for (let k = 0; k < 4; k++) {
+            const nx = prey.x + DIR_DX[k], ny = prey.y + DIR_DY[k];
+            if (!allowedCell(W, sp, u.area, nx, ny, true)) continue;
+            if (!walkableFor(W, u, u.area, nx, ny)) continue;
+            const ddx = Math.abs(nx - u.x), ddy = Math.abs(ny - u.y);
+            const dd = ddx > ddy ? ddx : ddy;
+            if (dd < bestD) {
+                bestD = dd;
+                bx = nx;
+                by = ny;
+            }
+        }
+        if (bestD === Infinity) {
+            if (!allowedCell(W, sp, u.area, prey.x, prey.y, true)) return;
+            bx = prey.x;
+            by = prey.y;
+        }
+        sendTo(W, u, bx, by);
+    }
+
     function predatorTick(W, frame) {
-        const cur = W.currentArea();
+        const cur = viewArea(W);
         if (!cur) return;
+        syncFlags(W);
+        const E = window.UF.ECS, stance = E.stance, hunger = E.hunger, hp = E.hp, isWild = E.isWildlife;
+        const n = idBound(W);
+        ensureScratch(n, W.state.size);
 
-        const preyList = [];
-        const maxEcsPrey = W.state.nextUnitId;
-        for (let i = 0; i < maxEcsPrey; i++) {
-            const o = W.unit(i);
+        // Prey per 16x16 chunk, highest id first so each chunk lists ascending ids. Kit herds are left to the colonies.
+        chunkHead.fill(-1);
+        let preyCount = 0;
+        for (let id = n - 1; id >= 0; id--) {
+            if (!isWild[id]) continue;
+            const o = W.unit(id);
             if (!o) continue;
-            if (!o.data || o.data.dead || o.data._isDying || !sameArea(o.area, cur)) continue;
-            if (o.data.kit) continue; // preserve starter kit herds for colonies
+            const d = o.data;
+            if (!d || d.dead || d._isDying || d.kit || !sameArea(o.area, cur)) continue;
             const osp = speciesOf(o);
-            if (osp && (osp.prey || o.data.kind === "colonist")) preyList.push({ unit: o, speciesId: osp.id });
+            if (osp && osp.prey && chunkPush(preyNext, o.x, o.y, id)) preyCount++;
         }
-        if (!preyList.length) return;
+        if (!preyCount) return;
 
-        const preyGrid = new Map();
-        for (let i = 0; i < preyList.length; i++) {
-            const p = preyList[i];
-            const key = ((p.unit.y >> 4) << 8) | (p.unit.x >> 4);
-            let arr = preyGrid.get(key);
-            if (!arr) { arr = []; preyGrid.set(key, arr); }
-            arr.push(p);
-        }
-
-        const maxEcs = W.state.nextUnitId;
-        for (let i = 0; i < maxEcs; i++) {
-            if (!window.UF.ECS.isWildlife[i]) continue;
-            const u = W.unit(i);
+        for (let id = 0; id < n; id++) {
+            if (!isWild[id]) continue;
+            const u = W.unit(id);
             if (!u) continue;
-
             const d = u.data;
             if (!d || d.kind !== "creature" || d.ai !== "wander" || !sameArea(u.area, cur)) continue;
             const sp = speciesOf(u);
             if (!sp || (sp.kind !== "predator" && sp.kind !== "monster")) continue;
-            if (d.state === "sleep") continue;
-            if (d.feedUntil && d.feedUntil > frame) {
-                d.state = "feed";
+            const h = hunger[id] + FEED_HUNGER;
+            hunger[id] = h < HUNGER_MAX ? h : HUNGER_MAX;
+            let s = stance[id];
+            if ((s & STANCE_MASK) === ST_SLEEP) continue;
+            if (hunger[id] < HUNGER_MAX) {
+                stance[id] = withState(s, ST_FEED);
                 continue;
             }
-            if (d.state === "feed") d.state = "idle";
+            if ((s & STANCE_MASK) === ST_FEED) s = withState(s, ST_IDLE);
 
-            const targets = PREDATOR_PREY[sp.id] || (sp.kind === "monster" ? null : []);
-            let bestPrey = null, bestDist = Infinity;
-            const ucx = u.x >> 4, ucy = u.y >> 4;
-            for (let dy = -1; dy <= 1; dy++) {
-                for (let dx = -1; dx <= 1; dx++) {
-                    const cellPrey = preyGrid.get(((ucy + dy) << 8) | (ucx + dx));
-                    if (!cellPrey) continue;
-                    for (let i = 0; i < cellPrey.length; i++) {
-                        const p = cellPrey[i];
-                        if (p.unit.id === u.id) continue;
-                        if (targets !== null && !targets.includes(p.speciesId)) continue;
-                        if (!allowedCell(W, sp, u.area, p.unit.x, p.unit.y, true)) continue;
-                        const dist = cheb(u, p.unit);
-                        if (dist <= PREDATOR_SIGHT && dist < bestDist) {
-                            bestDist = dist;
-                            bestPrey = p.unit;
-                        }
-                    }
-                }
-            }
-
-            if (!bestPrey) {
-                if (d.state === "hunt") d.state = "idle";
-                d.targetPreyId = null;
+            const prey = nearestPreyOf(W, u, sp);
+            if (!prey) {
+                stance[id] = (s & STANCE_MASK) === ST_HUNT ? withState(s, ST_IDLE) : s;
                 continue;
             }
-
-            d.state = "hunt";
-            d.targetPreyId = bestPrey.id;
-
-            if (bestDist <= 1) {
-                const C = window.UF && UF.Combat;
-                const combatReady = !!(C && C.enabled && typeof C.engage === "function");
-                const psp = speciesOf(bestPrey);
-                const attacksBefore = combatReady && C.stats ? (C.stats.attacks | 0) : 0;
-                if (combatReady) C.engage(u, bestPrey);
-                const engageRolled = !!(combatReady && C.stats && (C.stats.attacks | 0) !== attacksBefore);
-                const hpNow = readPreyHp(bestPrey, psp);
-                let dealt = 0;
-                let remainingHp;
-                if (engageRolled) {
-                    // Combat.resolveAttack already wrote this swing.
-                    remainingHp = hpNow;
-                } else {
-                    const rolled = strikeDamage(W, u, bestPrey, sp, frame);
-                    dealt = rolled.damage;
-                    remainingHp = hpNow - dealt;
-                    if (bestPrey.data && (dealt !== 0 || typeof window.UF.ECS.hp[bestPrey.id] === "number")) window.UF.ECS.hp[bestPrey.id] = remainingHp;
-                }
-                holdPredatorSwing(u, sp);
-
-                if (remainingHp <= 0) {
-                    const alreadyDead = !!(bestPrey.data && (bestPrey.data.dead || bestPrey.data._isDying));
-                    if (!alreadyDead) {
-                        const I = window.UF && UF.Items;
-                        const yields = (psp && psp.yields) || {};
-                        if (I && typeof I.drop === "function") {
-                            for (const it of Object.keys(yields)) {
-                                I.drop(bestPrey.area, bestPrey.x, bestPrey.y, it, yields[it] | 0);
-                            }
-                        }
-                        W.removeUnit(bestPrey.id);
-                    }
-                    emit("wildlife:kill", { predator: u, prey: bestPrey });
-                    d.state = "feed";
-                    d.feedUntil = frame + 90;
-                    d.targetPreyId = null;
-                }
-            } else if (!u.goal || frame % 60 === 0) {
-                let bestStep = null, bestStepD = Infinity;
-                for (const [dx, dy] of DIRS4) {
-                    const nx = bestPrey.x + dx, ny = bestPrey.y + dy;
-                    if (!allowedCell(W, sp, u.area, nx, ny, true)) continue;
-                    if (!walkableFor(W, u, u.area, nx, ny)) continue;
-                    const dd = cheb({ x: nx, y: ny }, u);
-                    if (dd < bestStepD) {
-                        bestStepD = dd;
-                        bestStep = { x: nx, y: ny };
-                    }
-                }
-                const targetCell = bestStep || (allowedCell(W, sp, u.area, bestPrey.x, bestPrey.y, true) ? { x: bestPrey.x, y: bestPrey.y } : null);
-                if (targetCell) W.sendUnit(u.id, { area: { x: u.area.x, y: u.area.y }, x: targetCell.x, y: targetCell.y });
-            }
+            stance[id] = withState(s, ST_HUNT);
+            if (cheb(u, prey) <= 1) strikePrey(W, u, sp, prey, frame, stance, hunger, hp);
+            else if (!u.goal || frame % 60 === 0) stalk(W, u, sp, prey);
         }
     }
 
     const perf = { ticks: 0, ms: 0, sleepMs: 0, fleeMs: 0, predMs: 0, grazeMs: 0, wanderMs: 0 };
     function tick() {
         const W = World();
-        if (!W || !W.state || !W.currentArea()) return;
+        if (!W || !W.state || !viewArea(W)) return;
         const frame = W._frame;
         const doFlee = frame % FLEE_EVERY === 0;
         const doPredator = (frame + 15) % PREDATOR_EVERY === 0;
@@ -1428,7 +1638,7 @@ window.UF.ECS = window.UF.ECS || {
     const Wildlife = {
         PREY_KINDS, DANGEROUS_KINDS, KINDS, WANDER_EVERY, WANDER_CHANCE, FLEE_EVERY, FLEE_RANGE, HERD_SPREAD,
         PREDATOR_EVERY, PREDATOR_SIGHT, PREDATOR_FEAR_RANGE, COLONIST_FEAR_RANGE, HERD_ALARM_RANGE, GRAZE_EVERY,
-        ACTIVITY_CYCLES, PREDATOR_PREY, activityOf, shouldSleep, isVegetationAt,
+        ACTIVITY_CYCLES, PREDATOR_PREY, activityOf, shouldSleep, isVegetationAt, STANCES, HUNGER_MAX,
         lastSpawn: null,
         /** The catalog species with index, tintValue, prey/dangerous flags (copies). */
         species: () => speciesList().slice(),
@@ -1487,7 +1697,7 @@ window.UF.ECS = window.UF.ECS || {
             const u = resolveUnit(x), sp = speciesOf(u);
             if (!sp) return null;
             const flees = !!(sp.hunt && sp.hunt.flees);
-            const state = (u.data && u.data.state) || "idle";
+            const state = stanceName(u);
             const held = withdrawnFromWild(u);
             const rec = held ? u.data.taming : null;
             const prey = !!sp.prey && !held;
@@ -1553,6 +1763,11 @@ window.UF.ECS = window.UF.ECS || {
         resetPerf() {
             perf.ticks = 0; perf.ms = 0; perf.sleepMs = 0; perf.fleeMs = 0; perf.predMs = 0; perf.grazeMs = 0; perf.wanderMs = 0;
         },
+        /** The behaviour of a creature (record, id or Game_Event): one of STANCES, from UF.ECS.stance; null for non-creatures. */
+        stanceOf: x => {
+            const u = resolveUnit(x);
+            return speciesOf(u) ? stanceName(u) : null;
+        },
         /** One predator decision at `frame`. The map hook stays unwired (Objective 2). */
         stepPredator(frame) {
             const W = World();
@@ -1567,6 +1782,48 @@ window.UF.ECS = window.UF.ECS || {
 
     // Registered at load: UF_Factions and UF_History load earlier, so their world:created listeners run first.
     if (window.UF.Events && UF.Events.on) UF.Events.on("world:created", state => spawnWorld(state));
+
+    // ECS slots: a creature added to the world gets its stance, hunger and hp (seedCreature); any other unit
+    // clears the wildlife flag its id may carry from an earlier world.
+    if (window.UF.Events && UF.Events.on) {
+        UF.Events.on("world:unitAdded", u => {
+            const E = window.UF.ECS;
+            if (!u || !E || !Number.isInteger(u.id) || u.id < 0 || u.id >= E.isWildlife.length) return;
+            if (u.id + 1 > ecsBound) ecsBound = u.id + 1;
+            if (u.data && u.data.kind === "creature") seedCreature(u, worldFrame(), false);
+            else E.isWildlife[u.id] = 0;
+        });
+        UF.Events.on("world:unitRemoved", uOrId => {
+            const E = window.UF.ECS;
+            const id = typeof uOrId === "object" && uOrId ? uOrId.id : uOrId;
+            if (E && Number.isInteger(id) && id >= 0 && id < E.isWildlife.length) E.isWildlife[id] = 0;
+        });
+    }
+
+    // Saves: DEUS_Colonists writes and restores UF.ECS (contents.ufEcs). contents.ufWildlifeEcs marks a save whose
+    // creatures keep their behaviour there; a save without it has it in unit.data, and seedCreature moves it over.
+    if (typeof DataManager !== "undefined") {
+        const _DataManager_makeSaveContents = DataManager.makeSaveContents;
+        DataManager.makeSaveContents = function() {
+            const contents = _DataManager_makeSaveContents.call(this);
+            contents.ufWildlifeEcs = ECS_SCHEMA;
+            return contents;
+        };
+        const _DataManager_extractSaveContents = DataManager.extractSaveContents;
+        DataManager.extractSaveContents = function(contents) {
+            _DataManager_extractSaveContents.call(this, contents);
+            flagState = null;
+            if (contents && contents.ufWildlifeEcs === ECS_SCHEMA && contents.ufEcs) return;
+            const W = World();
+            const units = W && W.state && W.state.units;
+            if (!units) return;
+            const frame = worldFrame();
+            for (const k of Object.keys(units)) {
+                const u = units[k];
+                if (u && u.data && u.data.kind === "creature") seedCreature(u, frame, !!(contents && contents.ufEcs));
+            }
+        };
+    }
 
     //-------------------------------------------------------------------------
     // Checks (UF_Test suite "wildlife"), registered at boot after all plugins load
@@ -1869,31 +2126,39 @@ window.UF.ECS = window.UF.ECS || {
             rem(prey); rem(stayer); rem(hunter); rem(hunter2);
 
             // DF 1. Activity cycles & sleep: diurnal deer sleeps during night, awakes on threat approach
+            const ECS = window.UF.ECS;
+            const stanceOf = u => Wildlife.stanceOf(u);
             const testDeer = add("deer", px - 2, py, { ai: "wander", state: "idle" });
             const DN = window.UF && UF.DayNight;
             const origPhase = DN && DN.phase;
             if (DN) DN.phase = () => "night";
             sleepTick(W, 120);
-            const deerSlept = testDeer.data.state === "sleep";
+            const deerSlept = stanceOf(testDeer) === "sleep";
             const startleWolf = add("wolf", px - 1, py, { ai: "none" });
             fleeTick(W, 150);
-            const deerWoke = testDeer.data.state !== "sleep";
+            const deerWoke = stanceOf(testDeer) !== "sleep";
             if (DN && origPhase) DN.phase = origPhase;
             t.check("activity_cycles", deerSlept && deerWoke,
-                `diurnal deer slept at night: ${deerSlept}, woke on wolf threat approach: ${deerWoke} (state ${testDeer.data.state})`);
+                `diurnal deer slept at night: ${deerSlept}, woke on wolf threat approach: ${deerWoke} (stance ${stanceOf(testDeer)})`);
             rem(testDeer); rem(startleWolf);
 
-            // DF 2. Herbivore grazing: grazer pauses to graze when on or adjacent to edible vegetation
-            const testGrazer = add("deer", px - 3, py + 1, { ai: "wander", grazeCooldown: 0, state: "idle" });
+            // DF 2. Herbivore grazing: a hungry grazer on or next to edible vegetation grazes, and eating sates it
+            const testGrazer = add("deer", px - 3, py + 1, { ai: "wander", state: "idle" });
             const hasVeg = isVegetationAt(area, testGrazer.x, testGrazer.y);
             let grazed = false;
             for (let f = 1; f <= 10 && !grazed; f++) {
-                testGrazer.data.grazeCooldown = 0;
+                ECS.hunger[testGrazer.id] = HUNGER_MAX;
                 grazeTick(W, f * 90 + 45);
-                if (testGrazer.data.state === "graze") grazed = true;
+                if (stanceOf(testGrazer) === "graze") grazed = true;
             }
-            t.check("herbivore_graze", hasVeg && grazed,
-                `deer at (${testGrazer.x},${testGrazer.y}) has vegetation: ${hasVeg}, entered graze state: ${grazed} (state ${testGrazer.data.state}, until ${testGrazer.data.grazeUntil})`);
+            const grazerHunger = ECS.hunger[testGrazer.id];
+            // Sated: the next two graze ticks leave it be (the old 240-frame cooldown), the third may graze again.
+            ECS.stance[testGrazer.id] = 0;
+            grazeTick(W, 11 * 90 + 45);
+            grazeTick(W, 12 * 90 + 45);
+            const satedHeld = stanceOf(testGrazer) === "idle" && ECS.hunger[testGrazer.id] === 2 * GRAZE_HUNGER;
+            t.check("herbivore_graze", hasVeg && grazed && grazerHunger === 0 && satedHeld,
+                `deer at (${testGrazer.x},${testGrazer.y}) has vegetation: ${hasVeg}, grazed: ${grazed}, hunger after grazing ${grazerHunger} (want 0), two graze ticks later stance ${stanceOf(testGrazer)} hunger ${ECS.hunger[testGrazer.id]} (want idle, ${2 * GRAZE_HUNGER})`);
             rem(testGrazer);
 
             // DF 3. Environmental threat fear: shy prey flees approaching predator without a player hunt job
@@ -1901,7 +2166,7 @@ window.UF.ECS = window.UF.ECS || {
             const envWolf = add("wolf", px + 3, py, { ai: "none" });
             const hareX0 = envHare.x, hareY0 = envHare.y;
             fleeTick(W, 180);
-            const hareFled = envHare.data.state === "flee" && !!envHare.goal;
+            const hareFled = stanceOf(envHare) === "flee" && !!envHare.goal;
             const hareFarther = envHare.goal ? (envHare.goal.x - envWolf.x) ** 2 + (envHare.goal.y - envWolf.y) ** 2 > (hareX0 - envWolf.x) ** 2 + (hareY0 - envWolf.y) ** 2 : false;
             t.check("environmental_flee", hareFled && hareFarther,
                 `unhunted hare at (${hareX0},${hareY0}) detected wolf at (${envWolf.x},${envWolf.y}): fled: ${hareFled}, goal farther: ${hareFarther} (${envHare.goal ? `(${envHare.goal.x},${envHare.goal.y})` : "none"})`);
@@ -1910,13 +2175,15 @@ window.UF.ECS = window.UF.ECS || {
             // DF 4. Herd alarm & scatter: startling one member alerts nearby herdmates to wake and flee
             const deerA = add("deer", px, py, { ai: "wander", herd: 999, state: "idle" });
             const deerB = add("deer", px + 2, py, { ai: "wander", herd: 999, state: "sleep" });
+            const deerBSeeded = stanceOf(deerB) === "sleep" && deerB.data.state === undefined;
             const alarmThreat = add("wolf", px - 2, py, { ai: "none" });
             fleeTick(W, 210);
-            const deerAFled = deerA.data.state === "flee";
-            const deerBWoke = deerB.data.state !== "sleep";
-            const deerBFled = deerB.data.state === "flee" && !!deerB.goal;
-            t.check("herd_alarm", deerAFled && deerBWoke && deerBFled,
-                `deerA fled: ${deerAFled}, herdmate deerB woke: ${deerBWoke}, herdmate deerB fled: ${deerBFled} (state ${deerB.data.state}, alarmedAt ${deerB.data.alarmedAt})`);
+            const deerAFled = stanceOf(deerA) === "flee";
+            const deerBWoke = stanceOf(deerB) !== "sleep";
+            const deerBFled = stanceOf(deerB) === "flee" && !!deerB.goal;
+            const deerBStamp = ECS.stance[deerB.id] >>> STAMP_SHIFT;
+            t.check("herd_alarm", deerBSeeded && deerAFled && deerBWoke && deerBFled && deerBStamp === 210,
+                `deerB seeded asleep from its spec: ${deerBSeeded}; deerA fled: ${deerAFled}, herdmate deerB woke: ${deerBWoke}, herdmate deerB fled: ${deerBFled} (stance ${stanceOf(deerB)}, alarmed at frame ${deerBStamp}, want 210)`);
             rem(deerA); rem(deerB); rem(alarmThreat);
 
             // DF 5. Autonomous predator hunting & feeding: wolf attacks adjacent low-HP prey, drops yields, feeds.
@@ -1925,28 +2192,85 @@ window.UF.ECS = window.UF.ECS || {
             const huntWolf = add("wolf", px, py, { ai: "wander", state: "idle" });
             const huntHare = add("hare", px + 1, py, { ai: "none", hp: 1 });
             const preyId = huntHare.id;
+            const hareHpSeeded = ECS.hp[preyId] === 1;
             const Rules = window.UF && UF.Rules;
             const pinRoll = Rules && typeof Rules._setTestRoll === "function" && typeof Rules._clearTestRoll === "function";
+            const nextHare = () => add("hare", px + 1, py, { ai: "none", hp: 1 });
+            let hare2 = null, hare2AliveWhileFed = false, wolfAfterOne = "", wolfAfterTwo = "", hare2Slain = false;
             if (pinRoll) Rules._setTestRoll(18);
             try {
                 predatorTick(W, 240);
+                // Fed: the next predator tick it keeps feeding (the old feedUntil +90), the one after it hunts again.
+                if (W.unit(preyId) === null) {
+                    hare2 = nextHare();
+                    predatorTick(W, 300);
+                    wolfAfterOne = stanceOf(huntWolf);
+                    hare2AliveWhileFed = W.unit(hare2.id) !== null;
+                    predatorTick(W, 360);
+                    wolfAfterTwo = stanceOf(huntWolf);
+                    hare2Slain = W.unit(hare2.id) === null;
+                }
             } finally {
                 if (pinRoll) Rules._clearTestRoll();
             }
-            const wolfFeeding = huntWolf.data.state === "feed" && huntWolf.data.feedUntil > 0;
             const hareSlain = W.unit(preyId) === null;
-            t.check("predator_hunt", wolfFeeding && hareSlain,
-                `wolf attacked adjacent hare: feeding: ${wolfFeeding} (state ${huntWolf.data.state}, until ${huntWolf.data.feedUntil}), prey unit #${preyId} removed/slain: ${hareSlain}`);
-            rem(huntWolf); rem(huntHare);
+            t.check("predator_hunt", hareHpSeeded && hareSlain && wolfAfterOne === "feed" && hare2AliveWhileFed && wolfAfterTwo === "feed" && hare2Slain,
+                `hare hp seeded in UF.ECS.hp: ${hareHpSeeded}; wolf killed the adjacent hare #${preyId}: ${hareSlain}; next predator tick: ${wolfAfterOne || "-"} with a second hare beside it alive: ${hare2AliveWhileFed} (want feed, true); the tick after: second hare slain ${hare2Slain}, wolf ${wolfAfterTwo || "-"} (want true, feed)`);
+            rem(huntWolf); rem(huntHare); rem(hare2);
 
             // DF 6. Defensive retaliation: cornered/threatened beast (boar, hunt.flees false) retaliates instead of fleeing
             const defBoar = add("boar", px, py, { ai: "wander", state: "idle" });
             const boarThreat = add("wolf", px + 1, py, { ai: "none" });
             fleeTick(W, 270);
-            const boarRetaliated = defBoar.data.state === "retaliate";
+            const boarRetaliated = stanceOf(defBoar) === "retaliate";
             const boarStayed = defBoar.goal === null;
             t.check("defensive_retaliation", boarRetaliated && boarStayed,
-                `boar (flees false) near wolf retaliated: ${boarRetaliated} (state ${defBoar.data.state}), stayed put: ${boarStayed}`);
+                `boar (flees false) near wolf retaliated: ${boarRetaliated} (stance ${stanceOf(defBoar)}), stayed put: ${boarStayed}`);
+
+            // FAUNA.ECS: behaviour lives in UF.ECS only; no creature keeps the old unit.data fields.
+            const legacyHolders = W.units().filter(u => u.data && u.data.kind === "creature" && LEGACY_FIELDS.some(k => u.data[k] !== undefined));
+            // A save from before FAUNA.ECS: seedCreature moves the old fields into the slots (an unused id, cleared after).
+            const ghostId = W.state.nextUnitId;
+            const ghost = { id: ghostId, data: { kind: "creature", species: "deer", state: "flee", alarmedAt: 900, feedUntil: 1050 } };
+            seedCreature(ghost, 1000, false);
+            const ghostOk = ECS.isWildlife[ghostId] === 1 && STANCES[ECS.stance[ghostId] & STANCE_MASK] === "flee" && (ECS.stance[ghostId] >>> STAMP_SHIFT) === 900
+                && ECS.hunger[ghostId] === 0 && ECS.hp[ghostId] === catalogHp(speciesById("deer")) && LEGACY_FIELDS.every(k => ghost.data[k] === undefined);
+            const ghostDetail = `stance ${STANCES[ECS.stance[ghostId] & STANCE_MASK]} alarmed ${ECS.stance[ghostId] >>> STAMP_SHIFT}, hunger ${ECS.hunger[ghostId]}, hp ${ECS.hp[ghostId]}, left ${LEGACY_FIELDS.filter(k => ghost.data[k] !== undefined).join("/") || "none"}`;
+            ECS.isWildlife[ghostId] = 0; ECS.stance[ghostId] = 0; ECS.hunger[ghostId] = 0; ECS.hp[ghostId] = 0;
+            t.check("ecs_only", legacyHolders.length === 0 && ghostOk,
+                `${legacyHolders.length} creature(s) with ${LEGACY_FIELDS.join("/")} in unit.data${legacyHolders.length ? ` (first #${legacyHolders[0].id})` : ""}; legacy record seeded: ${ghostOk} (${ghostDetail}; want flee, 900, 0, deer catalog hp, none)`);
+
+            // FAUNA.ECS: the AI tick path builds no objects, arrays or closures. Each function's own source (comments
+            // stripped) against the allocation forms. Cache fills (cellFill, tierMap, speciesList) and buffer growth
+            // (ensureScratch) are left out on purpose: they allocate once per cell, catalog or world size, not per tick.
+            const ALLOC_FORMS = [
+                ["object literal", /(?:[=(,:?]|\breturn)\s*\{/],
+                ["array literal", /(?:[=(,:?]|\breturn)\s*\[/],
+                ["destructuring", /\b(?:const|let|var)\s*[[{]/],
+                ["constructor", /\bnew\s+[A-Za-z_$]/],
+                ["Object copy", /\bObject\.(?:create|assign|keys|values|entries|fromEntries)\b/],
+                ["array copy", /\.(?:map|filter|slice|concat|reduce|flat|flatMap|from|split)\(/],
+                ["spread or rest", /\.\.\./],
+                ["template string", /`/],
+                ["closure", /=>|\bfunction\b|\.bind\(/],
+                ["iterator", /\bfor\s*\([^;)]*\bof\b/]
+            ];
+            const allocationsIn = fn => {
+                const src = String(fn).replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
+                const arrow = src.indexOf("=>"), brace = src.indexOf("{");
+                const body = src.startsWith("function") || arrow < 0 || (brace >= 0 && brace < arrow) ? src.slice(brace + 1) : src.slice(arrow + 2);
+                return ALLOC_FORMS.filter(f => f[1].test(body)).map(f => f[0]);
+            };
+            const tickPath = [tick, sleepTick, grazeTick, wanderTick, fleeTick, predatorTick, viewArea, syncFlags, idBound,
+                sleepRule, grazeReady, wanderReady, calmRule, alarmRule, herdAlarmRule, withState, alarmedNow, alarmedWithin, calmedAfter,
+                huntersByPrey, threatKindOf, nearestThreat, alarmHerd, fleeStep, occupy, vacate, occupied, onGrid, chunkPush, sendTo,
+                wanderGoal, rngNext, foodDirection, isVegetationAt, walkableFor, eventAtNt, allowedCell, allowedInRegion, tierIndex,
+                cellGroundAndBiome, hasJob, nearestPreyOf, strikePrey, readPreyHp, strikeDamage, strikeRng, huntWeaponKey, huntSeed,
+                holdPredatorSwing, stalk, emitKill, catalogAttack, catalogHp, hash4, hash5, unit01x4, fnv, mix32, speciesOf, speciesById,
+                activityOf, currentDayPhase, cheb, sameArea, World, catalog, now];
+            const allocating = tickPath.map(fn => ({ name: fn.name, forms: allocationsIn(fn) })).filter(r => r.forms.length);
+            t.check("ai_allocation_free", allocating.length === 0,
+                `${tickPath.length} functions on the AI tick path; ${allocating.length ? allocating.map(r => `${r.name}: ${r.forms.join(", ")}`).join("; ") : "none builds an object, array or closure"}`);
 
             await t.waitFrames(3);
             t.screenshot("df_behaviors");
