@@ -1,0 +1,39 @@
+PASS: plugin_loads - handlers structure; armed true
+PASS: subscribed_to_events - levels:strataChanged +1, objects:changed +1, objects:levelChanged +1
+PASS: no_frame_hook - 55 methods unchanged
+PASS: setup_held - drained true in 218 ticks; held 8036, falls 0, commits 0; scenario cells moved: none
+PASS: explain_held - {"verdict":"held","anchor":{"x":63,"y":64,"z":-2,"s":0},"chain":17,"reads":19,"reason":"held: a chain of 17 solid blocks reaches the bottom of the world at (63,64) level -2"}
+PASS: handlers_enqueue_seeds - queue 0 -> 27; destroyed 5
+PASS: handlers_read_nothing - reads 111383 -> 111383; ticks 218 -> 218
+PASS: cave_in_falls - landed 18/18; (45,45) z0 stone/stone/stone/stone/stone z1 stone/air/air/air/air; commits 0 -> 2 in 5 ticks
+PASS: structure_fell_once_per_fall - structure:fell 2, commits 2
+PASS: fall_moves_matter_only - census same; items {"n":1,"count":3} -> {"n":1,"count":3}; uncovered matter calls 0
+PASS: crushed_unit_dies - deaths [{"id":1,"cause":"crushed"}]; beside alive true
+PASS: items_relocate_not_destroyed - item at (43,43) z 0 count 3, standable true
+PASS: one_commit_per_tick - commits per serviced tick: 11; deferred 1; landed true
+PASS: never_falls_on_budget - serviced ticks before the commit 1; reads per tick 512,2670,0,0,0,0,0,0,0,0,0,0,0,0,402,512,512,512,512,512,512,430
+PASS: per_tick_bound - ticks over 512 without a commit: 0; debt after the commit 6254
+PASS: big_piece_lands - 256/256 cells; last fall {"tick":227,"area":{"x":0,"y":0},"drop":9,"blocks":256,"objects":0,"cells":512,"seed":"0,0,53,60,90","contact":{"x":53,"y":60,"g":80}}
+PASS: slab_into_pool_conserves_water - cap 7; water mass 7 -> 7, volume 7 -> 7; z0 stone/stone/stone/stone/stone depth 0; z1 depth 7
+PASS: fall_writes_no_fluid - UF.Fluid.setCell inside the structure tick: 0 from outside DEUS_Fluid, 1 from Fluid's own listeners
+PASS: save_load_restarts_checks - seeds saved 27 of 27 queued; without the section the block stays; restored 27; after the load it fell
+PASS: observe_mode_commits_nothing - commits 7 -> 7; observed 0 -> 5; block stone/stone/stone/stone/stone
+PASS: explain_falls - {"verdict":"falls","size":5,"drop":4,"dropFeet":8,"reason":"falls: 5 blocks with no chain to the bottom of the world; they drop 8 ft"}
+PASS: idle_zero_work - 10000 ticks; serviced 0, idle 10000, reads 0; lookups in the tick: strataAt 0, objectsAtIn 0, unitsInArea 0, units 0, itemsAtIn 0
+PASS: no_errors - none
+
+RESULT: PASS (23 passed, 0 failed; 29.6 s)
+
+=== Mutants: each must turn its check red ===
+CAUGHT: no_subscribe -> subscribed_to_events (exit 1; failing: subscribed_to_events, setup_held, handlers_enqueue_seeds, cave_in_falls, structure_fell_once_per_fall, crushed_unit_dies, items_relocate_not_destroyed, one_commit_per_tick, never_falls_on_budget, per_tick_bound, big_piece_lands, slab_into_pool_conserves_water, save_load_restarts_checks, observe_mode_commits_nothing)
+CAUGHT: drop_events -> handlers_enqueue_seeds (exit 1; failing: handlers_enqueue_seeds, cave_in_falls, structure_fell_once_per_fall, crushed_unit_dies, items_relocate_not_destroyed, one_commit_per_tick, never_falls_on_budget, per_tick_bound, big_piece_lands, slab_into_pool_conserves_water, save_load_restarts_checks, observe_mode_commits_nothing)
+CAUGHT: frame_hook -> no_frame_hook (exit 1; failing: no_frame_hook)
+CAUGHT: convert_to_item -> fall_moves_matter_only (exit 1; failing: fall_moves_matter_only)
+CAUGHT: uncapped_commit -> one_commit_per_tick (exit 1; failing: one_commit_per_tick)
+CAUGHT: no_budget -> never_falls_on_budget (exit 1; failing: never_falls_on_budget, per_tick_bound)
+CAUGHT: crush_survives -> crushed_unit_dies (exit 1; failing: crushed_unit_dies)
+CAUGHT: items_destroyed -> items_relocate_not_destroyed (exit 1; failing: fall_moves_matter_only, items_relocate_not_destroyed)
+CAUGHT: save_nothing -> save_load_restarts_checks (exit 1; failing: save_load_restarts_checks)
+CAUGHT: observe_commits -> observe_mode_commits_nothing (exit 1; failing: observe_mode_commits_nothing, explain_falls)
+CAUGHT: idle_service -> idle_zero_work (exit 1; failing: idle_zero_work)
+MUTANTS: 11/11 caught
