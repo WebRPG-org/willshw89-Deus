@@ -90,7 +90,9 @@
         if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
         if (v.loopX) x = mod(x, v.width);
         if (v.loopY) y = mod(y, v.height);
-        return `${Math.floor(x / BUCKET)},${Math.floor(y / BUCKET)}`;
+        const bx = Math.floor(x) >> 3;
+        const by = Math.floor(y) >> 3;
+        return (bx & 0xFFFF) | ((by & 0xFFFF) << 16);
     }
     function axisBuckets(lo, hi, size, loop) {
         const result = new Set();
@@ -240,7 +242,7 @@
             o.queried.clear();
             for (const e of o.active) o.dirty.add(e);
             for (const x of xs) for (const y of ys) {
-                const key = `${x},${y}`;
+                const key = (x & 0xFFFF) | ((y & 0xFFFF) << 16);
                 o.queried.add(key);
                 const bucket = o.buckets.get(key);
                 if (bucket) for (const e of bucket) { o.dirty.add(e); o.visited++; }
