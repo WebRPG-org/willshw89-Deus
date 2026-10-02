@@ -458,6 +458,175 @@
     window.UF.Space = Space;
 
     //-------------------------------------------------------------------------
+    // Chunk state machine (WG.00.45). Empty -> Terrain Generated -> Populated.
+    // Population (flora in WorldGen, fauna here) waits until every in-world chunk of the
+    // eight around the chunk is at least Terrain Generated. Ensuring that terrain does
+    // not populate those neighbors, so a border feature cannot cascade across the map.
+    // A slot past the world grid is not a chunk and does not block.
+
+    const CHUNK_TILES = 16;
+    const CHUNK_EMPTY = 0;
+    const CHUNK_TERRAIN = 1;
+    const CHUNK_POPULATED = 2;
+    const CHUNK_ADJ8 = Object.freeze([[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]);
+    let chunkState = new Uint8Array(0);
+    let chunkMemo = null;
+
+    function chunkLayout() {
+        const st = World.state;
+        const size = Math.max(1, (st && st.size) || CONFIG.size || 256);
+        const areasX = Math.max(1, (st && st.areasX) || CONFIG.areasX || 1);
+        const areasY = Math.max(1, (st && st.areasY) || CONFIG.areasY || 1);
+        const tiles = CHUNK_TILES;
+        return {
+            size, areasX, areasY, tiles,
+            chunksX: areasX * Math.ceil(size / tiles),
+            chunksY: areasY * Math.ceil(size / tiles),
+            seed: st ? st.seed : 0,
+            token: st || null
+        };
+    }
+    function liveChunkState() {
+        const L = chunkLayout();
+        if (!chunkMemo || chunkMemo.token !== L.token || chunkMemo.seed !== L.seed || chunkMemo.size !== L.size
+            || chunkMemo.chunksX !== L.chunksX || chunkMemo.chunksY !== L.chunksY) {
+            chunkState = new Uint8Array(L.chunksX * L.chunksY);
+            chunkMemo = L;
+        }
+        return chunkState;
+    }
+    function resetChunkState() {
+        chunkMemo = null;
+        return liveChunkState();
+    }
+    // liveChunkState() is the byte array. Dimensions live on chunkMemo, which that call refreshes.
+    function layoutNow() {
+        liveChunkState();
+        return chunkMemo;
+    }
+    function chunkInside(cx, cy, L) {
+        return !!L && cx >= 0 && cy >= 0 && cx < L.chunksX && cy < L.chunksY;
+    }
+    function chunkAt(cx, cy, L) {
+        return cy * L.chunksX + cx;
+    }
+    function areaChunkBox(ax, ay, size, L) {
+        const tiles = L.tiles;
+        return {
+            x0: Math.floor((ax * size) / tiles),
+            y0: Math.floor((ay * size) / tiles),
+            x1: Math.floor((ax * size + size - 1) / tiles),
+            y1: Math.floor((ay * size + size - 1) / tiles)
+        };
+    }
+    function markChunkTerrain(cx, cy, L) {
+        L = L || layoutNow();
+        if (!chunkInside(cx, cy, L)) return false;
+        const i = chunkAt(cx, cy, L);
+        if (chunkState[i] < CHUNK_TERRAIN) chunkState[i] = CHUNK_TERRAIN;
+        return true;
+    }
+    // Terrain only. Never populates this chunk or walks its neighbors.
+    function ensureChunkTerrain(cx, cy) {
+        const L = layoutNow();
+        if (!chunkInside(cx, cy, L)) return false;
+        const i = chunkAt(cx, cy, L);
+        if (chunkState[i] >= CHUNK_TERRAIN) return true;
+        chunkState[i] = CHUNK_TERRAIN;
+        try {
+            const G = window.UF && UF.WorldGen;
+            if (G && typeof G.realizeChunkTerrain === "function") G.realizeChunkTerrain(cx, cy);
+        } catch (e) {
+            if (chunkState[i] === CHUNK_TERRAIN) chunkState[i] = CHUNK_EMPTY;
+            throw e;
+        }
+        return chunkState[i] >= CHUNK_TERRAIN;
+    }
+
+    World.chunkTiles = CHUNK_TILES;
+    World.CHUNK_EMPTY = CHUNK_EMPTY;
+    World.CHUNK_TERRAIN = CHUNK_TERRAIN;
+    World.CHUNK_POPULATED = CHUNK_POPULATED;
+    World.CHUNK_ADJ8 = CHUNK_ADJ8;
+    Object.defineProperty(World, "chunkState", {
+        enumerable: true,
+        get() { return liveChunkState(); }
+    });
+    World.resetChunkState = resetChunkState;
+    World.chunkOfCell = function(ax, ay, x, y) {
+        const L = layoutNow();
+        const gx = (ax | 0) * L.size + (x | 0);
+        const gy = (ay | 0) * L.size + (y | 0);
+        return { cx: Math.floor(gx / L.tiles), cy: Math.floor(gy / L.tiles) };
+    };
+    World.chunkInside = (cx, cy) => chunkInside(cx, cy, layoutNow());
+    /** True when this chunk is at least Terrain Generated and so is every in-world neighbor of the eight. */
+    World.populationAllowed = function(cx, cy) {
+        const L = layoutNow();
+        if (!chunkInside(cx, cy, L)) return false;
+        if (chunkState[chunkAt(cx, cy, L)] < CHUNK_TERRAIN) return false;
+        for (let n = 0; n < CHUNK_ADJ8.length; n++) {
+            const nx = cx + CHUNK_ADJ8[n][0], ny = cy + CHUNK_ADJ8[n][1];
+            if (!chunkInside(nx, ny, L)) continue;
+            if (chunkState[chunkAt(nx, ny, L)] < CHUNK_TERRAIN) return false;
+        }
+        return true;
+    };
+    World.markChunkTerrain = (cx, cy) => markChunkTerrain(cx, cy);
+    World.ensureChunkTerrain = ensureChunkTerrain;
+    /** Terrain for this chunk and the eight around it. Does not populate any of them. */
+    World.prepareChunkPopulation = function(cx, cy) {
+        ensureChunkTerrain(cx, cy);
+        for (let n = 0; n < CHUNK_ADJ8.length; n++) ensureChunkTerrain(cx + CHUNK_ADJ8[n][0], cy + CHUNK_ADJ8[n][1]);
+        return this.populationAllowed(cx, cy);
+    };
+    World.markChunkPopulated = function(cx, cy) {
+        const L = layoutNow();
+        if (!chunkInside(cx, cy, L) || !this.populationAllowed(cx, cy)) return false;
+        chunkState[chunkAt(cx, cy, L)] = CHUNK_POPULATED;
+        return true;
+    };
+    /**
+     * The area's own chunks are already painted by the generator, so they are stamped Terrain Generated
+     * without a second pass. The one-chunk ring outside the area is terrain-realized and not populated.
+     */
+    World.sealAreaTerrain = function(ax, ay, size) {
+        const L = layoutNow();
+        const box = areaChunkBox(ax | 0, ay | 0, size || L.size, L);
+        for (let cy = box.y0; cy <= box.y1; cy++) {
+            for (let cx = box.x0; cx <= box.x1; cx++) markChunkTerrain(cx, cy, L);
+        }
+        for (let cy = box.y0 - 1; cy <= box.y1 + 1; cy++) {
+            for (let cx = box.x0 - 1; cx <= box.x1 + 1; cx++) {
+                if (cx >= box.x0 && cx <= box.x1 && cy >= box.y0 && cy <= box.y1) continue;
+                ensureChunkTerrain(cx, cy);
+            }
+        }
+    };
+    World.markAreaPopulated = function(ax, ay, size) {
+        const L = layoutNow();
+        const box = areaChunkBox(ax | 0, ay | 0, size || L.size, L);
+        let n = 0;
+        for (let cy = box.y0; cy <= box.y1; cy++) {
+            for (let cx = box.x0; cx <= box.x1; cx++) if (this.markChunkPopulated(cx, cy)) n++;
+        }
+        return n;
+    };
+    function isFaunaSpec(spec) {
+        const kind = spec && spec.data && spec.data.kind;
+        return kind === "creature" || kind === "fauna" || kind === "wildlife" || kind === "animal";
+    }
+    // Fauna is instantiated only after the chunk's neighborhood is at least Terrain Generated.
+    function acceptFauna(spec) {
+        const area = spec && spec.area;
+        if (!area || !World.state) return false;
+        const c = World.chunkOfCell(area.x, area.y, spec.x | 0, spec.y | 0);
+        if (!World.populationAllowed(c.cx, c.cy)) World.prepareChunkPopulation(c.cx, c.cy);
+        if (!World.populationAllowed(c.cx, c.cy)) return false;
+        return World.markChunkPopulated(c.cx, c.cy);
+    }
+
+    //-------------------------------------------------------------------------
     // UF.Sim (WG.00.44): the one loader for the pure game/js/sim modules, and the New-Game matter-opener registry.
     // It lives here (plugins.js index 5) so DEUS_WorldGen (6) can register openers while UF.Levels (35) doesn't exist yet.
 
@@ -687,6 +856,7 @@
         };
         zResync();
         buildCache.clear();
+        resetChunkState();
         offOcc = null;
         clearPaths(true);
         spawnStats = newSpawnStats();
@@ -1509,6 +1679,7 @@
         // The unit's level: spec.z, else spec.area.z, else the ground. A level outside the world's Z range is refused (VISION V80).
         const z = spec.z !== undefined ? spec.z : zOf(spec.area);
         if (!isLevel(z)) throw new Error(`UF_World.addUnit: level ${JSON.stringify(z)} doesn't exist (levels are ${zSync().zMin}..+${zr.zMax})`);
+        if (isFaunaSpec(spec) && !acceptFauna(spec)) return null;
         const id = st.nextUnitId++;
         const image = spec.image || {};
         const data = spec.data || {};
@@ -3505,6 +3676,7 @@
             armSimClock();
         }
         zResync();
+        resetChunkState();
         if (World.state && !World.state.objectDiffs) World.state.objectDiffs = {};
         spawnStats = newSpawnStats();
         buildCache.clear();

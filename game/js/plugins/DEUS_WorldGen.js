@@ -1212,6 +1212,72 @@
     };
 
     //-------------------------------------------------------------------------
+    // Chunk population gate (WG.00.45). chunkState is the world's Uint8Array:
+    // Empty (0) -> Terrain Generated (1) -> Populated (2). Flora is written only
+    // where populationAllowed is true, which requires the eight adjacent chunks
+    // (those that exist) to be at least Terrain Generated. Realizing a neighbor
+    // chunk classifies its terrain and does not place its flora or fauna.
+
+    const CHUNK_EMPTY = 0;
+    const CHUNK_TERRAIN = 1;
+    const CHUNK_POPULATED = 2;
+    let chunkState = new Uint8Array(0);
+    let realizingChunkTerrain = false;
+
+    function bindChunkState() {
+        const W = window.UF && UF.World;
+        if (W && W.chunkState instanceof Uint8Array) chunkState = W.chunkState;
+        return chunkState;
+    }
+    function floraAllowed(ax, ay, x, y) {
+        const W = window.UF && UF.World;
+        if (!W || typeof W.populationAllowed !== "function" || typeof W.chunkOfCell !== "function") return true;
+        const c = W.chunkOfCell(ax, ay, x, y);
+        return W.populationAllowed(c.cx, c.cy);
+    }
+    function sealChunkPopulation(ax, ay, size) {
+        const W = window.UF && UF.World;
+        if (W && typeof W.sealAreaTerrain === "function") W.sealAreaTerrain(ax, ay, size);
+        bindChunkState();
+    }
+    function finishChunkPopulation(ax, ay) {
+        const W = window.UF && UF.World;
+        if (W && typeof W.markAreaPopulated === "function") W.markAreaPopulated(ax, ay);
+        bindChunkState();
+    }
+    // Classify one chunk's terrain. Does not write objects and does not touch neighbor chunks.
+    function realizeChunkTerrain(cx, cy) {
+        if (realizingChunkTerrain) return;
+        const st = window.UF && UF.World && UF.World.state;
+        const m = compiled();
+        if (!st || !m) return;
+        realizingChunkTerrain = true;
+        try {
+            const tiles = (UF.World && UF.World.chunkTiles) || 16;
+            const d = dims(st);
+            const wm = waterModels(st);
+            const cell = {};
+            const x0 = cx * tiles, y0 = cy * tiles;
+            const x1 = Math.min(d.width, x0 + tiles), y1 = Math.min(d.height, y0 + tiles);
+            for (let gy = Math.max(0, y0); gy < y1; gy++) {
+                for (let gx = Math.max(0, x0); gx < x1; gx++) resolve(st.seed, d, m, wm, gx, gy, cell);
+            }
+        } finally {
+            realizingChunkTerrain = false;
+        }
+    }
+
+    WorldGen.CHUNK_EMPTY = CHUNK_EMPTY;
+    WorldGen.CHUNK_TERRAIN = CHUNK_TERRAIN;
+    WorldGen.CHUNK_POPULATED = CHUNK_POPULATED;
+    WorldGen.floraAllowed = floraAllowed;
+    WorldGen.realizeChunkTerrain = realizeChunkTerrain;
+    Object.defineProperty(WorldGen, "chunkState", {
+        enumerable: true,
+        get() { return bindChunkState(); }
+    });
+
+    //-------------------------------------------------------------------------
     // The generator
 
     function generate(ctx) {
@@ -1364,6 +1430,8 @@
         }
 
         // 5. Objects (section 3.6): the biome's plant table in catalog order, seeded patches, first hit wins, no caps.
+        // Flora is instantiated only once this area is Terrain Generated and the adjacent chunks are too.
+        sealChunkPopulation(ctx.areaX, ctx.areaY, size);
         const objects = ctx.objects;
         const counts = {};
         const biomeCells = {};
@@ -1375,6 +1443,7 @@
                 biomeCells[m.biomeIds[biome[i]]] = (biomeCells[m.biomeIds[biome[i]]] || 0) + 1;
                 if (objects[i] || (siteMask && siteMask[i]) || (start && inClearing(x, y)) || ctx.isTemplateCell(x, y)) continue;
                 if (flags[i] & FLAG_PEAK) continue;
+                if (!floraAllowed(ctx.areaX, ctx.areaY, x, y)) continue;
                 // Anchor surface objects to actual surface elevation (S === z)
                 if (L && typeof L.surfaceElevationAt === "function") {
                     const S = L.surfaceElevationAt(gx, gy, seed);
@@ -1398,6 +1467,7 @@
                 }
             }
         }
+        finishChunkPopulation(ctx.areaX, ctx.areaY);
         if (z === 0) {
             for (const s of sites) {
                 for (const piece of s.pieces || []) {
@@ -1790,8 +1860,10 @@
             }
             return false;
         };
+        sealChunkPopulation(ctx.areaX, ctx.areaY, size);
         for (let i = 0; i < cells; i++) {
             if (!dry[i] || siteMask[i] || ctx.objects[i]) continue;
+            if (!floraAllowed(ctx.areaX, ctx.areaY, i % size, (i / size) | 0)) continue;
             for (const p of kit.natural) {
                 if (p.biomes && !p.biomes.includes(biomes[i])) continue;
                 if (p.nearWater > 0 && !nearWater(i, p.nearWater)) continue;
@@ -1803,6 +1875,7 @@
                 break;
             }
         }
+        finishChunkPopulation(ctx.areaX, ctx.areaY);
         centres.forEach((c, ci) => {
             // Flood only dry floor in this pocket; a kit never spawns beyond a rock barrier.
             const reached = new Set(), queue = [c.y * size + c.x];
