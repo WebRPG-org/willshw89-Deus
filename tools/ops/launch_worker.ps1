@@ -68,7 +68,7 @@ function Get-DeusProviderFamily([string]$Provider) {
     return $null
 }
 
-function Get-DeusKnownProviders { return @('claude', 'fable', 'opus', 'sonnet', 'haiku', 'grok', 'codex', 'gemini') }
+function Get-DeusKnownProviders { return @('claude', 'fable', 'opus', 'sonnet', 'haiku', 'grok', 'codex', 'gemini', 'minimax') }
 
 function ConvertTo-DeusArg([string]$Value) {
     # Quote one argument for CommandLineToArgvW / the MSVC runtime.
@@ -88,6 +88,7 @@ function Get-DeusProviderSpec {
     param([string]$Provider, [string]$PromptPath, [switch]$Probe)
     $npm = Join-Path $env:APPDATA 'npm'
     switch ($Provider) {
+        'minimax' { return @{ Exe = 'node.exe'; Args = ('tools/ops/minimax_cli.js --prompt-file ' + (ConvertTo-DeusArg $PromptPath)); StdinPrompt = $false } }
         'minimax' { return $ArgLine }
         'minimax' { return @{ Exe = 'node'; Args = 'tools/ops/minimax_cli.js ' + (ConvertTo-DeusArg $PromptPath); StdinPrompt = $false } }
         { $_ -in 'claude', 'fable', 'opus', 'sonnet', 'haiku' } {
