@@ -44,6 +44,15 @@
  */
 
 (() => {
+window.UF = window.UF || {};
+window.UF.ECS = window.UF.ECS || {
+    hp: new Float32Array(65536),
+    hunger: new Float32Array(65536),
+    stance: new Int32Array(65536),
+    isColonist: new Uint8Array(65536),
+    isWildlife: new Uint8Array(65536)
+};
+
     "use strict";
 
     const DECIDE_EVERY = 60;        // ticks between decisions of one idle colonist (one game second)
@@ -1574,7 +1583,7 @@
         return !!t && (t.stage === "overheated" || t.stage === "heatstroke");
     };
     const waterNeed = u => WATER_GAL_PER_DAY * (hotWeather(u) ? 2 : 1);
-    const unconscious = u => !!u && !!u.data && Number.isFinite(u.data.hp) && u.data.hp <= 0;
+    const unconscious = u => !!u && !!u.data && Number.isFinite(window.UF.ECS.hp[u.id]) && window.UF.ECS.hp[u.id] <= 0;
 
     // The SRD needs record on a colonist; an older meter record (hunger/thirst/sleep) is replaced on sight.
     function ensureNeeds(u) {
@@ -1606,7 +1615,7 @@
         const job = J ? J.of(u.id) : null;
         if (job) J.cancel(job.id, `died of ${cause}`);
         u.data.dead = true;
-        if (Number.isFinite(u.data.hp)) u.data.hp = 0;
+        if (Number.isFinite(window.UF.ECS.hp[u.id])) window.UF.ECS.hp[u.id] = 0;
         delete u.data.dying;
         const c = colonyState(u);
         if (c && Array.isArray(c.log)) c.log.push({ tick: ticks(), text: `${u.name || "A colonist"} died of ${cause}` });
@@ -1670,7 +1679,12 @@
     // Every NEEDS_EVERY ticks (from the map-update alias), over the cached colonist list: the day boundary, nothing else.
     function tickNeeds() {
         const today = dayKey();
-        for (const u of colonists()) {
+        const maxEcs = (World() && World().state) ? World().state.nextUnitId : 0;
+        for (let i = 0; i < maxEcs; i++) {
+            if (!window.UF.ECS.isColonist[i]) continue;
+            const u = World().unit(i);
+            if (!u) continue;
+
             const n = ensureNeeds(u);
             if (n && n.day !== today) endOfDay(u, n);
         }
@@ -1994,7 +2008,7 @@
     function regainConsciousness(u, how) {
         if (!u || !u.data) return;
         delete u.data.dying;
-        if (Number.isFinite(u.data.hp) && u.data.hp < 1) u.data.hp = 1;
+        if (Number.isFinite(window.UF.ECS.hp[u.id]) && window.UF.ECS.hp[u.id] < 1) window.UF.ECS.hp[u.id] = 1;
         addThought(u, "Came to.", 6);
         emit("colonists:conscious", u, how);
         pendingDecision.add(u.id);
@@ -2136,7 +2150,7 @@
         n.lastRestDay = dayKey();
         n.wokeTick = ticks(); // breakfast follows (DEUS-TSK-FABLE-14)
         const d = u.data;
-        if (Number.isFinite(d.hp) && Number.isFinite(d.maxHp) && d.hp >= 1) d.hp = d.maxHp;
+        if (Number.isFinite(window.UF.ECS.hp[u.id]) && Number.isFinite(d.maxHp) && window.UF.ECS.hp[u.id] >= 1) window.UF.ECS.hp[u.id] = d.maxHp;
         if (n.exhaustion > 0) {
             const food = (n.foodLb || 0) + (n.foodYesterday || 0);
             const water = (n.waterGal || 0) + (n.waterYesterday || 0);
@@ -2385,7 +2399,7 @@
         if (u.data.postPartumUntil && ticks() < u.data.postPartumUntil) return false;
         if (isSettler(u)) {
             const n = u.data.needs || {};
-            if (n.hunger >= 75 || n.thirst >= 75 || n.sleep >= 85) return false;
+            if (window.UF.ECS.hunger[u.id] >= 75 || n.thirst >= 75 || n.sleep >= 85) return false;
         }
         return true;
     }
@@ -2701,7 +2715,7 @@
             childUnit.data.className = childUnit.data.dnd.name;
             childUnit.data.hitDie = childUnit.data.dnd.hitDie;
             childUnit.data.hpMax = childUnit.data.dnd.hpMax;
-            childUnit.data.hp = childUnit.data.dnd.hp;
+            window.UF.ECS.hp[childUnit.id] = childUnit.data.dnd.hp;
             childUnit.data.ac = childUnit.data.dnd.ac;
             childUnit.data.savingThrows = childUnit.data.dnd.savingThrows;
         }
@@ -2888,7 +2902,7 @@
         if (!u || !u.data || u.data.dead) return;
         u.data.deathCause = "old_age";
         u.data.dead = true;
-        u.data.hp = 0;
+        window.UF.ECS.hp[u.id] = 0;
 
         // Mourning thoughts for family and household members
         const House = window.UF && UF.Households;
@@ -5304,11 +5318,11 @@
         const due = [];
         for (const id of pendingDecision) { const u = colonist(id); if (u) due.push({ u, now: true }); }
         pendingDecision.clear();
-        if (sweep) for (const u of colonists()) if (!due.some(d => d.u === u)) due.push({ u, now: false });
+        if (sweep) { const maxEcs = World().state.nextUnitId; for (let i = 0; i < maxEcs; i++) { if (!window.UF.ECS.isColonist[i]) continue; const u = World().unit(i); if (u && !due.some(d => d.u === u)) due.push({ u, now: false }); } }
         // The dying roll their saving throws by the round; one unstable patient without a rescuer on the way pulls the
         // nearest ordinary worker off its job ("emergency: aid"), once per PREEMPT_EVERY per worker.
         if (sweep) {
-            const all = colonists();
+            const all = []; const maxEcs2 = World().state.nextUnitId; for (let i = 0; i < maxEcs2; i++) { if (window.UF.ECS.isColonist[i]) { const u = World().unit(i); if (u) all.push(u); } }
             if (bedsDirty) allocateBeds(); // a bed was built or someone arrived: the unbedded claim beds (DEUS-TSK-FABLE-13)
             for (const u of all) {
                 if (unconscious(u) && !u.data.dead) startDying(u); // idle or busy, 0 hit points is dying
@@ -5822,8 +5836,8 @@
         hooked = true;
         const clearUnitCaches = () => { simUnitsCache = null; colonistsCache = null; allFactionPeopleCache = null; simUnitsCacheTick = -1; allFactionPeopleCacheTick = -1; _lastHpCheckAt.clear(); };
         const clearObjectCaches = () => { planInvalidatedAt = localTicks; _planStatusCacheById.clear(); _siteCountCache.clear(); _sourceNearCache.clear(); };
-        UF.Events.on("world:unitAdded", clearUnitCaches);
-        UF.Events.on("world:unitRemoved", clearUnitCaches);
+        UF.Events.on("world:unitAdded", (u) => { clearUnitCaches(); if (window.UF && window.UF.ECS && u && isColonist(u)) window.UF.ECS.isColonist[u.id] = 1; });
+        UF.Events.on("world:unitRemoved", (uOrId) => { clearUnitCaches(); const id = (typeof uOrId === 'object' && uOrId ? uOrId.id : uOrId); if (window.UF && window.UF.ECS && id != null) window.UF.ECS.isColonist[id] = 0; });
         UF.Events.on("combat:kill", clearUnitCaches);
         UF.Events.on("combat:hit", ev => { try { noteThreat(ev); } catch (e) { console.error(e); } });
         UF.Events.on("world:unitMoved", (u, from, to) => { try { onUnitMoved(u, from, to); } catch (e) { console.error(e); } });
