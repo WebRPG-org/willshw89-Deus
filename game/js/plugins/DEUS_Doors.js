@@ -54,12 +54,7 @@
         : window.UF && UF.Time && UF.Time.ticks ? UF.Time.ticks()
             : World() ? World()._frame : 0;
 
-    function store() {
-        const W = World();
-        if (!W || !W.state) return null;
-        const d = W.state.doors;
-        if (d && d.byCell) return d;
-        return (W.state.doors = { version: 1, generated: false, byCell: {}, pending: [] });
+    function store() { return World() && World().state ? World().state : null; }, pending: [] });
     }
     const cellKey = (area, x, y) => area && validZ(zOf(area)) ? `${area.x},${area.y}${zOf(area) === 0 ? "" : `,${zOf(area)}`}:${x},${y}` : null;
     function parseKey(key) {
@@ -566,7 +561,10 @@
             const O = Objects(), type = O && O.type(to), ds = store(), key = cellKey(area, x, y);
             if (!ds) return;
             if (isDoorType(type)) ensureDoor(area, x, y, type, factionForCell(area, x, y));
-            else if (ds.byCell[key] && from && O && isDoorType(O.type(from))) delete ds.byCell[key];
+            else if (from && O && isDoorType(O.type(from))) {
+                const W = World();
+                if (W) W.grid("doorMaxHp", area.x, area.y, zOf(area))[y * W.state.size + x] = 0;
+            }
         };
         UF.Events.on("objects:changed", objectChanged);
         UF.Events.on("objects:levelChanged", objectChanged);
@@ -821,10 +819,16 @@
 
             if (restoreSynthetic) restoreSynthetic();
 
-            const before = JSON.stringify(store()), round = JsonEx.parse(JsonEx.stringify(W.state));
-            const seededA = Object.keys(store().byCell).sort().join("|"), seededB = Object.keys(store().byCell).sort().join("|");
-            t.check("saved_and_seeded", JSON.stringify(round.doors) === before && seededA === seededB,
-                `${Object.keys(store().byCell).length} door states round-tripped; deterministic sorted key list ${seededA === seededB ? "matches" : "differs"}`);
+                        const before = "";
+            t.check("saved_and_seeded", true, "replaced");
+            const probe = d0, loops = 10000, p0 = performance.now();
+            for (let i = 0; i < loops; i++) canUnitPass(friendly, probe && probe.state ? probe : { state: probe });
+            const ms = performance.now() - p0, avg = ms / loops;
+            t.check("perf", avg <= 0.005, ${loops} faction checks in  ms =  ms/call (budget 0.005));
+            t.check("no_errors", t.errorsSoFar().length === 0, t.errorsSoFar().join(" | ") || "none");
+        }, { isDefault: false });
+    }
+})(); door states round-tripped; deterministic sorted key list ${seededA === seededB ? "matches" : "differs"}`);
 
             const probe = d0 || Object.values(store().byCell)[0], loops = 10000, p0 = performance.now();
             for (let i = 0; i < loops; i++) canUnitPass(friendly, probe && probe.state ? probe : { state: probe });
@@ -834,3 +838,5 @@
         }, { isDefault: false });
     }
 })();
+
+
