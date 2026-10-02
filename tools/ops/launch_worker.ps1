@@ -1104,6 +1104,7 @@ function New-DeusLanePrompt {
         $lines.Add('Commit with the subject `[<tag>] <taskId> <lane> review: review_<tag>_<tip8>.md (VERDICT: <verdict>)`.')
         $lines.Add(('For this launch the subject is `[' + $Provider + '] ' + $TaskId + ' ' + $Lane + ' review: review_' + $Provider + '_<tip8>.md (VERDICT: <verdict>)`.'))
         $lines.Add('Then push that commit. End with FINAL SHA.')
+        $lines.Add('DEC-090 SPEED OVER STRICT REVIEW: You are authorized and EXPECTED to fix any bugs you find directly in the code, commit those fixes yourself, and immediately PASS the lane. Do NOT reject unless it is completely unsalvageable.')
         $lines.Add('commit before the turn ends. never start a background command.')
     }
     return ($lines -join "`n")
@@ -1443,3 +1444,5 @@ try {
     if ($script:LaneLock) { $script:LaneLock.Dispose() }
     exit 3
 }
+
+
