@@ -532,6 +532,69 @@
     objectAction("quarry", "Quarrying");
     objectAction("mine", "Mining");
 
+    // Vertical designations name the cell occupied by the worker. The supporting surface can
+    // be S0..S4 in that cell, or S4 of the level below when this cell has no base.
+    // A ceiling begins at least four air strata above that surface (the standing clearance).
+    function verticalStratum(type, target) {
+        const W = World(), L = window.UF && UF.Levels;
+        if (!W || !L || !target || !validLevel(target) ||
+            typeof L.strataAt !== "function" || typeof L.worldStrataElevationAt !== "function") return null;
+        const z = zOf(target), bottom = W.levels()[0];
+        const elevation = L.worldStrataElevationAt(target);
+        if (elevation < 0) return null;
+        const surfaceZ = Math.floor(elevation / 5) + bottom;
+        const surfaceS = elevation % 5;
+        if (type === "dig_down" && surfaceZ === bottom && surfaceS === 0) return null;
+        const first = type === "dig_down" ? elevation : elevation + 5;
+        const last = type === "dig_down" ? elevation : Math.min(first + 4, (W.levels().length * 5) - 1);
+        for (let e = first; e <= last; e++) {
+            const rockZ = Math.floor(e / 5) + bottom, s = e % 5;
+            const ref = { area: copyArea(target.area), x: target.x, y: target.y, z: rockZ };
+            const strata = L.strataAt(ref);
+            if (strata && strata.hp[s] > 0 && strata.materials[s] !== "air" &&
+                strata.materials[s] !== "water" && strata.materials[s] !== "lava") {
+                return { ref, s, material: strata.materials[s], byte: strata.bytes[s] };
+            }
+        }
+        return null;
+    }
+    for (const [type, verb, label] of [["dig_down", "Digging down", "Digging down"],
+        ["mine_ceiling", "Mining ceiling", "Mining the ceiling"]]) define(type, {
+        verb,
+        plan(job, unit) {
+            if (!sameLevel(job.target, unit)) return { ok: false, reason: "the worker is on another level" };
+            const rock = verticalStratum(type, job.target);
+            if (!rock) return { ok: false, reason: type === "dig_down" ? "no diggable floor" : "no reachable ceiling" };
+            const stand = { area: copyArea(job.target.area), x: job.target.x, y: job.target.y, z: zOf(job.target) };
+            if (!standableIn(lv(stand), stand.x, stand.y, unit.id)) return { ok: false, reason: "can't stand there" };
+            job.params.vertical = { z: rock.ref.z, s: rock.s, byte: rock.byte };
+            return { ok: true, stand };
+        },
+        work: 180,
+        apply(job, unit) {
+            const L = window.UF && UF.Levels, I = Items();
+            const rock = verticalStratum(type, job.target), planned = job.params.vertical;
+            if (!rock || !planned || rock.ref.z !== planned.z || rock.s !== planned.s || rock.byte !== planned.byte) {
+                job.reason = "the stratum changed";
+                return false;
+            }
+            const strata = L.strataAt(rock.ref);
+            const m = strata.bytes.slice(), hp = strata.hp.slice();
+            m[rock.s] = 0; hp[rock.s] = 0;
+            if (!L.setStrata(rock.ref, { m, hp, connector: strata.connector || 0 }, { cause: "jobs:" + type })) {
+                job.reason = L.lastRefusal && L.lastRefusal() ? L.lastRefusal().reason : "couldn't remove the stratum";
+                return false;
+            }
+            const item = rock.material === "wood" ? "log" : "stone";
+            const yields = { [item]: 1 };
+            matterNote("mine", { material: rock.material, slices: 1, legacyYields: yields, cause: "jobs:" + type,
+                at: { x: rock.ref.x, y: rock.ref.y, z: rock.ref.z, s: rock.s } });
+            if (I && typeof I.drop === "function") matterCover(() => I.drop(lv(job.target), job.target.x, job.target.y, item, 1, unit.id));
+            job.result = { z: rock.ref.z, stratum: rock.s, material: rock.material, yields };
+        },
+        describe: () => label
+    });
+
     const moveHandler = verb => ({
         verb,
         plan(job, unit) {
@@ -1658,7 +1721,7 @@
         if (unit && window.UF && UF.Proficiency && typeof UF.Proficiency.gainXp === "function") {
             let profId = job.type;
             if (job.type === "chop") profId = "woodcutting";
-            else if (job.type === "mine" || job.type === "quarry") profId = "mining";
+            else if (job.type === "mine" || job.type === "quarry" || job.type === "dig_down" || job.type === "mine_ceiling") profId = "mining";
             else if (job.type === "build") profId = "carpentry";
             else if (job.type === "craft") {
                 const r = recipeOf(job.params && job.params.recipeId);
@@ -1799,6 +1862,7 @@
         get: byId,
         describe,
         standFor,
+        verticalStratum,
         standable: standableIn,
         isWaterAt: isWaterIn,
         lethalHazardAt,
@@ -1818,6 +1882,76 @@
     window.DEUS = window.DEUS || {};
     window.UF = window.DEUS;
     window.UF.Jobs = Jobs;
+
+    // A blast and a mining job both publish levels:strataChanged. Resolve a lost
+    // standing surface after the structural service has handled any falling piece.
+    // The queue is saved with jobs so a save between the write and the next tick
+    // cannot strand an occupant on a missing floor.
+    let floorQueueState = null;
+    let floorQueueKeys = new Set();
+    function queueFloorCheck(ref, change) {
+        if (!ref || !change || change.cause === "structural:fall" || !change.before || !change.after) return;
+        if (![0, 1, 2, 3, 4].some(s => change.before[1 + s] !== change.after[1 + s])) return;
+        const st = jobState(), W = World();
+        if (!st || !W) return;
+        const q = st.verticalFalls || (st.verticalFalls = []);
+        if (floorQueueState !== st) {
+            floorQueueState = st;
+            floorQueueKeys = new Set(q.map(c => `${c.area.x},${c.area.y},${c.x},${c.y},${c.z}`));
+        }
+        for (const z of [ref.z, ref.z + 1]) {
+            if (!W.isLevel(z)) continue;
+            const key = `${ref.area.x},${ref.area.y},${ref.x},${ref.y},${z}`;
+            if (floorQueueKeys.has(key)) continue;
+            floorQueueKeys.add(key);
+            q.push({ area: copyArea(ref.area), x: ref.x, y: ref.y, z });
+        }
+    }
+    function settleFloorOccupants() {
+        const st = jobState(), W = World(), L = window.UF && UF.Levels;
+        if (!st || !st.verticalFalls || !st.verticalFalls.length || !W || !L || !UF.Rules || !UF.Sim || !UF.Sim.require) return;
+        const q = st.verticalFalls.splice(0).sort((a, b) => b.z - a.z);
+        floorQueueKeys.clear();
+        const planOccupants = UF.Sim.require("structural/index").planOccupants;
+        const I = Items(), O = Objects();
+        const unitsByLevel = new Map();
+        for (const c of q) {
+            const levelKey = `${c.area.x},${c.area.y},${c.z}`;
+            if (!unitsByLevel.has(levelKey)) unitsByLevel.set(levelKey, W.unitsInArea(c.area.x, c.area.y, c.z));
+            const units = unitsByLevel.get(levelKey).filter(u => u.x === c.x && u.y === c.y && W.unit(u.id))
+                .map(u => ({ id: u.id, x: u.x, y: u.y, z: c.z }));
+            const items = I && I.atIn ? I.atIn({ x: c.area.x, y: c.area.y, z: c.z }, c.x, c.y)
+                .map(it => ({ id: it.id, x: c.x, y: c.y, z: c.z })) : [];
+            if (!units.length && !items.length) continue;
+            const at = (x, y, z) => ({ area: c.area, x, y, z });
+            const s = W.state.size, levels = W.levels();
+            const result = planOccupants({
+                queries: {
+                    derivesSolid: (x, y, z) => L.shapeAt(at(x, y, z)) === "solid",
+                    standable: (x, y, z) => L.standableShape(at(x, y, z)) && !(O && O.blocksIn({ x: c.area.x, y: c.area.y, z }, x, y)),
+                    hasStandingSurface: (x, y, z) => L.standableShape(at(x, y, z))
+                },
+                rules: UF.Rules, rng: W.mulberry32(W.hash32(W.state.seed >>> 0, c.x, c.y, c.z)),
+                zMin: levels[0], zMax: levels[levels.length - 1], radius: 3, levelFeet: 10,
+                bounds: { x0: 0, y0: 0, x1: s - 1, y1: s - 1 }, units, items, vacated: [c], filled: []
+            });
+            for (const p of result.units) {
+                const u = W.unit(p.id);
+                if (!u) continue;
+                if (p.to) W.moveUnitToLevel(u, p.to.z, p.to.x, p.to.y);
+                if (p.effect === "crush" || p.kill || (u.data && typeof u.data.hp === "number" &&
+                    (u.data.hp = Math.max(0, u.data.hp - (p.damage.damage || 0))) <= 0)) {
+                    u.data = u.data || {};
+                    u.data.deathCause = p.effect === "crush" ? "crushed" : "fall";
+                    if (!UF.Combat || !UF.Combat.onUnitDeath || UF.Combat.onUnitDeath(u, null) === false) W.removeUnit(u.id);
+                }
+            }
+            if (I) for (const p of result.items) if (p.to) I.putDown(p.id,
+                { x: c.area.x, y: c.area.y, z: p.to.z }, p.to.x, p.to.y);
+        }
+    }
+    if (UF.Events && UF.Events.on) UF.Events.on("levels:strataChanged", queueFloorCheck);
+    if (UF.Sim && UF.Sim.onTick) UF.Sim.onTick("jobs:verticalFalls", 60, settleFloorOccupants);
 
     //-------------------------------------------------------------------------
     // Engine hooks and events
@@ -1862,6 +1996,56 @@
     // Checks (UF_Test suite "jobs")
 
     function registerChecks() {
+        UF.Test.suite("dig_through_floor", async t => {
+            const W = World(), L = UF.Levels;
+            const area = W && W.currentArea(), levels = W && W.levels();
+            if (!area || !L || !levels || levels[0] >= -1) {
+                t.check("vertical_ready", false, "world, strata and lower levels are required");
+                return;
+            }
+            if (L.view() !== 0) L.setView(0);
+            const x = Math.floor(W.state.size / 2) + 14, y = Math.floor(W.state.size / 2) + 14;
+            const ref = z => ({ area, x, y, z });
+            const put = (px, py, z, m) => L.setStrata({ area, x: px, y: py, z }, { m, connector: 0 }, { cause: "test:dig_through_floor" });
+            const O = Objects();
+            if (O) for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++)
+                O.setIn({ x: area.x, y: area.y, z: 0 }, x + dx, y + dy, null);
+            const stone = ["stone", "stone", "stone", "stone", "stone"], air = ["air", "air", "air", "air", "air"];
+            const deck = ["stone", "air", "air", "air", "air"];
+            let painted = true;
+            for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+                painted = put(x + dx, y + dy, -2, stone) && painted;
+                painted = put(x + dx, y + dy, -1, air) && painted;
+                for (const z of [0, 1, 2]) painted = put(x + dx, y + dy, z, air) && painted;
+            }
+            for (let z = levels[0]; z <= -1; z++) painted = put(x + 1, y, z, stone) && painted;
+            painted = put(x + 1, y, 0, deck) && painted;
+            painted = put(x, y, 0, deck) && painted;
+            t.check("fixture_painted", painted && L.standableShape(ref(0)) && L.standableShape(ref(-1)),
+                `painted ${painted}, upper ${L.shapeAt(ref(0))}, lower ${L.shapeAt(ref(-1))}`);
+            $gameMap.setDisplayPos(x - $gameMap.screenTileX() / 2, y - $gameMap.screenTileY() / 2);
+            const worker = W.addUnit({ name: "TEST_vertical_digger", image: { characterName: "People1", characterIndex: 0 },
+                area, x, y, z: 0, exact: true, data: { kind: "test", hp: 100, workRate: 180 } });
+            t.check("worker_present", !!worker && worker.z === 0, worker ? `unit ${worker.id} at z ${worker.z}` : "unit creation failed");
+            if (!worker) return;
+            await t.waitFrames(5);
+            t.screenshot("before");
+            const option = UF.Interact && UF.Interact.optionsFor(x, y).find(o => o.id === "dig_down" && o.enabled !== false);
+            t.check("menu_offers_dig_down", !!option, option ? option.label : "missing option");
+            const job = option ? option.run() : null;
+            if (job) assign(job.id, worker.id);
+            await t.waitUntil(() => job && (job.state === "done" || job.state === "failed"), 20000, "dig down job to finish");
+            await t.waitUntil(() => W.unit(worker.id) && W.unit(worker.id).z === -1, 20000, "worker to fall to level -1");
+            const upper = L.strataAt(ref(0));
+            t.check("floor_mined_once", job.state === "done" && upper.materials[0] === "air" && job.result.stratum === 0,
+                `${job.state}; upper S0 ${upper.materials[0]}; removed S${job.result && job.result.stratum}`);
+            t.check("worker_fell", W.unit(worker.id).z === -1, `worker z ${W.unit(worker.id).z}`);
+            L.setView(-1, { center: { x, y } });
+            await t.waitUntil(() => L.view() === -1, 20000, "lower level view");
+            await t.waitFrames(10);
+            t.screenshot("after");
+            t.check("no_errors", t.errorsSoFar().length === 0, t.errorsSoFar().slice(0, 2).join(" | "));
+        }, { isDefault: false });
         UF.Test.suite("jobs", async t => {
             const W = UF.World, O = UF.Objects, I = UF.Items;
             if (window.UF && UF.Levels && typeof UF.Levels.view === "function" && UF.Levels.view() !== 0) {
