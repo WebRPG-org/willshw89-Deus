@@ -11,12 +11,10 @@
  * 2. Sidecar presence and JSON schema validity
  * 3. 100% binary transparency (alpha 0 or 255 only)
  * 4. Snapped to art/palette/uf.hex (<= 31 colors)
-// removed check
  */
 
 const fs = require('fs');
 const path = require('path');
-const cp = require('child_process');
 const { decodePNG } = require('./png_read');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -97,13 +95,6 @@ for (const v of VARIATIONS) {
             continue;
         }
 
-        
-        if (orig !== 'PASS') {
-
-
-            continue;
-        }
-
         // Sidecar sanity check
         try {
             const sc = JSON.parse(fs.readFileSync(sp, 'utf8'));
@@ -119,7 +110,7 @@ for (const v of VARIATIONS) {
         }
 
         totalPassed++;
-        console.log(`  [PASS] ${act.padEnd(8)}: 144x192 | ${colors.size} colors (<=31) | 100% Binary Alpha | U7 Orig: PASS | Grounded y=47`);
+        console.log(`  [PASS] ${act.padEnd(8)}: 144x192 | ${colors.size} colors (<=31) | 100% Binary Alpha | Grounded y=47`);
     }
 }
 

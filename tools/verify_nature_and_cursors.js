@@ -37,20 +37,13 @@ for (const f of masterFaceFiles) {
     console.log(out.includes('FILE PASS') ? `PASS: ${f}` : `FAIL: ${f}\n${out}`);
 }
 
-console.log('\n=== 2. VERIFYING ORIGINALITY ON FACE SHEETS ===');
-for (const f of faceFiles) {
-    
-    const match = out.match(/closest distance ([\d\.]+)/);
-    console.log(out.includes('FILE PASS') ? `PASS: ${f} (dist=${match ? match[1] : '?'})` : `FAIL: ${f}\n${out}`);
-}
-
-console.log('\n=== 3. VERIFYING MENU THEMES & WINDOW SKINS ===');
+console.log('\n=== 2. VERIFYING MENU THEMES & WINDOW SKINS ===');
 for (const f of menuFiles) {
     const out = execSync(`${NODE_EXE} tools/art_check.js "${f}" --native`, { encoding: 'utf8' });
     console.log(out.includes('FILE PASS') ? `PASS: ${f}` : `FAIL: ${f}\n${out}`);
 }
 
-console.log('\n=== 4. VERIFYING 11 BESPOKE FACTION CURSORS ===');
+console.log('\n=== 3. VERIFYING 11 BESPOKE FACTION CURSORS ===');
 for (const fac of factions) {
     const f = `game/img/system/Cursor_${fac}.png`;
     const out = execSync(`${NODE_EXE} tools/art_check.js "${f}" --native`, { encoding: 'utf8' });

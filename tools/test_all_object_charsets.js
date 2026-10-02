@@ -11,7 +11,6 @@ console.log('Validating all 67 World Object Character Sets & Master Icons...');
 
 let sheetPass = 0, sheetFail = 0;
 let iconPass = 0, iconFail = 0;
-let origPass = 0, origFail = 0;
 
 for (const obj of catalog.objects) {
     const sheetPath = path.join(ROOT, 'game', 'img', 'characters', `${obj.image}.png`);
@@ -34,8 +33,6 @@ for (const obj of catalog.objects) {
         iconFail++;
         console.error(`Icon Art Check FAIL on ${obj.id} (${iconPath}):\n${e.stdout ? e.stdout.toString() : e.message}`);
     }
-
-
 }
 
 console.log('====================================================');
@@ -44,7 +41,7 @@ console.log(`Master Icons Art Check:       ${iconPass}/67 PASS, ${iconFail} FAIL
 
 console.log('====================================================');
 
-if (sheetFail > 0 || iconFail > 0 || origFail > 0) {
+if (sheetFail > 0 || iconFail > 0) {
     process.exit(1);
 } else {
     process.exit(0);

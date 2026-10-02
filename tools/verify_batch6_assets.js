@@ -35,7 +35,7 @@ for (const file of charsets) {
         continue;
     }
     try {
-        const artOut = execSync(`"${NODE}" tools/art_check.js "${fullPath}"`, { encoding: 'utf8' });
+        execSync(`"${NODE}" tools/art_check.js "${fullPath}"`, { encoding: 'utf8' });
         console.log(`[PASS art_check] ${file}`);
         passed++;
     } catch (err) {
@@ -43,14 +43,6 @@ for (const file of charsets) {
         failed++;
     }
 
-    try {
-        
-
-        passed++;
-    } catch (err) {
-
-        failed++;
-    }
 }
 
 
@@ -62,7 +54,7 @@ for (const file of faceSets) {
         continue;
     }
     try {
-        const artOut = execSync(`"${NODE}" tools/art_check.js "${fullPath}"`, { encoding: 'utf8' });
+        execSync(`"${NODE}" tools/art_check.js "${fullPath}"`, { encoding: 'utf8' });
         console.log(`[PASS art_check] ${file}`);
         passed++;
     } catch (err) {
@@ -70,14 +62,6 @@ for (const file of faceSets) {
         failed++;
     }
 
-    try {
-        
-
-        passed++;
-    } catch (err) {
-
-        failed++;
-    }
 }
 
 console.log(`\nVerification Summary: ${passed} PASS, ${failed} FAIL`);

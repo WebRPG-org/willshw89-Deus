@@ -134,7 +134,7 @@ const html = `<!DOCTYPE html>
     </div>
 
     <!-- Technical Specs & Engine Verification -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-[#30363d] pt-4 text-[11px] text-[#8b949e]">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-[#30363d] pt-4 text-[11px] text-[#8b949e]">
       <div class="bg-[#0d1117] border border-[#30363d] rounded-lg p-3">
         <div class="font-bold text-white mb-1">📐 AR-600 20-Col Standard</div>
         <div>20 columns × 8 rows (960×384 px). Grounding at Row 47, Anchor [24, 47], Footprint [1, 1]. Binary alpha 0/255.</div>
@@ -142,10 +142,6 @@ const html = `<!DOCTYPE html>
       <div class="bg-[#0d1117] border border-[#30363d] rounded-lg p-3">
         <div class="font-bold text-white mb-1">🎨 Palette Compliance</div>
         <div>Strictly &le; 32 colors from <code class="text-amber-300">art/palette/uf.hex</code>. Passed 7/7 checks in <code class="text-amber-300">tools/art_check.js</code>.</div>
-      </div>
-      <div class="bg-[#0d1117] border border-[#30363d] rounded-lg p-3">
-        <div class="font-bold text-white mb-1">🛡️ Originality Verification</div>
-// removed check
       </div>
     </div>
 
@@ -320,4 +316,3 @@ const html = `<!DOCTYPE html>
 
 fs.writeFileSync(OUT_FILE, html);
 console.log(`Successfully generated interactive walker at: ${OUT_FILE}`);
-

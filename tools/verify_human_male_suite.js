@@ -269,7 +269,6 @@ ${SUITES.map((s, idx) => `
     <div class="stage">
       <div id="anim_${idx}" class="sprite" style="background-image: url('game/img/characters/${s.file}'); background-position: 0px 0px;"></div>
     </div>
-    <div><span class="badge badge-pass">U7 ORIGINALITY: PASS</span></div>
     <img src="game/img/characters/${s.file}" class="sheet-preview" alt="${s.name} Sheet">
     <div class="desc">
       ${s.name === 'Walk' ? 'Master reference walk sheet. 4 facings (Down, Left, Right, Up), 3 animation columns.' :
