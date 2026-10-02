@@ -86,7 +86,6 @@ const html = `<!DOCTYPE html>
       </div>
       <div class="text-right text-xs text-slate-400">
         <div>144×192 px RMMZ Charsets</div>
-        <div class="text-emerald-400 font-semibold mt-0.5">U7 Originality: 6/6 PASS</div>
       </div>
     </div>
 

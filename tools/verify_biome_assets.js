@@ -4,7 +4,6 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const NODE = 'C:\\Program Files\\nodejs\\node.exe';
 const ART_CHECK = path.join(ROOT, 'tools', 'art_check.js');
-// removed check
 
 const files = [
     'game/img/faces/UF_Faces_Trees.png',

@@ -103,28 +103,24 @@ const ITEMS_DATA = [
     {
         id: 'mushroom',
         name: 'MUSHROOMS',
-        dist: '0.456 / 0.416',
         gColors: 8, iColors: 8,
         gDesc: '3 FORAGED CAVE MUSHROOMS', iDesc: 'MUSHROOM HEAP ICON'
     },
     {
         id: 'root',
         name: 'ROOT VEGETABLE',
-        dist: '0.556 / 0.493',
         gColors: 9, iColors: 8,
         gDesc: 'TAN TAPERED ROOT W/ LEAF TUFT', iDesc: 'ROOT VEGETABLE ICON'
     },
     {
         id: 'seeds',
         name: 'SEEDS',
-        dist: '0.492 / 0.448',
         gColors: 10, iColors: 9,
         gDesc: 'TIED POUCH W/ SPILLED SEEDS', iDesc: 'SEED POUCH ICON'
     },
     {
         id: 'fiber',
         name: 'PLANT FIBER',
-        dist: '0.534 / 0.441',
         gColors: 9, iColors: 8,
         gDesc: 'TIED SKEIN W/ FRAYED ENDS', iDesc: 'PLANT FIBER HANK'
     }
@@ -141,7 +137,7 @@ for (let idx = 0; idx < ITEMS_DATA.length; idx++) {
 
     // Item title
     drawText(35, curY + 12, `${idx + 1}. ${it.name} (${it.id})`, [255, 225, 120], 2);
-    drawText(350, curY + 16, `ORIGINALITY: PASS (DIST ${it.dist} >= 0.28)  |  PALETTE: ${it.gColors}G / ${it.iColors}I COLORS`, [100, 220, 130], 1);
+    drawText(350, curY + 16, `PALETTE: ${it.gColors}G / ${it.iColors}I COLORS`, [100, 220, 130], 1);
 
     const gMaster = decodePNG(fs.readFileSync(path.join(ROOT, 'art', 'masters', `${it.id}.png`)));
     const iMaster = decodePNG(fs.readFileSync(path.join(ROOT, 'art', 'masters', `${it.id}_icon.png`)));
@@ -275,7 +271,7 @@ for (let idx = 0; idx < ITEMS_DATA.length; idx++) {
 // Bottom Footer
 fillRect(20, H - 55, W - 40, 42, 0x10, 0x1c, 0x16);
 drawRect(20, H - 55, W - 40, 42, 0x16, 0xa3, 0x4a);
-drawText(35, H - 43, "AUTOMATED VERIFICATION: ALL 8 BATCH 4 ASSETS PASS PALETTE, ALPHA & ORIGINALITY CHECKS", [120, 240, 150], 2);
+drawText(35, H - 43, "AUTOMATED VERIFICATION: ALL 8 BATCH 4 ASSETS PASS PALETTE & ALPHA CHECKS", [120, 240, 150], 2);
 drawText(35, H - 25, "DELIVERED IN ART/RAW/ AND ART/MASTERS/ WITH VALID AR-600 SIDECARS", [160, 220, 180], 1);
 
 const outPath = path.join(ROOT, 'art', 'review', 'batch4_items_showcase.png');

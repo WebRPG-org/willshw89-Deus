@@ -95,7 +95,7 @@ const html = `<!DOCTYPE html>
           <span>Visual Consistency</span>
           <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">40px Anatomy</span>
         </div>
-        <p class="text-[var(--muted-foreground)]">Identical silver hair, amber eyes, forest green tunic, brown breeches, and dark boots across all 7 actions. 0 FAIL, 0 WARN on originality check.</p>
+        <p class="text-[var(--muted-foreground)]">Identical silver hair, amber eyes, forest green tunic, brown breeches, and dark boots across all 7 actions.</p>
       </div>
     </div>
   </div>

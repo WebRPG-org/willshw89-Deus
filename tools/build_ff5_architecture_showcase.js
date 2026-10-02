@@ -320,7 +320,7 @@ actionCards.forEach((c, idx) => {
 
 // Final footer text
 drawText(36, H - 42, "DELIVERY: 7 DEDICATED 12-SPRITE SHEETS SAVED TO GAME/IMG/CHARACTERS/ WITH VALID JSON SIDECARS", [160, 240, 180], 1);
-drawText(36, H - 26, "ALL ASSETS ORIGINATE FROM NANO BANANA II; 100% PASS PALETTE (31 COLORS MAX) & ORIGINALITY CHECKS", [140, 190, 230], 1);
+drawText(36, H - 26, "ALL ASSETS ORIGINATE FROM NANO BANANA II; 100% PASS PALETTE (31 COLORS MAX)", [140, 190, 230], 1);
 
 const outReviewPath = path.join(REVIEW_DIR, 'ff5_12_sprite_architecture_showcase.png');
 fs.writeFileSync(outReviewPath, writePNG(canvas, W, H));

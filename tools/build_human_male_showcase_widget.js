@@ -47,7 +47,7 @@ const html = `<!DOCTYPE html>
           <span class="px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider bg-blue-950/80 text-blue-400 border border-blue-800/60">12 Sprites / Sheet</span>
         </div>
         <h1 class="text-xl font-bold text-amber-300 mt-2">Adult Male Human — Complete 7-Action Suite</h1>
-        <p class="text-slate-400 text-xs mt-1">100% Google Nano Banana Pro • FF5 16-Bit Serious Chibi (~3.07 heads, 46px tall) • Invariant baseline y=47 • U7 Originality: PASS</p>
+        <p class="text-slate-400 text-xs mt-1">100% Google Nano Banana Pro • FF5 16-Bit Serious Chibi (~3.07 heads, 46px tall) • Invariant baseline y=47</p>
       </div>
       <div class="text-right text-xs text-slate-400">
         <div>144×192 px RMMZ Sheets</div>
@@ -111,7 +111,6 @@ const html = `<!DOCTYPE html>
         <div class="flex-1 space-y-2 text-xs">
           <div class="flex items-center gap-2">
             <span id="actionTitle" class="text-sm font-bold text-amber-400">WALK CYCLE</span>
-            <span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">U7 ORIGINALITY: PASS</span>
           </div>
           <p id="actionDesc" class="text-slate-300 leading-relaxed">
             Master 12-sprite walk reference sheet. Features dynamic scissor stride foot articulation, grounded baseline y=47, and serious chibi proportions (~3.07 heads tall).

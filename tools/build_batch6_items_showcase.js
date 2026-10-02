@@ -103,28 +103,24 @@ const ITEMS_DATA = [
     {
         id: 'bar_copper',
         name: 'COPPER BAR',
-        dist: '0.398 / 0.429',
         gColors: 10, iColors: 8,
         gDesc: 'CAST COPPER INGOT W/ STAMP', iDesc: 'COPPER INGOT ICON'
     },
     {
         id: 'charcoal',
         name: 'CHARCOAL',
-        dist: '0.420 / 0.407',
         gColors: 8, iColors: 7,
         gDesc: 'CARBONIZED CHARCOAL LUMPS W/ ASH', iDesc: 'CHARCOAL CHUNKS ICON'
     },
     {
         id: 'feathers',
         name: 'FEATHERS',
-        dist: '0.530 / 0.495',
         gColors: 9, iColors: 7,
         gDesc: 'WILD BIRD FLIGHT FEATHERS', iDesc: 'CROSSED PLUMES ICON'
     },
     {
         id: 'leather',
         name: 'TANNED LEATHER',
-        dist: '0.436 / 0.412',
         gColors: 9, iColors: 7,
         gDesc: 'ROLLED TANNED HIDE W/ STRAP', iDesc: 'BOUND LEATHER ROLL ICON'
     }
@@ -141,7 +137,7 @@ for (let idx = 0; idx < ITEMS_DATA.length; idx++) {
 
     // Item title
     drawText(35, curY + 12, `${idx + 1}. ${it.name} (${it.id})`, [255, 225, 120], 2);
-    drawText(350, curY + 16, `ORIGINALITY: PASS (DIST ${it.dist} >= 0.28)  |  PALETTE: ${it.gColors}G / ${it.iColors}I COLORS`, [100, 220, 130], 1);
+    drawText(350, curY + 16, `PALETTE: ${it.gColors}G / ${it.iColors}I COLORS`, [100, 220, 130], 1);
 
     const gMaster = decodePNG(fs.readFileSync(path.join(ROOT, 'art', 'masters', `${it.id}.png`)));
     const iMaster = decodePNG(fs.readFileSync(path.join(ROOT, 'art', 'masters', `${it.id}_icon.png`)));
@@ -275,7 +271,7 @@ for (let idx = 0; idx < ITEMS_DATA.length; idx++) {
 // Bottom Footer
 fillRect(20, H - 55, W - 40, 42, 0x10, 0x1c, 0x16);
 drawRect(20, H - 55, W - 40, 42, 0x16, 0xa3, 0x4a);
-drawText(35, H - 43, "AUTOMATED VERIFICATION: ALL 8 BATCH 6 ASSETS PASS PALETTE, ALPHA & ORIGINALITY CHECKS", [120, 240, 150], 2);
+drawText(35, H - 43, "AUTOMATED VERIFICATION: ALL 8 BATCH 6 ASSETS PASS PALETTE & ALPHA CHECKS", [120, 240, 150], 2);
 drawText(35, H - 25, "DELIVERED IN ART/RAW/, ART/MASTERS/, AND GAME/IMG/CHARACTERS/ WITH VALID AR-600 SIDECARS", [160, 220, 180], 1);
 
 const outPath = path.join(ROOT, 'art', 'review', 'batch6_items_showcase.png');

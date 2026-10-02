@@ -192,7 +192,7 @@ drawText(lineX + 25, gY + 39 * 4, "LEGS: 14 px (35.0%) - ARTICULATED LEATHER BOO
 
 drawText(p2X + 24, p2Y + 265, "TOTAL HEIGHT: 40 px ON ROWS 8..47 (LEAVES 7px TOP CLEARANCE)", [255, 235, 160], 1);
 drawText(p2X + 24, p2Y + 285, "BASELINE Y=47: PERFECT GROUNDING WITH ZERO CLIPPING", [160, 240, 200], 1);
-drawText(p2X + 24, p2Y + 305, "100% PASSES ORIGINALITY CHECK (0.513 >= 0.28) & PALETTE CHECK", [140, 200, 240], 1);
+drawText(p2X + 24, p2Y + 305, "PALETTE CHECK: PASS", [140, 200, 240], 1);
 
 // ----------------------------------------------------------------------------
 // 4. Bottom Panel: The 4 Core Facings & Action Lineup in Serious Chibi

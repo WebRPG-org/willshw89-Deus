@@ -15,7 +15,6 @@
  * - CIELAB CIE76 palette snapping to art/palette/uf.hex (<= 32 colors)
  * - Zero magenta/purple background fringe
  * - Ground contact row 47, center column 24
- * - Originality check against 19,431 U7 shapes (distance >= 0.28)
  */
 
 const fs = require('fs');
