@@ -31,6 +31,9 @@
  *      UF_Colonists exists,
  *   6. the resource kit (catalog start.kit) around every faction's area
  *      centre (2026-09-19; before that around the start only).
+ *   7. the void manifold (order 15): 3D simplex caves, ravines and shafts
+ *      for this level. It records which chunks open; it does not rewrite
+ *      strata or ground tiles.
  *
  * Contract: docs/design/WORLD_ARCHITECTURE.md section 3.
  * API and checks: docs/systems/UF_WorldGen.md
@@ -810,6 +813,104 @@
             z
         };
     };
+
+    //---------------------------------------------------------------------
+    // Void manifold (WG.62.03). Which cells are cave, ravine or shaft is a
+    // pure function of the seed and the world cell (sim/geology/caves.js).
+    // The generator pass records that answer per chunk. It does not write
+    // tiles, objects or strata, so the GEN=5 strata carve is unchanged.
+
+    let cavesMod = null;
+    function loadCaves() {
+        if (cavesMod) return cavesMod;
+        try {
+            if (typeof UF !== "undefined" && UF.Sim && typeof UF.Sim.require === "function") {
+                cavesMod = UF.Sim.require("geology/caves");
+                if (cavesMod) return cavesMod;
+            }
+        } catch (e) { /* a harness with no sim host tries the paths below */ }
+        try {
+            const path = require("path");
+            const candidates = [];
+            if (typeof __dirname === "string") candidates.push(path.join(__dirname, "..", "sim", "geology", "caves.js"));
+            if (typeof process !== "undefined" && process.cwd) {
+                candidates.push(path.join(process.cwd(), "game", "js", "sim", "geology", "caves.js"));
+                candidates.push(path.join(process.cwd(), "js", "sim", "geology", "caves.js"));
+            }
+            for (let i = 0; i < candidates.length; i++) {
+                try {
+                    cavesMod = require(candidates[i]);
+                    if (cavesMod) return cavesMod;
+                } catch (e) { /* next path */ }
+            }
+        } catch (e) { /* require is absent in a plain browser */ }
+        return null;
+    }
+    function caveSeed(seed) {
+        if (typeof seed === "number" && seed === seed) return seed >>> 0;
+        const st = window.UF && UF.World && UF.World.state;
+        if (st && typeof st.seed === "number") return st.seed >>> 0;
+        return 0;
+    }
+    const NO_VOID = Object.freeze({ open: false, kind: "none" });
+    const NO_MASK = Object.freeze({ hit: false, mixed: false, mask: null, open: 0 });
+
+    WorldGen.voidPass = Object.create(null);
+
+    /** { open, kind } at a world cell. kind is none, cave, ravine, shaft or chamber.
+     *  seed defaults to the loaded world. An explicit seed does not read the world. */
+    WorldGen.voidAt = function(gx, gy, z, seed) {
+        const mod = loadCaves();
+        if (!mod) return NO_VOID;
+        return mod.voidAt(caveSeed(seed), gx, gy, z);
+    };
+
+    /** 32×32 carve mask for chunk (cx, cy) of area (ax, ay) at z.
+     *  mixed is true when any cell of the chunk is open. mask is null when none are. */
+    WorldGen.chunkCarveMask = function(ax, ay, z, cx, cy, seed, areaSize) {
+        const mod = loadCaves();
+        if (!mod) return NO_MASK;
+        const st = window.UF && UF.World && UF.World.state;
+        const size = areaSize || (st && st.size) || 256;
+        return mod.chunkCarveMask(caveSeed(seed), ax, ay, z, cx, cy, size);
+    };
+
+    /** Fraction of this area's chunks at z that the void field opens. */
+    WorldGen.voidMixedFraction = function(ax, ay, z, seed, areaSize) {
+        const mod = loadCaves();
+        if (!mod) return 0;
+        const st = window.UF && UF.World && UF.World.state;
+        const size = areaSize || (st && st.size) || 256;
+        return mod.mixedFraction(caveSeed(seed), ax, ay, z, size);
+    };
+
+    // Runs for every rock level of an area build. Sky and the outside of the
+    // column are closed and are not walked. The summary is the pass's only output.
+    function carveVoidManifold(ctx) {
+        if (!ctx) return;
+        const z = ctx.z | 0;
+        const ax = ctx.areaX | 0, ay = ctx.areaY | 0;
+        const key = (window.UF && UF.World && typeof UF.World.levelKey === "function")
+            ? UF.World.levelKey(ax, ay, z) : (ax + "," + ay + "," + z);
+        if (z < -16 || z > 11) {
+            WorldGen.voidPass[key] = { seed: ctx.seed >>> 0, z: z, mixed: 0, open: 0, chunks: 0, ms: 0 };
+            return;
+        }
+        const mod = loadCaves();
+        if (!mod) return;
+        const size = ctx.width | 0 || 256;
+        const n = Math.max(1, Math.ceil(size / 32));
+        const t0 = now();
+        let mixed = 0, open = 0;
+        const seed = ctx.seed >>> 0;
+        for (let cy = 0; cy < n; cy++) {
+            for (let cx = 0; cx < n; cx++) {
+                const m = mod.chunkCarveMask(seed, ax, ay, z, cx, cy, size);
+                if (m.mixed) { mixed++; open += m.open; }
+            }
+        }
+        WorldGen.voidPass[key] = { seed: seed, z: z, mixed: mixed, open: open, chunks: n * n, ms: now() - t0 };
+    }
 
     /** { biomeId, biome, ground, water, walkable, region: {savagery, alignment}, fields, lake, peak, geology } for a world cell.
      *  worldDesc, when passed, is the world whose ground climate is sampled (a foreign checksum). The loaded world is not. */
@@ -1924,6 +2025,7 @@
     if (window.UF.World) {
         UF.World.unregisterGenerator("df_wilderness_generator"); // superseded (UF_ProcGen, commit a09d3fd)
         UF.World.registerGenerator("uf_worldgen", generate, 10, { levels: [0, 1, 2] });
+        UF.World.registerGenerator("uf_void_manifold", carveVoidManifold, 15, { levels: function(z) { return z >= -16 && z <= 11; } });
         UF.World.registerGenerator("uf_underground_resources", generateUnderground, 20, { levels: [-1, -2] });
     }
 
