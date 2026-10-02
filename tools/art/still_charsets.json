@@ -1,0 +1,26 @@
+[
+  { "entryId": "SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT", "sprite": "!$UF_Oak", "frameWidth": 96, "frameHeight": 96 },
+  { "entryId": "SURFACE_SHARED_TREE_SWAMP_B-V1_DEFAULT", "sprite": "!$UF_Tree_Swamp", "frameWidth": 96, "frameHeight": 96 },
+  { "entryId": "SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEFAULT", "sprite": "!$UF_Tree_Dead", "frameWidth": 96, "frameHeight": 96 },
+  { "entryId": "SURFACE_SHARED_TREE_BIRCH_B-V1_DEFAULT", "sprite": "!$UF_Birch", "frameWidth": 96, "frameHeight": 144 },
+  { "entryId": "SURFACE_SHARED_TREE_PINE_B-V1_DEFAULT", "sprite": "!$UF_Pine", "frameWidth": 96, "frameHeight": 144 },
+  { "entryId": "SURFACE_SHARED_TREE_OAK_B-V1_DEPLETED", "sprite": "!$UF_Oak_Stump", "frameWidth": 48, "frameHeight": 48 },
+  { "entryId": "SURFACE_SHARED_TREE_SWAMP_B-V1_DEPLETED", "sprite": "!$UF_Swamp_Stump", "frameWidth": 48, "frameHeight": 48 },
+  { "entryId": "SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEPLETED", "sprite": "!$UF_Dead_Stump", "frameWidth": 48, "frameHeight": 48 },
+  { "entryId": "SURFACE_SHARED_TREE_BIRCH_B-V1_DEPLETED", "sprite": "!$UF_Birch_Stump", "frameWidth": 48, "frameHeight": 48 },
+  { "entryId": "SURFACE_SHARED_TREE_PINE_B-V1_DEPLETED", "sprite": "!$UF_Pine_Stump", "frameWidth": 48, "frameHeight": 48 },
+  { "entryId": "SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEPLETED", "sprite": "!$UF_Fruit_Stump", "frameWidth": 48, "frameHeight": 48 },
+  { "entryId": "SURFACE_SHARED_FLORA_BUSH_B-V1_DEFAULT", "sprite": "!$UF_Bush", "frameWidth": 48, "frameHeight": 48 },
+  { "entryId": "SURFACE_SHARED_FLORA_FLOWERS-WHITE_B-V1_DEFAULT", "sprite": "!$UF_Flowers_White", "frameWidth": 48, "frameHeight": 48 },
+  {
+    "isV8": true,
+    "sprite": "!UF_GrassTuft_V8",
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "entries": [
+      "SURFACE_SHARED_FLORA_GRASS-TUFT_B-V1_DEFAULT",
+      "SURFACE_SHARED_FLORA_GRASS-TUFT_B-V2_DEFAULT",
+      "SURFACE_SHARED_FLORA_GRASS-TUFT_B-V3_DEFAULT"
+    ]
+  }
+]

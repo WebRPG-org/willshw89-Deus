@@ -1,6 +1,6 @@
 {
-  "id": "dead_stump",
-  "name": "dead_stump",
+  "id": "UF_GrassTuft",
+  "name": "UF_GrassTuft",
   "frameWidth": 48,
   "frameHeight": 48,
   "anchor": [
@@ -11,13 +11,10 @@
     1,
     1
   ],
-  "passable": true,
+  "passable": false,
   "under": false,
   "facings": [
-    "S",
-    "W",
-    "E",
-    "N"
+    "S"
   ],
   "animations": {
     "stand": [
@@ -26,6 +23,6 @@
   },
   "generator": "PixelLab (PM, DEC-063)",
   "standard": "RMMZ reference, Ultima VII style (DEC-063)",
-  "master": "art/approved/SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEPLETED.png",
-  "masterSha256": "ff7a5a828ffb1215e3467f911204b1db1692da6c0e6d473489e783b335b72377"
+  "master": "art/approved/SURFACE_SHARED_FLORA_GRASS-TUFT_B-V1_DEFAULT.png",
+  "masterSha256": "9830e002135f6b3c554200aed5e5939e20610edfad46e8f6b6c485d8c96b6bb8"
 }

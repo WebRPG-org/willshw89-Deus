@@ -1,0 +1,3 @@
+resume from HEAD 70fd0d40; re-read BRIEF and the uncommitted diff first
+
+Execute the writer task for lane-gh based on the ART.NAT.INDUCT brief. 16 masters are staged in C:/Users/snewt/DEUS_backups/pm_art_2026-10-01/induct1/masters/.

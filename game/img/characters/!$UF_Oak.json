@@ -1,5 +1,6 @@
 {
   "id": "oak",
+  "name": "oak",
   "frameWidth": 96,
   "frameHeight": 96,
   "anchor": [
@@ -10,20 +11,19 @@
     1,
     1
   ],
+  "passable": false,
+  "under": false,
   "facings": [
     "S"
   ],
   "animations": {
     "stand": [
       1
-    ],
-    "sway": [
-      0,
-      1,
-      2
     ]
   },
-  "frameMs": 300,
-  "generator": "Google Nano Banana 2",
-  "standard": "Final Fantasy VI 16-bit HD"
+  "generator": "PixelLab (PM, DEC-063)",
+  "standard": "RMMZ reference, Ultima VII style (DEC-063)",
+  "master": "art/approved/SURFACE_SHARED_TREE_OAK_B-V1_DEFAULT.png",
+  "masterSha256": "2db44565f0e0761515890ae4bd512b95693c41d50a474e52cd78f107160622ac",
+  "frameMs": 300
 }

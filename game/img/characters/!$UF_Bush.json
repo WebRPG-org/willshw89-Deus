@@ -1,5 +1,6 @@
 {
   "id": "bush",
+  "name": "bush",
   "frameWidth": 48,
   "frameHeight": 48,
   "anchor": [
@@ -10,20 +11,19 @@
     1,
     1
   ],
+  "passable": false,
+  "under": false,
   "facings": [
     "S"
   ],
   "animations": {
     "stand": [
       1
-    ],
-    "sway": [
-      0,
-      1,
-      2
     ]
   },
-  "frameMs": 250,
-  "generator": "Google Nano Banana 2",
-  "standard": "Final Fantasy VI 16-bit HD"
+  "generator": "PixelLab (PM, DEC-063)",
+  "standard": "RMMZ reference, Ultima VII style (DEC-063)",
+  "master": "art/approved/SURFACE_SHARED_FLORA_BUSH_B-V1_DEFAULT.png",
+  "masterSha256": "0d718a9088f57ab39ca4f25fe03bae5c409c9fc8a804870b595cd119997ac7df",
+  "frameMs": 250
 }

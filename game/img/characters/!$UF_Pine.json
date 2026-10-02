@@ -1,28 +1,28 @@
 {
   "id": "pine",
+  "name": "pine",
   "frameWidth": 96,
-  "frameHeight": 96,
+  "frameHeight": 144,
   "anchor": [
     48,
-    95
+    143
   ],
   "footprint": [
     1,
     1
   ],
+  "passable": false,
+  "under": false,
   "facings": [
     "S"
   ],
   "animations": {
     "stand": [
       1
-    ],
-    "sway": [
-      0,
-      1,
-      2
     ]
   },
-  "generator": "Google Nano Banana 2",
-  "standard": "Final Fantasy VI 16-bit HD"
+  "generator": "PixelLab (PM, DEC-063)",
+  "standard": "RMMZ reference, Ultima VII style (DEC-063)",
+  "master": "art/approved/SURFACE_SHARED_TREE_PINE_B-V1_DEFAULT.png",
+  "masterSha256": "8d6ff2f8169dddad88eeb65d4f0982e5650b94cb486d91dc1373c2ea204c532a"
 }

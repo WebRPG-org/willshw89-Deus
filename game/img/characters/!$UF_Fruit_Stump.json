@@ -1,6 +1,6 @@
 {
-  "id": "dead_stump",
-  "name": "dead_stump",
+  "id": "UF_Fruit_Stump",
+  "name": "UF_Fruit_Stump",
   "frameWidth": 48,
   "frameHeight": 48,
   "anchor": [
@@ -11,13 +11,10 @@
     1,
     1
   ],
-  "passable": true,
+  "passable": false,
   "under": false,
   "facings": [
-    "S",
-    "W",
-    "E",
-    "N"
+    "S"
   ],
   "animations": {
     "stand": [
@@ -26,6 +23,6 @@
   },
   "generator": "PixelLab (PM, DEC-063)",
   "standard": "RMMZ reference, Ultima VII style (DEC-063)",
-  "master": "art/approved/SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEPLETED.png",
-  "masterSha256": "ff7a5a828ffb1215e3467f911204b1db1692da6c0e6d473489e783b335b72377"
+  "master": "art/approved/SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEPLETED.png",
+  "masterSha256": "fa1b40518804c6fd8fc4748709663617e40e2f2036d93c3065805b4ad3889126"
 }

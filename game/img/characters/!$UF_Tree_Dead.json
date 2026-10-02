@@ -11,6 +11,8 @@
     2,
     2
   ],
+  "passable": false,
+  "under": false,
   "facings": [
     "S",
     "W",
@@ -19,15 +21,12 @@
   ],
   "animations": {
     "stand": [
-      0
-    ],
-    "sway": [
-      0,
-      1,
-      2
+      1
     ]
   },
-  "frameMs": 240,
-  "passable": false,
-  "under": false
+  "generator": "PixelLab (PM, DEC-063)",
+  "standard": "RMMZ reference, Ultima VII style (DEC-063)",
+  "master": "art/approved/SURFACE_SHARED_TREE_DEAD-TREE_B-V1_DEFAULT.png",
+  "masterSha256": "78209b52835be26b23bd919b97515ae47734b1f236e71ac3dc6e3e68c024ccfb",
+  "frameMs": 240
 }
