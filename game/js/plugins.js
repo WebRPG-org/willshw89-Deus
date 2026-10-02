@@ -283,7 +283,7 @@ var $plugins =
     "status": true,
     "description": "[DEUS Depth] Crisp depth projection of the levels below the viewed level, seen through open air (owner direction 2026-09-24).",
     "parameters": {
-      "MaxDepth": "2"
+      "MaxDepth": "32"
     }
   },
   {

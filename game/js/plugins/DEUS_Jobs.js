@@ -2066,7 +2066,7 @@
             const deck = ["stone", "air", "air", "air", "air"];
             let painted = true;
             for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
-                painted = put(x + dx, y + dy, -2, stone) && painted;
+                painted = put(x + dx, y + dy, 0 - 2, stone) && painted;
                 painted = put(x + dx, y + dy, -1, air) && painted;
                 for (const z of [0, 1, 2]) painted = put(x + dx, y + dy, z, air) && painted;
             }
