@@ -1,0 +1,131 @@
+UF_Test run 2026-10-02T03:42:26.808Z args=[]
+DEBUG_SHEET: Scene_Boot.start called
+AVAILABLE SUITES: selftest, smoke, perf, native_starting_gear, native_survival_dying, native_perf_4x_benchmark, select, select, minimap, natural_connections, ownership, ecology, projects, settlement, colonists, overseer, world, spawn, worldgen, biomes, tiles, ground, factions, skins, history, objects, walls, doors, items, jobs, floors, wildlife, wildlife_seeds, stance, combat, anim, fog, daynight, timespeed, camera, culling, speech, overhead, look, sheet, talk, fire, vertical, natural_walls, flooding, strata, sparse_outer, environment, faction_menus, title, load, setup, depth, layers_flat, select, select
+SUITE smoke
+PASS smoke.reached_map - map 1000 ""
+PASS smoke.player_not_visible
+PASS smoke.event_drawn.Roald - 1 in view drawn at screen (360,426); 2 more elsewhere in the area
+PASS smoke.event_drawn.Wilia - 1 in view drawn at screen (312,378); 1 more elsewhere in the area
+PASS smoke.event_drawn.Alar - 1 in view drawn at screen (648,90); 4 more elsewhere in the area
+PASS smoke.event_drawn.Liaan - 1 in view drawn at screen (168,234); 2 more elsewhere in the area
+PASS smoke.event_drawn.Perelle - 1 in view drawn at screen (168,330); 2 more elsewhere in the area
+PASS smoke.event_drawn.Merine - 1 in view drawn at screen (408,426); 4 more elsewhere in the area
+PASS smoke.event_drawn.Jora - 1 in view drawn at screen (552,330); 5 more elsewhere in the area
+PASS smoke.event_drawn.Meran - 1 in view drawn at screen (168,378); 1 more elsewhere in the area
+PASS smoke.event_drawn.Garald - 1 in view drawn at screen (456,522); 2 more elsewhere in the area
+PASS smoke.event_drawn.Garys - 1 in view drawn at screen (360,90); 1 more elsewhere in the area
+PASS smoke.event_drawn.Caera - 1 in view drawn at screen (420,390); 2 more elsewhere in the area
+PASS smoke.event_drawn.Fenald - 1 in view drawn at screen (456,426); 1 more elsewhere in the area
+PASS smoke.event_drawn.Alor - 1 in view drawn at screen (312,522); 3 more elsewhere in the area
+PASS smoke.event_drawn.Ulah - 1 in view drawn at screen (264,474); 3 more elsewhere in the area
+PASS smoke.event_drawn.Garette - 1 in view drawn at screen (648,186); 2 more elsewhere in the area
+PASS smoke.event_drawn.Elor - 1 in view drawn at screen (504,90); 2 more elsewhere in the area
+PASS smoke.event_drawn.Doror - 1 in view drawn at screen (360,186); 1 more elsewhere in the area
+PASS smoke.event_drawn.Kaia - 1 in view drawn at screen (504,378); 1 more elsewhere in the area
+PASS smoke.event_drawn.Merald - 1 in view drawn at screen (168,90); 1 more elsewhere in the area
+PASS smoke.event_drawn.Verus - 1 in view drawn at screen (552,234); 1 more elsewhere in the area
+PASS smoke.event_drawn.Helric - 1 in view drawn at screen (504,138); 4 more elsewhere in the area
+PASS smoke.event_drawn.Braen - 1 in view drawn at screen (408,234); 3 more elsewhere in the area
+PASS smoke.event_drawn.Roic - 1 in view drawn at screen (312,138); 2 more elsewhere in the area
+PASS smoke.event_drawn.Doron - 1 in view drawn at screen (408,138); 1 more elsewhere in the area
+PASS smoke.event_drawn.Fenwen - 1 in view drawn at screen (600,234); 2 more elsewhere in the area
+PASS smoke.event_drawn.Saette - 1 in view drawn at screen (552,378); 1 more elsewhere in the area
+PASS smoke.event_drawn.Yvean - 1 in view drawn at screen (216,138); 1 more elsewhere in the area
+PASS smoke.event_drawn.Eline - 1 in view drawn at screen (456,234); 2 more elsewhere in the area
+PASS smoke.event_drawn.Tamra - 1 in view drawn at screen (648,234); 1 more elsewhere in the area
+PASS smoke.event_drawn.Zorra - 1 in view drawn at screen (168,522); 1 more elsewhere in the area
+PASS smoke.event_drawn.Roine - 1 in view drawn at screen (504,330); 1 more elsewhere in the area
+PASS smoke.event_drawn.Saan - 1 in view drawn at screen (420,342); 1 more elsewhere in the area
+PASS smoke.event_drawn.Orys - 1 in view drawn at screen (468,342); 1 more elsewhere in the area
+PASS smoke.event_drawn.Wilor - 1 in view drawn at screen (516,342); 1 more elsewhere in the area
+PASS smoke.event_drawn.Elon - 1 in view drawn at screen (216,186); 1 more elsewhere in the area
+PASS smoke.event_drawn.Elar - 1 in view drawn at screen (456,330); 2 more elsewhere in the area
+PASS smoke.event_drawn.Kaor - 1 in view drawn at screen (360,378)
+PASS smoke.event_drawn.Ulic - 1 in view drawn at screen (408,378)
+PASS smoke.event_drawn.Hela - 1 in view drawn at screen (456,90); 2 more elsewhere in the area
+PASS smoke.event_drawn.Saelle - 1 in view drawn at screen (456,378)
+PASS smoke.event_drawn.Naar - 1 in view drawn at screen (360,474); 1 more elsewhere in the area
+PASS smoke.event_drawn.Peria - 1 in view drawn at screen (312,234); 1 more elsewhere in the area
+PASS smoke.event_drawn.Dorald - 1 in view drawn at screen (360,234)
+PASS smoke.event_drawn.Rora - 1 in view drawn at screen (168,282); 1 more elsewhere in the area
+PASS smoke.event_drawn.Istamah - 1 in view drawn at screen (504,234)
+PASS smoke.event_drawn.Roen - 1 in view drawn at screen (312,282); 3 more elsewhere in the area
+PASS smoke.event_drawn.Naah - 1 in view drawn at screen (504,282)
+PASS smoke.event_drawn.Naem - 1 in view drawn at screen (312,330)
+PASS smoke.event_drawn.Liaus - 1 in view drawn at screen (552,282); 1 more elsewhere in the area
+PASS smoke.event_drawn.Ulys - 1 in view drawn at screen (648,282); 2 more elsewhere in the area
+PASS smoke.event_drawn.Ora - 1 in view drawn at screen (312,426); 1 more elsewhere in the area
+PASS smoke.event_drawn.Ulan - 1 in view drawn at screen (648,138); 1 more elsewhere in the area
+PASS smoke.event_drawn.Zoron - 1 in view drawn at screen (504,426); 2 more elsewhere in the area
+PASS smoke.event_drawn.Meric - 1 in view drawn at screen (264,186)
+PASS smoke.event_drawn.Doran - 1 in view drawn at screen (312,474); 1 more elsewhere in the area
+PASS smoke.event_drawn.Verina - 1 in view drawn at screen (312,186)
+PASS smoke.event_drawn.Fenys - 1 in view drawn at screen (168,426); 1 more elsewhere in the area
+PASS smoke.event_drawn.Kays - 1 in view drawn at screen (408,186)
+PASS smoke.event_drawn.Helen - 1 in view drawn at screen (456,186)
+PASS smoke.event_drawn.Joror - 1 in view drawn at screen (504,186)
+PASS smoke.event_drawn.Rotamon - 1 in view drawn at screen (552,186)
+PASS smoke.event_drawn.Isina - 1 in view drawn at screen (264,234)
+PASS smoke.event_drawn.Nays - 1 in view drawn at screen (504,522); 1 more elsewhere in the area
+PASS smoke.event_drawn.Brawen - 1 in view drawn at screen (264,282); 1 more elsewhere in the area
+PASS smoke.event_drawn.Wilald - 1 in view drawn at screen (600,90); 1 more elsewhere in the area
+PASS smoke.event_drawn.Roina - 1 in view drawn at screen (264,330)
+PASS smoke.event_drawn.Perette - 1 in view drawn at screen (408,90); 1 more elsewhere in the area
+PASS smoke.event_drawn.Zorah - 1 in view drawn at screen (648,378); 1 more elsewhere in the area
+PASS smoke.event_drawn.Ulor - 1 in view drawn at screen (264,378)
+PASS smoke.event_drawn.Zorgarah - 1 in view drawn at screen (264,426)
+PASS smoke.event_drawn.Joron - 1 in view drawn at screen (456,474); 1 more elsewhere in the area
+PASS smoke.event_drawn.Kaon - 1 in view drawn at screen (552,426); 1 more elsewhere in the area
+PASS smoke.event_drawn.Tamald - 1 in view drawn at screen (216,234); 2 more elsewhere in the area
+PASS smoke.event_drawn.Liaette - 1 in view drawn at screen (216,330); 1 more elsewhere in the area
+PASS smoke.event_drawn.Isa - 1 in view drawn at screen (408,474)
+PASS smoke.event_drawn.Elan - 1 in view drawn at screen (504,474)
+PASS smoke.event_drawn.Liaalina - 1 in view drawn at screen (552,474)
+PASS smoke.event_drawn.Verah - 1 in view drawn at screen (264,138); 1 more elsewhere in the area
+PASS smoke.event_drawn.Zorwen - 1 in view drawn at screen (360,138); 1 more elsewhere in the area
+PASS smoke.event_drawn.Roa - 1 in view drawn at screen (456,138); 1 more elsewhere in the area
+PASS smoke.event_drawn.Tamelle - 1 in view drawn at screen (600,426); 1 more elsewhere in the area
+PASS smoke.event_drawn.Dorvera - 1 in view drawn at screen (552,138)
+PASS smoke.event_drawn.Isic - 1 in view drawn at screen (600,138)
+PASS smoke.event_drawn.Oron - 1 in view drawn at screen (600,186)
+PASS smoke.event_drawn.Isroon - 1 in view drawn at screen (216,282)
+PASS smoke.event_drawn.Lianaa - 1 in view drawn at screen (600,282)
+PASS smoke.event_drawn.Branaic - 1 in view drawn at screen (600,330)
+PASS smoke.event_drawn.Isys - 1 in view drawn at screen (216,378)
+PASS smoke.event_drawn.Wiline - 1 in view drawn at screen (600,378)
+PASS smoke.event_drawn.Saem - 1 in view drawn at screen (216,426)
+PASS smoke.event_drawn.Braina - 1 in view drawn at screen (216,474)
+PASS smoke.event_drawn.Caeald - 1 in view drawn at screen (408,570); 2 more elsewhere in the area
+PASS smoke.event_drawn.Caeelle - 1 in view drawn at screen (600,474); 1 more elsewhere in the area
+PASS smoke.event_drawn.Verys - 1 in view drawn at screen (216,522)
+PASS smoke.event_drawn.Says - 1 in view drawn at screen (264,522); 1 more elsewhere in the area
+PASS smoke.event_drawn.Sawen - 1 in view drawn at screen (360,522)
+PASS smoke.event_drawn.Perys - 1 in view drawn at screen (408,522)
+PASS smoke.event_drawn.Kaine - 1 in view drawn at screen (216,90); 1 more elsewhere in the area
+PASS smoke.event_drawn.Merisic - 1 in view drawn at screen (552,522)
+PASS smoke.event_drawn.Elah - 1 in view drawn at screen (600,522)
+PASS smoke.event_drawn.Liaine - 1 in view drawn at screen (264,90)
+PASS smoke.event_drawn.Perliara - 1 in view drawn at screen (312,90)
+PASS smoke.event_drawn.Karic - 1 in view drawn at screen (552,90)
+PASS smoke.event_drawn.Yveric - 1 in view drawn at screen (264,570); 1 more elsewhere in the area
+PASS smoke.event_drawn.Braon - 1 in view drawn at screen (168,138)
+PASS smoke.event_drawn.Isia - 1 in view drawn at screen (168,186)
+PASS smoke.event_drawn.Alra - 1 in view drawn at screen (648,330)
+PASS smoke.event_drawn.Tamon - 1 in view drawn at screen (168,474); 1 more elsewhere in the area
+PASS smoke.event_drawn.Tamwen - 1 in view drawn at screen (648,426)
+PASS smoke.event_drawn.Jorar - 1 in view drawn at screen (648,474)
+PASS smoke.event_drawn.Yveic - 1 in view drawn at screen (648,522); 1 more elsewhere in the area
+PASS smoke.event_drawn.Caesaar - 1 in view drawn at screen (168,570)
+PASS smoke.event_drawn.Dorem - 1 in view drawn at screen (216,570)
+PASS smoke.event_drawn.Alkaan - 1 in view drawn at screen (312,570)
+PASS smoke.event_drawn.Garine - 1 in view drawn at screen (360,570)
+PASS smoke.event_drawn.Alah - 1 in view drawn at screen (456,570)
+PASS smoke.event_drawn.Saroar - 1 in view drawn at screen (504,570)
+PASS smoke.save_serializes
+PASS smoke.colony_state_in_save
+SHOT C:\Users\snewt\AppData\Local\Temp\lane-dd-f5\game\test_output\smoke.map.png
+PASS smoke.no_errors - none in first ~3 s on map
+RESULT: 122 passed, 0 failed (exit 0)
+
+RUN_EXIT 0
+WALL_S 34.4

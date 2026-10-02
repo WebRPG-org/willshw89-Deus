@@ -1,0 +1,3 @@
+Checked 62 DEUS plugin files. Errors: 0
+EXIT 0
+WALL_S 6

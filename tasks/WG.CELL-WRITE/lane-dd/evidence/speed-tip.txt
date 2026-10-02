@@ -1,0 +1,31 @@
+area generation speed
+PASS no_rest_parameter_hash_on_generator_path
+one_area_volume_ms sample 1 3520.8 ms
+one_area_volume_ms sample 2 3869.9 ms
+one_area_volume_ms sample 3 4143.4 ms
+one_area_volume_ms samples 3520.8 3869.9 4143.4 median 3869.9
+PASS one_area_volume_ms - median 3869.9 ms, limit 5000
+checksum gen 1 seed 18 1x1 170.3 ms z0 0779462c
+checksum gen 2 seed 18 1x1 346.9 ms z0 0779462c
+checksum gen 3 seed 18 1x1 342.1 ms z0 0779462c
+checksum gen 4 seed 18 1x1 2643.9 ms z0 0779462c
+checksum gen 5 seed 18 1x1 3167.8 ms z0 1f5c2a72
+checksum gen 1 seed 20260927 1x1 151.1 ms z0 664e5663
+checksum gen 2 seed 20260927 1x1 306.8 ms z0 664e5663
+checksum gen 3 seed 20260927 1x1 291.0 ms z0 664e5663
+checksum gen 4 seed 20260927 1x1 2691.6 ms z0 664e5663
+checksum gen 5 seed 20260927 1x1 3018.8 ms z0 3bec30ce
+checksum gen 1 seed 18 3x3 1383.1 ms z0 353be9a8
+checksum gen 2 seed 18 3x3 5661.2 ms z0 353be9a8
+checksum gen 3 seed 18 3x3 6253.2 ms z0 353be9a8
+checksum gen 4 seed 18 3x3 29525.1 ms z0 353be9a8
+checksum gen 5 seed 18 3x3 29318.9 ms z0 8c73447f
+checksum gen 1 seed 20260927 3x3 1037.7 ms z0 25482ae8
+checksum gen 2 seed 20260927 3x3 4256.3 ms z0 25482ae8
+checksum gen 3 seed 20260927 3x3 6264.9 ms z0 25482ae8
+checksum gen 4 seed 20260927 3x3 32002.5 ms z0 25482ae8
+checksum gen 5 seed 20260927 3x3 33906.1 ms z0 58c88b58
+PASS core_checksums_bit_identical
+RESULT pass
+EXIT 0
+WALL_S 174.5

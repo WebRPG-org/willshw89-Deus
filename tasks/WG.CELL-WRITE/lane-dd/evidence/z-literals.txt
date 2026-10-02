@@ -1,0 +1,3 @@
+scan: 139 line(s) with a Z-range pattern in 22 plugins under C:\Users\snewt\.deus_worktrees\lane-dd; 139 allowed by 116 allow-list entries; 0 not allowed; 0 stale entries
+EXIT 0
+WALL_S 0.3

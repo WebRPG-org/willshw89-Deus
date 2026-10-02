@@ -1,0 +1,22 @@
+lazy area generation
+PASS ensure_generates_start_area_only: grid 3x3 start {"x":1,"y":1} areaGenerations [{"ax":1,"ay":1,"gen":5,"ms":1056.5278999999998}] generated 5 (want exactly 1,1 and 5) boot boot stub after hooks
+PASS area_sums_computed_once_per_area: areaSumComputations before extra calls 1 after 1000 1 (want 1 and 1)
+PASS per_area_checksum_on_first_generation: start 1,1 and requested 0,0 recorded on the core; 2,2 and outer levels absent; JSON kept the sums
+PASS per_area_checksum_mismatch_reported: saved 5c168720 corrupted 5c168720 original 5c168725 flagged true warned true
+PASS area_generated_event_once: first 1 repeat 1 new state 2 after eviction regen 16 (no extra) before 16
+PASS area_generated_deferred_on_load: during inner 0 order [0,0 0,1 2,2] markers true state loaded
+PASS offscreen_request_generates_area: view {"x":1,"y":1,"z":0} baseline yes requester DEUS_Factions.js generated 5 -> 10 requests [{"ax":0,"ay":0,"requester":"DEUS_Factions.js"}]
+PASS legacy_single_checksum_verifies: 1x1 mismatches 0 3x3 mismatches 0 flipped reported 1 kept true flagged true warned true one-area areaChecksum equals checksum true
+PASS load_generates_visited_areas_only: recorded 1,1 0,0 extract generated delta 0 after build ["0,0"] generated delta 5
+PASS trace_off_by_default: trace false areaRequests 0 areaStackReads 0
+PASS home_areas_exist_at_tick0: tick 0 homes 9 readable true generated stayed true human@1,1 z0 elf@2,0 z0 halfling@2,1 z0 dwarf@0,2 z-1 gnome@0,0 z-1 dragonborn@0,1 z-2 half-elf@1,2 z0 half-orc@2,2 z0 tiefling@1,2 z-2
+DEC-065 areas 1,1 1064.5ms DEUS_Core.js | 2,0 1076.5ms DEUS_WorldGen.js | 2,1 823.0ms DEUS_WorldGen.js | 0,2 824.3ms DEUS_WorldGen.js | 0,0 911.0ms DEUS_WorldGen.js | 0,1 809.6ms DEUS_WorldGen.js | 1,2 1036.9ms DEUS_WorldGen.js | 2,2 1093.0ms DEUS_WorldGen.js
+DEC-065 homes human*@1,1 z0 elf@2,0 z0 halfling@2,1 z0 dwarf@0,2 z-1 gnome@0,0 z-1 dragonborn@0,1 z-2 half-elf@1,2 z0 half-orc@2,2 z0 tiefling@1,2 z-2
+PASS new_game_3x3_areas_attributed: real true one-duplicate-would-pass false areas 1,1 2,0 2,1 0,2 0,0 0,1 1,2 2,2
+DEC-065 T(1x1) 16003.5 ms grid 1x1 T(3x3) 31644.1 ms grid 3x3 k 8 Tarea 974.0 ms per-area 1064.5,1076.5,823.0,824.3,911.0,809.6,1036.9,1093.0 T1x1_levels 1015.4 judged sum 7639.0 <= 8807.2 printed expression T(1x1)+(k-1)*Tarea*1.25 = 24525.7
+PASS new_game_3x3_cost_bound: Levels sum 7639.0 ms limit 8807.2 ms (T1x1_levels 1015.4 + k 8 * Tarea 974.0)
+PASS lazy_equals_eager: seeds 18 and 20260927, four orders, chain matches lane-dc, sums match the area fixture
+TIME 114.4 s (target 600 s, printed, not a failing check)
+RESULT 14 passed, 0 failed
+EXIT 0
+WALL_S 114.7
