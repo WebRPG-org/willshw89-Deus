@@ -1154,6 +1154,7 @@ Every decision item recorded in this log must provide:
 
 ---
 - **Amendment (Owner, 2026-10-01):** item 1 holds only under conditions A-C; see DEC-070 item 1.
+- **Amendment (Owner, 2026-10-02 ~02:09Z): the narrowing of item 1 is ACCEPTED.** The Owner's word: "Accelt" (accept), given to the PM in chat after two questions: "Did we determine that the world will still develop with us if we only load the start area" and "What Im asking is if lazy terrain is going to cuck the point of the game which is societies developing in parallel". The PM's answer, now binding on lane-dd: terrain generation is driven by the simulation, never by the view; an off-screen request from faction or colonist code generates its area at once, in the same call, and no code path may gate generation on `viewLevel()` or the camera (lane-dd check `offscreen_request_generates_area`, mutant `view_gated_generation`). The merge condition on lane-dd is met; the far-society fidelity question belongs to ADR-003's LOD, not to terrain.
 
 ### Decision `DEC-066`: Owner rulings of 2026-10-01 on the PM's morning questions: nine size overrides approved; script work on PixelLab output may ship; WG.64.01 and WG.64.02 superseded
 - **Date:** 2026-10-01 (~12:30Z)
