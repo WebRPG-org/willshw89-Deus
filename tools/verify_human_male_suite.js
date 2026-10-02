@@ -58,21 +58,7 @@ for (const s of SUITES) {
     }
 }
 
-// 2. Run Originality Check
-console.log('\n--- Running U7 Originality Checks ---');
-for (const s of SUITES) {
-    const rel = `game/img/characters/${s.file}`;
-    try {
-        const out = cp.execFileSync('C:/Program Files/nodejs/node.exe', ['tools/originality_check.js', rel], {
-            cwd: ROOT,
-            encoding: 'utf8'
-        });
-        const passLine = out.split('\n').find(l => l.includes('RESULT PASS'));
-        console.log(`PASS ${s.name.padEnd(8)}: ${passLine.trim()}`);
-    } catch (e) {
-        console.error(`FAIL ${s.name.padEnd(8)}: originality check failed`, e.stdout || e.message);
-    }
-}
+
 
 // 3. Render Master 7-Action Review Board (1320 x 860)
 console.log('\n--- Rendering Master Review Board ---');

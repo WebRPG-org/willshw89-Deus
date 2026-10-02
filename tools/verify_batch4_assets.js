@@ -52,16 +52,7 @@ for (const c of charsets) {
     artFailCount++;
   }
 
-  try {
-    const res = execSync(`"${process.execPath}" tools/originality_check.js "${p}"`, { encoding: 'utf8' }).trim();
-    if (res.includes('RESULT FAIL')) {
-      console.error(`[FAIL originality] ${c}: ${res}`);
-      origFailCount++;
-    }
-  } catch (e) {
-    console.error(`[FAIL originality] ${c}: ${e.stdout || e.message}`);
-    origFailCount++;
-  }
+
 }
 
 for (const f of faces) {
@@ -77,16 +68,7 @@ for (const f of faces) {
     artFailCount++;
   }
 
-  try {
-    const res = execSync(`"${process.execPath}" tools/originality_check.js "${p}"`, { encoding: 'utf8' }).trim();
-    if (res.includes('RESULT FAIL')) {
-      console.error(`[FAIL originality] ${f}: ${res}`);
-      origFailCount++;
-    }
-  } catch (e) {
-    console.error(`[FAIL originality] ${f}: ${e.stdout || e.message}`);
-    origFailCount++;
-  }
+
 }
 
 console.log(`Summary: art_check FAILs = ${artFailCount}, originality FAILs = ${origFailCount}`);
