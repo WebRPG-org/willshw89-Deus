@@ -99,6 +99,7 @@
     }
 
     const keyOf = (ax, ay, x, y, g) => ax + "," + ay + "," + x + "," + y + "," + g;
+    const now = () => (typeof performance !== "undefined" ? performance.now() : Date.now());
     const STRUCTURAL_TAGS = ["wall", "door"];
     // Neighbour order of the reader: down, north, east, south, west, up.
     const STEPS = [[0, 0, -1], [0, -1, 0], [1, 0, 0], [0, 1, 0], [-1, 0, 0], [0, 0, 1]];
@@ -113,7 +114,8 @@
         settled: new Set(),     // blocks found held in this epoch
         touched: [],            // block keys changed since the last service (removed blocks, neighbours of placed ones)
         watch: new Map(),       // area key -> seeds held as unknown_edge
-        debt: 0
+        debt: 0,
+        commitMs: 0             // time this tick's commit spent writing (UF.Levels and the listeners of its events)
     };
     let stats = freshStats();
     function freshStats() {
@@ -122,7 +124,7 @@
             enqueued: 0, skipped: 0, restarts: 0,
             verdicts: { air: 0, held: 0, falls: 0, unknown_edge: 0, too_big: 0 },
             holds: { too_big_to_fall: 0, multi_area: 0, no_drop: 0, unknown_below: 0 },
-            commits: 0, cellsWritten: 0, deferred: 0, refused: 0, observed: 0,
+            commits: 0, cellsWritten: 0, deferred: 0, refused: 0, observed: 0, maxTickMs: 0,
             crushed: 0, fell: 0, killed: 0, itemsMoved: 0, objectsBroken: 0,
             lastFall: null, lastVerdict: null, lastError: null, history: []
         };
@@ -130,7 +132,7 @@
 
     function reset() {
         rt.queue = []; rt.head = 0; rt.queued.clear(); rt.sorted = true;
-        rt.jobs = []; rt.epoch++; rt.settled.clear(); rt.touched.length = 0; rt.watch.clear(); rt.debt = 0;
+        rt.jobs = []; rt.epoch++; rt.settled.clear(); rt.touched.length = 0; rt.watch.clear(); rt.debt = 0; rt.commitMs = 0;
     }
 
     function noteError(where, err) {
@@ -248,11 +250,37 @@
     //-------------------------------------------------------------------------
     // Reading blocks (charged) and the bounded search
 
+    // Objects for the reader, without building a level. UF.Objects.atIn goes through World.getObject, which builds a
+    // level that is not built (seconds) and reorders the build cache whenever the level changes (about 50 us a call, and
+    // a search goes down through every level). Placed objects, walls and doors included, are in World.state.objectDiffs
+    // (History, colonists, doors and builds all place through setObject). A built level (on screen or cached) also
+    // holds the generated baseline, which is nature: no walls or doors (tools/test_structural_runtime.js checks it).
+    function objectsAdapter() {
+        const W = UF.World, O = UF.Objects;
+        if (!O) return null;
+        const st = W.state, size = st.size;
+        const view = typeof W.viewLevel === "function" ? W.viewLevel() : null;
+        return {
+            atIn(a, x, y) {
+                const z = a.z === undefined ? 0 : a.z, i = y * size + x;
+                const d = st.objectDiffs && st.objectDiffs[W.levelKey(a.x, a.y, z)];
+                let t = 0;
+                if (d && d[i] !== undefined) t = d[i] | 0;
+                else {
+                    const onView = view && view.x === a.x && view.y === a.y && view.z === z && window.$dataMap && $dataMap.ufObjects;
+                    const map = onView ? $dataMap : W.cachedBuild(a.x, a.y, z);
+                    t = map && map.ufObjects ? map.ufObjects[i] | 0 : 0;
+                }
+                return t ? O.type(t) : null;
+            }
+        };
+    }
+
     function makeReader(cache) {
         const W = UF.World, st = W.state, zr = W.zRange();
         return sim().createLevelsReader({
             levels: UF.Levels,
-            objects: UF.Objects ? { atIn: (a, x, y) => UF.Objects.atIn(a, x, y) } : null,
+            objects: objectsAdapter(),
             isKnown: (ax, ay, z) => W.inWorld(ax, ay, z) && (typeof W.areaGenerated !== "function" || !!W.areaGenerated(ax, ay)),
             world: { size: st.size, zMin: zr.zMin, zMax: zr.zMax, areasX: st.areasX || 1, areasY: st.areasY || 1 },
             cache: cache !== false
@@ -386,7 +414,7 @@
 
     // One pass over the units of each changed level, and the items and objects of the changed cells.
     function bindOccupants(plan, res, tick, range) {
-        const W = UF.World, L = UF.Levels, I = UF.Items, O = UF.Objects, M = sim();
+        const W = UF.World, L = UF.Levels, I = UF.Items, O = UF.Objects, M = sim(), objs = objectsAdapter();
         const ax = plan.area.x, ay = plan.area.y;
         const cells = new Map(), levels = new Set();
         const add = (x, y, z) => {
@@ -404,7 +432,7 @@
         for (const [k, c] of cells) {
             const la = { x: ax, y: ay, z: c.z };
             if (I && typeof I.atIn === "function") for (const it of I.atIn(la, c.x, c.y)) items.push({ id: it.id, x: c.x, y: c.y, z: c.z });
-            const t = O ? O.atIn(la, c.x, c.y) : null;
+            const t = objs ? objs.atIn(la, c.x, c.y) : null;
             if (t) {
                 objects.push({ id: k, x: c.x, y: c.y, z: c.z, tags: t.tags || [], ruin: t.ruin || null });
                 objectAt.set(k, c);
@@ -417,7 +445,8 @@
             return;
         }
         const ref = (x, y, z) => ({ area: { x: ax, y: ay }, x, y, z });
-        const standable = (x, y, z) => L.standableShape(ref(x, y, z)) && !(O && O.blocksIn({ x: ax, y: ay, z }, x, y));
+        const blocks = (x, y, z) => { const t = objs ? objs.atIn({ x: ax, y: ay, z }, x, y) : null; return !!t && t.passable !== true; };
+        const standable = (x, y, z) => L.standableShape(ref(x, y, z)) && !blocks(x, y, z);
         const size = W.state.size;
         const occ = M.planOccupants({
             queries: {
@@ -461,7 +490,7 @@
                     const at = p.placeAt;
                     if (!p.ruin || !at || !O.type(p.ruin) || !standable(at.x, at.y, at.z)) continue;
                     const la = { x: ax, y: ay, z: at.z };
-                    if (!O.atIn(la, at.x, at.y)) O.setIn(la, at.x, at.y, p.ruin);
+                    if (!objs.atIn(la, at.x, at.y)) O.setIn(la, at.x, at.y, p.ruin);
                 }
             });
         }
@@ -476,6 +505,7 @@
             return false;
         }
         let res = { ok: true, writes: [] };
+        const t0 = now();
         if (plan.vacated.length) {
             res = sim().commitFall({ area: plan.area, drop: plan.drop, vacated: plan.vacated, filled: plan.filled, contact: plan.contact },
                 { levels: UF.Levels, events: UF.Events });
@@ -489,13 +519,16 @@
         }
         stats.commits++;
         stats.cellsWritten += res.writes.length;
+        const t1 = now();
         stats.lastFall = { tick, area: plan.area, drop: plan.drop, blocks: plan.vacated.length, objects: plan.objectCells.length,
-            cells: res.writes.length, seed: job.seed.k, contact: plan.contact };
+            cells: res.writes.length, seed: job.seed.k, contact: plan.contact, commitMs: Math.round((t1 - t0) * 100) / 100, occupantsMs: 0 };
         try {
             bindOccupants(plan, res, tick, range);
         } catch (e) {
             noteError("occupants", e);
         }
+        stats.lastFall.occupantsMs = Math.round((now() - t1) * 100) / 100;
+        rt.commitMs += stats.lastFall.commitMs;
         return true;
     }
 
@@ -551,6 +584,8 @@
     }
 
     function service(tick) {
+        const t0 = now();
+        rt.commitMs = 0;
         stats.ticks++;
         const range = worldRange();
         const reader = makeReader(true);
@@ -579,7 +614,9 @@
         if (readyWaiting() && commits >= COMMITS_PER_TICK) stats.deferred++;
         stats.reads += counter.used;
         if (counter.left < 0) rt.debt = -counter.left;
-        stats.history.push({ tick, reads: counter.used, commits, debt: rt.debt, queued: queuedCount(), jobs: rt.jobs.length });
+        const ms = Math.round((now() - t0) * 100) / 100;
+        if (ms > stats.maxTickMs) stats.maxTickMs = ms;
+        stats.history.push({ tick, reads: counter.used, commits, debt: rt.debt, queued: queuedCount(), jobs: rt.jobs.length, ms, commitMs: rt.commitMs });
         if (stats.history.length > HISTORY) stats.history.shift();
     }
 
@@ -735,4 +772,6 @@
     if (UF.Events && typeof UF.Events.on === "function") UF.Events.on("world:created", reset);
     if (UF.Sim && typeof UF.Sim.onTick === "function") UF.Sim.onTick("structure", TICK_ORDER, onTick);
     else console.error("DEUS_Structural: UF.Sim.onTick is missing (DEUS_World must load first); nothing will fall");
+    // Load the sim modules now, not inside the first event handler.
+    try { sim(); } catch (e) { noteError("load", e); }
 })();

@@ -24,6 +24,9 @@
  *   setup_held                   the painted sandbox and the five supported scenario pieces are checked held: the
  *                                queue drains and nothing in the scenarios moves
  *   explain_held                 explain() on a supported block says held, with the anchor on level -2, S0
+ *   wall_object_is_solid         a wall placed with UF.Objects.setIn on a deck reads as a solid object voxel, held
+ *   baseline_has_no_structural_objects  no built level holds a wall or door that is not in World.state.objectDiffs
+ *                                (the plugin reads placed objects from the diffs and never builds a level)
  *   handlers_enqueue_seeds       mining a support queues seeds during the write
  *   handlers_read_nothing        the handlers read no block, and no tick runs during the write
  *   cave_in_falls                two 3x3 blocks held only by a mined column fall 8 ft onto the deck, exactly
@@ -60,6 +63,7 @@
  *   items_destroyed  -> items_relocate_not_destroyed  items under a fall are removed
  *   save_nothing     -> save_load_restarts_checks   the save section holds no seeds
  *   observe_commits  -> observe_mode_commits_nothing  observe mode commits anyway
+ *   objects_unseen   -> wall_object_is_solid        the reader's object adapter sees no object
  *   idle_service     -> idle_zero_work              an idle tick still runs the service
  */
 
@@ -102,11 +106,13 @@ const MUTANTS = [
         edits: [["return { v: SAVE_VERSION, seeds };", "return { v: SAVE_VERSION, seeds: [] }; /* MUTANT */"]] },
     { name: "observe_commits", check: "observe_mode_commits_nothing",
         edits: [["if (Structural.mode !== \"live\") { stats.observed++; return false; }", "if (false) { stats.observed++; return false; } /* MUTANT */"]] },
+    { name: "objects_unseen", check: "wall_object_is_solid",
+        edits: [["return t ? O.type(t) : null;", "return null; /* MUTANT: objects never seen */"]] },
     { name: "idle_service", check: "idle_zero_work",
         edits: [["            stats.idleTicks++;\n            return;\n", "            stats.idleTicks++; /* MUTANT: no early return */\n"]] }
 ];
 
-const CHECKS = ["plugin_loads", "subscribed_to_events", "no_frame_hook", "setup_held", "explain_held", "handlers_enqueue_seeds",
+const CHECKS = ["plugin_loads", "subscribed_to_events", "no_frame_hook", "setup_held", "explain_held", "wall_object_is_solid", "baseline_has_no_structural_objects", "handlers_enqueue_seeds",
     "handlers_read_nothing", "cave_in_falls", "one_commit_per_tick", "structure_fell_once_per_fall", "fall_moves_matter_only",
     "crushed_unit_dies", "items_relocate_not_destroyed", "never_falls_on_budget", "per_tick_bound", "big_piece_lands",
     "slab_into_pool_conserves_water", "fall_writes_no_fluid", "save_load_restarts_checks", "observe_mode_commits_nothing",
@@ -481,6 +487,23 @@ function run(mutantName) {
     const ex = S.explain({ area: AREA, x: 62, y: 64, z: 1, s: 0 });
     check("explain_held", ex.verdict === "held" && ex.anchor && ex.anchor.z === -2 && ex.anchor.s === 0 && /^held/.test(ex.reason),
         JSON.stringify({ verdict: ex.verdict, anchor: ex.anchor, chain: ex.chain, reads: ex.reads, reason: ex.reason }));
+
+    //------------------------------------------------------------ objects: placed walls are solid; the baseline has none
+    const placedWall = O.setIn({ x: 0, y: 0, z: 0 }, 70, 70, "wall_stone");
+    drain(env, 200);
+    const exw = S.explain({ area: AREA, x: 70, y: 70, z: 0, s: 3 });
+    check("wall_object_is_solid", placedWall === true && exw.block.state === "solid" && exw.block.source === "object" && exw.verdict === "held",
+        JSON.stringify({ placed: placedWall, block: exw.block, verdict: exw.verdict, reason: exw.reason }));
+    const strayBaseline = [];
+    for (const z of W.LEVELS) {
+        const map = W.peekArea(0, 0, z), diffs = (W.state.objectDiffs || {})[W.levelKey(0, 0, z)] || {};
+        if (!map || !map.ufObjects) { strayBaseline.push("level " + z + " not built"); continue; }
+        for (let i = 0; i < map.ufObjects.length; i++) {
+            const t = map.ufObjects[i] ? O.type(map.ufObjects[i]) : null;
+            if (t && Array.isArray(t.tags) && (t.tags.includes("wall") || t.tags.includes("door")) && diffs[i] === undefined) strayBaseline.push(z + ":" + i + " " + t.id);
+        }
+    }
+    check("baseline_has_no_structural_objects", strayBaseline.length === 0, strayBaseline.length ? strayBaseline.slice(0, 5).join(", ") : W.LEVELS.length + " levels scanned");
 
     //------------------------------------------------------------ S1: cave-in, crush, items, one commit per tick
     const u1 = W.addUnit({ name: "TEST_crushed", area: AREA, z: 0, x: 45, y: 45, exact: true, data: { kind: "test", hp: 100 } });

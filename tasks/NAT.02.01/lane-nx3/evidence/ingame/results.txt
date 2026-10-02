@@ -1,0 +1,18 @@
+UF_Test run 2026-10-02T05:02:19.841Z args=[]
+DEBUG_SHEET: Scene_Boot.start called
+AVAILABLE SUITES: selftest, smoke, perf, native_starting_gear, native_survival_dying, native_perf_4x_benchmark, collapse_cave_in, select, select, minimap, natural_connections, ownership, ecology, projects, settlement, colonists, overseer, world, spawn, worldgen, biomes, tiles, ground, factions, skins, history, objects, walls, doors, items, jobs, floors, wildlife, wildlife_seeds, stance, combat, anim, fog, daynight, timespeed, camera, culling, speech, overhead, look, sheet, talk, fire, vertical, natural_walls, flooding, strata, sparse_outer, environment, faction_menus, title, load, setup, depth, layers_flat, select, select
+SUITE collapse_cave_in
+PASS collapse_cave_in.structural_registered - UF.Structural true; tick handlers structure; since the New Game: 10 ticks serviced, 0 idle, 5120 reads, 658 seeds, 0 commits, slowest tick 7.27 ms
+PASS collapse_cave_in.scene_built - 99 cells written, refused none; block at (140,128); unit 5220 at z -1; item 3244; z range -16..15
+PASS collapse_cave_in.held_by_pillar - queue 0, active 0; commits 0 -> 0; held verdicts 488; ticks serviced 95
+SHOT C:\Users\snewt\AppData\Local\Temp\deus_collapse_ingame\tip_24844\test_output\collapse_cave_in.before.png
+SHOT C:\Users\snewt\AppData\Local\Temp\deus_collapse_ingame\tip_24844\test_output\collapse_cave_in.before_below.png
+PASS collapse_cave_in.cave_in_falls - destroyed 4 strata; 9/9 cells dropped; commits 0 -> 1; last fall {"tick":96,"area":{"x":0,"y":0},"drop":4,"blocks":45,"objects":0,"cells":18,"seed":"0,0,140,128,80","contact":{"x":140,"y":128,"g":75}}; (cx,cy) z-1 stone/stone/stone/stone/stone z0 stone/air/air/air/air
+PASS collapse_cave_in.unit_crushed - deathCause crushed; in world false; dead true; hp 0; crushed 1
+PASS collapse_cave_in.item_kept - item at (136,125) z -1, count 2, standable true
+PASS collapse_cave_in.fell_event_once - structure:fell 1, cause structural:fall
+SHOT C:\Users\snewt\AppData\Local\Temp\deus_collapse_ingame\tip_24844\test_output\collapse_cave_in.after.png
+SHOT C:\Users\snewt\AppData\Local\Temp\deus_collapse_ingame\tip_24844\test_output\collapse_cave_in.after_below.png
+FAIL collapse_cave_in.tick_cost_bounded - slowest serviced tick since the New Game 358.44 ms (limit 50); the fall tick: {"tick":96,"reads":368,"commits":1,"debt":0,"queued":134,"jobs":4,"ms":358.44}; serviced ticks 104, reads 52726
+PASS collapse_cave_in.no_errors - none
+RESULT: 8 passed, 1 failed (exit 1)
