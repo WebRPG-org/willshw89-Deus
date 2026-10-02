@@ -115,6 +115,13 @@
  * Off-screen units walk planned paths on their own level. UF_Levels owns the
  * level shapes, tiles and view switching.
  *
+ * Chunk fields (2026-10-02, WG.WORLDGEN.07): an area's per-cell biome blend
+ * and river course (game/js/sim/worldgen) are made by a pool of Web Workers
+ * (js/sim/worldgen/worker.js) into a SharedArrayBuffer. buildArea starts the
+ * job before its generators run; ctx.fields() / UF.World.areaFields() return
+ * it, finishing any strip no worker has taken on the main thread. With no
+ * SharedArrayBuffer or Worker, the main thread computes them when first asked.
+ *
  * API, events, save data and checks: docs/systems/UF_World.md
  * Architecture: docs/design/WORLD_ARCHITECTURE.md
  *
@@ -811,6 +818,7 @@
      * ctx: { areaX, areaY, width, height, seed, rng, isStart, templateRect, center,
      *        setTile(x, y, layer, tileId), getTile(x, y, layer), index(x, y, layer),
      *        objects (Uint16Array), setObject(x, y, type), getObject(x, y),   (object types: UF_Objects)
+     *        fields() -> the area's chunk fields (World.areaFields: biome blend and rivers per cell), or null,
      *        addEvent({ name, x, y, image, note, priorityType, through, directionFix, walkAnime }) -> event id }
      * Generators must be deterministic: use ctx.rng / UF.World.rngFor / hashes of coordinates only, never Math.random.
      * opts.levels: the levels the generator paints (default [0], the ground), or a function z -> true for a rule over
@@ -853,13 +861,206 @@
         return this._templateMask.mask[ty * tpl.width + tx] === 1;
     };
 
+    //-------------------------------------------------------------------------
+    // Chunk fields (WG.WORLDGEN.07): an area's per-cell biome blend (sim/worldgen/DEUS_Biomes) and river course
+    // (sim/worldgen/DEUS_Hydrology), made off the main thread. One buffer per area, cut into strips of rows; a pool of
+    // Web Workers (sim/worldgen/worker.js) and the main thread claim strips with Atomics, so each strip is computed
+    // once, by whoever gets to it first. With SharedArrayBuffer and Worker, buildArea starts the job before its
+    // generators run, so the workers fill the buffer while the generators work; ctx.fields() (or World.areaFields)
+    // computes any strip still unclaimed on the main thread and waits for the rest. Without them there is no pool and
+    // ctx.fields() computes the whole area on the main thread when first asked. Fields are the same for every level of
+    // an area, keyed by seed, area and river-spec version, and never saved.
+
+    const FIELDS = { enabled: true, poolSize: 0, stripRows: 32, cache: 4, spinMs: 5000, url: "js/sim/worldgen/worker.js", spawn: null };
+    const fieldStats = { jobs: 0, posted: 0, stripsMain: 0, stripsWorker: 0, stripsForced: 0, waits: 0, waitMs: 0, workerErrors: 0, lastError: null };
+    const fieldJobs = new Map();          // key -> job, least recently used first
+    let fieldMod;                         // worker.js on this thread; null when it can't load
+    let fieldComputer = null;             // the main thread's strip computer
+    let fieldPool = null;                 // { workers: [{ worker, alive }], broken }
+    let fieldHydro = { version: 0, spec: null };
+    let fieldJobSeq = 0;
+
+    function fieldModule() {
+        if (fieldMod !== undefined) return fieldMod;
+        try {
+            fieldMod = Sim.require("worldgen/worker");
+            fieldComputer = fieldMod.createComputer({ Biomes: Sim.require("worldgen/DEUS_Biomes"), Hydrology: Sim.require("worldgen/DEUS_Hydrology") });
+            fieldComputer.setHydrology(fieldHydro.spec, fieldHydro.version);
+        } catch (e) {
+            fieldMod = null;
+            fieldComputer = null;
+            fieldStats.lastError = String(e && e.message || e);
+            console.warn(`DEUS_World: chunk fields are off: ${fieldStats.lastError}`);
+        }
+        return fieldMod;
+    }
+    const sharedOk = () => typeof SharedArrayBuffer === "function" && typeof Atomics === "object";
+    const canSpawn = () => !!FIELDS.spawn || typeof Worker === "function";
+
+    function stopFieldPool() {
+        if (fieldPool) for (const w of fieldPool.workers) { try { w.worker.terminate(); } catch (_) {} }
+        fieldPool = null;
+    }
+    function onFieldMessage(entry, msg) {
+        if (!msg || typeof msg !== "object") return;
+        if (msg.type === "done") fieldStats.stripsWorker += msg.computed | 0;
+        else if (msg.type === "error") {
+            fieldStats.workerErrors++;
+            fieldStats.lastError = msg.message;
+            if (fieldStats.workerErrors <= 3) console.error(`DEUS_World: chunk worker: ${msg.message}`);
+            if (msg.fatal) entry.alive = false;
+            if (fieldPool && fieldPool.workers.every(w => !w.alive)) fieldPool.broken = true;
+        }
+    }
+    // The pool, made on first use; null when this host can't have one (no SharedArrayBuffer, no Worker, or it broke).
+    function fieldWorkers() {
+        if (!FIELDS.enabled || !sharedOk() || !canSpawn() || !fieldModule()) return null;
+        if (fieldPool) return fieldPool.broken ? null : fieldPool;
+        const cores = typeof navigator !== "undefined" && navigator && navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 2;
+        const n = FIELDS.poolSize > 0 ? FIELDS.poolSize : Math.max(1, Math.min(4, cores - 1));
+        fieldPool = { workers: [], broken: false };
+        try {
+            for (let i = 0; i < n; i++) {
+                const worker = FIELDS.spawn ? FIELDS.spawn() : new Worker(FIELDS.url);
+                const entry = { worker, alive: true };
+                worker.onmessage = e => onFieldMessage(entry, e && e.data);
+                worker.onerror = e => onFieldMessage(entry, { type: "error", message: String(e && (e.message || e)), fatal: true });
+                worker.postMessage({ type: "config", version: fieldHydro.version, hydrology: fieldHydro.spec });
+                fieldPool.workers.push(entry);
+            }
+        } catch (e) {
+            fieldStats.lastError = String(e && e.message || e);
+            console.warn(`DEUS_World: no chunk worker pool: ${fieldStats.lastError}`);
+            stopFieldPool();
+            fieldPool = { workers: [], broken: true };
+            return null;
+        }
+        return fieldPool;
+    }
+
+    const fieldKey = (ax, ay) => `${World.state.seed}:${ax},${ay}:r${fieldHydro.version}`;
+    // The job for an area, made (and posted to the pool, when there is one) if there isn't one yet.
+    function fieldJob(ax, ay) {
+        const key = fieldKey(ax, ay);
+        let job = fieldJobs.get(key);
+        if (job) {
+            fieldJobs.delete(key);
+            fieldJobs.set(key, job);
+            return job;
+        }
+        const size = World.state.size;
+        const desc = { id: ++fieldJobSeq, gx0: ax * size, gy0: ay * size, w: size, h: size, stripRows: FIELDS.stripRows, seed: World.state.seed, hydroVersion: fieldHydro.version };
+        const L = fieldMod.layout(desc.w, desc.h, desc.stripRows);
+        const pool = fieldWorkers();
+        const buffer = pool ? new SharedArrayBuffer(L.bytes) : new ArrayBuffer(L.bytes);
+        job = { key, area: { x: ax, y: ay }, desc, layout: L, buffer, fields: null };
+        fieldStats.jobs++;
+        if (pool) {
+            for (const w of pool.workers) if (w.alive) { w.worker.postMessage({ type: "job", buffer, job: desc }); fieldStats.posted++; }
+        }
+        fieldJobs.set(key, job);
+        for (const k of Array.from(fieldJobs.keys())) {
+            if (fieldJobs.size <= FIELDS.cache) break;
+            if (k !== key) fieldJobs.delete(k);
+        }
+        return job;
+    }
+    // Finish a job on this thread: claim and compute every free strip, then wait for the strips the workers hold.
+    function finishFieldJob(job) {
+        if (job.fields) return job.fields;
+        const v = fieldMod.views(job.buffer, job.layout);
+        // Domain "engine": a wall-clock guard on a worker that holds a strip and never finishes it (it died).
+        const t0 = performance.now();
+        let waited = false;
+        for (;;) {
+            fieldStats.stripsMain += fieldComputer.runJob(job.buffer, job.desc);   // every free strip, and any a failed worker gave back
+            if (fieldMod.complete(v)) break;
+            waited = true;
+            if (performance.now() - t0 > FIELDS.spinMs) {
+                for (let s = 0; s < job.layout.strips; s++) {
+                    if (Atomics.load(v.state, s) === fieldMod.DONE) continue;
+                    fieldComputer.forceStrip(job.buffer, job.desc, s);
+                    fieldStats.stripsForced++;
+                }
+                if (fieldPool) fieldPool.broken = true;
+                console.warn(`DEUS_World: chunk workers held strips of area (${job.area.x},${job.area.y}) for over ${FIELDS.spinMs} ms; computed here, pool off`);
+                break;
+            }
+        }
+        if (waited) {
+            fieldStats.waits++;
+            fieldStats.waitMs += performance.now() - t0;
+        }
+        job.fields = Object.freeze({
+            schema: job.layout.schema, area: job.area, gx0: job.desc.gx0, gy0: job.desc.gy0, width: job.desc.w, height: job.desc.h,
+            seed: job.desc.seed, riverVersion: job.desc.hydroVersion, shared: sharedOk() && job.buffer instanceof SharedArrayBuffer,
+            biomeIds: fieldComputer.biomeIds,
+            primary: v.primary, secondary: v.secondary, secondaryWeight: v.secondaryWeight, river: v.river, bed: v.bed
+        });
+        return job.fields;
+    }
+
+    /**
+     * Start making an area's chunk fields on the worker pool, without waiting. True when a pool took the job (or had
+     * it already); false when there is no pool (World.areaFields then computes them on this thread).
+     */
+    World.requestAreaFields = function(ax, ay) {
+        if (!this.state || !this.inWorld(ax, ay, 0) || !fieldWorkers()) return false;
+        fieldJob(ax, ay);
+        return true;
+    };
+    /**
+     * An area's chunk fields, or null when they're off (FIELDS.enabled false, or the sim modules can't load):
+     * { schema, area, gx0, gy0, width, height, seed, riverVersion, shared, biomeIds,
+     *   primary (Uint8Array: index into biomeIds), secondary (Uint8Array), secondaryWeight (Float32Array: the
+     *   runner-up's IDW weight; the primary's is 1 - it), river (Uint16Array: river id + 1, 0 = dry), bed (Float32Array,
+     *   NaN where dry) }, cell (x, y) at y * width + x. The arrays are shared with the workers that wrote them: read only.
+     */
+    World.areaFields = function(ax, ay) {
+        if (!FIELDS.enabled || !this.state || !this.inWorld(ax, ay, 0) || !fieldModule()) return null;
+        return finishFieldJob(fieldJob(ax, ay));
+    };
+    /**
+     * The river network the chunk fields draw: null (no rivers), or { grid, options } for DEUS_Hydrology
+     * (createMacroGrid(grid), createRiverNetwork(grid, options)). The spec must survive structured cloning (plain
+     * objects, arrays, typed arrays; grid.elevation an array, not a function). Fields made for another spec are dropped.
+     */
+    World.setFieldRivers = function(spec) {
+        fieldHydro = { version: fieldHydro.version + 1, spec: spec || null };
+        if (fieldComputer) fieldComputer.setHydrology(fieldHydro.spec, fieldHydro.version);
+        if (fieldPool) for (const w of fieldPool.workers) if (w.alive) w.worker.postMessage({ type: "config", version: fieldHydro.version, hydrology: fieldHydro.spec });
+        fieldJobs.clear();
+        return fieldHydro.version;
+    };
+    /**
+     * Settings: { enabled, poolSize (0 = cores - 1, at most 4), stripRows, cache (areas kept), spinMs, url, spawn }.
+     * spawn: () => a Worker-like object (postMessage, terminate, onmessage, onerror), for hosts without Worker. A change
+     * stops the pool and drops every cached area.
+     */
+    World.configureFields = function(opts = {}) {
+        for (const k of Object.keys(opts)) if (k in FIELDS) FIELDS[k] = opts[k];
+        stopFieldPool();
+        fieldJobs.clear();
+        return Object.assign({}, FIELDS);
+    };
+    World.stopFieldPool = function() {
+        stopFieldPool();
+        fieldJobs.clear();
+    };
+    World.fieldStats = () => Object.assign({
+        pool: fieldPool ? (fieldPool.broken ? "broken" : fieldPool.workers.filter(w => w.alive).length) : 0,
+        cached: fieldJobs.size, riverVersion: fieldHydro.version
+    }, fieldStats);
+
     /**
      * Build the $dataMap object of an area's level (z left out = the ground) in memory. Pure: doesn't touch the
      * current map. Only the generators registered for that level run; the start template is ground-only.
+     * With a chunk worker pool, the area's chunk fields are started on it first (ctx.fields() waits for them).
      */
     World.buildArea = function(ax, ay, z = 0) {
         const st = this.state;
         if (!st || !this.inWorld(ax, ay, z)) return null;
+        World.requestAreaFields(ax, ay);
         const size = st.size;
         const cells = size * size;
         const index = (x, y, layer) => (layer * size + y) * size + x;
@@ -901,6 +1102,8 @@
                 if (x >= 0 && y >= 0 && x < size && y < size) objects[y * size + x] = type;
             },
             getObject: (x, y) => (x >= 0 && y >= 0 && x < size && y < size ? objects[y * size + x] : 0),
+            /** The area's chunk fields (World.areaFields), or null when they're off. */
+            fields: () => World.areaFields(ax, ay),
             addEvent(spec) {
                 if (nextEventId >= EVENT_BASE) throw new Error(`UF_World: area (${ax},${ay}) has too many generated events (limit ${EVENT_BASE - 1})`);
                 const id = nextEventId++;
