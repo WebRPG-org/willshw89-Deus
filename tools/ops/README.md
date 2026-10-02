@@ -5,7 +5,9 @@ Windows PowerShell 5.1 scripts; nothing here is loaded by the game.
 
 | File | What it does |
 |---|---|
-| `launch_worker.ps1` | Starts one provider CLI session (claude, grok, codex or gemini) in a lane worktree, watches it to the end and records what happened. Also the shared function library for the other scripts. |
+| `launch_worker.ps1` | Starts one provider CLI session (claude, grok, codex or gemini) in a lane worktree, watches it to the end and records what happened. Also the shared function library for the other scripts. A generated reviewer prompt carries the review procedure (DEC-087). |
+| `open_lane.ps1` | Opens one lane worktree from `origin/main`, writes `BRIEF.md` and `lane.json`, commits as `deus-pm` and pushes `task/<lane>`. |
+| `test_open_lane.ps1` | Tests for `open_lane.ps1`. |
 | `resume_queue.ps1` | One pass of auto-resume: probes providers whose usage limit should have reset, then relaunches queued lanes. Run it on a schedule. |
 | `gate_tests.json` | The suites the merge gate runs, and the suites it deliberately does not run (with reasons). |
 | `hooks/pre-push` | Blocks `git push` unless `DEUS_INTEGRATOR=1`. |
@@ -119,6 +121,38 @@ Chosen in this order:
 
    The brief match is plain text. A brief that says "never run git push origin task/lane-x" would count as asking
    for a push. `"push": false` overrides that.
+
+   A generated **reviewer** prompt (DEC-087) keeps that first line and the standing rules, and always includes the
+   push form of rule 2 plus `FINAL SHA`, because the review commit has to be pushed. It then adds a review procedure:
+   the TIP is `git rev-parse HEAD` and its full hash goes in the review; check scope against `allowedPaths` with
+   `git diff --name-status <merge-base> HEAD`; read the brief and the lane's `REPORT.md`; run the new or changed tests
+   and the lane's named mutants, not every gate command (`merge_gate` runs those); `git fetch origin` and
+   `git merge-tree --write-tree origin/main HEAD`; write `tasks/<taskId>/<lane>/review_<tag>_<tip8>.md` with findings
+   graded `BLOCKER`, `MAJOR` or `MINOR` and one final line `VERDICT: CLEAN PASS`, `VERDICT: PASS`,
+   `VERDICT: PASS WITH MINORS`, or `VERDICT: REJECT`; `git add` that one path; commit with the subject
+   `[<tag>] <taskId> <lane> review: review_<tag>_<tip8>.md (VERDICT: <verdict>)`; push; end with `FINAL SHA`;
+   commit before the turn ends; never start a background command.
+   `-ReviewNotes <file>` appends the PM's notes after that procedure, and only on a generated reviewer prompt.
+   `-PromptFile` still replaces the whole prompt, notes included. A missing notes file refuses the launch.
+
+### Opening a lane: `open_lane.ps1` (DEC-087)
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/ops/open_lane.ps1 `
+    -Lane lane-ol -Task OPS.FLOW.CUT -Writer grok -Reviewer codex -BriefFile C:\path\BRIEF.md
+```
+
+Run it from inside the repository. It refuses, and creates nothing, when `task/<lane>` already exists locally or on
+`origin`, when `<WorktreeRoot>\<lane>` already exists (default `%USERPROFILE%\.deus_worktrees`), when the brief is
+empty or has no `# lane-<lane>: ...` heading, when the writer and reviewer share a family (`claude`/`fable`,
+`gemini`/`antigravity`, `grok`, `codex`), or when the manifest fails `merge_gate.validateManifest`.
+
+It fetches `origin` and cuts the worktree on `task/<lane>` from `origin/main`. It writes
+`tasks/<task>/<lane>/BRIEF.md` and `lane.json`. With no `-ManifestFile`, `lane.json` has `push: true` and takes
+`allowedPaths` and `gateTests` from the brief's first fenced json block (a line of three backticks plus `json`, then one JSON object). `-ManifestFile` is validated instead, and
+its `lane`, `taskId`, `branch`, `writer` and `reviewer` must match the arguments. The commit is authored
+`deus-pm <deus-pm@local.invalid>` with subject `[pm] Open <lane> (<task>, writer <w>): <the heading without its "# lane-..: " prefix>`.
+It pushes `task/<lane>`. `-Launch` then runs `launch_worker.ps1` for the writer with that brief.
 
 ### What a run records
 
@@ -349,6 +383,7 @@ Shared JSON files are updated under a lock in `%TEMP%\deus_ops_locks\` and repla
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File tools/ops/test_launch_worker.ps1            # about 2 minutes
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/ops/test_open_lane.ps1                # under a minute
 powershell -NoProfile -ExecutionPolicy Bypass -File tools/ops/test_resume_queue.ps1             # about 30 s
 powershell -NoProfile -ExecutionPolicy Bypass -File tools/ops/test_launch_worker.ps1 -Mutants   # about 5 minutes
 powershell -NoProfile -ExecutionPolicy Bypass -File tools/ops/test_resume_queue.ps1 -Mutants    # about 1.5 minutes
@@ -366,10 +401,13 @@ this machine checks the scripts out with CRLF (the system gitconfig sets `core.a
 matches a multi-line fault's text with the file's own line ending. Before WG.00.12b the `launcher_pid_not_checked`
 fault was a SETUP-ERROR in such a clone.
 
+DEC-087 adds `test_open_lane.ps1` (opens a lane and checks the `deus-pm` author, subject, files and push; refuses a duplicate lane, an empty brief, a same-family pair and a bad manifest; mutant `open_lane_wrong_author`) and the launcher cases `generated_reviewer_prompt`, `review_notes_appended`, `prompt_file_replaces_reviewer_prompt` and `review_notes_missing_refused` (mutant `prompt_without_commit`).
+
 Counts (WG.00.12b; before it: 147 and 68 checks, 24 and 15 mutants): `test_launch_worker.ps1` 216 checks and 40
 mutants, `test_resume_queue.ps1` 95 checks and 20 mutants. OPS.20.06 adds the effort mapping, the DEC-032 floor,
-the gemini provider and the `-ProviderArgs` byte-identity cases, each with a mutant: `test_launch_worker.ps1` is
-268 checks and 44 mutants. `test_resume_queue.ps1` is unchanged at 95 checks. The WG.00.12b tests cover the push rule (brief, other branch,
+the gemini provider and the `-ProviderArgs` byte-identity cases, each with a mutant. OPS.FLOW.CUT measured the default
+`test_launch_worker.ps1` suite at 285 checks, 0 failed, and adds the mutant `prompt_without_commit` (`$MutantDefs` is 46).
+`test_resume_queue.ps1` is unchanged at 95 checks. The WG.00.12b tests cover the push rule (brief, other branch,
 `lane.json` true / false / invalid), prompt reuse (`-PromptFile` recorded then reused, resume without stacking, an
 explicit file with an old resume line, relaunch notes, reviewer vs writer both ways, a committed prompt without the
 registry, generated prompts not reused, another task or provider not reused) and, in the resume queue, the saved

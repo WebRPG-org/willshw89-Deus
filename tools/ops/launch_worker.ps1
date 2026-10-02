@@ -9,6 +9,8 @@
       - Prompt: -PromptFile, else the lane's saved prompt for the same task, role and provider (never a prompt of the
         other role, never one the launcher generated), else the generated default, whose rule 2 says to push the lane's
         own branch (and to end with FINAL SHA) only when lane.json "push" or the brief asks for it (WG.00.12b).
+        A generated reviewer prompt also carries the review procedure (DEC-087). -ReviewNotes appends the PM's
+        notes to that generated reviewer prompt only.
       - Saves the exact prompt to ~/.deus_ops/prompts/<lane>_<runId>.txt without a commit.
         -CommitPrompt restores the lane-branch launch-prompt commit for an explicit exception.
       - Tees stdout and stderr to <LogRoot>\<lane>\<runId>.log. A 0-byte log is a failure (EMPTY-LOG).
@@ -51,7 +53,8 @@ param(
     [string]$ProviderExe,
     [string]$ProviderArgs,
     [switch]$ProviderStdinPrompt,
-    [string]$Effort
+    [string]$Effort,
+    [string]$ReviewNotes
 )
 
 # ---------------------------------------------------------------------------------------------
@@ -1063,7 +1066,10 @@ function New-DeusLanePrompt {
     param([string]$Lane, [string]$TaskId, [string]$Provider, [string]$Role, [string]$BriefRel, [string[]]$Allowed, [string]$ResumeSha, [switch]$Push, [string]$Branch)
     $lines = New-Object System.Collections.Generic.List[string]
     if ($ResumeSha) { $lines.Add((Get-DeusResumeLine $ResumeSha)); $lines.Add('') }
-    if ($Role -eq 'reviewer') { $what = 'the independent reviewer' } else { $what = 'the primary implementer' }
+    $reviewer = ($Role -eq 'reviewer')
+    # A reviewer always pushes the review commit. The writer's push rule is unchanged.
+    if ($reviewer) { $Push = $true }
+    if ($reviewer) { $what = 'the independent reviewer' } else { $what = 'the primary implementer' }
     $lines.Add("You are $what for $Lane (Task $TaskId), running as $Provider.")
     $lines.Add("Read $BriefRel carefully and follow all instructions within it.")
     $lines.Add('Your allowed paths are:')
@@ -1078,6 +1084,22 @@ function New-DeusLanePrompt {
     }
     $lines.Add("Commit messages start with '[$Provider] $TaskId'.")
     if ($Push) { $lines.Add('Your final output line must be exactly: FINAL SHA: <sha> (pasted from git rev-parse HEAD after the push).') }
+    if ($reviewer) {
+        $lines.Add('')
+        $lines.Add('Review procedure:')
+        $lines.Add('The TIP is `git rev-parse HEAD`. Its full hash goes in the review.')
+        $lines.Add('Check scope against allowedPaths with `git diff --name-status <merge-base> HEAD`.')
+        $lines.Add("Read the brief and the lane's REPORT.md.")
+        $lines.Add('Run the new or changed tests and the lane''s named mutants, not every gate command (merge_gate runs those).')
+        $lines.Add('Run `git fetch origin` and `git merge-tree --write-tree origin/main HEAD`.')
+        $lines.Add("Write tasks/$TaskId/$Lane/review_<tag>_<tip8>.md (this launch: tasks/$TaskId/$Lane/review_${Provider}_<tip8>.md) with findings graded BLOCKER, MAJOR or MINOR.")
+        $lines.Add('The one final line is VERDICT: CLEAN PASS, or VERDICT: PASS, or VERDICT: PASS WITH MINORS, or VERDICT: REJECT.')
+        $lines.Add('git add that one path.')
+        $lines.Add('Commit with the subject `[<tag>] <taskId> <lane> review: review_<tag>_<tip8>.md (VERDICT: <verdict>)`.')
+        $lines.Add(('For this launch the subject is `[' + $Provider + '] ' + $TaskId + ' ' + $Lane + ' review: review_' + $Provider + '_<tip8>.md (VERDICT: <verdict>)`.'))
+        $lines.Add('Then push that commit. End with FINAL SHA.')
+        $lines.Add('commit before the turn ends. never start a background command.')
+    }
     return ($lines -join "`n")
 }
 
@@ -1169,6 +1191,10 @@ function Invoke-DeusLaunchMain {
     $pushRule = Get-DeusPushRule -LaneInfo $laneInfo -BriefText ([IO.File]::ReadAllText($brief)) -Branch $pushBranch
     if ($pushRule.Error) { Stop-DeusLaunch $pushRule.Error }
     if ($SavedPrompt -and -not $PromptFile) { Stop-DeusLaunch '-SavedPrompt needs -PromptFile' }
+    if ($ReviewNotes) {
+        if (-not (Test-Path -LiteralPath $ReviewNotes -PathType Leaf)) { Stop-DeusLaunch "review notes not found: $ReviewNotes" }
+        $ReviewNotes = (Resolve-Path -LiteralPath $ReviewNotes).ProviderPath
+    }
     if ($CommitPrompt -and $NoCommitPrompt) { Stop-DeusLaunch '-CommitPrompt and -NoCommitPrompt cannot be used together' }
 
     # --- telemetry paths ----------------------------------------------------------------------
@@ -1240,6 +1266,12 @@ function Invoke-DeusLaunchMain {
     }
     Write-DeusLaunchMessage "launch_worker: prompt $promptSource from $promptFrom$(if ($promptFileUsed) { ": $promptFileUsed" }); push rule $(if ($pushRule.Push) { 'push' } else { 'no-push' }) ($($pushRule.Source))"
     if (-not $promptText.Trim()) { Stop-DeusLaunch 'prompt is empty' }
+    # -ReviewNotes is the PM's lane-specific points. They follow a generated reviewer prompt and are not
+    # added to a -PromptFile or to a saved prompt (those replace or reuse the whole text).
+    if ($ReviewNotes -and $promptSource -eq 'generated' -and $roleName -eq 'reviewer') {
+        $noteText = [IO.File]::ReadAllText($ReviewNotes, [Text.Encoding]::UTF8).TrimStart([char]0xFEFF).Trim()
+        if ($noteText) { $promptText = $promptText.TrimEnd() + "`n`nReview notes from the PM:`n" + $noteText + "`n" }
+    }
     $launchRel = "tasks/$taskId/$Lane/launches"
     $launchDir = Join-Path $wt ($launchRel.Replace('/', '\'))
     $promptDir = if ($CommitPrompt) { $launchDir } else { Join-Path $env:USERPROFILE '.deus_ops\prompts' }
