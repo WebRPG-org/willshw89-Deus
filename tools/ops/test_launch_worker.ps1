@@ -601,6 +601,89 @@ $Tests = @(
         Check 'no_writer_text' ($stdin -notmatch 'TEST_ writer') $stdin
         Check 'generated_reviewer_prompt' ($r2.Entry['promptSource'] -eq 'generated' -and $stdin -match '^You are the independent reviewer for lane-t') $stdin
     } }
+    @{ Name = 'generated_reviewer_prompt'; Body = {
+        Reset-Lane $Fx
+        $r = Invoke-Launch $Fx -Mode 'commit' -Params @{ Provider = 'grok' }
+        $e = $r.Entry
+        Check 'exit_0' ($r.Code -eq 0) "exit $($r.Code) $($r.Err)"
+        Check 'role_reviewer' ($e -and $e['role'] -eq 'reviewer' -and $e['promptSource'] -eq 'generated') "role $($e['role']) source $($e['promptSource'])"
+        $prompt = Get-TextFile $e['launchPromptPath']
+        $phrases = @(
+            'git rev-parse HEAD',
+            'full hash goes in the review',
+            'git diff --name-status',
+            'allowedPaths',
+            'REPORT.md',
+            'named mutants',
+            'merge_gate runs those',
+            'git fetch origin',
+            'git merge-tree --write-tree origin/main HEAD',
+            'review_<tag>_<tip8>.md',
+            'BLOCKER',
+            'MAJOR',
+            'MINOR',
+            'VERDICT: CLEAN PASS',
+            'VERDICT: PASS WITH MINORS',
+            'VERDICT: REJECT',
+            'or VERDICT: PASS,',
+            'git add that one path',
+            'Commit with the subject',
+            '[grok] T.01 lane-t review: review_grok_<tip8>.md (VERDICT:',
+            'git push origin task/lane-t',
+            'FINAL SHA',
+            'commit before the turn ends',
+            'never start a background command'
+        )
+        $missing = @($phrases | Where-Object { $prompt -notmatch [regex]::Escape($_) })
+        Check 'required_phrases' ($missing.Count -eq 0) ($missing -join ' | ')
+        Check 'stands_as_reviewer' ($prompt -match '^You are the independent reviewer for lane-t \(Task T\.01\), running as grok\.')
+    } }
+    @{ Name = 'review_notes_appended'; Body = {
+        Reset-Lane $Fx
+        $notes = New-PromptFile 'review_notes.txt' "PM note: watch the retry flag.`n"
+        $r = Invoke-Launch $Fx -Mode 'commit' -Params @{ Provider = 'grok'; ReviewNotes = $notes }
+        $prompt = Get-TextFile (Get-EntryField $r 'launchPromptPath')
+        $idxCommit = "$prompt".IndexOf('Commit with the subject')
+        $idxNotes = "$prompt".IndexOf('PM note: watch the retry flag.')
+        Check 'exit_0' ($r.Code -eq 0) "exit $($r.Code) $($r.Err)"
+        Check 'notes_after_procedure' ($idxCommit -ge 0 -and $idxNotes -gt $idxCommit) "commit $idxCommit notes $idxNotes"
+    } }
+    @{ Name = 'saved_reviewer_prompt_gets_procedure_and_notes'; Body = {
+        Reset-Lane $Fx
+        $old = New-PromptFile 'old_reviewer.txt' "OLD SAVED REVIEWER PROMPT WITHOUT THE PROCEDURE`n"
+        $r1 = Invoke-Launch $Fx -Mode 'commit' -Params @{ Provider = 'grok'; PromptFile = $old }
+        Check 'seed_exit_0' ($r1.Code -eq 0) "exit $($r1.Code) $($r1.Err)"
+        Check 'seed_was_the_file' ($r1.Entry -and $r1.Entry['promptSource'] -eq 'file') "source $($r1.Entry['promptSource'])"
+        $notes = New-PromptFile 'saved_review_notes.txt' "PM note: the saved prompt must not win.`n"
+        $r2 = Invoke-Launch $Fx -Mode 'commit' -Params @{ Provider = 'grok'; ReviewNotes = $notes }
+        $e = $r2.Entry
+        $prompt = Get-TextFile $e['launchPromptPath']
+        $idxCommit = "$prompt".IndexOf('Commit with the subject')
+        $idxNotes = "$prompt".IndexOf('PM note: the saved prompt must not win.')
+        $skip = @($e['promptCandidatesSkipped']) -join ' | '
+        Check 'exit_0' ($r2.Code -eq 0) "exit $($r2.Code) $($r2.Err)"
+        Check 'generated_not_saved' ($e['promptSource'] -eq 'generated' -and $e['promptFrom'] -eq 'generated (review procedure; saved reviewer prompt not reused)') "source $($e['promptSource']) from $($e['promptFrom'])"
+        Check 'old_text_absent' ("$prompt" -notmatch 'OLD SAVED REVIEWER PROMPT')
+        Check 'notes_after_procedure' ($idxCommit -ge 0 -and $idxNotes -gt $idxCommit) "commit $idxCommit notes $idxNotes"
+        Check 'skipped_the_saved_prompt' ($skip -match 'saved reviewer prompt skipped so the review procedure is generated') $skip
+    } }
+    @{ Name = 'prompt_file_replaces_reviewer_prompt'; Body = {
+        Reset-Lane $Fx
+        $pf = New-PromptFile 'hand_review.txt' "HAND WRITTEN REVIEWER PROMPT ONLY`n"
+        $notes = New-PromptFile 'review_notes_ignored.txt' "PM note should not appear.`n"
+        $r = Invoke-Launch $Fx -Mode 'commit' -Params @{ Provider = 'grok'; PromptFile = $pf; ReviewNotes = $notes }
+        $stdin = Get-RunStdin $Fx $r.Entry
+        Check 'exit_0' ($r.Code -eq 0) "exit $($r.Code) $($r.Err)"
+        Check 'whole_prompt_is_the_file' ("$stdin".Trim() -ceq 'HAND WRITTEN REVIEWER PROMPT ONLY') $stdin
+        Check 'notes_not_appended' ("$stdin" -notmatch 'PM note should not appear')
+        Check 'procedure_not_present' ("$stdin" -notmatch 'Commit with the subject')
+    } }
+    @{ Name = 'review_notes_missing_refused'; Body = {
+        Reset-Lane $Fx
+        $r = Invoke-Launch $Fx -Mode 'commit' -Params @{ Provider = 'grok'; ReviewNotes = (Join-Path $script:TestRoot 'no-such-review-notes.txt') }
+        Check 'exit_1' ($r.Code -eq 1) "exit $($r.Code)"
+        Check 'says_not_found' ($r.Err -match 'review notes not found') $r.Err
+    } }
     @{ Name = 'committed_prompt_reused_without_registry'; Body = {
         Reset-Lane $Fx
         $pm = New-PromptFile 'pm_writer_committed.txt' (Get-PmPromptText)
@@ -1125,6 +1208,10 @@ $MutantDefs = @(
        Find = 'if ($p -is [bool]) { return @{ Push = $p; Source = ''lane.json'' } }'; Replace = 'if ($p -is [bool]) { $null = $p }' }
     @{ Name = 'push_lane_json_invalid_accepted'; File = 'launch_worker.ps1'; Tests = 'push_rule_lane_json_invalid_refused'
        Find = 'return @{ Error = "lane.json ""push"" must be true or false, not ''$p''" }'; Replace = '$null = $p' }
+    @{ Name = 'prompt_without_commit'; File = 'launch_worker.ps1'; Tests = 'generated_reviewer_prompt'
+       Find = 'Commit with the subject'; Replace = 'Record with the subject' }
+    @{ Name = 'saved_reviewer_reused'; File = 'launch_worker.ps1'; Tests = 'saved_reviewer_prompt_gets_procedure_and_notes'
+       Find = '$skipSavedReviewer = ($roleName -eq ''reviewer'' -and $saved.Path)'; Replace = '$skipSavedReviewer = $false' }
     @{ Name = 'no_final_sha_line'; File = 'launch_worker.ps1'; Tests = 'push_rule_from_brief'
        Find = 'if ($Push) { $lines.Add(''Your final output line'; Replace = 'if ($false) { $lines.Add(''Your final output line' }
     # effort, the floor, gemini, and explicit -ProviderArgs (OPS.20.06)
@@ -1156,7 +1243,11 @@ if ($List) { $Tests | ForEach-Object { $_.Name }; exit 0 }
 if ($Mutants) {
     $script:TestRoot = (Get-Location).Path
     $names = @($Only | ForEach-Object { ([string]$_).Split(',') } | Where-Object { $_ })
-    $selected = if ($names) { @($MutantDefs | Where-Object { $names -contains $_.Name }) } else { $MutantDefs }
+    # A one-element Object[] of hashtables is enumerated by @(), so collect into a list.
+    $selected = New-Object System.Collections.Generic.List[object]
+    foreach ($m in $MutantDefs) {
+        if ($names.Count -eq 0 -or ($names -contains $m.Name)) { $selected.Add($m) }
+    }
     exit (Invoke-MutantSweep 'test_launch_worker.ps1' $selected)
 }
 

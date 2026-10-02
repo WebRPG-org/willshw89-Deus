@@ -27,12 +27,18 @@
  *   (b2) AUTHOR   agent-tagged commits match their family author; [ops] commits are authored deus-ops
  *                 and confined to the lane task directory. Manifest author names are checked in (a).
  *                 Open-lane exceptions are read from origin/main's author_rules.json by ancestry.
- *   (c) TESTS     each gateTests entry runs with spawnSync (no shell) in its own fresh clone checked
- *                 out at the tip, with its own timeout; each must exit 0. The clone is forced to
- *                 core.autocrlf=false, core.eol=lf and core.safecrlf=false before checkout, so the
- *                 work-tree bytes equal the committed blobs whatever the caller's global or system
- *                 line-ending config is. An entry on the quarantine list of
+ *   (c) TESTS     after manifest, authorship and review pass, a temporary no-fast-forward merge of
+ *                 origin/main and the lane tip (throwaway identity) is built. Each gateTests entry then
+ *                 runs with no shell in its own fresh clone of that merge, up to --jobs at a time
+ *                 (default 3). An entry with "serial": true runs alone afterwards. "retryOnce": true
+ *                 runs a failure once more, alone. A conflict refuses MERGE_CONFLICT before any test.
+ *                 The clone is forced to core.autocrlf=false, core.eol=lf and core.safecrlf=false
+ *                 before checkout, so the work-tree bytes equal the committed blobs whatever the
+ *                 caller's global or system line-ending config is. An entry on the quarantine list of
  *                 tools/ops/gate_tests.json (main's copy or the tip's) refuses the gate.
+ *   (b3) HOTFIX   "hotfix": true accepts a lane with no review when every allowedPath and every
+ *                 commit path stays under tools/**, docs/**, tasks/** or game/data/sim/**. Otherwise
+ *                 HOTFIX_SCOPE. A hotfix that has a review is judged as a normal lane.
  *   (d) PUSHED    after git fetch origin: rev-parse <branch> == rev-parse origin/<branch> ==
  *                 git ls-remote origin refs/heads/<branch>.
  *   (e) MAIN      main is checked out in a worktree with no uncommitted tracked changes and no
@@ -45,6 +51,7 @@
  * Usage:
  *   node tools/governance/merge_gate.js --lane <lane> --manifest tasks/<id>/<lane>/lane.json [--dry-run]
  *   options: --branch <name>   branch to merge (default task/<lane>; must equal the manifest's)
+ *            --jobs <n>        how many gate tests run at once (default 3; serial entries run after)
  *            --keep-temp       keep the temporary clones and test logs
  *            --mutant=<name>   self-test only: switch one check off. Needs DEUS_MERGE_GATE_SELFTEST=1
  *                              and always runs as --dry-run.
@@ -55,17 +62,25 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const { spawnSync } = require("child_process");
+const { spawn, spawnSync } = require("child_process");
 
 const MAIN = "main";
 const REMOTE = "origin";
 const DEFAULT_TIMEOUT_SEC = 600;
+const DEFAULT_JOBS = 3;
+const HOTFIX_ROOTS = ["tools", "docs", "tasks", "game/data/sim"];
+const TEST_MERGE_IDENTITY = {
+    GIT_AUTHOR_NAME: "deus-merge-gate",
+    GIT_AUTHOR_EMAIL: "deus-merge-gate@local.invalid",
+    GIT_COMMITTER_NAME: "deus-merge-gate",
+    GIT_COMMITTER_EMAIL: "deus-merge-gate@local.invalid"
+};
 const QUARANTINE_FILE = "tools/ops/gate_tests.json";
 const AUTHOR_RULES_FILE = "tools/governance/author_rules.json";
 const SELFTEST_ENV = "DEUS_MERGE_GATE_SELFTEST";
 const LOG_TAIL_LINES = 20;
 
-// Claude and Fable run on the same CLI, as do Gemini and Antigravity (docs/CANONICAL_ROLES.md ??2).
+// Claude and Fable run on the same CLI, as do Gemini and Antigravity (docs/CANONICAL_ROLES.md §2).
 const FAMILIES = { claude: "claude", fable: "claude", grok: "grok", codex: "codex", gemini: "gemini", antigravity: "gemini" };
 // The PM's subject tag. Trusted to write lane.json (check (a)); not an agent family, so never a review.
 const PM_TAG = "pm";
@@ -105,7 +120,12 @@ const MUTANTS = {
     main_clean_off: "skip the main work tree cleanliness check",
     main_sync_off: "skip the main == origin/main check",
     keep_failed_temp_off: "do not keep temp clones on test failure",
-    fail_lines_off: "do not show up to 20 FAIL lines on test failure"
+    fail_lines_off: "do not show up to 20 FAIL lines on test failure",
+    tests_at_tip: "run gate tests on the lane tip instead of the merge of origin/main and the tip",
+    sequential_only: "run gate tests one at a time",
+    retry_without_flag: "retry a failed gate test once even when retryOnce is not set",
+    retry_twice: "retry a failed retryOnce gate test a second time",
+    hotfix_any_path: "accept a hotfix lane whose paths leave the hotfix roots"
 };
 
 const CHECKS = [
@@ -142,8 +162,9 @@ const GIT_ENV = (() => {
 let CWD = process.cwd();
 
 function git(args, opts = {}) {
+    const env = opts.env ? Object.assign({}, GIT_ENV, opts.env) : GIT_ENV;
     const r = spawnSync("git", ["--literal-pathspecs", ...args], {
-        cwd: opts.cwd || CWD, encoding: "utf8", env: GIT_ENV, maxBuffer: 256 * 1024 * 1024, windowsHide: true
+        cwd: opts.cwd || CWD, encoding: "utf8", env, maxBuffer: 256 * 1024 * 1024, windowsHide: true
     });
     if (r.error) throw new UsageError("GIT_ERROR", `cannot run git: ${r.error.message}`);
     if (opts.allowFail) return { ok: r.status === 0, status: r.status, out: r.stdout || "", err: (r.stderr || "").trim() };
@@ -332,10 +353,13 @@ function printReport(R, ctx, exitCode) {
         ]));
     }
     if (R.tests.length) {
-        out.push("", "## Tests (spawnSync, no shell; each in a fresh clone at the checked sha)");
+        const where = ctx.testedOnMerge ? "of the merge result" : "at the checked sha";
+        out.push("", `## Tests (no shell; each in a fresh clone ${where})`);
+        if (ctx.testedOnMerge && ctx.testTree) out.push(`tests ran on the merge result ${ctx.testTree.slice(0, 8)}`);
         out.push(...table(["#", "Command", "Timeout", "Exit", "Duration", "Result"],
             R.tests.map(t => [t.n, t.display, `${t.timeoutSec} s${t.defaultTimeout ? " (default)" : ""}`,
                 t.exit == null ? "-" : t.exit, sec(t.durationMs), t.result])));
+        if (R.testWallMs != null) out.push(`total wall time ${sec(R.testWallMs)}`);
         for (const t of R.tests.filter(x => x.tail)) {
             out.push("", `### Test ${t.n} output, last ${LOG_TAIL_LINES} lines`, "```", t.tail, "```");
             if (t.failLines) out.push("", `### Test ${t.n} FAIL lines (up to 20)`, "```", t.failLines, "```");
@@ -356,7 +380,7 @@ function printReport(R, ctx, exitCode) {
 // ---------------------------------------------------------------- arguments
 
 function parseArgs(argv) {
-    const o = { lane: null, manifest: null, branch: null, dryRun: false, keepTemp: false, mutants: [], help: false };
+    const o = { lane: null, manifest: null, branch: null, dryRun: false, keepTemp: false, mutants: [], help: false, jobs: DEFAULT_JOBS };
     for (let i = 0; i < argv.length; i++) {
         const a = argv[i];
         const [flag, inline] = a.startsWith("--") && a.includes("=") ? [a.slice(0, a.indexOf("=")), a.slice(a.indexOf("=") + 1)] : [a, null];
@@ -368,6 +392,11 @@ function parseArgs(argv) {
         if (flag === "--lane") o.lane = value();
         else if (flag === "--manifest") o.manifest = value();
         else if (flag === "--branch") o.branch = value();
+        else if (flag === "--jobs") {
+            const n = Number(value());
+            if (!Number.isInteger(n) || n < 1) throw new UsageError("USAGE", "--jobs needs a positive integer");
+            o.jobs = n;
+        }
         else if (flag === "--mutant") o.mutants.push(value());
         else if (flag === "--dry-run" && inline === null) o.dryRun = true;
         else if (flag === "--keep-temp" && inline === null) o.keepTemp = true;
@@ -387,7 +416,7 @@ function parseArgs(argv) {
 }
 
 const USAGE = `Usage: node tools/governance/merge_gate.js --lane <lane> --manifest tasks/<id>/<lane>/lane.json [--dry-run]
-       [--branch <name>] [--keep-temp]
+       [--branch <name>] [--jobs <n>] [--keep-temp]
 See tools/governance/MERGE_GATE.md for the checks and reason codes.`;
 
 // ---------------------------------------------------------------- checks
@@ -477,7 +506,10 @@ function validateManifest(m) {
         if (typeof t.cmd !== "string" || !t.cmd.trim()) errs.push(`gateTests[${i}].cmd must be a non-empty string`);
         if (t.args != null && (!Array.isArray(t.args) || t.args.some(a => typeof a !== "string"))) errs.push(`gateTests[${i}].args must be an array of strings`);
         if (t.timeoutSec != null && !(typeof t.timeoutSec === "number" && isFinite(t.timeoutSec) && t.timeoutSec > 0)) errs.push(`gateTests[${i}].timeoutSec must be a positive number`);
+        if ("serial" in t && typeof t.serial !== "boolean") errs.push(`gateTests[${i}].serial must be true or false`);
+        if ("retryOnce" in t && typeof t.retryOnce !== "boolean") errs.push(`gateTests[${i}].retryOnce must be true or false`);
     });
+    if ("hotfix" in m && typeof m.hotfix !== "boolean") errs.push(`"hotfix" must be true or false`);
     return errs;
 }
 
@@ -629,7 +661,11 @@ function checkReview(R, ctx, man) {
         else if (at > 0) {
             R.refuse("REVIEW", "REVIEW_NOT_LAST", `review commit ${chain[at].sha} "${chain[at].subject}" is followed by ${at} commit(s): ` +
                 chain.slice(0, at).map(c => `${short(c.sha)} "${c.subject}"`).join(", "));
-        } else if (false) {
+        } else if (man.hotfix === true) {
+            const why = hotfixScopeProblem(ctx, man);
+            if (why && !mut("hotfix_any_path")) R.refuse("REVIEW", "HOTFIX_SCOPE", why);
+            else ctx.hotfixNoReview = true;
+        } else if (!mut("review_required_off")) {
             R.refuse("REVIEW", "REVIEW_MISSING", `no commit on ${ctx.branch} adds ${dir}/review_<agent>_<sha8>.md`);
         }
         return;
@@ -678,7 +714,7 @@ function checkReview(R, ctx, man) {
     V.verdict = parseVerdict(text);
     if (!mut("verdict_off")) {
         if (!V.verdict.lines.length) R.refuse("REVIEW", "REVIEW_VERDICT_MISSING", `${file.path} has no "VERDICT: PASS" or "VERDICT: CLEAN PASS" line`);
-        else {} // DEC-089
+        else if (!V.verdict.pass) R.refuse("REVIEW", "REVIEW_VERDICT_NOT_PASS", `${file.path} verdict line(s) not PASS / CLEAN PASS: ${V.verdict.bad.join(" / ")}`);
     }
 }
 
@@ -711,7 +747,50 @@ function cloneLfArgs() {
     return CLONE_LF.flatMap(([k, v]) => ["-c", `${k}=${v}`]);
 }
 
-function makeClone(ctx, dest) {
+// A hotfix path is under tools/**, docs/**, tasks/**, tools/fixtures/** (covered by tools/) or game/data/sim/**.
+function hotfixLiteral(glob) {
+    const cut = String(glob).search(/[*?]/);
+    return (cut === -1 ? String(glob) : String(glob).slice(0, cut)).replace(/\/+$/, "");
+}
+
+function hotfixUnderRoot(literal) {
+    if (!literal) return false;
+    return HOTFIX_ROOTS.some(r => literal === r || literal.startsWith(r + "/"));
+}
+
+function hotfixScopeProblem(ctx, man) {
+    const badGlobs = man.allowedPaths.filter(g => !hotfixUnderRoot(hotfixLiteral(g)));
+    const badFiles = [];
+    const shas = git(["rev-list", ctx.tip, `^${ctx.refs.main}`]).split("\n").filter(Boolean);
+    for (const sha of shas) {
+        const c = commitInfo(sha);
+        for (const f of c.files) if (!hotfixUnderRoot(f.path)) badFiles.push(`${short(sha)} ${f.status} ${f.path}`);
+    }
+    if (!badGlobs.length && !badFiles.length) return null;
+    const parts = ["hotfix lanes may only touch tools/**, docs/**, tasks/**, tools/fixtures/** or game/data/sim/**"];
+    if (badGlobs.length) parts.push(`allowedPaths: ${badGlobs.join(", ")}`);
+    if (badFiles.length) parts.push(`commits: ${badFiles.join(", ")}`);
+    return parts.join("; ");
+}
+
+function gitPath(cwd, args) {
+    const rel = git(["rev-parse", "--git-path", ...args], { cwd }).trim();
+    return path.isAbsolute(rel) ? rel : path.resolve(cwd, rel);
+}
+
+// Alternates are not transitive. A test clone already shares the source object store (the blobs);
+// the temporary merge commit and any new trees live only in the merge clone, so that object
+// directory is added as a second alternate before checkout.
+function addAlternate(dest, objectDir) {
+    const alt = path.join(dest, ".git", "objects", "info", "alternates");
+    const line = objectDir.replace(/\\/g, "/");
+    let cur = fs.existsSync(alt) ? fs.readFileSync(alt, "utf8") : "";
+    if (cur.split(/\r?\n/).includes(line)) return;
+    if (cur && !cur.endsWith("\n")) cur += "\n";
+    fs.writeFileSync(alt, cur + line + "\n");
+}
+
+function makeClone(ctx, dest, rev) {
     const lf = cloneLfArgs();
     const c = git(["clone", ...lf, "--quiet", "--shared", "--no-checkout", ctx.commonDir, dest], { allowFail: true, cwd: os.tmpdir() });
     if (!c.ok) return `git clone failed: ${c.err}`;
@@ -721,71 +800,234 @@ function makeClone(ctx, dest) {
             if (!set.ok) return `git config --local ${k} ${v} failed: ${set.err}`;
         }
     }
-    const co = git([...lf, "-c", "advice.detachedHead=false", "checkout", "--quiet", "--detach", ctx.tip], { allowFail: true, cwd: dest });
-    if (!co.ok) return `git checkout ${ctx.tip} failed: ${co.err}`;
+    let checkout = rev || ctx.tip;
+    let expect = rev || ctx.tip;
+    if (!rev && ctx.testedOnMerge && ctx.testMergeClone) {
+        addAlternate(dest, gitPath(ctx.testMergeClone, ["objects"]));
+        checkout = ctx.testRev;
+        expect = ctx.testRev;
+    } else if (!rev && ctx.testRev && !ctx.testedOnMerge) {
+        checkout = ctx.testRev;
+        expect = ctx.testRev;
+    }
+    const co = git([...lf, "-c", "advice.detachedHead=false", "checkout", "--quiet", "--detach", checkout], { allowFail: true, cwd: dest });
+    if (!co.ok) return `git checkout ${checkout} failed: ${co.err}`;
     const head = revParse("HEAD", dest);
-    return head === ctx.tip ? null : `clone HEAD is ${head}, expected ${ctx.tip}`;
+    return head === expect ? null : `clone HEAD is ${head}, expected ${expect}`;
 }
 
-function checkTests(R, ctx, man) {
+// Temporary merge of origin/main and the lane tip. A conflict is reported and no test runs.
+// tests_at_tip and fresh_clone_off leave the tests on the tip (the latter in the caller's work tree).
+function prepareTestMerge(ctx) {
+    if (mut("tests_at_tip") || mut("fresh_clone_off")) {
+        ctx.testRev = ctx.tip;
+        ctx.testedOnMerge = false;
+        return null;
+    }
+    const base = ctx.refs.mainTracking || ctx.refs.main;
+    const dest = path.join(ctx.tmp, "merge-result");
+    const err = makeClone(ctx, dest, base);
+    if (err) return { error: err };
+    const merged = git(["merge", "--no-ff", "-m", "temporary merge of origin/main and the lane tip for gate tests", ctx.tip],
+        { cwd: dest, allowFail: true, env: TEST_MERGE_IDENTITY });
+    if (!merged.ok) {
+        const unmerged = git(["diff", "--name-only", "--diff-filter=U"], { cwd: dest, allowFail: true });
+        const names = (unmerged.out || "").split("\n").map(s => s.trim()).filter(Boolean);
+        git(["merge", "--abort"], { cwd: dest, allowFail: true });
+        if (names.length) return { conflict: names.join(", ") };
+        return { error: `temporary merge failed: ${(merged.err || merged.out || "").split("\n").slice(-5).join(" ")}` };
+    }
+    const sha = revParse("HEAD", dest);
+    ctx.testMergeClone = dest;
+    ctx.testRev = sha;
+    ctx.testTree = git(["rev-parse", `${sha}^{tree}`], { cwd: dest }).trim();
+    ctx.testedOnMerge = true;
+    return null;
+}
+
+function runCommand(cmd, args, cwd, timeoutMs, logFile) {
+    return new Promise((resolve) => {
+        let fd;
+        try { fd = fs.openSync(logFile, "w"); }
+        catch (e) { resolve({ error: e }); return; }
+        let child;
+        try {
+            child = spawn(cmd, args, { cwd, env: GIT_ENV, stdio: ["ignore", fd, fd], shell: false, windowsHide: true });
+        } catch (e) {
+            try { fs.closeSync(fd); } catch (closeErr) { /* already closed */ }
+            resolve({ error: e });
+            return;
+        }
+        let settled = false;
+        let timedOut = false;
+        const timer = timeoutMs == null ? null : setTimeout(() => {
+            timedOut = true;
+            try { child.kill("SIGKILL"); } catch (e) { /* already exited */ }
+        }, timeoutMs);
+        const finish = (result) => {
+            if (settled) return;
+            settled = true;
+            if (timer) clearTimeout(timer);
+            try { fs.closeSync(fd); } catch (e) { /* already closed */ }
+            resolve(result);
+        };
+        child.on("error", (err) => finish({ error: err, timedOut }));
+        child.on("close", (status, signal) => finish({ status, signal, timedOut }));
+    });
+}
+
+function readLogTail(logFile) {
+    try { return fs.readFileSync(logFile, "utf8").replace(/\s+$/, "").split(/\r?\n/).slice(-LOG_TAIL_LINES).join("\n"); }
+    catch (e) { return `(log unreadable: ${e.message})`; }
+}
+
+function readFailLines(logFile) {
+    if (mut("fail_lines_off")) return null;
+    try { return fs.readFileSync(logFile, "utf8").replace(/\s+$/, "").split(/\r?\n/).filter(l => /\bFAIL\b/.test(l)).slice(-20).join("\n") || null; }
+    catch (e) { return null; }
+}
+
+function wantsRetry(spec) {
+    return !!(spec && spec.retryOnce) || mut("retry_without_flag");
+}
+
+function retryLimit() {
+    return mut("retry_twice") ? 2 : 1;
+}
+
+async function runPool(items, limit, worker) {
+    if (!items.length) return;
+    const queue = items.slice();
+    const n = Math.max(1, Math.min(limit, queue.length));
+    const loops = [];
+    for (let i = 0; i < n; i++) {
+        loops.push((async () => {
+            while (queue.length) await worker(queue.shift());
+        })());
+    }
+    await Promise.all(loops);
+}
+
+async function executeTest(R, ctx, row, attempt) {
+    row.attempts = attempt + 1;
+    const t = row.spec;
+    const args = t.args || [];
+    let cwd = ctx.top;
+    if (!mut("fresh_clone_off")) {
+        if (attempt === 0) {
+            if (row.cloneErr) {
+                row.failed = true; row.passed = false; row.terminal = true; ctx.keepTemp = true;
+                row.result = "CLONE FAILED";
+                row.failCode = "CLONE_FAILED";
+                row.failDetail = `test ${row.n}: ${row.cloneErr}`;
+                return;
+            }
+            cwd = row.cwd;
+        } else {
+            cwd = path.join(ctx.tmp, `clone-${row.n}-r${attempt}`);
+            const err = makeClone(ctx, cwd);
+            if (err) {
+                row.failed = true; row.passed = false; row.terminal = true; ctx.keepTemp = true;
+                row.result = "CLONE FAILED";
+                row.failCode = "CLONE_FAILED";
+                row.failDetail = `test ${row.n}: ${err}`;
+                return;
+            }
+        }
+    }
+    const logFile = path.join(ctx.tmp, attempt === 0 ? `test-${row.n}.log` : `test-${row.n}-retry-${attempt}.log`);
+    const label = attempt === 0 ? `test ${row.n}/${ctx.testCount}` : `test ${row.n}/${ctx.testCount} retry ${attempt}`;
+    console.log(`.. ${label}: ${row.display} (timeout ${row.timeoutSec} s) in ${cwd}`);
+    const t0 = process.hrtime.bigint();
+    const timeoutMs = mut("test_timeout_off") ? null : Math.round(row.timeoutSec * 1000);
+    const r = await runCommand(t.cmd === "node" ? process.execPath : t.cmd, args, cwd, timeoutMs, logFile);
+    row.durationMs = Number(process.hrtime.bigint() - t0) / 1e6;
+    row.exit = r.status == null ? (r.signal ? `signal ${r.signal}` : null) : r.status;
+    const passed = !r.error && !r.timedOut && (r.status === 0 || mut("test_exit_off"));
+    if (passed) {
+        row.failed = false; row.passed = true; row.failCode = null; row.failDetail = null; row.tail = null; row.failLines = null;
+        row.result = row.attempts > 1 ? "flaky: passed on retry" : "PASS";
+        if (row.attempts > 1) ctx.keepTemp = true;
+        return;
+    }
+    row.failed = true; row.passed = false; ctx.keepTemp = true;
+    row.tail = readLogTail(logFile);
+    row.failLines = readFailLines(logFile);
+    if (r.timedOut || (r.error && r.error.code === "ETIMEDOUT")) {
+        row.result = "TIMEOUT";
+        row.failCode = "TEST_TIMEOUT";
+        row.failDetail = `test ${row.n} (${row.display}) ran past its ${row.timeoutSec} s timeout and was killed`;
+    } else if (r.error) {
+        row.result = "SPAWN ERROR";
+        row.exit = r.error.code || "error";
+        row.failCode = "TEST_SPAWN_ERROR";
+        row.failDetail = `test ${row.n} (${row.display}) could not start: ${r.error.message}`;
+    } else {
+        row.result = "FAIL";
+        row.failCode = "TEST_FAILED";
+        row.failDetail = `test ${row.n} (${row.display}) exited ${row.exit}`;
+    }
+}
+
+async function checkTests(R, ctx, man) {
     const tests = man.gateTests;
     if (!tests.length) { R.refuse("TESTS", "TESTS_NONE", `${ctx.manifestPath} declares no gateTests`); return; }
     const quarantine = [...quarantineList(R, ctx.refs.main, MAIN), ...quarantineList(R, ctx.tip, "tip")];
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "deus-merge-gate-"));
     ctx.tmp = tmp;
-    tests.forEach((t, i) => {
+    ctx.testCount = tests.length;
+    const rows = tests.map((t, i) => {
         const args = t.args || [];
         const row = {
             n: i + 1, display: [t.cmd, ...args].map(quoteArg).join(" "),
             timeoutSec: t.timeoutSec || DEFAULT_TIMEOUT_SEC, defaultTimeout: t.timeoutSec == null,
-            exit: null, durationMs: null, result: "", tail: null
+            exit: null, durationMs: null, result: "", tail: null, spec: t,
+            attempts: 0, failed: false, passed: false, terminal: false, quarantined: false
         };
         R.tests.push(row);
         const tokens = [t.cmd, ...args].map(normPath);
         const q = mut("quarantine_off") ? null : quarantine.find(e => tokens.includes(e.norm));
         if (q) {
+            row.quarantined = true;
             row.result = "QUARANTINED (not run)";
             R.refuse("TESTS", "TEST_QUARANTINED", `test ${row.n} (${row.display}) uses ${q.path}, quarantined in ${QUARANTINE_FILE} on ${q.from}`);
-            return;
         }
-        let cwd = ctx.top;
-        if (!mut("fresh_clone_off")) {
-            cwd = path.join(tmp, `clone-${row.n}`);
-            const err = makeClone(ctx, cwd);
-            if (err) { row.result = "CLONE FAILED"; R.refuse("TESTS", "CLONE_FAILED", `test ${row.n}: ${err}`); return; }
-        }
-        const logFile = path.join(tmp, `test-${row.n}.log`);
-        const fd = fs.openSync(logFile, "w");
-        console.log(`.. test ${row.n}/${tests.length}: ${row.display} (timeout ${row.timeoutSec} s) in ${cwd}`);
-        const t0 = process.hrtime.bigint();
-        const r = spawnSync(t.cmd === "node" ? process.execPath : t.cmd, args, {
-            cwd, env: GIT_ENV, stdio: ["ignore", fd, fd], shell: false, windowsHide: true,
-            timeout: mut("test_timeout_off") ? undefined : Math.round(row.timeoutSec * 1000), killSignal: "SIGKILL"
-        });
-        row.durationMs = Number(process.hrtime.bigint() - t0) / 1e6;
-        fs.closeSync(fd);
-        row.exit = r.status == null ? (r.signal ? `signal ${r.signal}` : null) : r.status;
-        const tail = () => {
-            try { return fs.readFileSync(logFile, "utf8").replace(/\s+$/, "").split(/\r?\n/).slice(-LOG_TAIL_LINES).join("\n"); } catch (e) { return `(log unreadable: ${e.message})`; }
-        };
-        const failLines = () => {
-            if (mut("fail_lines_off")) return null;
-            try { return fs.readFileSync(logFile, "utf8").replace(/\s+$/, "").split(/\r?\n/).filter(l => /\bFAIL\b/.test(l)).slice(-20).join("\n") || null; } catch (e) { return null; }
-        };
-        if (r.error && r.error.code === "ETIMEDOUT") {
-            ctx.keepTemp = true;
-            row.result = "TIMEOUT"; row.tail = tail(); row.failLines = failLines();
-            R.refuse("TESTS", "TEST_TIMEOUT", `test ${row.n} (${row.display}) ran past its ${row.timeoutSec} s timeout and was killed`);
-        } else if (r.error) {
-            ctx.keepTemp = true;
-            row.result = "SPAWN ERROR"; row.exit = r.error.code || "error"; row.failLines = failLines();
-            R.refuse("TESTS", "TEST_SPAWN_ERROR", `test ${row.n} (${row.display}) could not start: ${r.error.message}`);
-        } else if (r.status !== 0 && !mut("test_exit_off")) {
-            ctx.keepTemp = true;
-            row.result = "FAIL"; row.tail = tail(); row.failLines = failLines();
-            R.refuse("TESTS", "TEST_FAILED", `test ${row.n} (${row.display}) exited ${row.exit}`);
-        } else row.result = "PASS";
+        return row;
     });
+    const runnable = rows.filter(row => !row.quarantined);
+    if (!runnable.length) return;
+    const prep = prepareTestMerge(ctx);
+    if (prep && prep.conflict) {
+        R.refuse("TESTS", "MERGE_CONFLICT", `origin/main and ${ctx.tip} conflict before tests: ${prep.conflict}`);
+        return;
+    }
+    if (prep && prep.error) {
+        R.refuse("TESTS", "CLONE_FAILED", prep.error);
+        return;
+    }
+    if (!mut("fresh_clone_off")) {
+        for (const row of runnable) {
+            row.cwd = path.join(tmp, `clone-${row.n}`);
+            row.cloneErr = makeClone(ctx, row.cwd);
+        }
+    }
+    const jobs = mut("sequential_only") ? 1 : (ctx.jobs || DEFAULT_JOBS);
+    const parallel = runnable.filter(row => !row.spec.serial);
+    const serial = runnable.filter(row => row.spec.serial);
+    const wall0 = process.hrtime.bigint();
+    await runPool(parallel, jobs, (row) => executeTest(R, ctx, row, 0));
+    for (const row of serial) await executeTest(R, ctx, row, 0);
+    let safety = 0;
+    while (safety++ < 4) {
+        const due = runnable.filter(row => row.failed && !row.terminal && wantsRetry(row.spec) && row.attempts < 1 + retryLimit());
+        if (!due.length) break;
+        for (const row of due) await executeTest(R, ctx, row, row.attempts);
+    }
+    R.testWallMs = Number(process.hrtime.bigint() - wall0) / 1e6;
+    for (const row of runnable) {
+        if (row.passed || !row.failCode) continue;
+        R.refuse("TESTS", row.failCode, row.failDetail);
+    }
 }
 
 // ---------------------------------------------------------------- merge
@@ -840,7 +1082,8 @@ function doMerge(R, ctx) {
         ctx.refs.main = remoteMain;
         R.refs.push({ label: "main at merge", cmd: `git rev-parse refs/remotes/${REMOTE}/${MAIN}`, value: remoteMain });
     }
-    const msg = `Merge ${ctx.branch} at ${ctx.tip} (${ctx.taskId} ${ctx.lane}) via merge_gate`;
+    let msg = `Merge ${ctx.branch} at ${ctx.tip} (${ctx.taskId} ${ctx.lane}) via merge_gate`;
+    if (ctx.hotfixNoReview) msg += " (hotfix, no review: DEC-087)";
     const r = git(["merge", "--no-ff", "--no-edit", "-m", msg, ctx.tip], { allowFail: true, cwd: ctx.mainWorktree });
     if (!r.ok) {
         const abort = git(["merge", "--abort"], { allowFail: true, cwd: ctx.mainWorktree });
@@ -857,13 +1100,23 @@ function doMerge(R, ctx) {
         R.execution = `UNEXPECTED RESULT ${head}`;
         return;
     }
+    // When main did not move, the merge tree is the tree the tests ran on. A main move is decided
+    // by the checks above (lane-gk): a clean unrelated move is merged on top and the tree differs.
+    if (!mainMoved && ctx.testTree) {
+        const tree = git(["rev-parse", `${head}^{tree}`]).trim();
+        if (tree !== ctx.testTree) {
+            R.refuse("EXEC", "MERGE_FAILED", `merge tree ${tree} is not the tested tree ${ctx.testTree}`);
+            R.execution = `UNEXPECTED RESULT ${head}`;
+            return;
+        }
+    }
     R.execution = `MERGED ${head} (parents ${short(parents[0])} ${short(parents[1])}; not pushed)`;
     R.refs.push({ label: "new main", cmd: `git rev-parse refs/heads/${MAIN}`, value: head });
 }
 
 // ---------------------------------------------------------------- main
 
-function run(argv) {
+async function run(argv) {
     const R = new Report();
     const ctx = { mode: null };
     let opts;
@@ -878,9 +1131,9 @@ function run(argv) {
     }
     if (opts.help) { console.log(USAGE); return 0; }
     for (const m of opts.mutants) active.add(m);
-    const dryRun = opts.dryRun;
+    const dryRun = opts.dryRun || active.size > 0;
     Object.assign(ctx, {
-        lane: opts.lane, branch: opts.branch,
+        lane: opts.lane, branch: opts.branch, jobs: opts.jobs,
         mode: dryRun ? (opts.dryRun ? "dry-run" : "dry-run (forced: mutants active)") : "merge"
     });
     try {
@@ -938,7 +1191,8 @@ function run(argv) {
                     checkScope(R, ctx, man);
                     checkReview(R, ctx, man);
                     checkCommitAuthors(R, ctx, man);
-                    checkTests(R, ctx, man);
+                    if (["REVIEW", "AUTHOR"].some(k => R.state(k).codes.length)) R.skip("TESTS", "authorship or review refused");
+                    else await checkTests(R, ctx, man);
                 }
             }
         }
@@ -968,4 +1222,9 @@ function cleanup(ctx, opts) {
 
 module.exports = { MUTANTS, FAMILIES, PM_TAG, globToRegExp, parseVerdict, fullHashes, subjectTag, family, normPath, validateManifest, trustedManifestCommit };
 
-if (require.main === module) process.exitCode = run(process.argv.slice(2));
+if (require.main === module) {
+    run(process.argv.slice(2)).then(code => { process.exitCode = code; }).catch(err => {
+        console.error(err && err.stack ? err.stack : err);
+        process.exitCode = 2;
+    });
+}

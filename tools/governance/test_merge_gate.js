@@ -664,8 +664,226 @@ const CASES = [
         verify: r => (r.out.includes("| mode | dry-run (forced: mutants active) |") && r.out.includes("| (f) execution | SKIPPED (dry-run (forced: mutants active)) | - |") ? null : "mode or execution row does not show the forced dry-run")
     },
 
+    // DEC-087: tests on the merge result, parallel jobs, one retry, hotfix class.
+    // These restore main in teardown. The execution cases below leave main moved on purpose.
+    {
+        name: "fail_union_green_alone_fails_on_merge",
+        build: () => {
+            const saved = mainSha();
+            fs.mkdirSync(path.join(WORK, "src"), { recursive: true });
+            fs.writeFileSync(path.join(WORK, "src", "base.js"), "module.exports = { offset: 0 };\n");
+            w(["add", "src/base.js"]);
+            w(["commit", "-q", "-m", "[gemini] TEST_ offset zero"]);
+            w(["push", "-q", "origin", "main"]);
+            const l = new Lane("union", {
+                allowedPaths: ["src/feature.js", "tests/test_feature.js", "tasks/TEST.01/lane-union/**"]
+            });
+            l.savedMain = saved;
+            l.baseMain = mainSha();
+            const test = "const f = require(\"../src/feature.js\");\nconst b = require(\"../src/base.js\");\n" +
+                "if (f.add(2, 2) + b.offset !== 4) { console.log(\"FAIL TEST_ union offset \" + b.offset); process.exit(1); }\n" +
+                "console.log(\"PASS TEST_ union\");\n";
+            l.manifestCommit();
+            l.writer({ "tests/test_feature.js": test });
+            l.review();
+            l.push();
+            return l;
+        },
+        setup: l => {
+            w(["reset", "-q", "--hard", l.baseMain]);
+            if (originMain() !== l.baseMain) w(["push", "-q", "--force", "origin", "main"]);
+            fs.writeFileSync(path.join(WORK, "src", "base.js"), "module.exports = { offset: 1 };\n");
+            fs.mkdirSync(path.join(WORK, "tests"), { recursive: true });
+            fs.writeFileSync(path.join(WORK, "tests", "test_main_offset.js"),
+                "const b = require(\"../src/base.js\");\nif (b.offset !== 1) { console.log(\"FAIL TEST_ main\"); process.exit(1); }\nconsole.log(\"PASS TEST_ main\");\n");
+            w(["add", "src/base.js", "tests/test_main_offset.js"]);
+            w(["commit", "-q", "-m", "[gemini] TEST_ offset one"]);
+            w(["push", "-q", "origin", "main"]);
+        },
+        teardown: l => {
+            w(["reset", "-q", "--hard", l.savedMain]);
+            if (originMain() !== l.savedMain) w(["push", "-q", "--force", "origin", "main"]);
+        },
+        expect: REFUSE("TEST_FAILED"),
+        verify: r => {
+            const errs = [];
+            if (!/tests ran on the merge result [0-9a-f]{8}/.test(r.out)) errs.push("merge-result line missing");
+            const mainTest = spawnSync(process.execPath, ["tests/test_main_offset.js"], { cwd: WORK, encoding: "utf8" });
+            if (mainTest.status !== 0) errs.push(`main alone failed: ${mainTest.stdout} ${mainTest.stderr}`);
+            return errs.join("; ") || null;
+        }
+    },
+    {
+        name: "pass_parallel_under_four_seconds",
+        build: () => {
+            const dir = path.join(TMP, "parallel-lane");
+            const spin = id => {
+                const name = JSON.stringify(id);
+                return "const fs = require(\"fs\"), path = require(\"path\");\n" +
+                    `const dir = ${JSON.stringify(dir)};\n` +
+                    "fs.mkdirSync(dir, { recursive: true });\n" +
+                    `fs.writeFileSync(path.join(dir, ${name} + ".start"), String(Date.now()));\n` +
+                    "const until = Date.now() + 2000; while (Date.now() < until) {}\n" +
+                    "const starts = [\"a\", \"b\", \"c\"].filter(n => fs.existsSync(path.join(dir, n + \".start\")));\n" +
+                    `fs.writeFileSync(path.join(dir, ${name} + ".end"), String(Date.now()));\n` +
+                    "if (starts.length < 3) { console.log(\"FAIL TEST_ not parallel \" + starts.join(\",\")); process.exit(1); }\n" +
+                    `console.log("PASS TEST_ parallel ${id}");\n`;
+            };
+            const serial = "const fs = require(\"fs\"), path = require(\"path\");\n" +
+                `const dir = ${JSON.stringify(dir)};\n` +
+                "const missing = [\"a\", \"b\", \"c\"].filter(n => !fs.existsSync(path.join(dir, n + \".end\")));\n" +
+                "fs.mkdirSync(dir, { recursive: true });\n" +
+                "fs.writeFileSync(path.join(dir, \"s.start\"), String(Date.now()));\n" +
+                "if (missing.length) { console.log(\"FAIL TEST_ serial early \" + missing.join(\",\")); process.exit(1); }\n" +
+                "console.log(\"PASS TEST_ serial\");\n";
+            const files = {
+                "tests/p_a.js": spin("a"), "tests/p_b.js": spin("b"), "tests/p_c.js": spin("c"), "tests/p_s.js": serial
+            };
+            return built("par", {
+                allowedPaths: ["src/feature.js", "tests/test_feature.js", "tests/p_a.js", "tests/p_b.js", "tests/p_c.js", "tests/p_s.js", "tasks/TEST.01/lane-par/**"],
+                gateTests: [
+                    { cmd: "node", args: ["tests/p_a.js"], timeoutSec: 30 },
+                    { cmd: "node", args: ["tests/p_b.js"], timeoutSec: 30 },
+                    { cmd: "node", args: ["tests/p_c.js"], timeoutSec: 30 },
+                    { cmd: "node", args: ["tests/p_s.js"], timeoutSec: 30, serial: true }
+                ]
+            }, l => { l.manifestCommit(); l.writer(files); l.review(); l.push(); });
+        },
+        setup: () => fs.rmSync(path.join(TMP, "parallel-lane"), { recursive: true, force: true }),
+        args: DRY,
+        expect: PASS,
+        verify: r => {
+            const errs = [];
+            const wall = /total wall time (\d+\.\d+) s/.exec(r.out);
+            if (!wall) errs.push("no total wall time");
+            else if (Number(wall[1]) >= 4) errs.push(`wall ${wall[1]} s is not under 4`);
+            if (!/tests ran on the merge result [0-9a-f]{8}/.test(r.out)) errs.push("merge-result line missing");
+            const dir = path.join(TMP, "parallel-lane");
+            let maxEnd = 0;
+            for (const id of ["a", "b", "c"]) {
+                const p = path.join(dir, `${id}.end`);
+                if (!fs.existsSync(p)) { errs.push(`missing ${id}.end`); continue; }
+                maxEnd = Math.max(maxEnd, Number(fs.readFileSync(p, "utf8")));
+            }
+            const startPath = path.join(dir, "s.start");
+            if (!fs.existsSync(startPath)) errs.push("serial start missing");
+            else if (Number(fs.readFileSync(startPath, "utf8")) < maxEnd) errs.push(`serial started before parallel ended (${fs.readFileSync(startPath, "utf8")} < ${maxEnd})`);
+            return errs.join("; ") || null;
+        }
+    },
+    {
+        name: "pass_flaky_retry_once",
+        build: () => {
+            const counter = path.join(TMP, "flaky-retry-once.txt");
+            const script = "const fs = require(\"fs\");\n" +
+                `const p = ${JSON.stringify(counter)};\n` +
+                "const n = fs.existsSync(p) ? Number(fs.readFileSync(p, \"utf8\")) : 0;\n" +
+                "fs.writeFileSync(p, String(n + 1));\n" +
+                "if (n < 1) { console.log(\"FAIL TEST_ flaky \" + n); process.exit(1); }\n" +
+                "console.log(\"PASS TEST_ flaky\");\n";
+            return built("flaky1", {
+                gateTests: [{ cmd: "node", args: ["tests/test_feature.js"], timeoutSec: 30, retryOnce: true }]
+            }, l => { l.manifestCommit(); l.writer({ "tests/test_feature.js": script }); l.review(); l.push(); });
+        },
+        setup: () => fs.rmSync(path.join(TMP, "flaky-retry-once.txt"), { force: true }),
+        args: DRY,
+        expect: PASS,
+        verify: r => {
+            const errs = [];
+            if (!r.out.includes("flaky: passed on retry")) errs.push("result column");
+            const m = /\.\. kept temporary clones and logs in (.+)/.exec(r.out);
+            if (!m) errs.push("logs not kept");
+            else {
+                const dir = m[1].trim();
+                for (const f of ["test-1.log", "test-1-retry-1.log"]) {
+                    if (!fs.existsSync(path.join(dir, f))) errs.push(`missing ${f}`);
+                }
+            }
+            return errs.join("; ") || null;
+        }
+    },
+    {
+        name: "fail_flaky_no_retry_without_flag",
+        build: () => {
+            const counter = path.join(TMP, "flaky-no-flag.txt");
+            const script = "const fs = require(\"fs\");\n" +
+                `const p = ${JSON.stringify(counter)};\n` +
+                "const n = fs.existsSync(p) ? Number(fs.readFileSync(p, \"utf8\")) : 0;\n" +
+                "fs.writeFileSync(p, String(n + 1));\n" +
+                "if (n < 1) { console.log(\"FAIL TEST_ flaky \" + n); process.exit(1); }\n" +
+                "console.log(\"PASS TEST_ flaky\");\n";
+            return built("flaky0", {
+                gateTests: [{ cmd: "node", args: ["tests/test_feature.js"], timeoutSec: 30 }]
+            }, l => { l.manifestCommit(); l.writer({ "tests/test_feature.js": script }); l.review(); l.push(); });
+        },
+        setup: () => fs.rmSync(path.join(TMP, "flaky-no-flag.txt"), { force: true }),
+        expect: REFUSE("TEST_FAILED")
+    },
+    {
+        name: "fail_flaky_second_failure",
+        build: () => {
+            const counter = path.join(TMP, "flaky-twice.txt");
+            const script = "const fs = require(\"fs\");\n" +
+                `const p = ${JSON.stringify(counter)};\n` +
+                "const n = fs.existsSync(p) ? Number(fs.readFileSync(p, \"utf8\")) : 0;\n" +
+                "fs.writeFileSync(p, String(n + 1));\n" +
+                "if (n < 2) { console.log(\"FAIL TEST_ flaky \" + n); process.exit(1); }\n" +
+                "console.log(\"PASS TEST_ flaky\");\n";
+            return built("flaky2", {
+                gateTests: [{ cmd: "node", args: ["tests/test_feature.js"], timeoutSec: 30, retryOnce: true }]
+            }, l => { l.manifestCommit(); l.writer({ "tests/test_feature.js": script }); l.review(); l.push(); });
+        },
+        setup: () => fs.rmSync(path.join(TMP, "flaky-twice.txt"), { force: true }),
+        expect: REFUSE("TEST_FAILED")
+    },
+    {
+        name: "pass_hotfix_with_review_is_normal",
+        build: () => built("hotrev", { hotfix: true }, l => { l.manifestCommit(); l.writer(); l.review(); l.push(); }),
+        args: DRY, expect: PASS,
+        verify: r => (r.out.includes("(hotfix, no review: DEC-087)") ? "hotfix suffix applied even though a review exists" : null)
+    },
+    {
+        name: "fail_hotfix_touches_plugin",
+        build: () => built("hotplug", {
+            hotfix: true,
+            allowedPaths: ["game/js/plugins/**", "tasks/TEST.01/lane-hotplug/**"],
+            gateTests: [{ cmd: "node", args: ["-e", "process.exit(0)"], timeoutSec: 30 }]
+        }, l => {
+            l.manifestCommit();
+            l.commit("[claude] TEST_ plugin", { "game/js/plugins/Foo.js": "// TEST_ plugin\n" });
+            l.push();
+        }),
+        expect: REFUSE("HOTFIX_SCOPE")
+    },
+
     // (f) execution; these change main, so they run last
     realMergeCase("pass_real_merge_no_ff_never_pushes", "merge"),
+    {
+        name: "pass_hotfix_merges_without_review",
+        build: () => built("hotok", {
+            hotfix: true,
+            allowedPaths: ["tools/ops/hotfix_note.txt", "tasks/TEST.01/lane-hotok/**"],
+            gateTests: [{ cmd: "node", args: ["-e", "process.exit(0)"], timeoutSec: 30 }]
+        }, l => {
+            l.manifestCommit();
+            l.commit("[claude] TEST_ hotfix note", { "tools/ops/hotfix_note.txt": "TEST_ hotfix\n" });
+            l.push();
+        }),
+        expect: Object.assign({ merged: true }, PASS),
+        setup: (l, c) => { c.originBefore = originMain(); },
+        teardown: (l, c) => {
+            if (originMain() !== c.originBefore) w(["push", "-q", "-f", "origin", `${c.originBefore}:refs/heads/main`]);
+            w(["reset", "-q", "--hard", c.originBefore]);
+        },
+        verify: (r, l, before, after) => {
+            const errs = [];
+            const base = verifyRealMerge(r, l, before, after);
+            if (base) errs.push(base);
+            const subject = w(["log", "-1", "--format=%s", after]);
+            if (!subject.endsWith("(hotfix, no review: DEC-087)")) errs.push(`subject: ${subject}`);
+            return errs.join("; ") || null;
+        }
+    },
     raceCase("pass_main_moves_unrelated", "moveok", "unrelated", PASS),
     raceCase("fail_main_moves_shared", "moveshared", "shared", REFUSE("RACE_REF_MOVED")),
     raceCase("fail_lane_tip_moves", "movetip", "tip", REFUSE("RACE_REF_MOVED")),
@@ -679,11 +897,12 @@ const CASES = [
             w(["add", "src/feature.js"]); w(["commit", "-q", "-m", "[gemini] TEST_ main moves under the lane"]); w(["push", "-q", "origin", "main"]);
             c.moved = true;
         },
-        expect: REFUSE("MERGE_FAILED"),
-        verify: () => {
+        expect: REFUSE("MERGE_CONFLICT"),
+        verify: r => {
             const errs = [];
-            if (w(["status", "--porcelain"])) errs.push("work tree not clean after the aborted merge");
+            if (w(["status", "--porcelain"])) errs.push("work tree not clean after the refused merge");
             if (w(["rev-parse", "-q", "--verify", "MERGE_HEAD"], { allowFail: true }).status === 0) errs.push("MERGE_HEAD left behind");
+            if (/^\.\. test \d+\//m.test(r.out)) errs.push("a test ran after the conflict");
             return errs.join("; ") || null;
         }
     },
@@ -732,7 +951,12 @@ const KILLS = {
     main_clean_off: "fail_main_dirty",
     main_sync_off: "fail_main_not_synced",
     keep_failed_temp_off: "fail_test_keeps_temp_and_shows_fail_lines",
-    fail_lines_off: "fail_test_keeps_temp_and_shows_fail_lines"
+    fail_lines_off: "fail_test_keeps_temp_and_shows_fail_lines",
+    tests_at_tip: "fail_union_green_alone_fails_on_merge",
+    sequential_only: "pass_parallel_under_four_seconds",
+    retry_without_flag: "fail_flaky_no_retry_without_flag",
+    retry_twice: "fail_flaky_second_failure",
+    hotfix_any_path: "fail_hotfix_touches_plugin"
 };
 
 // Source mutants of the execution step, which has no --mutant flag: each copy of the gate must
@@ -793,7 +1017,11 @@ function unitChecks(G) {
         G.validateManifest({ lane: "l", taskId: "T", branch: "task/l", writer: "claude", reviewer: "pm", allowedPaths: ["a"], gateTests: [] }).some(e => e.includes("reviewer \"pm\" is not a known agent")) &&
         G.validateManifest({ lane: "l", taskId: "T", branch: "task/l", writer: "claude", push: true, allowedPaths: ["a"], gateTests: [] }).length === 0 &&
         G.validateManifest({ lane: "l", taskId: "T", branch: "task/l", writer: "claude", push: false, allowedPaths: ["a"], gateTests: [] }).length === 0 &&
-        ["yes", 1, null].every(p => G.validateManifest({ lane: "l", taskId: "T", branch: "task/l", writer: "claude", push: p, allowedPaths: ["a"], gateTests: [] }).some(e => e.includes("\"push\" must be true or false"))),
+        ["yes", 1, null].every(p => G.validateManifest({ lane: "l", taskId: "T", branch: "task/l", writer: "claude", push: p, allowedPaths: ["a"], gateTests: [] }).some(e => e.includes("\"push\" must be true or false"))) &&
+        G.validateManifest({ lane: "l", taskId: "T", branch: "task/l", writer: "claude", allowedPaths: ["a"], gateTests: [{ cmd: "node", serial: "yes" }] }).some(e => e.includes("serial must be true or false")) &&
+        G.validateManifest({ lane: "l", taskId: "T", branch: "task/l", writer: "claude", allowedPaths: ["a"], gateTests: [{ cmd: "node", retryOnce: 1 }] }).some(e => e.includes("retryOnce must be true or false")) &&
+        G.validateManifest({ lane: "l", taskId: "T", branch: "task/l", writer: "claude", hotfix: "yes", allowedPaths: ["a"], gateTests: [] }).some(e => e.includes("\"hotfix\" must be true or false")) &&
+        G.validateManifest({ lane: "l", taskId: "T", branch: "task/l", writer: "claude", hotfix: true, allowedPaths: ["a"], gateTests: [{ cmd: "node", serial: true, retryOnce: false }] }).length === 0,
         "validateManifest");
     const mk = Object.keys(G.MUTANTS).sort().join(), kk = Object.keys(KILLS).sort().join();
     check("unit_every_mutant_has_a_kill_case", mk === kk && Object.values(KILLS).every(n => CASES.some(c => c.name === n)), `gate mutants [${mk}] vs kill table [${kk}]`);

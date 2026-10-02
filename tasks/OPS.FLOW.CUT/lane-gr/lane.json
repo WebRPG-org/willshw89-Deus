@@ -1,0 +1,57 @@
+{
+  "lane": "lane-gr",
+  "taskId": "OPS.FLOW.CUT",
+  "branch": "task/lane-gr",
+  "writer": "grok",
+  "reviewer": "codex",
+  "push": true,
+  "allowedPaths": [
+    "tools/governance/merge_gate.js",
+    "tools/governance/test_merge_gate.js",
+    "tools/governance/MERGE_GATE.md",
+    "tools/ops/launch_worker.ps1",
+    "tools/ops/test_launch_worker.ps1",
+    "tools/ops/open_lane.ps1",
+    "tools/ops/test_open_lane.ps1",
+    "tools/ops/README.md",
+    "tasks/OPS.FLOW.CUT/lane-gr/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/governance/test_merge_gate.js"
+      ],
+      "timeoutSec": 1200
+    },
+    {
+      "cmd": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "tools/ops/test_launch_worker.ps1"
+      ],
+      "timeoutSec": 1200
+    },
+    {
+      "cmd": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "tools/ops/test_open_lane.ps1"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}
