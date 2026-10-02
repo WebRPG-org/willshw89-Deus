@@ -50,3 +50,7 @@ For each of items 1 and 2, show that the script no longer throws: run its non-as
 - Push `task/lane-gl` when the work is committed, and end with FINAL SHA.
 - The reviewer is launched through `tools/ops/launch_worker.ps1`. The PM merges through merge_gate.
 - Report in one paragraph plus the test output (DEC-085 item 5: this lane does not touch `game/`).
+
+## Clarification after the first review (PM, 2026-10-02 ~00:40Z)
+
+Grok's review of 4f861669 (`review_grok_4f861669.md`) rejects the lane on two points. B1: your guard (brief item 10) fails on the word `originalit` in 20 more files under `tools/` (showcase and widget builders, `classify_tests.js`, `process_camp_assets.js`, `verify_all_42_dwarf_male_charsets.js`). Some of them print "U7 Orig: PASS" into generated pages, which is now a false claim. The PM added those 20 paths to `allowedPaths`: clear the wording, the claims and any step that depended on them, and nothing else in those files. B2: the leftover `// removed check` comment in `tools/verify_batch3_assets.js` and `tools/verify_biome_assets.js` goes too. Then `node tools/test_no_originality_check.js` must exit 0, with the named mutants kept and the object-art counts no worse.
