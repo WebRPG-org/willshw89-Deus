@@ -6,7 +6,7 @@ const os = require('os');
 const ROOT = path.resolve(__dirname, '..');
 const SNAPSHOT_DIR = path.join(os.tmpdir(), 'uf_snapshots', 'pkg_proofs');
 
-console.log('=== Setting up In-Engine Proof Scenario Harness (Packages 1, 2, 3) ===');
+console.log('=== Setting up In-Engine Proof Scenario Harness (Packages 1 and 3) ===');
 
 if (fs.existsSync(SNAPSHOT_DIR)) {
     fs.rmSync(SNAPSHOT_DIR, { recursive: true, force: true });
@@ -22,7 +22,7 @@ let testJs = fs.readFileSync(testJsPath, 'utf8');
 
 const suiteInjection = `
     //-------------------------------------------------------------------------
-    // In-Engine Playtest Proof Suites for Packages 1, 2, 3
+    // In-Engine Playtest Proof Suites for Packages 1 and 3
     Test.suite("package_proofs", async t => {
         const W = window.UF && window.UF.World;
         const Levels = window.UF && window.UF.Levels;
@@ -58,41 +58,8 @@ const suiteInjection = `
         await t.waitFrames(15);
         t.screenshot("proof_pkg1_physical_space");
 
-        // =====================================================================
-        // PROOF B: Package 2 - Physical Matter & Structural Collapse
-        // =====================================================================
-        try {
-            const structuralMod = require(path.join(baseDir, "js", "sim", "structural", "index.js"));
-            t.check("pkg2_module_loaded", !!structuralMod, "Structural module loaded in engine");
-
-            const granite = { density: 165.0, tensileYield: 3000 }; // max span = 3000 / (165 * 10) = 1 cell
-            const anchor = { position: { x: 0, y: 0 }, solid: true, supported: true, material: granite, type: "solid" };
-            const beam1 = { position: { x: 1, y: 0 }, solid: true, supported: false, material: granite, type: "solid" };
-            const beam2 = { position: { x: 2, y: 0 }, solid: true, supported: true, material: granite, type: "solid" };
-
-            // Beam 1 anchored to (0,0): span = 1 <= maxSpan 1 -> supported
-            const res1 = structuralMod.evalCellSupport(beam1, granite, null, anchor);
-            t.check("pkg2_cantilever_supported", res1.supported === true, "Span 1 cantilever beam supported within tensile limit");
-
-            // Beam 2 evaluated relative to anchor at (0,0): span = 2 > maxSpan 1 -> overloaded
-            const res2 = structuralMod.evalCellSupport(beam2, granite, null, anchor);
-            t.check("pkg2_cantilever_overloaded", res2.supported === false, "Span 2 cantilever beam exceeds tensile limit");
-
-            // Execute collapse and verify mass conservation via ledger
-            beam2.neighborHoriz = anchor;
-            const cellMass = structuralMod.CELL_VOLUME_CUFT * granite.density; // 50 * 165 = 8250 lbs
-            const ledger = { solid: 50000, rubble: 0 };
-            const collapseRes = structuralMod.executeCollapse([beam2], null, ledger);
-
-            t.check("pkg2_collapse_executed", collapseRes.collapsedCount === 1, "Unsupported beam collapsed (count: " + collapseRes.collapsedCount + ")");
-            t.check("pkg2_mass_conservation", ledger.rubble === cellMass && ledger.solid === 50000 - cellMass, "Mass ledger strictly conserved (transferred " + cellMass + " lbs)");
-            t.check("pkg2_rubble_generated", collapseRes.rubbleItemsCreated === 1, "Rubble items spawned from collapsed rock mass");
-        } catch (err) {
-            t.check("pkg2_structural_error", false, "Structural proof failed: " + err.message);
-        }
-
-        await t.waitFrames(15);
-        t.screenshot("proof_pkg2_collapse_rubble");
+        // PROOF B (Package 2: span cantilever and rubble collapse) was removed by NAT.02.01.BRIDGE (lane-nx3):
+        // DEC-083 replaced that model. The live collapse proof is tools/test_collapse_ingame.js.
 
         // =====================================================================
         // PROOF C: Package 3 - Water & Aquifer Seepage
@@ -167,7 +134,6 @@ fs.mkdirSync(reviewDir, { recursive: true });
 
 const shots = [
     'package_proofs.proof_pkg1_physical_space.png',
-    'package_proofs.proof_pkg2_collapse_rubble.png',
     'package_proofs.proof_pkg3_aquifer_seepage.png'
 ];
 
