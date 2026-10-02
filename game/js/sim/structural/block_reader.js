@@ -1,7 +1,7 @@
 "use strict";
 
 const Z_BASE = 16;
-const STRATA_PER_LAYER = 64;
+const STRATA_PER_LAYER = 5;
 
 function gOf(z, s) {
     return STRATA_PER_LAYER * (z + Z_BASE) + s;
@@ -15,7 +15,7 @@ function sOfG(g) {
     return g - STRATA_PER_LAYER * Math.floor(g / STRATA_PER_LAYER);
 }
 
-function createFixtureReader(spec) {
+function createBlockFixture(spec) {
     spec = spec || {};
     const b = spec.bounds;
     if (!b) throw new TypeError("structural/block_reader: fixture needs bounds {x0, y0, x1, y1}");
@@ -71,6 +71,6 @@ function createFixtureReader(spec) {
 }
 
 module.exports = {
-    createFixtureReader,
+    createBlockFixture,
     gOf, zOfG, sOfG
 };

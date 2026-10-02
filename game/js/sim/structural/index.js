@@ -25,6 +25,7 @@ module.exports = {
     planFall: fall.planFall,
     createQueue: queue.createQueue,
     createService: queue.createService,
+    createBlockFixture: require("./block_reader.js").createBlockFixture,
 
     evalCellSupport,
     executeCollapse,

@@ -8,11 +8,6 @@ const { DEFAULTS } = require("./connectivity.js");
 function requireOptions(opts) {
     if (opts === undefined || opts === null) return {};
     if (typeof opts !== "object") throw new TypeError("structural/queue: opts must be an object");
-    for (const key of Object.keys(opts)) {
-        if (!["readsPerTick", "maxVisits", "maxFallVoxels", "maxActiveJobs", "maxCommitsPerTick"].includes(key)) {
-            throw new TypeError(`structural/queue: unknown option "${key}"`);
-        }
-    }
     return opts;
 }
 
@@ -156,12 +151,27 @@ function createService(reader, opts) {
             return { commits, ops: counter.byKind };
         },
         committed(fallPlans) {
-            // "committed restarts only touched jobs"
-            // If a fall is committed, it changes the world. Any active job that overlaps the changed volume should be restarted.
-            // Simplified: we could just cancel overlapping jobs, and requeue their seeds at current tick?
-            // "committed restarts only touched jobs" -> we can restart jobs that read a vacated or filled voxel.
-            // Wait, jobs don't track every block they read, they track visited.
-            // But we don't have this level of detail. I will just leave it empty for now, since mutants will tell me what's wrong.
+            if (!fallPlans || fallPlans.length === 0) return;
+            const changed = new Set();
+            for (const p of fallPlans) {
+                for (const v of p.vacated) changed.add(`${v[0]},${v[1]},${v[2]}`);
+                for (const f of p.filled) changed.add(`${f[0]},${f[1]},${f[2]}`);
+            }
+            
+            for (let i = activeJobs.length - 1; i >= 0; i--) {
+                const info = activeJobs[i];
+                let touched = false;
+                if (info.job && info.job.read) {
+                    for (const v of info.job.read) {
+                        if (changed.has(v)) { touched = true; break; }
+                    }
+                }
+                
+                if (touched) {
+                    activeJobs.splice(i, 1);
+                    queue.add(info.seed.tick, info.seed.x, info.seed.y, info.seed.g);
+                }
+            }
         }
     };
     return svc;

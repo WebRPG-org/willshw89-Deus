@@ -7,7 +7,7 @@ function createOpsCounter(limit) {
     if (!(limit === Infinity || (Number.isInteger(limit) && limit >= 0))) {
         throw new RangeError(`structural/counter: limit must be a non-negative integer or Infinity (got ${String(limit)})`);
     }
-    const byKind = { read: 0, visit: 0 };
+    const byKind = { read: 0, visit: 0, write: 0 };
     let used = 0;
     return {
         get limit() { return limit; },
@@ -15,7 +15,7 @@ function createOpsCounter(limit) {
         get remaining() { return limit - used; },
         byKind,
         charge(kind) {
-            if (kind !== "read" && kind !== "visit") {
+            if (kind !== "read" && kind !== "visit" && kind !== "write") {
                 throw new Error(`structural/counter: unknown op kind "${kind}"`);
             }
             if (used >= limit) return false;

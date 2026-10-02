@@ -101,8 +101,8 @@ function* runFallJob(ctx, reader, component) {
                 
                 // If we reach the floor
                 if (reader.floorG !== null && g === reader.floorG) {
-                    if (currentDrop < bestDrop) {
-                        bestDrop = currentDrop;
+                    if (currentDrop + 1 < bestDrop) {
+                        bestDrop = currentDrop + 1;
                         contact = null; // World floor binds
                     }
                     break;

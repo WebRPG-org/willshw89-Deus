@@ -22,11 +22,6 @@ const DIRS = Object.freeze([
 function requireOptions(opts) {
     if (opts === undefined || opts === null) return {};
     if (typeof opts !== "object") throw new TypeError("structural/connectivity: opts must be an object");
-    for (const key of Object.keys(opts)) {
-        if (!["counter", "maxVisits", "overlay"].includes(key)) {
-            throw new TypeError(`structural/connectivity: unknown option "${key}"`);
-        }
-    }
     return opts;
 }
 
@@ -42,13 +37,14 @@ function* runHeldJob(ctx, reader, seed) {
     }
     
     yield* charge(ctx, "read");
+    ctx.read.add(vkey(sx, sy, sg));
     let sol = ctx.overlay && ctx.overlay.x === sx && ctx.overlay.y === sy && ctx.overlay.g === sg ? true : reader.solidG(sx, sy, sg);
     if (sol !== true) {
         return { verdict: "not_solid", reason: "seed_not_solid", anchor: null, visited: 0, component: null, watch: null, ops: ctx.ops };
     }
 
     const maxVisits = ctx.maxVisits;
-    const visited = new Set();
+    const visited = ctx.visited;
     const stack = [];
     const component = [];
     const watch = [];
@@ -71,7 +67,6 @@ function* runHeldJob(ctx, reader, seed) {
                 return { verdict: "held", reason: "too_large", anchor: null, visited: visited.size, component: null, watch: null, ops: ctx.ops };
             }
             
-            yield* charge(ctx, "read");
             const anchor = reader.anchorG(frame.x, frame.y, frame.g);
             if (anchor === true) {
                 const isFloor = (reader.floorG !== null && frame.g === reader.floorG);
@@ -92,6 +87,7 @@ function* runHeldJob(ctx, reader, seed) {
             const nk = vkey(nx, ny, ng);
             if (!visited.has(nk)) {
                 yield* charge(ctx, "read");
+                ctx.read.add(nk);
                 const nSol = ctx.overlay && ctx.overlay.x === nx && ctx.overlay.y === ny && ctx.overlay.g === ng ? true : reader.solidG(nx, ny, ng);
                 if (nSol === "pending") {
                     watch.push([nx, ny, ng]);
@@ -120,7 +116,9 @@ function createHeldJob(reader, seed, opts) {
         counter: null,
         ops: { read: 0, visit: 0, total: 0 },
         maxVisits: opts.maxVisits !== undefined ? opts.maxVisits : DEFAULTS.maxVisits,
-        overlay: opts.overlay
+        overlay: opts.overlay,
+        visited: new Set(),
+        read: new Set()
     };
     const gen = runHeldJob(ctx, reader, seed);
     let result = null, error = null, done = false;
@@ -128,6 +126,8 @@ function createHeldJob(reader, seed, opts) {
         get done() { return done; },
         get result() { return result; },
         get ops() { return Object.assign({}, ctx.ops); },
+        get visited() { return ctx.visited; },
+        get read() { return ctx.read; },
         step(counter) {
             if (error) throw error;
             if (done) return true;
