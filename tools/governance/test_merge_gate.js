@@ -319,6 +319,7 @@ function realMergeCase(name, laneName) {
 const CASES = [
     // passing cases
     { name: "pass_valid_lane_dry_run_prints_summary", build: () => new Lane("ok").standard(), args: DRY, expect: PASS, verify: verifySummary },
+    { name: "pass_valid_lane_deletes_temp", build: () => new Lane("ptmp").standard(), args: DRY, expect: PASS, verify: r => (r.out.includes("kept temporary clones") || r.out.includes("NOTE temporary folder not removed") ? "temp dir was kept or error removing it" : null) },
     { name: "pass_clean_pass_bold_verdict", build: () => built("bold", null, l => { l.manifestCommit(); l.writer(); l.review({ verdict: "**VERDICT:** CLEAN PASS" }); l.push(); }), args: DRY, expect: PASS },
     { name: "pass_review_author_matches", build: () => built("raok", null, l => { l.pmOpen(); l.writer(); l.review({ author: "deus-grok" }); l.push(); }), args: DRY, expect: PASS },
     { name: "pass_gemini_manifest_by_ops", build: () => built("gmops", null, l => { l.manifestCommit(undefined, "gemini", { author: "deus-ops" }); l.writer(); l.review(); l.push(); }), args: DRY, expect: PASS },
@@ -423,6 +424,10 @@ const CASES = [
     {
         name: "fail_test_exits_nonzero", build: () => built("tfail", null, l => { l.manifestCommit(); l.writer(FAILING_TEST); l.review(); l.push(); }), expect: REFUSE("TEST_FAILED"),
         verify: r => (/^\| 1 \| node tests\/test_feature\.js \| 60 s \| 1 \| \d+\.\d\d s \| FAIL \|$/m.test(r.out) && r.out.includes("FAIL TEST_ deliberate") ? null : "test row with exit 1 or the captured output is missing")
+    },
+    {
+        name: "fail_test_keeps_temp_and_shows_fail_lines", build: () => built("tfkt", null, l => { l.manifestCommit(); l.writer(FAILING_TEST); l.review(); l.push(); }), expect: REFUSE("TEST_FAILED"),
+        verify: r => (r.out.includes("kept temporary clones") && r.out.includes("FAIL lines (up to 20)") && r.out.includes("FAIL TEST_ deliberate") ? null : "temp dir not kept or FAIL lines missing")
     },
     {
         name: "fail_test_timeout",
@@ -677,7 +682,9 @@ const KILLS = {
     push_off: "fail_branch_unpushed_local_ahead",
     tracking_off: "fail_tracking_ref_stale",
     main_clean_off: "fail_main_dirty",
-    main_sync_off: "fail_main_not_synced"
+    main_sync_off: "fail_main_not_synced",
+    keep_failed_temp_off: "fail_test_keeps_temp_and_shows_fail_lines",
+    fail_lines_off: "fail_test_keeps_temp_and_shows_fail_lines"
 };
 
 // Source mutants of the execution step, which has no --mutant flag: each copy of the gate must
@@ -772,7 +779,8 @@ function main() {
         const applied = r && r.out.includes(`| mutants | ${mutant} (self-test only; merge disabled) |`) && !r.codes.includes("USAGE") && !r.codes.includes("MUTANT_NOT_ALLOWED");
         const lost = r ? c.expect.codes.filter(code => !r.codes.includes(code)) : [];
         // A mutant that makes a rule stricter is killed on a passing case, which it must make the gate refuse.
-        const broke = c.expect.codes.length ? lost.length > 0 : Boolean(r && r.codes.length > 0);
+        // A mutant that disables a report feature is killed if it makes the verify function fail.
+        const broke = c.expect.codes.length ? (lost.length > 0 || (c.verify && !res.ok)) : Boolean(r && r.codes.length > 0);
         check(`mutant_${mutant}_killed`, applied && !res.ok && broke,
             !applied ? `mutant not applied: ${res.detail}` : `mutant survived: ${caseName} still reported [${r.codes.join(", ")}]`);
     }

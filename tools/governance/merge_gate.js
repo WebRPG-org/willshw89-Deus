@@ -100,7 +100,9 @@ const MUTANTS = {
     push_off: "skip the local-vs-remote branch comparison",
     tracking_off: "skip the origin/<branch> tracking-ref comparison",
     main_clean_off: "skip the main work tree cleanliness check",
-    main_sync_off: "skip the main == origin/main check"
+    main_sync_off: "skip the main == origin/main check",
+    keep_failed_temp_off: "do not keep temp clones on test failure",
+    fail_lines_off: "do not show up to 20 FAIL lines on test failure"
 };
 
 const CHECKS = [
@@ -332,6 +334,7 @@ function printReport(R, ctx, exitCode) {
                 t.exit == null ? "-" : t.exit, sec(t.durationMs), t.result])));
         for (const t of R.tests.filter(x => x.tail)) {
             out.push("", `### Test ${t.n} output, last ${LOG_TAIL_LINES} lines`, "```", t.tail, "```");
+            if (t.failLines) out.push("", `### Test ${t.n} FAIL lines (up to 20)`, "```", t.failLines, "```");
         }
     }
     out.push("", "## Checks");
@@ -746,14 +749,21 @@ function checkTests(R, ctx, man) {
         const tail = () => {
             try { return fs.readFileSync(logFile, "utf8").replace(/\s+$/, "").split(/\r?\n/).slice(-LOG_TAIL_LINES).join("\n"); } catch (e) { return `(log unreadable: ${e.message})`; }
         };
+        const failLines = () => {
+            if (mut("fail_lines_off")) return null;
+            try { return fs.readFileSync(logFile, "utf8").replace(/\s+$/, "").split(/\r?\n/).filter(l => /\bFAIL\b/.test(l)).slice(-20).join("\n") || null; } catch (e) { return null; }
+        };
         if (r.error && r.error.code === "ETIMEDOUT") {
-            row.result = "TIMEOUT"; row.tail = tail();
+            ctx.keepTemp = true;
+            row.result = "TIMEOUT"; row.tail = tail(); row.failLines = failLines();
             R.refuse("TESTS", "TEST_TIMEOUT", `test ${row.n} (${row.display}) ran past its ${row.timeoutSec} s timeout and was killed`);
         } else if (r.error) {
-            row.result = "SPAWN ERROR"; row.exit = r.error.code || "error";
+            ctx.keepTemp = true;
+            row.result = "SPAWN ERROR"; row.exit = r.error.code || "error"; row.failLines = failLines();
             R.refuse("TESTS", "TEST_SPAWN_ERROR", `test ${row.n} (${row.display}) could not start: ${r.error.message}`);
         } else if (r.status !== 0 && !mut("test_exit_off")) {
-            row.result = "FAIL"; row.tail = tail();
+            ctx.keepTemp = true;
+            row.result = "FAIL"; row.tail = tail(); row.failLines = failLines();
             R.refuse("TESTS", "TEST_FAILED", `test ${row.n} (${row.display}) exited ${row.exit}`);
         } else row.result = "PASS";
     });
@@ -894,7 +904,7 @@ function run(argv) {
 
 function cleanup(ctx, opts) {
     if (!ctx.tmp) return;
-    if (opts.keepTemp) { console.log(`.. kept temporary clones and logs in ${ctx.tmp}`); return; }
+    if (opts.keepTemp || (ctx.keepTemp && !mut("keep_failed_temp_off"))) { console.log(`.. kept temporary clones and logs in ${ctx.tmp}`); return; }
     try { fs.rmSync(ctx.tmp, { recursive: true, force: true, maxRetries: 3 }); } catch (e) { console.log(`.. NOTE temporary folder not removed: ${ctx.tmp}: ${e.message}`); }
 }
 

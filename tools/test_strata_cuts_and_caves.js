@@ -1259,10 +1259,15 @@ guard("cost", () => {
 });
 
 async function finish() {
+    const failedSuitesTails = [];
     for (const [key, p] of Object.entries(suites)) {
         const r = await p;
         const tail = (r.text.match(/(RESULT:.*|MUTANT VERIFICATION:.*|PASSED: \d+|FAILED: \d+)/g) || []).join("; ");
         check(key, r.code === 0, `node ${r.file}: exit ${r.code} in ${r.s.toFixed(0)} s; ${tail}`);
+        if (r.code !== 0) {
+            const lines = r.text.trim().split(/\r?\n/).slice(-40).join("\n");
+            failedSuitesTails.push(`\n--- ${key} tail (up to 40 lines) ---\n${lines}`);
+        }
     }
     const unexpected = [envA, envB, env4, ...set.slice(1).map(r => r.env), ...extraEnvs].flatMap(e => e ? e.__errors : []).concat(envErrors);
     check("no_errors", unexpected.length === 0, unexpected.length ? unexpected.slice(0, 3).join(" | ") : "none");
@@ -1270,6 +1275,7 @@ async function finish() {
         console.log("EVIDENCE (generated worlds; x,y in the start area; levels -2..+2; heights in ft = strata):");
         for (const e of evidence) console.log(`  ${e}`);
     }
+    for (const tailBlock of failedSuitesTails) console.log(tailBlock);
     console.log(`TIME ${((performance.now() - T0) / 1000).toFixed(1)} s`);
     console.log(`RESULT: ${passed} passed, ${failed} failed (exit ${failed ? 1 : 0})${failed ? ` - ${failures.join(", ")}` : ""}`);
     process.exit(failed ? 1 : 0);
