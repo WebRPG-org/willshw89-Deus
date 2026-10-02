@@ -117,13 +117,13 @@ Fluid lanes that change: **fm** (participant in `commitMatterBatch`) already pro
 
 ## 10. OWNER QUESTIONS (each with my default)
 
-1. **Anchors.** Only the bottom of the world, reached through any chain of solid blocks, natural rock included, so a natural mass you cut free falls too? Or all untouched natural rock is always held and only built or moved blocks need a chain? Default: the first.
-2. **Crush.** Default: SRD falling-object dice for the drop (1d6 per 10 ft, minimum 1d6, maximum 20d6, bludgeoning), survivors pushed to the nearest standable cell, items pushed aside and never destroyed, furniture and doors break to their remains. Or anything under a landing piece dies?
-3. **Riders.** Units standing on a piece that falls ride it down and take fall damage (default), or take none?
-4. **Fall speed.** One landing in the tick the check finishes (default; no code-made animation, Rule 12), or a visible multi-tick fall so people can run?
-5. **Walls.** Default: player-built wall and door objects are solid blocks in the graph and a piece's wall breaks to its ruin when it falls. Or walls are anchors that never fall? Bigger option, outside this re-plan: rebuild walls as constructed strata so there is one kind of block.
-6. **Water pressure breaking dams** (DEC-046 item 4, DEC-067 item 6b predate DEC-083). Default: drop it; a dam stands until a block is mined or blasted. Or keep a fluid-side rule that damages barrier block HP under high head (nx6)?
-7. **Placement.** Refuse a block that attaches to nothing (default), or allow floating placement that then falls?
+1. **Anchors.** DECISION: Only the bottom of the world (Default). Natural rock that is completely cut free will fall.
+2. **Crush.** DECISION: SRD falling-object dice (Default). Survivors pushed aside, furniture breaks.
+3. **Riders.** DECISION: Ride it down and take fall damage (Default).
+4. **Fall speed.** DECISION: Single tick instant fall (Default).
+5. **Walls.** DECISION: Walls act as solid blocks in the connectivity graph. If unanchored, they fall and break into ruins (Default).
+6. **Water pressure.** DECISION: Drop it. Dams stand until mined/blasted (Default).
+7. **Placement.** DECISION: Refuse placement if it attaches to nothing (Default).
 8. **Mining floors and roofs.** One 2 ft stratum per action (default), or the whole 10 ft cell like a wall?
 
 ## 11. PM TO CONFIRM (my own choices)
