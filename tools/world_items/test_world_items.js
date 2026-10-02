@@ -11,6 +11,7 @@ const ROOT = path.join(__dirname, "..", "..");
 const SIM = path.join(ROOT, "game", "js", "sim", "world_items");
 const { createLedger, defaultConfig } = require(path.join(ROOT, "game", "js", "sim", "ledger.js"));
 const real = require(path.join(SIM, "index.js"));
+const catalog = require(path.join(SIM, "catalog.js"));
 
 let passed = 0;
 let failed = 0;
@@ -25,6 +26,21 @@ function check(name, ok, why) {
         failed++;
         console.log("FAIL " + name + (why ? ": " + why : ""));
     }
+}
+
+function massMatchesWeight(rows) {
+    return rows.every(function (r) { return r.massCp === Math.floor((r.weightOz * 25 + 2) / 4); });
+}
+
+{
+    const rows = catalog.all();
+    const wrong = rows.filter(function (r) { return r.massCp !== Math.floor((r.weightOz * 25 + 2) / 4); });
+    check("world_item_mass_matches_weight", wrong.length === 0 && massMatchesWeight(rows)
+        && catalog.item("longsword").massCp === 300
+        && catalog.item("key_brass").massCp === 6
+        && catalog.item("sack").massCp === 50
+        && catalog.massCp(2) === 13,
+        wrong.map(function (r) { return r.typeId; }).join(","));
 }
 
 function loadMutant(file, from, to) {
@@ -42,6 +58,9 @@ const worldSrc = path.join(SIM, "world.js");
 const geomSrc = path.join(SIM, "geom.js");
 const pathSrc = path.join(SIM, "pathing.js");
 const sumSrc = path.join(SIM, "summary.js");
+const catalogSrc = path.join(SIM, "catalog.js");
+const mutNoFactor = loadMutant(catalogSrc, "weightOz * CP_PER_LB", "weightOz");
+check("no_25_over_4_mutant_killed", !massMatchesWeight(mutNoFactor.all()));
 
 const mutNest = loadMutant(worldSrc, "t += totalOz(item.contents[i]); // NEST_RECURSE", "t += 0; // NEST_RECURSE");
 const mutLoad = loadMutant(worldSrc, "if (total > cap) { // LOAD_LIMIT", "if (false) { // LOAD_LIMIT");
@@ -381,6 +400,14 @@ check("drag_preview_snaps", preview.xPx === 6 && preview.yPx === 6 && preview.ce
 }
 
 // --- mass ---
+{
+    const pair = ledgerWorld(real);
+    const sword = pair.world.place({ typeId: "longsword", tileX: 0, tileY: 0, layer: 0 });
+    pair.ledger.seal();
+    let balanced = false;
+    try { pair.ledger.assertBalanced(pair.world.ledgerRecount()); balanced = true; } catch (e) { balanced = false; }
+    check("world_item_ledger_cp", sword.massCp === 300 && pair.ledger.amount("steel", "item") === 300 && balanced);
+}
 check("mass_burn", destruction(real, "burn") === "ok", destruction(real, "burn"));
 check("mass_spill", destruction(real, "spill") === "ok", destruction(real, "spill"));
 check("mass_burn_mutant_killed", destruction(mutLedger, "burn") === "E_UNBALANCED", destruction(mutLedger, "burn"));
@@ -408,6 +435,24 @@ check("mass_spill_mutant_killed", destruction(mutLedger, "spill") === "E_UNBALAN
 
 // --- save ---
 {
+    const w = real.createWorld({ seed: 51 });
+    const sword = w.place({ typeId: "longsword", tileX: 2, tileY: 3, layer: 0 });
+    const blob = JSON.parse(JSON.stringify(w.saveChanges()));
+    const before = JSON.stringify(w.saveChanges());
+    const itemBefore = JSON.stringify(w.get(sword.id));
+    const old = JSON.parse(JSON.stringify(blob));
+    old.v = 1;
+    let oldCode = "";
+    try { w.loadChanges(old); } catch (e) { oldCode = e.code || ""; }
+    const legacyField = JSON.parse(JSON.stringify(blob));
+    legacyField.items[0].massMu = legacyField.items[0].massCp;
+    let fieldCode = "";
+    try { w.loadChanges(legacyField); } catch (e) { fieldCode = e.code || ""; }
+    check("world_item_old_save_refused", blob.v === 2 && oldCode === "E_SAVE" && fieldCode === "E_SAVE"
+        && JSON.stringify(w.saveChanges()) === before && JSON.stringify(w.get(sword.id)) === itemBefore,
+        oldCode + "," + fieldCode);
+}
+{
     function roundTrip(mod) {
         const w = mod.createWorld({ seed: 5 });
         const dagger = w.place({ typeId: "dagger", tileX: 1, tileY: 1, layer: 0 });
@@ -420,7 +465,12 @@ check("mass_spill_mutant_killed", destruction(mutLedger, "spill") === "E_UNBALAN
         w2.loadChanges(blob);
         const got = w2.get(chest.id);
         const child = w2.get(dagger.id);
-        return got.tileX === 4 && got.tileY === 5 && child.parentId === chest.id && child.interiorX === 18 && child.interiorY === 12 && w2.budgetCount() === 1;
+        return blob.v === 2 && blob.items[0].massCp === catalog.item("chest").massCp
+            && blob.items[0].contents[0].massCp === catalog.item("dagger").massCp
+            && !JSON.stringify(blob).includes('"massMu"')
+            && got.tileX === 4 && got.tileY === 5 && child.parentId === chest.id
+            && child.massCp === catalog.item("dagger").massCp
+            && child.interiorX === 18 && child.interiorY === 12 && w2.budgetCount() === 1;
     }
     check("save_roundtrip", roundTrip(real));
     check("save_roundtrip_mutant_killed", roundTrip(mutSaveEmit) === false);

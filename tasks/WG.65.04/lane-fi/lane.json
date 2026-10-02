@@ -1,0 +1,26 @@
+{
+  "lane": "lane-fi",
+  "taskId": "WG.65.04",
+  "branch": "task/lane-fi",
+  "writer": "claude",
+  "reviewer": "grok",
+  "push": true,
+  "allowedPaths": [
+    "game/js/sim/spawner/global_density.js",
+    "game/js/sim/spawner/index.js",
+    "tools/sim/test_global_spawn_density.js",
+    "tasks/WG.65.04/lane-fi/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": ["tools/check_deus_syntax.js"],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": ["tools/sim/test_global_spawn_density.js"],
+      "timeoutSec": 900
+    }
+  ]
+}
