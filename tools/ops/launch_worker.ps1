@@ -88,6 +88,8 @@ function Get-DeusProviderSpec {
     param([string]$Provider, [string]$PromptPath, [switch]$Probe)
     $npm = Join-Path $env:APPDATA 'npm'
     switch ($Provider) {
+        'minimax' { return $ArgLine }
+        'minimax' { return @{ Exe = 'node'; Args = 'tools/ops/minimax_cli.js ' + (ConvertTo-DeusArg $PromptPath); StdinPrompt = $false } }
         { $_ -in 'claude', 'fable', 'opus', 'sonnet', 'haiku' } {
             $exe = Join-Path $npm 'node_modules\@anthropic-ai\claude-code\bin\claude.exe'
             if (-not (Test-Path -LiteralPath $exe)) {
