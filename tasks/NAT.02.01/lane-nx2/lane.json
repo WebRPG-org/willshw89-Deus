@@ -1,7 +1,7 @@
 {
   "taskId": "NAT.02.01",
   "branch": "task/lane-nx2",
-  "writer": "minimax",
+  "writer": "grok",
   "reviewer": "codex",
   "allowedPaths": [
     "game/js/sim/structural/commit.js",

@@ -6,7 +6,7 @@
 | taskId (manifest) | NAT.02.01 |
 | Branch | 	ask/lane-nx2 |
 | Manifest | 	asks/NAT.02.01/lane-nx2/lane.json |
-| Writer -> reviewer | minimax -> codex |
+| Writer -> reviewer | grok -> codex |
 | Size | M |
 | Dependencies | NAT.02.01 (lane-gq / nx1) |
 
