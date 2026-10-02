@@ -89,6 +89,8 @@ function zrangeSuitePlugin() {
         function census() {
             const c = { strata: {}, outer: {}, objects: {}, items: {}, units: {}, capStrata: 0, capColumns: 0, fluidStrata: 0 };
             const add = (o, k, n = 1) => { o[k] = (o[k] || 0) + n; };
+            // Objects are counted by id, not by numeric typeId: a typeId is a position in the catalogue (the nine war banners follow it), so new catalogue objects shift them (lane-gp).
+            const objectName = n => { const ty = O && typeof O.type === "function" ? O.type(n) : null; return ty && ty.id ? ty.id : `#${n}`; };
             const t0 = performance.now();
             for (const z of CORE) {
                 for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
@@ -96,7 +98,7 @@ function zrangeSuitePlugin() {
                     for (let k = 0; k < 5; k++) if (s.bytes[k]) add(c.strata, `${s.bytes[k]}`);
                 }
                 const map = W.peekArea(area.x, area.y, z);
-                for (let i = 0; i < map.ufObjects.length; i++) { const o = map.ufObjects[i]; if (o) add(c.objects, `${o}`); }
+                for (let i = 0; i < map.ufObjects.length; i++) { const o = map.ufObjects[i]; if (o) add(c.objects, objectName(o)); }
             }
             if (tip) {
                 for (const z of levels) {

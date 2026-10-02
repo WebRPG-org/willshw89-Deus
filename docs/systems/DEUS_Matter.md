@@ -8,6 +8,38 @@ CommonJS module; it neither reads a catalogue nor mutates world or ledger state.
 It is foundational code awaiting independent Grok review and integration.
 The shared MASS leaf remains open for the subsequent parts.
 
+## Ledger reservoir vocabulary (NAT.02.MASS lane-dp, 2026-10-02)
+
+`game/js/sim/ledger_defaults.js` records all balances in integer cp. A form
+names where a class's matter resides. `holding` belongs only to `water` and
+`lava`: it is displaced fluid retained by its authority until it can return
+to a fluid cell. It is distinct from solid debris. There is no `held` solid
+parcel form in this vocabulary (DEC-083 item 2).
+
+| Class | Forms added | Accounted moves |
+|---|---|---|
+| `water` | `holding`, `return`, `pore` | `displace` fluid to holding; `restore` holding to fluid; `exit` fluid or holding to return; `rain` return to fluid; `infiltrate` fluid to pore; `seep` pore to fluid; `release` pore to holding. |
+| `lava` | `holding`, `magma`, `core` | `tap` core to magma; `vent` magma to fluid; `engulf` fluid to magma; `displace` fluid to holding; `restore` holding to fluid. |
+
+These are transfers within the `water` or `mineral` family. `exit` does not
+delete water, and `rain` does not create it. `solidify` already transfers lava
+fluid to stone strata within `mineral`; quench uses that row. `normalize` in
+`ledger.js` rejects a row that crosses families or duplicates a move.
+
+The wrapped world has no `world-edge` source or sink. The former `rain` source
+and `evaporation` sink are removed. The only declared source and sink names are
+`magic`, `debug-explicit`, and `legacy-levels-write`, all marked
+`ownerConfirmed: false` with their authority stated in the defaults. `magic`
+keeps DEC-018's open question visible; `debug-explicit` supports deliberate
+test injections; `legacy-levels-write` is a transitional escape hatch for
+frozen Levels writers, scoped to stone, rubble, soil, sediment, wood, water,
+and lava in the strata or fluid forms, and slated for retirement by lane-dy.
+No source can emit ore or a finite family without an explicit finite override.
+Only these declared sink names may reach a conserved family.
+
+These definitions are headless simulation data. No plugin loads them in this
+lane; the fluid, water, and lava runtime authorities are future consumers.
+
 ## Units
 
 Authoritative mass is a **nonnegative safe-integer JavaScript Number in

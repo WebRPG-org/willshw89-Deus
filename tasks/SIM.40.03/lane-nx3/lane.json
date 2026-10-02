@@ -1,0 +1,18 @@
+{
+  "taskId": "SIM.40.03",
+  "branch": "task/lane-nx3",
+  "writer": "claude",
+  "reviewer": "grok",
+  "allowedPaths": [
+    "game/js/plugins/DEUS_Structural.js",
+    "archive/DEUS_Span.js",
+    "archive/DEUS_Rubble.js",
+    "archive/test_structural_collapse.js",
+    "tools/sim/test_live_collapse.js",
+    "tasks/SIM.40.03/lane-nx3/REPORT.md"
+  ],
+  "gateTests": [
+    "node tools/check_deus_syntax.js",
+    "node tools/sim/test_live_collapse.js"
+  ]
+}

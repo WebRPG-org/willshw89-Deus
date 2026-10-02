@@ -9,6 +9,20 @@
 
 ---
 
+## 0. Active Lanes
+
+| Lane | Task | Writer -> reviewer | State |
+|---|---|---|---|
+| gp | OPS.MAIN.GREEN | claude -> grok | MERGED 86a51589 |
+| gq | NAT.02.01 nx1 | gemini -> grok | In Review (grok) |
+| gn | ART.GROUND.FIX | gemini -> codex | In Review (codex) |
+| dr | NAT.02.MASS part 4 | codex -> grok | In Review (grok) |
+| gr | OPS.FLOW.CUT | grok -> codex | Writing (grok) |
+| dd | WG.CELL-WRITE part 3 | grok -> codex | Writing (grok) |
+| dp | NAT.02.MASS part 3 | codex -> grok | Writing (codex) |
+| nx2 | NAT.02.01 part 3 | grok -> codex | Opened |
+| fi | WG.65.04 | claude -> grok | Opened |
+
 ## 1. Live Systems
 The following subsystems are actively loaded by `game/js/plugins.js` (42 plugins) or invoked as live companions / modules by `DEUS_Core.js`:
 

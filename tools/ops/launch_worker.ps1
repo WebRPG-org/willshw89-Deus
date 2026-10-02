@@ -9,8 +9,9 @@
       - Prompt: -PromptFile, else the lane's saved prompt for the same task, role and provider (never a prompt of the
         other role, never one the launcher generated), else the generated default, whose rule 2 says to push the lane's
         own branch (and to end with FINAL SHA) only when lane.json "push" or the brief asks for it (WG.00.12b).
-        A generated reviewer prompt also carries the review procedure (DEC-087). -ReviewNotes appends the PM's
-        notes to that generated reviewer prompt only.
+        A reviewer launch with no -PromptFile always gets the generated review procedure (DEC-087), even when a
+        saved reviewer prompt exists. -ReviewNotes appends the PM's notes to that generated reviewer prompt.
+        -PromptFile still replaces the whole prompt, notes included.
       - Saves the exact prompt to ~/.deus_ops/prompts/<lane>_<runId>.txt without a commit.
         -CommitPrompt restores the lane-branch launch-prompt commit for an explicit exception.
       - Tees stdout and stderr to <LogRoot>\<lane>\<runId>.log. A 0-byte log is a failure (EMPTY-LOG).
@@ -71,7 +72,7 @@ function Get-DeusProviderFamily([string]$Provider) {
     return $null
 }
 
-function Get-DeusKnownProviders { return @('claude', 'fable', 'opus', 'sonnet', 'haiku', 'grok', 'codex', 'gemini') }
+function Get-DeusKnownProviders { return @('claude', 'fable', 'opus', 'sonnet', 'haiku', 'grok', 'codex', 'gemini', 'minimax') }
 
 function ConvertTo-DeusArg([string]$Value) {
     # Quote one argument for CommandLineToArgvW / the MSVC runtime.
@@ -91,6 +92,9 @@ function Get-DeusProviderSpec {
     param([string]$Provider, [string]$PromptPath, [switch]$Probe)
     $npm = Join-Path $env:APPDATA 'npm'
     switch ($Provider) {
+        'minimax' { return @{ Exe = (Get-Command node.exe).Source; Args = ('tools/ops/minimax_cli.js --prompt-file ' + (ConvertTo-DeusArg $PromptPath)); StdinPrompt = $false } }
+        'minimax' { return $ArgLine }
+        'minimax' { return @{ Exe = 'node'; Args = 'tools/ops/minimax_cli.js ' + (ConvertTo-DeusArg $PromptPath); StdinPrompt = $false } }
         { $_ -in 'claude', 'fable', 'opus', 'sonnet', 'haiku' } {
             $exe = Join-Path $npm 'node_modules\@anthropic-ai\claude-code\bin\claude.exe'
             if (-not (Test-Path -LiteralPath $exe)) {
@@ -156,6 +160,7 @@ function Resolve-DeusLaunchEffort {
         grok   = @{ Floor = 'xhigh'; Cap = 'max' }
         codex  = @{ Floor = 'xhigh'; Cap = 'ultra' }
         gemini = @{ Floor = 'high'; Cap = 'high' }
+        minimax = @{ Floor = 'high'; Cap = 'high' }
     }
     $p = $policy[$Provider]
     if (-not $p) { return @{ Error = "-Effort is not defined for provider $Provider" } }
@@ -185,6 +190,7 @@ function Add-DeusEffortArgument {
             return ($ArgLine -replace ' exec ', " exec $flag ")
         }
         'gemini' { return $ArgLine }
+        'minimax' { return $ArgLine }
     }
     return $ArgLine
 }
@@ -1238,9 +1244,10 @@ function Invoke-DeusLaunchMain {
 
     # --- prompt -----------------------------------------------------------------------------
     # -PromptFile: used as given (with -ResumeFromSha: this launch's resume line replaces any at the top). -SavedPrompt
-    # marks it as an earlier launch's prompt, whose resume line and relaunch note are dropped too. Without -PromptFile the
-    # lane's saved prompt for this task, role and provider is reused the same way; only when there is none is the
-    # default generated, with rule 2 following the push rule.
+    # marks it as an earlier launch's prompt, whose resume line and relaunch note are dropped too. Without -PromptFile a
+    # writer reuses the lane's saved prompt for this task, role and provider; only when there is none is the default
+    # generated, with rule 2 following the push rule. A reviewer with no -PromptFile always gets the generated review
+    # procedure (DEC-087). A saved reviewer prompt is not reused, so one from before that procedure cannot drop it.
     $headBefore = (& git -C $wt rev-parse HEAD 2>$null)
     $promptFileUsed = $null
     $promptSkipped = @()
@@ -1256,18 +1263,25 @@ function Invoke-DeusLaunchMain {
     } else {
         $saved = Find-DeusSavedPrompt -Worktree $wt -TaskId $taskId -Lane $Lane -Role $roleName -Provider $prov -RegistryPath $reg
         $promptSkipped = @($saved.Skipped | Select-Object -First 20)
+        $skipSavedReviewer = ($roleName -eq 'reviewer' -and $saved.Path)
+        if ($skipSavedReviewer) {
+            $promptSkipped = @("saved reviewer prompt skipped so the review procedure is generated: $($saved.Path)") + @($promptSkipped)
+            $promptSkipped = @($promptSkipped | Select-Object -First 20)
+            $saved = @{ Path = $null }
+        }
         if ($saved.Path) {
             $promptFileUsed = $saved.Path; $promptSource = 'saved'; $promptFrom = $saved.From
             $promptText = Set-DeusPromptResume -Text ([IO.File]::ReadAllText($saved.Path, [Text.Encoding]::UTF8)) -Sha $ResumeFromSha
         } else {
-            $promptSource = 'generated'; $promptFrom = "generated (no saved $roleName prompt for $prov)"
+            $promptSource = 'generated'
+            $promptFrom = if ($skipSavedReviewer) { 'generated (review procedure; saved reviewer prompt not reused)' } else { "generated (no saved $roleName prompt for $prov)" }
             $promptText = New-DeusLanePrompt -Lane $Lane -TaskId $taskId -Provider $prov -Role $roleName -BriefRel $briefRel -Allowed $allowed -ResumeSha $ResumeFromSha -Push:$pushRule.Push -Branch $pushBranch
         }
     }
     Write-DeusLaunchMessage "launch_worker: prompt $promptSource from $promptFrom$(if ($promptFileUsed) { ": $promptFileUsed" }); push rule $(if ($pushRule.Push) { 'push' } else { 'no-push' }) ($($pushRule.Source))"
     if (-not $promptText.Trim()) { Stop-DeusLaunch 'prompt is empty' }
-    # -ReviewNotes is the PM's lane-specific points. They follow a generated reviewer prompt and are not
-    # added to a -PromptFile or to a saved prompt (those replace or reuse the whole text).
+    # -ReviewNotes is the PM's lane-specific points. They follow the generated reviewer procedure.
+    # -PromptFile replaces the whole prompt, so notes are not added to it.
     if ($ReviewNotes -and $promptSource -eq 'generated' -and $roleName -eq 'reviewer') {
         $noteText = [IO.File]::ReadAllText($ReviewNotes, [Text.Encoding]::UTF8).TrimStart([char]0xFEFF).Trim()
         if ($noteText) { $promptText = $promptText.TrimEnd() + "`n`nReview notes from the PM:`n" + $noteText + "`n" }

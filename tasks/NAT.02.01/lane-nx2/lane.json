@@ -1,0 +1,18 @@
+{
+  "taskId": "NAT.02.01",
+  "branch": "task/lane-nx2",
+  "writer": "grok",
+  "reviewer": "codex",
+  "allowedPaths": [
+    "game/js/sim/structural/commit.js",
+    "game/js/sim/structural/occupants.js",
+    "game/js/sim/structural/index.js",
+    "tools/sim/test_structure_fluid.js",
+    "tasks/NAT.02.01/lane-nx2/REPORT.md"
+  ],
+  "gateTests": [
+    "node tools/check_deus_syntax.js",
+    "node tools/test_structural_connectivity.js",
+    "node tools/sim/test_structure_fluid.js"
+  ]
+}

@@ -17,23 +17,6 @@ const masses = JSON.parse(fs.readFileSync(path.join(ROOT, "game", "data", "sim",
 const interactions = JSON.parse(fs.readFileSync(path.join(ROOT, "game", "data", "sim", "interactions.json"), "utf8"));
 const ledgerDefaults = require(path.join(ROOT, "game", "js", "sim", "ledger_defaults.js"));
 const bag = { catalogue: catalogue, masses: masses, interactions: interactions };
-function adaptForReclaim(raw) {
-    const b = JSON.parse(JSON.stringify(raw));
-    for (const id of Object.keys(b.masses.objects || {})) {
-        const o = b.masses.objects[id];
-        if (o.massCp != null && o.massMu == null) o.massMu = o.massCp;
-        if (o.lines) for (const ln of o.lines) if (ln.cp != null && ln.mu == null) ln.mu = ln.cp;
-        if (o.bill) for (const bl of o.bill) if (bl.cp != null && bl.mu == null) bl.mu = bl.cp;
-        if (o.yield && o.yield.postings) for (const p of o.yield.postings) if (p.cp != null && p.mu == null) p.mu = p.cp;
-        if (o.collapse && o.collapse.postings) for (const p of o.collapse.postings) if (p.cp != null && p.mu == null) p.mu = p.cp;
-    }
-    for (const id of Object.keys(b.masses.items || {})) {
-        const it = b.masses.items[id];
-        if (it.massCp != null && it.massMu == null) it.massMu = it.massCp;
-    }
-    return b;
-}
-const reclaimBag = adaptForReclaim(bag);
 const SRC = fs.readFileSync(path.join(ROOT, "game", "js", "sim", "reclaim.js"), "utf8").replace(/\r\n/g, "\n");
 
 let passed = 0, failed = 0;
@@ -52,18 +35,98 @@ function loadReclaim(src) {
 function open() {
     const ledger = createLedger();
     const materials = createMaterials(bag);
-    const session = createReclaim({ ledger: ledger, materials: materials, data: reclaimBag, strict: true });
+    const session = createReclaim({ ledger: ledger, materials: materials, data: bag, strict: true });
     return { ledger: ledger, materials: materials, session: session };
 }
 function codeOf(fn) {
     try { fn(); return ""; }
     catch (e) { return e.code || ""; }
 }
-function placeMu(session, cls, form) {
+function placeCp(session, cls, form) {
     let s = 0;
     const list = session.places();
-    for (let i = 0; i < list.length; i++) if (list[i].cls === cls && list[i].form === form) s += list[i].mu;
+    for (let i = 0; i < list.length; i++) if (list[i].cls === cls && list[i].form === form) s += list[i].cp;
     return s;
+}
+
+{
+    const w = open();
+    let result = null;
+    let error = "";
+    try { result = w.session.registerObject("wall_wood", 1, "worldgen"); }
+    catch (e) { error = e.code || e.message; }
+    const places = w.session.places();
+    const holding = w.session.registerHolding("soil", "strata", 25, "worldgen");
+    check("reclaim_fields_are_cp", !error && result && result.ok === true && holding.cp === 25
+        && places.length > 0 && places.every(function (p) { return Number.isSafeInteger(p.cp) && !Object.prototype.hasOwnProperty.call(p, "mu"); })
+        && JSON.stringify(w.session.blocks()).indexOf('"mu"') < 0,
+        error || JSON.stringify(result));
+}
+
+{
+    const w = open();
+    w.session.registerSlice("limestone", 1, "worldgen");
+    w.session.seal();
+    const snap = w.session.snapshot();
+    const before = w.session.checksum();
+    const ledgerBefore = w.ledger.checksum();
+    const old = JSON.parse(JSON.stringify(snap));
+    old.schema = 1;
+    old.places[0].mu = old.places[0].cp;
+    delete old.places[0].cp;
+    const code = codeOf(function () { w.session.restore(old); });
+    check("reclaim_old_snapshot_refused", code === "E_UNIT_PROVENANCE"
+        && w.session.checksum() === before && w.ledger.checksum() === ledgerBefore, code);
+    w.session.mine("limestone", 1, "roundtrip");
+    w.session.restore(snap);
+    check("reclaim_snapshot_roundtrip_cp", snap.schema === 2 && w.session.checksum() === before
+        && w.ledger.checksum() === ledgerBefore && w.session.conserved().ok);
+}
+
+{
+    // Allowlist for non-mass identifiers: empty. Comments and string literals are ignored.
+    function forbidden(source) {
+        const code = source.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`/g, " ");
+        return /\b(?:mu|du|massMu)\b|\.mu\b/.test(code);
+    }
+    const files = ["reclaim.js", "world_items/catalog.js", "world_items/world.js", "world_items/ledger_bridge.js"];
+    const clean = files.every(function (file) {
+        return !forbidden(fs.readFileSync(path.join(ROOT, "game", "js", "sim", file), "utf8"));
+    });
+    check("no_mu_identifiers", clean && forbidden("const mu = 1;") && forbidden("item.massMu = 2;"));
+}
+
+function postingAmountReadsCp(Reclaim) {
+    const fields = ["mu", "du"];
+    let allRefused = true;
+    const details = [];
+    for (const field of fields) {
+        const ledger = createLedger();
+        const materials = Object.assign({}, createMaterials(bag));
+        const postings = materials.yieldOf("limestone").postings.map(function (raw) {
+            const posting = Object.assign({}, raw);
+            posting[field] = posting.cp;
+            delete posting.cp;
+            return posting;
+        });
+        materials.yieldOf = function () { return { postings: postings }; };
+        const session = Reclaim.createReclaim({ ledger: ledger, materials: materials, data: bag, strict: true });
+        session.registerSlice("limestone", 1, "worldgen");
+        session.seal();
+        const before = session.checksum();
+        const ledgerBefore = ledger.checksum();
+        const code = codeOf(function () { session.mine("limestone", 1, "unit-probe"); });
+        if (code !== "E_UNIT" || session.checksum() !== before || ledger.checksum() !== ledgerBefore) allRefused = false;
+        details.push(field + ":" + code);
+    }
+    return { ok: allRefused, detail: details.join(", ") };
+}
+{
+    const actual = postingAmountReadsCp({ createReclaim: createReclaim });
+    check("posting_amount_reads_cp", actual.ok, actual.detail);
+    const anchor = 'if (typeof p.cp === "number") return p.cp;';
+    const Mut = loadReclaim(SRC.replace(anchor, anchor + '\n        if (typeof p.mu === "number") return p.mu;'));
+    check("accept_mu_records_mutant_killed", SRC.includes(anchor) && !postingAmountReadsCp(Mut).ok);
 }
 
 const api = createMaterials(bag);
@@ -78,9 +141,9 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     const before = w.ledger.familyTotal("mineral");
     const slice = w.materials.massOf("limestone", "strata", 1);
     const r = w.session.mine("limestone", 4, "jobs:mine", { legacyYields: { stone: 2 }, at: { x: 3, y: 4, z: 0 } });
-    const kept = placeMu(w.session, "stone", "strata");
-    const items = placeMu(w.session, "stone", "item");
-    const rubble = placeMu(w.session, "rubble", "strata");
+    const kept = placeCp(w.session, "stone", "strata");
+    const items = placeCp(w.session, "stone", "item");
+    const rubble = placeCp(w.session, "rubble", "strata");
     check("mine four slices", r && r.ok === true && w.session.conserved().ok && w.ledger.check().ok, JSON.stringify(r));
     check("mine keeps one floor slice", kept === slice, "kept " + kept + " slice " + slice);
     check("mine posts the slice mass", items + rubble === slice * 4, "items " + items + " rubble " + rubble);
@@ -116,7 +179,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     w.session.registerObject("wall_wood", 1, "worldgen");
     w.session.seal();
     const r = w.session.note("deconstruct", { elementId: "wall_wood", count: 1, cause: "objects:remove" });
-    check("deconstruct wall", r.ok && placeMu(w.session, "wood", "item") === 1764 && placeMu(w.session, "wood", "object") === 0 && w.session.conserved().ok, JSON.stringify(r));
+    check("deconstruct wall", r.ok && placeCp(w.session, "wood", "item") === 1764 && placeCp(w.session, "wood", "object") === 0 && w.session.conserved().ok, JSON.stringify(r));
 }
 
 {
@@ -126,7 +189,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     const ore = w.ledger.familyTotal("fe");
     const r = w.session.note("harvest", { elementId: "ironstone", cause: "objects:mine" });
     w.session.tick(40);
-    check("ore harvest keeps the gram", r.ok && w.ledger.familyTotal("fe") === ore && w.ledger.amount("fe_ore", "item") === 5292 && w.ledger.amount("fe_ore", "object") === 0 && w.session.conserved().ok, JSON.stringify(r) + " " + w.session.conserved().recountMsg);
+    check("ore harvest keeps cp", r.ok && w.ledger.familyTotal("fe") === ore && w.ledger.amount("fe_ore", "item") === 5292 && w.ledger.amount("fe_ore", "object") === 0 && w.session.conserved().ok, JSON.stringify(r) + " " + w.session.conserved().recountMsg);
 }
 
 {
@@ -154,8 +217,8 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     const stored = piles.filter(function (p) { return p.exempt && p.cls === "fe_metal"; });
     const rusted = piles.filter(function (p) { return p.cls === "fe_trace"; });
     const gold = piles.filter(function (p) { return p.cls === "au_metal" && p.form === "item"; });
-    check("exempt iron stays metal", stored.length === 1 && stored[0].mu === 882 && rusted.length === 1 && rusted[0].mu === 882, JSON.stringify(piles));
-    check("gold stays scrap", gold.length === 1 && gold[0].mu === 22 && w.ledger.amount("au_ore", "item") === 0);
+    check("exempt iron stays metal", stored.length === 1 && stored[0].cp === 882 && rusted.length === 1 && rusted[0].cp === 882, JSON.stringify(piles));
+    check("gold stays scrap", gold.length === 1 && gold[0].cp === 22 && w.ledger.amount("au_ore", "item") === 0);
     check("finite families constant", w.ledger.familyTotal("au") === au && w.ledger.familyTotal("fe") === fe && w.ledger.familyTotal("gem") === gem && w.session.conserved().ok);
 }
 
@@ -166,12 +229,12 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     const organic = w.ledger.familyTotal("organic");
     const mat = w.session.places()[0].materialId;
     let guard = 0, last;
-    while (guard < 8 && w.session.places().some(function (p) { return p.mu > 0 && !p.done && p.cls === "biomass"; })) {
+    while (guard < 8 && w.session.places().some(function (p) { return p.cp > 0 && !p.done && p.cls === "biomass"; })) {
         last = w.session.note("decay", { materialId: mat, cause: "decay:bone" });
         guard++;
     }
     const blocks = w.session.blocks().filter(function (b) { return b.cls === "humus" && b.x === 5; });
-    check("bone rots to one humus block", guard >= 1 && last && last.ok !== false && blocks.length === 1 && blocks[0].blocks === 1 && blocks[0].remainder === (3636 * 110 - 399919), JSON.stringify(last) + " " + JSON.stringify(blocks));
+    check("bone rots to one humus block", guard >= 1 && last && last.ok !== false && blocks.length === 1 && blocks[0].blocks === 1 && Number.isSafeInteger(blocks[0].cp) && !Object.prototype.hasOwnProperty.call(blocks[0], "mu") && blocks[0].remainder === (3636 * 110 - 399919), JSON.stringify(last) + " " + JSON.stringify(blocks));
     check("bone family constant", w.ledger.familyTotal("organic") === organic && w.session.conserved().ok);
 }
 
@@ -182,7 +245,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     const mineral = w.ledger.familyTotal("mineral");
     w.session.tick(8);
     const stone = w.session.places().filter(function (p) { return p.cls === "stone" && p.form === "strata" && p.done; });
-    check("rubble reclaims to stone", stone.length === 1 && stone[0].mu === w.materials.massOf("rubble", "strata", 2) && w.ledger.familyTotal("mineral") === mineral && w.session.conserved().ok, JSON.stringify(w.session.places()));
+    check("rubble reclaims to stone", stone.length === 1 && stone[0].cp === w.materials.massOf("rubble", "strata", 2) && w.ledger.familyTotal("mineral") === mineral && w.session.conserved().ok, JSON.stringify(w.session.places()));
 }
 
 {
@@ -192,7 +255,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     const organic = w.ledger.familyTotal("organic");
     w.session.mine("wood", 1, "jobs:chop", { at: { x: 1, y: 1, z: 0 } });
     w.session.tick(6);
-    const humus = placeMu(w.session, "humus", "strata");
+    const humus = placeCp(w.session, "humus", "strata");
     check("wood reclaim reaches humus", humus > 0 && w.ledger.familyTotal("organic") === organic && w.session.conserved().ok, "humus " + humus);
 }
 
@@ -207,7 +270,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     w.session.restore(snap);
     check("snapshot restore", w.session.checksum() === sum && w.session.conserved().ok);
     const bad = w.session.snapshot();
-    bad.places[0].mu += 1;
+    bad.places[0].cp += 1;
     w.session.restore(bad);
     check("tampered place fails recount", w.session.conserved().ok === false);
     w.session.restore(snap);
@@ -221,7 +284,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     w.ledger.source("debug-explicit", "soil", "strata", 1, "inject-duplicate");
     const drift = w.session.conserved();
     const mineral = drift.diffs.filter(function (d) { return d.family === "mineral"; })[0];
-    check("duplicated gram is caught", drift.ok === false && mineral && mineral.delta === 1, JSON.stringify(drift.diffs));
+    check("duplicated cp is caught", drift.ok === false && mineral && mineral.delta === 1, JSON.stringify(drift.diffs));
 }
 {
     const w = open();
@@ -230,7 +293,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     w.ledger.sink("debug-explicit", "soil", "strata", 1, "inject-leak");
     const drift = w.session.conserved();
     const mineral = drift.diffs.filter(function (d) { return d.family === "mineral"; })[0];
-    check("leaked gram is caught", drift.ok === false && mineral && mineral.delta === -1, JSON.stringify(drift.diffs));
+    check("leaked cp is caught", drift.ok === false && mineral && mineral.delta === -1, JSON.stringify(drift.diffs));
 }
 
 {
@@ -255,7 +318,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     ));
     const ledger = createLedger();
     const materials = createMaterials(bag);
-    const session = Mut.createReclaim({ ledger: ledger, materials: materials, data: reclaimBag, strict: true });
+    const session = Mut.createReclaim({ ledger: ledger, materials: materials, data: bag, strict: true });
     session.registerSlice("limestone", 1, "worldgen");
     session.seal();
     let caught = false;
@@ -263,7 +326,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
         session.mine("limestone", 1, "mutant");
         caught = session.conserved().ok === false;
     } catch (e) { caught = true; }
-    check("mutant leak gram fails the run", caught === true);
+    check("mutant leak cp fails the run", caught === true);
 }
 {
     const Mut = loadReclaim(SRC.replace(
@@ -272,7 +335,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
     ));
     const ledger = createLedger();
     const materials = createMaterials(bag);
-    const session = Mut.createReclaim({ ledger: ledger, materials: materials, data: reclaimBag, strict: true });
+    const session = Mut.createReclaim({ ledger: ledger, materials: materials, data: bag, strict: true });
     session.registerSlice("limestone", 1, "worldgen");
     session.registerHolding("stone", "strata", 1, "spare", { materialId: "limestone", pathId: "limestone", exempt: true });
     session.seal();
@@ -281,7 +344,7 @@ check("vm load", typeof loadReclaim(SRC).createReclaim === "function");
         session.mine("limestone", 1, "mutant");
         caught = session.conserved().ok === false;
     } catch (e) { caught = true; }
-    check("mutant duplicated gram fails the run", caught === true);
+    check("mutant duplicated cp fails the run", caught === true);
 }
 
 {

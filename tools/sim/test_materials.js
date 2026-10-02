@@ -22,6 +22,7 @@ const masses = readJson(path.join(ROOT, "game", "data", "sim", "mass_tables.json
 const interactions = readJson(path.join(ROOT, "game", "data", "sim", "interactions.json"));
 const ledger = require(path.join(ROOT, "game", "js", "sim", "ledger_defaults.js"));
 const { createLedger } = require(path.join(ROOT, "game", "js", "sim", "ledger.js"));
+const { kgToCp } = require(path.join(ROOT, "game", "js", "sim", "units.js"));
 const live = require(path.join(ROOT, "game", "data", "DEUS_WorldCatalog.json"));
 const SRC = fs.readFileSync(path.join(ROOT, "game", "js", "sim", "materials.js"), "utf8").replace(/\r\n/g, "\n");
 
@@ -207,6 +208,26 @@ const liveItems = live.items.types.map(function (i) { return i.id; }).sort();
 const liveObjects = live.objects.map(function (o) { return o.id; }).sort();
 check("catalog_items_covered", JSON.stringify(liveItems) === JSON.stringify(masses.catalogIndex.items.slice().sort()));
 check("catalog_objects_covered", JSON.stringify(liveObjects) === JSON.stringify(masses.catalogIndex.objects.slice().sort()));
+function strataIdsValid(materials) {
+    const ids = materials.filter(m => m.strataId != null).map(m => m.strataId);
+    return ids.every(id => Number.isInteger(id) && id >= 0 && id < 64) && new Set(ids).size === ids.length;
+}
+check("strata_ids_unique_and_under_64", strataIdsValid(catalogue.materials));
+for (const [id, strataId, density] of [["obsidian", 55, 2400], ["peridotite", 54, 3300]]) {
+    check(id + "_row_present", (function () {
+        const row = catalogue.materials.find(m => m.id === id);
+        if (!row) return false;
+        const kg = Math.round(density * 1.4158423296);
+        return row.kind === "natural" && row.strataId === strataId && row.ledger.class === "stone" &&
+            row.ledgerForm === "strata" && row.densityKgM3 === density && row.kgPerSlice === kg &&
+            row.cpPerStratum === kgToCp(kg) && errsOf(bag()).length === 0;
+    })());
+}
+check("new_row_postings_close", ["obsidian", "peridotite"].every(function (id) {
+    const m = catalogue.materials.find(row => row.id === id);
+    return m && m.yield && m.collapse && covered(m.yield.postings, materialKeys(m)) === m.cpPerStratum &&
+        covered(m.collapse.postings, materialKeys(m)) === m.cpPerStratum;
+}));
 
 check("catalogue_is_cp", catalogue.massUnit === "cp" && masses.massUnit === "cp");
 check("cp_rule_every_row", api.material("stone").cpPerStratum === 717825 && api.material("granite").cpPerStratum === 858480);
@@ -276,6 +297,12 @@ function kill(name, data, code, localBad) {
     g.yield.postings[0].cp = g.yield.postings[0].cp - 1;
     kill("mutant_yield_short", d, "E_YIELD_MASS", postingSum(g.yield.postings) !== g.cpPerStratum);
 })();
+check("mutant_duplicate_strataId_killed", (function () {
+    const d = bag(), row = d.catalogue.materials.find(m => m.id === "obsidian");
+    if (!row) return false;
+    row.strataId = 54;
+    return !strataIdsValid(d.catalogue.materials) && hasCode(errsOf(d), "E_ID");
+})());
 (function () {
     const d = bag();
     const g = d.catalogue.materials.filter(function (m) { return m.id === "granite"; })[0];

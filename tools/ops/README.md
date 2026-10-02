@@ -5,7 +5,7 @@ Windows PowerShell 5.1 scripts; nothing here is loaded by the game.
 
 | File | What it does |
 |---|---|
-| `launch_worker.ps1` | Starts one provider CLI session (claude, grok, codex or gemini) in a lane worktree, watches it to the end and records what happened. Also the shared function library for the other scripts. A generated reviewer prompt carries the review procedure (DEC-087). |
+| `launch_worker.ps1` | Starts one provider CLI session (claude, grok, codex, gemini or minimax) in a lane worktree, watches it to the end and records what happened. Also the shared function library for the other scripts. A reviewer launch with no `-PromptFile` gets the generated review procedure (DEC-087). |
 | `open_lane.ps1` | Opens one lane worktree from `origin/main`, writes `BRIEF.md` and `lane.json`, commits as `deus-pm` and pushes `task/<lane>`. |
 | `test_open_lane.ps1` | Tests for `open_lane.ps1`. |
 | `resume_queue.ps1` | One pass of auto-resume: probes providers whose usage limit should have reset, then relaunches queued lanes. Run it on a schedule. |
@@ -87,9 +87,11 @@ Chosen in this order:
    and including a line `--- original prompt follows ---`, the form the PM used for the lane-s relaunch
    (`tasks/WG.20.02/lane-s/launches/20260926_034739_prompt.txt`). Without `-SavedPrompt` that note is kept, because
    the PM may have written it for this launch.
-2. **The lane's saved prompt** (`Find-DeusSavedPrompt`), when no `-PromptFile` is given. It is reused like a
-   `-SavedPrompt` file: its old resume line and relaunch note are dropped, and this launch's resume line is added when
-   `-ResumeFromSha` is set. Candidates, first usable one wins:
+2. **The lane's saved prompt** (`Find-DeusSavedPrompt`), when no `-PromptFile` is given and the role is **writer**.
+   It is reused like a `-SavedPrompt` file: its old resume line and relaunch note are dropped, and this launch's
+   resume line is added when `-ResumeFromSha` is set. A **reviewer** launch with no `-PromptFile` does not take this
+   step: the procedure in (3) is generated even when a saved reviewer prompt exists, and that candidate is listed in
+   `promptCandidatesSkipped`. Candidates, first usable one wins:
    - registry entries of the lane, newest `startedAt` first, with the **same `taskId`, `role` and `provider`**: the
      entry's `promptFile` (the file it was given), then its `launchPromptPath` (the saved copy);
    - prompt files committed at `HEAD` in `tasks/<task>/<lane>/launches/`, newest name first, whose adding commit has
@@ -101,8 +103,10 @@ Chosen in this order:
    generated it. Older subjects without `(<role> <provider>)`, and the coordinator's
    `[gemini] Record Lane X ... launch prompt` commits, record neither, so their prompts are reused only through a
    registry entry. The effects:
-   - A reviewer prompt is never reused for a writer, or a writer prompt for a reviewer. Both roles save prompts
-     outside git by default. Their registry entries record the role, provider and saved path for reuse.
+   - A reviewer prompt is never reused for a writer, or a writer prompt for a reviewer. A saved reviewer prompt is
+     not reused for a later reviewer launch either: that launch is generated (DEC-087). Both roles save prompts
+     outside git by default. Their registry entries record the role, provider and saved path; a writer relaunch
+     reuses that path, and `resume_queue.ps1` can still pass it as `-PromptFile`.
    - A prompt written for another provider is not reused (after a failover its first line and commit tag would
      name the wrong agent), and neither is a prompt of another task that happened to use the same lane name.
    - A prompt the launcher generated is never reused, so a pre-WG.00.12b default with "Do not push" is not carried
@@ -132,8 +136,10 @@ Chosen in this order:
    `VERDICT: PASS WITH MINORS`, or `VERDICT: REJECT`; `git add` that one path; commit with the subject
    `[<tag>] <taskId> <lane> review: review_<tag>_<tip8>.md (VERDICT: <verdict>)`; push; end with `FINAL SHA`;
    commit before the turn ends; never start a background command.
-   `-ReviewNotes <file>` appends the PM's notes after that procedure, and only on a generated reviewer prompt.
-   `-PromptFile` still replaces the whole prompt, notes included. A missing notes file refuses the launch.
+   `-ReviewNotes <file>` appends the PM's notes after that procedure. Because a reviewer with no `-PromptFile` is
+   always generated, the notes are kept even when an older saved reviewer prompt is on record. `-PromptFile` still
+   replaces the whole prompt, notes included (that is also how `resume_queue.ps1` passes a saved prompt). A missing
+   notes file refuses the launch.
 
 ### Opening a lane: `open_lane.ps1` (DEC-087)
 
@@ -175,7 +181,8 @@ The prompt fields (WG.00.12b): `promptFile` is the source prompt, meaning the `-
 reused (full path), or `null` for a generated prompt. `launchPromptPath` and `promptPath` name the copy actually sent.
 `promptSource` is `file`, `saved` or `generated`. `promptFrom` says where it came from (`-PromptFile`,
 `-PromptFile -SavedPrompt`, `registry run <runId> promptFile|launchPromptPath`, `committed <path>`, or
-`generated (no saved <role> prompt for <provider>)`). `promptCandidatesSkipped` lists up to 20 candidates passed over,
+`generated (no saved <role> prompt for <provider>)`, or, when a saved reviewer prompt was set aside,
+`generated (review procedure; saved reviewer prompt not reused)`). `promptCandidatesSkipped` lists up to 20 candidates passed over,
 with the reason. `pushRule` is `push` or `no-push`, and `pushRuleSource` is `lane.json`, `brief` or `default`; both
 are recorded for every run, though only a generated prompt uses them.
 
@@ -401,13 +408,13 @@ this machine checks the scripts out with CRLF (the system gitconfig sets `core.a
 matches a multi-line fault's text with the file's own line ending. Before WG.00.12b the `launcher_pid_not_checked`
 fault was a SETUP-ERROR in such a clone.
 
-DEC-087 adds `test_open_lane.ps1` (opens a lane and checks the `deus-pm` author, subject, files and push; refuses a duplicate lane, an empty brief, a same-family pair and a bad manifest; mutant `open_lane_wrong_author`) and the launcher cases `generated_reviewer_prompt`, `review_notes_appended`, `prompt_file_replaces_reviewer_prompt` and `review_notes_missing_refused` (mutant `prompt_without_commit`).
+DEC-087 adds `test_open_lane.ps1` (opens a lane and checks the `deus-pm` author, subject, files and push; refuses a duplicate lane, an empty brief, a same-family pair and a bad manifest; mutant `open_lane_wrong_author`) and the launcher cases `generated_reviewer_prompt`, `review_notes_appended`, `saved_reviewer_prompt_gets_procedure_and_notes`, `prompt_file_replaces_reviewer_prompt` and `review_notes_missing_refused` (mutants `prompt_without_commit` and `saved_reviewer_reused`).
 
 Counts (WG.00.12b; before it: 147 and 68 checks, 24 and 15 mutants): `test_launch_worker.ps1` 216 checks and 40
 mutants, `test_resume_queue.ps1` 95 checks and 20 mutants. OPS.20.06 adds the effort mapping, the DEC-032 floor,
 the gemini provider and the `-ProviderArgs` byte-identity cases, each with a mutant. OPS.FLOW.CUT measured the default
-`test_launch_worker.ps1` suite at 285 checks, 0 failed, and adds the mutant `prompt_without_commit` (`$MutantDefs` is 46).
-`test_resume_queue.ps1` is unchanged at 95 checks. The WG.00.12b tests cover the push rule (brief, other branch,
+`test_launch_worker.ps1` suite at 292 checks, 0 failed, and adds the mutants `prompt_without_commit` and
+`saved_reviewer_reused` (`$MutantDefs` is 47). `test_resume_queue.ps1` is unchanged at 95 checks. The WG.00.12b tests cover the push rule (brief, other branch,
 `lane.json` true / false / invalid), prompt reuse (`-PromptFile` recorded then reused, resume without stacking, an
 explicit file with an old resume line, relaunch notes, reviewer vs writer both ways, a committed prompt without the
 registry, generated prompts not reused, another task or provider not reused) and, in the resume queue, the saved

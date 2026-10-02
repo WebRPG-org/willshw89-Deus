@@ -648,6 +648,25 @@ $Tests = @(
         Check 'exit_0' ($r.Code -eq 0) "exit $($r.Code) $($r.Err)"
         Check 'notes_after_procedure' ($idxCommit -ge 0 -and $idxNotes -gt $idxCommit) "commit $idxCommit notes $idxNotes"
     } }
+    @{ Name = 'saved_reviewer_prompt_gets_procedure_and_notes'; Body = {
+        Reset-Lane $Fx
+        $old = New-PromptFile 'old_reviewer.txt' "OLD SAVED REVIEWER PROMPT WITHOUT THE PROCEDURE`n"
+        $r1 = Invoke-Launch $Fx -Mode 'commit' -Params @{ Provider = 'grok'; PromptFile = $old }
+        Check 'seed_exit_0' ($r1.Code -eq 0) "exit $($r1.Code) $($r1.Err)"
+        Check 'seed_was_the_file' ($r1.Entry -and $r1.Entry['promptSource'] -eq 'file') "source $($r1.Entry['promptSource'])"
+        $notes = New-PromptFile 'saved_review_notes.txt' "PM note: the saved prompt must not win.`n"
+        $r2 = Invoke-Launch $Fx -Mode 'commit' -Params @{ Provider = 'grok'; ReviewNotes = $notes }
+        $e = $r2.Entry
+        $prompt = Get-TextFile $e['launchPromptPath']
+        $idxCommit = "$prompt".IndexOf('Commit with the subject')
+        $idxNotes = "$prompt".IndexOf('PM note: the saved prompt must not win.')
+        $skip = @($e['promptCandidatesSkipped']) -join ' | '
+        Check 'exit_0' ($r2.Code -eq 0) "exit $($r2.Code) $($r2.Err)"
+        Check 'generated_not_saved' ($e['promptSource'] -eq 'generated' -and $e['promptFrom'] -eq 'generated (review procedure; saved reviewer prompt not reused)') "source $($e['promptSource']) from $($e['promptFrom'])"
+        Check 'old_text_absent' ("$prompt" -notmatch 'OLD SAVED REVIEWER PROMPT')
+        Check 'notes_after_procedure' ($idxCommit -ge 0 -and $idxNotes -gt $idxCommit) "commit $idxCommit notes $idxNotes"
+        Check 'skipped_the_saved_prompt' ($skip -match 'saved reviewer prompt skipped so the review procedure is generated') $skip
+    } }
     @{ Name = 'prompt_file_replaces_reviewer_prompt'; Body = {
         Reset-Lane $Fx
         $pf = New-PromptFile 'hand_review.txt' "HAND WRITTEN REVIEWER PROMPT ONLY`n"
@@ -1191,6 +1210,8 @@ $MutantDefs = @(
        Find = 'return @{ Error = "lane.json ""push"" must be true or false, not ''$p''" }'; Replace = '$null = $p' }
     @{ Name = 'prompt_without_commit'; File = 'launch_worker.ps1'; Tests = 'generated_reviewer_prompt'
        Find = 'Commit with the subject'; Replace = 'Record with the subject' }
+    @{ Name = 'saved_reviewer_reused'; File = 'launch_worker.ps1'; Tests = 'saved_reviewer_prompt_gets_procedure_and_notes'
+       Find = '$skipSavedReviewer = ($roleName -eq ''reviewer'' -and $saved.Path)'; Replace = '$skipSavedReviewer = $false' }
     @{ Name = 'no_final_sha_line'; File = 'launch_worker.ps1'; Tests = 'push_rule_from_brief'
        Find = 'if ($Push) { $lines.Add(''Your final output line'; Replace = 'if ($false) { $lines.Add(''Your final output line' }
     # effort, the floor, gemini, and explicit -ProviderArgs (OPS.20.06)

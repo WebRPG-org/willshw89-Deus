@@ -1,0 +1,17 @@
+{
+  "taskId": "SIM.40.05",
+  "branch": "task/lane-nx5",
+  "writer": "claude",
+  "reviewer": "codex",
+  "allowedPaths": [
+    "game/js/plugins/DEUS_Floors.js",
+    "game/js/plugins/DEUS_Colonists.js",
+    "game/js/plugins/DEUS_UI.js",
+    "tools/sim/test_builder_reach.js",
+    "tasks/SIM.40.05/lane-nx5/REPORT.md"
+  ],
+  "gateTests": [
+    "node tools/check_deus_syntax.js",
+    "node tools/sim/test_builder_reach.js"
+  ]
+}
