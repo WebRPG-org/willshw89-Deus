@@ -632,7 +632,13 @@
 
     const baselines = new Map(); // "seed:gen:z:ax,ay" -> { shape: Uint8Array, material: Uint8Array }
     const stats = { generated: 0, genMs: 0, lastGenMs: 0, shapeReads: 0, switches: 0, lastSwitch: null, migrations: 0, checksumMismatches: 0, composeMs: 0,
-        strataWrites: 0, strataDamaged: 0, strataDestroyed: 0, strataMigrations: 0, strataSchemaErrors: 0, derives: 0, gridBuilds: 0, featureMs: 0 };
+        strataWrites: 0, strataDamaged: 0, strataDestroyed: 0, strataMigrations: 0, strataSchemaErrors: 0, derives: 0, gridBuilds: 0, featureMs: 0,
+        areaGenerations: [], areaRequests: [], areaSumMs: 0, areaSumComputations: 0, areaStackReads: 0 };
+    // WG.00.46. The seen set and the load queue are runtime only (never saved). One entry per world state, not per cache fill.
+    let traceAreaRequestsOn = false;
+    const areaSeen = new WeakMap();
+    let areaEventHold = 0;
+    const areaEventQueue = [];
 
     // The generator of a level: its level entry's; a level without an entry (outside the core, WG.00.17) takes the
     // ground's (one generator makes a world's column: generator 5's volume spans it); else GEN.
@@ -1101,13 +1107,91 @@
         return grid;
     }
 
+    function coresReady(st) {
+        if (!st || !st.levels) return false;
+        for (let i = 0; i < CORE_LEVELS.length; i++) if (!st.levels[String(CORE_LEVELS[i])]) return false;
+        return true;
+    }
+    function markAreaSeen(st, ax, ay) {
+        let seen = areaSeen.get(st);
+        if (!seen) { seen = new Set(); areaSeen.set(st, seen); }
+        const key = ax + "," + ay;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    }
+    // The first plugin file on the stack that is not Levels. Captured only while the trace switch is on.
+    function requesterFromStack() {
+        stats.areaStackReads++;
+        const stack = (new Error()).stack || "";
+        const lines = stack.split("\n");
+        for (let i = 0; i < lines.length; i++) {
+            const m = lines[i].match(/(?:DEUS|UF)_[A-Za-z0-9_]+\.js/);
+            if (!m) continue;
+            if (m[0] === "DEUS_Levels.js" || m[0] === "UF_Levels.js") continue;
+            return m[0];
+        }
+        return "";
+    }
+    function emitAreaGenerated(ax, ay, gen) {
+        if (areaEventHold > 0) { // WG.00.46 hold events until the load flush
+            for (let i = 0; i < areaEventQueue.length; i++) if (areaEventQueue[i].ax === ax && areaEventQueue[i].ay === ay) return;
+            areaEventQueue.push({ ax: ax, ay: ay, gen: gen });
+            return;
+        }
+        emit("levels:areaGenerated", { ax: ax, ay: ay, gen: gen });
+    }
+    function flushAreaEvents() {
+        if (!areaEventQueue.length) return;
+        const batch = areaEventQueue.slice();
+        areaEventQueue.length = 0;
+        batch.sort((a, b) => a.ay - b.ay || a.ax - b.ax);
+        for (let i = 0; i < batch.length; i++) emit("levels:areaGenerated", batch[i]);
+    }
+    // First baseline request of an area in this world state. The hash runs once; a saved areaSums entry is compared, never replaced.
+    function recordArea(st, ax, ay, g, ms, causedGen) {
+        if (!coresReady(st)) return;
+        if (!markAreaSeen(st, ax, ay)) return;
+        const sumKey = ax + "," + ay;
+        stats.areaGenerations.push({ ax: ax, ay: ay, gen: g, ms: ms }); // WG.00.46 one generation record
+        if (traceAreaRequestsOn) stats.areaRequests.push({ ax: ax, ay: ay, requester: requesterFromStack() });
+        const t0 = performance.now();
+        let hadRecord = false;
+        for (let i = 0; i < CORE_LEVELS.length; i++) {
+            const L = st.levels[String(CORE_LEVELS[i])];
+            if (L.areaSums && Object.prototype.hasOwnProperty.call(L.areaSums, sumKey)) hadRecord = true;
+        }
+        for (let i = 0; i < CORE_LEVELS.length; i++) {
+            const z = CORE_LEVELS[i];
+            const L = st.levels[String(z)];
+            const sum = areaChecksum(z, ax, ay);
+            if (L.areaSums && Object.prototype.hasOwnProperty.call(L.areaSums, sumKey)) {
+                const prev = L.areaSums[sumKey];
+                if (prev !== sum) { // WG.00.46 report, never replace
+                    L.checksumMismatch = true;
+                    stats.checksumMismatches++;
+                    console.warn(`UF_Levels: area ${sumKey} level ${z} baseline differs from the one this save was made with: saved ${prev}, regenerated ${sum}`);
+                }
+            } else {
+                if (!L.areaSums) L.areaSums = {};
+                L.areaSums[sumKey] = sum; // WG.00.46 save the area sum
+            }
+        }
+        stats.areaSumMs += performance.now() - t0;
+        stats.areaSumComputations++;
+        if (!hadRecord) emitAreaGenerated(ax, ay, g); // WG.00.46 once per world state
+        return causedGen;
+    }
     function baseline(z, ax = 0, ay = 0, seed, gen) {
         const W = World();
         const st = W && W.state;
         if (!st || !isLevel(z)) return null;
+        // WG.00.46 view never gates generation
         const s = seed === undefined ? st.seed : seed, g = gen === undefined ? levelGen(st, z) : gen;
         const r = zrSync(), key = `${s}:${g}:${z}:${ax},${ay}:${st.size}:${st.areasX},${st.areasY}:${r.zMin}..${r.zMax}:${st.verticalBiomeCoupling ? 1 : 0}`;
         let b = baselines.get(key);
+        const genBefore = stats.generated;
+        const tGen = performance.now();
         if (!b) {
             const desc = (seed === undefined || seed === st.seed)
                 ? st
@@ -1116,6 +1200,9 @@
             baselines.set(key, b);
             while (baselines.size > 12) baselines.delete(baselines.keys().next().value);
         }
+        const genWall = performance.now() - tGen;
+        const live = (seed === undefined || seed === st.seed) && (gen === undefined || gen === levelGen(st, z));
+        if (live) recordArea(st, ax, ay, g, stats.generated !== genBefore ? genWall : 0, stats.generated !== genBefore);
         return b;
     }
 
@@ -1132,7 +1219,8 @@
         return grid;
     }
 
-    function checksumOf(z, seed, gen, worldDesc) {
+    // The world a checksum samples. A supplied worldDesc (or a seed that is itself a world) wins over the loaded world.
+    function checksumWorld(seed, worldDesc) {
         const W = World(), st = W && W.state;
         const desc = (typeof worldDesc === "object" && worldDesc !== null)
             ? worldDesc
@@ -1141,40 +1229,70 @@
                 : (seed !== undefined
                     ? { seed, size: (st && st.size) || 256, areasX: (st && st.areasX) || 1, areasY: (st && st.areasY) || 1, startArea: (st && st.startArea) || { x: 0, y: 0 }, verticalBiomeCoupling: st ? st.verticalBiomeCoupling : true, zRange: st ? st.zRange : undefined }
                     : st));
+        return { desc, st };
+    }
+    // One area's 32x32 ground lattice, the same cell order checksumOf uses before any strata.
+    function latticeFold(h, G, s, size, ax, ay, desc) {
+        const step = size / 32;
+        const enc = text => Array.from(String(text), ch => ch.charCodeAt(0) & 255);
+        for (let j = 0; j < 32; j++) for (let i = 0; i < 32; i++) {
+            const gx = ax * size + Math.floor(i * step + step / 2);
+            const gy = ay * size + Math.floor(j * step + step / 2);
+            const info = G.cellInfo(gx, gy, 0, desc);
+            h = fnvBytes(h, enc(info ? `${info.ground}|${info.water || ""}|${info.peak ? 1 : 0};` : "-;"));
+        }
+        return h;
+    }
+    // One area's baseline bytes. Generator 5 folds the strata; older generators fold the legacy views.
+    function baselineFold(h, s, g, z, ax, ay, size, desc) {
+        const b = generateBaseline(s, g, z, ax, ay, size, desc);
+        if (g >= FEATURE_GEN) return strataHash(h, b);
+        const v = legacyViews(b);
+        h = fnvBytes(h, v.shape);
+        h = fnvBytes(h, v.material);
+        if (v.biome) h = fnvBytes(h, v.biome);
+        if (v.water) h = fnvBytes(h, v.water);
+        return h;
+    }
+    // One area, in the order a one-area checksumOf uses (ground: lattice, then strata). Does not record or emit.
+    function areaChecksum(z, ax, ay, seed, gen, worldDesc) {
+        const resolved = checksumWorld(seed, worldDesc);
+        const desc = resolved.desc, st = resolved.st;
+        if (!desc) return "n/a";
+        const s = desc.seed !== undefined ? desc.seed : (typeof seed === "number" ? seed : 0);
+        const g = gen || (desc.levels && levelGen(desc, z)) || GEN;
+        const size = desc.size || (st && st.size) || 256;
+        let h = 2166136261 >>> 0;
+        if (z === 0) {
+            const G = window.UF.WorldGen;
+            if (!G || typeof G.cellInfo !== "function") return "n/a";
+            h = latticeFold(h, G, s, size, ax, ay, desc);
+            if (g >= FEATURE_GEN) h = baselineFold(h, s, g, z, ax, ay, size, desc);
+            return hex(h);
+        }
+        return hex(baselineFold(h, s, g, z, ax, ay, size, desc));
+    }
+    function checksumOf(z, seed, gen, worldDesc) {
+        const resolved = checksumWorld(seed, worldDesc);
+        const desc = resolved.desc, st = resolved.st;
         if (!desc) return "n/a";
         const s = desc.seed !== undefined ? desc.seed : (typeof seed === "number" ? seed : 0);
         const g = gen || (desc.levels && levelGen(desc, z)) || GEN;
         const size = desc.size || (st && st.size) || 256;
         const areasX = desc.areasX || 1, areasY = desc.areasY || 1;
-        const baseOfArea = (ax, ay) => generateBaseline(s, g, z, ax, ay, size, desc);
         let h = 2166136261 >>> 0;
         if (z === 0) {
             const G = window.UF.WorldGen;
             if (!G || typeof G.cellInfo !== "function") return "n/a";
-            const step = size / 32;
-            const enc = text => Array.from(String(text), ch => ch.charCodeAt(0) & 255);
-            for (let ay = 0; ay < areasY; ay++) for (let ax = 0; ax < areasX; ax++) {
-                for (let j = 0; j < 32; j++) for (let i = 0; i < 32; i++) {
-                    const gx = ax * size + Math.floor(i * step + step / 2);
-                    const gy = ay * size + Math.floor(j * step + step / 2);
-                    const info = G.cellInfo(gx, gy, 0, desc);
-                    h = fnvBytes(h, enc(info ? `${info.ground}|${info.water || ""}|${info.peak ? 1 : 0};` : "-;"));
-                }
-            }
+            for (let ay = 0; ay < areasY; ay++) for (let ax = 0; ax < areasX; ax++) h = latticeFold(h, G, s, size, ax, ay, desc);
             // Generator 5: the ground's strata too (its natural cuts and caves are strata, not climate cells).
-            if (g >= FEATURE_GEN) for (let ay = 0; ay < areasY; ay++) for (let ax = 0; ax < areasX; ax++) h = strataHash(h, baseOfArea(ax, ay));
+            if (g >= FEATURE_GEN) for (let ay = 0; ay < areasY; ay++) for (let ax = 0; ax < areasX; ax++) h = baselineFold(h, s, g, z, ax, ay, size, desc);
             return hex(h);
         }
         for (let ay = 0; ay < areasY; ay++) for (let ax = 0; ax < areasX; ax++) {
             // Generator 5: the strata bytes themselves (partial fills, caves and caps don't show in the legacy codes).
-            if (g >= FEATURE_GEN) { h = strataHash(h, baseOfArea(ax, ay)); continue; }
-            // The generator's codes, read back from the strata (legacyViews): the same bytes as before the strata, so a
-            // save's checksum from New Game still matches.
-            const v = legacyViews(baseOfArea(ax, ay));
-            h = fnvBytes(h, v.shape);
-            h = fnvBytes(h, v.material);
-            if (v.biome) h = fnvBytes(h, v.biome);
-            if (v.water) h = fnvBytes(h, v.water);
+            // Older generators: the codes read back from the strata, so a save's checksum from New Game still matches.
+            h = baselineFold(h, s, g, z, ax, ay, size, desc);
         }
         return hex(h);
     }
@@ -4681,11 +4799,15 @@
         // WG.00.43 entry scope: core only. Mutant checksum_all_levels widens this to every level of the range.
         const entryLevels = CORE_LEVELS;
         for (const z of entryLevels) if (!st.levels[String(z)]) st.levels[String(z)] = { z, gen: g, checksum: null, strata: {} };
-        for (const z of allLevels) {
-            // Allocate Ground too: its checksum still uses its unchanged WorldGen lattice. (Generator 5 makes the area's
-            // levels outside the core with its core, in volumeOf.) Building a baseline writes no save entry.
-            for (let ay = 0; ay < st.areasY; ay++) for (let ax = 0; ax < st.areasX; ax++) baseline(z, ax, ay);
-            if (entryLevels.indexOf(z) >= 0) {
+        // Allocate Ground too: its checksum still uses its unchanged WorldGen lattice. (Generator 5 makes the area's
+        // levels outside the core with its core, in volumeOf.) Building a baseline writes no save entry.
+        const sa = st.startArea || { x: 0, y: 0 };
+        // WG.00.46 generate the start area only
+        baseline(0, sa.x, sa.y);
+        const oneArea = ((st.areasX | 0) * (st.areasY | 0)) <= 1;
+        if (oneArea) {
+            for (const z of entryLevels) {
+                if (CORE_LEVELS.indexOf(z) < 0) continue;
                 const L = st.levels[String(z)];
                 if (L && !L.checksum) L.checksum = checksumOf(z);
             }
@@ -4746,8 +4868,10 @@
         for (const z of CORE_LEVELS) {
             const L = st.levels[String(z)];
             if (!L) { bad.push(`${z}: missing`); continue; }
+            // A null checksum is the multi-area form: do not walk every area. A string checksum still verifies.
+            if (!L.checksum || L.checksum === "n/a") continue;
             const now = checksumOf(z, undefined, undefined, st);
-            if (L.checksum && now !== "n/a" && L.checksum !== "n/a" && now !== L.checksum) {
+            if (now !== "n/a" && now !== L.checksum) {
                 L.checksumMismatch = true;
                 bad.push(`${z}: saved ${L.checksum}, regenerated ${now}`);
             }
@@ -4759,19 +4883,59 @@
         return bad;
     }
 
+    // One all-area pass, only for a multi-area save that still carries string checksums and no area sums.
+    // A mismatch is left for the next load. A new-form save (area sums already present) never takes this path.
+    function migrateLegacyAreaSums(st) {
+        if (!st || !st.levels) return false;
+        const areas = (st.areasX | 0) * (st.areasY | 0);
+        if (areas <= 1) return false;
+        st.migrations = st.migrations || [];
+        if (st.migrations.some(m => m && m.rule === "WG.00.46")) return false;
+        let anySums = false, anyString = false, mismatch = false;
+        for (let i = 0; i < CORE_LEVELS.length; i++) {
+            const L = st.levels[String(CORE_LEVELS[i])];
+            if (!L) continue;
+            if (L.areaSums && Object.keys(L.areaSums).length) anySums = true;
+            if (typeof L.checksum === "string" && L.checksum && L.checksum !== "n/a") anyString = true;
+            if (L.checksumMismatch) mismatch = true;
+        }
+        if (anySums || !anyString || mismatch) return false;
+        for (let ay = 0; ay < (st.areasY | 0); ay++) for (let ax = 0; ax < (st.areasX | 0); ax++) {
+            const sumKey = ax + "," + ay;
+            for (let i = 0; i < CORE_LEVELS.length; i++) {
+                const z = CORE_LEVELS[i];
+                const L = st.levels[String(z)];
+                if (!L) continue;
+                if (!L.areaSums) L.areaSums = {};
+                if (!Object.prototype.hasOwnProperty.call(L.areaSums, sumKey)) L.areaSums[sumKey] = areaChecksum(z, ax, ay, undefined, undefined, st);
+            }
+        }
+        st.migrations.push({ rule: "WG.00.46" });
+        stats.migrations++;
+        return true;
+    }
+
     const _DataManager_extractSaveContents = DataManager.extractSaveContents;
     DataManager.extractSaveContents = function(contents) {
-        _DataManager_extractSaveContents.call(this, contents);
-        const W = World(), st = W && W.state;
-        if (!st) return;
-        if (!(st.version >= 4 && st.levels)) migrate(st, { x: $gamePlayer.x, y: $gamePlayer.y });
-        else {
-            migrateSaveToFiveStrata(st);   // a no-op at schema 1; converts levels[z].cells of a save made before the strata
-            migrateSparseOuterSave(st);    // WG.00.43, once: checksum-only outer entries are not changes
-            verifyLevels(st);
+        // Hold before the previous wrapper. An inner wrapper installed before the plugins runs before World restores
+        // state, and lane-dv restores its matter host in that inner wrapper, before this flush.
+        areaEventHold++;
+        try {
+            _DataManager_extractSaveContents.call(this, contents);
+            const W = World(), st = W && W.state;
+            if (!st) return;
+            if (!(st.version >= 4 && st.levels)) migrate(st, { x: $gamePlayer.x, y: $gamePlayer.y });
+            else {
+                migrateSaveToFiveStrata(st);   // a no-op at schema 1; converts levels[z].cells of a save made before the strata
+                migrateSparseOuterSave(st);    // WG.00.43, once: checksum-only outer entries are not changes
+                const bad = verifyLevels(st);
+                if (!bad.length) migrateLegacyAreaSums(st);
+            }
+            deltaLevels(st);                   // decode the saved strata records now: an unreadable one is reported at load
+            pruneUnitEvents();
+        } finally {
+            if (--areaEventHold === 0) flushAreaEvents();
         }
-        deltaLevels(st);                   // decode the saved strata records now: an unreadable one is reported at load
-        pruneUnitEvents();
     };
 
     // A loaded game map keeps the unit events it was saved with. One whose unit isn't on that map's level (gone, or on
@@ -4793,9 +4957,9 @@
         return n;
     }
 
-    // New Game: every baseline of the range is generated before the first frame (RESOURCE_ATLAS section 2). Save entries
-    // and their checksums are the core only (WG.00.43). The view is recorded when the first map starts (UF_History sets
-    // where it starts in its own world:created listener).
+    // New Game: the start area is generated before the first frame (RESOURCE_ATLAS section 2). Any other area waits for
+    // the request that needs its floor. Save entries are the core only (WG.00.43). The view is recorded when the first
+    // map starts (UF_History sets where it starts in its own world:created listener).
     function onWorldCreated(st) {
         ensureWorldLevels(st);
         if (st.view === undefined) st.view = null;
@@ -5329,6 +5493,14 @@
         notifyWorldCellChanged,
         /** Checksum of a level's baseline: the save's world by default; seed/gen regenerate another one (tests). */
         checksum: (z, seed, gen, worldDesc) => checksumOf(z, seed, gen, worldDesc),
+        /** One area's checksum. Same seed, gen and worldDesc resolution as checksum. A one-area world matches checksum. */
+        areaChecksum: (z, ax, ay, seed, gen, worldDesc) => areaChecksum(z, ax | 0, ay | 0, seed, gen, worldDesc),
+        /** Off by default. While on, the first request of an area records the plugin file that asked. No argument reads the flag. */
+        traceAreaRequests(on) {
+            if (on === undefined) return traceAreaRequestsOn;
+            traceAreaRequestsOn = !!on;
+            return traceAreaRequestsOn;
+        },
         migrate,
         verifyLevels,
         /** The level on screen (a level of the world Z range), or null off the world maps. */
@@ -5733,22 +5905,30 @@
         const itemType = I.types()[0];
 
         //---------------------------------------------------------------- five_levels (WG.00.17: the levels of the Z range)
-        // The world's levels are its Z range; the five core levels have their entries and checksums from New Game (a level
-        // outside the core has none until it changes); a level past either end of the range doesn't exist.
+        // The world's levels are its Z range; the core levels have their entries from New Game. A one-area world keeps
+        // the string checksum. A multi-area world keeps the viewed area's sum and leaves the all-area checksum empty.
+        // A level outside the core has no entry until it changes. A level past either end of the range doesn't exist.
         {
             const st = W.state, r0 = W.zRange(), levels = W.levels();
             const keys = Object.keys(st.levels || {}).map(Number).sort((a, b) => a - b);
             const want = levels.slice(), core = CORE_LEVELS.slice(), past = r0.zMax + 1, below = r0.zMin - 1;
+            const oneArea = ((st.areasX | 0) * (st.areasY | 0)) <= 1;
+            const sumKey = area.x + "," + area.y;
             const regen = {}, lens = {};
             for (const z of core) {
-                regen[z] = z === 0 ? checksumOf(0) : checksumOf(z, st.seed, levelGen(st, z));
+                regen[z] = oneArea ? (z === 0 ? checksumOf(0) : checksumOf(z, st.seed, levelGen(st, z))) : areaChecksum(z, area.x, area.y);
                 if (z !== 0) {
-                    const b = baseline(z);
+                    const b = baseline(z, area.x, area.y);
                     lens[z] = `${b.shape.length}/${b.material.length}`;
                 }
             }
             const lensOk = core.filter(z => z !== 0).every(z => lens[z] === `${size * size}/${size * size}`);
-            const sumsOk = core.every(z => st.levels[String(z)] && st.levels[String(z)].checksum === regen[z] && regen[z] !== "n/a");
+            const sumsOk = oneArea
+                ? core.every(z => st.levels[String(z)] && st.levels[String(z)].checksum === regen[z] && regen[z] !== "n/a")
+                : core.every(z => {
+                    const L = st.levels[String(z)];
+                    return L && !L.checksum && L.areaSums && L.areaSums[sumKey] === regen[z] && regen[z] !== "n/a";
+                });
             const entriesOk = keys.filter(z => !core.includes(z)).every(z => Object.keys(st.levels[String(z)].strata || {}).length || st.levels[String(z)].caps) && core.every(z => keys.includes(z));
             let threw = null;
             try {
@@ -5811,15 +5991,20 @@
                     `biomes ${JSON.stringify(metrics.biomes)}, fresh water ${metrics.water}, dry founding cores ${dryCores}, checksums ${ownSum}/${repeat}/${other}`);
             }
             t.check("underground_biomes", geographyOk && deterministic, report.join("; "));
+            const sa = st.startArea || { x: area.x, y: area.y };
+            const oneAreaStart = ((st.areasX | 0) * (st.areasY | 0)) <= 1;
+            const startKey = sa.x + "," + sa.y;
             const before = JSON.stringify(st.levels), viewBefore = JSON.stringify(st.view);
             ensureWorldLevels(st);
             const allAllocated = CORE_LEVELS.every(z => {
-                const b = baseline(z);
-                return b && b.shape.length === size * size && b.material.length === size * size && !!st.levels[String(z)].checksum;
-            }) && W.levels().every(z => !!baseline(z));
+                const b = baseline(z, sa.x, sa.y);
+                const L = st.levels[String(z)];
+                const recorded = oneAreaStart ? !!L.checksum : !!(L && L.areaSums && L.areaSums[startKey]);
+                return b && b.shape.length === size * size && b.material.length === size * size && recorded;
+            }) && W.levels().every(z => !!baseline(z, sa.x, sa.y));
             t.check("complete_at_start", allAllocated && stats.initializedBeforeCreated === st.seed &&
                 JSON.stringify(st.levels) === before && JSON.stringify(st.view) === viewBefore,
-                `the core's ${size}x${size} baselines allocated with their checksums, every level of the range made (${W.levels().length}); early initialization seed ${stats.initializedBeforeCreated}/${st.seed}; repeated initialization preserves saved edits/checksums/view ${JSON.stringify(st.levels) === before && JSON.stringify(st.view) === viewBefore}`);
+                `the core's ${size}x${size} baselines allocated, every level available on request (generator 5's one volume holds all ${W.levels().length}); early initialization seed ${stats.initializedBeforeCreated}/${st.seed}; repeated initialization preserves saved edits/checksums/view ${JSON.stringify(st.levels) === before && JSON.stringify(st.view) === viewBefore}`);
         }
 
         //---------------------------------------------------------------- fixtures for the view checks
@@ -6204,12 +6389,23 @@
                 if (!(unitOk && objOk && itemOk && shapeOk)) ok = false;
                 per.push(`${labelOf(z)}: ${z === 0 ? "tile" : "shape"} ${shapeOk ? "kept" : "LOST"}, object ${objOk ? "kept" : "LOST/LEAKED"}, item ${itemOk ? "kept" : "LOST/LEAKED"}, unit ${unitOk ? "kept" : "LOST/MOVED"}`);
             }
-            const regen = CORE_LEVELS.map(z => ({ z, saved: st2.levels[String(z)].checksum, now: z === 0 ? checksumOf(0) : checksumOf(z, st2.seed, levelGen(st2, z)) }));
-            const sumsOk = regen.every(r => r.saved === r.now && r.now !== "n/a");
-            const other = checksumOf(-1, st2.seed + 1, levelGen(st2, -1));
-            t.check("persistence", ok && sumsOk && other !== regen.find(r => r.z === -1).now && st2.version === 4,
+            const oneAreaSave = ((st2.areasX | 0) * (st2.areasY | 0)) <= 1;
+            const regen = oneAreaSave
+                ? CORE_LEVELS.map(z => ({ z, saved: st2.levels[String(z)].checksum, now: z === 0 ? checksumOf(0) : checksumOf(z, st2.seed, levelGen(st2, z)) }))
+                : CORE_LEVELS.map(z => {
+                    const L = st2.levels[String(z)];
+                    const key = area.x + "," + area.y;
+                    return { z, saved: L && L.areaSums ? L.areaSums[key] : undefined, now: areaChecksum(z, area.x, area.y), legacy: L && L.checksum };
+                });
+            const sumsOk = oneAreaSave
+                ? regen.every(r => r.saved === r.now && r.now !== "n/a")
+                : regen.every(r => !r.legacy && r.saved === r.now && r.now !== "n/a");
+            const other = oneAreaSave
+                ? checksumOf(-1, st2.seed + 1, levelGen(st2, -1))
+                : areaChecksum(CORE_LEVELS[1], area.x, area.y, st2.seed + 1, levelGen(st2, CORE_LEVELS[1]));
+            t.check("persistence", ok && sumsOk && other !== regen.find(r => r.z === CORE_LEVELS[1]).now && st2.version === 4,
                 `saved (${saveBytes} characters of JSON, ${zipped} zipped) and loaded through DataManager.extractSaveContents, then a new Scene_Map: ${per.join("; ")}; ` +
-                `baselines regenerated from seed ${st2.seed}: ${regen.map(r => `${r.z} ${r.saved === r.now ? "same" : `DIFFERENT (${r.saved}/${r.now})`}`).join(", ")}; seed + 1 gives -1 checksum ${other} (${other !== regen.find(r => r.z === -1).now ? "different" : "SAME"})${note}`);
+                `baselines regenerated from seed ${st2.seed}: ${regen.map(r => `${r.z} ${r.saved === r.now ? "same" : `DIFFERENT (${r.saved}/${r.now})`}`).join(", ")}; seed + 1 gives a different core checksum ${other} (${other !== regen.find(r => r.z === CORE_LEVELS[1]).now ? "different" : "SAME"})${note}`);
             t.check("save_size", sizeNow <= 3 * 1024 * 1024 && saveBytes > 0,
                 `save contents ${sizeNow} characters of JSON (V50 limit 3 MB = ${3 * 1024 * 1024}), ${zipped} zipped (RMMZ level 1), measured with JsonEx.stringify(DataManager.makeSaveContents()); ` +
                 `${W2.units().length} units, changed strata cells ${Object.keys(st2.levels).map(k => `${k}: ${Object.values(st2.levels[k].strata || {}).reduce((n, c) => n + Object.keys(c).length, 0)}`).join(", ")}${note}`);
