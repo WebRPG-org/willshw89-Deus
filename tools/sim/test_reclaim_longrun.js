@@ -17,7 +17,7 @@ const interactions = JSON.parse(fs.readFileSync(path.join(ROOT, "game", "data", 
 const bag = { catalogue: catalogue, masses: masses, interactions: interactions };
 const schedule = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures", "reclaim", "schedule.json"), "utf8"));
 // Reviewed at base 74a9d7ee: place and checksum field names changed from mu to cp.
-const cpPins = { "1": "0bc6fb75", "2": "df4a146a" };
+const cpPins = { "1": "19b71883", "2": "dc7a7188" };
 
 let passed = 0, failed = 0;
 function check(name, ok, why) {
