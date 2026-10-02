@@ -1,5 +1,7 @@
 "use strict";
 
+const { zOfG } = require("./reader.js");
+
 /**
  * game/js/sim/structural/occupants.js
  *
@@ -34,11 +36,17 @@ function cellKey(x, y, z) {
     return x + "," + y + "," + z;
 }
 
+function levelOf(voxel) {
+    if (Number.isInteger(voxel.z)) return voxel.z;
+    if (Number.isInteger(voxel.g)) return zOfG(voxel.g);
+    fail("fall voxels need z or g");
+}
+
 function cellSet(list) {
     const out = new Set();
     for (let i = 0; i < (list || []).length; i++) {
         const c = list[i];
-        out.add(cellKey(c.x | 0, c.y | 0, c.z | 0));
+        out.add(cellKey(c.x | 0, c.y | 0, levelOf(c)));
     }
     return out;
 }
@@ -137,7 +145,7 @@ function planOccupants(input) {
         const fills = [];
         const list = input.filled || [];
         for (let i = 0; i < list.length; i++) {
-            if ((list[i].x | 0) === x && (list[i].y | 0) === y) fills.push(list[i].z | 0);
+            if ((list[i].x | 0) === x && (list[i].y | 0) === y) fills.push(levelOf(list[i]));
         }
         if (fills.length) {
             fills.sort(function (a, b) { return a - b; });

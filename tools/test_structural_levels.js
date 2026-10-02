@@ -497,6 +497,26 @@ function runPure() {
     }, { levels: rollback.levels, events: { emit(name, payload) { rolledEvents.push(name); } } });
     check("rollback_restores_in_reverse", rolled.ok === false && rolled.restored === true && rolled.event == null && rolledEvents.length === 0 && rollback.snap() === before && rollback.calls.length === 3);
 
+    const throwsAfterWrite = makeStore();
+    throwsAfterWrite.put(0, 0, 1, [1, 0, 0, 0, 0], [9, 0, 0, 0, 0], null);
+    throwsAfterWrite.put(0, 0, 0, [0, 0, 0, 0, 0], null, null);
+    const throwSnap = throwsAfterWrite.snap();
+    let throwWrites = 0;
+    const thrown = api.commitFall({
+        area: { x: 0, y: 0 },
+        vacated: [{ x: 0, y: 0, z: 1, s: 0 }],
+        filled: [{ x: 0, y: 0, z: 0, s: 4 }]
+    }, { levels: {
+        strataAt: throwsAfterWrite.levels.strataAt,
+        setStrata(ref, spec, opts) {
+            const accepted = throwsAfterWrite.levels.setStrata(ref, spec, opts);
+            if (++throwWrites === 2) throw new Error("observer failed after storage");
+            return accepted;
+        }
+    }, events: { emit() { throw new Error("fall event must not be emitted"); } } });
+    check("rollback_after_write_throws", thrown.ok === false && thrown.restored === true &&
+        thrown.event == null && throwsAfterWrite.snap() === throwSnap);
+
     const first = makeStore();
     first.put(0, 0, 0, [1, 0, 0, 0, 0], null, null);
     first.put(0, 0, -1, [0, 0, 0, 0, 0], null, null);
@@ -572,6 +592,16 @@ function runPure() {
     });
     const door = piece.objects.filter(o => o.id === "door")[0];
     check("structural_object_removed_to_landing", piece.objects.length === 1 && door.effect === "remove" && door.placeAt.z === -1 && door.ruin === "rubble");
+
+    const voxelPiece = api.planOccupants({
+        zMin: -2, zMax: 2, rules: rules,
+        vacated: [{ x: 4, y: 4, g: api.gOf(1, 2) }],
+        filled: [{ x: 4, y: 4, g: api.gOf(-1, 3) }],
+        queries: stand({ solid: {}, stand: {}, surface: { "4,4,1": true } }),
+        objects: [{ id: "door_g", x: 4, y: 4, z: 1, tags: ["door"], ruin: "rubble" }]
+    });
+    check("global_stratum_object_removed_to_landing", voxelPiece.objects.length === 1 &&
+        voxelPiece.objects[0].effect === "remove" && voxelPiece.objects[0].placeAt.z === -1);
 
     const up = api.planOccupants({
         zMin: 0, zMax: 2, rules: rules,

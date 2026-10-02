@@ -189,17 +189,26 @@ function commitFall(plan, io) {
     const ordered = ORDER_VACATE_FIRST ? vacateOnly.concat(fill) : fill.concat(vacateOnly);
 
     const done = [];
-    function rollback() {
+    function rollback(current) {
         if (!ROLLBACK_ON_REFUSAL) return false;
-        for (let i = done.length - 1; i >= 0; i--) {
-            const e = done[i];
-            io.levels.setStrata(
-                { area: area, x: e.x, y: e.y, z: e.z },
-                specOf(e.before.bytes, e.before.hp, e.before.connector || 0),
-                { cause: FALL_CAUSE }
-            );
+        // An event listener may throw after setStrata stored the current cell.
+        // Restore that cell first, then the accepted writes in reverse order.
+        const restore = current ? done.concat(current) : done;
+        let complete = true;
+        for (let i = restore.length - 1; i >= 0; i--) {
+            const e = restore[i];
+            try {
+                const res = io.levels.setStrata(
+                    { area: area, x: e.x, y: e.y, z: e.z },
+                    specOf(e.before.bytes, e.before.hp, e.before.connector || 0),
+                    { cause: FALL_CAUSE }
+                );
+                if (res !== true && !(res && res.ok === true)) complete = false;
+            } catch (_) {
+                complete = false;
+            }
         }
-        return true;
+        return complete;
     }
 
     for (let i = 0; i < ordered.length; i++) {
@@ -208,7 +217,7 @@ function commitFall(plan, io) {
         try {
             res = io.levels.setStrata({ area: area, x: e.x, y: e.y, z: e.z }, e.spec, { cause: FALL_CAUSE });
         } catch (err) {
-            const restored = rollback();
+            const restored = rollback(e);
             return {
                 ok: false, cause: FALL_CAUSE, writes: done.map(writeOf), restored: restored, event: null,
                 reason: err && err.message ? err.message : "setStrata threw"
