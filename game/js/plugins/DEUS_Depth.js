@@ -16,7 +16,7 @@
  * @desc 2: the level two below shows through the open cells of the level below (default). 1: one level, then the void. 0: none.
  * @type number
  * @min 0
- * @max 16
+ * @max 32
  * @default 2
  *
  * @help
@@ -136,7 +136,7 @@
         enabled: true,
         /** How many levels below the viewed level are drawn: 2 (the level two below shows through the open cells of the level
          *  below), 1 (one level, the void beyond it) or 0 (none). */
-        maxDepth: 16,
+        maxDepth: 32,
         /** The void below the last drawn level (DEUS near-black, rule 13's range #08080C..#121218). */
         voidColor: 0x08080c,
         /** Levels whose open cells show the level below them: every level (Owner 2026-09-25 23:52 CT: "cuts down to z-2" on the ground view). */
@@ -149,7 +149,7 @@
         entityRefreshFrames: 300,
         _stamp: 1
     };
-    if (params.MaxDepth !== undefined) config.maxDepth = Math.max(0, Math.min(16, num(params.MaxDepth, 2) | 0));
+    if (params.MaxDepth !== undefined) config.maxDepth = Math.max(0, Math.min(32, num(params.MaxDepth, 2) | 0));
     // The ground_draws_through_openings provocation: the old rule, only the levels above the ground show what is below.
     if (provokedAny("ground_draws_through_openings", "every_view_sees_through")) config.exposes = z => z > 0;
 
@@ -1187,12 +1187,11 @@
         this._void.beginFill(config.voidColor).drawRect(0, 0, maxDepthTilemapWidth(), maxDepthTilemapHeight()).endFill();
         this._void.visible = false;
         this.addChild(this._void);
-        this.planes = []; for (let i = 1; i <= 16; i++) this.planes.push(new Sprite_DepthPlane(i));
-        this.planes[0]._ocRoot = this;
-        this.planes[1]._ocRoot = this;
+        this.planes = []; for (let i = 1; i <= 32; i++) this.planes.push(new Sprite_DepthPlane(i));
+        for(let i=0; i<32; i++) this.planes[i]._ocRoot = this;
         // Depth 2 is drawn first, depth 1 over it; through depth 1's open cells depth 2 shows.
         // The mask-order provocation draws them the other way round.
-        const order = provoked("mask_order") ? [this.planes[0], this.planes[1]] : [this.planes[1], this.planes[0]];
+        const order = provoked("mask_order") ? this.planes.slice() : this.planes.slice().reverse();
         for (const p of order) this.addChild(p);
         // The exposure mask: the planes and the void draw only inside the viewed level's open cells (a stencil Graphics mask,
         // not a filter). The viewed level's tiles occlude them as well, but a solid cell whose art has transparent pixels
@@ -1546,17 +1545,20 @@
     Sprite_DepthRoot.prototype.scanUnits = function(W, win, simNow) {
         // The unit_step_same_frame provocation: the old path, units re-read only every 60 frames.
         if (provoked("unit_step_same_frame") && this._frames % 60 !== 1) return;
-        const a = this.planes[0].level ? this.planes[0] : null, b = this.planes[1].level ? this.planes[1] : null;
-        if (a) a.beginScan();
-        if (b) b.beginScan();
+        const activePlanes = this.planes.filter(p => p.level);
+        for (const p of activePlanes) p.beginScan();
         if (config.entities.units && W.units && !provoked("entities_drawn")) {
-            const cands = this.unitCandidates(W, a, b), size = W.state.size;
+            const cands = this.unitCandidates(W, activePlanes), size = W.state.size;
             for (let i = 0; i < cands.length; i++) {
                 const u = cands[i];
                 if (!u || !u.area || (u.data && (u.data.dead || u.data.hidden))) continue;
                 const uz = u.z !== undefined ? u.z : 0;
-                if (a && uz === a.level.z && u.area.x === a.level.x && u.area.y === a.level.y) a.seeUnit(u, win, size, simNow);
-                else if (b && uz === b.level.z && u.area.x === b.level.x && u.area.y === b.level.y) b.seeUnit(u, win, size, simNow);
+                for (const p of activePlanes) {
+                    if (uz === p.level.z && u.area.x === p.level.x && u.area.y === p.level.y) {
+                        p.seeUnit(u, win, size, simNow);
+                        break;
+                    }
+                }
             }
             stats.unitsScanned = cands.length;
         }
@@ -1567,9 +1569,9 @@
      *  removed makes a new array), when a unit changes level or area, when the planes are bound again, and at least once a
      *  second as a safety net. Each frame then tests these units only, not every unit of the world. */
     const CANDIDATE_REFRESH_FRAMES = 60;
-    Sprite_DepthRoot.prototype.unitCandidates = function(W, a, b) {
+    Sprite_DepthRoot.prototype.unitCandidates = function(W, activePlanes) {
         const all = W.units();
-        if (provoked("scan_candidates_only")) return all; // the provocation: every unit of the world, every frame
+        if (provoked("scan_candidates_only")) return all;
         if (all !== this._candsOf || this._candsStamp !== unitPlaceStamp || this._frames - this._candsFrame >= CANDIDATE_REFRESH_FRAMES) {
             const c = this._cands;
             c.length = 0;
@@ -1577,7 +1579,12 @@
                 const u = all[i];
                 if (!u || !u.area) continue;
                 const uz = u.z !== undefined ? u.z : 0;
-                if ((a && uz === a.level.z && u.area.x === a.level.x && u.area.y === a.level.y) || (b && uz === b.level.z && u.area.x === b.level.x && u.area.y === b.level.y)) c.push(u);
+                for (const p of activePlanes) {
+                    if (uz === p.level.z && u.area.x === p.level.x && u.area.y === p.level.y) {
+                        c.push(u);
+                        break;
+                    }
+                }
             }
             this._candsOf = all;
             this._candsStamp = unitPlaceStamp;
@@ -1966,7 +1973,7 @@
             const settle = async () => { D.touch(); await t.waitFrames(3); };
 
             // 3. On +2 with both depths (the addendum's chain): +1 through the summit's open air, the ground through +1's.
-            config.maxDepth = 16;
+            config.maxDepth = 32;
             await goTo(2);
             await settle();
             await need(t, () => !window.$gameScreen || $gameScreen.weatherPower() === 0, 30000, "the weather to clear");
@@ -2142,7 +2149,7 @@
             const planeState = () => D.stats().planes.map(p => `${p.depth}:${p.visible ? p.z : "-"}`).join(" ");
             config.maxDepth = 1; await t.waitFrames(2);
             const sMax1 = D.stats(), tMax1 = planeState();
-            config.maxDepth = 16; await t.waitFrames(2);
+            config.maxDepth = 32; await t.waitFrames(2);
             const sMax2 = D.stats(), tMax2 = planeState();
             config.enabled = false; await t.waitFrames(2);
             const sOff = D.stats(), tOff = planeState();
@@ -2158,7 +2165,7 @@
             const states = [];
             const record = async (label, fn) => { await fn(); await t.waitFrames(2); states.push({ label, filters: filtered() }); };
             await record("maxDepth 1", async () => { config.maxDepth = 1; });
-            await record("maxDepth 2", async () => { config.maxDepth = 16; });
+            await record("maxDepth 2", async () => { config.maxDepth = 32; });
             await record("off", async () => { D.setEnabled(false); });
             await record("on", async () => { D.setEnabled(true); });
             await record("entities off", async () => setEntities(false));
@@ -2186,7 +2193,7 @@
             // 11b. Flat transform (DEC-011; folds the old blur_off_no_blur and color_off_baseline): both planes and their entity
             //      containers at scale 1, whole-pixel positions equal to the tilemap's own, no filter, alpha 1, a terrace pixel equal
             //      to its source texel; the active tilemap untouched; no physical effect.
-            config.maxDepth = 16;
+            config.maxDepth = 32;
             await settle();
             const mainTm = scene()._spriteset._tilemap;
             const flatOf = p => { const u = p.unprojected(viewO().x, viewO().y); return p.scale.x === 1 && p.scale.y === 1 && p.x === u.x && p.y === u.y && !p.filters && p.alpha === 1 && p._entities.scale.x === 1 && !p._entities.filters; };
