@@ -1,0 +1,22 @@
+Resume lane-cy2 (ART.GROUND.INDUCT) at HEAD 86c51fd9 on task/lane-cy2. Re-read tasks/ART.GROUND.INDUCT/lane-cy2/BRIEF.md, especially "The set table". The PM sends this fix run after grok's review of 86c51fd9 (the review notes are summarised below; the file itself was set aside).
+
+Three defects to fix:
+
+1. BLOCKER: most of the set table is not placed. At 86c51fd9, 18 of the 32 Outside_A2.png slots are fully transparent: 4, 5, 8-14, 16, 17, 21, 23, 26, 27 and 29-31. The converter places only the 15 sets from C:/Users/snewt/DEUS_backups/pixellab_2026-10-01/tiles_pro, and leaves every older row as "pre-lane pixels". Some examples of older rows: dry_grass_base a7bfcf27, shrub_soil 6ea85489/ff01c30d/390a16e7, forest_floor_base 4d156d7e, forest_floor_dry 642ca861, needle_floor 373f6cd2/61c027fe, sand_base 74e8c5ec, stony 1338d7b1/6bc632da, rock cf0ca97a/a7a14675, peak_rock_base 38ff1be9, marsh_mud_damp ac1027ec, swamp_mud_damp 28056291, dirt_base 58e1a2c9, scree 12c2a349/50c160d0/9b14146b, mined_stone 74a93c7b. The brief's goal is the sheets from the Owner's 43 kept sets: place every row of the table, reading the older sets from C:/Users/snewt/DEUS_backups/pixellab_2026-09-30/tiles_pro. Use the table's fillTile and check each solid tile by eye as the brief says. Never use one of the 16 deleted ids. A damp or dry variant with no set of its own uses its base kind's block, now that the bases are placed (log each as a stand-in). Only a kind whose base has no set (swamp_mud_base, dug_earth) keeps what main has.
+2. BLOCKER: game/data/Tilesets.json, tilesets 2 and 4: tilesetNames[7] (the D sheet) is an empty string, so RPG Maker MZ never loads Outside_D.png. Set both to "Outside_D", and change only those two entries, in the file's existing one-line-per-tileset format (a script that edits the parsed array and writes RMMZ's format, never ConvertTo-Json).
+3. Dungeon A2: slots 3, 4 and 6 (peak_rock_dry, peak_rock_damp, swamp_mud_dry) still hold stock blocks.
+   - peak_rock_dry and peak_rock_damp take the peak_rock_base block, once item 1 places it.
+   - swamp_mud_dry has no base set: keep the stock block there and log it as a PM exception (a blank autotile would draw nothing).
+   - dug_earth (slot 1) stays as it is.
+
+Strengthen the tests so that each defect fails at 86c51fd9:
+- tools/art/verify_specimens_rgb.js: every table row's slot derives from its own set, older rows included, and no table-mapped slot is transparent;
+- tools/art/test_ground_kept_sets.js: tilesetNames[7] is "Outside_D" on tilesets 2 and 4, and the Tilesets.json diff touches only those two entries;
+- show each new check failing at 86c51fd9 (git stash, or a temp copy) and passing at your tip, and quote the output.
+
+Then:
+- rebuild the art catalogue (`node tools/art/build_catalogue.js`), because the tileset images are catalogue sources;
+- run every gateTests command in the manifest in the foreground, one at a time, and quote the results;
+- update tasks/ART.GROUND.INDUCT/lane-cy2/REPORT.md in the AGENTS.md format, including a 2x board of all 32 Outside A2 slots that you open and describe.
+
+Commit with the [codex] tag, staging only the manifest's paths, and push task/lane-cy2. Do not touch the manifest or the brief. Never start a command in the background. Commit before you end your turn, and end with FINAL SHA.

@@ -1,0 +1,451 @@
+{
+  "sourceFolders": [
+    "C:/Users/snewt/DEUS_backups/pixellab_2026-09-30/tiles_pro",
+    "C:/Users/snewt/DEUS_backups/pixellab_2026-10-01/tiles_pro"
+  ],
+  "allowedIds": [
+    "12c2a349-cb4f-4dab-a537-063272c2e35e",
+    "1338d7b1-5d11-4b4d-b0f3-1d3c6a5d1e21",
+    "14cb1aff-78ed-4cf6-bf5a-6e2235f71208",
+    "1a88fe0e-72a5-4357-a698-342c95606ae8",
+    "1fe2fa67-fb5a-43df-acb7-010f5c52aa4c",
+    "248a876d-f8e8-41fd-b90f-713297180bee",
+    "28056291-1771-4c24-b202-27521267d219",
+    "35f849ec-c177-4bb1-ae1c-270785e3f9e3",
+    "373f6cd2-32d8-4a47-8b05-ed0b6291a059",
+    "38ff1be9-a415-484e-a89c-c2e8a78c5e6f",
+    "390a16e7-e983-4b79-89ec-85f1d99bb3f5",
+    "4d156d7e-973e-44dc-a089-6c86a6838d12",
+    "4e32db8a-b0ed-42af-aa72-a7ea1a237911",
+    "50c160d0-65c8-478d-83bb-2d074785f4c0",
+    "5122a922-c87b-4933-b569-999452aa2f05",
+    "581ead32-b724-4f92-b376-9a1887d2759d",
+    "58e1a2c9-7ad0-48ad-bd6f-c0b2a79d1ebd",
+    "61c027fe-5383-4010-8945-6b060c139166",
+    "642ca861-8590-4b13-af31-bfe4f173cf8c",
+    "6bc632da-4279-48c1-b89c-93f6bc9e88aa",
+    "6c37c67e-1b82-47af-b828-5f606e43bd09",
+    "6ea85489-36ca-42b4-bf41-8989522c7d26",
+    "74a93c7b-3e10-43c5-9c6e-525cbfaf9b28",
+    "74e8c5ec-3c41-4c4f-bc0f-8f0953e1c13f",
+    "7e83dfcc-8f63-4d5f-8aa2-b9da22203811",
+    "82e30806-95c0-4add-856d-3a82da9f8416",
+    "9b14146b-62b6-4122-8c84-042e74f619e8",
+    "a7a14675-e27d-4849-b5c8-6b36a9c4c9dd",
+    "a7bfcf27-55e9-4cab-9ff3-2992cfd89f59",
+    "ac1027ec-caad-4235-85fe-0602a8e82226",
+    "ba56457f-a72a-46a9-a1af-b70a543938ba",
+    "ba8523c7-36b1-4623-ad57-4f78cb4b0b65",
+    "cf0ca97a-5e7f-40c8-8fd6-95fc0b2fc810",
+    "d8d58d33-c282-4110-bfc4-97e5b70b7ea7",
+    "db0f92ff-0353-4b55-a7e9-bc068b69bc2b",
+    "ff01c30d-0b53-420c-ba4e-6c442d2f4a8a"
+  ],
+  "selected": {
+    "dry_grass_damp": [
+      "5122a922-c87b-4933-b569-999452aa2f05",
+      15
+    ],
+    "forest_floor_damp": [
+      "7e83dfcc-8f63-4d5f-8aa2-b9da22203811",
+      15
+    ],
+    "needle_floor_damp": [
+      "ba8523c7-36b1-4623-ad57-4f78cb4b0b65",
+      15
+    ],
+    "sand_damp": [
+      "d8d58d33-c282-4110-bfc4-97e5b70b7ea7",
+      0
+    ],
+    "sand_dry": [
+      "1a88fe0e-72a5-4357-a698-342c95606ae8",
+      15
+    ],
+    "stony_dry": [
+      "82e30806-95c0-4add-856d-3a82da9f8416",
+      15
+    ],
+    "rock_damp": [
+      "db0f92ff-0353-4b55-a7e9-bc068b69bc2b",
+      15
+    ],
+    "marsh_mud_base": [
+      "1fe2fa67-fb5a-43df-acb7-010f5c52aa4c",
+      15
+    ],
+    "marsh_mud_dry": [
+      "35f849ec-c177-4bb1-ae1c-270785e3f9e3",
+      15
+    ],
+    "dirt_damp": [
+      "14cb1aff-78ed-4cf6-bf5a-6e2235f71208",
+      15
+    ],
+    "dirt_dry": [
+      "581ead32-b724-4f92-b376-9a1887d2759d",
+      15
+    ],
+    "road_trail": [
+      "6c37c67e-1b82-47af-b828-5f606e43bd09",
+      15
+    ],
+    "cave_floor": [
+      "4e32db8a-b0ed-42af-aa72-a7ea1a237911",
+      15
+    ],
+    "dry_grass_base": [
+      "a7bfcf27-55e9-4cab-9ff3-2992cfd89f59",
+      0
+    ],
+    "shrub_soil_base": [
+      "6ea85489-36ca-42b4-bf41-8989522c7d26",
+      0
+    ],
+    "shrub_soil_damp": [
+      "ff01c30d-0b53-420c-ba4e-6c442d2f4a8a",
+      0
+    ],
+    "shrub_soil_dry": [
+      "390a16e7-e983-4b79-89ec-85f1d99bb3f5",
+      0
+    ],
+    "forest_floor_base": [
+      "4d156d7e-973e-44dc-a089-6c86a6838d12",
+      0
+    ],
+    "forest_floor_dry": [
+      "642ca861-8590-4b13-af31-bfe4f173cf8c",
+      0
+    ],
+    "needle_floor_base": [
+      "373f6cd2-32d8-4a47-8b05-ed0b6291a059",
+      0
+    ],
+    "needle_floor_dry": [
+      "61c027fe-5383-4010-8945-6b060c139166",
+      0
+    ],
+    "sand_base": [
+      "74e8c5ec-3c41-4c4f-bc0f-8f0953e1c13f",
+      0
+    ],
+    "stony_base": [
+      "1338d7b1-5d11-4b4d-b0f3-1d3c6a5d1e21",
+      0
+    ],
+    "stony_damp": [
+      "6bc632da-4279-48c1-b89c-93f6bc9e88aa",
+      0
+    ],
+    "rock_base": [
+      "cf0ca97a-5e7f-40c8-8fd6-95fc0b2fc810",
+      0
+    ],
+    "rock_dry": [
+      "a7a14675-e27d-4849-b5c8-6b36a9c4c9dd",
+      0
+    ],
+    "peak_rock_base": [
+      "38ff1be9-a415-484e-a89c-c2e8a78c5e6f",
+      0
+    ],
+    "marsh_mud_damp": [
+      "ac1027ec-caad-4235-85fe-0602a8e82226",
+      0
+    ],
+    "swamp_mud_damp": [
+      "28056291-1771-4c24-b202-27521267d219",
+      0
+    ],
+    "dirt_base": [
+      "58e1a2c9-7ad0-48ad-bd6f-c0b2a79d1ebd",
+      15
+    ],
+    "scree_base": [
+      "12c2a349-cb4f-4dab-a537-063272c2e35e",
+      0
+    ],
+    "scree_damp": [
+      "50c160d0-65c8-478d-83bb-2d074785f4c0",
+      0
+    ],
+    "scree_dry": [
+      "9b14146b-62b6-4122-8c84-042e74f619e8",
+      0
+    ],
+    "mined_stone": [
+      "74a93c7b-3e10-43c5-9c6e-525cbfaf9b28",
+      0
+    ]
+  },
+  "specs": {
+    "dry_grass_damp": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_DRY-GRASS_V1_DEFAULT",
+      "edge": "#6A5310",
+      "hi": "#B09430"
+    },
+    "forest_floor_damp": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_FOREST-FLOOR_V1_DEFAULT",
+      "edge": "#261811",
+      "hi": "#5B3A26"
+    },
+    "needle_floor_damp": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR_V1_DEFAULT",
+      "edge": "#1B110B",
+      "hi": "#462C18"
+    },
+    "sand_damp": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_SAND_V1_DEFAULT",
+      "edge": "#6E5536",
+      "hi": "#B89C72"
+    },
+    "sand_dry": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_SAND_V3_DEFAULT",
+      "edge": "#B2936B",
+      "hi": "#F6DEC0"
+    },
+    "stony_dry": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_STONY_V3_DEFAULT",
+      "edge": "#625852",
+      "hi": "#B2A69E"
+    },
+    "rock_damp": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_ROCK_V1_DEFAULT",
+      "edge": "#292929",
+      "hi": "#626262"
+    },
+    "marsh_mud_base": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_MUD_V2_DEFAULT",
+      "edge": "#3D281D",
+      "hi": "#7D5843"
+    },
+    "marsh_mud_dry": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_MUD_V3_DEFAULT",
+      "edge": "#503527",
+      "hi": "#9B7157"
+    },
+    "dirt_damp": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_DIRT_V1_DEFAULT",
+      "edge": "#322213",
+      "hi": "#664A2E"
+    },
+    "dirt_dry": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_DIRT_V3_DEFAULT",
+      "edge": "#4D361F",
+      "hi": "#8C6741"
+    },
+    "road_trail": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_ROAD_A2_DEFAULT",
+      "edge": "#75583B",
+      "hi": "#C09C72"
+    },
+    "cave_floor": {
+      "canonicalId": "ALL_SHARED_TERRAIN_CAVE-FLOOR_A2_DEFAULT",
+      "edge": "#2A2A2E",
+      "hi": "#62626A"
+    },
+    "dry_grass_base": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_DRY-GRASS-BASE_V1_DEFAULT",
+      "edge": "#8A6D14",
+      "hi": "#D8B840"
+    },
+    "shrub_soil_base": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_SHRUB-SOIL-BASE_V1_DEFAULT",
+      "edge": "#6D4E2A",
+      "hi": "#BA9462"
+    },
+    "shrub_soil_damp": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_SHRUB-SOIL-DAMP_V1_DEFAULT",
+      "edge": "#4D361C",
+      "hi": "#8E6E45"
+    },
+    "shrub_soil_dry": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_SHRUB-SOIL-DRY_V1_DEFAULT",
+      "edge": "#7E5B32",
+      "hi": "#D0AE7C"
+    },
+    "forest_floor_base": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_FOREST-FLOOR-BASE_V1_DEFAULT",
+      "edge": "#38251C",
+      "hi": "#7D5239"
+    },
+    "forest_floor_dry": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_FOREST-FLOOR-DRY_V1_DEFAULT",
+      "edge": "#4A3226",
+      "hi": "#94664A"
+    },
+    "needle_floor_base": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR-BASE_V1_DEFAULT",
+      "edge": "#2A1C12",
+      "hi": "#5E3C22"
+    },
+    "needle_floor_dry": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_NEEDLE-FLOOR-DRY_V1_DEFAULT",
+      "edge": "#3C2719",
+      "hi": "#795031"
+    },
+    "sand_base": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_SAND-BASE_V1_DEFAULT",
+      "edge": "#967852",
+      "hi": "#E6C898"
+    },
+    "stony_base": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_STONY-BASE_V1_DEFAULT",
+      "edge": "#4D443E",
+      "hi": "#948880"
+    },
+    "stony_damp": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_STONY-DAMP_V1_DEFAULT",
+      "edge": "#342D29",
+      "hi": "#736860"
+    },
+    "rock_base": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_ROCK-BASE_V1_DEFAULT",
+      "edge": "#3E3E3E",
+      "hi": "#828282"
+    },
+    "rock_dry": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_ROCK-DRY_V1_DEFAULT",
+      "edge": "#515151",
+      "hi": "#9E9E9E"
+    },
+    "peak_rock_base": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_PEAK-ROCK-BASE_V1_DEFAULT",
+      "edge": "#222224",
+      "hi": "#55555A"
+    },
+    "marsh_mud_damp": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_MUD-DAMP_V1_DEFAULT",
+      "edge": "#281A12",
+      "hi": "#5C3E2D"
+    },
+    "swamp_mud_damp": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_SWAMP-MUD-DAMP_V1_DEFAULT",
+      "edge": "#120F0D",
+      "hi": "#2C2522"
+    },
+    "dirt_base": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_DIRT-BASE_V1_DEFAULT",
+      "edge": "#4D361F",
+      "hi": "#8C6741"
+    },
+    "scree_base": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_SCREE-BASE_V1_DEFAULT",
+      "edge": "#3A3A3C",
+      "hi": "#76767A"
+    },
+    "scree_damp": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_SCREE-DAMP_V1_DEFAULT",
+      "edge": "#262628",
+      "hi": "#555558"
+    },
+    "scree_dry": {
+      "canonicalId": "SURFACE_SHARED_TERRAIN_SCREE-DRY_V1_DEFAULT",
+      "edge": "#4E4E52",
+      "hi": "#96969C"
+    },
+    "mined_stone": {
+      "canonicalId": "UNDERGROUND_FLOOR_MINED-STONE_A2_DEFAULT",
+      "edge": "#36363A",
+      "hi": "#7A7A82"
+    }
+  },
+  "expectedOutsideSlots": {
+    "0": "meadow",
+    "1": "tropical_grass",
+    "2": "dry_grass_base",
+    "3": "shrub_soil_base",
+    "4": "forest_floor_base",
+    "5": "needle_floor_base",
+    "6": "dry_grass_base",
+    "7": "dry_grass_damp",
+    "8": "shrub_soil_dry",
+    "9": "shrub_soil_damp",
+    "10": "sand_base",
+    "11": "stony_base",
+    "12": "stony_damp",
+    "13": "rock_base",
+    "14": "peak_rock_base",
+    "15": "marsh_mud_base",
+    "16": null,
+    "17": "dirt_base",
+    "18": "dirt_damp",
+    "19": "dirt_dry",
+    "20": "forest_floor_damp",
+    "21": "scree_base",
+    "22": "road_trail",
+    "23": "forest_floor_dry",
+    "24": "sand_damp",
+    "25": "sand_dry",
+    "26": "scree_damp",
+    "27": "scree_dry",
+    "28": "rock_damp",
+    "29": "rock_dry",
+    "30": "marsh_mud_damp",
+    "31": "swamp_mud_damp"
+  },
+  "expectedDungeonSlots": {
+    "0": "cave_floor",
+    "1": null,
+    "2": "mined_stone",
+    "3": "peak_rock_base",
+    "4": "peak_rock_base",
+    "5": "stony_dry",
+    "6": null,
+    "7": "marsh_mud_dry",
+    "8": "rock_base",
+    "9": "rock_damp",
+    "10": "rock_dry",
+    "11": "dirt_base",
+    "12": "dirt_damp",
+    "13": "sand_base",
+    "14": "sand_damp",
+    "15": "scree_base"
+  },
+  "expectedGallerySlots": {
+    "0": "meadow",
+    "1": "tropical_grass",
+    "2": "dry_grass_base",
+    "3": "dry_grass_damp",
+    "4": "dry_grass_base",
+    "5": "shrub_soil_base",
+    "6": "shrub_soil_damp",
+    "7": "shrub_soil_dry",
+    "8": "forest_floor_base",
+    "9": "forest_floor_damp",
+    "10": "forest_floor_dry",
+    "11": "needle_floor_base",
+    "12": "needle_floor_damp",
+    "13": "needle_floor_dry",
+    "14": "sand_base",
+    "15": "sand_damp",
+    "16": "sand_dry",
+    "17": "stony_base",
+    "18": "stony_damp",
+    "19": "stony_dry",
+    "20": "rock_base",
+    "21": "rock_damp",
+    "22": "rock_dry",
+    "23": "peak_rock_base",
+    "24": "peak_rock_base",
+    "25": "peak_rock_base",
+    "26": "marsh_mud_base",
+    "27": "marsh_mud_damp",
+    "28": "marsh_mud_dry",
+    "30": "swamp_mud_damp",
+    "32": "dirt_base",
+    "33": "dirt_damp",
+    "34": "dirt_dry",
+    "35": "scree_base",
+    "36": "scree_damp",
+    "37": "scree_dry",
+    "38": "road_trail",
+    "39": "cave_floor",
+    "41": "mined_stone"
+  },
+  "unusedAlternatives": [
+    "248a876d-f8e8-41fd-b90f-713297180bee",
+    "ba56457f-a72a-46a9-a1af-b70a543938ba"
+  ]
+}

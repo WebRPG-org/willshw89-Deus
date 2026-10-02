@@ -1,0 +1,3 @@
+resume from HEAD a5255704; re-read BRIEF and the uncommitted diff first
+
+Execute the writer task for lane-cy2 based on the ART.GROUND.INDUCT brief. The 15 new 2026-10-01 sets are in C:/Users/snewt/DEUS_backups/pixellab_2026-10-01/tiles_pro. Use no other sets.

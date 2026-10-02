@@ -1,0 +1,16 @@
+{
+  "canonicalId": "SURFACE_SHARED_TERRAIN_DIRT_V3_DEFAULT",
+  "name": "dirt_dry",
+  "date": "2026-10-01",
+  "author": "Owner (PixelLab)",
+  "pixellabId": "581ead32-b724-4f92-b376-9a1887d2759d",
+  "fillTile": 15,
+  "palette": "deus_master_world_palette_v1.hex",
+  "dimensions": {
+    "width": 48,
+    "height": 48
+  },
+  "sourceFolder": "C:\\Users\\snewt\\DEUS_backups\\pixellab_2026-10-01\\tiles_pro",
+  "status": "EXISTING_UNAPPROVED",
+  "statusWhy": "Owner source selected for lane-cy2 induction; independent review pending"
+}
