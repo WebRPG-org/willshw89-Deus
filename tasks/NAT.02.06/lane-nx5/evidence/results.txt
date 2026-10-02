@@ -1,7 +1,15 @@
-UF_Test run 2026-10-02T06:22:06.511Z args=[]
+UF_Test run 2026-10-02T06:23:22.544Z args=[]
 DEBUG_SHEET: Scene_Boot.start called
 AVAILABLE SUITES: selftest, smoke, perf, native_starting_gear, native_survival_dying, native_perf_4x_benchmark, build_room_above, select, select, minimap, natural_connections, ownership, ecology, projects, settlement, colonists, overseer, world, spawn, worldgen, biomes, tiles, ground, factions, skins, history, objects, walls, doors, items, dig_through_floor, jobs, floors, wildlife, wildlife_seeds, stance, combat, anim, fog, daynight, timespeed, camera, culling, speech, overhead, look, sheet, talk, fire, vertical, natural_walls, flooding, strata, sparse_outer, environment, faction_menus, title, load, setup, depth, layers_flat, select, select
 SUITE build_room_above
 PASS build_room_above.structural_registered - UF.Structural true; tick handlers structure,jobs:verticalFalls; Floors.attachment true
-FAIL build_room_above.suite_completed - wallId is not defined [at Object.T.suite.isDefault [as fn] (chrome-extension://njgcanhfjdabfmnlmpmdedalocpafnhl/js/plugins/DEUS_TestBuildVertical.js:45:73) | at async run (chrome-extension://njgcanhfjdabfmnlmpmdedalocpafnhl/js/plugins/DEUS_Test.js:222:21)]
-RESULT: 1 passed, 1 failed (exit 1)
+FAIL build_room_above.ring_built - spot (131,131) from the player (128,128); walls 3/16 (wall_wood); builder 5220
+FAIL build_room_above.roof_built_from_below - 3/25 roof slabs done; 3 worked from level 0 without changing level; (129,129) Roof above (attaches to nothing); (130,129) Roof above (attaches to nothing); (131,129) Roof above (attaches to nothing)
+FAIL build_room_above.walls_built_from_below - 5/16 walls on the deck; 5 built from level 0; (129,129) failed attaches to nothing; (130,129) failed attaches to nothing; (131,129) failed attaches to nothing
+FAIL build_room_above.nothing_fell - drained true; commits 0 -> 0; structure:fell 0; deck slabs held 5/25; held verdicts 53 -> 332
+PASS build_room_above.unattached_refused - level 1 (137,125): Floor here (attaches to nothing) [disabled]
+FAIL build_room_above.look_line - deck centre (131,131) level 1: ""
+SHOT C:\Users\snewt\AppData\Local\Temp\deus_build_vertical\tip_44560\test_output\build_room_above.level0.png
+SHOT C:\Users\snewt\AppData\Local\Temp\deus_build_vertical\tip_44560\test_output\build_room_above.level1.png
+PASS build_room_above.no_errors - none
+RESULT: 3 passed, 5 failed (exit 1)
