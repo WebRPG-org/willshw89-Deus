@@ -44,7 +44,7 @@ Build the ground sheets from the Owner's 43 kept Tiles Pro sets only, and change
 
 | key | set | fillTile | note |
 |---|---|---|---|
-| meadow, tropical_grass | owner master files (as lane-cy) | - | unchanged |
+| meadow, tropical_grass | the Owner master files, exactly as lane-cy placed them: `art/masters/source_sets/SURFACE_SHARED_TERRAIN_MEADOW_V1_DEFAULT/variant_0.png` and `.../SURFACE_SHARED_TERRAIN_TROPICAL-GRASS_V1_DEFAULT/variant_0.png` on `origin/task/lane-cy` (copy those two folders onto this branch; read lane-cy's `tools/art/induct_all_ground_tiles.js` for how it cut them into Outside A2 slots 0 and 1 and the D swatches) | - | **placed from the masters** (the PM's clarification, 2026-10-01 ~00:15Z: "unchanged" meant "as lane-cy placed them", not "leave main's flat tiles"; Grok's review of f35297c6 rejects the lane for this) |
 | dry_grass_base | a7bfcf27 | 0 | |
 | dry_grass_damp | 5122a922 | 15 | new |
 | dry_grass_dry | none | - | base stands in |
@@ -104,3 +104,7 @@ The editor stays closed (DEC-059). Use the snapshot harness: `node tools/add_tes
 ## Rules
 
 Commit only on `task/lane-cy2` with the `[codex]` tag, staging only the manifest paths. The reviewer is launched through `tools/ops/launch_worker.ps1` (AUDIT_LOG A12). The PM merges through merge_gate. Report in the AGENTS.md format.
+
+## Clarification after the second review (PM, 2026-10-01 ~00:15Z)
+
+Grok's review of f35297c6 (`review_grok_f35297c6.md`) confirms the two earlier defects are fixed and rejects the lane for one thing: meadow and tropical grass, the two base grasses, are still main's flat placeholders (Outside A2 slots 0 and 1 are byte-identical to main; the D swatches 0 and 1 too). The table row for them said "unchanged"; it meant "as lane-cy placed them". Place them from the Owner masters named in the table, add the two master folders under `art/masters/source_sets/`, and add a check to `verify_specimens_rgb.js` (and `test_ground_kept_sets.js` as fits) that slots 0 and 1 and D swatches 0 and 1 derive from those masters and are not equal to main's tiles. Show it failing at f35297c6.
