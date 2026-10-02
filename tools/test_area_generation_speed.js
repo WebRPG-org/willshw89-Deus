@@ -12,6 +12,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const simHook = require("./lib/vm_sim_require"); // WG.00.44: UF.Sim.require and a 1x1 grid default in the vm
 
 const ROOT = path.resolve(__dirname, "..");
 const LEVELS_FILE = path.join(ROOT, "game", "js", "plugins", "DEUS_Levels.js");
@@ -136,6 +137,7 @@ function makeEnv(areasX, areasY, levelsSource) {
     });
     env.$gameMap = new env.Game_Map();
     env.$gamePlayer = new env.Game_Player();
+    simHook.install(env); // before the plugins are evaluated; the PluginManager above passes AreasX and AreasY, which the hook keeps
     for (const f of ["DEUS_World.js", "DEUS_WorldGen.js", "DEUS_Levels.js"]) {
         const src = f === "DEUS_Levels.js" ? levelsSource : fs.readFileSync(path.join(ROOT, "game/js/plugins", f), "utf8");
         vm.runInNewContext(src, env, { filename: f });

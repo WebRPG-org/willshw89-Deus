@@ -1,0 +1,23 @@
+{
+  "lane": "lane-gp",
+  "taskId": "OPS.MAIN.GREEN",
+  "branch": "task/lane-gp",
+  "writer": "claude",
+  "reviewer": "grok",
+  "push": true,
+  "allowedPaths": [
+    "tools/test_area_generation_speed.js",
+    "game/data/sim/mass_tables.json",
+    "tools/zrange/zrange_suite.js",
+    "tools/zrange/fixtures/geology_304ca7b2_seed18.json",
+    "tasks/OPS.MAIN.GREEN/lane-gp/**"
+  ],
+  "gateTests": [
+    { "cmd": "node", "args": ["tools/check_deus_syntax.js"], "timeoutSec": 600 },
+    { "cmd": "node", "args": ["tools/sim/test_materials.js"], "timeoutSec": 600 },
+    { "cmd": "node", "args": ["tools/sim/migrate_mass_units.js", "--check"], "timeoutSec": 600 },
+    { "cmd": "node", "args": ["tools/test_sim_loader.js"], "timeoutSec": 900 },
+    { "cmd": "node", "args": ["tools/test_area_generation_speed.js"], "timeoutSec": 1200 },
+    { "cmd": "node", "args": ["tools/test_zrange.js"], "timeoutSec": 1800 }
+  ]
+}

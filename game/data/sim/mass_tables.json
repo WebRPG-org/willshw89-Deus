@@ -70,6 +70,7 @@
       "berry_bush",
       "berry_bush_bare",
       "birch",
+      "birch_stump",
       "bones_pile",
       "bowyer_bench",
       "bridge",
@@ -86,6 +87,7 @@
       "crystal",
       "crystal_small",
       "crystal_spire",
+      "dead_stump",
       "dead_tree",
       "desert_shrub",
       "dining_bench",
@@ -102,6 +104,7 @@
       "flowers_blue",
       "flowers_purple",
       "flowers_white",
+      "fruit_stump",
       "fruit_tree",
       "fruit_tree_bare",
       "furnace",
@@ -119,8 +122,10 @@
       "mangrove",
       "mason_bench",
       "oak",
+      "oak_stump",
       "palm",
       "pine",
+      "pine_stump",
       "pottery_kiln",
       "reeds",
       "rocks_small",
@@ -136,6 +141,7 @@
       "stalagmite",
       "stockpile",
       "stump",
+      "swamp_stump",
       "tanning_rack",
       "tower_cap",
       "tree_cursed",
@@ -6045,6 +6051,282 @@
       "catalogNotApplied": [],
       "disagreement": [],
       "massCp": 993
+    },
+    "oak_stump": {
+      "massless": false,
+      "massStatus": "PM_DEFAULT_UNCONFIRMED",
+      "lines": [
+        {
+          "class": "wood",
+          "family": "organic",
+          "cp": 1764
+        }
+      ],
+      "yield": {
+        "postings": [
+          {
+            "process": "salvage",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "item",
+            "item": "log",
+            "count": 1,
+            "family": "organic",
+            "sameClass": false,
+            "cp": 1764
+          }
+        ]
+      },
+      "collapse": {
+        "postings": [
+          {
+            "process": "salvage",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "item",
+            "item": "log",
+            "count": 1,
+            "family": "organic",
+            "sameClass": false,
+            "cp": 1764
+          }
+        ]
+      },
+      "catalogNotApplied": [],
+      "disagreement": [],
+      "massCp": 1764
+    },
+    "swamp_stump": {
+      "massless": false,
+      "massStatus": "PM_DEFAULT_UNCONFIRMED",
+      "lines": [
+        {
+          "class": "wood",
+          "family": "organic",
+          "cp": 1764
+        }
+      ],
+      "yield": {
+        "postings": [
+          {
+            "process": "salvage",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "item",
+            "item": "log",
+            "count": 1,
+            "family": "organic",
+            "sameClass": false,
+            "cp": 1764
+          }
+        ]
+      },
+      "collapse": {
+        "postings": [
+          {
+            "process": "salvage",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "item",
+            "item": "log",
+            "count": 1,
+            "family": "organic",
+            "sameClass": false,
+            "cp": 1764
+          }
+        ]
+      },
+      "catalogNotApplied": [],
+      "disagreement": [],
+      "massCp": 1764
+    },
+    "dead_stump": {
+      "massless": false,
+      "massStatus": "PM_DEFAULT_UNCONFIRMED",
+      "lines": [
+        {
+          "class": "wood",
+          "family": "organic",
+          "cp": 1764
+        }
+      ],
+      "yield": {
+        "postings": [
+          {
+            "process": "salvage",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "item",
+            "item": "log",
+            "count": 1,
+            "family": "organic",
+            "sameClass": false,
+            "cp": 1764
+          }
+        ]
+      },
+      "collapse": {
+        "postings": [
+          {
+            "process": "salvage",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "item",
+            "item": "log",
+            "count": 1,
+            "family": "organic",
+            "sameClass": false,
+            "cp": 1764
+          }
+        ]
+      },
+      "catalogNotApplied": [],
+      "disagreement": [],
+      "massCp": 1764
+    },
+    "birch_stump": {
+      "massless": false,
+      "massStatus": "PM_DEFAULT_UNCONFIRMED",
+      "lines": [
+        {
+          "class": "wood",
+          "family": "organic",
+          "cp": 1764
+        }
+      ],
+      "yield": {
+        "postings": [
+          {
+            "process": "salvage",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "item",
+            "item": "log",
+            "count": 1,
+            "family": "organic",
+            "sameClass": false,
+            "cp": 1764
+          }
+        ]
+      },
+      "collapse": {
+        "postings": [
+          {
+            "process": "salvage",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "item",
+            "item": "log",
+            "count": 1,
+            "family": "organic",
+            "sameClass": false,
+            "cp": 1764
+          }
+        ]
+      },
+      "catalogNotApplied": [],
+      "disagreement": [],
+      "massCp": 1764
+    },
+    "pine_stump": {
+      "massless": false,
+      "massStatus": "PM_DEFAULT_UNCONFIRMED",
+      "lines": [
+        {
+          "class": "wood",
+          "family": "organic",
+          "cp": 1764
+        }
+      ],
+      "yield": {
+        "postings": [
+          {
+            "process": "salvage",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "item",
+            "item": "log",
+            "count": 1,
+            "family": "organic",
+            "sameClass": false,
+            "cp": 1764
+          }
+        ]
+      },
+      "collapse": {
+        "postings": [
+          {
+            "process": "salvage",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "item",
+            "item": "log",
+            "count": 1,
+            "family": "organic",
+            "sameClass": false,
+            "cp": 1764
+          }
+        ]
+      },
+      "catalogNotApplied": [],
+      "disagreement": [],
+      "massCp": 1764
+    },
+    "fruit_stump": {
+      "massless": false,
+      "massStatus": "PM_DEFAULT_UNCONFIRMED",
+      "lines": [
+        {
+          "class": "wood",
+          "family": "organic",
+          "cp": 1764
+        }
+      ],
+      "yield": {
+        "postings": [
+          {
+            "process": "salvage",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "item",
+            "item": "log",
+            "count": 1,
+            "family": "organic",
+            "sameClass": false,
+            "cp": 1764
+          }
+        ]
+      },
+      "collapse": {
+        "postings": [
+          {
+            "process": "salvage",
+            "fromClass": "wood",
+            "fromForm": "object",
+            "class": "wood",
+            "form": "item",
+            "item": "log",
+            "count": 1,
+            "family": "organic",
+            "sameClass": false,
+            "cp": 1764
+          }
+        ]
+      },
+      "catalogNotApplied": [],
+      "disagreement": [],
+      "massCp": 1764
     }
   },
   "massUnit": "cp"
