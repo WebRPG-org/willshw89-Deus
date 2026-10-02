@@ -18,7 +18,8 @@
     "tools/sim/test_reclaim_longrun.js",
     "docs/systems/DEUS_Matter.md",
     "docs/systems/DEUS_Materials.md",
-    "tasks/NAT.02.MASS/lane-dp/**"
+    "tasks/NAT.02.MASS/lane-dp/**",
+    "docs/schemas/spells/effects.json"
   ],
   "gateTests": [
     {
