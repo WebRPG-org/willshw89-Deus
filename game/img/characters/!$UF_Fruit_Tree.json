@@ -1,28 +1,28 @@
 {
   "id": "fruit_tree",
+  "name": "fruit_tree",
   "frameWidth": 96,
-  "frameHeight": 96,
+  "frameHeight": 144,
   "anchor": [
     48,
-    95
+    143
   ],
   "footprint": [
     1,
     1
   ],
+  "passable": false,
+  "under": false,
   "facings": [
     "S"
   ],
   "animations": {
     "stand": [
       1
-    ],
-    "sway": [
-      0,
-      1,
-      2
     ]
   },
-  "generator": "Google Nano Banana 2",
-  "standard": "Final Fantasy VI 16-bit HD"
+  "generator": "PixelLab (PM, DEC-063)",
+  "standard": "RMMZ reference, Ultima VII style (DEC-063)",
+  "master": "art/approved/SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEFAULT.png",
+  "masterSha256": "b1834430748fb4cce6d5ce52e8e928281d133b53de5dd6022d6bb8b834abaf4e"
 }

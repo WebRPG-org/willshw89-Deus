@@ -12,6 +12,12 @@
   { "entryId": "SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEPLETED", "sprite": "!$UF_Fruit_Stump", "frameWidth": 48, "frameHeight": 48 },
   { "entryId": "SURFACE_SHARED_FLORA_BUSH_B-V1_DEFAULT", "sprite": "!$UF_Bush", "frameWidth": 48, "frameHeight": 48 },
   { "entryId": "SURFACE_SHARED_FLORA_FLOWERS-WHITE_B-V1_DEFAULT", "sprite": "!$UF_Flowers_White", "frameWidth": 48, "frameHeight": 48 },
+  { "entryId": "SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEFAULT", "sprite": "!$UF_Fruit_Tree", "frameWidth": 96, "frameHeight": 144, "anchor": [48, 143] },
+  { "entryId": "SURFACE_SHARED_TREE_FRUIT-TREE-BARE_B-V1_DEFAULT", "sprite": "!$UF_Fruit_Tree_Bare", "frameWidth": 96, "frameHeight": 144, "anchor": [48, 143] },
+  { "entryId": "SURFACE_SHARED_FLORA_FLOWERS_B-V1_DEFAULT", "sprite": "!$UF_Wildflowers", "frameWidth": 48, "frameHeight": 48 },
+  { "entryId": "SURFACE_SHARED_FLORA_FLOWERS-PURPLE_B-V1_DEFAULT", "sprite": "!$UF_Flowers_Purple", "frameWidth": 48, "frameHeight": 48 },
+  { "entryId": "SURFACE_SHARED_FLORA_FLOWERS-BLUE_B-V1_DEFAULT", "sprite": "!$UF_Flowers_Blue", "frameWidth": 48, "frameHeight": 48 },
+  { "entryId": "SURFACE_SHARED_TREE_SAPLING_B-V1_DEFAULT", "sprite": "!$UF_Sapling", "frameWidth": 48, "frameHeight": 96 },
   {
     "isV8": true,
     "sprite": "!UF_GrassTuft_V8",
@@ -20,7 +26,8 @@
     "entries": [
       "SURFACE_SHARED_FLORA_GRASS-TUFT_B-V1_DEFAULT",
       "SURFACE_SHARED_FLORA_GRASS-TUFT_B-V2_DEFAULT",
-      "SURFACE_SHARED_FLORA_GRASS-TUFT_B-V3_DEFAULT"
+      "SURFACE_SHARED_FLORA_GRASS-TUFT_B-V3_DEFAULT",
+      "SURFACE_SHARED_FLORA_GRASS-TUFT_B-V4_DEFAULT"
     ]
   }
 ]

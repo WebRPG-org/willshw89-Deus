@@ -2,31 +2,28 @@
   "id": "sapling",
   "name": "Sapling",
   "frameWidth": 48,
-  "frameHeight": 48,
+  "frameHeight": 96,
   "anchor": [
     24,
-    47
+    95
   ],
   "footprint": [
     1,
     1
   ],
+  "passable": true,
+  "under": true,
   "facings": [
     "S"
   ],
   "animations": {
     "stand": [
       1
-    ],
-    "sway": [
-      0,
-      1,
-      2
     ]
   },
-  "frameMs": 250,
-  "under": true,
-  "passable": true,
-  "generator": "Google Nano Banana 2",
-  "standard": "Final Fantasy VI 16-bit HD"
+  "generator": "PixelLab (PM, DEC-063)",
+  "standard": "RMMZ reference, Ultima VII style (DEC-063)",
+  "master": "art/approved/SURFACE_SHARED_TREE_SAPLING_B-V1_DEFAULT.png",
+  "masterSha256": "31201ea5c6e02214d4317bad40aa879d4f79ec1916f3c5e05617046d1d077a79",
+  "frameMs": 250
 }

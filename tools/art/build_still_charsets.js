@@ -114,7 +114,7 @@ function writeSidecar(item, repEntryId, masterSha256) {
         name: oldSidecar.name || (oldSidecar.id || id),
         frameWidth: item.frameWidth,
         frameHeight: item.frameHeight,
-        anchor: [entry.anchor.x, entry.anchor.y],
+        anchor: item.anchor || [entry.anchor.x, entry.anchor.y], // a mapping row may set the anchor (a size exception drawn in a taller frame than its catalogue slot)
         footprint: oldSidecar.footprint || (entry.footprint ? [entry.footprint.w, entry.footprint.h] : [1, 1]),
         passable: oldSidecar.passable !== undefined ? oldSidecar.passable : false,
         under: oldSidecar.under !== undefined ? oldSidecar.under : false,
