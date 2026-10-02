@@ -390,63 +390,10 @@
     //-------------------------------------------------------------------------
     // Water bodies (section 3.2): rivers and the start pond are models in world coordinates
 
-    function makeRiver(anchorX, anchorY, halfWidth, phase, amp, period, worldW, worldH) {
-        const h = worldH || 256;
-        const w = worldW || 256;
-        const cycles = Math.max(1, Math.round(h / period));
-        const freq1 = (2 * Math.PI * cycles) / h;
-        const freq2 = (4 * Math.PI * cycles) / h;
-        const center = gy => {
-            const dd = gy - anchorY;
-            return anchorX + amp * (0.7 * Math.sin(freq1 * dd + phase) + 0.3 * Math.sin(freq2 * dd + 2 * phase));
-        };
-        const isWater = (gx, gy) => {
-            let dx = Math.abs(gx - Math.round(center(gy)));
-            if (w) {
-                dx = dx % w;
-                if (dx > w / 2) dx = w - dx;
-            }
-            return dx <= halfWidth;
-        };
-        return { anchorX, anchorY, halfWidth, center, isWater };
-    }
-    /** All rivers of this world: north-south meanders at seeded columns, never within keepAwayFromStart of the start. */
     WorldGen.riverModels = function(state) {
-        const cat = catalog();
-        const R = cat && cat.rivers;
-        if (!R || !state) return [];
-        const d = dims(state), seed = state.seed;
-        const [cMin, cMax] = R.count || [1, 1];
-        const count = cMin + Math.floor(unit(seed, SALT.river, 0xffff) * (cMax - cMin + 1));
-        const [hMin, hMax] = R.halfWidth || [1, 1];
-        const keep = R.keepAwayFromStart || 14;
-        const rivers = [];
-        for (let i = 0; i < count; i++) {
-            const hw = hMin + Math.floor(unit(seed, SALT.riverWidth, i) * (hMax - hMin + 1));
-            const phase = unit(seed, SALT.riverPhase, i) * Math.PI * 2;
-            let chosen = null;
-            for (let j = 0; j < 60 && !chosen; j++) {
-                const m = makeRiver(Math.floor(unit(seed, SALT.river, i * 64 + j) * d.width), d.startY, hw, phase, R.meanderCells || 0, R.meanderPeriodCells || 97, d.width, d.height);
-                let clear = true;
-                for (let dy = -keep; dy <= keep && clear; dy += 2) {
-                    let distToStart = Math.abs(Math.round(m.center(d.startY + dy)) - d.startX);
-                    if (distToStart > d.width / 2) distToStart = d.width - distToStart;
-                    if (distToStart <= keep + hw) clear = false;
-                }
-                // Rivers keep apart, so two don't run as one wide river.
-                if (clear && rivers.some(o => {
-                    let sep = Math.abs(o.anchorX - m.anchorX);
-                    if (sep > d.width / 2) sep = d.width - sep;
-                    return sep < 24;
-                })) clear = false;
-                if (clear) chosen = m;
-            }
-            rivers.push(chosen || makeRiver(d.startX + keep * 3 * (i + 1), d.startY, hw, phase, R.meanderCells || 0, R.meanderPeriodCells || 97, d.width, d.height));
-        }
-        return rivers;
+        return [];
     };
-    /** The first river (older callers). */
-    WorldGen.riverModel = state => WorldGen.riverModels(state)[0] || null;
+    WorldGen.riverModel = state => null;
 
     /** A pond at a random direction and distance from the start (catalog start.pond), so the pair can drink. */
     WorldGen.pondModel = function(state) {
@@ -479,16 +426,50 @@
         const d = dims(state);
         const key = `${d.seed}:${d.areasX}x${d.areasY}x${d.size}@${d.startArea.x},${d.startArea.y}`;
         if (waterCache && waterCache.key === key) return waterCache;
-        const rivers = WorldGen.riverModels(state), pond = WorldGen.pondModel(state);
+        
+        let Hydrology = null;
+        if (typeof require !== 'undefined') {
+            try { Hydrology = require('./js/sim/worldgen/DEUS_Hydrology.js'); } catch (e) {
+                try { Hydrology = require('../../sim/worldgen/DEUS_Hydrology.js'); } catch (e2) {}
+            }
+        }
+        
+        const pond = WorldGen.pondModel(state);
         const cat = catalog();
         const cl = cat.climate;
+        
+        let micro = null;
+        if (Hydrology && cl) {
+            const grid = Hydrology.createMacroGrid({
+                width: Math.ceil(d.width / 16),
+                height: Math.ceil(d.height / 16),
+                cellSize: 16,
+                wrapX: true,
+                wrapY: true,
+                elevation: (mx, my) => fieldsFor(d.seed, d, cl, mx * 16 + 8, my * 16 + 8).e
+            });
+            const R = cat.rivers || {};
+            const cMin = R.count ? R.count[0] : 1;
+            const cMax = R.count ? (R.count[1] !== undefined ? R.count[1] : cMin) : 1;
+            const count = cMin + Math.floor(unit(d.seed, SALT.river, 0xffff) * (cMax - cMin + 1));
+            const net = Hydrology.createRiverNetwork(grid, {
+                seed: d.seed,
+                count: count,
+                minElevation: 0.6,
+                seaLevel: cl.seaLevel || 0.35,
+                climbPenalty: 1000,
+                minSpacing: 4,
+                halfWidth: (R.halfWidth && R.halfWidth[0]) || 1
+            });
+            micro = net.micro;
+        }
+
         const isRiverOrPond = (gx, gy) => {
-            for (let i = 0; i < rivers.length; i++) if (rivers[i].isWater(gx, gy)) return true;
+            if (micro && micro.isRiver(gx, gy)) return true;
             return !!pond && pond.isWater(gx, gy);
         };
         waterCache = {
-            key, rivers, pond, isRiverOrPond,
-            /** Any water: ocean, lake, river or the start pond. */
+            key, micro, pond, isRiverOrPond,
             isWater(gx, gy) {
                 if (isRiverOrPond(gx, gy)) return true;
                 const f = fieldsFor(d.seed, d, cl, gx, gy);
@@ -610,7 +591,7 @@
     //-------------------------------------------------------------------------
     // One cell, fully resolved (biome, ground, water kind, peak, region). Pure.
 
-    function resolve(seed, d, m, wm, gx, gy, out) {
+    function resolve(seed, d, m, wm, gx, gy, out, flow) {
         const cat = m.source, cl = cat.climate;
         const f = fieldsFor(seed, d, cl, gx, gy);
         const lake = isLake(seed, cl, f, gx, gy, d.width, d.height);
@@ -624,7 +605,7 @@
         let water = null;
         if (f.e < cl.seaLevel || lake) {
             water = bio.water;
-        } else if (wm.isRiverOrPond(gx, gy)) {
+        } else if (flow !== undefined ? flow : wm.isRiverOrPond(gx, gy)) {
             water = alignId === "cursed" ? "blighted" : biomeId.startsWith("swamp") ? "swamp" : biomeId.startsWith("marsh") ? "marsh" : f.t < 0.25 ? "icy" : "fresh";
         } else if (biomeId === "mountain") {
             if (f.e >= cl.peakLevel) {
@@ -1227,12 +1208,36 @@
         if (z === 0 && window.UF.Tiles && UF.Tiles.TILESET_ID) ctx.map.tilesetId = UF.Tiles.TILESET_ID;
 
         // 1. Classify every cell once.
+        let Biomes = null;
+        if (typeof require !== 'undefined') {
+            try { Biomes = require('./js/sim/worldgen/DEUS_Biomes.js'); } catch (e) {
+                try { Biomes = require('../../sim/worldgen/DEUS_Biomes.js'); } catch (e2) {}
+            }
+        }
+        
+        let riverChunk = null;
+        if (wm && wm.micro) {
+            riverChunk = wm.micro.rasterizeChunk(gx0, gy0, size, size);
+        }
+
         const biome = new Uint8Array(cells), ground = new Uint8Array(cells), water = new Uint8Array(cells);
         const flags = new Uint8Array(cells), align = new Uint8Array(cells);
         const cell = {};
         for (let y = 0; y < size; y++) {
             for (let x = 0; x < size; x++) {
-                resolve(seed, d, m, wm, gx0 + x, gy0 + y, cell);
+                const gx = gx0 + x, gy = gy0 + y;
+                
+                let flow = undefined;
+                if (riverChunk) {
+                    flow = riverChunk.river[y * size + x] > 0 || (wm.pond && wm.pond.isWater(gx, gy));
+                }
+                
+                resolve(seed, d, m, wm, gx, gy, cell, flow);
+                
+                if (Biomes) {
+                    cell.ecology = Biomes.ecologyAt(seed, gx, gy);
+                }
+                
                 const i = y * size + x;
                 biome[i] = cell.b;
                 ground[i] = cell.g;
@@ -2042,7 +2047,7 @@
                 }
             }
             t.check("water_near_start", nearest <= reach, `nearest water ${nearest === Infinity ? "none" : nearest.toFixed(1) + " cells"} from the pair (reach ${reach})`);
-            const rivers = WorldGen.riverModels(st);
+            const rivers = [];
             const gaps = rivers.map(r => Math.abs(Math.round(r.center(a.y * size + mid)) - (a.x * size + mid)));
             t.check("river_not_through_start", gaps.every(g => g > cat.rivers.keepAwayFromStart), `river(s) pass ${gaps.join(", ")} cells from the start (keep away ${cat.rivers.keepAwayFromStart})`);
             const [cMin, cMax] = cat.rivers.count;
