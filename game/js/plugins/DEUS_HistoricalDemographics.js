@@ -149,6 +149,44 @@
     });
     const ABSOLUTE_MIN_CAPACITY = 60;
     const ABSOLUTE_MAX_CAPACITY = 350;
+    // The saved v7 people array is the public History/materialization contract.
+    // Keep the numeric hot columns outside JSON so old saves and consumers retain
+    // their shape. A loaded state rebuilds these columns on its first validation.
+    const historicalFields = ["hfBirthYear", "hfDeathYear", "hfFaction", "hfSite", "hfDynasty",
+        "hfPartnership", "hfMother", "hfFather", "hfLastBirthYear", "hfGender", "hfSpecies"];
+    const historicalColumns = new WeakMap();
+    function demographicColumns(state) {
+        let columns = historicalColumns.get(state);
+        if (!columns) {
+            columns = { capacity: 0, count: 0, factionIds: Object.keys(state.factions), speciesIds: Object.keys(state.config.profiles) };
+            historicalColumns.set(state, columns);
+            for (const field of historicalFields) {
+                Object.defineProperty(state, field, { configurable: true, enumerable: false, get: () => columns[field] });
+            }
+            Object.defineProperty(state, "hfCount", { configurable: true, enumerable: false, get: () => columns.count });
+        }
+        const count = state.people.length;
+        if (count > columns.capacity) {
+            columns.capacity = Math.max(16, columns.capacity * 2, count);
+            for (const field of historicalFields) columns[field] = new Int32Array(columns.capacity);
+        }
+        columns.count = count;
+        for (let id = 0; id < count; id++) {
+            const p = state.people[id];
+            columns.hfBirthYear[id] = p.born;
+            columns.hfDeathYear[id] = p.died === null ? -1 : p.died;
+            columns.hfFaction[id] = columns.factionIds.indexOf(p.factionId);
+            columns.hfSite[id] = p.siteId;
+            columns.hfDynasty[id] = p.dynastyId;
+            columns.hfPartnership[id] = p.partnershipId === null ? -1 : p.partnershipId;
+            columns.hfMother[id] = p.parents.length ? p.parents[0] : -1;
+            columns.hfFather[id] = p.parents.length ? p.parents[1] : -1;
+            columns.hfLastBirthYear[id] = p.lastBirthYear === null ? -1 : p.lastBirthYear;
+            columns.hfGender[id] = p.gender === "female" ? 1 : 0;
+            columns.hfSpecies[id] = columns.speciesIds.indexOf(p.species);
+        }
+        return columns;
+    }
     function matchesDefaultProfiles(profiles) {
         if (!profiles || typeof profiles !== "object" || Array.isArray(profiles)) return false;
         const keys = Object.keys(DEFAULT_PROFILES);
@@ -461,6 +499,7 @@
         }
         check(integer(state.nextEventId) && state.nextEventId >= 1 && integer(state.eventsDiscarded) && state.eventsDiscarded >= 0 && state.events.length + state.eventsDiscarded === state.nextEventId - 1 && state.events.length <= state.config.eventLimit, "event retention mismatch");
         state.events.forEach((e, i) => check(e.id === state.eventsDiscarded + i + 1 && integer(e.year) && e.year >= state.startYear && e.year <= state.currentYear && own(state.factions, e.factionId) && integer(e.siteId) && state.sites[e.siteId] && Array.isArray(e.personIds) && e.personIds.every(id => integer(id) && state.people[id]) && typeof e.text === "string", "invalid chronicle event"));
+        demographicColumns(state);
         return true;
     }
     function conditionsValid(state, conditions) {
@@ -473,33 +512,41 @@
     function step(state, conditions = {}) {
         validate(state); conditionsValid(state, conditions);
         check(state.currentYear < 1000000 && state.people.length < 1000000, "historical proof registry/year bound exceeded");
+        const hf = historicalColumns.get(state);
         state.currentYear++; state.yearsSimulated++;
         const startOfYearPopulation = new Map();
         for (const s of state.sites) {
             startOfYearPopulation.set(s.id, s.population);
         }
         const casualties = new Set(conditions.casualtyIds || []);
-        for (const p of state.people.filter(alive)) {
+        for (let id = 0; id < hf.count; id++) {
+            if (hf.hfDeathYear[id] !== -1) continue;
+            const p = state.people[id];
             const profile = state.config.profiles[p.species], [lo, hi] = lifespan(state, p), age = state.currentYear - p.born;
-            const rng = random(state, state.currentYear, p.id, 0x44454144), risk = (conditions.siteRisks || {})[p.siteId] || {};
+            const rng = random(state, state.currentYear, id, 0x44454144);
+            const risk = conditions.siteRisks && conditions.siteRisks[hf.hfSite[id]];
             let cause = casualties.has(p.id) ? "violence" : null, detail = null;
             if (!cause && age <= 1 && rng() < profile.infantMortality) { cause = "disease"; detail = "infant"; }
-            if (!cause && rng() < Math.min(1, profile.diseaseMortality + (risk.disease || 0))) cause = "disease";
-            if (!cause && rng() < Math.min(1, profile.exposureMortality + (risk.exposure || 0))) cause = "exposure";
+            if (!cause && rng() < Math.min(1, profile.diseaseMortality + (risk ? risk.disease || 0 : 0))) cause = "disease";
+            if (!cause && rng() < Math.min(1, profile.exposureMortality + (risk ? risk.exposure || 0 : 0))) cause = "exposure";
             if (!cause && age >= lo && (age >= hi || rng() < (age - lo + 1) / (hi - lo + 1))) cause = "old_age";
             if (cause && p.died === null) {
                 p.died = state.currentYear; p.causeOfDeath = cause; p.deathDetail = detail; p.tier = "recent"; state.sites[p.siteId].population--;
+                hf.hfDeathYear[id] = state.currentYear;
                 emit(state, "death", p.factionId, p.siteId, [p.id], `${p.name} died (${cause}).`);
             }
         }
-        for (const h of state.partnerships.filter(h => h.toYear === null)) {
+        for (const h of state.partnerships) {
+            if (h.toYear !== null) continue;
             if (!alive(state.people[h.motherId]) || !alive(state.people[h.fatherId])) {
                 h.toYear = state.currentYear; state.people[h.motherId].partnershipId = null; state.people[h.fatherId].partnershipId = null;
+                hf.hfPartnership[h.motherId] = hf.hfPartnership[h.fatherId] = -1;
             }
         }
         pair(state);
         const capModel = state.config.capacityModel;
-        for (const h of state.partnerships.filter(h => h.toYear === null)) {
+        for (const h of state.partnerships) {
+            if (h.toYear !== null) continue;
             const mother = state.people[h.motherId], father = state.people[h.fatherId], profile = state.config.profiles[mother.species];
             if (!fertile(state, mother) || !fertile(state, father) || (mother.lastBirthYear !== null && state.currentYear - mother.lastBirthYear < profile.birthSpacingYears)) continue;
             const site = state.sites[mother.siteId];
@@ -526,6 +573,7 @@
             if (!s.population && s.abandonedYear === null) { s.abandonedYear = state.currentYear; emit(state, "abandonment", s.factionId, s.id, [], `${s.name} became uninhabited.`); }
         }
         for (const p of state.people) if (p.tier === "recent" && state.currentYear - p.died >= state.config.recentYears) p.tier = "historic";
+        demographicColumns(state);
         return state;
     }
     function simulate(state, years, options = {}) {
