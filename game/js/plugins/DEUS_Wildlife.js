@@ -2252,11 +2252,12 @@ window.UF.ECS = window.UF.ECS || {
                 ["array copy", /\.(?:map|filter|slice|concat|reduce|flat|flatMap|from|split)\(/],
                 ["spread or rest", /\.\.\./],
                 ["template string", /`/],
-                ["closure", /=>|\bfunction\b|\.bind\(/],
+                ["closure", /=>|\bfunction\s*[\w$]*\s*\(|\.bind\(/],
                 ["iterator", /\bfor\s*\([^;)]*\bof\b/]
             ];
             const allocationsIn = fn => {
-                const src = String(fn).replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
+                const src = String(fn).replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "")
+                    .replace(/"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/g, "\"\"");
                 const arrow = src.indexOf("=>"), brace = src.indexOf("{");
                 const body = src.startsWith("function") || arrow < 0 || (brace >= 0 && brace < arrow) ? src.slice(brace + 1) : src.slice(arrow + 2);
                 return ALLOC_FORMS.filter(f => f[1].test(body)).map(f => f[0]);
