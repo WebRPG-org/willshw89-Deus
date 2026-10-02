@@ -1,0 +1,13 @@
+{
+  "taskId": "WG.62.03",
+  "lane": "lane-ga",
+  "branch": "task/lane-ga",
+  "roles": {
+    "writer": "grok",
+    "reviewer": "claude"
+  },
+  "allowedPaths": [
+    "game/js/sim/worldgen/DEUS_VoidManifold.js",
+    "tools/test_void_manifold.js"
+  ]
+}
