@@ -1125,7 +1125,7 @@ Every decision item recorded in this log must provide:
 ### Decision `DEC-065`: New Game builds each faction-home area once and keeps lazy (area, z) demand; natural collapse rubble is reclaim-eligible and registered once
 - **Date:** 2026-10-01
 - **Decider:** the PM (Claude). DEC-058 has the PM settle each design's open questions from the braintrust recommendations and record each choice; DEC-059 item 1 has the PM build the natural world straight through, with no Owner gate between packages. The Owner can change either item at any time.
-- **Status:** `DECIDED (PM)`
+- **Status:** `DECIDED (PM)`; item 2 SUPERSEDED by DEC-083 (2026-10-02)
 - **Source:** WORK-GATE G02, the merged braintrust verdict on the natural-world build plan (binding; `C:/Users/snewt/.deus_pm/braintrust/2026-10-01/WORK-GATE-G02_merged_chatgpt_pro.md`), section 4, the two rows due in wave 3:
   - before lane-dd (line 95): "Record: New Game may generate each faction-home area once, including all nine areas when all nine hold homes. This authorizes required home-area/floor generation, not eager materialization of all 32 levels in every area. Measure the actual shipped-grid cost; retain lazy `(area,z)` demand."
   - before lane-dr (line 96): "Confirm natural collapse rubble is explicitly reclaim-eligible and registered once, as already required by the reconciled MASS work. Do not reopen soil or decay."
@@ -1383,3 +1383,15 @@ Every decision item recorded in this log must provide:
   7. **One source for each ruling.** The art banners in AGENTS.md, CLAUDE.md and GEMINI.md become pointers to this decision log's live art rules; a new ruling is one entry here plus the files that act on it, not a sweep of every file that mentions the old one.
   8. **One status view:** the Build Board. `docs/STATUS.md` and the WBS rows are not updated per lane.
 - **Records updated with this entry:** `.gitignore`; `docs/agents/mailboxes/README.md`; `.agents/rules/deus-multiagent-routing.md`; `tools/ops/hooks/pre-commit-main-guard`; the AG hand-off queue.
+
+### Decision `DEC-083`: Structure and collapse are Minecraft-style block updates; floors and roofs are mineable and breakable; build on the tile above or below
+- **Date:** 2026-10-02 (~00:30Z); the Owner gave the four rulings to AG in the Antigravity chat on 2026-10-01 (~20:30Z and ~21:00Z; AG-PRUNE-122 and AG-PRUNE-123), and confirmed them to the PM in chat: "Yes, record all four".
+- **Decider:** Owner.
+- **Status:** `DECIDED`
+- **Ruling:**
+  1. **Collapse is block-update connectivity, not a capacity-weight engine.** A block with no connection falls straight down (it can still crush what it lands on). The NAT.02.01 plan built around load, capacity and a static ladder (D3 design) is replaced.
+  2. **No rubble accounting.** A falling block does not become a granular, ledger-accounted rubble pile. Matter is moved, not converted: the closed-mass ledger sees a move, never a source or a sink (DEC-040). DEC-065 item 2 (natural collapse rubble is reclaim-eligible and registered once) is superseded; lane-dr's rubble part drops out and its centipound storage and posting of reclaim and world items stay.
+  3. **Roofs and floors are mineable and diggable like walls.** Destructive forces such as fireballs can blow out a floor or roof on a Z level and expose the level below.
+  4. **Build on the tile above or below,** like a roof or a floor: adjacent-block placement works across Z levels as it does on a level (Minecraft-style).
+- **Re-plan:** the PM re-plans the structure, collapse and bridge lanes (eo, ep, eq, fo, fr, fv, es to ew, fk, fq, fs, ft, fj) around block-update connectivity. Until the PM mails the new briefs they stay held.
+- **Records updated with this entry:** none beyond this entry (DEC-085 item 7: one entry plus the files that act on it); the WBS rows, briefs and design notes are rewritten by the re-plan.
