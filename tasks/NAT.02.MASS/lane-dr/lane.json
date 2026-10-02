@@ -1,0 +1,65 @@
+{
+  "lane": "lane-dr",
+  "taskId": "NAT.02.MASS",
+  "branch": "task/lane-dr",
+  "writer": "codex",
+  "reviewer": "grok",
+  "push": true,
+  "allowedPaths": [
+    "game/js/sim/reclaim.js",
+    "game/js/sim/world_items/catalog.js",
+    "game/js/sim/world_items/world.js",
+    "game/js/sim/world_items/ledger_bridge.js",
+    "tools/sim/test_reclaim.js",
+    "tools/sim/test_reclaim_longrun.js",
+    "tools/sim/test_living_world_rules.js",
+    "tools/world_items/test_world_items.js",
+    "docs/systems/DEUS_Reclamation.md",
+    "docs/systems/DEUS_WorldItems.md",
+    "tasks/NAT.02.MASS/lane-dr/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_reclaim.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_reclaim_longrun.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_living_world_rules.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/world_items/test_world_items.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/sim/test_ledger.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}
