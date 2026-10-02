@@ -47,8 +47,17 @@
  * A creature with data.taming.status "captive" or "domesticated" is not wild
  * prey: nearestPrey skips it, and populationSummary counts it as held.
  *
+ * Behaviour state (FAUNA.ECS, 2026-10-02) lives in UF.ECS, indexed by unit id:
+ * stance (the behaviour, Wildlife.STANCES, and the frame of the last alarm),
+ * hunger (0 just ate .. Wildlife.HUNGER_MAX) and hp. unit.data no longer has
+ * state / alarmedAt / grazeUntil / grazeCooldown / feedUntil / targetPreyId;
+ * a creature added with them (or loaded from an older save) is moved over.
+ * Wildlife.stanceOf(unit) names the behaviour. The AI ticks allocate nothing:
+ * the wildlife:kill payload { predator, prey } is one reused object, so a
+ * listener that keeps it must copy it.
+ *
  * All randomness is seeded (hash32 of seed, unit id and frame). Nothing is
- * kept outside UF.World.state / unit.data except caches.
+ * kept outside UF.World.state / unit.data / UF.ECS except caches.
  *
  * API, events, save data and checks: docs/systems/UF_Wildlife.md
  * Contract: docs/design/WORLD_ARCHITECTURE.md sections 2.4 and 5.7
