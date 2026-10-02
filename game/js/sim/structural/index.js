@@ -11,6 +11,9 @@ const { evalCellSupport } = require("./support.js");
 const { executeCollapse, CELL_VOLUME_CUFT } = require("./collapse.js");
 const rooted = require("./rooted.js");
 const reader = require("./reader.js");
+const levelsReader = require("./levels_reader.js");
+const commit = require("./commit.js");
+const occupants = require("./occupants.js");
 
 module.exports = {
     evalCellSupport,
@@ -33,5 +36,10 @@ module.exports = {
     READER_PENDING: reader.PENDING,
     gOf: reader.gOf,
     zOfG: reader.zOfG,
-    sOfG: reader.sOfG
+    sOfG: reader.sOfG,
+
+    // Levels reader, fall commit and occupant plan (NAT.02.01 part 3)
+    createLevelsReader: levelsReader.createLevelsReader,
+    commitFall: commit.commitFall,
+    planOccupants: occupants.planOccupants
 };
