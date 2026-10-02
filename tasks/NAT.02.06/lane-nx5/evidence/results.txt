@@ -1,0 +1,7 @@
+UF_Test run 2026-10-02T06:22:06.511Z args=[]
+DEBUG_SHEET: Scene_Boot.start called
+AVAILABLE SUITES: selftest, smoke, perf, native_starting_gear, native_survival_dying, native_perf_4x_benchmark, build_room_above, select, select, minimap, natural_connections, ownership, ecology, projects, settlement, colonists, overseer, world, spawn, worldgen, biomes, tiles, ground, factions, skins, history, objects, walls, doors, items, dig_through_floor, jobs, floors, wildlife, wildlife_seeds, stance, combat, anim, fog, daynight, timespeed, camera, culling, speech, overhead, look, sheet, talk, fire, vertical, natural_walls, flooding, strata, sparse_outer, environment, faction_menus, title, load, setup, depth, layers_flat, select, select
+SUITE build_room_above
+PASS build_room_above.structural_registered - UF.Structural true; tick handlers structure,jobs:verticalFalls; Floors.attachment true
+FAIL build_room_above.suite_completed - wallId is not defined [at Object.T.suite.isDefault [as fn] (chrome-extension://njgcanhfjdabfmnlmpmdedalocpafnhl/js/plugins/DEUS_TestBuildVertical.js:45:73) | at async run (chrome-extension://njgcanhfjdabfmnlmpmdedalocpafnhl/js/plugins/DEUS_Test.js:222:21)]
+RESULT: 1 passed, 1 failed (exit 1)
