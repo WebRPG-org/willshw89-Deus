@@ -1,0 +1,8 @@
+{
+  "lane": "lane-ecs",
+  "taskId": "WG.GRID.02",
+  "branch": "task/lane-ecs",
+  "writer": "codex",
+  "gateTests": [],
+  "allowedPaths": ["game/js/plugins/DEUS_Colonists.js", "game/js/plugins/DEUS_Wildlife.js", "game/js/plugins/DEUS_Jobs.js"]
+}

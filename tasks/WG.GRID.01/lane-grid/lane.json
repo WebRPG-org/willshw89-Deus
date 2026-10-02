@@ -1,0 +1,8 @@
+{
+  "lane": "lane-grid",
+  "taskId": "WG.GRID.01",
+  "branch": "task/lane-grid",
+  "writer": "grok",
+  "gateTests": [],
+  "allowedPaths": ["game/js/plugins/DEUS_World.js", "game/js/plugins/DEUS_Doors.js", "game/js/plugins/DEUS_Walls.js"]
+}

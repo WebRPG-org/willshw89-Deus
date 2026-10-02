@@ -1,0 +1,8 @@
+{
+  "lane": "lane-lazy",
+  "taskId": "WG.00.45",
+  "branch": "task/lane-lazy",
+  "writer": "grok",
+  "gateTests": [],
+  "allowedPaths": ["game/js/plugins/DEUS_WorldGen.js", "game/js/plugins/DEUS_World.js"]
+}

@@ -123,6 +123,11 @@
 
 (() => {
     "use strict";
+    if (!Uint16Array.prototype.toJSON) Uint16Array.prototype.toJSON = function() { return Array.from(this); };
+    if (!Float32Array.prototype.toJSON) Float32Array.prototype.toJSON = function() { return Array.from(this); };
+    if (!Int32Array.prototype.toJSON) Int32Array.prototype.toJSON = function() { return Array.from(this); };
+    if (!Uint8Array.prototype.toJSON) Uint8Array.prototype.toJSON = function() { return Array.from(this); };
+
 
     const P = (PluginManager.parameters("DEUS_World") && Object.keys(PluginManager.parameters("DEUS_World")).length ? PluginManager.parameters("DEUS_World") : PluginManager.parameters("UF_World"));
     const num = (key, fallback) => (P[key] !== undefined && P[key] !== "" ? Number(P[key]) : fallback);
@@ -683,7 +688,8 @@
             units: {},
             nextUnitId: 1,
             diffs: {},
-            objectDiffs: {}
+            objectDiffs: {},
+            gridData: {}
         };
         zResync();
         buildCache.clear();
@@ -798,6 +804,14 @@
         return viewMemo.level;
     };
     World.isStartArea = (ax, ay) => !!World.state && World.state.startArea.x === ax && World.state.startArea.y === ay;
+    World.grid = function(name, ax, ay, z = 0) {
+        if (!this.state || !this.inWorld(ax, ay, z)) return null;
+        if (!this.state.gridData) this.state.gridData = {};
+        if (!this.state.gridData[name]) this.state.gridData[name] = {};
+        const key = this.levelKey(ax, ay, z);
+        if (!this.state.gridData[name][key]) this.state.gridData[name][key] = new Uint16Array(this.state.size * this.state.size);
+        return this.state.gridData[name][key];
+    };
     World.sameArea = sameArea;
     World.areaKey = areaKey;
 
@@ -3496,6 +3510,15 @@
     DataManager.extractSaveContents = function(contents) {
         _DataManager_extractSaveContents.call(this, contents);
         World.state = contents.ufWorld || null;
+        if (World.state && World.state.gridData) {
+            for (const name of Object.keys(World.state.gridData)) {
+                for (const key of Object.keys(World.state.gridData[name])) {
+                    if (Array.isArray(World.state.gridData[name][key])) {
+                        World.state.gridData[name][key] = new Uint16Array(World.state.gridData[name][key]);
+                    }
+                }
+            }
+        }
         // The tick clock resumes from the save; a save from before SIM.00.02a arms it at the loaded calendar minute.
         simClock = null;
         if (World.state && World.state.simTick) {
@@ -4657,3 +4680,4 @@
         UF.Test.suite("spawn", spawnChecks, { isDefault: false });
     }
 })();
+

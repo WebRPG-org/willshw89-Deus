@@ -1,0 +1,8 @@
+{
+  "lane": "lane-threads",
+  "taskId": "WG.WORLDGEN.07",
+  "branch": "task/lane-threads",
+  "writer": "claude",
+  "gateTests": [],
+  "allowedPaths": ["game/js/plugins/DEUS_World.js", "game/js/sim/worldgen/worker.js"]
+}

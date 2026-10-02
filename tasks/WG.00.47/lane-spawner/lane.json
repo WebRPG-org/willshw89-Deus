@@ -1,0 +1,8 @@
+{
+  "lane": "lane-spawner",
+  "taskId": "WG.00.47",
+  "branch": "task/lane-spawner",
+  "writer": "grok",
+  "gateTests": [],
+  "allowedPaths": ["game/js/plugins/DEUS_Wildlife.js"]
+}

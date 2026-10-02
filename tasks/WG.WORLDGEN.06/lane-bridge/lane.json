@@ -1,0 +1,8 @@
+{
+  "lane": "lane-bridge",
+  "taskId": "WG.WORLDGEN.06",
+  "branch": "task/lane-bridge",
+  "writer": "claude",
+  "gateTests": [],
+  "allowedPaths": ["game/js/plugins/DEUS_WorldGen.js", "game/js/sim/worldgen/DEUS_Biomes.js", "game/js/sim/worldgen/DEUS_Hydrology.js"]
+}
