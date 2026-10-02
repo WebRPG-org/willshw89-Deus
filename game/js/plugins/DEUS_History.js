@@ -494,7 +494,7 @@
             }
             const units = [], cat = catalog() || {};
             for (const p of living) {
-                const site = d.sites[p.siteId], id = personToUnit[p.id], age = d.currentYear - p.born;
+                const site = d.sites[p.siteId], id = personToUnit[p.id], age = Math.max(0, d.currentYear - p.born);
                 const pair = p.partnershipId === null ? null : d.partnerships[p.partnershipId];
                 const spouse = pair && pair.toYear === null ? (pair.motherId === p.id ? pair.fatherId : pair.motherId) : null;
                 const callings = Callings.sampleCallings(site.population, 3, mulberry32(hash32(d.seed, p.id, SALT_CALLINGS)));
@@ -3018,7 +3018,7 @@
             const playerId = F && typeof F.playerId === "function" ? F.playerId() : "player";
             const data = {
                 kind: f.id === playerId ? "colonist" : "person", faction: f.id, species: f.species, ai: "settlement", home: { area: { ...site.area }, x: site.x, y: site.y, z: levelOf(site) }, wander: (site.radius || 4) + 2, site: site.id,
-                founder: true, born: 1 - p.age, age: p.age, stage: stageOf(p.age), gender: p.gender, rank: p.leader ? 1 : 0, superior: null,
+                founder: true, born: (h.startYear !== undefined ? h.startYear : 1) - Math.max(1, p.age), age: Math.max(1, p.age), stage: stageOf(Math.max(1, p.age)), gender: p.gender, rank: p.leader ? 1 : 0, superior: null,
                 variation: q.variation,
                 familyId: p.familyId || null, lineageId: p.lineageId || null, surname: p.surname || null,
                 generation: 1, parents: [], motherId: null, fatherId: null, genetics: null,
