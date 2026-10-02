@@ -83,12 +83,12 @@ function* runFallJob(ctx, reader, component) {
                 if (currentDrop > bestDrop) break; // Exceeds best drop, stop scanning this block
                 
                 yield* charge(ctx, "read");
-                const sol = reader.solidG(b.x, b.y, g);
-                if (sol === "pending") {
+                const sol = reader.state(b.x, b.y, g);
+                if (sol === "unknown") {
                     return { ok: false, reason: "unknown_below", ops: ctx.ops };
                 }
                 
-                if (sol === true && !piece.has(vkey(b.x, b.y, g))) {
+                if (sol === "solid" && !piece.has(vkey(b.x, b.y, g))) {
                     if (currentDrop < bestDrop) {
                         bestDrop = currentDrop;
                         contact = [b.x, b.y, g];

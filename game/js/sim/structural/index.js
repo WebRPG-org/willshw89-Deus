@@ -15,6 +15,8 @@ const reader = require("./reader.js");
 const connectivity = require("./connectivity.js");
 const fall = require("./fall.js");
 const queue = require("./queue.js");
+const counter = require("./counter.js");
+const block_reader = require("./block_reader.js");
 
 module.exports = {
     // Pure connectivity (DEC-083)
@@ -23,9 +25,10 @@ module.exports = {
     wouldBeHeld: connectivity.wouldBeHeld,
     createFallJob: fall.createFallJob,
     planFall: fall.planFall,
-    createQueue: queue.createQueue,
-    createService: queue.createService,
-    createBlockFixture: require("./block_reader.js").createBlockFixture,
+    createDirtyQueue: queue.createDirtyQueue,
+    createStructuralService: queue.createStructuralService,
+    createBlockFixture: block_reader.createBlockFixture,
+    createOpsCounter: counter.createOpsCounter,
 
     evalCellSupport,
     executeCollapse,
@@ -34,7 +37,6 @@ module.exports = {
     // Rooted support (pure; reads geometry through a StrataReader)
     evaluateMember: rooted.evaluateMember,
     createRootedJob: rooted.createRootedJob,
-    createOpsCounter: rooted.createOpsCounter,
     bandOf: rooted.bandOf,
     spanBaseFor: rooted.spanBaseFor,
     spanEffOf: rooted.spanEffOf,

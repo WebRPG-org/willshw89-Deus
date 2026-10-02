@@ -38,8 +38,8 @@ function* runHeldJob(ctx, reader, seed) {
     
     yield* charge(ctx, "read");
     ctx.read.add(vkey(sx, sy, sg));
-    let sol = ctx.overlay && ctx.overlay.x === sx && ctx.overlay.y === sy && ctx.overlay.g === sg ? true : reader.solidG(sx, sy, sg);
-    if (sol !== true) {
+    let sol = ctx.overlay && ctx.overlay.x === sx && ctx.overlay.y === sy && ctx.overlay.g === sg ? "solid" : reader.state(sx, sy, sg);
+    if (sol !== "solid") {
         return { verdict: "not_solid", reason: "seed_not_solid", anchor: null, visited: 0, component: null, watch: null, ops: ctx.ops };
     }
 
@@ -67,9 +67,9 @@ function* runHeldJob(ctx, reader, seed) {
                 return { verdict: "held", reason: "too_large", anchor: null, visited: visited.size, component: null, watch: null, ops: ctx.ops };
             }
             
-            const anchor = reader.anchorG(frame.x, frame.y, frame.g);
+            let anchor = false; let isFloor = false; if (reader.floorG !== null && frame.g === reader.floorG) { isFloor = true; anchor = true; } else { anchor = reader.anchor(frame.x, frame.y, frame.g); }
             if (anchor === true) {
-                const isFloor = (reader.floorG !== null && frame.g === reader.floorG);
+                
                 return { verdict: "held", reason: isFloor ? "floor" : "certified", anchor: [frame.x, frame.y, frame.g], visited: visited.size, component: null, watch: null, ops: ctx.ops };
             } else if (anchor === "pending") {
                 watch.push([frame.x, frame.y, frame.g]);
@@ -88,10 +88,10 @@ function* runHeldJob(ctx, reader, seed) {
             if (!visited.has(nk)) {
                 yield* charge(ctx, "read");
                 ctx.read.add(nk);
-                const nSol = ctx.overlay && ctx.overlay.x === nx && ctx.overlay.y === ny && ctx.overlay.g === ng ? true : reader.solidG(nx, ny, ng);
-                if (nSol === "pending") {
+                const nSol = ctx.overlay && ctx.overlay.x === nx && ctx.overlay.y === ny && ctx.overlay.g === ng ? "solid" : reader.state(nx, ny, ng);
+                if (nSol === "unknown") {
                     watch.push([nx, ny, ng]);
-                } else if (nSol === true) {
+                } else if (nSol === "solid") {
                     pushNode(nx, ny, ng);
                 }
             }

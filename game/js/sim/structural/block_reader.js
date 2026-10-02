@@ -22,48 +22,125 @@ function createBlockFixture(spec) {
     const x0 = b.x0, y0 = b.y0, x1 = b.x1, y1 = b.y1;
     const zMin = spec.zMin === undefined ? -2 : spec.zMin;
     const zMax = spec.zMax === undefined ? 2 : spec.zMax;
-    
-    const floor = spec.foundation === "floor";
+    const wrap = spec.wrap === true;
+    const floor = spec.floor !== false; // default true
+
     const cells = new Map();
     const pending = new Set();
     const anchors = new Set();
 
+    let reads = 0;
+
     const key = (x, y, g) => `${x},${y},${g}`;
-    const inBounds = (x, y) => x >= x0 && x <= x1 && y >= y0 && y <= y1;
-    const canonFn = spec.canon;
-    const unknown = (x, y, g) => !inBounds(x, y) || zOfG(g) < zMin || pending.has(key(x, y, g));
+    const inBoundsX = x => x >= x0 && x <= x1;
+    const inBoundsY = y => y >= y0 && y <= y1;
+
+    function canon(x, y) {
+        if (wrap) {
+            const w = x1 - x0 + 1;
+            const h = y1 - y0 + 1;
+            let nx = (x - x0) % w;
+            if (nx < 0) nx += w;
+            let ny = (y - y0) % h;
+            if (ny < 0) ny += h;
+            return { x: x0 + nx, y: y0 + ny };
+        }
+        return { x, y };
+    }
+
+    const floorG = floor ? gOf(zMin, 0) : null;
+    const topG = gOf(zMax, STRATA_PER_LAYER - 1);
+    
+    function outOfBounds(x, y, g) {
+        if (g > topG) return false; // Above topG is air, not unknown
+        if (floorG !== null && g < floorG) return true;
+        if (!wrap && (!inBoundsX(x) || !inBoundsY(y))) return true;
+        return false;
+    }
 
     const reader = {
-        zMin, zMax,
-        get floorG() { return floor ? gOf(zMin, 0) : null; },
-        canon: canonFn ? (x, y) => canonFn(x, y) : undefined,
-        solidG(x, y, g) {
-            if (unknown(x, y, g)) return "pending";
-            if (zOfG(g) > zMax) return false;
-            return cells.has(key(x, y, g));
+        get floorG() { return floorG; },
+        get topG() { return topG; },
+        get reads() { return reads; },
+        
+        state(x, y, g) {
+            reads++;
+            let c = canon(x, y);
+            x = c.x; y = c.y;
+            if (g > topG) return "air";
+            if (outOfBounds(x, y, g)) return "unknown";
+            if (pending.has(key(x, y, g))) return "unknown";
+            return cells.has(key(x, y, g)) ? "solid" : "air";
         },
-        anchorG(x, y, g) {
-            if (unknown(x, y, g)) return "pending";
-            return anchors.has(key(x, y, g)) || (floor && g === gOf(zMin, 0));
+        
+        neighbors(x, y, g) {
+            let n = [];
+            // DOWN, N, E, S, W, UP
+            const dirs = [
+                { dx: 0, dy: 0, dg: -1 },
+                { dx: 0, dy: -1, dg: 0 },
+                { dx: 1, dy: 0, dg: 0 },
+                { dx: 0, dy: 1, dg: 0 },
+                { dx: -1, dy: 0, dg: 0 },
+                { dx: 0, dy: 0, dg: 1 }
+            ];
+            for (const d of dirs) {
+                let nx = x + d.dx, ny = y + d.dy, ng = g + d.dg;
+                let c = canon(nx, ny);
+                nx = c.x; ny = c.y;
+                if (reader.floorG !== null && ng < reader.floorG) continue;
+                if (ng > reader.topG) continue;
+                n.push([nx, ny, ng]);
+            }
+            return n;
         },
-        setG(x, y, g) {
-            cells.set(key(x, y, g), true);
+        
+        key(x, y, g) {
+            let c = canon(x, y);
+            return `${c.x},${c.y},${g}`;
+        },
+        
+        anchor(x, y, g) {
+            reads++;
+            let c = canon(x, y);
+            return anchors.has(key(c.x, c.y, g));
+        },
+        
+        set(x, y, g) {
+            let c = canon(x, y);
+            cells.set(key(c.x, c.y, g), true);
+            pending.delete(key(c.x, c.y, g));
             return reader;
         },
-        clearG(x, y, g) {
-            cells.delete(key(x, y, g));
+        
+        clear(x, y, g) {
+            let c = canon(x, y);
+            cells.delete(key(c.x, c.y, g));
+            pending.delete(key(c.x, c.y, g));
+            anchors.delete(key(c.x, c.y, g));
             return reader;
         },
-        markPendingG(x, y, g) {
-            pending.add(key(x, y, g));
+        
+        markUnknown(x, y, g) {
+            let c = canon(x, y);
+            pending.add(key(c.x, c.y, g));
             return reader;
         },
-        addAnchorG(x, y, g) {
-            anchors.add(key(x, y, g));
+        
+        pin(x, y, g) {
+            let c = canon(x, y);
+            anchors.add(key(c.x, c.y, g));
             return reader;
         },
-        fillG(x, y, g0, g1) {
-            for (let g = g0; g <= g1; g++) reader.setG(x, y, g);
+        
+        fillBox(bx0, by0, bg0, bx1, by1, bg1) {
+            for (let x = bx0; x <= bx1; x++) {
+                for (let y = by0; y <= by1; y++) {
+                    for (let g = bg0; g <= bg1; g++) {
+                        reader.set(x, y, g);
+                    }
+                }
+            }
             return reader;
         }
     };
