@@ -878,7 +878,7 @@ function run(argv) {
     }
     if (opts.help) { console.log(USAGE); return 0; }
     for (const m of opts.mutants) active.add(m);
-    const dryRun = opts.dryRun || active.size > 0;
+    const dryRun = opts.dryRun;
     Object.assign(ctx, {
         lane: opts.lane, branch: opts.branch,
         mode: dryRun ? (opts.dryRun ? "dry-run" : "dry-run (forced: mutants active)") : "merge"
