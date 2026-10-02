@@ -494,7 +494,7 @@
             }
             const units = [], cat = catalog() || {};
             for (const p of living) {
-                const site = d.sites[p.siteId], id = personToUnit[p.id], age = d.currentYear - p.born;
+                const site = d.sites[p.siteId], id = personToUnit[p.id], age = Math.max(0, d.currentYear - p.born);
                 const pair = p.partnershipId === null ? null : d.partnerships[p.partnershipId];
                 const spouse = pair && pair.toYear === null ? (pair.motherId === p.id ? pair.fatherId : pair.motherId) : null;
                 const callings = Callings.sampleCallings(site.population, 3, mulberry32(hash32(d.seed, p.id, SALT_CALLINGS)));
@@ -530,7 +530,9 @@
                 const queue = slots.get(p.siteId), cell = queue.cells[queue.next++];
                 if (state.units[id] || state.nextUnitId > id) throw new Error("History: another unit allocator used the reserved historical ID range");
                 state.nextUnitId = id;
+                data.skipStartingGear = true;
                 const unit = W.addUnit({ name: p.name, image, area: site.area, z: site.z, x: cell.x, y: cell.y, exact: true, data });
+                delete unit.data.skipStartingGear;
                 if (unit.id !== id || state.nextUnitId !== id + 1) throw new Error("History: unitAdded listener allocated inside the historical ID range");
                 const Items = window.UF && UF.Items;
                 if (Items && typeof Items.giveFactionStartingKit === "function" && p.factionId === state.factions.playerId) {
@@ -3018,7 +3020,7 @@
             const playerId = F && typeof F.playerId === "function" ? F.playerId() : "player";
             const data = {
                 kind: f.id === playerId ? "colonist" : "person", faction: f.id, species: f.species, ai: "settlement", home: { area: { ...site.area }, x: site.x, y: site.y, z: levelOf(site) }, wander: (site.radius || 4) + 2, site: site.id,
-                founder: true, born: 1 - p.age, age: p.age, stage: stageOf(p.age), gender: p.gender, rank: p.leader ? 1 : 0, superior: null,
+                founder: true, born: (h.startYear !== undefined ? h.startYear : 1) - Math.max(1, p.age), age: Math.max(1, p.age), stage: stageOf(Math.max(1, p.age)), gender: p.gender, rank: p.leader ? 1 : 0, superior: null,
                 variation: q.variation,
                 familyId: p.familyId || null, lineageId: p.lineageId || null, surname: p.surname || null,
                 generation: 1, parents: [], motherId: null, fatherId: null, genetics: null,
