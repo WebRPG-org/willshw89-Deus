@@ -37,7 +37,7 @@ const fromRev = (process.argv.find(a => a.startsWith("--from-rev=")) || "").slic
 const MUTANTS = {
     regenerate_twice: {
         from: "stats.areaGenerations.push({ ax: ax, ay: ay, gen: g, ms: ms }); // WG.00.46 one generation record",
-        to: "stats.areaGenerations.push({ ax: ax, ay: ay, gen: g, ms: ms }); // WG.00.46 one generation record\n        stats.areaGenerations.push({ ax: ax, ay: ay, gen: g, ms: ms });",
+        to: "stats.areaGenerations.push({ ax: ax, ay: ay, gen: g, ms: ms }); // WG.00.46 one generation record\n        const duplicateStarted = performance.now();\n        volumes.clear(); baselines.clear();\n        generateBaseline(st.seed, g, 0, ax, ay, st.size, st);\n        stats.areaGenerations.push({ ax: ax, ay: ay, gen: g, ms: performance.now() - duplicateStarted });",
         checks: ["new_game_3x3_cost_bound", "new_game_3x3_areas_attributed"]
     },
     eager_ensure: {
@@ -74,6 +74,11 @@ const MUTANTS = {
         from: "// WG.00.46 view never gates generation",
         to: "// WG.00.46 view never gates generation\n        if (typeof World().viewLevel === \"function\") { const v = World().viewLevel(); if (v && (v.x !== ax || v.y !== ay)) return null; }",
         checks: ["offscreen_request_generates_area"]
+    },
+    legacy_migration_skipped: {
+        from: "if (anySums || !anyString || mismatch) return false;",
+        to: "if (true) return false;",
+        checks: ["legacy_multi_area_migrates_after_verify"]
     }
 };
 
@@ -494,6 +499,52 @@ function runLegacy() {
         + " one-area areaChecksum equals checksum " + equal);
 }
 
+function runLegacyMigration() {
+    const name = "legacy_multi_area_migrates_after_verify";
+    if (!shouldRun(name)) return;
+    const env = makeEnv(3, LEVELS_PLUGINS);
+    boot(env);
+    const opened = openWorld(env, 18);
+    if (opened.err || !opened.st) { check(name, false, opened.err || "no world"); return; }
+    const legacy = JSON.parse(JSON.stringify(opened.st));
+    const chain = dcChain(18, 3);
+    for (const z of CORE) {
+        const entry = legacy.levels[String(z)];
+        entry.checksum = chain[String(z)];
+        delete entry.areaSums;
+    }
+    env.DataManager.extractSaveContents({ ufWorld: JSON.parse(JSON.stringify(legacy)) });
+    const migrated = env.UF.World.state;
+    const fixture = JSON.parse(fs.readFileSync(AREA_FIXTURE, "utf8"));
+    const frozen = fixture.cases.find(c => c.seed === 18);
+    let sumsMatch = !!frozen;
+    for (const z of CORE) {
+        const sums = migrated.levels[String(z)].areaSums;
+        if (!sums || Object.keys(sums).length !== 9) { sumsMatch = false; continue; }
+        for (const area of frozen.areas) {
+            if (sums[areaKey(area.x, area.y)] !== area.sums[String(z)]) sumsMatch = false;
+        }
+    }
+    const migrationCount = st => (st.migrations || []).filter(m => m && m.rule === "WG.00.46").length;
+    const oneMigration = migrationCount(migrated) === 1;
+    env.DataManager.extractSaveContents({ ufWorld: JSON.parse(JSON.stringify(migrated)) });
+    const stillOne = migrationCount(env.UF.World.state) === 1;
+
+    const bad = JSON.parse(JSON.stringify(legacy));
+    const stored = bad.levels["0"].checksum;
+    bad.levels["0"].checksum = stored.slice(0, 7) + (stored[7] === "0" ? "1" : "0");
+    const warningsBefore = env._warnings.length;
+    env.DataManager.extractSaveContents({ ufWorld: bad });
+    const rejected = env.UF.World.state;
+    const mismatchHeld = rejected.levels["0"].checksum === bad.levels["0"].checksum
+        && rejected.levels["0"].checksumMismatch === true
+        && CORE.every(z => !rejected.levels[String(z)].areaSums)
+        && migrationCount(rejected) === 0 && env._warnings.length > warningsBefore;
+    check(name, sumsMatch && oneMigration && stillOne && mismatchHeld,
+        "frozen area sums " + sumsMatch + " first migration " + oneMigration
+        + " idempotent " + stillOne + " mismatch kept without migration " + mismatchHeld);
+}
+
 function runLoadVisited() {
     const name = "load_generates_visited_areas_only";
     if (!shouldRun(name)) return;
@@ -775,6 +826,7 @@ try {
     runDeferred();
     runOffscreen();
     runLegacy();
+    runLegacyMigration();
     runLoadVisited();
     runFullChecks();
     runLazy();
