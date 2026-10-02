@@ -34,6 +34,12 @@ var $plugins =
     }
   },
   {
+    "name": "DEUS_FlowFields",
+    "status": true,
+    "description": "Flow field pathfinding for crowds",
+    "parameters": {}
+  },
+  {
     "name": "DEUS_Perspective25D",
     "status": true,
     "description": "[DEUS Perspective25D] 2.5D elevation layers, dynamic Z-depth sorting, real-time directional cast shadows, and canopy occlusion.",
