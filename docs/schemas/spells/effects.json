@@ -1122,7 +1122,7 @@
           },
           "ledger": {
             "mode": "none",
-            "downstream": ["source:rain", "sink:evaporation"],
+            "downstream": ["source:magic", "sink:magic"],
             "note": "The spell changes weather state only; rain and evaporation stay the weather system's named source and sink."
           }
         }
