@@ -37,7 +37,6 @@ const faces = [
 console.log(`=== Verifying ${charsets.length} charsets and ${faces.length} face sets ===`);
 
 let artFailCount = 0;
-let origFailCount = 0;
 
 for (const c of charsets) {
   const p = path.join(ROOT, 'game', 'img', 'characters', c);
@@ -50,17 +49,6 @@ for (const c of charsets) {
   } catch (e) {
     console.error(`[FAIL art_check] ${c}: ${e.stdout || e.message}`);
     artFailCount++;
-  }
-
-  try {
-    const res = execSync(`"${process.execPath}" tools/originality_check.js "${p}"`, { encoding: 'utf8' }).trim();
-    if (res.includes('RESULT FAIL')) {
-      console.error(`[FAIL originality] ${c}: ${res}`);
-      origFailCount++;
-    }
-  } catch (e) {
-    console.error(`[FAIL originality] ${c}: ${e.stdout || e.message}`);
-    origFailCount++;
   }
 }
 
@@ -76,21 +64,10 @@ for (const f of faces) {
     console.error(`[FAIL art_check] ${f}: ${e.stdout || e.message}`);
     artFailCount++;
   }
-
-  try {
-    const res = execSync(`"${process.execPath}" tools/originality_check.js "${p}"`, { encoding: 'utf8' }).trim();
-    if (res.includes('RESULT FAIL')) {
-      console.error(`[FAIL originality] ${f}: ${res}`);
-      origFailCount++;
-    }
-  } catch (e) {
-    console.error(`[FAIL originality] ${f}: ${e.stdout || e.message}`);
-    origFailCount++;
-  }
 }
 
-console.log(`Summary: art_check FAILs = ${artFailCount}, originality FAILs = ${origFailCount}`);
-if (artFailCount === 0 && origFailCount === 0) {
+console.log(`Summary: art_check FAILs = ${artFailCount}`);
+if (artFailCount === 0) {
   console.log('ALL 24 ASSETS 100% PASSED AUTOMATED CHECKS!');
 } else {
   process.exit(1);

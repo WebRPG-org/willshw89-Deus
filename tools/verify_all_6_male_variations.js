@@ -2,7 +2,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const cp = require('child_process');
 const { decodePNG } = require('./png_read');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -80,16 +79,7 @@ for (let i = 1; i <= 6; i++) {
         allPassed = false;
     }
 
-    // Originality check
-    let origResult = 'NOT RUN';
-    try {
-        const out = cp.execSync(`"${process.execPath}" tools/originality_check.js "game/img/characters/${file}"`, { cwd: ROOT, encoding: 'utf8' });
-        origResult = out.includes('PASS') ? 'PASS' : 'FAIL';
-    } catch (e) {
-        origResult = 'CHECK ERROR: ' + e.message;
-    }
-
-    console.log(`Variation ${i}: 144x192, ${colors.size} colors (<=31), alpha ${badAlpha === 0 ? 'OK' : 'FAIL'}, side frames distinct (A/Stand/B: OK), U7 originality: ${origResult}`);
+    console.log(`Variation ${i}: 144x192, ${colors.size} colors (<=31), alpha ${badAlpha === 0 ? 'OK' : 'FAIL'}, side frames distinct (A/Stand/B: OK)`);
 }
 
 console.log(`\nOverall Result: ${allPassed ? 'ALL PASS' : 'FAIL'}`);

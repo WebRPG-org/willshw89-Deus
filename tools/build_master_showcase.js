@@ -127,10 +127,6 @@ const html = `<!DOCTYPE html>
           <span class="font-mono text-slate-200 font-bold">144×192 px ($filename.png)</span>
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-slate-400">Originality Check:</span>
-          <span class="text-emerald-400 font-semibold font-mono">6/6 PASS & 7/7 PASS</span>
-        </div>
-        <div class="flex items-center gap-2">
           <span class="text-slate-400">Smoke Tests:</span>
           <span class="text-emerald-400 font-semibold font-mono">13/13 PASS (exit 0)</span>
         </div>

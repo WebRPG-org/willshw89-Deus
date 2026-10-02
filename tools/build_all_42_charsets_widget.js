@@ -116,7 +116,7 @@ const html = `<!DOCTYPE html>
           <span class="px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider bg-purple-950/90 text-purple-300 border border-purple-800/60">100% Nano Banana Pro</span>
         </div>
         <h1 class="text-2xl font-black text-amber-300 mt-2">Adult Male Human — Complete 42-Charset Matrix</h1>
-        <p class="text-slate-400 text-sm mt-1">Serious Chibi (~3.1 heads, 43px tall) • Native baseline y=47 • 12 Sprites / Sheet • U7 Originality: 42/42 PASS • In-Engine Smoke: PASS</p>
+        <p class="text-slate-400 text-sm mt-1">Serious Chibi (~3.1 heads, 43px tall) • Native baseline y=47 • 12 Sprites / Sheet • In-Engine Smoke: PASS</p>
       </div>
       <div class="text-right text-xs text-slate-400">
         <div class="text-emerald-400 font-bold text-base">42 / 42 Charsets Complete</div>

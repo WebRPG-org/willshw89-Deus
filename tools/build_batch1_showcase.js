@@ -103,21 +103,18 @@ const ITEMS_DATA = [
     {
         id: 'firewood',
         name: 'FIREWOOD',
-        dist: '0.481 / 0.468',
         gColors: 32, iColors: 32,
         gDesc: '3 SPLIT BILLETS STACK', iDesc: 'HEMP-TIED WOOD BUNDLE'
     },
     {
         id: 'stone',
         name: 'STONE',
-        dist: '0.397 / 0.400',
         gColors: 17, iColors: 19,
         gDesc: 'QUARRIED ANGULAR BLOCK', iDesc: 'CHISELED STONE CUBE'
     },
     {
         id: 'ore_iron',
         name: 'IRON ORE',
-        dist: '0.470 / 0.423',
         gColors: 32, iColors: 32,
         gDesc: 'ROUGH ROCK W/ RUST VEINS', iDesc: 'JAGGED METALLIC MINERAL'
     }
@@ -134,7 +131,7 @@ for (let idx = 0; idx < ITEMS_DATA.length; idx++) {
 
     // Item title
     drawText(35, curY + 12, `${idx + 1}. ${it.name} (${it.id})`, [255, 225, 120], 2);
-    drawText(350, curY + 16, `ORIGINALITY: PASS (DIST ${it.dist} >= 0.28)  |  PALETTE: ${it.gColors}G / ${it.iColors}I COLORS`, [100, 220, 130], 1);
+    drawText(350, curY + 16, `PALETTE: ${it.gColors}G / ${it.iColors}I COLORS`, [100, 220, 130], 1);
 
     const gMaster = decodePNG(fs.readFileSync(path.join(ROOT, 'art', 'masters', `${it.id}.png`)));
     const iMaster = decodePNG(fs.readFileSync(path.join(ROOT, 'art', 'masters', `${it.id}_icon.png`)));
@@ -269,7 +266,7 @@ for (let idx = 0; idx < ITEMS_DATA.length; idx++) {
 // Bottom Footer
 fillRect(20, H - 55, W - 40, 42, 0x10, 0x1c, 0x16);
 drawRect(20, H - 55, W - 40, 42, 0x16, 0xa3, 0x4a);
-drawText(35, H - 43, "AUTOMATED VERIFICATION: ALL 6 BATCH 1 ASSETS PASS PALETTE, ALPHA & ORIGINALITY CHECKS", [120, 240, 150], 2);
+drawText(35, H - 43, "AUTOMATED VERIFICATION: ALL 6 BATCH 1 ASSETS PASS PALETTE & ALPHA CHECKS", [120, 240, 150], 2);
 drawText(35, H - 25, "DELIVERED IN ART/RAW/ AND ART/MASTERS/ WITH VALID AR-600 SIDECARS", [160, 220, 180], 1);
 
 const outPath = path.join(ROOT, 'art', 'review', 'batch1_items_showcase.png');

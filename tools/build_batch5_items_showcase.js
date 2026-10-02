@@ -103,42 +103,36 @@ const ITEMS_DATA = [
     {
         id: 'meat_raw',
         name: 'RAW MEAT',
-        dist: '0.405 / 0.394',
         gColors: 9, iColors: 9,
         gDesc: 'MARBLED RED STEAK CUT W/ T-BONE', iDesc: 'RAW MEAT STEAK ICON'
     },
     {
         id: 'meat_cooked',
         name: 'COOKED MEAT',
-        dist: '0.438 / 0.409',
         gColors: 11, iColors: 9,
         gDesc: 'SEARED BROWN ROAST CUT W/ CHAR', iDesc: 'COOKED ROAST MEAT ICON'
     },
     {
         id: 'fish',
         name: 'RAW FISH',
-        dist: '0.435 / 0.390',
         gColors: 9, iColors: 7,
         gDesc: 'SILVER-BLUE FRESH RIVER FISH', iDesc: 'FRESH FISH ICON'
     },
     {
         id: 'hide',
         name: 'ANIMAL HIDE',
-        dist: '0.452 / 0.405',
         gColors: 7, iColors: 5,
         gDesc: 'TANNED LEATHER PELT W/ FUR', iDesc: 'CURING ANIMAL HIDE ICON'
     },
     {
         id: 'bone',
         name: 'ANIMAL BONE',
-        dist: '0.554 / 0.500',
         gColors: 7, iColors: 6,
         gDesc: 'CLEFT MARROW BONE W/ JOINTS', iDesc: 'CRAFTING BONE ICON'
     },
     {
         id: 'wool',
         name: 'SHEEP WOOL',
-        dist: '0.453 / 0.416',
         gColors: 9, iColors: 8,
         gDesc: 'TIED BALE OF CRIMPED FLEECE', iDesc: 'SPINNING WOOL BALE ICON'
     }
@@ -155,7 +149,7 @@ for (let idx = 0; idx < ITEMS_DATA.length; idx++) {
 
     // Item title
     drawText(35, curY + 12, `${idx + 1}. ${it.name} (${it.id})`, [255, 225, 120], 2);
-    drawText(350, curY + 16, `ORIGINALITY: PASS (DIST ${it.dist} >= 0.28)  |  PALETTE: ${it.gColors}G / ${it.iColors}I COLORS`, [100, 220, 130], 1);
+    drawText(350, curY + 16, `PALETTE: ${it.gColors}G / ${it.iColors}I COLORS`, [100, 220, 130], 1);
 
     const gMaster = decodePNG(fs.readFileSync(path.join(ROOT, 'art', 'masters', `${it.id}.png`)));
     const iMaster = decodePNG(fs.readFileSync(path.join(ROOT, 'art', 'masters', `${it.id}_icon.png`)));
@@ -289,7 +283,7 @@ for (let idx = 0; idx < ITEMS_DATA.length; idx++) {
 // Bottom Footer
 fillRect(20, H - 55, W - 40, 42, 0x10, 0x1c, 0x16);
 drawRect(20, H - 55, W - 40, 42, 0x16, 0xa3, 0x4a);
-drawText(35, H - 43, "AUTOMATED VERIFICATION: ALL 12 BATCH 5 ASSETS PASS PALETTE, ALPHA & ORIGINALITY CHECKS", [120, 240, 150], 2);
+drawText(35, H - 43, "AUTOMATED VERIFICATION: ALL 12 BATCH 5 ASSETS PASS PALETTE & ALPHA CHECKS", [120, 240, 150], 2);
 drawText(35, H - 25, "DELIVERED IN ART/RAW/, ART/MASTERS/, AND GAME/IMG/CHARACTERS/ WITH VALID AR-600 SIDECARS", [160, 220, 180], 1);
 
 const outPath = path.join(ROOT, 'art', 'review', 'batch5_items_showcase.png');

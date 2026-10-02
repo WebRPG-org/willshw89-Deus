@@ -26,7 +26,7 @@ const faceSets = [
 let failed = 0;
 let passed = 0;
 
-console.log('=== Verifying Batch 6 Character Sheets (art_check & originality_check) ===');
+
 for (const file of charsets) {
     const fullPath = path.join(ROOT, 'game', 'img', 'characters', file);
     if (!fs.existsSync(fullPath)) {
@@ -35,7 +35,7 @@ for (const file of charsets) {
         continue;
     }
     try {
-        const artOut = execSync(`"${NODE}" tools/art_check.js "${fullPath}"`, { encoding: 'utf8' });
+        execSync(`"${NODE}" tools/art_check.js "${fullPath}"`, { encoding: 'utf8' });
         console.log(`[PASS art_check] ${file}`);
         passed++;
     } catch (err) {
@@ -43,17 +43,9 @@ for (const file of charsets) {
         failed++;
     }
 
-    try {
-        const origOut = execSync(`"${NODE}" tools/originality_check.js "${fullPath}"`, { encoding: 'utf8' });
-        console.log(`[PASS originality_check] ${file}`);
-        passed++;
-    } catch (err) {
-        console.error(`[FAIL originality_check] ${file}:\n`, err.stdout || err.message);
-        failed++;
-    }
 }
 
-console.log('\n=== Verifying Batch 6 Face Sets (art_check & originality_check) ===');
+
 for (const file of faceSets) {
     const fullPath = path.join(ROOT, 'game', 'img', 'faces', file);
     if (!fs.existsSync(fullPath)) {
@@ -62,7 +54,7 @@ for (const file of faceSets) {
         continue;
     }
     try {
-        const artOut = execSync(`"${NODE}" tools/art_check.js "${fullPath}"`, { encoding: 'utf8' });
+        execSync(`"${NODE}" tools/art_check.js "${fullPath}"`, { encoding: 'utf8' });
         console.log(`[PASS art_check] ${file}`);
         passed++;
     } catch (err) {
@@ -70,14 +62,6 @@ for (const file of faceSets) {
         failed++;
     }
 
-    try {
-        const origOut = execSync(`"${NODE}" tools/originality_check.js "${fullPath}"`, { encoding: 'utf8' });
-        console.log(`[PASS originality_check] ${file}`);
-        passed++;
-    } catch (err) {
-        console.error(`[FAIL originality_check] ${file}:\n`, err.stdout || err.message);
-        failed++;
-    }
 }
 
 console.log(`\nVerification Summary: ${passed} PASS, ${failed} FAIL`);

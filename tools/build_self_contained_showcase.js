@@ -82,7 +82,6 @@ ${suiteData.map((s, idx) => `
     <div class="stage">
       <div id="anim_${idx}" class="sprite" style="background-image: url('data:image/png;base64,${s.b64}'); background-position: 0px 0px;"></div>
     </div>
-    <div><span class="badge badge-pass">U7 ORIGINALITY: PASS (>=0.28)</span></div>
     <img src="data:image/png;base64,${s.b64}" class="sheet-preview" alt="${s.name} Sheet">
     <div class="desc">${s.desc}</div>
   </div>

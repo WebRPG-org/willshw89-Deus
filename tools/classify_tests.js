@@ -3,7 +3,7 @@
 // Classifies all scripts in tools/ into authoritative operational categories:
 // - HEADLESS_AUTOMATED: Headless node unit/proof suites (runnable in CI)
 // - PLAYTEST_IN_GAME: Live RMMZ browser / canvas / WebGL visual tests
-// - ART_PIPELINE: Nano Banana Pro, palette, sprite packing & originality checks
+// - ART_PIPELINE: Nano Banana Pro, palette, sprite packing
 // - UTILITY_TOOL: CLI tools, generators, benchmarks, audit harnesses
 // - LEGACY_OR_STALE: Deprecated or retired test scripts
 //=============================================================================
@@ -31,7 +31,7 @@ for (const file of files) {
     // Classification heuristics
     if (file.startsWith("bench_") || file.startsWith("benchmark_") || file === "health_audit.js" || file === "classify_tests.js" || file === "generate_asset_inventory.js" || file === "add_test_plugin.js" || file === "register_world_plugins.js") {
         categories.UTILITY_TOOL.push({ file, reason: "Diagnostic, benchmark, or build utility" });
-    } else if (file.includes("sprite") || file.includes("palette") || file.includes("originality") || file.includes("quantize") || file.includes("atlas") || file.includes("color_map") || file.includes("render_sheet") || file.includes("clean_sheet")) {
+    } else if (file.includes("sprite") || file.includes("palette") || file.includes("quantize") || file.includes("atlas") || file.includes("color_map") || file.includes("render_sheet") || file.includes("clean_sheet")) {
         categories.ART_PIPELINE.push({ file, reason: "Art pipeline / image processing tool" });
     } else if (content.includes("puppeteer") || content.includes("chrome-launcher") || content.includes("headless: false") || file.includes("live") || file.includes("playtest") || file.includes("screenshot") || content.includes("nw.Window")) {
         categories.PLAYTEST_IN_GAME.push({ file, reason: "Requires live RMMZ / browser environment" });

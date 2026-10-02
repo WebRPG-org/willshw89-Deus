@@ -58,21 +58,7 @@ for (const s of SUITES) {
     }
 }
 
-// 2. Run Originality Check
-console.log('\n--- Running U7 Originality Checks ---');
-for (const s of SUITES) {
-    const rel = `game/img/characters/${s.file}`;
-    try {
-        const out = cp.execFileSync('C:/Program Files/nodejs/node.exe', ['tools/originality_check.js', rel], {
-            cwd: ROOT,
-            encoding: 'utf8'
-        });
-        const passLine = out.split('\n').find(l => l.includes('RESULT PASS'));
-        console.log(`PASS ${s.name.padEnd(8)}: ${passLine.trim()}`);
-    } catch (e) {
-        console.error(`FAIL ${s.name.padEnd(8)}: originality check failed`, e.stdout || e.message);
-    }
-}
+
 
 // 3. Render Master 7-Action Review Board (1320 x 860)
 console.log('\n--- Rendering Master Review Board ---');
@@ -283,7 +269,6 @@ ${SUITES.map((s, idx) => `
     <div class="stage">
       <div id="anim_${idx}" class="sprite" style="background-image: url('game/img/characters/${s.file}'); background-position: 0px 0px;"></div>
     </div>
-    <div><span class="badge badge-pass">U7 ORIGINALITY: PASS</span></div>
     <img src="game/img/characters/${s.file}" class="sheet-preview" alt="${s.name} Sheet">
     <div class="desc">
       ${s.name === 'Walk' ? 'Master reference walk sheet. 4 facings (Down, Left, Right, Up), 3 animation columns.' :

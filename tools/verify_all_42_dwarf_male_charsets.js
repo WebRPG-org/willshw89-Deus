@@ -10,7 +10,6 @@
  * - Binary transparency (alpha 0 or 255 only)
  * - Max colors <= 31 per sheet
  * - Grounded at native baseline y = 47 in 48x48 cells
- * - Ultima VII originality check (> 0.28)
  */
 
 const fs = require('fs');

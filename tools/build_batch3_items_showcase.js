@@ -103,28 +103,24 @@ const ITEMS_DATA = [
     {
         id: 'bar_iron',
         name: 'IRON BAR',
-        dist: '0.366 / 0.302',
         gColors: 7, iColors: 7,
         gDesc: 'CAST INGOT W/ MOULD SEAM', iDesc: 'CHAMFERED IRON INGOT'
     },
     {
         id: 'berries',
         name: 'BERRIES',
-        dist: '0.519 / 0.414',
         gColors: 8, iColors: 6,
         gDesc: 'WILD RED BERRIES & TWIG LEAVES', iDesc: 'BERRY HEAP ICON'
     },
     {
         id: 'fruit',
         name: 'TREE FRUIT',
-        dist: '0.459 / 0.412',
         gColors: 9, iColors: 9,
         gDesc: 'ORANGE GLOBE W/ STEM & LEAF', iDesc: 'ORCHARD FRUIT ICON'
     },
     {
         id: 'straw',
         name: 'STRAW SHEAF',
-        dist: '0.472 / 0.508',
         gColors: 9, iColors: 7,
         gDesc: 'BOUND GOLDEN GRAIN SHEAF', iDesc: 'TIED STRAW BUNDLE'
     }
@@ -141,7 +137,7 @@ for (let idx = 0; idx < ITEMS_DATA.length; idx++) {
 
     // Item title
     drawText(35, curY + 12, `${idx + 1}. ${it.name} (${it.id})`, [255, 225, 120], 2);
-    drawText(350, curY + 16, `ORIGINALITY: PASS (DIST ${it.dist} >= 0.28)  |  PALETTE: ${it.gColors}G / ${it.iColors}I COLORS`, [100, 220, 130], 1);
+    drawText(350, curY + 16, `PALETTE: ${it.gColors}G / ${it.iColors}I COLORS`, [100, 220, 130], 1);
 
     const gMaster = decodePNG(fs.readFileSync(path.join(ROOT, 'art', 'masters', `${it.id}.png`)));
     const iMaster = decodePNG(fs.readFileSync(path.join(ROOT, 'art', 'masters', `${it.id}_icon.png`)));
@@ -275,7 +271,7 @@ for (let idx = 0; idx < ITEMS_DATA.length; idx++) {
 // Bottom Footer
 fillRect(20, H - 55, W - 40, 42, 0x10, 0x1c, 0x16);
 drawRect(20, H - 55, W - 40, 42, 0x16, 0xa3, 0x4a);
-drawText(35, H - 43, "AUTOMATED VERIFICATION: ALL 8 BATCH 3 ASSETS PASS PALETTE, ALPHA & ORIGINALITY CHECKS", [120, 240, 150], 2);
+drawText(35, H - 43, "AUTOMATED VERIFICATION: ALL 8 BATCH 3 ASSETS PASS PALETTE & ALPHA CHECKS", [120, 240, 150], 2);
 drawText(35, H - 25, "DELIVERED IN ART/RAW/ AND ART/MASTERS/ WITH VALID AR-600 SIDECARS", [160, 220, 180], 1);
 
 const outPath = path.join(ROOT, 'art', 'review', 'batch3_items_showcase.png');

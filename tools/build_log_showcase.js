@@ -192,7 +192,6 @@ drawRect(r1X - 1, r1Y - 1, 167, 194, 0x8b, 0x5c, 0xf6);
 // Metrics footer for ground item
 drawText(p1X + 15, p1Y + 335, "SPECS: ANCHOR [24, 47] | FOOTPRINT 1X1", [180, 200, 220], 1);
 drawText(p1X + 15, p1Y + 350, "PALETTE: 29/32 COLORS SNAPPED TO UF.HEX", [180, 200, 220], 1);
-drawText(p1X + 15, p1Y + 365, "ORIGINALITY: PASS (DIST 0.383 >= 0.28)", [100, 220, 130], 1);
 drawText(p1X + 15, p1Y + 380, "DELIVERY: ART/RAW/LOG.PNG + ART/MASTERS/LOG.PNG", [150, 160, 180], 1);
 
 // 3. Right Panel: Inventory Icon (log_icon.png)
@@ -253,13 +252,12 @@ drawRect(rIconX - 1, rIconY - 1, 130, 130, 0x8b, 0x5c, 0xf6);
 // Metrics footer for icon
 drawText(p2X + 15, p2Y + 335, "SPECS: 32X32 GRID | ANCHOR [16, 31]", [180, 200, 220], 1);
 drawText(p2X + 15, p2Y + 350, "PALETTE: 32/32 COLORS SNAPPED TO UF.HEX", [180, 200, 220], 1);
-drawText(p2X + 15, p2Y + 365, "ORIGINALITY: PASS (DIST 0.412 >= 0.28)", [100, 220, 130], 1);
 drawText(p2X + 15, p2Y + 380, "DELIVERY: ART/RAW/LOG_ICON.PNG + ART/MASTERS/LOG_ICON.PNG", [150, 160, 180], 1);
 
 // 4. Bottom Footer: Verification status
 fillRect(20, 520, W - 40, 42, 0x10, 0x1c, 0x16);
 drawRect(20, 520, W - 40, 42, 0x16, 0xa3, 0x4a);
-drawText(35, 532, "AUTOMATED VERIFICATION: ALL ART STANDARD AND ORIGINALITY CHECKS PASS", [120, 240, 150], 2);
+drawText(35, 532, "AUTOMATED VERIFICATION: ALL ART STANDARD CHECKS PASS", [120, 240, 150], 2);
 drawText(35, 550, "READY FOR ART DIRECTOR APPROVAL PER RULE 6 & 13 BEFORE PROCEEDING TO BATCH 1", [160, 220, 180], 1);
 
 const outShowcasePath = path.join(ROOT, 'art', 'review', 'log_first_asset_showcase.png');

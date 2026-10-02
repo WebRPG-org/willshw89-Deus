@@ -1,0 +1,74 @@
+{
+  "lane": "lane-gl",
+  "taskId": "OPS.ORIG.DELETE",
+  "branch": "task/lane-gl",
+  "writer": "codex",
+  "reviewer": "grok",
+  "push": true,
+  "allowedPaths": [
+    "docs/systems/ORIGINALITY_CHECK.md",
+    "tools/build_all_42_dwarf_male_showcase.js",
+    "tools/build_female_settler_walk.js",
+    "tools/build_interactive_walker_html.js",
+    "tools/check_furniture_originality.js",
+    "tools/export_u7_style_dataset.js",
+    "tools/make_25d.js",
+    "tools/ops/quarantine.json",
+    "tools/originality_check.js",
+    "tools/process_batch2_plants.js",
+    "tools/process_nano_banana_female_settler.js",
+    "tools/test_all_object_charsets.js",
+    "tools/test_no_originality_check.js",
+    "tools/test_object_art.js",
+    "tools/test_object_originality.js",
+    "tools/test_var2_suite.js",
+    "tools/test_var_suite.js",
+    "tools/verify_all_42_female_charsets.js",
+    "tools/verify_all_42_male_charsets.js",
+    "tools/verify_all_6_male_variations.js",
+    "tools/verify_all_face_deliveries.js",
+    "tools/verify_batch3_assets.js",
+    "tools/verify_batch4_assets.js",
+    "tools/verify_batch6_assets.js",
+    "tools/verify_biome_assets.js",
+    "tools/verify_human_male_suite.js",
+    "tools/verify_nature_and_cursors.js",
+    "tools/build_all_42_charsets_widget.js",
+    "tools/build_batch1_showcase.js",
+    "tools/build_batch2_items_showcase.js",
+    "tools/build_batch3_items_showcase.js",
+    "tools/build_batch4_items_showcase.js",
+    "tools/build_batch5_items_showcase.js",
+    "tools/build_batch6_items_showcase.js",
+    "tools/build_female_42_charsets_widget.js",
+    "tools/build_ff5_architecture_showcase.js",
+    "tools/build_generator_prompts.js",
+    "tools/build_human_male_showcase_widget.js",
+    "tools/build_ingame_widget.js",
+    "tools/build_log_showcase.js",
+    "tools/build_male_variations_widget.js",
+    "tools/build_master_showcase.js",
+    "tools/build_self_contained_showcase.js",
+    "tools/build_serious_chibi_comparison.js",
+    "tools/classify_tests.js",
+    "tools/process_camp_assets.js",
+    "tools/verify_all_42_dwarf_male_charsets.js",
+    "tasks/OPS.ORIG.DELETE/lane-gl/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_no_originality_check.js"
+      ],
+      "timeoutSec": 600
+    }
+  ]
+}

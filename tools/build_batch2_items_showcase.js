@@ -103,28 +103,24 @@ const ITEMS_DATA = [
     {
         id: 'ore_copper',
         name: 'COPPER ORE',
-        dist: '0.422 / 0.343',
         gColors: 9, iColors: 9,
         gDesc: 'MALACHITE BLOOM & COPPER GLINT', iDesc: 'CRUSTED ORE ICON'
     },
     {
         id: 'gold',
         name: 'GOLD NUGGET',
-        dist: '0.470 / 0.402',
         gColors: 7, iColors: 7,
         gDesc: 'TWO-LOBED NUGGET W/ LOOSE GRAINS', iDesc: 'POLISHED GOLD NUGGET'
     },
     {
         id: 'gem_rough',
         name: 'ROUGH GEM',
-        dist: '0.422 / 0.399',
         gColors: 8, iColors: 8,
         gDesc: 'BROKEN CRYSTAL W/ HOST ROCK RIND', iDesc: 'RAW BLUE CRYSTAL'
     },
     {
         id: 'gem_cut',
         name: 'CUT GEM',
-        dist: '0.504 / 0.449',
         gColors: 8, iColors: 8,
         gDesc: 'FACETED POINT-CUT BRILLIANT GEM', iDesc: 'STAR-FACETED BLUE GEM'
     }
@@ -141,7 +137,7 @@ for (let idx = 0; idx < ITEMS_DATA.length; idx++) {
 
     // Item title
     drawText(35, curY + 12, `${idx + 1}. ${it.name} (${it.id})`, [255, 225, 120], 2);
-    drawText(350, curY + 16, `ORIGINALITY: PASS (DIST ${it.dist} >= 0.28)  |  PALETTE: ${it.gColors}G / ${it.iColors}I COLORS`, [100, 220, 130], 1);
+    drawText(350, curY + 16, `PALETTE: ${it.gColors}G / ${it.iColors}I COLORS`, [100, 220, 130], 1);
 
     const gMaster = decodePNG(fs.readFileSync(path.join(ROOT, 'art', 'masters', `${it.id}.png`)));
     const iMaster = decodePNG(fs.readFileSync(path.join(ROOT, 'art', 'masters', `${it.id}_icon.png`)));
@@ -275,7 +271,7 @@ for (let idx = 0; idx < ITEMS_DATA.length; idx++) {
 // Bottom Footer
 fillRect(20, H - 55, W - 40, 42, 0x10, 0x1c, 0x16);
 drawRect(20, H - 55, W - 40, 42, 0x16, 0xa3, 0x4a);
-drawText(35, H - 43, "AUTOMATED VERIFICATION: ALL 8 BATCH 2 ASSETS PASS PALETTE, ALPHA & ORIGINALITY CHECKS", [120, 240, 150], 2);
+drawText(35, H - 43, "AUTOMATED VERIFICATION: ALL 8 BATCH 2 ASSETS PASS PALETTE & ALPHA CHECKS", [120, 240, 150], 2);
 drawText(35, H - 25, "DELIVERED IN ART/RAW/ AND ART/MASTERS/ WITH VALID AR-600 SIDECARS", [160, 220, 180], 1);
 
 const outPath = path.join(ROOT, 'art', 'review', 'batch2_items_showcase.png');
