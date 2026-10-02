@@ -1431,3 +1431,4 @@ Every decision item recorded in this log must provide:
 - **DEC-097 (2026-10-02):** The Owner explicitly approved WBS Phase 4 Architecture, Loading, and Efficiency (WG.ARCH.01, WG.ARCH.02, WG.ARCH.03). Modifying PIXI asset loaders and JSON save mechanics in the engine is authorized.
 - **DEC-098 (2026-10-02):** The Owner explicitly approved WBS Phase 5 Ecology and Economy (WG.ECON.01, WG.ECO.01, WG.ECO.02). Creating new simulation modules for economy and cellular automata is authorized.
 - **DEC-099 (2026-10-02):** The Owner explicitly approved WBS Phase 6 Rendering Optimizations (WG.RENDER.01, WG.RENDER.02). Creating new WebGL lighting and PIXI culling modules is authorized.
+- **DEC-100 (2026-10-02):** The Owner explicitly REJECTED the Ecology and Economy simulation concepts (Victoria 3 market, L-Systems, Cellular Automata fluids). They are considered bloat and violate the DEC-037 Phase Lock. WBS Phase 5 is cancelled.
