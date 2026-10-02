@@ -448,11 +448,12 @@
         hp[0] = 255;
         return L.setStrata(r, { m, hp }, { cause: cause || "floors:slab" });
     }
-    // A floor laid where the cell's own S0 is the block: every level but the ground, and a hole in the ground.
+    // A floor is a new S0 slab where the cell's S0 is not solid (open air, a shaft, a hole in the ground). Off the ground a
+    // cell that is not a slab place already has its floor; on the ground it is an A2 ground kind (setGround).
     function slabAt(area, x, y) {
-        if (zOf(area) !== 0) return true;
-        const st = inBounds(area, x, y) ? strataOf({ area: { x: area.x, y: area.y }, x, y, z: 0 }) : null;
-        return !!st && st.materials[0] === "air";
+        const st = inBounds(area, x, y) ? strataOf({ area: { x: area.x, y: area.y }, x, y, z: zOf(area) }) : null;
+        if (!st) return zOf(area) !== 0;
+        return !(SOLID_KEYS.includes(st.materials[0]) && st.hp[0] > 0);
     }
 
     const Rooms = { MAX_ROOM_CELLS, MAX_ROOM_GAPS, roomAt, value: roomValue, invalidate, isRoofed, hasOpaqueOverburden, applyRoofedUpperDeck };
