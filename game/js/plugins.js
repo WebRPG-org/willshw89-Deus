@@ -298,4 +298,5 @@ var $plugins =
     "description": "[DEUS Test] Automated test harness: PASS/FAIL test suites, screenshot verification, and performance benchmarks.",
     "parameters": {}
   }
+    ,{"name":"DEUS_CellularFluids","status":true,"description":"Cellular Automata Fluid Dynamics Engine","parameters":{}}
 ];
