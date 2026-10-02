@@ -22,21 +22,21 @@ Designs this stays consistent with, and the places they disagree, are listed at 
 | `game/data/sim/README.md` | Units, the half-height conversion, how to call the reader. |
 | `game/js/sim/materials.js` | `createMaterials` / `validate`. No host global, no clock, no random numbers, no file loading. |
 
-`node tools/sim/test_materials.js` reads the data, checks conservation, and kills mutants. `node tools/sim/test_ledger.js` is unchanged by this package.
+`node tools/sim/test_materials.js` reads the data, checks conservation, and kills mutants. `node tools/sim/test_ledger.js` checks the ledger vocabulary.
 
 ## Mass unit
 
-`ledger_defaults.js` lines 9-10 name `mu` and leave its size to SIM.40.00 / SIM.40.01. The catalogue proposes **1 mu = 1 g** (`proposalMuPerKg` 1000) with status `PM_DEFAULT_UNCONFIRMED` and `confirmed: false`.
+The current ledger and catalogue use integer centipounds (`cp`), with one cp equal to 1/100 lb (DEC-038). `kgPerSlice` keeps the rounded design kilogram figure; `cpPerStratum` is `kgToCp(kgPerSlice)` from `game/js/sim/units.js`. The `mu` and `du` names in historical disagreement text below describe the pre-conversion contract and are not current ledger units.
 
-Lane Q's published figures are integer kilograms (SIM.40.01 §1 and §2.3). For every family except water, each of those kilograms is stored as `kgPerSlice` and as `massPerSlice = kgPerSlice * 1000`. The water family is the ledger's du, not mu (`D-WATER-DU`). Lane R's 1/16 lb and Lane W's grams are the other options for mu. None of the three is confirmed. Choosing a different mu size means multiplying every mu mass by one constant and re-checking that alloy totals still divide by the ledger composition denominator (electrum's denominator is 2). The safe-integer headroom of that choice is an open question in the lane report. It is not decided here.
+The water family also uses cp. A full 5×5×2-ft water stratum is 312,000 cp. The earlier `D-MU-UNIT` and `D-WATER-DU` disagreements are retained as historical provenance in the JSON, not as active unit proposals.
 
 Catalogue items that already have a `weight` field store `catalogWeightTimes1000` and use that as `massMu`. The field has no unit in the catalogue. Treating it as kilograms is part of the unconfirmed proposal: a longsword at 1.4 lines up with the SRD's 3 lb, and the gram proposal makes every published weight an integer. Items with no weight use a PM-default carried mass, documented on the row (`massStatus` `PM_DEFAULT`).
 
 ## Slice mass
 
-Rounding is SIM.40.01 §2.3, one rule. A slice is 50 ft³. The foot is 304.8 mm. Density in kg/m³ times that volume rounds to the nearest integer kilogram, halves upward. Fills and loose fractions multiply that integer and round once. The reader checks `massPerSlice` against `kgPerSlice * proposalMuPerKg`, and it checks loose bulk (`rubble` is 3/5 of the parent kilogram, `scrap` is 1/4) the same way.
+Rounding is SIM.40.01 §2.3, one rule. A slice is 50 ft³. The foot is 304.8 mm. Density in kg/m³ times that volume rounds to the nearest integer kilogram, halves upward. The importer checks the cp conversion and exact posting sums; fills and loose splits apportion existing cp rather than converting every fragment independently.
 
-Examples that match the Lane Q table: granite 3,894 kg, limestone 3,256 kg, oak 1,062 kg, masonry 977 kg, timber wall (oak) 266 kg, iron grate 111 kg. Ice's ledger amount is 1 du. Its support load is 1,011 kg and is not posted. Species timber scales the oak assembly kilogram by the species density over oak's 750 kg/m³ and rounds once. The oak row is what `massOf` returns; `speciesScale` holds the others.
+Examples that match the Lane Q table: granite 3,894 kg, limestone 3,256 kg, oak 1,062 kg, masonry 977 kg, timber wall (oak) 266 kg, iron grate 111 kg. Ice's ledger amount is 312,000 cp. Its support load is 1,011 kg and is not posted. Species timber scales the oak assembly kilogram by the species density over oak's 750 kg/m³ and rounds once. The oak row is what `massOf` returns; `speciesScale` holds the others.
 
 Strata ids follow SIM.40.01 §2.7. Ids 0-63 only. Ids 38-42 are the five ore hosts with `massPerSlice` null and status `OWNER_OPEN` because vein grade is not set. Ids 43-47 are reserved the same way. Id 15 (snow) and id 31 (stairs) are reserved placeholders. Wood species other than the generic trunk (id 3, oak density) are records without a strata id, because the 6-bit id space is the one Lane Q fixed.
 
@@ -46,9 +46,19 @@ Each matter record names a class and family from `ledger_defaults.js`, or an int
 
 Constructed voxels are ledger form `object` (the built flag). Natural rock and soil are `strata`. Loose rubble, sediment, ash, charcoal and humus are `strata`. Metal classes have no strata form, so scrap and a solid metal reference voxel are form `item` (LEDGER_API §10). Soil has no object form, so an earth prop is booked as `strata`. Gem objects move with `unset` (object to item). Gem `mine` is strata to item only.
 
+Obsidian and peridotite are natural `stone|strata` rows, with strataIds 55
+and 54 respectively. Their densities are PM defaults: 2,400 and 3,300 kg/m³.
+The 50-ft³ slice formula gives 3,398 kg / 749,131 cp for obsidian and
+4,672 kg / 1,030,000 cp for peridotite. Each row's `yield` and `collapse`
+postings close exactly in cp, with basalt's support, porosity and blast group
+as the PM-default template. Obsidian is the quench output material: the ledger
+uses the existing `solidify` move from `lava|fluid` to `stone|strata`.
+No new `quench` ledger row is defined, and this lane does not implement the
+quench caller.
+
 A posting names a ledger transform row (`quarry`, `break`, `chop`, `salvage`, `dig`, `pick`, `mine`, `smelt`, `harvest`, `litter`, `rot`, `unset`) with from-class, from-form, to-class and to-form. `identity` is a same-class stay, used where the ledger has no row because the mass is already in its resting form. `validate` refuses a named process the ledger does not list.
 
-Yield and collapse are alternative paths. Amounts taken from the original source sum to the source. A later step may move that same amount (an outcrop is mined, then smelted). Families still match after the list, so a stone slice that becomes stone items plus rubble spoil stays in `mineral`, and a timber slice that becomes wood items stays in `organic`. Water postings carry du. The two paths are not added.
+Yield and collapse are alternative paths. Amounts taken from the original source sum to the source. A later step may move that same amount (an outcrop is mined, then smelted). Families still match after the list, so a stone slice that becomes stone items plus rubble spoil stays in `mineral`, and a timber slice that becomes wood items stays in `organic`. Water postings carry cp. The two paths are not added.
 
 Combustion of organics is a per-mille split of ash and charcoal that sums to 1000. The ledger burn rows keep both in `organic` and have no gas sink, so the Lane R gas fraction is retained as charcoal (`applied: false` on the Lane R numbers, `D-FIRE-SINK`). Charcoal itself burns entirely to ash.
 
@@ -73,7 +83,7 @@ Decay classes and the life tables are SIM.40.05, stored as milli-years of simula
 
 Bone is `biomass` because the ledger has no bone class (`D-BONE`). Tin and the tin share of bronze (Lane Q's example 120/1000) are `unmapped` with element `sn` (`D-TIN`). They are not given a stand-in family. Glass, ceramic, lead and the special metals are the same kind of gap: decay-class keys exist for glass, ceramic and stone items, and there is no mass row pretending they are stone.
 
-Lava's ledger unit is mu, because class `lava` is family `mineral`. `muPerDu` converts the fluid hook's du. Solidification keeps the Lane Q ratio: 2 du × 2,053 kg = one basalt slice of 4,106 kg. A leftover du is 2,053 kg of basalt-lineage rubble. The kilogram ratio is `PM_DEFAULT`. The mu figure scales with the unconfirmed proposal.
+Lava is booked in cp as class `lava` in family `mineral`. The existing `solidify` move transfers lava fluid to stone strata without changing that family. The caller chooses the exact basalt or obsidian material row and cp amount; this lane adds the obsidian row but does not implement the caller.
 
 ## Items and objects
 
@@ -96,13 +106,13 @@ const { createMaterials } = require("./game/js/sim/materials.js");
 const ledgerDefaults = require("./game/js/sim/ledger_defaults.js");
 const api = createMaterials({ catalogue, masses, interactions });
 api.validate({ catalogue, masses, interactions }, ledgerDefaults); // array of "CODE: where"
-api.massOf("granite", "strata", 1);   // mu of one slice
-api.massOf("ice", "strata", 1);       // 1 du, not the 1,011 kg support load
+api.massOf("granite", "strata", 1);   // cp of one slice
+api.massOf("ice", "strata", 1);       // 312,000 cp, not the 1,011 kg support load
 api.massOf("log", "item", 4);
 api.massOf("wall_stone", "object", 1);
 api.yieldOf("granite");
 api.reclaimTarget("iron");            // fe_trace
-api.billOfMaterials("wall_stone");    // lines sum to elementMu
+api.billOfMaterials("wall_stone");    // lines sum to elementCp
 api.checksum();                       // stable across two loads
 ```
 

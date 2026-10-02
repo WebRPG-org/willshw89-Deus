@@ -266,10 +266,100 @@ function suite(L, D) {
             ok(!c.ore, "source " + n + " allows ore " + k);
             ok(!c.finite, "source " + n + " allows finite " + k);
         }
-        ok(d.sinks["world-edge"].allowed.indexOf("fe_ore|strata") >= 0, "sinks may remove ore");
-        for (const n of ["magic", "world-edge", "debug-explicit"]) { ok(d.sources[n], "source " + n + " missing"); ok(d.sinks[n], "sink " + n + " missing"); }
-        same(d.sources.rain.allowed, ["water|fluid"], "rain scope");
-        same(d.sinks.evaporation.allowed, ["water|fluid"], "evaporation scope");
+        ok(d.sinks.magic.allowed.indexOf("fe_ore|strata") >= 0, "declared sinks may remove ore");
+        for (const n of ["magic", "debug-explicit", "legacy-levels-write"]) { ok(d.sources[n], "source " + n + " missing"); ok(d.sinks[n], "sink " + n + " missing"); }
+    });
+    T("no_deletion_sink_conserved", () => {
+        const d = L.createLedger().describe();
+        const escape = new Set(["magic", "debug-explicit", "legacy-levels-write"]);
+        const conserved = new Set(["mineral", "water", "fe", "cu", "ag", "au", "pt", "gem"]);
+        for (const [name, row] of Object.entries(d.sinks)) {
+            if (row.allowed.some(key => Object.keys(d.classes[key.split("|")[0]].composition).some(f => conserved.has(f))))
+                ok(escape.has(name), "undeclared conserved sink " + name);
+        }
+        for (const name of escape) for (const row of [d.sources[name], d.sinks[name]]) {
+            ok(row, "missing declared escape " + name);
+            eq(row.ownerConfirmed, false, name + " ownerConfirmed");
+            ok(typeof row.authority === "string" && row.authority.length > 10, name + " authority");
+        }
+    });
+    T("wrapped_world_has_no_edge", () => {
+        const d = L.createLedger().describe();
+        ok(!d.sources["world-edge"] && !d.sinks["world-edge"], "world-edge remains");
+        ok(!d.sources.rain && !d.sinks.evaporation, "unaccounted weather source or sink remains");
+    });
+    T("legacy_write_source_is_unconfirmed", () => {
+        const l = L.createLedger(), d = l.describe();
+        for (const kind of ["source", "sink"]) {
+            const row = kind === "source" ? d.sources["legacy-levels-write"] : d.sinks["legacy-levels-write"];
+            ok(row && row.allowed.includes("water|fluid") && row.allowed.includes("stone|strata"), kind + " legacy scope");
+            ok(!row.allowed.includes("fe_ore|strata") && !row.allowed.includes("gem|strata"), kind + " finite scope");
+        }
+        const u = l.unconfirmed().map(x => x.kind + ":" + x.name);
+        ok(u.includes("source:legacy-levels-write") && u.includes("sink:legacy-levels-write"), "unconfirmed legacy writer");
+    });
+    T("holding_is_fluid_only", () => {
+        const d = L.createLedger().describe();
+        ok(d.forms.includes("holding"), "holding form missing");
+        for (const [name, row] of Object.entries(d.classes))
+            eq(row.forms.includes("holding"), name === "water" || name === "lava", name + " holding");
+    });
+    T("ore_never_output_still", () => {
+        const d = L.createLedger().describe();
+        for (const row of d.transforms) ok(!d.classes[row.to].ore || row.from === row.to, "ore output " + row.id);
+    });
+    T("quench_same_family", () => {
+        const d = L.createLedger().describe();
+        for (const row of d.transforms) same(d.classes[row.from].composition, d.classes[row.to].composition, "family for " + row.id);
+        const l = L.createLedger();
+        l.register("lava", "fluid", 101, "magma"); l.seal();
+        l.transform("lava", "fluid", "stone", "strata", 101, "quench");
+        eq(l.amount("lava", "fluid"), 0, "lava debit");
+        eq(l.amount("stone", "strata"), 101, "stone credit");
+        eq(l.familyTotal("mineral"), 101, "mineral total");
+        eq(l.assertBalanced().ok, true, "balanced quench");
+        const c = cfg();
+        c.transforms.push({ id: "bad-quench", from: "water", fromForms: ["fluid"], to: "stone", toForms: ["strata"] });
+        throwsCode(() => L.createLedger(c), "E_FAMILY", "water to stone refused");
+    });
+    T("core_tap_vent_closes", () => {
+        const l = L.createLedger(); l.register("lava", "core", 300, "core"); l.seal();
+        for (const [from, to, amount] of [["core", "magma", 200], ["magma", "fluid", 120], ["fluid", "magma", 120], ["magma", "fluid", 200]]) {
+            l.transform("lava", from, "lava", to, amount, "lava-cycle");
+            eq(l.familyTotal("mineral"), 300, "mineral after " + from + ">" + to);
+            eq(l.assertBalanced().ok, true, "balanced " + from + ">" + to);
+        }
+        eq(l.amount("lava", "core"), 100, "core debit");
+        eq(l.amount("lava", "fluid"), 200, "fluid credit");
+    });
+    T("water_cycle_closes", () => {
+        const l = L.createLedger(); l.register("water", "fluid", 700, "water"); l.seal();
+        const step = (from, to, amount, label) => {
+            l.transform("water", from, "water", to, amount, label);
+            eq(l.familyTotal("water"), 700, "water conserved by " + label);
+            eq(l.assertBalanced().ok, true, "balanced " + label);
+        };
+        step("fluid", "return", 100, "exit"); step("return", "fluid", 100, "rain");
+        step("fluid", "holding", 200, "displace"); step("holding", "return", 50, "exit");
+        step("return", "fluid", 50, "rain"); step("holding", "fluid", 150, "restore");
+        step("fluid", "pore", 80, "infiltrate"); step("pore", "fluid", 30, "seep");
+        step("pore", "holding", 50, "release"); step("holding", "fluid", 50, "restore");
+        eq(l.amount("water", "fluid"), 700, "end fluid");
+        for (const form of ["return", "holding", "pore"]) eq(l.amount("water", form), 0, "end " + form);
+    });
+    T("pore_roundtrip", () => {
+        const l = L.createLedger(); l.register("water", "fluid", 100, "water"); l.seal();
+        l.transform("water", "fluid", "water", "pore", 60, "infiltrate");
+        const copy = L.createLedger(); copy.restore(JSON.parse(JSON.stringify(l.snapshot())));
+        eq(copy.amount("water", "fluid"), 40, "restored fluid");
+        eq(copy.amount("water", "pore"), 60, "restored pore");
+        copy.transform("water", "pore", "water", "fluid", 20, "seep");
+        copy.transform("water", "pore", "water", "holding", 40, "release");
+        copy.transform("water", "holding", "water", "fluid", 40, "restore");
+        eq(copy.amount("water", "fluid"), 100, "returned fluid");
+        eq(copy.amount("water", "pore"), 0, "pore debit");
+        eq(copy.amount("water", "holding"), 0, "holding debit");
+        eq(copy.assertBalanced().ok, true, "balanced roundtrip");
     });
     T("defaults_magic_flagged_unconfirmed", () => {
         const l = L.createLedger(), d = l.describe();
@@ -369,7 +459,7 @@ function suite(L, D) {
             c => { c.classes.fe_ore = { composition: { fe: 1, cu: 1 }, forms: ["strata"], ore: true }; },
             c => { c.logLimit = 0; },
             c => { c.sinks.magic.allowFinite = true; },
-            c => { c.sources.rain.forms = ["lake"]; },
+            c => { c.sources["legacy-levels-write"].forms = ["lake"]; },
             c => { c.forms.push("strata"); },
             c => { c.classes.stone.forms = []; }
         ];
@@ -486,8 +576,8 @@ function suite(L, D) {
         throwsCode(() => a.register("rubble", "strata", 1), "E_OVERFLOW", "family mineral");
         a.register("water", "fluid", MAX - 2);
         a.seal();
-        throwsCode(() => a.source("rain", "water", "fluid", 3, "storm"), "E_OVERFLOW", "source");
-        a.source("rain", "water", "fluid", 2, "storm");
+        throwsCode(() => a.source("legacy-levels-write", "water", "fluid", 3, "legacy"), "E_OVERFLOW", "source");
+        a.source("legacy-levels-write", "water", "fluid", 2, "legacy");
         eq(a.total("water"), MAX, "water at MAX");
         throwsCode(() => a.transform("water", "fluid", "water", "ice", MAX + 1, "freeze"), "E_AMOUNT", "beyond MAX is not an amount");
         const b = L.createLedger();
@@ -556,10 +646,10 @@ function suite(L, D) {
         l.transform("fe_ore", "item", "fe_metal", "item", 100, "smelt");
         eq(ore(), 700, "smelting lowers ore");
         eq(l.familyTotal("fe"), 1050, "smelting keeps Fe");
-        l.sink("world-edge", "fe_ore", "item", 50, "trader:left_map");
+        l.sink("debug-explicit", "fe_ore", "item", 50, "test:ore_removed");
         eq(ore(), 650, "a sink lowers ore");
         eq(l.familyTotal("fe"), 1000, "Fe lowered only by the sink");
-        for (const n of ["magic", "world-edge", "debug-explicit"]) throwsCode(() => l.source(n, "fe_ore", "strata", 1, "respawn"), "E_ORE_OUTPUT", n + " ore source");
+        for (const n of ["magic", "legacy-levels-write", "debug-explicit"]) throwsCode(() => l.source(n, "fe_ore", "strata", 1, "respawn"), "E_ORE_OUTPUT", n + " ore source");
         throwsCode(() => l.transform("fe_ore", "item", "fe_ore", "strata", 1, "backfill"), "E_NO_ENTRY", "no ore row back into strata");
     });
     T("rust_keeps_element", () => {
@@ -656,7 +746,7 @@ function suite(L, D) {
     });
     T("source_ore_refused_at_call", () => {
         const l = world();
-        for (const m of METALS) for (const n of ["magic", "world-edge", "debug-explicit", "rain"])
+        for (const m of METALS) for (const n of ["magic", "legacy-levels-write", "debug-explicit"])
             throwsCode(() => l.source(n, m + "_ore", "strata", 1, "respawn"), "E_ORE_OUTPUT", n + " " + m + "_ore");
     });
     T("source_finite_refused", () => {
@@ -667,10 +757,10 @@ function suite(L, D) {
     });
     T("source_sink_scope", () => {
         const l = world();
-        throwsCode(() => l.source("rain", "soil", "strata", 1, "storm"), "E_SOURCE_SCOPE", "rain soil");
-        throwsCode(() => l.source("rain", "water", "item", 1, "storm"), "E_SOURCE_SCOPE", "rain into a jug");
-        throwsCode(() => l.sink("evaporation", "stone", "strata", 1, "sun"), "E_SINK_SCOPE", "evaporating stone");
-        throwsCode(() => l.sink("evaporation", "water", "ice", 1, "sun"), "E_SINK_SCOPE", "evaporation of ice is not declared");
+        throwsCode(() => l.source("legacy-levels-write", "biomass", "creature", 1, "legacy"), "E_SOURCE_SCOPE", "legacy biomass");
+        throwsCode(() => l.source("legacy-levels-write", "water", "item", 1, "legacy"), "E_SOURCE_SCOPE", "legacy into a jug");
+        throwsCode(() => l.sink("legacy-levels-write", "wood", "object", 1, "legacy"), "E_SINK_SCOPE", "legacy wood object");
+        throwsCode(() => l.sink("legacy-levels-write", "water", "ice", 1, "legacy"), "E_SINK_SCOPE", "legacy ice");
     });
     T("magic_source_and_sink_logged_with_cause", () => {
         const l = world();
@@ -687,13 +777,13 @@ function suite(L, D) {
         const fam = iv.families.find(r => r.family === "mineral");
         same([fam.start, fam.end, fam.sources, fam.sinks], [10500, 10525, 25, 0], "mineral interval row");
         eq(l.check().ok, true, "closure");
-        l.source("rain", "water", "fluid", 11, "weather:rain");
-        l.sink("evaporation", "water", "fluid", 4, "weather:sun");
+        l.source("legacy-levels-write", "water", "fluid", 11, "legacy:water-write");
+        l.sink("legacy-levels-write", "water", "fluid", 4, "legacy:water-delete");
         eq(l.familyTotal("water"), 702, "water = 700 - 5 + 11 - 4");
     });
     T("sink_can_lower_ore_and_is_atomic", () => {
         const l = world();
-        l.sink("world-edge", "fe_ore", "strata", 10, "river:carried_off");
+        l.sink("debug-explicit", "fe_ore", "strata", 10, "test:ore_removed");
         eq(l.total("fe_ore"), 790, "ore lowered");
         const cs = l.checksum();
         throwsCode(() => l.sink("magic", "gem", "strata", 31, "spell"), "E_INSUFFICIENT", "too much");
@@ -771,8 +861,8 @@ function suite(L, D) {
         l.transform("stone", "object", "stone", "ruin", 40, "decay");
         l.transform("stone", "ruin", "rubble", "strata", 30, "decay");
         l.source("magic", "stone", "object", 9, "spell");
-        l.sink("world-edge", "rubble", "strata", 4, "landslide:off_map");
-        l.source("rain", "water", "fluid", 6, "rain");
+        l.sink("debug-explicit", "rubble", "strata", 4, "test:removed");
+        l.source("legacy-levels-write", "water", "fluid", 6, "legacy:water-write");
         const iv = l.interval();
         eq(iv.ok, true, "identity holds");
         const m = iv.families.find(r => r.family === "mineral");
@@ -793,7 +883,7 @@ function suite(L, D) {
         l.transform("fe_metal", "item", "fe_trace", "strata", 5, "rust");
         l.recipe("alloy.electrum", 3, "smith");
         l.source("magic", "stone", "object", 9, "spell");
-        l.sink("evaporation", "water", "fluid", 6, "sun");
+        l.sink("legacy-levels-write", "water", "fluid", 6, "legacy:water-delete");
         return l;
     }
     T("snapshot_is_json_safe", () => {
@@ -985,6 +1075,9 @@ const MUTANTS = [
     ["defaults_decay_skip_row", "ledger_defaults.js", '["solidify", "lava", ["fluid"], "stone", ["strata"]],', '["solidify", "lava", ["fluid"], "stone", ["strata"]],\n    ["compact", "rubble", ["strata"], "stone", ["strata"]],'],
     ["defaults_magic_marked_confirmed", "ledger_defaults.js", 'classes: "*", forms: "*", allowFinite: false, ownerConfirmed: false,\n        authority: "PM default for DEC-018', 'classes: "*", forms: "*", allowFinite: false, ownerConfirmed: true,\n        authority: "PM default for DEC-018'],
     ["defaults_magic_allows_finite", "ledger_defaults.js", 'classes: "*", forms: "*", allowFinite: false, ownerConfirmed: false,\n        authority: "PM default for DEC-018', 'classes: "*", forms: "*", allowFinite: true, ownerConfirmed: false,\n        authority: "PM default for DEC-018'],
+    ["evaporation_sink_back", "ledger_defaults.js", "const SINKS = {", 'const SINKS = {\n    evaporation: { classes: ["water"], forms: ["fluid"], ownerConfirmed: false, authority: "mutant evaporation sink" },', "no_deletion_sink_conserved"],
+    ["cross_family_row", "ledger_defaults.js", '["solidify", "lava", ["fluid"], "stone", ["strata"]],', '["solidify", "lava", ["fluid"], "stone", ["strata"]],\n    ["bad-quench", "water", ["fluid"], "stone", ["strata"]],', "quench_same_family"],
+    ["solid_holding_form", "ledger_defaults.js", 'stone: { family: "mineral", forms: ["strata", "item", "object", "ruin"] }', 'stone: { family: "mineral", forms: ["strata", "item", "object", "ruin", "holding"] }', "holding_is_fluid_only"],
     ["defaults_not_frozen", "ledger_defaults.js", "module.exports = deepFreeze({", "module.exports = ({"],
     ["hidden_math_random_caught_dynamically", "ledger.js", "function createLedger(config) {\n", 'function createLedger(config) {\n    Reflect.get(Reflect.getPrototypeOf(function () {}), "constr" + "uctor")("return Ma" + "th.ran" + "dom()")();\n']
 ];
@@ -1041,7 +1134,7 @@ for (const f of LEDGER_FILES) {
 
 // 3. Mutants: each must make at least one unit check fail (or fail to load).
 if (real && failed === 0) {
-    for (const [name, file, find, repl] of MUTANTS) {
+    for (const [name, file, find, repl, expected] of MUTANTS) {
         const n = count(REAL[file], find);
         if (n !== 1) { report("mutant_" + name + "_killed", false, "the find text occurs " + n + " times in " + file); continue; }
         const text = REAL[file].replace(find, () => repl);
@@ -1050,7 +1143,8 @@ if (real && failed === 0) {
         const dead = res.filter(r => !r[1]);
         let extra = "";
         if (name === "hidden_math_random_caught_dynamically") extra = "; static scan of the mutant: " + (purityViolations(text).length ? "flagged" : "clean, so only the bare vm context catches it");
-        report("mutant_" + name + "_killed", dead.length > 0, dead.length ? dead.length + " check(s) fail, e.g. " + dead.slice(0, 3).map(r => r[0]).join(", ") + (dead[0] ? " [" + dead[0][2].slice(0, 90) + "]" : "") + extra : "no check failed: the mutant SURVIVED");
+        const killed = expected ? dead.some(r => r[0] === expected) : dead.length > 0;
+        report("mutant_" + name + "_killed", killed, dead.length ? dead.length + " check(s) fail, e.g. " + dead.slice(0, 3).map(r => r[0]).join(", ") + (dead[0] ? " [" + dead[0][2].slice(0, 90) + "]" : "") + (expected ? "; required " + expected : "") + extra : "no check failed: the mutant SURVIVED");
     }
 } else if (real) {
     console.log("SKIP mutants: the unit checks must pass on the real module first");
