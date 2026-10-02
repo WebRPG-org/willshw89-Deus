@@ -133,6 +133,25 @@ const lower = { depth: F.depthAt(0, 0, 85, 45, -1), type: F.typeAt(0, 0, 85, 45,
 check("mined_floor_drains_water", wetJob.state === "done" && lower.depth > 0 && lower.type === "water",
     `${wetJob.state} upper ${JSON.stringify(upper)} lower ${JSON.stringify(lower)}`);
 
+// The event is allowed to wait until the next shared tick, including across a save/load.
+fixture(env, 105, 45);
+drain(env, 200);
+const savedUnit = W.addUnit({ name: "TEST_saved_fall", area: AREA, x: 105, y: 45, z: 0, exact: true, data: { kind: "test", hp: 100 } });
+L.applyVolumeDamage(AREA, 105, 45, 0, 0, 105, 45, 0, 0, 100000, "impact");
+let saveDetail = "";
+let savedFall = false;
+try {
+    const save = env.JsonEx.parse(env.JsonEx.stringify(env.DataManager.makeSaveContents()));
+    const queued = save.ufWorld && save.ufWorld.jobs && save.ufWorld.jobs.verticalFalls;
+    const serialized = Array.isArray(queued) && queued.some(c => c.x === 105 && c.y === 45 && c.z === 0);
+    env.DataManager.extractSaveContents(save);
+    runTicks(env, 1);
+    const loaded = W.unit(savedUnit.id);
+    savedFall = serialized && !!loaded && loaded.z === -1;
+    saveDetail = `queued ${serialized}, loaded unit z ${loaded && loaded.z}`;
+} catch (e) { saveDetail = `save/load threw ${e && e.message}`; }
+check("pending_fall_survives_save_load", savedFall, saveDetail);
+
 check("no_console_errors", env.__errors.length === 0, env.__errors.slice(0, 2).join(" | "));
 console.log(`RESULT: ${failed ? "FAIL" : "PASS"} (${passed} passed, ${failed} failed)`);
 process.exitCode = failed ? 1 : 0;
