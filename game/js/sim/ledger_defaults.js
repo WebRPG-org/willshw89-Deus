@@ -61,7 +61,7 @@ const CLASSES = {
     gem: { family: "gem", forms: ["strata", "item", "object"] },
     steel: { family: "fe", forms: ["item", "object", "ruin"] },  // DEUS_ResourceRegistry.json:453
     // Electrum: "a 50/50 alloy of Gold and Silver. Its mass is conserved against the gold and silver ledgers"
-    // (DEUS_ResourceRegistry.json:471). Every 2 mu of electrum is 1 mu of au and 1 mu of ag.
+    // (DEUS_ResourceRegistry.json:471). Every 2 cp of electrum is 1 cp of au and 1 cp of ag.
     electrum: { composition: { au: 1, ag: 1 }, forms: ["item", "object", "ruin"] }
 };
 for (const m of METALS) {
