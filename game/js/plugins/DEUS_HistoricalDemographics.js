@@ -164,16 +164,22 @@
                 Object.defineProperty(state, field, { configurable: true, enumerable: false, get: () => columns[field] });
             }
             Object.defineProperty(state, "hfCount", { configurable: true, enumerable: false, get: () => columns.count });
+            Object.defineProperty(state, "hfFactionIds", { configurable: true, enumerable: false, get: () => columns.factionIds });
+            Object.defineProperty(state, "hfSpeciesIds", { configurable: true, enumerable: false, get: () => columns.speciesIds });
         }
         const count = state.people.length;
         if (count > columns.capacity) {
             columns.capacity = Math.max(16, columns.capacity * 2, count);
             for (const field of historicalFields) columns[field] = new Int32Array(columns.capacity);
+            columns.available = new Int32Array(columns.capacity);
+            columns.candidates = new Int32Array(columns.capacity);
         }
         columns.count = count;
         for (let id = 0; id < count; id++) {
             const p = state.people[id];
+            check(p.born >= -2147483648 && p.born <= 2147483647, "birth year exceeds Int32 registry range");
             columns.hfBirthYear[id] = p.born;
+            // -1 means no death, partner, parent, or prior birth. Gender is 0 male / 1 female.
             columns.hfDeathYear[id] = p.died === null ? -1 : p.died;
             columns.hfFaction[id] = columns.factionIds.indexOf(p.factionId);
             columns.hfSite[id] = p.siteId;
@@ -262,6 +268,8 @@
         const p = { id: state.partnerships.length, motherId: mother.id, fatherId: father.id, siteId: mother.siteId,
             fromYear: state.currentYear, toYear: null, lastBirthYear: null, imported };
         state.partnerships.push(p); mother.partnershipId = p.id; father.partnershipId = p.id;
+        const columns = historicalColumns.get(state);
+        if (columns) columns.hfPartnership[mother.id] = columns.hfPartnership[father.id] = p.id;
         emit(state, "partnership", mother.factionId, mother.siteId, [mother.id, father.id], `${mother.name} and ${father.name} established a household.`);
     }
     function fertile(state, person) {
@@ -269,14 +277,30 @@
         return alive(person) && age >= bounds[0] && age <= bounds[1];
     }
     function pair(state) {
-        const available = state.people.filter(p => fertile(state, p) && p.partnershipId === null);
-        for (const mother of available.filter(p => p.gender === "female")) {
-            const candidates = available.filter(p => p.gender === "male" && p.partnershipId === null && p.siteId === mother.siteId && p.species === mother.species && p.factionId === mother.factionId && !kinshipRelated(state, p.id, mother.id));
-            if (!candidates.length) continue;
+        const hf = historicalColumns.get(state) || demographicColumns(state);
+        let availableCount = 0;
+        for (let id = 0; id < hf.count; id++) {
+            if (hf.hfPartnership[id] === -1 && fertile(state, state.people[id])) hf.available[availableCount++] = id;
+        }
+        for (let i = 0; i < availableCount; i++) {
+            const motherId = hf.available[i];
+            if (hf.hfGender[motherId] !== 1 || hf.hfPartnership[motherId] !== -1) continue;
+            const mother = state.people[motherId];
+            let candidateCount = 0, family = -1;
+            for (let j = 0; j < availableCount; j++) {
+                const fatherId = hf.available[j];
+                if (hf.hfGender[fatherId] !== 0 || hf.hfPartnership[fatherId] !== -1 ||
+                    hf.hfSite[fatherId] !== hf.hfSite[motherId] ||
+                    hf.hfSpecies[fatherId] !== hf.hfSpecies[motherId] ||
+                    hf.hfFaction[fatherId] !== hf.hfFaction[motherId] ||
+                    kinshipRelated(state, fatherId, motherId)) continue;
+                hf.candidates[candidateCount++] = fatherId;
+                if (family === -1 && mother.sourceFamilyId && state.people[fatherId].sourceFamilyId === mother.sourceFamilyId) family = fatherId;
+            }
+            if (!candidateCount) continue;
             // Preserve imported founder families when both partners reach maturity.
-            const family = mother.sourceFamilyId && candidates.find(p => p.sourceFamilyId === mother.sourceFamilyId);
             const rng = random(state, state.currentYear, mother.id, 0x50414952);
-            partner(state, mother, family || candidates[Math.floor(rng() * candidates.length)]);
+            partner(state, mother, state.people[family === -1 ? hf.candidates[Math.floor(rng() * candidateCount)] : family]);
         }
     }
     function succession(state, initial = {}) {
@@ -514,18 +538,19 @@
         check(state.currentYear < 1000000 && state.people.length < 1000000, "historical proof registry/year bound exceeded");
         const hf = historicalColumns.get(state);
         state.currentYear++; state.yearsSimulated++;
-        const startOfYearPopulation = new Map();
+        const startOfYearPopulation = new Int32Array(state.sites.length);
         for (const s of state.sites) {
-            startOfYearPopulation.set(s.id, s.population);
+            startOfYearPopulation[s.id] = s.population;
         }
-        const casualties = new Set(conditions.casualtyIds || []);
+        const casualties = new Uint8Array(hf.count);
+        for (const id of conditions.casualtyIds || []) casualties[id] = 1;
         for (let id = 0; id < hf.count; id++) {
             if (hf.hfDeathYear[id] !== -1) continue;
             const p = state.people[id];
             const profile = state.config.profiles[p.species], [lo, hi] = lifespan(state, p), age = state.currentYear - p.born;
             const rng = random(state, state.currentYear, id, 0x44454144);
             const risk = conditions.siteRisks && conditions.siteRisks[hf.hfSite[id]];
-            let cause = casualties.has(p.id) ? "violence" : null, detail = null;
+            let cause = casualties[id] ? "violence" : null, detail = null;
             if (!cause && age <= 1 && rng() < profile.infantMortality) { cause = "disease"; detail = "infant"; }
             if (!cause && rng() < Math.min(1, profile.diseaseMortality + (risk ? risk.disease || 0 : 0))) cause = "disease";
             if (!cause && rng() < Math.min(1, profile.exposureMortality + (risk ? risk.exposure || 0 : 0))) cause = "exposure";
@@ -550,7 +575,7 @@
             const mother = state.people[h.motherId], father = state.people[h.fatherId], profile = state.config.profiles[mother.species];
             if (!fertile(state, mother) || !fertile(state, father) || (mother.lastBirthYear !== null && state.currentYear - mother.lastBirthYear < profile.birthSpacingYears)) continue;
             const site = state.sites[mother.siteId];
-            const startPop = startOfYearPopulation.get(mother.siteId);
+            const startPop = startOfYearPopulation[mother.siteId];
             const cap = site.historicalCapacity;
             const scale = Math.max(capModel.minimumScale, 1 - (startPop / cap));
             const effectiveBirthChance = profile.birthChance * scale;
