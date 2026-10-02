@@ -299,4 +299,5 @@ var $plugins =
     "parameters": {}
   }
     ,{"name":"DEUS_CellularFluids","status":true,"description":"Cellular Automata Fluid Dynamics Engine","parameters":{}}
+    ,{"name":"DEUS_StructuralPhysics","status":true,"description":"[DEUS StructuralPhysics] Falling Cubes, Shadows, and Crushing Death.","parameters":{}}
 ];
