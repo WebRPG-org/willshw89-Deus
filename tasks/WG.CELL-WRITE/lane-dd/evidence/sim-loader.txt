@@ -1,0 +1,10 @@
+PASS vm_loader_loads_ledger - resolve("ledger") = C:\Users\snewt\.deus_worktrees\lane-dd\game\js\sim\ledger.js; exports createLedger: function; same object as Node's require: true; resolve("hydro") = C:\Users\snewt\.deus_worktrees\lane-dd\game\js\sim\hydro\index.js; sandbox require left alone: true
+PASS missing_module_throws - threw DEUS_SIM_MODULE_MISSING: UF.Sim.require("no_such_module_wg0044"): no such sim module; tried C:\Users\snewt\.deus_worktrees\lane-dd\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\.deus_worktrees\lane-dd\game\js\sim\no_such_module_wg0044\index.js, C:\Users\snewt\.deus_worktrees\lane-dd\game\game\js\sim\no_such_module_wg0044.js, C:\Users\snewt\.deus_worktrees\lane-dd\game\game\js\sim\no_such_module_wg0044\index.js; "../plugins/DEUS_World" -> TypeError; no host -> UF.Sim.require("ledger"): no such sim module; tried nothing (no require in this host)
+PASS every_vm_harness_installs_hook - 52 hits in 983 files; without the hook: none; planted harness found by the scan: true, refused: true; hooked fixture accepted: true
+PASS scan_finds_known_harnesses - 52 hits; known hits missing: none; excluded files found: none; fixtures classified wrong: none
+PASS opener_registry - order Air, core, water; duplicate "core": UF.Sim.registerMatterOpener: "core" is already registered; bad fn: TypeError; empty name: TypeError; registry after a caller emptied its copy: 3; UF.Levels at register: undefined
+PASS grid_pinned_by_hook - fallback-3 fixture: {} -> 1x1, grid "shipped" -> 3x3, AreasX "2" -> 2x1, PluginManager set after install -> 1x1, legacy UF_World AreasX "4" -> 4x1; real DEUS_World.js -> 1x1; grid "3x3" refused: true
+PASS nwjs_loader - run_tests exit 0; 5 sim_loader PASS lines; no FAIL/ERROR lines; log: 2026-10-02T03:24:06.878Z [SIM] UF.Sim.require("ledger") resolved C:\Users\snewt\AppData\Local\Temp\wg0044-nw-5eW4TY\game\js\sim\ledger.js; expected C:\Users\snewt\AppData\Local\Temp\wg0044-nw-5eW4TY\game\js\sim\ledger.js
+RESULT: 7 passed, 0 failed
+EXIT 0
+WALL_S 52.7

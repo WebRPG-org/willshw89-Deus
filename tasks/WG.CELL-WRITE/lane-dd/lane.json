@@ -1,0 +1,81 @@
+{
+  "lane": "lane-dd",
+  "taskId": "WG.CELL-WRITE",
+  "branch": "task/lane-dd",
+  "writer": "grok",
+  "reviewer": "codex",
+  "push": true,
+  "allowedPaths": [
+    "game/js/plugins/DEUS_Levels.js",
+    "tools/test_lazy_area_generation.js",
+    "tools/fixtures/levels/area_checksums_gen5_3x3.json",
+    "docs/systems/DEUS_Levels.md",
+    "docs/systems/DEUS_ZRange.md",
+    "tasks/WG.CELL-WRITE/lane-dd/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_lazy_area_generation.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_sparse_outer_save.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_area_generation_speed.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_strata_cuts_and_caves.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_sim_loader.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_32_levels_generation.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_new_game_year0.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/zrange/scan_z_literals.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}

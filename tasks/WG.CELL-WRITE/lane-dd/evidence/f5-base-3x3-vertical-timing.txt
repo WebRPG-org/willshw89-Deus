@@ -1,0 +1,11 @@
+2026-10-02T03:40:12.546Z [TIMING] DataManager.setupNewGame enter (+2.4ms)
+2026-10-02T03:40:12.551Z [TIMING] setupForNewGame before World.newWorld
+2026-10-02T03:40:20.224Z [TIMING] world:initializing fired (+7680.1ms)
+2026-10-02T03:41:41.066Z [TIMING] world:created fired (+88522.2ms)
+2026-10-02T03:41:41.071Z [TIMING] emit world:created done
+2026-10-02T03:41:41.071Z [TIMING] early seated done, units=0
+2026-10-02T03:41:41.216Z [TIMING] setupForNewGame after World.newWorld
+2026-10-02T03:41:41.216Z [TIMING] setupForNewGame exit (reserved map 1004)
+2026-10-02T03:41:41.216Z [TIMING] DataManager.setupNewGame exit (+88672.0ms)
+2026-10-02T03:41:41.241Z [TIMING] Scene_Boot.start exit (+88696.8ms)
+2026-10-02T03:41:41.850Z [TIMING] world:areaBuilt (1,1) (+89305.6ms)

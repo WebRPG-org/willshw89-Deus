@@ -1,0 +1,14 @@
+=== DEUS 32-LAYER WORLD GENERATION TEST SUITE ===
+  [PASS] world_default_zrange_is_32
+  [PASS] core_entries_only
+  [PASS] all_32_levels_reconstructible
+  [PASS] core_levels_have_valid_checksums
+  [PASS] core_levels_have_gen
+  [PASS] level_minus_16_baseline_exists
+  [PASS] level_plus_15_baseline_exists
+  [PASS] no_entry_for_unchanged_minus_10
+  [PASS] no_entry_for_unchanged_plus_10
+
+Results: 9 passed, 0 failed.
+EXIT 0
+WALL_S 4

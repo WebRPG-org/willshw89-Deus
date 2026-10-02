@@ -1,0 +1,9 @@
+UF_Test run 2026-10-02T03:46:18.136Z args=[]
+DEBUG_SHEET: Scene_Boot.start called
+HARNESS timed out after 11000 ms waiting for 60 frames
+HARNESS current scene: Scene_Map
+SHOT C:\Users\snewt\AppData\Local\Temp\lane-dd-f5\game\test_output\harness.on_failure.png
+RESULT: 0 passed, 0 failed (exit 2)
+
+RUN_EXIT 2
+WALL_S 141.2
