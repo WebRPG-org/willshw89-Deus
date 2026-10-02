@@ -678,7 +678,7 @@ function checkReview(R, ctx, man) {
     V.verdict = parseVerdict(text);
     if (!mut("verdict_off")) {
         if (!V.verdict.lines.length) R.refuse("REVIEW", "REVIEW_VERDICT_MISSING", `${file.path} has no "VERDICT: PASS" or "VERDICT: CLEAN PASS" line`);
-        else // DEC-089: Non-core logic can bypass LLM reviewer reject
+        else {} // DEC-089
     }
 }
 
