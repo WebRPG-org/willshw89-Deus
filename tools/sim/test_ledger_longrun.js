@@ -28,7 +28,7 @@ const FIXTURE = path.join(__dirname, "fixtures", "ledger", "longrun_expected.jso
 const CELL_FT = 5, SLICE_FT = 2, STRATA = 5, LAYER_FT = STRATA * SLICE_FT, CHUNK = 32, CHUNKS_PER_SIDE = 4, W = CHUNK * CHUNKS_PER_SIDE;
 const BANDS = [["Lower-2", -16, -9], ["Lower-1", -8, -1], ["Surface", 0, 3], ["Upper-1", 4, 9], ["Upper-2", 10, 15]];
 
-// Toy mass per full 2-ft slice, in mass units. Placeholders only: SIM.40.00/SIM.40.01 set the real table.
+// Toy mass per full 2-ft slice, in cp. These are harness quantities, not the catalogue's physical masses.
 const SLICE_CAP = { stone: 1000, rubble: 650, soil: 700, sediment: 750, wood: 450, gem: 900, fe_ore: 1200, cu_ore: 1150, ag_ore: 1150, au_ore: 1300, pt_ore: 1400 };
 
 // This harness's own composition table, written independently of game/js/sim/ledger_defaults.js.
@@ -295,7 +295,7 @@ function opErode(run) {
     const [x, y, z] = neighbour(run, c, [-1, 0]);
     run.ledger.transform("soil", "strata", "sediment", "strata", n, "erosion:transport");
     if (run.world.inBounds(x, y, z)) put(run.world.get(x, y, z, true), "sediment", "strata", n);
-    else sink(run, "world-edge", "sediment", "strata", n, "erosion:off_edge");
+    else sink(run, "debug-explicit", "sediment", "strata", n, "test:erosion_out_of_bounds");
     return true;
 }
 function opWaterFlow(run) {
@@ -304,7 +304,7 @@ function opWaterFlow(run) {
     const n = take(c, "water", "fluid", amountOf(run, "water", have(c, "water", "fluid")));
     const [x, y, z] = neighbour(run, c, [-1, -1, 0]);   // gravity first
     if (run.world.inBounds(x, y, z)) put(run.world.get(x, y, z, true), "water", "fluid", n);   // a move: no ledger call
-    else sink(run, "world-edge", "water", "fluid", n, "flow:off_edge");
+    else sink(run, "debug-explicit", "water", "fluid", n, "test:flow_out_of_bounds");
     return true;
 }
 function opCreatureMove(run) {
@@ -313,7 +313,7 @@ function opCreatureMove(run) {
     const b = take(c, "biomass", "creature", have(c, "biomass", "creature")), w = take(c, "water", "creature", have(c, "water", "creature"));
     const [x, y, z] = neighbour(run, c, [-1, 0, 0, 1]);
     if (run.world.inBounds(x, y, z)) { const d = run.world.get(x, y, z, true); put(d, "biomass", "creature", b); put(d, "water", "creature", w); }
-    else { sink(run, "world-edge", "biomass", "creature", b, "migration:left_map"); if (w) sink(run, "world-edge", "water", "creature", w, "migration:left_map"); }
+    else { sink(run, "debug-explicit", "biomass", "creature", b, "test:creature_out_of_bounds"); if (w) sink(run, "debug-explicit", "water", "creature", w, "test:creature_out_of_bounds"); }
     return true;
 }
 const HAULED = ["stone", "rubble", "soil", "wood", "biomass", "charcoal", "water", "gem", "steel", "electrum"].concat(each(METALS, m => [m + "_ore", m + "_metal"]));
@@ -327,11 +327,7 @@ function opHaul(run) {
     return true;
 }
 function opRain(run) {
-    const c = pickCell(run, () => true);
-    const n = run.rng.int(1, 20);
-    source(run, "rain", "water", "fluid", n, "weather:rain");
-    put(c, "water", "fluid", n);
-    return true;
+    return inPlace([["water", "return", "water", "fluid"]], "weather:rain")(run);
 }
 function opSinkFrom(name, pairs, cause) {
     return run => {
@@ -352,8 +348,8 @@ function opMagicSource(run) {
 function opMigrantArrives(run) {
     const c = run.world.get(0, run.rng.int(0, W - 1), Math.min(0, run.world.zMax), true);
     const b = run.rng.int(20, 200), w = run.rng.int(5, 30);
-    source(run, "world-edge", "biomass", "creature", b, "migration:arrived");
-    source(run, "world-edge", "water", "creature", w, "migration:arrived");
+    source(run, "debug-explicit", "biomass", "creature", b, "test:creature_injection");
+    source(run, "debug-explicit", "water", "creature", w, "test:creature_injection");
     put(c, "biomass", "creature", b);
     put(c, "water", "creature", w);
     return true;
@@ -404,11 +400,11 @@ const OPS = [
     ["freeze", 3, inPlace([["water", "fluid", "water", "ice"]], "weather:freeze")],
     ["thaw", 3, inPlace([["water", "ice", "water", "fluid"]], "weather:thaw")],
     ["rain", 3, opRain],
-    ["evaporate", 3, opSinkFrom("evaporation", [["water", "fluid"]], "weather:sun")],
+    ["evaporate", 3, inPlace([["water", "fluid", "water", "return"]], "weather:exit")],
     ["magic_source", 1, opMagicSource],
     ["magic_sink", 1, opSinkFrom("magic", [["stone", "object"], ["water", "fluid"]], "spell:dispel_conjured")],
     ["migrant_arrives", 1, opMigrantArrives],
-    ["trader_leaves", 1, opSinkFrom("world-edge", [["fe_metal", "item"], ["cu_metal", "item"], ["ag_metal", "item"], ["steel", "item"]], "trade:left_map")],
+    ["trader_leaves", 1, opSinkFrom("debug-explicit", [["fe_metal", "item"], ["cu_metal", "item"], ["ag_metal", "item"], ["steel", "item"]], "test:trade_out_of_bounds")],
     ["grow", 4, inPlace([["humus", "strata", "biomass", "object"]], "growth")],
     ["litter", 3, inPlace([["biomass", "object", "humus", "strata"]], "litter")],
     ["harvest", 3, inPlace([["biomass", "object", "biomass", "item"]], "harvest")],
@@ -540,7 +536,7 @@ function printRun(run, ms) {
     const possible = (o.zMax - o.zMin + 1) * CHUNKS_PER_SIDE * CHUNKS_PER_SIDE;
     console.log("  world: after generation " + num(run.genStats.cells) + " cells in " + run.genStats.chunks + " chunks; now " + num(run.world.cells.length) + " cells in " +
         run.world.chunks.size + " of " + possible + " possible chunks (" + bands.join(", ") + ")");
-    console.log("  class totals, start -> end (mass units; water in depth units):");
+    console.log("  class totals, start -> end (cp):");
     const cls = Object.keys(COMP).sort(), cols = [];
     for (const c of cls) cols.push(c + " " + num(run.startCls[c]) + " -> " + num(classTotal(rc, c)));
     for (let i = 0; i < cols.length; i += 4) console.log("    " + cols.slice(i, i + 4).map(s => s.padEnd(38)).join(""));
@@ -615,10 +611,10 @@ if (ARGS.child) {
         else {
             const bad = [];
             const SCHEMA2_LEDGER = {
-                "seed1_z-16..15_ops100000_k1000": "75f56657",
-                "seed2_z-16..15_ops100000_k1000": "67697cb7",
-                "seed3_z-16..15_ops100000_k1000": "8b0e4e49",
-                "seed4_z-4..4_ops100000_k1000": "36d4b241"
+                "seed1_z-16..15_ops100000_k1000": "a2b567a5",
+                "seed2_z-16..15_ops100000_k1000": "6875b999",
+                "seed3_z-16..15_ops100000_k1000": "d2b3208c",
+                "seed4_z-4..4_ops100000_k1000": "09d9728e"
             };
             for (const k of Object.keys(results)) {
                 const a = results[k], b = fx.runs[k];

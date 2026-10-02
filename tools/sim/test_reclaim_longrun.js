@@ -34,7 +34,7 @@ function adaptForReclaim(raw) {
 const reclaimBag = adaptForReclaim(bag);
 const schedule = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures", "reclaim", "schedule.json"), "utf8"));
 const pins = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures", "reclaim", "checksums.json"), "utf8"));
-const cpPins = { "1": "1afb4f75", "2": "54b9da8d" };
+const cpPins = { "1": "3f4a40cb", "2": "38bad9af" };
 
 let passed = 0, failed = 0;
 function check(name, ok, why) {

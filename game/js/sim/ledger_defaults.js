@@ -15,6 +15,11 @@ const FORMS = [
     "object",   // placed objects and structures, including constructed (0x80) strata (DEUS_Levels.js:995), ADR-003 Q-OBJ
     "ruin",     // a failed or abandoned structure's remains before they break into rubble (decay chain, ADR-003 §17.4)
     "fluid",    // liquid volume (DEUS_Fluid), ADR-003 Q-WATER / Q-LAVA
+    "holding",  // displaced fluid held by its water/lava authority
+    "return",   // water awaiting rainfall after leaving local fluid cells
+    "pore",     // water stored in connected pore space
+    "magma",    // molten mineral below a surface fluid cell
+    "core",     // deep molten mineral reservoir
     "ice",      // frozen water: the brief's "water (fluid, with an ice form)"; ADR-003 §7.8 "Water that freezes stays Q-MASS[water] in an ice form"
     "creature"  // matter held in creatures (food eaten, body mass, water drunk), ADR-003 §7.8 "the matter held in creatures"
 ];
@@ -43,7 +48,7 @@ const CLASSES = {
     rubble: { family: "mineral", forms: ["strata", "item"] },
     soil: { family: "mineral", forms: ["strata", "item"] },
     sediment: { family: "mineral", forms: ["strata"] },
-    lava: { family: "mineral", forms: ["fluid"] },  // DEUS_Levels.js:994 M_LAVA; the hook converts du to mu (Lane Q §9.1)
+    lava: { family: "mineral", forms: ["fluid", "holding", "magma", "core"] },
     // organic (carbon): FIR-3 wants ash and charcoal as ledger outputs
     wood: { family: "organic", forms: ["strata", "item", "object", "ruin"] },
     biomass: { family: "organic", forms: ["item", "object", "creature"] },
@@ -51,7 +56,7 @@ const CLASSES = {
     ash: { family: "organic", forms: ["strata", "item"] },
     charcoal: { family: "organic", forms: ["strata", "item"] },
     // water
-    water: { family: "water", forms: ["fluid", "ice", "item", "creature"] },
+    water: { family: "water", forms: ["fluid", "holding", "return", "pore", "ice", "item", "creature"] },
     // finite
     gem: { family: "gem", forms: ["strata", "item", "object"] },
     steel: { family: "fe", forms: ["item", "object", "ruin"] },  // DEUS_ResourceRegistry.json:453
@@ -87,6 +92,11 @@ const ROWS = [
     ["dig", "soil", ["strata"], "soil", ["item"]],
     ["fill", "soil", ["item"], "soil", ["strata"]],
     ["solidify", "lava", ["fluid"], "stone", ["strata"]],
+    ["tap", "lava", ["core"], "lava", ["magma"]],
+    ["vent", "lava", ["magma"], "lava", ["fluid"]],
+    ["engulf", "lava", ["fluid"], "lava", ["magma"]],
+    ["displace", "lava", ["fluid"], "lava", ["holding"]],
+    ["restore", "lava", ["holding"], "lava", ["fluid"]],
     // organic: growth, harvest, food, death, rot
     ["grow", "humus", ["strata"], "biomass", ["object"]],
     ["litter", "biomass", ["object"], "humus", ["strata"]],
@@ -117,6 +127,13 @@ const ROWS = [
     ["pour", "water", ["item"], "water", ["fluid"]],
     ["drink", "water", ["fluid", "item"], "water", ["creature"]],
     ["excrete", "water", ["creature"], "water", ["fluid"]],
+    ["displace", "water", ["fluid"], "water", ["holding"]],
+    ["restore", "water", ["holding"], "water", ["fluid"]],
+    ["exit", "water", ["fluid", "holding"], "water", ["return"]],
+    ["rain", "water", ["return"], "water", ["fluid"]],
+    ["infiltrate", "water", ["fluid"], "water", ["pore"]],
+    ["seep", "water", ["pore"], "water", ["fluid"]],
+    ["release", "water", ["pore"], "water", ["holding"]],
     // gems: they only change form
     ["mine", "gem", ["strata"], "gem", ["item"]],
     ["set", "gem", ["item"], "gem", ["object"]],
@@ -158,17 +175,14 @@ const SOURCES = {
         classes: "*", forms: "*", allowFinite: false, ownerConfirmed: false,
         authority: "PM default for DEC-018's open sub-question (docs/OWNER_DECISIONS.md:262); NOT confirmed by the Owner"
     },
-    "world-edge": {
-        classes: "*", forms: "*", allowFinite: false, ownerConfirmed: false,
-        authority: "PM brief WG.65.15 default: matter entering across the world edge (inflow, migration)"
-    },
     "debug-explicit": {
         classes: "*", forms: "*", allowFinite: false, ownerConfirmed: false,
         authority: "PM brief WG.65.15 default: an explicit debug or test command, logged with its cause"
     },
-    rain: {
-        classes: ["water"], forms: ["fluid"], allowFinite: false, ownerConfirmed: false,
-        authority: "ADR-003 §7.8-§7.9 (PROPOSED): rain is the example of a named water source"
+    "legacy-levels-write": {
+        classes: ["stone", "rubble", "soil", "sediment", "wood", "water", "lava"], forms: ["strata", "fluid"],
+        allowFinite: false, ownerConfirmed: false,
+        authority: "PM transitional escape hatch for frozen Levels writers; retire in lane-dy"
     }
 };
 const SINKS = {
@@ -176,17 +190,14 @@ const SINKS = {
         classes: "*", forms: "*", ownerConfirmed: false,
         authority: "PM default for DEC-018's open sub-question (docs/OWNER_DECISIONS.md:262); NOT confirmed by the Owner"
     },
-    "world-edge": {
-        classes: "*", forms: "*", ownerConfirmed: false,
-        authority: "PM brief WG.65.15 default: matter leaving across the world edge (outflow, emigration)"
-    },
     "debug-explicit": {
         classes: "*", forms: "*", ownerConfirmed: false,
         authority: "PM brief WG.65.15 default: an explicit debug or test command, logged with its cause"
     },
-    evaporation: {
-        classes: ["water"], forms: ["fluid"], ownerConfirmed: false,
-        authority: "ADR-003 §7.8-§7.9 (PROPOSED): evaporation is the example of a named water sink"
+    "legacy-levels-write": {
+        classes: ["stone", "rubble", "soil", "sediment", "wood", "water", "lava"], forms: ["strata", "fluid"],
+        ownerConfirmed: false,
+        authority: "PM transitional escape hatch for frozen Levels writers; retire in lane-dy"
     }
 };
 

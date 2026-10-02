@@ -619,6 +619,210 @@
       "cpPerStratum": 905218
     },
     {
+      "id": "obsidian",
+      "strataId": 55,
+      "kind": "natural",
+      "ledger": {
+        "class": "stone",
+        "family": "mineral",
+        "unit": "cp"
+      },
+      "ledgerForm": "strata",
+      "densityKgM3": 2400,
+      "densityStatus": "PM_DEFAULT",
+      "kgPerSlice": 3398,
+      "massStatus": "PM_DEFAULT",
+      "support": {
+        "spanBase": [
+          2,
+          3,
+          3,
+          4,
+          6,
+          9,
+          12
+        ],
+        "maxUnsupportedSpanSquares": 12,
+        "spans": true,
+        "ratedLoadKg": 82120,
+        "weightClass": "rock",
+        "srdAC": 17,
+        "maxHP": 240,
+        "dt": 10,
+        "status": "PM_DEFAULT"
+      },
+      "porosity": {
+        "perm": 1,
+        "status": "PLACEHOLDER"
+      },
+      "flam": {
+        "cls": 0,
+        "status": "PM_DEFAULT"
+      },
+      "weather": {
+        "input": "weatherResistance",
+        "value": 90,
+        "status": "PM_DEFAULT"
+      },
+      "blastGroup": "natural_rock",
+      "decay": {
+        "note": "Natural strata have no decay class (SIM.40.05 R-01.3).",
+        "status": "PM_DEFAULT"
+      },
+      "yield": {
+        "postings": [
+          {
+            "process": "quarry",
+            "fromClass": "stone",
+            "fromForm": "strata",
+            "class": "stone",
+            "form": "item",
+            "item": "stone",
+            "count": 226,
+            "cp": 747382
+          },
+          {
+            "process": "break",
+            "fromClass": "stone",
+            "fromForm": "strata",
+            "class": "rubble",
+            "form": "strata",
+            "lineage": "obsidian",
+            "cp": 1749
+          }
+        ]
+      },
+      "collapse": {
+        "postings": [
+          {
+            "process": "break",
+            "fromClass": "stone",
+            "fromForm": "strata",
+            "class": "rubble",
+            "form": "strata",
+            "lineage": "obsidian",
+            "cp": 749131
+          }
+        ]
+      },
+      "reclaim": {
+        "dec028": "solid stone",
+        "ledgerClass": "stone",
+        "ledgerForm": "strata",
+        "path": [
+          "break:stone->rubble",
+          "weather:rubble->sediment",
+          "lithify:sediment->stone"
+        ],
+        "direct": false,
+        "disagreement": "D-RECLAIM-RUBBLE",
+        "status": "PM_DEFAULT"
+      },
+      "cpPerStratum": 749131
+    },
+    {
+      "id": "peridotite",
+      "strataId": 54,
+      "kind": "natural",
+      "ledger": {
+        "class": "stone",
+        "family": "mineral",
+        "unit": "cp"
+      },
+      "ledgerForm": "strata",
+      "densityKgM3": 3300,
+      "densityStatus": "PM_DEFAULT",
+      "kgPerSlice": 4672,
+      "massStatus": "PM_DEFAULT",
+      "support": {
+        "spanBase": [
+          2,
+          3,
+          3,
+          4,
+          6,
+          9,
+          12
+        ],
+        "maxUnsupportedSpanSquares": 12,
+        "spans": true,
+        "ratedLoadKg": 82120,
+        "weightClass": "rock",
+        "srdAC": 17,
+        "maxHP": 240,
+        "dt": 10,
+        "status": "PM_DEFAULT"
+      },
+      "porosity": {
+        "perm": 1,
+        "status": "PLACEHOLDER"
+      },
+      "flam": {
+        "cls": 0,
+        "status": "PM_DEFAULT"
+      },
+      "weather": {
+        "input": "weatherResistance",
+        "value": 90,
+        "status": "PM_DEFAULT"
+      },
+      "blastGroup": "natural_rock",
+      "decay": {
+        "note": "Natural strata have no decay class (SIM.40.05 R-01.3).",
+        "status": "PM_DEFAULT"
+      },
+      "yield": {
+        "postings": [
+          {
+            "process": "quarry",
+            "fromClass": "stone",
+            "fromForm": "strata",
+            "class": "stone",
+            "form": "item",
+            "item": "stone",
+            "count": 311,
+            "cp": 1028477
+          },
+          {
+            "process": "break",
+            "fromClass": "stone",
+            "fromForm": "strata",
+            "class": "rubble",
+            "form": "strata",
+            "lineage": "peridotite",
+            "cp": 1523
+          }
+        ]
+      },
+      "collapse": {
+        "postings": [
+          {
+            "process": "break",
+            "fromClass": "stone",
+            "fromForm": "strata",
+            "class": "rubble",
+            "form": "strata",
+            "lineage": "peridotite",
+            "cp": 1030000
+          }
+        ]
+      },
+      "reclaim": {
+        "dec028": "solid stone",
+        "ledgerClass": "stone",
+        "ledgerForm": "strata",
+        "path": [
+          "break:stone->rubble",
+          "weather:rubble->sediment",
+          "lithify:sediment->stone"
+        ],
+        "direct": false,
+        "disagreement": "D-RECLAIM-RUBBLE",
+        "status": "PM_DEFAULT"
+      },
+      "cpPerStratum": 1030000
+    },
+    {
       "id": "slate",
       "strataId": 34,
       "kind": "natural",
