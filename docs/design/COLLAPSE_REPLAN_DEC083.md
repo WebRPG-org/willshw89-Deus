@@ -118,7 +118,7 @@ Fluid lanes that change: **fm** (participant in `commitMatterBatch`) already pro
 ## 10. OWNER QUESTIONS (each with my default)
 
 1. **Anchors.** DECISION: Only the bottom of the world (Default). Natural rock that is completely cut free will fall.
-2. **Crush.** DECISION: SRD falling-object dice (Default). Survivors pushed aside, furniture breaks.
+2. **Crush.** DECISION: Lethal. If a unit is crushed by falling rock or a collapsing room, they die instantly (Owner 2026-10-01).
 3. **Riders.** DECISION: Ride it down and take fall damage (Default).
 4. **Fall speed.** DECISION: Single tick instant fall (Default).
 5. **Walls.** DECISION: Walls act as solid blocks in the connectivity graph. If unanchored, they fall and break into ruins (Default).
