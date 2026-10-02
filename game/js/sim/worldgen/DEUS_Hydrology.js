@@ -12,9 +12,11 @@
  * straight or 14 diagonal, plus climbPenalty per unit of rise, so a path
  * follows valleys and crosses a ridge at its gap. The heuristic is the octile
  * distance to the nearest goal (a multi-source distance transform built once
- * per grid and sea level), which never overestimates. The bed is the running
- * minimum of node elevations along the path: where a path has to cross a rise
- * the river cuts through it, so the bed never climbs.
+ * per grid and sea level), which never overestimates. Routing surveys the
+ * original terrain; water follows only the carved bed. Repeated erosion passes
+ * lower every obstructing downstream node until that bed is non-increasing.
+ * The grid remains unchanged so independently planned rivers are repeatable.
+ * In a landlocked world the lowest local basin holds a standing terminal lake.
  *
  * Micro. Each macro node gets a tile anchor: its cell centre plus a jitter
  * hashed from the node's absolute coordinates. Each macro segment between two
@@ -203,7 +205,8 @@ function goalField(grid, seaLevel) {
 
 /**
  * findRiverPath(grid, source {mx, my}, { seaLevel, climbPenalty, maxExpansions })
- * -> { ok: true, nodes: [{mx, my}], elev: [...], bed: [...], cost, terminal, expansions }
+ * -> { ok: true, nodes: [{mx, my}], elev: [...], bed: [...], cost,
+ *      terminal, lake, erosionPasses, eroded, expansions }
  *  | { ok: false, reason: "budget" | "unreachable", expansions }
  * The path starts at the source and ends at the first goal reached. Nodes are wrapped grid coordinates.
  */
@@ -256,10 +259,52 @@ function pathResult(grid, parent, end, cost, terminal, expansions) {
     idx.reverse();
     const nodes = idx.map(i => ({ mx: i % grid.width, my: (i / grid.width) | 0 }));
     const elev = idx.map(i => grid.elev[i]);
-    const carve = mutant() !== "no_carve";
-    const bed = [];
-    for (let k = 0; k < elev.length; k++) bed.push(carve && k > 0 ? Math.min(bed[k - 1], elev[k]) : elev[k]);
-    return { ok: true, nodes, elev, bed, cost, terminal, expansions };
+    const bed = elev.slice();
+    let erosionPasses = 0, eroded = 0;
+    if (mutant() !== "no_carve") {
+        // A bounded number of full-path passes: each pass cuts at most one
+        // eighth of the route's elevation range from each obstructing node.
+        // The running waterline is the lowest bed seen upstream, including
+        // earlier cuts in this pass. This models progressive canyon incision
+        // without changing the terrain supplied by the caller.
+        let high = elev[0], low = elev[0], needsCut = false;
+        for (let k = 1; k < elev.length; k++) {
+            high = Math.max(high, elev[k]);
+            low = Math.min(low, elev[k]);
+            if (elev[k] > low) needsCut = true;
+        }
+        const range = high - low;
+        const step = range / 8 || range;
+        if (needsCut && step > 0) {
+            let obstructed;
+            do {
+                obstructed = false;
+                let waterline = bed[0];
+                for (let k = 1; k < bed.length; k++) {
+                    if (bed[k] > waterline) {
+                        const next = bed[k] - waterline <= step * (1 + 1e-12) ? waterline : bed[k] - step;
+                        eroded += bed[k] - next;
+                        bed[k] = next;
+                        if (next > waterline) obstructed = true;
+                    }
+                    waterline = Math.min(waterline, bed[k]);
+                }
+                erosionPasses++;
+            } while (obstructed);
+        }
+    }
+    let lake = null;
+    if (terminal === "lake") {
+        const mx = end % grid.width, my = (end / grid.width) | 0;
+        let rim = Infinity;
+        for (let k = 0; k < 8; k++) {
+            const j = neighbour(grid, mx, my, k);
+            if (j >= 0 && j !== end) rim = Math.min(rim, grid.elev[j]);
+        }
+        const surface = rim === Infinity ? bed[bed.length - 1] : rim;
+        lake = { mx, my, surface, depth: Math.max(0, surface - bed[bed.length - 1]) };
+    }
+    return { ok: true, nodes, elev, bed, cost, terminal, lake, erosionPasses, eroded, expansions };
 }
 
 /**
@@ -292,7 +337,8 @@ function axisDist(a, b, size, wrap) {
 
 /**
  * planMacroRivers(grid, { sources | (seed, count, minElevation, minSpacing), seaLevel, climbPenalty, maxExpansions })
- * -> { rivers: [{ id, source, nodes, elev, bed, cost, terminal }], failed: [{ source, reason }] }
+ * -> { rivers: [{ id, source, nodes, elev, bed, cost, terminal, lake,
+ *                 erosionPasses, eroded }], failed: [{ source, reason }] }
  * Sources already at a goal are skipped as "at_goal".
  */
 function planMacroRivers(grid, options) {
@@ -304,7 +350,7 @@ function planMacroRivers(grid, options) {
         if (field.isGoal[s.my * grid.width + s.mx]) { failed.push({ source: s, reason: "at_goal" }); continue; }
         const p = findRiverPath(grid, s, opts);
         if (!p.ok) { failed.push({ source: s, reason: p.reason }); continue; }
-        rivers.push({ id: rivers.length, source: { mx: s.mx, my: s.my }, nodes: p.nodes, elev: p.elev, bed: p.bed, cost: p.cost, terminal: p.terminal });
+        rivers.push({ id: rivers.length, source: { mx: s.mx, my: s.my }, nodes: p.nodes, elev: p.elev, bed: p.bed, cost: p.cost, terminal: p.terminal, lake: p.lake, erosionPasses: p.erosionPasses, eroded: p.eroded });
     }
     return { rivers, failed };
 }
