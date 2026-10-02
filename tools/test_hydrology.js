@@ -9,11 +9,11 @@
  * Macro:
  *   macro_downhill_to_sea   a path runs from its high source to a sink, one 8-neighbour step at a time
  *   macro_ridge_gap         a path crosses a ridge at its gap, not over the top
- *   macro_carve_bed         across a full-width rise the bed never climbs
+ *   macro_carve_bed         repeated erosion lowers a full-width rise without changing the input terrain
  *   macro_optimal           A* cost equals an independent Dijkstra (h = 0) on rugged ground
  *   macro_wrap              with wrapX a path steps across the seam to the near sea
  *   macro_budget            maxExpansions stops a search with reason "budget"
- *   macro_landlocked        with no sink a path ends at the lowest node, terminal "lake"
+ *   macro_landlocked        with no sea sink a path ends at a local basin with standing water depth
  *   macro_deterministic     the same inputs give the same plan; bad sources throw E_SOURCE
  *   sources_spacing         pickSources: highest first, above minElevation, spaced
  * Micro:
@@ -162,6 +162,8 @@ check("macro_downhill_to_sea", () => {
     for (let k = 1; k < p.nodes.length; k++) assert(adjacent(grid, p.nodes[k - 1], p.nodes[k]), "step " + k + " is not to an 8-neighbour");
     for (let k = 0; k < p.nodes.length - 1; k++) assert(p.elev[k] > 0.05, "node " + k + " is already sea; the path should have stopped there");
     assert(p.nodes.length === 12, "a straight slope should take 12 nodes, took " + p.nodes.length);
+    assert(p.erosionPasses === 0 && p.eroded === 0, "a downhill slope should need no erosion");
+    assert(p.bed.every((bed, k) => bed === p.elev[k]), "a downhill slope should keep its original bed");
 });
 
 // Slope down to the south, a ridge across row 7 (+0.8) with one gap at column 17.
@@ -180,10 +182,12 @@ check("macro_ridge_gap", () => {
     assert(p.nodes.filter(n => n.my === 7).every(n => n.mx === 17), "path crosses row 7 off the gap: " + JSON.stringify(p.nodes.filter(n => n.my === 7)));
     const maxRise = Math.max(...p.elev.map((e, k) => k ? e - p.elev[k - 1] : 0));
     assert(maxRise <= 0, "path climbs by " + maxRise);
+    assert(p.eroded === 0, "the gap should avoid excavation");
 });
 
 check("macro_carve_bed", () => {
     const grid = ridgeGrid(-1); // no gap: the ridge must be crossed
+    const original = Array.from(grid.elev);
     const p = H.findRiverPath(grid, { mx: 10, my: 0 }, { seaLevel: 0.1 + 1e-9 });
     assert(p.ok, "path failed: " + p.reason);
     const rawRise = p.elev.some((e, k) => k && e > p.elev[k - 1]);
@@ -191,6 +195,12 @@ check("macro_carve_bed", () => {
     for (let k = 1; k < p.bed.length; k++) assert(p.bed[k] <= p.bed[k - 1], "bed climbs at node " + k + ": " + p.bed[k - 1] + " -> " + p.bed[k]);
     for (let k = 0; k < p.bed.length; k++) assert(p.bed[k] <= p.elev[k], "bed above ground at node " + k);
     assert(p.bed[0] === p.elev[0], "bed at the source should be the source elevation");
+    assert(p.erosionPasses >= 2, "the ridge should require repeated erosion passes, got " + p.erosionPasses);
+    assert(p.erosionPasses <= 8, "erosion did not converge within eight passes");
+    const totalCut = p.elev.reduce((sum, e, k) => sum + e - p.bed[k], 0);
+    assert(Math.abs(totalCut - p.eroded) < 1e-9 && p.eroded > 0, "eroded volume does not match the cut bed");
+    assert(JSON.stringify(Array.from(grid.elev)) === JSON.stringify(original), "pathfinding mutated the source terrain");
+    assert(p.lake === null, "a path ending in the sea should not report a standing lake");
 });
 
 check("macro_optimal", () => {
@@ -257,12 +267,23 @@ check("macro_landlocked", () => {
     assert(p.terminal === "lake", "terminal " + p.terminal);
     const end = p.nodes[p.nodes.length - 1];
     assert(end.mx === 6 && end.my === 4, "should end at the bowl's lowest node, ended at " + JSON.stringify(end));
+    assert(p.lake && p.lake.mx === end.mx && p.lake.my === end.my, "lake is not at the basin minimum");
+    assert(Math.abs(p.lake.surface - 0.53) < 1e-9, "lake surface should reach the lowest surrounding rim");
+    assert(Math.abs(p.lake.depth - 0.03) < 1e-9, "standing lake depth should be 0.03, got " + p.lake.depth);
+    assert(p.bed.every((e, k) => k === 0 || e <= p.bed[k - 1]), "lake inflow bed climbs");
+    const planned = H.planMacroRivers(grid, { sources: [{ mx: 0, my: 0 }], seaLevel: 0.1 });
+    assert(planned.rivers.length === 1 && JSON.stringify(planned.rivers[0].lake) === JSON.stringify(p.lake), "network lost the lake metadata");
 });
 
 check("macro_deterministic", () => {
     const a = JSON.stringify(H.planMacroRivers(ruggedGrid(32, 24, 4242, true), { seed: 99, count: 5, minElevation: 0.9, minSpacing: 5, seaLevel: SEA }));
     const b = JSON.stringify(H.planMacroRivers(ruggedGrid(32, 24, 4242, true), { seed: 99, count: 5, minElevation: 0.9, minSpacing: 5, seaLevel: SEA }));
     assert(a === b, "two plans from the same inputs differ");
+    const planned = JSON.parse(a);
+    assert(planned.rivers.length > 0, "rugged fixture produced no rivers");
+    for (const r of planned.rivers) {
+        for (let k = 1; k < r.bed.length; k++) assert(r.bed[k] <= r.bed[k - 1], "planned river " + r.id + " climbs at node " + k);
+    }
     const grid = ruggedGrid(32, 24, 4242, true);
     const seaIdx = grid.elev.findIndex(e => e <= SEA);
     assert(seaIdx >= 0, "fixture has no sea node");
