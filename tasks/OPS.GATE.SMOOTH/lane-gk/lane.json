@@ -1,0 +1,45 @@
+{
+  "lane": "lane-gk",
+  "taskId": "OPS.GATE.SMOOTH",
+  "branch": "task/lane-gk",
+  "writer": "codex",
+  "reviewer": "grok",
+  "push": true,
+  "allowedPaths": [
+    "tools/governance/merge_gate.js",
+    "tools/governance/test_merge_gate.js",
+    "tools/governance/MERGE_GATE.md",
+    "tools/governance/fixtures/**",
+    "tools/ops/launch_worker.ps1",
+    "tools/ops/test_launch_worker.ps1",
+    "tools/ops/README.md",
+    "tasks/OPS.GATE.SMOOTH/lane-gk/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 600
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/governance/test_merge_gate.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "tools/ops/test_launch_worker.ps1"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}

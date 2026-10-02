@@ -9,7 +9,8 @@
       - Prompt: -PromptFile, else the lane's saved prompt for the same task, role and provider (never a prompt of the
         other role, never one the launcher generated), else the generated default, whose rule 2 says to push the lane's
         own branch (and to end with FINAL SHA) only when lane.json "push" or the brief asks for it (WG.00.12b).
-      - Saves the exact prompt to tasks/<task>/<lane>/launches/<yyyyMMdd_HHmmss>_prompt.txt and commits it.
+      - Saves the exact prompt to ~/.deus_ops/prompts/<lane>_<runId>.txt without a commit.
+        -CommitPrompt restores the lane-branch launch-prompt commit for an explicit exception.
       - Tees stdout and stderr to <LogRoot>\<lane>\<runId>.log. A 0-byte log is a failure (EMPTY-LOG).
       - Records PID, start, end, exit code and state in docs/telemetry/sessions/active_workers.json.
       - Kills the whole process tree on timeout (TIMEOUT).
@@ -41,6 +42,7 @@ param(
     [string]$ResumeFromSha,
     [string[]]$AllowedPaths,
     [switch]$NoCommitPrompt,
+    [switch]$CommitPrompt,
     [switch]$KillOrphans,
     [switch]$Quiet,
     [double]$PollSeconds = 5,
@@ -1167,6 +1169,7 @@ function Invoke-DeusLaunchMain {
     $pushRule = Get-DeusPushRule -LaneInfo $laneInfo -BriefText ([IO.File]::ReadAllText($brief)) -Branch $pushBranch
     if ($pushRule.Error) { Stop-DeusLaunch $pushRule.Error }
     if ($SavedPrompt -and -not $PromptFile) { Stop-DeusLaunch '-SavedPrompt needs -PromptFile' }
+    if ($CommitPrompt -and $NoCommitPrompt) { Stop-DeusLaunch '-CommitPrompt and -NoCommitPrompt cannot be used together' }
 
     # --- telemetry paths ----------------------------------------------------------------------
     $mainWt = Get-DeusMainWorktree $wt
@@ -1239,19 +1242,20 @@ function Invoke-DeusLaunchMain {
     if (-not $promptText.Trim()) { Stop-DeusLaunch 'prompt is empty' }
     $launchRel = "tasks/$taskId/$Lane/launches"
     $launchDir = Join-Path $wt ($launchRel.Replace('/', '\'))
-    if (-not (Test-Path -LiteralPath $launchDir)) { New-Item -ItemType Directory -Force -Path $launchDir | Out-Null }
+    $promptDir = if ($CommitPrompt) { $launchDir } else { Join-Path $env:USERPROFILE '.deus_ops\prompts' }
+    if (-not (Test-Path -LiteralPath $promptDir)) { New-Item -ItemType Directory -Force -Path $promptDir | Out-Null }
     $stamp = Get-Date -Format 'yyyyMMdd_HHmmss'
     $suffix = ''
     $n = 1
-    while ((Test-Path -LiteralPath (Join-Path $launchDir "$stamp${suffix}_prompt.txt")) -or (Test-Path -LiteralPath (Join-Path (Join-Path $logs $Lane) "${Lane}_$stamp$suffix.log"))) {
+    while ((Test-Path -LiteralPath (Join-Path $promptDir $(if ($CommitPrompt) { "$stamp${suffix}_prompt.txt" } else { "${Lane}_${Lane}_$stamp${suffix}.txt" }))) -or (Test-Path -LiteralPath (Join-Path (Join-Path $logs $Lane) "${Lane}_$stamp$suffix.log"))) {
         $n++
         $suffix = "_$n"
     }
     $runId = "${Lane}_$stamp$suffix"
     $promptRel = "$launchRel/$stamp${suffix}_prompt.txt"
-    $promptPath = Join-Path $wt ($promptRel.Replace('/', '\'))
+    $promptPath = if ($CommitPrompt) { Join-Path $wt ($promptRel.Replace('/', '\')) } else { Join-Path $promptDir "${Lane}_$runId.txt" }
     [IO.File]::WriteAllText($promptPath, $promptText, (New-Object Text.UTF8Encoding $false))
-    if (-not $NoCommitPrompt) {
+    if ($CommitPrompt) {
         & git -C $wt add -- $promptRel 2>&1 | Out-Null
         & git -C $wt commit -q --only -m "[ops] $taskId $Lane launch prompt $stamp$suffix ($roleName $prov)" -- $promptRel 2>&1 | Out-Null
         if ($LASTEXITCODE -ne 0) { Stop-DeusLaunch "could not commit the prompt file $promptRel" }
@@ -1269,7 +1273,7 @@ function Invoke-DeusLaunchMain {
         lane = $Lane; provider = $prov; role = $roleName; taskId = $taskId; state = 'RUNNING'
         pid = $null; processStartedAt = $null; launcherPid = $PID
         launcherStartedAt = (Format-DeusIso (Get-Process -Id $PID).StartTime)
-        worktree = $wt; branch = $branch; briefPath = $brief; launchPromptPath = $promptPath
+        worktree = $wt; branch = $branch; briefPath = $brief; launchPromptPath = $promptPath; promptPath = $promptPath
         promptFile = $promptFileUsed; promptSource = $promptSource; promptFrom = $promptFrom; promptCandidatesSkipped = $promptSkipped
         pushRule = $(if ($pushRule.Push) { 'push' } else { 'no-push' }); pushRuleSource = $pushRule.Source
         logPath = $logPath; launchTimeCT = (Format-DeusCentral (Get-Date)); startedAt = (Format-DeusIso (Get-Date))
@@ -1303,7 +1307,6 @@ function Invoke-DeusLaunchMain {
     $newCommits = 0
     if ($base -and $head) { $newCommits = [int](& git -C $wt rev-list --count "$base..$head" 2>$null) }
     $changes = Get-DeusChangedFiles $wt $base
-    if ($NoCommitPrompt) { $changes.Uncommitted = @($changes.Uncommitted | Where-Object { $_ -ne $promptRel }) }
     $outOfScope = @(@($changes.Committed) + @($changes.Uncommitted) | Where-Object { $_ } | Sort-Object -Unique | Where-Object { -not (Test-DeusPathAllowed $_ $allowed) })
     $logBytes = 0
     if (Test-Path -LiteralPath $logPath) { $logBytes = (Get-Item -LiteralPath $logPath).Length }
