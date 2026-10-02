@@ -11,6 +11,8 @@
     1,
     1
   ],
+  "passable": true,
+  "under": true,
   "facings": [
     "S",
     "W",
@@ -19,15 +21,12 @@
   ],
   "animations": {
     "stand": [
-      0
-    ],
-    "sway": [
-      0,
-      1,
-      2
+      1
     ]
   },
-  "frameMs": 200,
-  "passable": true,
-  "under": true
+  "generator": "PixelLab (PM, DEC-063)",
+  "standard": "RMMZ reference, Ultima VII style (DEC-063)",
+  "master": "art/approved/SURFACE_SHARED_FLORA_FLOWERS-BLUE_B-V1_DEFAULT.png",
+  "masterSha256": "c99e86a686c5c27af0485969896df0a83141a033df26841664fa7f36c5c179fe",
+  "frameMs": 200
 }

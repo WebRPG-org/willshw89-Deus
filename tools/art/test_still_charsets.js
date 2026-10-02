@@ -15,6 +15,39 @@ function getSha256(buf) {
     return crypto.createHash('sha256').update(buf).digest('hex');
 }
 
+// Size exceptions (DEC-016 amendment, Owner 2026-10-01: "I will solve size mismatches when I see them in the game"). An entry listed
+// here is accepted although its drawn size misses its catalogue slot or envelope: validate_art may refuse it ONLY with the listed
+// codes. Any other refusal (alpha, palette, template, approval) still fails. Because validate_art stops at the first refusal, an
+// exception entry's alpha and palette are checked here directly. The sheet and sidecar then follow the mapping's frame (and its
+// optional "anchor") instead of the catalogue slot.
+const SIZE_EXCEPTIONS = {
+    'SURFACE_SHARED_TREE_FRUIT-TREE_B-V1_DEFAULT': ['DIMS_MISMATCH', 'SCALE_OUT_OF_ENVELOPE'],       // drawn 95x98, frame 96x144
+    'SURFACE_SHARED_TREE_FRUIT-TREE-BARE_B-V1_DEFAULT': ['DIMS_MISMATCH', 'SCALE_OUT_OF_ENVELOPE'],  // drawn 94x98, frame 96x144
+    'SURFACE_SHARED_FLORA_FLOWERS_B-V1_DEFAULT': ['SCALE_OUT_OF_ENVELOPE'],                          // 21 tall, envelope 20
+    'SURFACE_SHARED_FLORA_FLOWERS-PURPLE_B-V1_DEFAULT': ['SCALE_OUT_OF_ENVELOPE'],
+    'SURFACE_SHARED_FLORA_FLOWERS-BLUE_B-V1_DEFAULT': ['SCALE_OUT_OF_ENVELOPE'],
+    'SURFACE_SHARED_FLORA_GRASS-TUFT_B-V4_DEFAULT': ['SCALE_OUT_OF_ENVELOPE']                         // 19 tall, envelope minimum 20
+};
+
+function paletteSet() {
+    const hex = fs.readFileSync(path.join(__dirname, '../../art/palette/deus_master_world_palette_v1.hex'), 'utf8');
+    return new Set(hex.split(/\r?\n/).map(s => s.trim().replace(/^#/, '').toLowerCase()).filter(s => /^[0-9a-f]{6}$/.test(s)));
+}
+
+// Alpha is 0 or 255 and every opaque colour is in the master palette (what validate_art checks after its size checks).
+function pixelProblems(png, palette) {
+    let semi = 0, off = 0;
+    for (let i = 0; i < png.width * png.height; i++) {
+        const a = png.data[i * 4 + 3];
+        if (a !== 0 && a !== 255) semi++;
+        if (a === 255) {
+            const h = [0, 1, 2].map(k => png.data[i * 4 + k].toString(16).padStart(2, '0')).join('');
+            if (!palette.has(h)) off++;
+        }
+    }
+    return { semi, off };
+}
+
 function check() {
     let failures = 0;
     const fail = (msg) => { console.error("FAIL:", msg); failures++; };
@@ -39,19 +72,31 @@ function check() {
         }
     }
     
-    // 3. validate_art ACCEPTS every master
-    const tempDir = path.join(__dirname, 'temp_templates');
+    // 3. validate_art ACCEPTS every master (a size exception may be refused only with its listed codes)
+    const os = require('os');
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'still-charsets-templates-'));
+    const palette = paletteSet();
     try {
-        execSync(`node tools/art/make_blank_templates.js --catalogue art/catalogue/catalogue.json --out tools/art/temp_templates`, { cwd: path.join(__dirname, '../../'), stdio: 'pipe' });
+        execSync(`node tools/art/make_blank_templates.js --catalogue art/catalogue/catalogue.json --out "${tempDir}"`, { cwd: path.join(__dirname, '../../'), stdio: 'pipe' });
     } catch (e) {}
-    
+
     for (const entryId of checkedMasters) {
         try {
-            execSync(`node tools/art/validate_art.js art/approved/${entryId}.png --entry ${entryId} --catalogue art/catalogue/catalogue.json --approvals art/APPROVALS.md --templates tools/art/temp_templates`, { cwd: path.join(__dirname, '../../'), stdio: 'pipe' });
+            execSync(`node tools/art/validate_art.js art/approved/${entryId}.png --entry ${entryId} --catalogue art/catalogue/catalogue.json --approvals art/APPROVALS.md --templates "${tempDir}"`, { cwd: path.join(__dirname, '../../'), stdio: 'pipe' });
         } catch (e) {
-            fail(`validate_art rejected ${entryId}:\n` + e.stdout.toString() + e.stderr.toString());
+            const text = e.stdout.toString() + e.stderr.toString();
+            const codes = [...text.matchAll(/^REFUSE ([A-Z_]+)/gm)].map(m => m[1]);
+            const allowed = SIZE_EXCEPTIONS[entryId];
+            if (allowed && codes.length && codes.every(c => allowed.includes(c))) {
+                const p = pixelProblems(decodePNG(fs.readFileSync(path.join(approvedDir, entryId + '.png'))), palette);
+                if (p.semi || p.off) fail(`size exception ${entryId}: ${p.semi} semi-transparent and ${p.off} off-palette pixel(s)`);
+                else console.log(`NOTE: size exception ${entryId}: validate_art refused ${codes.join(', ')} (allowed, DEC-016 amendment); alpha and palette checked directly`);
+            } else {
+                fail(`validate_art rejected ${entryId}:\n` + text);
+            }
         }
     }
+    fs.rmSync(tempDir, { recursive: true, force: true });
     
     // 1, 4, 5, 7. Sheets and Sidecars
     for (const item of mapping) {
@@ -67,9 +112,13 @@ function check() {
         
         // 5. Sidecar properties
         const repEntry = catalogue.entries.find(e => e.id === (item.isV8 ? item.entries[0] : item.entryId));
-        if (sidecar.frameWidth !== repEntry.slot.w) fail(`Sidecar frameWidth ${sidecar.frameWidth} != slot w ${repEntry.slot.w}`);
-        if (sidecar.frameHeight !== repEntry.slot.h) fail(`Sidecar frameHeight ${sidecar.frameHeight} != slot h ${repEntry.slot.h}`);
-        if (sidecar.anchor[0] !== repEntry.anchor.x || sidecar.anchor[1] !== repEntry.anchor.y) fail(`Sidecar anchor [${sidecar.anchor}] != catalogue anchor [${repEntry.anchor.x},${repEntry.anchor.y}]`);
+        // A size exception follows the mapping's frame and optional anchor; every other entry follows the catalogue slot and anchor.
+        const exc = !item.isV8 && SIZE_EXCEPTIONS[item.entryId];
+        const wantW = exc ? item.frameWidth : repEntry.slot.w, wantH = exc ? item.frameHeight : repEntry.slot.h;
+        const wantAnchor = exc && item.anchor ? item.anchor : [repEntry.anchor.x, repEntry.anchor.y];
+        if (sidecar.frameWidth !== wantW) fail(`Sidecar frameWidth ${sidecar.frameWidth} != slot w ${wantW}`);
+        if (sidecar.frameHeight !== wantH) fail(`Sidecar frameHeight ${sidecar.frameHeight} != slot h ${wantH}`);
+        if (sidecar.anchor[0] !== wantAnchor[0] || sidecar.anchor[1] !== wantAnchor[1]) fail(`Sidecar anchor [${sidecar.anchor}] != expected anchor [${wantAnchor}]`);
         
         // 4. Sheet size
         if (item.isV8) {
@@ -150,6 +199,13 @@ function check() {
         if (!fs.existsSync(stumpSprite)) fail(`Stump sprite ${stumpSprite} does not exist`);
     }
     
+    // 8. every mapped sprite is drawn by a world object; the sapling points at its new sprite and no tile (DEUS_Objects frameFor draws tile first)
+    for (const item of mapping) {
+        if (!worldCatalog.objects.some(o => o.image === item.sprite)) fail(`No world object uses ${item.sprite}`);
+    }
+    const sapling = worldCatalog.objects.find(o => o.id === 'sapling');
+    if (!sapling || sapling.image !== '!$UF_Sapling' || sapling.tile) fail('the sapling object must use image !$UF_Sapling and no tile');
+
     if (failures > 0) {
         console.error(`${failures} check(s) failed.`);
         process.exit(1);

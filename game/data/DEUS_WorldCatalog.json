@@ -2745,11 +2745,7 @@
     {
       "id": "sapling",
       "name": "Sapling",
-      "tile": {
-        "sheet": "Outside_B",
-        "id": 152
-      },
-      "tint": "#7fb35a",
+      "image": "!$UF_Sapling",
       "under": true,
       "passable": true,
       "tags": [
