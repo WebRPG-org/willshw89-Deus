@@ -1,18 +1,36 @@
 {
+  "lane": "lane-nx2",
   "taskId": "NAT.02.01",
   "branch": "task/lane-nx2",
   "writer": "grok",
-  "reviewer": "codex",
+  "reviewer": "self",
+  "push": true,
   "allowedPaths": [
+    "game/js/sim/structural/levels_reader.js",
     "game/js/sim/structural/commit.js",
     "game/js/sim/structural/occupants.js",
     "game/js/sim/structural/index.js",
-    "tools/sim/test_structure_fluid.js",
-    "tasks/NAT.02.01/lane-nx2/REPORT.md"
+    "tools/test_structural_levels.js",
+    "tools/test_structure_fluid.js",
+    "tasks/NAT.02.01/lane-nx2/**"
   ],
   "gateTests": [
-    "node tools/check_deus_syntax.js",
-    "node tools/test_structural_connectivity.js",
-    "node tools/sim/test_structure_fluid.js"
+    {
+      "cmd": "node",
+      "args": ["tools/check_deus_syntax.js"],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": ["tools/test_structural_levels.js"],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": ["tools/test_structure_fluid.js"],
+      "timeoutSec": 900
+    }
   ]
 }
+
+

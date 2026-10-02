@@ -1,27 +1,19 @@
-# lane-nx2: Integration and legacy replacement (Commit and Fluid Interface)
+# lane-nx2 (NAT.02.01 part 3): The Levels Reader, Commit, and Pure Occupant Plan
 
 | Field | Value |
 |---|---|
-| WBS | NAT.02.01 (nx2) |
-| taskId (manifest) | NAT.02.01 |
-| Branch | 	ask/lane-nx2 |
-| Manifest | 	asks/NAT.02.01/lane-nx2/lane.json |
+| WBS | NAT.02.01 |
+| Branch | \	ask/lane-nx2\ |
+| Manifest | \	asks/NAT.02.01/lane-nx2/lane.json\ |
 | Writer -> reviewer | grok -> codex |
-| Size | M |
-| Dependencies | NAT.02.01 (lane-gq / nx1) |
 
-## Goal
-Implement the integration layer for the pure connectivity kernel (nx1). This involves the fall step commit (grouping blocks, building records, writing via setStrata), handling occupants (crush lethality), and fluid interface pinning checks.
+## 1. Scope
+Per docs/design/COLLAPSE_REPLAN_DEC083.md (sections 6, 7, 8):
+1. **levels_reader.js**: Implement the struct reader reading from injected \levels\, \objects\, \isKnown\ (so sim code does not name \UF\ or \window\). Wrap torus edges, parse S0-S4 strata HP and materials.
+2. **commit.js**: Implement the fall step commit via \setStrata(..., { cause: "structural:fall" })\, atomic with rollback on failure. Vacate first, then fill. 
+3. **occupants.js**: Pure occupant plan for units, items, and non-structural objects under a fall.
+4. **index.js**: Export these modules.
+5. **test_structural_levels.js** and **test_structure_fluid.js**: Implement tests using the node VM pattern (from test_strata_fluid_reconciliation.js) asserting water conservation, fall events, and mutants \all_deletes_displaced\, \ill_before_vacate\, \skip_event\.
 
-## Scope
-1. **Commit**: Write the final 11-byte record per affected cell (moved bytes keep HP/constructed flag, connector code cleared, stairs to plain blocks). Write through setStrata(..., { cause: "structural:fall" }) vacating first, then filling. One synchronous commit.
-2. **Occupants**: After commit, scan units in changed levels. If a unit is crushed by falling rock or collapsing room, they die instantly (Owner DECISION 2026-10-01). Survivors falling drop to the nearest standable cell taking SRD falling damage.
-3. **Checks**: Implement interface pinning checks in 	est_structure_fluid.js: slab_into_pool_conserves_water, loor_mined_lake_drains_down, acate_wakes_neighbours, 
-o_fluid_write_by_fall.
-
-## Out of scope
-Any span, load, weight, or capacity limits. Fluid edits (Fluid handles its own displacement).
-
-## Rules
-- One commit per tick.
-- Adhere to pure deterministic RNG.
+## 2. The prompt
+(Default launch_worker generated prompt applies; you push and end with FINAL SHA).
