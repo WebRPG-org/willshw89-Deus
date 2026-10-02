@@ -541,10 +541,10 @@ function syntheticF03(oreIds) {
 
 // --- F-04. Mine, dig, quarry and a wall collapse post balanced mass at z in the range. ---
 
-function placeMu(session, cls, form) {
+function placeCp(session, cls, form) {
     let s = 0;
     const list = session.places();
-    for (let i = 0; i < list.length; i++) if (list[i].cls === cls && list[i].form === form) s += list[i].mu;
+    for (let i = 0; i < list.length; i++) if (list[i].cls === cls && list[i].form === form) s += list[i].cp;
     return s;
 }
 
@@ -651,8 +651,8 @@ function runMine(sandbox, matter, type, z, material) {
         }
         return { ok: true, detail: "soil z " + z + " stayed soil" };
     }
-    const kept = placeMu(session, "stone", "strata");
-    const moved = placeMu(session, "stone", "item") + placeMu(session, "rubble", "strata");
+    const kept = placeCp(session, "stone", "strata");
+    const moved = placeCp(session, "stone", "item") + placeCp(session, "rubble", "strata");
     if (kept !== slice || moved !== slice * 4) {
         return { ok: false, detail: type + " z " + z + " kept " + kept + " moved " + moved + " slice " + slice };
     }

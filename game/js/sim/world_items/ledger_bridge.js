@@ -1,7 +1,7 @@
 "use strict";
 // Posts spill, collapse, burn and rot through the existing ledger API.
 // This file does not change ledger rules. Every step is one transform() the default table already allows.
-// massMu on a catalog row is the integer posted. It does not define how many mu are in a pound.
+// massCp on a catalog row is the integer centipound amount posted.
 
 function applyPlan(ledger, plan) {
     if (!ledger) return;
@@ -21,7 +21,7 @@ function recount(items, deposits) {
     }
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
-        if (item.massMu) add(item.ledgerClass, item.ledgerForm, item.massMu);
+        if (item.massCp) add(item.ledgerClass, item.ledgerForm, item.massCp);
     }
     for (let i = 0; i < deposits.length; i++) {
         const d = deposits[i];

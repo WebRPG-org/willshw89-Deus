@@ -190,7 +190,7 @@ function createReclaim(opts) {
             pathId: spec.pathId || spec.materialId || "",
             cls: spec.cls,
             form: spec.form,
-            mu: spec.mu,
+            cp: spec.cp,
             x: spec.x || 0,
             y: spec.y || 0,
             z: spec.z || 0,
@@ -212,9 +212,9 @@ function createReclaim(opts) {
         const row = blankPlace(spec);
         let i;
         for (i = 0; i < places.length; i++) {
-            if (places[i].mu > 0 && samePile(places[i], row)) {
-                if (places[i].mu > MAX - row.mu) die("E_AMOUNT", "pile");
-                places[i].mu += row.mu;
+            if (places[i].cp > 0 && samePile(places[i], row)) {
+                if (places[i].cp > MAX - row.cp) die("E_AMOUNT", "pile");
+                places[i].cp += row.cp;
                 return places[i];
             }
         }
@@ -225,20 +225,20 @@ function createReclaim(opts) {
         let s = 0, i, p;
         for (i = 0; i < places.length; i++) {
             p = places[i];
-            if (p.cls !== cls || p.form !== form || p.mu <= 0) continue;
+            if (p.cls !== cls || p.form !== form || p.cp <= 0) continue;
             if (prefer && !prefer(p)) continue;
-            s += p.mu;
+            s += p.cp;
         }
         return s;
     }
-    function takeMu(cls, form, amount, prefer) {
+    function takeCp(cls, form, amount, prefer) {
         let left = amount, i, p, n;
         for (i = 0; i < places.length && left > 0; i++) {
             p = places[i];
-            if (p.cls !== cls || p.form !== form || p.mu <= 0) continue;
+            if (p.cls !== cls || p.form !== form || p.cp <= 0) continue;
             if (prefer && !prefer(p)) continue;
-            n = p.mu < left ? p.mu : left;
-            p.mu -= n;
+            n = p.cp < left ? p.cp : left;
+            p.cp -= n;
             left -= n;
         }
         if (left !== 0) die("E_INSUFFICIENT", cls + "/" + form);
@@ -246,7 +246,7 @@ function createReclaim(opts) {
     function compact() {
         const next = [];
         let i;
-        for (i = 0; i < places.length; i++) if (places[i].mu > 0) next.push(places[i]);
+        for (i = 0; i < places.length; i++) if (places[i].cp > 0) next.push(places[i]);
         places = next;
     }
     function preferMaterial(materialId) {
@@ -257,8 +257,7 @@ function createReclaim(opts) {
     }
 
     function postingAmount(p) {
-        if (typeof p.mu === "number") return p.mu;
-        if (typeof p.du === "number") return p.du;
+        if (typeof p.cp === "number") return p.cp;
         return null;
     }
     function scalePostings(list, times) {
@@ -267,7 +266,8 @@ function createReclaim(opts) {
         for (i = 0; i < list.length; i++) {
             p = list[i];
             unit = postingAmount(p);
-            if (unit === null || unit === 0) continue;
+            if (unit === null) return { error: "E_UNIT" };
+            if (unit === 0) continue;
             if (!p.fromClass || !p.class || !p.fromForm || !p.form) return null;
             out.push({
                 process: p.process || "identity",
@@ -331,7 +331,7 @@ function createReclaim(opts) {
             pathId: pathId,
             cls: m.toCls,
             form: m.toForm,
-            mu: m.amount,
+            cp: m.amount,
             x: at.x, y: at.y, z: at.z,
             outdoor: outdoor != null ? outdoor : (m.toForm === "item" || m.toForm === "ruin" || (m.toForm === "strata" && !solid)),
             exempt: exempt === true,
@@ -342,6 +342,7 @@ function createReclaim(opts) {
 
     function applyMaterial(materialId, list, times, cause, at, prefer) {
         const rows = scalePostings(list, times);
+        if (rows && rows.error === "E_UNIT") return soft("E_UNIT", materialId);
         if (!rows) return soft("E_OPEN", materialId);
         const bad = checkMoves(rows, cause);
         if (bad) return bad;
@@ -361,7 +362,7 @@ function createReclaim(opts) {
         for (i = 0; i < rows.length; i++) {
             m = rows[i];
             if (m.process === "identity") continue;
-            takeMu(m.fromCls, m.fromForm, m.amount, prefer);
+            takeCp(m.fromCls, m.fromForm, m.amount, prefer);
             givePlace(productSpec(m, materialId, at, null, false));
         }
         compact();
@@ -373,6 +374,7 @@ function createReclaim(opts) {
         if (!o) return soft("E_NO_DATA", elementId);
         if (o.massless) return { ok: true, massless: true, posted: 0 };
         const rows = scalePostings(list, times);
+        if (rows && rows.error === "E_UNIT") return soft("E_UNIT", elementId);
         if (!rows) return soft("E_OPEN", elementId);
         const bad = checkMoves(rows, cause);
         if (bad) return bad;
@@ -387,9 +389,9 @@ function createReclaim(opts) {
         }
         for (i = 0; i < places.length; i++) {
             const p = places[i];
-            if (p.elementId !== elementId || p.mu <= 0) continue;
+            if (p.elementId !== elementId || p.cp <= 0) continue;
             const k = p.cls + "|" + p.form;
-            held[k] = (held[k] || 0) + p.mu;
+            held[k] = (held[k] || 0) + p.cp;
         }
         const keys = Object.keys(need).sort();
         for (i = 0; i < keys.length; i++) {
@@ -399,16 +401,16 @@ function createReclaim(opts) {
         for (i = 0; i < rows.length; i++) {
             m = rows[i];
             if (m.process === "identity") continue;
-            takeMu(m.fromCls, m.fromForm, m.amount, prefer);
+            takeCp(m.fromCls, m.fromForm, m.amount, prefer);
             givePlace(productSpec(m, canonMaterial(m.toCls, m.toForm) || m.item || elementId, at, null, false));
         }
         for (i = 0; i < rows.length; i++) {
             m = rows[i];
             if (m.process !== "identity") continue;
-            takeMu(m.fromCls, m.fromForm, m.amount, prefer);
+            takeCp(m.fromCls, m.fromForm, m.amount, prefer);
             const spec = productSpec(m, canonMaterial(m.toCls, m.toForm) || elementId, at, true, false);
             spec.elementId = m.objectId || "";
-            spec.mu = m.amount;
+            spec.cp = m.amount;
             if (m.toForm === "strata" && !looseStrata(m.toCls)) spec.outdoor = false;
             givePlace(spec);
         }
@@ -487,15 +489,15 @@ function createReclaim(opts) {
         if (!row) {
             const bridge = bridgeToward(place, step);
             if (!bridge) { place.parked = "no-row"; return { ok: true, blocked: "no-row" }; }
-            if (ledger.amount(place.cls, place.form) < place.mu) return soft("E_INSUFFICIENT", place.cls + "/" + place.form);
-            commitMove(place.cls, place.form, bridge.to, bridge.toForm, place.mu, cause);
+            if (ledger.amount(place.cls, place.form) < place.cp) return soft("E_INSUFFICIENT", place.cls + "/" + place.form);
+            commitMove(place.cls, place.form, bridge.to, bridge.toForm, place.cp, cause);
             place.cls = bridge.to;
             place.form = bridge.toForm;
             return { ok: true, moved: true, prep: true };
         }
         if (oreOutput(place.cls, row.to)) return refuse("E_ORE_OUTPUT", place.cls + " -> " + row.to);
-        if (ledger.amount(place.cls, place.form) < place.mu) return soft("E_INSUFFICIENT", place.cls + "/" + place.form);
-        commitMove(place.cls, place.form, row.to, row.toForm, place.mu, cause);
+        if (ledger.amount(place.cls, place.form) < place.cp) return soft("E_INSUFFICIENT", place.cls + "/" + place.form);
+        commitMove(place.cls, place.form, row.to, row.toForm, place.cp, cause);
         place.cls = row.to;
         place.form = row.toForm;
         const nextMat = canonMaterial(place.cls, place.form);
@@ -510,7 +512,7 @@ function createReclaim(opts) {
         let i, p;
         for (i = 0; i < places.length; i++) {
             p = places[i];
-            if (p.mu > 0 && p.outdoor && !p.exempt && !p.done && !p.parked) out.push(p);
+            if (p.cp > 0 && p.outdoor && !p.exempt && !p.done && !p.parked) out.push(p);
         }
         out.sort(function (a, b) { return a.id - b.id; });
         return out;
@@ -547,40 +549,40 @@ function createReclaim(opts) {
         return null;
     }
 
-    function registerCommon(cls, form, mu, cause, spec) {
-        if (!ledger.isSealed()) ledger.register(cls, form, mu, cause || "register");
+    function registerCommon(cls, form, cp, cause, spec) {
+        if (!ledger.isSealed()) ledger.register(cls, form, cp, cause || "register");
         else return soft("E_SEALED", cls + "/" + form);
         givePlace(spec);
-        return { ok: true, mu: mu, cls: cls, form: form };
+        return { ok: true, cp: cp, cls: cls, form: form };
     }
     function registerSlice(id, count, cause, opts) {
         const m = materials.material(id);
         if (!m || !m.ledger) return soft("E_NO_DATA", String(id));
         if (m.ledgerForm && m.ledgerForm !== "strata") return soft("E_FORM", id);
         if (m.unmapped) return soft("E_OPEN", (m.unmapped && m.unmapped.disagreement) || id);
-        let mu;
-        try { mu = materials.massOf(id, "strata", count); }
+        let cp;
+        try { cp = materials.massOf(id, "strata", count); }
         catch (e) { return soft(e.code || "E_FORM", id); }
-        if (!isAmount(mu) || mu === 0) return soft("E_OPEN", id);
+        if (!isAmount(cp) || cp === 0) return soft("E_OPEN", id);
         const o = opts || {};
         const at = atOf(o);
-        return registerCommon(m.ledger.class, "strata", mu, cause, {
+        return registerCommon(m.ledger.class, "strata", cp, cause, {
             elementId: "",
             materialId: id,
             pathId: id,
             cls: m.ledger.class,
             form: "strata",
-            mu: mu,
+            cp: cp,
             x: at.x, y: at.y, z: at.z,
             outdoor: o.outdoor === true,
             exempt: o.exempt !== false
         });
     }
     function registerItem(id, count, cause, opts) {
-        let mu;
-        try { mu = materials.massOf(id, "item", count); }
+        let cp;
+        try { cp = materials.massOf(id, "item", count); }
         catch (e) { return soft(e.code || "E_FORM", id); }
-        if (!isAmount(mu) || mu === 0) return soft("E_OPEN", id);
+        if (!isAmount(cp) || cp === 0) return soft("E_OPEN", id);
         const items = data && data.masses && data.masses.items;
         const row = items && items[id];
         const cls = row && row.ledger && row.ledger.class;
@@ -588,13 +590,13 @@ function createReclaim(opts) {
         const o = opts || {};
         const at = atOf(o);
         const pathId = canonMaterial(cls, "item") || id;
-        return registerCommon(cls, "item", mu, cause, {
+        return registerCommon(cls, "item", cp, cause, {
             elementId: "",
             materialId: pathId,
             pathId: pathId,
             cls: cls,
             form: "item",
-            mu: mu,
+            cp: cp,
             x: at.x, y: at.y, z: at.z,
             outdoor: o.outdoor !== false,
             exempt: o.exempt === true
@@ -607,18 +609,18 @@ function createReclaim(opts) {
         if (!Array.isArray(orec.lines) || !orec.lines.length) return soft("E_NO_DATA", id);
         const o = opts || {};
         const at = atOf(o);
-        let i, line, mu, res;
+        let i, line, cp, res;
         for (i = 0; i < orec.lines.length; i++) {
             line = orec.lines[i];
-            mu = mul(line.mu, count);
-            if (!mu) continue;
-            res = registerCommon(line.class, line.form || "object", mu, cause, {
+            cp = mul(line.cp, count);
+            if (!cp) continue;
+            res = registerCommon(line.class, line.form || "object", cp, cause, {
                 elementId: id,
                 materialId: canonMaterial(line.class, line.form || "object") || id,
                 pathId: canonMaterial(line.class, line.form || "object") || id,
                 cls: line.class,
                 form: line.form || "object",
-                mu: mu,
+                cp: cp,
                 x: at.x, y: at.y, z: at.z,
                 outdoor: o.outdoor === true,
                 exempt: o.exempt !== false
@@ -627,18 +629,18 @@ function createReclaim(opts) {
         }
         return { ok: true };
     }
-    function registerHolding(cls, form, mu, cause, opts) {
-        if (!isAmount(mu) || mu === 0) return soft("E_AMOUNT", cls);
+    function registerHolding(cls, form, cp, cause, opts) {
+        if (!isAmount(cp) || cp === 0) return soft("E_AMOUNT", cls);
         const o = opts || {};
         const at = atOf(o);
         const pathId = o.pathId || canonMaterial(cls, form) || cls;
-        return registerCommon(cls, form, mu, cause, {
+        return registerCommon(cls, form, cp, cause, {
             elementId: o.elementId || "",
             materialId: o.materialId || pathId,
             pathId: pathId,
             cls: cls,
             form: form,
-            mu: mu,
+            cp: cp,
             x: at.x, y: at.y, z: at.z,
             outdoor: o.outdoor === true,
             exempt: o.exempt === true
@@ -666,11 +668,11 @@ function createReclaim(opts) {
         let sum = 0, i, unit;
         for (i = 0; i < list.length; i++) {
             unit = postingAmount(list[i]);
-            if (unit === null) continue;
+            if (unit === null) return soft("E_UNIT", id);
             if (!list[i].fromClass) continue;
             sum += unit;
         }
-        const unmapped = m && m.unmapped && isAmount(m.unmapped.mu) ? m.unmapped.mu : 0;
+        const unmapped = m && m.unmapped && isAmount(m.unmapped.cp) ? m.unmapped.cp : 0;
         if (sum + unmapped !== one) return soft("E_UNBALANCED", id + " yield " + sum + " mass " + one);
         const at = atOf(detail);
         return applyMaterial(id, list, n, cause || "mine", at, preferMaterial(id));
@@ -695,14 +697,14 @@ function createReclaim(opts) {
             let i, line;
             for (i = 0; i < bill.lines.length; i++) {
                 line = bill.lines[i];
-                if (!line || !line.class || !isAmount(line.mu)) return soft("E_NO_DATA", id);
+                if (!line || !line.class || !isAmount(line.cp)) return soft("E_NO_DATA", id);
                 rows.push({
                     process: "build",
                     fromCls: line.class,
                     fromForm: "item",
                     toCls: line.class,
                     toForm: "object",
-                    amount: mul(line.mu, count),
+                    amount: mul(line.cp, count),
                     item: line.item || "",
                     objectId: id,
                     count: line.count ? mul(line.count, count) : 0
@@ -715,14 +717,14 @@ function createReclaim(opts) {
             }
             runMoves(rows, cause);
             for (i = 0; i < rows.length; i++) {
-                takeMu(rows[i].fromCls, "item", rows[i].amount, null);
+                takeCp(rows[i].fromCls, "item", rows[i].amount, null);
                 givePlace({
                     elementId: id,
                     materialId: canonMaterial(rows[i].toCls, "object") || id,
                     pathId: canonMaterial(rows[i].toCls, "object") || id,
                     cls: rows[i].toCls,
                     form: "object",
-                    mu: rows[i].amount,
+                    cp: rows[i].amount,
                     x: at.x, y: at.y, z: at.z,
                     outdoor: detail.outdoor === true,
                     exempt: detail.exempt !== false,
@@ -734,27 +736,27 @@ function createReclaim(opts) {
             return { ok: true, posted: rows.length, cause: cause };
         }
         if (detail.item && isAmount(detail.count) && detail.count > 0) {
-            let mu;
-            try { mu = materials.massOf(detail.item, "item", detail.count); }
+            let cp;
+            try { cp = materials.massOf(detail.item, "item", detail.count); }
             catch (e) { return soft(e.code || "E_FORM", detail.item); }
-            if (!isAmount(mu) || mu === 0) return soft("E_OPEN", String(detail.item));
+            if (!isAmount(cp) || cp === 0) return soft("E_OPEN", String(detail.item));
             const items = data && data.masses && data.masses.items;
             const row = items && items[detail.item];
             const cls = row && row.ledger && row.ledger.class;
             if (!cls) return soft("E_NO_DATA", String(detail.item));
-            const move = { process: "build", fromCls: cls, fromForm: "item", toCls: cls, toForm: "object", amount: mu, item: detail.item, objectId: id || detail.item, count: detail.count };
+            const move = { process: "build", fromCls: cls, fromForm: "item", toCls: cls, toForm: "object", amount: cp, item: detail.item, objectId: id || detail.item, count: detail.count };
             const bad = checkMoves([move], cause);
             if (bad) return bad;
-            if (available(cls, "item", null) < mu) return soft("E_INSUFFICIENT", cls + "/item");
+            if (available(cls, "item", null) < cp) return soft("E_INSUFFICIENT", cls + "/item");
             runMoves([move], cause);
-            takeMu(cls, "item", mu, null);
+            takeCp(cls, "item", cp, null);
             givePlace({
                 elementId: id || detail.item,
                 materialId: canonMaterial(cls, "object") || detail.item,
                 pathId: canonMaterial(cls, "object") || detail.item,
                 cls: cls,
                 form: "object",
-                mu: mu,
+                cp: cp,
                 x: at.x, y: at.y, z: at.z,
                 outdoor: detail.outdoor === true,
                 exempt: detail.exempt !== false
@@ -841,7 +843,7 @@ function createReclaim(opts) {
         let i, p, best = null;
         for (i = 0; i < places.length; i++) {
             p = places[i];
-            if (p.mu <= 0 || p.done) continue;
+            if (p.cp <= 0 || p.done) continue;
             if (d.elementId && p.elementId !== d.elementId) continue;
             if (d.materialId && p.materialId !== d.materialId && p.pathId !== d.materialId) continue;
             if (!d.elementId && !d.materialId) continue;
@@ -855,10 +857,10 @@ function createReclaim(opts) {
         let i, p, bucket;
         for (i = 0; i < places.length; i++) {
             p = places[i];
-            if (p.mu <= 0) continue;
+            if (p.cp <= 0) continue;
             if (!map[p.cls]) map[p.cls] = {};
             bucket = map[p.cls];
-            bucket[p.form] = (bucket[p.form] || 0) + p.mu;
+            bucket[p.form] = (bucket[p.form] || 0) + p.cp;
         }
         return map;
     }
@@ -890,11 +892,11 @@ function createReclaim(opts) {
         let i, p, key, id, slice, names, out, g;
         for (i = 0; i < places.length; i++) {
             p = places[i];
-            if (!p.done || p.form !== "strata" || p.mu <= 0) continue;
+            if (!p.done || p.form !== "strata" || p.cp <= 0) continue;
             if (p.cls !== "stone" && p.cls !== "humus") continue;
             key = p.x + "," + p.y + "," + p.z + "|" + p.cls;
-            if (!groups[key]) groups[key] = { x: p.x, y: p.y, z: p.z, cls: p.cls, mu: 0, pathId: p.pathId };
-            groups[key].mu += p.mu;
+            if (!groups[key]) groups[key] = { x: p.x, y: p.y, z: p.z, cls: p.cls, cp: 0, pathId: p.pathId };
+            groups[key].cp += p.cp;
         }
         names = Object.keys(groups).sort();
         out = [];
@@ -904,9 +906,9 @@ function createReclaim(opts) {
             try { slice = materials.massOf(id, "strata", 1); }
             catch (e) { slice = null; }
             out.push({
-                x: g.x, y: g.y, z: g.z, cls: g.cls, mu: g.mu, slice: slice,
-                blocks: slice ? Math.floor(g.mu / slice) : 0,
-                remainder: slice ? g.mu % slice : g.mu
+                x: g.x, y: g.y, z: g.z, cls: g.cls, cp: g.cp, slice: slice,
+                blocks: slice ? Math.floor(g.cp / slice) : 0,
+                remainder: slice ? g.cp % slice : g.cp
             });
         }
         return out;
@@ -919,7 +921,7 @@ function createReclaim(opts) {
             places: places.map(function (p) {
                 return {
                     id: p.id, elementId: p.elementId, materialId: p.materialId, pathId: p.pathId,
-                    cls: p.cls, form: p.form, mu: p.mu, x: p.x, y: p.y, z: p.z,
+                    cls: p.cls, form: p.form, cp: p.cp, x: p.x, y: p.y, z: p.z,
                     outdoor: p.outdoor, exempt: p.exempt, done: p.done, parked: p.parked, step: p.step
                 };
             })
@@ -928,7 +930,7 @@ function createReclaim(opts) {
     }
     function snapshot() {
         return {
-            schema: 1,
+            schema: 2,
             places: copy(places),
             nextId: nextId,
             cursor: cursor,
@@ -941,7 +943,12 @@ function createReclaim(opts) {
         };
     }
     function restore(snap) {
-        if (!isObj(snap) || snap.schema !== 1 || !Array.isArray(snap.places)) die("E_SNAPSHOT", "reclaim");
+        if (isObj(snap) && snap.schema === 1) die("E_UNIT_PROVENANCE", "reclaim");
+        if (!isObj(snap) || snap.schema !== 2 || !Array.isArray(snap.places)) die("E_SNAPSHOT", "reclaim");
+        for (let i = 0; i < snap.places.length; i++) {
+            const place = snap.places[i];
+            if (!isObj(place) || !isAmount(place.cp) || Object.prototype.hasOwnProperty.call(place, "mu")) die("E_SNAPSHOT", "place cp");
+        }
         ledger.restore(snap.ledger);
         places = copy(snap.places);
         nextId = snap.nextId;
@@ -994,4 +1001,4 @@ function install(root, session) {
     return session;
 }
 
-module.exports = { createReclaim: createReclaim, install: install, SCHEMA: 1 };
+module.exports = { createReclaim: createReclaim, install: install, SCHEMA: 2 };
