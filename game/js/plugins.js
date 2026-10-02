@@ -3,6 +3,12 @@
 var $plugins =
 [
   {
+    "name": "DEUS_AssetStreaming",
+    "status": true,
+    "description": "[DEUS AssetStreaming] PIXI.js VRAM Asset Streaming API.",
+    "parameters": {}
+  },
+  {
     "name": "DEUS_Core",
     "status": true,
     "description": "[DEUS Core] Foundation systems: shared state, time domains, deterministic RNG, coordinate math, spatial queries, and engine hooks.",
