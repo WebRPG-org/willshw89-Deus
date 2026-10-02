@@ -414,6 +414,47 @@
         return opts;
     }
 
+    // Building across Z (NAT.02.06): a floor or a roof is the S0 slab of a cell on any level (a roof is the floor of the
+    // level above); it must attach to a held block (UF.Floors.canPlaceSlab). The job is an ordinary "floor" job, worked
+    // from the slab's level or the level above or below it (builder reach, UF.Jobs.standForReach).
+    const VERTICAL_ROWS = [["roof", "Roof above", 1], ["floor", "Floor here", 0], ["below", "Floor below", -1]];
+    /** The "Build above/below" submenu for a cell on screen: a roof over it, a floor in it, a floor under it. */
+    function verticalOptions(target) {
+        const F = window.UF.Floors, W = World(), I = Items();
+        const tx = target.x, ty = target.y, tz = typeof target.z === "number" ? target.z : 0;
+        const opts = [{ id: "back", label: "Back", enabled: true, run: () => ({ submenu: optionsFor(tx, ty), header: headerFor(tx, ty) }) }];
+        const spec = F && typeof F.playerCultureFloor === "function" ? F.playerCultureFloor() : null;
+        if (!F || !spec || typeof F.canLay !== "function") return opts;
+        const cost = `${spec.count} ${lower(I && I.type(spec.item) ? I.type(spec.item).name : spec.item)}`;
+        for (const [as, name, dz] of VERTICAL_ROWS) {
+            const z = tz + dz, area = { x: target.area.x, y: target.area.y, z };
+            // A level that does not exist, or a cell whose floor is already solid, has nothing to build: no row.
+            if (!W || typeof W.isLevel !== "function" || !W.isLevel(z)) continue;
+            if (typeof F.isSlabAt === "function" && !F.isSlabAt(area, tx, ty)) continue;
+            const v = F.canLay(area, tx, ty, true);
+            const slab = { area: copyArea(target.area), x: tx, y: ty, z };
+            opts.push({ id: `vertical:${as}`, label: v.ok ? `${name} — ${cost}` : `${name} (${v.reason})`, enabled: !!v.ok, level: z,
+                run: () => v.ok ? designate({ type: "floor", target: slab, params: Object.assign({ force: true, as }, spec) }) : null });
+        }
+        if (opts.length === 1) opts.push({ id: "vertical:none", label: "Nothing to build (solid above, here and below)", enabled: false, run: () => null });
+        return opts;
+    }
+    /** The structure's word on a cell (UF.Structural.explain, AGENTS rule 14): "Structure: held: ..." or "" (air, no plugin). */
+    function structureLine(target) {
+        const S = window.UF.Structural;
+        if (!S || typeof S.explain !== "function" || !target || !target.area) return "";
+        let e = null;
+        try { e = S.explain({ area: copyArea(target.area), x: target.x, y: target.y, z: typeof target.z === "number" ? target.z : 0 }); } catch (err) { return ""; }
+        if (!e || e.verdict === "air" || !e.reason) return "";
+        return `Structure: ${e.reason}`;
+    }
+    // The Look lines of a cell: UF_Look's lines, then the structure's line when there is one (null: UF_Look's own).
+    function lookLines(x, y, target) {
+        const L = Look(), line = structureLine(target);
+        if (!L || !line) return null;
+        return (L.describeCell(x, y) || []).filter(l => l !== "").concat([line]);
+    }
+
     function selectColonist(hit, follow) {
         const cm = window.$colonyManager;
         if (!cm) return false;
@@ -510,9 +551,11 @@
         if (water) {
             add("fish", "Fish here", () => designate({ type: "fish", target }));
         }
+        // Every level: floors and roofs, blocks that attach to a held block (NAT.02.06).
+        if (window.UF.Floors && typeof UF.Floors.canLay === "function") add("build_vertical", "Build above/below", () => ({ submenu: verticalOptions(target), header: "Build above/below" }));
         const here = designationsAt(x, y, area);
         if (here.length) add("cancel", here.length > 1 ? `Cancel ${here.length} designations` : "Cancel designation", () => cancelAt(x, y, area));
-        add("look", "Look", () => (L ? L.show(x, y, LOOK_SECONDS) : false));
+        add("look", "Look", () => (L ? L.show(x, y, LOOK_SECONDS, lookLines(x, y, target) || undefined) : false));
         return opts;
     }
 
@@ -606,6 +649,9 @@
         markersEnabled: true,
         optionsFor,
         buildOptions,
+        verticalOptions,
+        structureLine,
+        lookLines,
         designate,
         designations,
         designationsAt,

@@ -60,6 +60,7 @@
     const TALK_WORK = 180;
     const SLEEP_WORK = 600;      // default when params.frames is missing
     const STABILIZE_WORK = 360;  // one action: a 6 s round at 60 updates a second (SRD first aid)
+    const REACH_LEVELS = 1;      // a builder reaches the tile above or below it (NAT.02.06; handlers with reach: true)
     const NEIGHBORS = [[0, 1], [1, 0], [0, -1], [-1, 0]]; // 4-way (contract section 1.6)
     const DIAGONALS = [[1, 1], [-1, 1], [1, -1], [-1, -1]];
     // 8-way (VISION V3, UF_Movement8D's FourWay off): a unit may also work from a diagonal neighbour of its target.
@@ -343,6 +344,28 @@
         }
         return best;
     }
+    /**
+     * Builder reach (NAT.02.06): the stand for a target that may be worked from its own level or the level above or
+     * below it (a handler with reach: true). The unit's own level first, so it need not change level: there, the
+     * target's column cell (standing under a roof, or over a floor) or a neighbour of it; on the target's own level,
+     * standFor. Null when the unit is in another area or more than a level away, or nothing is standable.
+     */
+    function standForReach(target, unit, adjacentOnly) {
+        if (!target || !unit || !target.area || !validLevel(target) || !validLevel(unit) || !sameArea(target.area, unit.area)) return null;
+        const tz = refZ(target), uz = refZ(unit);
+        if (Math.abs(tz - uz) > REACH_LEVELS) return null;
+        const levels = [uz];
+        for (let d = -REACH_LEVELS; d <= REACH_LEVELS; d++) if (tz + d !== uz) levels.push(tz + d);
+        for (const z of levels) {
+            if (!validLevel({ z })) continue;
+            const stand = z === tz ? standFor(target, unit, adjacentOnly) : standFor({ area: copyArea(target.area), x: target.x, y: target.y, z }, unit, false);
+            if (stand) return stand;
+        }
+        return null;
+    }
+    // A unit may work this job from where it is: the target's level, or a level within reach for a handler with reach.
+    const withinReach = (job, unit) => !!job && !!unit && !!handlers[job.type] && handlers[job.type].reach === true &&
+        validLevel(job.target) && validLevel(unit) && sameArea(job.target.area, unit.area) && Math.abs(refZ(job.target) - refZ(unit)) <= REACH_LEVELS;
     const atCell = (unit, cell) => sameLevel(unit, cell) && unit.x === cell.x && unit.y === cell.y;
 
     //-------------------------------------------------------------------------
@@ -780,8 +803,15 @@
             }
         }
     }
+    // Where an object may stand (NAT.02.06, DEC-083 rule 4): a wall or door attaches to a held block, anything else
+    // needs a floor (UF.Floors.placement). Without UF.Floors the old rule stands: the cell is the builder's to judge.
+    function placementOf(target, t) {
+        const F = window.UF && UF.Floors;
+        return F && typeof F.placement === "function" ? F.placement(target, t) : { ok: true, reason: "" };
+    }
     define("build", {
         verb: "Building",
+        reach: true,   // built from its own level or from the level above or below (a wall on a deck, from the room under it)
         plan(job, unit) {
             const O = Objects(), I = Items();
             const t = O ? O.type(job.params.objectId) : null;
@@ -800,7 +830,11 @@
             };
             const missing = Object.keys(needs).filter(id => countFor({ area: lv(job.target), x: job.target.x, y: job.target.y }, id) < (needs[id] | 0));
             if (missing.length) return { ok: false, reason: "needs items" };
-            const stand = standFor(job.target, unit, t.passable !== true); // a wall is built from beside its cell
+            if (O.typeIdIn(lv(job.target), job.target.x, job.target.y) !== t.typeId) {
+                const place = placementOf(job.target, t);
+                if (!place.ok) return { ok: false, reason: place.reason };
+            }
+            const stand = standForReach(job.target, unit, t.passable !== true); // a wall is built from beside its cell, or under or over it
             return stand ? { ok: true, stand } : { ok: false, reason: "can't reach it" };
         },
         work(job) {
@@ -823,6 +857,8 @@
             for (const id of Object.keys(needs)) {
                 if (here.filter(it => buildMatches(it, id)).reduce((n, it) => n + it.count, 0) < (needs[id] | 0)) { job.reason = "needs items"; return false; }
             }
+            const place = placementOf(job.target, t);
+            if (!place.ok) { job.reason = place.reason; return false; }
             const placed = matterCover(() => O.setIn(area, x, y, t.id));
             if (!placed) {
                 const r = W && W.lastObjectRefusal;
@@ -1520,7 +1556,7 @@
         const W = World();
         const unit = W ? W.unit(unitId) : null;
         if (!unit || !validLevel(unit)) return null;
-        const candidates = open().filter(j => sameLevel(j.target, unit) && matches(j, filter));
+        const candidates = open().filter(j => (sameLevel(j.target, unit) || withinReach(j, unit)) && matches(j, filter));
         candidates.sort((a, b) => (b.priority - a.priority) || (unitDistance(unit, lv(a.target), a.target.x, a.target.y) - unitDistance(unit, lv(b.target), b.target.x, b.target.y)) || (a.id - b.id));
         for (const job of candidates.slice(0, 8)) {
             // A dry run of the plan: a designation nobody can do yet (needs items, walled in) stays open.
@@ -1654,7 +1690,7 @@
                 dy = job.params.faceTowards.y - unit.y;
             }
             // Face the target before the work frames play: 8 ways (VISION V3), 4 with FourWay.
-            if ((dx || dy) && sameLevel(job.target, unit)) {
+            if ((dx || dy) && (sameLevel(job.target, unit) || withinReach(job, unit))) {
                 if (ev.faceToward8) ev.faceToward8(dx, dy);
                 else ev.setDirection(facingTo(dx, dy));
                 if (unit) unit.dir = ev.direction();
@@ -1685,7 +1721,8 @@
             const item = Items() && Items().get(job.params.itemId);
             if (item && item.area && item.holder !== unit.id) subject = item;
         } else if (job.type === "haul") subject = job.params.to;
-        if (!sameLevel(job.target, unit) || (subject && (!validLevel(subject) || !sameLevel(subject, unit)))) {
+        const reached = sameLevel(job.target, unit) || (withinReach(job, unit) && (!job.stand || atCell(unit, job.stand)));
+        if (!reached || (subject && (!validLevel(subject) || !sameLevel(subject, unit)))) {
             fail(job, "the target is on another level");
             return;
         }
@@ -1863,6 +1900,8 @@
         describe,
         standFor,
         verticalStratum,
+        standForReach,
+        REACH_LEVELS,
         standable: standableIn,
         isWaterAt: isWaterIn,
         lethalHazardAt,

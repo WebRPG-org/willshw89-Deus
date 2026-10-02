@@ -3728,6 +3728,15 @@
         _siteCountCache.set(key, count);
         return count;
     }
+    // Off the ground (NAT.02.06, DEC-083 rule 4): a cell with walkable ground takes the piece; a cell without it only
+    // when UF.Floors.placement accepts it there (a wall or door attached to a held block, anything else on a floor).
+    // Without UF.Floors, the old rule: no unsupported airborne construction.
+    function placeableOffGround(c, x, y, t) {
+        const W = World();
+        if (W.walkable && W.walkable(c.area.x, c.area.y, x, y, { z: zOf(c), ground: true })) return true;
+        const F = window.UF && UF.Floors;
+        return !!F && typeof F.placement === "function" && F.placement({ area: copyArea(c.area), x, y, z: zOf(c) }, t).ok;
+    }
     // A build step's cells: [{ x, y, state: "done" | "skipped" | "todo" }]. Furniture (passable objects) and the site's
     // own centre piece count wherever the site already has them; walls are counted cell by cell.
     function buildCells(step, ref) {
@@ -3772,7 +3781,7 @@
             else if (here && (hasTag(here, "building") || hasTag(here, "ruin"))) state = step.exact ? "blocked" : "skipped";
             else if (here && here.passable !== true && (!here.actions || !Object.keys(here.actions).length)) state = step.exact ? "blocked" : "skipped";
             else if (Jobs() && Jobs().isWaterAt(levelArea(c), x, y)) state = step.exact ? "blocked" : "skipped"; // nothing is built on water
-            else if (zOf(c) !== 0 && (!World().walkable || !World().walkable(c.area.x, c.area.y, x, y, { z: zOf(c), ground: true }))) state = step.exact ? "blocked" : "skipped"; // no excavation or unsupported airborne construction
+            else if (zOf(c) !== 0 && !placeableOffGround(c, x, y, t)) state = step.exact ? "blocked" : "skipped"; // no excavation; airborne only when attached (NAT.02.06)
             out.push({ x, y, state, here });
         }
         step._cachedCells = out;

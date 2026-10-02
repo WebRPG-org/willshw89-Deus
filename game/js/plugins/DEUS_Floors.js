@@ -67,6 +67,8 @@
     const zOf = ref => ref && ref.z !== undefined ? ref.z : ref && ref.area && ref.area.z !== undefined ? ref.area.z : 0;
     const copyArea = ref => { const a = ref.area || ref; return { x: a.x, y: a.y, z: zOf(ref) }; };
     const sameArea = (a, b) => !!a && !!b && a.x === b.x && a.y === b.y && zOf(a) === zOf(b);
+    // Builder reach (NAT.02.06): the same area, on the level of the target or the level above or below it.
+    const inReach = (area, unit) => !!area && !!unit && !!unit.area && area.x === unit.area.x && area.y === unit.area.y && Math.abs(zOf(area) - zOf(unit)) <= 1;
     function supportedArea(area) {
         const W = World(), z = zOf(area);
         return !!area && Number.isInteger(z) &&
@@ -303,6 +305,156 @@
         return true;
     }
 
+    //-------------------------------------------------------------------------
+    // Building across Z (NAT.02.06; DEC-083 rule 4, docs/design/COLLAPSE_REPLAN_DEC083.md section 6 "Placement").
+    // A block is one 2 ft stratum (x, y, z, s). A new block is accepted when one of its six face neighbours (down,
+    // north, east, south, west, up; across Z too) is a solid block the structure holds (UF.Structural.explain says
+    // "held", or "unknown_edge": the structure never drops what touches an area it cannot see). Otherwise it is
+    // refused. A floor or a roof is the S0 slab of a cell: a roof is the floor of the level above. A wall or a door is
+    // the voxel column the structure reads for it: from the cell's stacked floor through S4. Placing writes only the
+    // new block, so it can never drop anything else: adding a solid block cuts no chain.
+
+    const STRATA = 5;
+    const SOLID_KEYS = ["stone", "soil", "wood"];   // levels_reader: solid with HP above 0; air, water and lava are not
+    const MATERIAL_BYTE = { stone: 1, soil: 2, wood: 3 };
+    const M_BUILT = 0x80;
+    const SLAB_MATERIAL = { floor_wood: "wood", floor_stone: "stone", floor_rushes: "wood" };
+    const STRUCTURAL_TAGS = ["wall", "door"];
+    const Levels = () => (window.UF && UF.Levels) || null;
+    const Structure = () => (window.UF && UF.Structural) || null;
+    const isStructuralType = t => !!t && Array.isArray(t.tags) && STRUCTURAL_TAGS.some(tag => t.tags.includes(tag));
+    const slabMaterial = kindId => SLAB_MATERIAL[kindId] || "wood";
+
+    // A cell of the world as { area: { x, y }, x, y, z }; area edges wrap (torus, as the structure reads them).
+    function cellRef(area, x, y, z) {
+        const W = World(), st = W && W.state;
+        if (!st || !st.size) return null;
+        const size = st.size, nx = st.areasX || 1, ny = st.areasY || 1;
+        let ax = area.x, ay = area.y;
+        while (x < 0) { x += size; ax--; }
+        while (x >= size) { x -= size; ax++; }
+        while (y < 0) { y += size; ay--; }
+        while (y >= size) { y -= size; ay++; }
+        return { area: { x: ((ax % nx) + nx) % nx, y: ((ay % ny) + ny) % ny }, x, y, z };
+    }
+    function levelExists(z) {
+        const W = World();
+        return !!W && Number.isInteger(z) && (typeof W.isLevel === "function" ? W.isLevel(z) : z === 0);
+    }
+    function strataOf(ref) {
+        const L = Levels();
+        return L && typeof L.strataAt === "function" ? L.strataAt(ref) : null;
+    }
+    // The number of solid strata stacked from S0: where a wall or door object's voxels begin (levels_reader "fill").
+    function fillOf(st) {
+        let fill = 0;
+        while (fill < STRATA && SOLID_KEYS.includes(st.materials[fill]) && st.hp[fill] > 0) fill++;
+        return fill;
+    }
+    function structuralObjectAt(ref) {
+        const O = Objects(), t = O && typeof O.atIn === "function" ? O.atIn({ x: ref.area.x, y: ref.area.y, z: ref.z }, ref.x, ref.y) : null;
+        return isStructuralType(t) ? t : null;
+    }
+    // Solid as the structure reads it: a solid stratum with HP, or a wall or door voxel above the stacked floor.
+    function solidBlockAt(ref, s) {
+        if (!levelExists(ref.z)) return false;
+        const st = strataOf(ref);
+        if (!st) return false;
+        if (SOLID_KEYS.includes(st.materials[s]) && st.hp[s] > 0) return true;
+        return s >= fillOf(st) && !!structuralObjectAt(ref);
+    }
+    // The six face neighbours of block (ref, s), in the structure's order.
+    function blockNeighbours(ref, s) {
+        const out = [];
+        const at = (r, ss) => { if (r) out.push({ ref: r, s: ss }); };
+        at(s > 0 ? ref : cellRef(ref.area, ref.x, ref.y, ref.z - 1), s > 0 ? s - 1 : STRATA - 1);
+        at(cellRef(ref.area, ref.x, ref.y - 1, ref.z), s);
+        at(cellRef(ref.area, ref.x + 1, ref.y, ref.z), s);
+        at(cellRef(ref.area, ref.x, ref.y + 1, ref.z), s);
+        at(cellRef(ref.area, ref.x - 1, ref.y, ref.z), s);
+        at(s < STRATA - 1 ? ref : cellRef(ref.area, ref.x, ref.y, ref.z + 1), s < STRATA - 1 ? s + 1 : 0);
+        return out;
+    }
+    /**
+     * attachment(ref, s0, s1): may the blocks S{s0}..S{s1} of cell ref be placed? { ok, reason, via, verdict, checked }.
+     * Every face neighbour outside those blocks is looked at; the first solid one the structure holds attaches them.
+     * Without UF.Structural (the plugin is not loaded) a solid neighbour attaches and checked is false.
+     */
+    function attachment(ref, s0, s1) {
+        const r = cellRef(ref.area || ref, ref.x, ref.y, zOf(ref));
+        if (!r || !levelExists(r.z)) return { ok: false, reason: "no such level", checked: false };
+        const lo = s0 === undefined ? 0 : s0 | 0, hi = s1 === undefined ? lo : s1 | 0;
+        const S = Structure(), checked = !!S && typeof S.explain === "function";
+        const seen = new Set();
+        let solid = 0, last = null;
+        for (let s = lo; s <= hi; s++) {
+            for (const nb of blockNeighbours(r, s)) {
+                const n = nb.ref;
+                if (n.x === r.x && n.y === r.y && n.z === r.z && n.area.x === r.area.x && n.area.y === r.area.y && nb.s >= lo && nb.s <= hi) continue;
+                const k = `${n.area.x},${n.area.y},${n.x},${n.y},${n.z},${nb.s}`;
+                if (seen.has(k) || !levelExists(n.z)) continue;
+                seen.add(k);
+                if (!solidBlockAt(n, nb.s)) continue;
+                solid++;
+                const via = { area: { x: n.area.x, y: n.area.y }, x: n.x, y: n.y, z: n.z, s: nb.s };
+                if (!checked) return { ok: true, reason: "", via, verdict: "solid", checked: false };
+                const e = S.explain(via);
+                if (e.verdict === "held" || e.verdict === "unknown_edge") return { ok: true, reason: "", via, verdict: e.verdict, checked: true, explain: e };
+                last = e;
+            }
+        }
+        if (!solid) return { ok: false, reason: "attaches to nothing", checked };
+        return { ok: false, reason: "attaches to nothing that is held", checked, verdict: last ? last.verdict : null, explain: last };
+    }
+
+    /** May a floor or roof slab (S0) be built at { area, x, y, z }? { ok, reason, attach }. */
+    function slabCheck(ref) {
+        const L = Levels(), z = zOf(ref), area = ref.area || ref;
+        if (!L || typeof L.strataAt !== "function" || typeof L.setStrata !== "function") return { ok: false, reason: "no levels in this world" };
+        if (!levelExists(z) || !inBounds({ x: area.x, y: area.y, z }, ref.x, ref.y)) return { ok: false, reason: "off the map" };
+        const r = { area: { x: area.x, y: area.y }, x: ref.x, y: ref.y, z };
+        const st = strataOf(r);
+        if (!st) return { ok: false, reason: "off the map" };
+        const m0 = st.materials[0];
+        if (m0 === "water" || m0 === "lava") return { ok: false, reason: m0 };
+        if (SOLID_KEYS.includes(m0) && st.hp[0] > 0) return { ok: false, reason: st.constructed[0] ? "already floored" : "the ground is already solid" };
+        if (structuralObjectAt(r)) return { ok: false, reason: "a wall stands there" };
+        const attach = attachment(r, 0, 0);
+        return attach.ok ? { ok: true, reason: "", attach } : { ok: false, reason: attach.reason, attach };
+    }
+    /** May an object be built at { area, x, y, z }? A wall or door attaches like any block; anything else needs a floor. */
+    function placement(ref, type) {
+        const r = { area: { x: (ref.area || ref).x, y: (ref.area || ref).y }, x: ref.x, y: ref.y, z: zOf(ref) };
+        if (!levelExists(r.z)) return { ok: false, reason: "no such level" };
+        const st = strataOf(r);
+        if (!st) return { ok: true, reason: "", checked: false };   // no strata (generator < 4): nothing to attach to read
+        const fill = fillOf(st);
+        if (fill >= STRATA) return { ok: false, reason: "solid rock" };
+        if (isStructuralType(type)) {
+            const a = attachment(r, fill, STRATA - 1);
+            return a.ok ? { ok: true, reason: "", attach: a } : { ok: false, reason: a.reason, attach: a };
+        }
+        const L = Levels();
+        if (fill === 0 && !(L && typeof L.standableShape === "function" && L.standableShape(r))) return { ok: false, reason: "nothing to stand on" };
+        return { ok: true, reason: "" };
+    }
+    // Write the S0 slab only, constructed, keeping S1..S4 and the connector: the one block added (never a whole cell).
+    function writeSlab(ref, material, cause) {
+        const L = Levels(), r = { area: { x: (ref.area || ref).x, y: (ref.area || ref).y }, x: ref.x, y: ref.y, z: zOf(ref) };
+        const st = strataOf(r), id = MATERIAL_BYTE[material];
+        if (!L || !st || !id) return false;
+        const m = st.bytes.slice(), hp = st.hp.slice();
+        m[0] = id | M_BUILT;
+        hp[0] = 255;
+        return L.setStrata(r, { m, hp }, { cause: cause || "floors:slab" });
+    }
+    // A floor laid where the cell's own S0 is the block: every level but the ground, and a hole in the ground.
+    function slabAt(area, x, y) {
+        if (zOf(area) !== 0) return true;
+        const st = inBounds(area, x, y) ? strataOf({ area: { x: area.x, y: area.y }, x, y, z: 0 }) : null;
+        return !!st && st.materials[0] === "air";
+    }
+
     const Rooms = { MAX_ROOM_CELLS, MAX_ROOM_GAPS, roomAt, value: roomValue, invalidate, isRoofed, hasOpaqueOverburden, applyRoofedUpperDeck };
     window.DEUS = window.DEUS || {};
     window.UF = window.DEUS;
@@ -338,7 +490,11 @@
         return true;
     }
     function setFloor(area, x, y, kindId) {
-        if (!floorKind(kindId) || !setGround(area, x, y, kindId)) return false;
+        if (!floorKind(kindId)) return false;
+        if (supportedArea(area) && slabAt(area, x, y)) {
+            if (!slabCheck({ area, x, y, z: zOf(area) }).ok || !writeSlab({ area, x, y, z: zOf(area) }, slabMaterial(kindId), "floors:lay")) return false;
+            invalidate(area);
+        } else if (!setGround(area, x, y, kindId)) return false;
         const st = floorState(); if (st) st.laid++;
         emit("floors:laid", area, x, y, kindId);
         return true;
@@ -351,13 +507,20 @@
         matterNote("deconstruct", { elementId: k.id, count: 1, cause: "floors:removed", at: { x: x, y: y, z: zOf(area) } });
         return true;
     }
+    // A floor on any level (NAT.02.06). On the ground it is an A2 ground kind; elsewhere, and over a hole in the ground,
+    // it is the cell's S0 slab, a block that must attach to a held block (slabCheck). A roof is the floor of the level above.
     function canLay(area, x, y, force) {
-        if (!supportedArea(area) || zOf(area) !== 0) return { ok: false, reason: "level floor construction is not available" };
+        if (!supportedArea(area)) return { ok: false, reason: "no such level" };
         if (!inBounds(area, x, y)) return { ok: false, reason: "off the map" };
         if (isWater(area, x, y)) return { ok: false, reason: "water" };
         const O = Objects(), o = O && O.atIn(area, x, y);
         const isDomesticObject = o && o.tags && (o.tags.includes("bed") || o.tags.includes("furniture") || o.tags.includes("fire") || o.tags.includes("storage"));
         if (o && o.passable !== true && !force && !isDomesticObject) return { ok: false, reason: "blocked" };
+        if (slabAt(area, x, y)) {
+            if (!force && !roomAt(area, x, y)) return { ok: false, reason: "not inside a room" };
+            return slabCheck({ area, x, y, z: zOf(area) });
+        }
+        if (zOf(area) !== 0) return { ok: false, reason: "already floored" };
         const k = kindAt(area, x, y);
         if (!k || k.passable === false) return { ok: false, reason: "solid ground" };
         if (floorKind(k.id)) return { ok: false, reason: "already floored" };
@@ -379,9 +542,11 @@
         if (!J) return false;
         J.define("floor", {
             verb: "Laying floor",
+            reach: true,   // a slab (any level but the ground) is built from its own level or the level above or below
             plan(job, unit) {
                 const p = job.params || {}, area = copyArea(job.target);
-                if (!sameArea(area, copyArea(unit))) return { ok: false, reason: "worker is on another level or area" };
+                const slab = slabAt(area, job.target.x, job.target.y);
+                if (!(slab ? inReach(area, unit) : sameArea(area, copyArea(unit)))) return { ok: false, reason: slab ? "worker is more than a level away" : "worker is on another level or area" };
                 if (!floorKind(p.kind)) return { ok: false, reason: "invalid floor kind" };
                 const valid = canLay(area, job.target.x, job.target.y, !!p.force);
                 if (!valid.ok) return { ok: false, reason: valid.reason };
@@ -392,7 +557,8 @@
                 if (onCell >= need || carried >= need) {
                     p.ready = true;
                     delete p.fetchItemId;
-                    const stand = J.standFor(job.target, unit, false);
+                    // A slab has no floor to stand on: the builder stands beside it, under it (a roof) or over it.
+                    const stand = slab && typeof J.standForReach === "function" ? J.standForReach(job.target, unit, true) : J.standFor(job.target, unit, false);
                     return stand ? { ok: true, stand } : { ok: false, reason: "can't reach it" };
                 }
                 p.ready = false;
@@ -406,24 +572,26 @@
             apply(job, unit) {
                 const p = job.params || {}, I = Items(), need = Math.max(1, p.count | 0);
                 const area = copyArea(job.target), valid = canLay(area, job.target.x, job.target.y, !!p.force);
-                if (!valid.ok || !sameArea(area, copyArea(unit)) || !floorKind(p.kind)) {
+                const slab = slabAt(area, job.target.x, job.target.y);
+                if (!valid.ok || !(slab ? inReach(area, unit) : sameArea(area, copyArea(unit))) || !floorKind(p.kind)) {
                     job.reason = !valid.ok ? valid.reason : "invalid floor or worker level";
                     // Jobs.finish treats undefined as success. Replan so its
                     // ordinary plan refusal fails this stale job, not jobs:done.
                     return "continue";
                 }
                 if (!p.ready) {
-                    if (!p.fetchItemId || !I || !I.pickUp(p.fetchItemId, unit.id)) { job.reason = "the material is gone"; return; }
+                    if (!p.fetchItemId || !I || !I.pickUp(p.fetchItemId, unit.id)) { job.reason = "the material is gone"; return false; }
                     delete p.fetchItemId;
                     return "continue";
                 }
-                const paid = matterCover(() => {
+                // Transactional: the material must be there, the floor is laid, and only then is the material used up.
+                const cell = { area, x: job.target.x, y: job.target.y, z: zOf(area) };
+                if (!I || I.count(cell, p.item) + I.count(unit.id, p.item) < need) { job.reason = `needs ${p.item}`; return false; }
+                if (!setFloor(area, job.target.x, job.target.y, p.kind)) { job.reason = "the floor could not be laid"; return false; }
+                matterCover(() => {
                     const ground = consumeGround(area, job.target.x, job.target.y, p.item, need);
-                    const carried = ground < need && I ? I.consumeFrom(unit.id, p.item, need - ground) : 0;
-                    return ground + carried;
+                    if (ground < need) I.consumeFrom(unit.id, p.item, need - ground);
                 });
-                if (paid < need) { job.reason = `needs ${p.item}`; return; }
-                if (!setFloor(area, job.target.x, job.target.y, p.kind)) { job.reason = "the floor could not be laid"; return; }
                 matterNote("build", {
                     elementId: p.kind,
                     item: p.item,
@@ -431,9 +599,10 @@
                     cause: "floors:lay",
                     at: { x: job.target.x, y: job.target.y, z: zOf(area) }
                 });
-                job.result = { kind: p.kind, item: p.item, count: need };
+                job.result = { kind: p.kind, item: p.item, count: need, slab };
             },
             describe(job) {
+                if (job.params && job.params.as === "roof") return "Building a roof";
                 const k = (catalog() && catalog().groundKinds || []).find(g => g.id === job.params.kind);
                 return `Laying ${k ? k.name.toLowerCase() : "a floor"}`;
             }
@@ -609,7 +778,8 @@
     const Floors = {
         FLOOR_IDS: FLOOR_IDS.slice(), MAX_OPEN, FLOOR_WORK, kindAt, isFloorAt, isFloor: isFloorAt, canLay, setFloor, removeFloor, setGround,
         createDesignations, floorOtherSites, playerCultureFloor, defineJobType, augmentOptions, hookInteract,
-        isRoofed, hasOpaqueOverburden, applyRoofedUpperDeck
+        isRoofed, hasOpaqueOverburden, applyRoofedUpperDeck,
+        attachment, canPlaceSlab: slabCheck, placement, isSlabAt: slabAt, slabMaterial, SLAB_MATERIAL: Object.assign({}, SLAB_MATERIAL)
     };
     window.UF.Floors = Floors;
     defineJobType();
