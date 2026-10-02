@@ -73,7 +73,7 @@ and returns when the worker has finished.
   reused PID does not block a lane.
   `RUNNING` entries whose processes are gone are marked `LOST` at this point.
 - The provider CLI must be found (`-ProviderExe` with `-ProviderArgs` overrides the whole command; the tests and the PM wrappers use this, and that pair is byte-for-byte the argument string they passed). `-ProviderExe` without `-ProviderArgs` runs that executable with the built-in command below, which is how the tests substitute a stub without starting a real model.
-- `lane.json` `push`, when present, must be `true` or `false`. `-SavedPrompt` needs `-PromptFile`.
+- `lane.json` `push`, when present, must be `true` or `false`. `-SavedPrompt` needs `-PromptFile`. The default prompt copy stays outside git under `%USERPROFILE%\.deus_ops\prompts\<lane>_<runId>.txt`; `-CommitPrompt` explicitly restores a lane-branch `[ops]` prompt commit. `-NoCommitPrompt` remains accepted for older launch calls and cannot be combined with `-CommitPrompt`.
 
 ### The prompt (WG.00.12b)
 
@@ -99,9 +99,8 @@ Chosen in this order:
    generated it. Older subjects without `(<role> <provider>)`, and the coordinator's
    `[gemini] Record Lane X ... launch prompt` commits, record neither, so their prompts are reused only through a
    registry entry. The effects:
-   - A reviewer prompt is never reused for a writer, or a writer prompt for a reviewer. Reviewer launches with
-     `-NoCommitPrompt` leave their prompt, uncommitted, in the same `launches/` folder. Their registry entry says
-     `role: reviewer`, and uncommitted files are not candidates.
+   - A reviewer prompt is never reused for a writer, or a writer prompt for a reviewer. Both roles save prompts
+     outside git by default. Their registry entries record the role, provider and saved path for reuse.
    - A prompt written for another provider is not reused (after a failover its first line and commit tag would
      name the wrong agent), and neither is a prompt of another task that happened to use the same lane name.
    - A prompt the launcher generated is never reused, so a pre-WG.00.12b default with "Do not push" is not carried
@@ -125,20 +124,21 @@ Chosen in this order:
 
 | Where | What |
 |---|---|
-| `tasks/<task>/<lane>/launches/<yyyyMMdd_HHmmss>_prompt.txt` | The exact prompt, committed on the lane branch (`[ops] <task> <lane> launch prompt <stamp> (<role> <provider>)`; before WG.00.12b the subject ended at `<stamp>`) before the worker starts. `-NoCommitPrompt` writes it without committing. |
+| `%USERPROFILE%\.deus_ops\prompts\<lane>_<runId>.txt` | The exact prompt sent to the worker, saved outside git by default. `-PromptFile` remains the source when supplied. |
+| `tasks/<task>/<lane>/launches/<yyyyMMdd_HHmmss>_prompt.txt` | With explicit `-CommitPrompt`, the old lane-branch `[ops] <task> <lane> launch prompt <stamp> (<role> <provider>)` commit and path. |
 | `<LogRoot>\<lane>\<runId>.log` | stdout and stderr of the worker, line by line (UTF-8). `<LogRoot>` defaults to `%USERPROFILE%\.deus_worktrees\logs`. |
 | `<LogRoot>\<lane>\<runId>.exit` | `EXIT=<code>` and `STATE=<state>`. |
 | `docs/telemetry/sessions/active_workers.json` in the **main** worktree (`-RegistryPath` to override) | One entry per run, keyed by `runId` (`<lane>_<stamp>`). Written at start (`state: RUNNING`, launcher PID, paths, `baseCommit`) and again at the end. |
 | `docs/telemetry/sessions/provider_status.json` (next to the registry, `-ProviderStatusPath` to override) | Only after a usage/quota/rate-limit stop: the provider's state and the lane's resume-queue entry (section 3). |
 
 Registry entry fields: `runId lane provider role taskId state flags pid processStartedAt launcherPid
-launcherStartedAt worktree branch briefPath launchPromptPath promptFile promptSource promptFrom
+launcherStartedAt worktree branch briefPath launchPromptPath promptPath promptFile promptSource promptFrom
 promptCandidatesSkipped pushRule pushRuleSource logPath launchTimeCT startedAt endedAt exitCode
 timeoutMinutes baseCommit headCommit newCommits dirtyFiles outOfScope orphans orphansKilled usage timedOut
 startError logBytes outputDrained branchAfter resumeFromSha resumeHeadMismatch pushGuardHooksPath gitIdentity`.
 
 The prompt fields (WG.00.12b): `promptFile` is the source prompt, meaning the `-PromptFile` given or the saved prompt
-reused (full path), or `null` for a generated prompt. `launchPromptPath` stays the copy actually sent.
+reused (full path), or `null` for a generated prompt. `launchPromptPath` and `promptPath` name the copy actually sent.
 `promptSource` is `file`, `saved` or `generated`. `promptFrom` says where it came from (`-PromptFile`,
 `-PromptFile -SavedPrompt`, `registry run <runId> promptFile|launchPromptPath`, `committed <path>`, or
 `generated (no saved <role> prompt for <provider>)`). `promptCandidatesSkipped` lists up to 20 candidates passed over,
@@ -182,7 +182,7 @@ After the worker exits (or is killed) the launcher checks the result. Every prob
 | `TIMEOUT` | `-TimeoutMinutes` passed; the whole process tree was killed (taskkill /T plus every descendant seen while it ran). |
 | `USAGE-EXHAUSTED` | The log shows a usage, quota or rate-limit error for this provider (see below). The lane is queued for resume. |
 | `ORPHANED-CHILDREN` | The worker exited while processes it started were still alive (`orphans`: pid, name, command line). They are left running unless `-KillOrphans`. |
-| `EXITED-NO-COMMIT` | No new commit since the prompt commit, and the tree is dirty (`dirtyFiles`). A clean tree with no commit is not flagged. |
+| `EXITED-NO-COMMIT` | No new commit since launch, and the tree is dirty (`dirtyFiles`). A clean tree with no commit is not flagged. |
 | `EMPTY-LOG` | The log is 0 bytes. |
 | `OUT-OF-SCOPE` | Files changed outside `allowedPaths`, committed since `baseCommit` or left uncommitted (`outOfScope`). Also printed. |
 | `BRANCH-CHANGED` | The worktree ended on a different branch. |

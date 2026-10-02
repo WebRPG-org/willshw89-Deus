@@ -55,11 +55,12 @@ function Initialize-TestHarness([string]$Prefix) {
     # A session started by launch_worker.ps1 already carries GIT_AUTHOR_NAME=deus-<provider>; left in place, the
     # identity checks would pass even if the launcher stopped setting it.
     $cleared = @('DEUS_INTEGRATOR', 'DEUS_RUN_ID', 'GIT_AUTHOR_NAME', 'GIT_COMMITTER_NAME', 'GIT_AUTHOR_EMAIL', 'GIT_COMMITTER_EMAIL')
-    foreach ($k in @('GIT_CONFIG_GLOBAL', 'GIT_CONFIG_NOSYSTEM') + $cleared) { $script:SavedEnv[$k] = [Environment]::GetEnvironmentVariable($k) }
+    foreach ($k in @('GIT_CONFIG_GLOBAL', 'GIT_CONFIG_NOSYSTEM', 'USERPROFILE') + $cleared) { $script:SavedEnv[$k] = [Environment]::GetEnvironmentVariable($k) }
     $gc = Join-Path $root 'gitconfig_global'
     [IO.File]::WriteAllText($gc, "[user]`n`tname = deus-test`n`temail = deus-test@example.invalid`n[init]`n`tdefaultBranch = main`n[core]`n`tautocrlf = false`n")
     $env:GIT_CONFIG_GLOBAL = $gc
     $env:GIT_CONFIG_NOSYSTEM = '1'
+    $env:USERPROFILE = Join-Path $root 'profile'
     foreach ($k in $cleared) { [Environment]::SetEnvironmentVariable($k, $null) }
     return $root
 }
@@ -397,11 +398,11 @@ $Tests = @(
         Check 'run_id_format' ($runId -match '^lane-t_\d{8}_\d{6}(_\d+)?$') $runId
         $stamp = $runId.Substring('lane-t_'.Length)
         $promptRel = "tasks/T.01/lane-t/launches/${stamp}_prompt.txt"
-        $promptPath = Join-Path $Fx.Wt $promptRel
+        $promptPath = Join-Path $env:USERPROFILE ".deus_ops\prompts\lane-t_$runId.txt"
         Check 'prompt_saved' (Test-Path $promptPath) $promptPath
-        Check 'prompt_tracked' ((G $Fx.Wt ls-files -- $promptRel) -eq $promptRel)
-        Check 'prompt_committed_before_worker' ((G $Fx.Wt log --format=%s -1 $e['baseCommit']) -match 'launch prompt') (G $Fx.Wt log --oneline -3)
-        Check 'prompt_commit_names_role_and_provider' ((G $Fx.Wt log --format=%s -1 $e['baseCommit']) -ceq "[ops] T.01 lane-t launch prompt $stamp (writer claude)") (G $Fx.Wt log --format=%s -1 $e['baseCommit'])
+        Check 'prompt_not_tracked' (-not (G $Fx.Wt ls-files -- $promptRel))
+        Check 'no_prompt_commit' ($e['baseCommit'] -eq $Fx.Base -and (G $Fx.Wt log --format=%s -1 $e['baseCommit']) -eq 'fixture') (G $Fx.Wt log --oneline -3)
+        Check 'registry_prompt_path' ($e['promptPath'] -eq $promptPath -and $e['launchPromptPath'] -eq $promptPath) "$($e['promptPath'])"
         Check 'registry_prompt_generated' ($e['promptSource'] -eq 'generated' -and $null -eq $e['promptFile']) "promptSource '$($e['promptSource'])' promptFile '$($e['promptFile'])'"
         Check 'registry_push_rule_default' ($e['pushRule'] -eq 'no-push' -and $e['pushRuleSource'] -eq 'default') "$($e['pushRule']) $($e['pushRuleSource'])"
         $prompt = Get-TextFile $promptPath
@@ -429,6 +430,18 @@ $Tests = @(
         Check 'env_integrator_stripped' ($envText -match 'integrator=\[\]') $envText
         Check 'commit_author_identity' ((G $Fx.Wt log -1 '--format=%an|%cn') -eq 'deus-claude|deus-claude') (G $Fx.Wt log -1 '--format=%an|%cn')
         Check 'no_flags' (@($e['flags']).Count -eq 0) ($e['flags'] -join ',')
+    } }
+    @{ Name = 'commit_prompt_opt_in'; Body = {
+        Reset-Lane $Fx
+        $r = Invoke-Launch $Fx -Mode 'commit' -Switches @('CommitPrompt')
+        $e = $r.Entry
+        $stamp = $e['runId'].Substring('lane-t_'.Length)
+        $promptRel = "tasks/T.01/lane-t/launches/${stamp}_prompt.txt"
+        Check 'exit_0' ($r.Code -eq 0) "exit $($r.Code) $($r.Err)"
+        Check 'prompt_committed' ((G $Fx.Wt ls-files -- $promptRel) -eq $promptRel)
+        Check 'commit_subject' ((G $Fx.Wt log --format=%s -1 $e['baseCommit']) -ceq "[ops] T.01 lane-t launch prompt $stamp (writer claude)")
+        Check 'registry_path' ($e['promptPath'] -eq (Join-Path $Fx.Wt $promptRel))
+        Check 'worker_received_prompt' ((Get-TextFile (Join-Path $Fx.Out "stdin_$($e['runId']).txt")) -ceq (Get-TextFile $e['promptPath']))
     } }
     @{ Name = 'resume_prompt'; Body = {
         Reset-Lane $Fx
@@ -591,7 +604,7 @@ $Tests = @(
     @{ Name = 'committed_prompt_reused_without_registry'; Body = {
         Reset-Lane $Fx
         $pm = New-PromptFile 'pm_writer_committed.txt' (Get-PmPromptText)
-        $r1 = Invoke-Launch $Fx -Mode 'commit' -Params @{ PromptFile = $pm }
+        $r1 = Invoke-Launch $Fx -Mode 'commit' -Params @{ PromptFile = $pm } -Switches @('CommitPrompt')
         $rel = 'tasks/T.01/lane-t/launches/' + (Split-Path -Leaf $r1.Entry['launchPromptPath'])
         Remove-Item -LiteralPath $Fx.Reg, $pm -Force
         $r2 = Invoke-Launch $Fx -Mode 'commit'
@@ -609,7 +622,7 @@ $Tests = @(
         $skip = @($r2.Entry['promptCandidatesSkipped']) -join ' | '
         Check 'exit_0' ($r2.Code -eq 0) "exit $($r2.Code) $($r2.Err)"
         Check 'regenerated_with_push' ($r2.Entry['promptSource'] -eq 'generated' -and $stdin -match 'git push origin task/lane-t\.' -and $stdin -notmatch 'Do not push') $stdin
-        Check 'old_generated_skipped' (@($r2.Entry['promptCandidatesSkipped'] | Where-Object { $_ -match 'was generated by the launcher' }).Count -ge 2) $skip
+        Check 'old_generated_skipped' (@($r2.Entry['promptCandidatesSkipped'] | Where-Object { $_ -match 'was generated by the launcher' }).Count -ge 1) $skip
     } }
     @{ Name = 'other_task_or_provider_not_reused'; Body = {
         Reset-Lane $Fx
@@ -895,9 +908,9 @@ $Tests = @(
         Check 'grok_stdin_empty' ((Get-RunStdin $Fx $r2.Entry) -eq '')
         $r3 = Invoke-LaunchBuilt $Fx -Params @{ Provider = 'codex'; Effort = 'ultra' }
         $a3 = Get-StubArgs $Fx $r3.Entry
-        $tail = (@($a3 | Select-Object -Last 6) -join '|')
+        $tail = (@($a3 | Select-Object -Last 8) -join '|')
         Check 'codex_exit' ($r3.Code -eq 0) "exit $($r3.Code) $($r3.Err)"
-        Check 'codex_argv' ($tail -eq 'exec|-c|model_reasoning_effort="ultra"|--dangerously-bypass-approvals-and-sandbox|--json|-') $tail
+        Check 'codex_argv' ($tail -eq 'exec|-c|model_reasoning_effort="ultra"|--dangerously-bypass-approvals-and-sandbox|--model|gpt-6-sol|--json|-') $tail
         Check 'codex_stdin' ((Get-RunStdin $Fx $r3.Entry) -ceq (Get-TextFile $r3.Entry['launchPromptPath']))
     } }
     @{ Name = 'effort_floor_raises'; Body = {
@@ -942,12 +955,13 @@ $Tests = @(
         Check 'writer_identity' ($wenv -match 'author=deus-gemini' -and $wenv -match 'integrator=\[\]') $wenv
         Reset-Lane $Fx
         Save-LaneFixture $Fx $null ([ordered]@{ reviewer = 'gemini' })
+        $beforeRev = G $Fx.Wt rev-parse HEAD
         $rev = Invoke-LaunchBuilt $Fx -Params @{ Provider = 'gemini'; Effort = 'low' }
         $rcmd = @((Get-StubArgs $Fx $rev.Entry) | Where-Object { $_ -like 'gemini *' })
         Check 'reviewer_exit' ($rev.Code -eq 0) "exit $($rev.Code) $($rev.Err)"
         Check 'reviewer_role' ($rev.Entry['role'] -eq 'reviewer') $rev.Entry['role']
         Check 'reviewer_floor_keeps_high_model' ($rcmd.Count -eq 1 -and $rcmd[0] -eq 'gemini --model gemini-3.1-pro-preview --skip-trust --approval-mode yolo --output-format stream-json') ("[$($rcmd -join ' || ')] all=" + ((Get-StubArgs $Fx $rev.Entry) -join '|'))
-        Check 'reviewer_commit_names_role' ((G $Fx.Wt log --format=%s -1 $rev.Entry['baseCommit']) -match '\(reviewer gemini\)$') (G $Fx.Wt log --format=%s -1 $rev.Entry['baseCommit'])
+        Check 'reviewer_prompt_uncommitted' ($rev.Entry['baseCommit'] -eq $beforeRev -and (Test-Path $rev.Entry['promptPath'])) (G $Fx.Wt log --format=%s -1 $rev.Entry['baseCommit'])
         $pats = @(Get-DeusUsagePatterns 'gemini')
         Check 'resource_exhausted_pattern' (@($pats | Where-Object { 'RESOURCE_EXHAUSTED' -match $_ }).Count -ge 1)
         Reset-Lane $Fx
@@ -1057,8 +1071,10 @@ $MutantDefs = @(
        Find = '$clock = [regex]::Match('; Replace = '$clock = [regex]::Match("(?!)", "") ; $null = [regex]::Match(' }
     @{ Name = 'empty_log_ok'; File = 'launch_worker.ps1'; Tests = 'empty_log'
        Find = "if (`$logBytes -eq 0) { `$flags.Add('EMPTY-LOG') }"; Replace = '' }
-    @{ Name = 'prompt_not_committed'; File = 'launch_worker.ps1'; Tests = 'commit_run'
-       Find = 'if (-not $NoCommitPrompt) {'; Replace = 'if ($false) {' }
+    @{ Name = 'prompt_committed_by_default'; File = 'launch_worker.ps1'; Tests = 'commit_run'
+       Find = "if (-not `$promptText.Trim()) { Stop-DeusLaunch 'prompt is empty' }"; Replace = "`$CommitPrompt = `$true; if (-not `$promptText.Trim()) { Stop-DeusLaunch 'prompt is empty' }" }
+    @{ Name = 'commit_prompt_ignored'; File = 'launch_worker.ps1'; Tests = 'commit_prompt_opt_in'
+       Find = "if (-not `$promptText.Trim()) { Stop-DeusLaunch 'prompt is empty' }"; Replace = "`$CommitPrompt = `$false; if (-not `$promptText.Trim()) { Stop-DeusLaunch 'prompt is empty' }" }
     @{ Name = 'empty_brief_ok'; File = 'launch_worker.ps1'; Tests = 'refuse_empty_brief'
        Find = '(Get-Item -LiteralPath $brief).Length -eq 0 -or -not ([IO.File]::ReadAllText($brief)).Trim()'; Replace = '$false' }
     @{ Name = 'identity_unset'; File = 'launch_worker.ps1'; Tests = 'commit_run'
@@ -1137,7 +1153,12 @@ $MutantDefs = @(
 
 if ($MyInvocation.InvocationName -eq '.') { return }
 if ($List) { $Tests | ForEach-Object { $_.Name }; exit 0 }
-if ($Mutants) { exit (Invoke-MutantSweep 'test_launch_worker.ps1' $MutantDefs) }
+if ($Mutants) {
+    $script:TestRoot = (Get-Location).Path
+    $names = @($Only | ForEach-Object { ([string]$_).Split(',') } | Where-Object { $_ })
+    $selected = if ($names) { @($MutantDefs | Where-Object { $names -contains $_.Name }) } else { $MutantDefs }
+    exit (Invoke-MutantSweep 'test_launch_worker.ps1' $selected)
+}
 
 $TestRoot = Initialize-TestHarness 'deus_lw_test'
 Write-Host "test_launch_worker: ops $OpsDir; temp $TestRoot"

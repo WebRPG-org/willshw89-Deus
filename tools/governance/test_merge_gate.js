@@ -314,6 +314,40 @@ function realMergeCase(name, laneName) {
     };
 }
 
+// The committed test itself advances a ref after the gate's initial checks, before doMerge.
+function raceCase(name, laneName, kind, expectation) {
+    return {
+        name,
+        build: () => built(laneName, null, l => {
+            l.pmOpen();
+            const sharedFeature = FEATURE["src/feature.js"] + `// TEST_ ${laneName}\n`;
+            const script = `const fs = require("fs"), path = require("path"), cp = require("child_process");\n` +
+                `const work = ${JSON.stringify(WORK)}, kind = ${JSON.stringify(kind)}, lane = ${JSON.stringify(l.branch)};\n` +
+                `const run = (...a) => cp.execFileSync("git", ["-C", work, ...a], { encoding: "utf8" }).trim();\n` +
+                `const f = require("../src/feature.js"); if (f.add(2, 2) !== 4) process.exit(1);\n` +
+                `if (kind === "tip") { const tip = run("rev-parse", "refs/heads/" + lane); const tree = run("rev-parse", tip + "^{tree}"); const next = run("commit-tree", tree, "-p", tip, "-m", "[claude] TEST_ moved tip"); run("update-ref", "refs/heads/" + lane, next); }\n` +
+                `else { const rel = kind === "shared" ? "src/feature.js" : kind === "conflict" ? ${JSON.stringify(`tasks/TEST.01/${l.lane}`)} : ${JSON.stringify(`main_only_${l.lane}.txt`)}; fs.mkdirSync(path.dirname(path.join(work, rel)), { recursive: true }); fs.writeFileSync(path.join(work, rel), kind === "shared" ? ${JSON.stringify(sharedFeature)} : "TEST_ main change\\n"); run("add", "--", rel); run("commit", "-q", "-m", "[gemini] TEST_ move main during gate"); run("push", "-q", "origin", "main"); }\n` +
+                `console.log("PASS TEST_ race injected " + kind);\n`;
+            l.writer({ "src/feature.js": sharedFeature, "tests/test_feature.js": script }); l.review(); l.push();
+        }),
+        expect: Object.assign({ merged: true }, expectation),
+        setup: (l, c) => { c.mainBefore = mainSha(); },
+        teardown: (l, c) => {
+            if (originMain() !== c.mainBefore) w(["push", "-q", "-f", "origin", `${c.mainBefore}:refs/heads/main`]);
+            w(["reset", "-q", "--hard", c.mainBefore]);
+        },
+        verify: (r, l, before, after) => {
+            if (kind === "tip") return after === before ? null : `main moved despite tip race: ${after}`;
+            const moved = originMain();
+            if (moved === before) return "test did not move origin/main";
+            if (expectation.exit !== 0) return after === moved ? null : `main changed beyond moved commit: ${after}`;
+            const parents = w(["rev-list", "--parents", "-n", "1", after]).split(" ").slice(1);
+            const note = `main moved while the gate ran: ${before} -> ${moved}; merged on top (no shared files)`;
+            return parents.join(" ") === `${moved} ${l.head}` && r.out.includes(note) ? null : `merge parents or note wrong: ${parents.join(" ")}`;
+        }
+    };
+}
+
 // ---------------------------------------------------------------- cases
 
 const CASES = [
@@ -321,6 +355,11 @@ const CASES = [
     { name: "pass_valid_lane_dry_run_prints_summary", build: () => new Lane("ok").standard(), args: DRY, expect: PASS, verify: verifySummary },
     { name: "pass_valid_lane_deletes_temp", build: () => new Lane("ptmp").standard(), args: DRY, expect: PASS, verify: r => (r.out.includes("kept temporary clones") || r.out.includes("NOTE temporary folder not removed") ? "temp dir was kept or error removing it" : null) },
     { name: "pass_clean_pass_bold_verdict", build: () => built("bold", null, l => { l.manifestCommit(); l.writer(); l.review({ verdict: "**VERDICT:** CLEAN PASS" }); l.push(); }), args: DRY, expect: PASS },
+    { name: "pass_with_minors", build: () => built("minors", null, l => { l.pmOpen(); l.writer(); l.review({ verdict: "VERDICT: PASS WITH MINORS" }); l.push(); }), args: DRY, expect: PASS,
+        verify: r => r.out.includes("| verdict | VERDICT: PASS WITH MINORS |") ? null : "verdict missing from report" },
+    { name: "pass_with_minors_decorated", build: () => built("mindec", null, l => { l.pmOpen(); l.writer(); l.review({ verdict: "**VERDICT:** PASS WITH MINORS**" }); l.push(); }), args: DRY, expect: PASS },
+    { name: "pass_pm_recut_metadata", build: () => built("pmrecut", null, l => { l.pmOpen(); l.writer(); l.review(); l.commit("[pm] TEST_ update brief", { [`${l.dir}/BRIEF.md`]: "# TEST_ revised\n" }); l.commit("[pm] TEST_ recut manifest", { [l.manifestPath]: l.manifestText() + " " }); l.push(); }), args: DRY, expect: PASS,
+        verify: r => r.out.includes("PM manifest/brief commits above the review; code identical") && r.out.includes("| reviewer file |") && r.out.includes("| last non-review commit |") ? null : "PM re-cut review report incomplete" },
     { name: "pass_review_author_matches", build: () => built("raok", null, l => { l.pmOpen(); l.writer(); l.review({ author: "deus-grok" }); l.push(); }), args: DRY, expect: PASS },
     { name: "pass_gemini_manifest_by_ops", build: () => built("gmops", null, l => { l.manifestCommit(undefined, "gemini", { author: "deus-ops" }); l.writer(); l.review(); l.push(); }), args: DRY, expect: PASS },
     { name: "pass_pm_manifest_by_pm", build: () => built("pmby", null, l => { l.manifestCommit(undefined, "pm", { author: "deus-pm" }); l.writer(); l.review(); l.push(); }), args: DRY, expect: PASS },
@@ -411,6 +450,8 @@ const CASES = [
     { name: "fail_gemini_commit_after_review", build: () => built("after2", null, l => { l.manifestCommit(); l.writer(); l.review(); l.commit("[gemini] TEST_ launch prompt", { [`${l.dir}/launches/p.txt`]: "x\n" }); l.push(); }), expect: REFUSE("REVIEW_NOT_LAST") },
     { name: "fail_verdict_missing", build: () => built("vmiss", null, l => { l.manifestCommit(); l.writer(); l.review({ verdict: "Looks fine to me." }); l.push(); }), expect: REFUSE("REVIEW_VERDICT_MISSING") },
     { name: "fail_verdict_fail", build: () => built("vfail", null, l => { l.manifestCommit(); l.writer(); l.review({ verdict: "VERDICT: FAIL" }); l.push(); }), expect: REFUSE("REVIEW_VERDICT_NOT_PASS") },
+    { name: "fail_verdict_majors", build: () => built("vmajor", null, l => { l.pmOpen(); l.writer(); l.review({ verdict: "VERDICT: PASS WITH MAJORS" }); l.push(); }), expect: REFUSE("REVIEW_VERDICT_NOT_PASS") },
+    { name: "fail_verdict_minors_then_reject", build: () => built("vreject", null, l => { l.pmOpen(); l.writer(); l.review({ verdict: "VERDICT: PASS WITH MINORS\nVERDICT: REJECT" }); l.push(); }), expect: REFUSE("REVIEW_VERDICT_NOT_PASS") },
     { name: "fail_verdict_incomplete", build: () => built("vinc", null, l => { l.manifestCommit(); l.writer(); l.review({ verdict: "VERDICT: PASS (pending re-run of test 2)" }); l.push(); }), expect: REFUSE("REVIEW_VERDICT_NOT_PASS") },
     { name: "fail_verdict_empty", build: () => built("vempty", null, l => { l.manifestCommit(); l.writer(); l.review({ verdict: "VERDICT:" }); l.push(); }), expect: REFUSE("REVIEW_VERDICT_NOT_PASS") },
     { name: "fail_verdict_conflicting_lines", build: () => built("vboth", null, l => { l.manifestCommit(); l.writer(); l.review({ verdict: "VERDICT: PASS\n\nVerdict: FAIL (see F1)" }); l.push(); }), expect: REFUSE("REVIEW_VERDICT_NOT_PASS") },
@@ -542,7 +583,9 @@ const CASES = [
         build: () => built("pmrev", { reviewer: undefined }, l => { l.pmOpen(); l.writer(); l.review({ tag: "pm" }); l.push(); }),
         verify: r => (/^REFUSED REVIEW_TAG_UNKNOWN: .*\[pm\] may write lane\.json but never reviews$/m.test(r.out) ? null : "the refusal does not say [pm] never reviews")
     },
-    { name: "fail_pm_commit_after_review", build: () => built("pmafter", null, l => { l.pmOpen(); l.writer(); l.review(); l.commit("[pm] TEST_ brief update", { [`${l.dir}/BRIEF.md`]: "# TEST_ brief v2\n" }); l.push(); }), expect: REFUSE("REVIEW_NOT_LAST") },
+    { name: "fail_pm_commit_after_review", build: () => built("pmafter", null, l => { l.pmOpen(); l.writer(); l.review(); l.commit("[pm] TEST_ other task file", { [`${l.dir}/notes.md`]: "# TEST_ notes\n" }); l.push(); }), expect: REFUSE("REVIEW_NOT_LAST") },
+    { name: "fail_pm_recut_changes_code", build: () => built("pmcode", null, l => { l.pmOpen(); l.writer(); l.review(); l.commit("[pm] TEST_ code edit", { "src/feature.js": FEATURE["src/feature.js"] + "// changed\n" }); l.push(); }), expect: REFUSE("REVIEW_NOT_LAST") },
+    { name: "fail_non_pm_recut", build: () => built("norecut", null, l => { l.pmOpen(); l.writer(); l.review(); l.commit("[gemini] TEST_ brief update", { [`${l.dir}/BRIEF.md`]: "# TEST_ brief v2\n" }); l.push(); }), expect: REFUSE("REVIEW_NOT_LAST") },
 
     { name: "fail_manifest_missing", build: () => built("nomani", null, l => { l.writer(); l.review(); l.push(); }), expect: REFUSE("MANIFEST_MISSING") },
     { name: "fail_manifest_invalid_json", build: () => built("badjson", null, l => { l.manifestCommit("{ \"lane\": "); l.writer(); l.review(); l.push(); }), expect: REFUSE("MANIFEST_INVALID") },
@@ -623,6 +666,10 @@ const CASES = [
 
     // (f) execution; these change main, so they run last
     realMergeCase("pass_real_merge_no_ff_never_pushes", "merge"),
+    raceCase("pass_main_moves_unrelated", "moveok", "unrelated", PASS),
+    raceCase("fail_main_moves_shared", "moveshared", "shared", REFUSE("RACE_REF_MOVED")),
+    raceCase("fail_lane_tip_moves", "movetip", "tip", REFUSE("RACE_REF_MOVED")),
+    raceCase("fail_main_merge_tree_conflict", "moveconflict", "conflict", REFUSE("RACE_REF_MOVED")),
     {
         name: "fail_merge_conflict_is_aborted", build: () => new Lane("conflict").standard(),
         setup: (l, c) => {
@@ -667,6 +714,7 @@ const KILLS = {
     scope_off: "fail_out_of_scope_file",
     review_required_off: "fail_review_missing",
     review_order_off: "fail_writer_commit_after_review",
+    pm_above_review_any_path: "fail_pm_recut_changes_code",
     review_family_off: "fail_same_tag_review_claude_reviews_claude",
     fable_alias_off: "fail_fable_reviews_claude",
     reviewer_designation_off: "fail_reviewer_not_designated",
@@ -691,12 +739,18 @@ const KILLS = {
 // fail a fresh case that the real gate passes. They run last because a broken gate may merge or push.
 // kill(suffix) builds a new lane each call, so the control run and the mutant run never share a branch.
 const SOURCE_MUTANTS = [
+    { name: "pass_with_minors_refuses", from: "(CLEAN PASS|PASS WITH MINORS|PASS)", to: "(CLEAN PASS|PASS)",
+        kill: sfx => ({ name: "src_minors", build: () => built(`srcminors${sfx}`, null, l => { l.pmOpen(); l.writer(); l.review({ verdict: "VERDICT: PASS WITH MINORS" }); l.push(); }), args: DRY, expect: PASS }) },
     { name: "dry_run_merges", from: "else if (dryRun) R.execution", to: "else if (false) R.execution",
         kill: sfx => ({ name: "src_dry_run", build: () => new Lane(`srcdry${sfx}`).standard(), args: DRY, expect: PASS }) },
     { name: "fast_forward_merge", from: "[\"merge\", \"--no-ff\", \"--no-edit\"", to: "[\"merge\", \"--ff\", \"--no-edit\"",
         kill: sfx => realMergeCase("src_ff", `srcff${sfx}`) },
     { name: "push_after_merge", from: "R.execution = `MERGED ${head}", to: "git([\"push\", \"-q\", REMOTE, MAIN]); R.execution = `MERGED ${head}",
-        kill: sfx => realMergeCase("src_push", `srcpush${sfx}`) }
+        kill: sfx => realMergeCase("src_push", `srcpush${sfx}`) },
+    { name: "race_any_move_refuses", from: "if (mainMoved) {", to: "if (mainMoved) { R.refuse(\"REFS\", \"RACE_REF_MOVED\", \"old main-move rule\"); return;",
+        kill: sfx => raceCase("src_race_any", `srcraceany${sfx}`, "unrelated", PASS) },
+    { name: "race_ignores_shared_files", from: "if (shared.length) {", to: "if (false) {",
+        kill: sfx => raceCase("src_race_shared", `srcraceshared${sfx}`, "shared", REFUSE("RACE_REF_MOVED")) }
 ];
 
 // ---------------------------------------------------------------- unit checks
@@ -713,8 +767,8 @@ function unitChecks(G) {
         g4.test("docs/x.md") && g4.test("docs/a/b/x.md") && !g4.test("docsx.md") &&
         [null, "", "/abs/x", "C:/x", "a/../b", "./a", "a\\b"].every(g => G.globToRegExp(g) === null),
         "globToRegExp matched wrongly");
-    const passes = ["VERDICT: PASS", "VERDICT: CLEAN PASS", "**VERDICT: PASS**", "**VERDICT:** CLEAN PASS", "## VERDICT: PASS", "- VERDICT: PASS", "text\n\nVERDICT: PASS\r\n"];
-    const fails = ["VERDICT: FAIL", "VERDICT: PASS WITH FINDINGS", "VERDICT: pass", "Verdict: PASS", "VERDICT:", "VERDICT: PASSED", "VERDICT: PASS\nVERDICT: FAIL", "no verdict here", ""];
+    const passes = ["VERDICT: PASS", "VERDICT: CLEAN PASS", "VERDICT: PASS WITH MINORS", "**VERDICT: PASS**", "**VERDICT:** CLEAN PASS", "**VERDICT:** PASS WITH MINORS**", "## VERDICT: PASS", "- VERDICT: PASS", "text\n\nVERDICT: PASS\r\n"];
+    const fails = ["VERDICT: FAIL", "VERDICT: PASS WITH FINDINGS", "VERDICT: PASS WITH MAJORS", "VERDICT: pass", "Verdict: PASS", "VERDICT:", "VERDICT: PASSED", "VERDICT: PASS\nVERDICT: FAIL", "VERDICT: PASS WITH MINORS\nVERDICT: REJECT", "no verdict here", ""];
     const badP = passes.filter(t => !G.parseVerdict(t).pass), badF = fails.filter(t => G.parseVerdict(t).pass);
     check("unit_verdict", !badP.length && !badF.length && G.parseVerdict("").lines.length === 0 && G.parseVerdict("VERDICT: FAIL").lines.length === 1,
         `rejected ${JSON.stringify(badP)}; accepted ${JSON.stringify(badF)}`);

@@ -16,11 +16,13 @@
  *                 change stops the gate at once: scope, review and tests are not evaluated and the
  *                 manifest's gateTests are never run.
  *   (a) SCOPE     every path in git diff <merge-base main> <tip> matches a manifest allowedPaths glob.
- *   (b) REVIEW    the tip is a review commit: one parent, subject tag of another family than the
+ *   (b) REVIEW    the tip is a review commit (or is followed only by PM manifest/brief re-cut commits):
+ *                 one parent, subject tag of another family than the
  *                 writer (claude and fable are one family), the designated reviewer when the
  *                 manifest names one, and it touches only tasks/<id>/<lane>/review_<tag>_<sha8>.md.
  *                 That file holds the full 40-character hash of the last non-review commit on the
- *                 branch and a "VERDICT: PASS" or "VERDICT: CLEAN PASS" line (and no other verdict).
+ *                 branch and a "VERDICT: PASS", "VERDICT: CLEAN PASS", or "VERDICT: PASS WITH MINORS"
+ *                 line (and no rejecting verdict).
  *                 Every review commit's author name matches its tag family, with no grandfathering.
  *   (b2) AUTHOR   agent-tagged commits match their family author; [ops] commits are authored deus-ops
  *                 and confined to the lane task directory. Manifest author names are checked in (a).
@@ -35,8 +37,8 @@
  *                 git ls-remote origin refs/heads/<branch>.
  *   (e) MAIN      main is checked out in a worktree with no uncommitted tracked changes and no
  *                 merge in progress, and rev-parse main == rev-parse origin/main == ls-remote main.
- *   (f) EXECUTION when all hold and --dry-run is absent: git merge --no-ff <checked sha> in main's
- *                 worktree. The gate never pushes.
+ *   (f) EXECUTION when all hold and --dry-run is absent: re-fetch, reconcile unrelated main moves,
+ *                 then git merge --no-ff <checked sha> in main's worktree. The gate never pushes.
  *   (g) SUMMARY   a table of the raw hashes, the diff, the review, every test (command, exit code,
  *                 duration) and the checks, ending "GATE: PASS (exit 0)" or "GATE: REFUSED (exit n)".
  *
@@ -85,6 +87,7 @@ const MUTANTS = {
     scope_off: "accept paths outside allowedPaths",
     review_required_off: "accept a branch with no review commit",
     review_order_off: "use the latest review commit even when other commits follow it",
+    pm_above_review_any_path: "allow PM commits above a review to change code paths",
     review_family_off: "accept a review from the writer's family",
     fable_alias_off: "count fable as a family of its own",
     reviewer_designation_off: "accept a reviewer other than the manifest's",
@@ -231,9 +234,9 @@ function globToRegExp(glob) {
 }
 
 const VERDICT_LINE_RE = /^[\s>#*_`|-]*verdict[\s*_`]*[:=]/i;
-const VERDICT_PASS_RE = /^[\s>#*_`|-]*VERDICT[*_`]*:[\s*_`]*(CLEAN PASS|PASS)[\s*_`.|]*$/;
+const VERDICT_PASS_RE = /^[\s>#*_`|-]*VERDICT[*_`]*:[\s*_`]*(CLEAN PASS|PASS WITH MINORS|PASS)[\s*_`.|]*$/;
 
-// Every verdict line must read PASS or CLEAN PASS; one other verdict anywhere refuses.
+// Every verdict line must pass; one other verdict anywhere refuses.
 function parseVerdict(text) {
     const lines = String(text || "").split(/\r?\n/).filter(l => VERDICT_LINE_RE.test(l)).map(l => l.trim());
     const bad = lines.filter(l => !VERDICT_PASS_RE.test(l));
@@ -324,7 +327,8 @@ function printReport(R, ctx, exitCode) {
             ["expected file", v.expectedFile || "-"],
             ["last non-review commit", v.target ? `${v.target.sha} ${v.target.subject}` : "(none)"],
             ["full hashes in file", v.hashes && v.hashes.length ? v.hashes.join(", ") : "(none)"],
-            ["verdict", v.verdict && v.verdict.lines.length ? v.verdict.lines.join(" / ") : "(none)"]
+            ["verdict", v.verdict && v.verdict.lines.length ? v.verdict.lines.join(" / ") : "(none)"],
+            ...(v.pmAbove ? [["PM re-cut", "PM manifest/brief commits above the review; code identical"]] : [])
         ]));
     }
     if (R.tests.length) {
@@ -600,9 +604,24 @@ function checkReview(R, ctx, man) {
     const touches = c => c.files.some(f => reviewRe.test(f.path));
     const isReview = c => c.parents.length === 1 && c.files.length > 0 && c.files.every(f => reviewRe.test(f.path) && f.status !== "D") &&
         family(c.tag) !== null && family(c.tag) !== writerFam;
-    const V = R.review = { commit: null, target: null, file: null, expectedFile: null, hashes: null, verdict: null };
+    const V = R.review = { commit: null, target: null, file: null, expectedFile: null, hashes: null, verdict: null, pmAbove: false };
 
     let idx = chain.length && chain[0].parents.length === 1 && touches(chain[0]) ? 0 : -1;
+    if (idx < 0) {
+        const at = chain.findIndex(c => c.parents.length === 1 && touches(c));
+        if (at > 0) {
+            const above = chain.slice(0, at);
+            const reviewedTarget = chain.slice(at + 1).find(c => !isReview(c));
+            const onlyPmMetadata = above.every(c => c.parents.length === 1 && c.tag === PM_TAG &&
+                (mut("pm_above_review_any_path") || (c.files.length > 0 && c.files.every(f =>
+                    f.path === `${dir}/BRIEF.md` || f.path === `${dir}/lane.json`))));
+            // --literal-pathspecs is active in git(); inspect the full diff instead of using :! exclusions.
+            const codeIdentical = reviewedTarget && (mut("pm_above_review_any_path") ||
+                git(["diff", "--name-only", "-z", reviewedTarget.sha, ctx.tip]).split("\0")
+                    .filter(Boolean).every(p => p.startsWith(`${dir}/`)));
+            if (onlyPmMetadata && codeIdentical) { idx = at; V.pmAbove = true; }
+        }
+    }
     if (idx < 0 && mut("review_order_off")) idx = chain.findIndex(c => c.parents.length === 1 && touches(c));
     if (idx < 0) {
         const at = chain.findIndex(touches);
@@ -773,14 +792,53 @@ function checkTests(R, ctx, man) {
 
 function doMerge(R, ctx) {
     const nowTip = revParse(`refs/heads/${ctx.branch}`), nowMain = revParse(`refs/heads/${MAIN}`);
-    if (nowTip !== ctx.tip || nowMain !== ctx.refs.main) {
-        R.refuse("REFS", "RACE_REF_MOVED", `refs moved while the gate ran: ${ctx.branch} ${ctx.tip} -> ${nowTip}, ${MAIN} ${ctx.refs.main} -> ${nowMain}`);
+    if (nowTip !== ctx.tip) {
+        R.refuse("REFS", "RACE_REF_MOVED", `${ctx.branch} moved while the gate ran: ${ctx.tip} -> ${nowTip}`);
         return;
     }
     const d = mainDirt({ path: ctx.mainWorktree });
     if (d.error || d.entries.length || d.inProgress.length) {
         R.refuse("MAIN", "MAIN_DIRTY", `${ctx.mainWorktree} changed while the gate ran`);
         return;
+    }
+    const refreshed = git(["fetch", "--quiet", REMOTE], { allowFail: true });
+    if (!refreshed.ok) {
+        R.refuse("REFS", "REMOTE_ERROR", `git fetch ${REMOTE} at merge step failed: ${refreshed.err}`);
+        return;
+    }
+    const remoteMain = revParse(`refs/remotes/${REMOTE}/${MAIN}`);
+    const tipAfterFetch = revParse(`refs/heads/${ctx.branch}`);
+    const remoteTip = revParse(`refs/remotes/${REMOTE}/${ctx.branch}`);
+    if (tipAfterFetch !== ctx.tip || remoteTip !== ctx.tip) {
+        R.refuse("REFS", "RACE_REF_MOVED", `${ctx.branch} moved while the gate ran: checked ${ctx.tip}, local ${tipAfterFetch}, origin ${remoteTip}`);
+        return;
+    }
+    const mainMoved = nowMain !== ctx.refs.main || remoteMain !== ctx.refs.main;
+    if (mainMoved) {
+        if (!remoteMain || !nowMain || !isAncestor(ctx.refs.main, remoteMain) || !isAncestor(nowMain, remoteMain)) {
+            R.refuse("REFS", "RACE_REF_MOVED", `${MAIN} moved without a fast-forward from ${ctx.refs.main} to origin/main ${remoteMain}; local ${nowMain}`);
+            return;
+        }
+        const moved = git(["diff", "--name-only", "-z", ctx.refs.main, remoteMain]).split("\0").filter(Boolean);
+        const laneFiles = new Set(R.diff.files.map(f => f.path));
+        const shared = moved.filter(p => laneFiles.has(p));
+        if (shared.length) {
+            R.refuse("REFS", "RACE_REF_MOVED", `${MAIN} moved and shares lane file(s): ${shared.join(", ")}`);
+            return;
+        }
+        const tree = git(["merge-tree", "--write-tree", remoteMain, ctx.tip], { allowFail: true });
+        if (!tree.ok) {
+            R.refuse("REFS", "RACE_REF_MOVED", `${MAIN} moved; merge-tree conflict in: ${(tree.out || tree.err).trim().split("\n").slice(-8).join(" ")}`);
+            return;
+        }
+        const ff = git(["merge", "--ff-only", remoteMain], { allowFail: true, cwd: ctx.mainWorktree });
+        if (!ff.ok) {
+            R.refuse("REFS", "RACE_REF_MOVED", `${MAIN} could not fast-forward to origin/main ${remoteMain}: ${ff.err || ff.out}`);
+            return;
+        }
+        R.notes.push(`main moved while the gate ran: ${ctx.refs.main} -> ${remoteMain}; merged on top (no shared files)`);
+        ctx.refs.main = remoteMain;
+        R.refs.push({ label: "main at merge", cmd: `git rev-parse refs/remotes/${REMOTE}/${MAIN}`, value: remoteMain });
     }
     const msg = `Merge ${ctx.branch} at ${ctx.tip} (${ctx.taskId} ${ctx.lane}) via merge_gate`;
     const r = git(["merge", "--no-ff", "--no-edit", "-m", msg, ctx.tip], { allowFail: true, cwd: ctx.mainWorktree });
