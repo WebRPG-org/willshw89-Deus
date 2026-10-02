@@ -50,6 +50,16 @@
  * All randomness is seeded (hash32 of seed, unit id and frame). Nothing is
  * kept outside UF.World.state / unit.data except caches.
  *
+ * Runtime refill (WG.00.47) is a pure function of world cell and time:
+ * calculateSpawn(gx, gy, time) returns the same descriptor for the same
+ * seed, cell, level, time window and attempt. It writes no breeding herd,
+ * no birth and no carrying-capacity record. An attempt whose local count
+ * has reached ecology.fauna.localCapScale (1.5) times that cell's target
+ * is discarded before anything is stored. A combat:kill stores one
+ * timestamp per (area, z); the rate is the closed form (now - that time)
+ * over three days. Tier D anchors store { count, next } only while they
+ * are short of the cap. A full anchor is absent from the save.
+ *
  * API, events, save data and checks: docs/systems/UF_Wildlife.md
  * Contract: docs/design/WORLD_ARCHITECTURE.md sections 2.4 and 5.7
  *
@@ -69,7 +79,7 @@
     const sameArea = (a, b) => !!a && !!b && a.x === b.x && a.y === b.y;
 
     // One salt per roll, so every decision is independent of the others.
-    const SALT = Object.freeze({ herds: 0x1d, center: 0x1e, member: 0x1f, kit: 0x20, lair: 0x21, wander: 0x77, wanderGoal: 0x78, graze: 0x79, predator: 0x7a, sleep: 0x7b, alarm: 0x7c });
+    const SALT = Object.freeze({ herds: 0x1d, center: 0x1e, member: 0x1f, kit: 0x20, lair: 0x21, wander: 0x77, wanderGoal: 0x78, graze: 0x79, predator: 0x7a, sleep: 0x7b, alarm: 0x7c, anchor: 0x5a01, spawnSpecies: 0x5a02, spawnSize: 0x5a03, spawnRate: 0x5a04, spawnMember: 0x5a05 });
     const WANDER_EVERY = 90;   // map updates between wander decisions
     const WANDER_CHANCE = 0.35;
     const FLEE_EVERY = 30;     // map updates between flee steps: a fleeing hare is slower than a walking hunter
@@ -1372,6 +1382,501 @@
     };
 
     //-------------------------------------------------------------------------
+    // Stateless spawner (WG.00.47). A spawn is calculateSpawn(gx, gy, time):
+    // seed, cell, level, time window and attempt index. Live counts only
+    // accept or reject. Breeding herds are never recorded.
+    //
+    // Minecraft rule record (DEC-039 item 5), local mob cap:
+    // SOURCE: Minecraft Java cancels a spawn attempt once the local mob cap is met.
+    // REFERENCE BEHAVIOR: the attempt produces no mob and stores nothing.
+    // DEUS TRANSLATION: cap = max(herd max, ceil(herd mean × ecology.fauna.localCapScale)).
+    //   localCapScale is 1.5. Reaching that cap discards the attempt immediately.
+    // DEVIATIONS: one cap per anchor and species. A short remote anchor refills by
+    //   (now - kill time), not by a random tick. Dormant animals are not culled.
+
+    const SPAWN_WINDOW_HOURS = 6;
+    const ANCHOR_STRIDE = 175;
+    const LOCAL_CAP_SCALE_DEFAULT = 1.5;
+    const DEPLETION_RECOVERY_HOURS = 72;
+    const LOCAL_RADIUS = 8;
+
+    function localCapScale() {
+        const fauna = catalog() && catalog().ecology && catalog().ecology.fauna;
+        const n = fauna && Number(fauna.localCapScale);
+        return Number.isFinite(n) && n > 0 ? n : LOCAL_CAP_SCALE_DEFAULT;
+    }
+
+    function gameHour(explicit) {
+        if (Number.isFinite(explicit)) return Math.floor(explicit);
+        const O = window.UF && UF.Objects;
+        if (O && typeof O.hourNow === "function") return O.hourNow() | 0;
+        const t = window.$ufTime;
+        if (t && Number.isFinite(t.year)) {
+            return (((t.year * 12 + (t.monthIndex | 0)) * 28) + ((t.day || 1) - 1)) * 24 + (t.hour | 0);
+        }
+        return 0;
+    }
+
+    function timeWindowOf(time) {
+        const t = Math.floor(Number(time) || 0);
+        if (t <= 0) return 0;
+        return Math.floor(t / SPAWN_WINDOW_HOURS);
+    }
+
+    function hourOf(time) {
+        const t = Math.floor(Number(time) || 0);
+        return ((t % 24) + 24) % 24;
+    }
+
+    function phaseAt(time, z) {
+        const hour = hourOf(time);
+        const DN = window.UF && UF.DayNight;
+        if (DN && typeof DN.phase === "function") return DN.phase(hour, z | 0);
+        if ((z | 0) !== 0) return "night";
+        if (hour >= 8 && hour < 17) return "day";
+        if (hour >= 17 && hour < 22) return "dusk";
+        if (hour >= 5 && hour < 8) return "dawn";
+        return "night";
+    }
+
+    function inactiveAt(sp, phase) {
+        const cycle = activityOf(sp.id);
+        if (cycle === "all_active" || cycle === "crepuscular") return false;
+        if (cycle === "diurnal") return phase === "night";
+        if (cycle === "nocturnal") return phase === "day";
+        return false;
+    }
+
+    function resolveState(state) {
+        if (state) return state;
+        const W = World();
+        return (W && W.state) || null;
+    }
+
+    function spawnBag(st, create) {
+        if (!st) return null;
+        if (!st.wildlifeSpawn && create) st.wildlifeSpawn = { version: 1, depletion: {}, anchors: {} };
+        const bag = st.wildlifeSpawn;
+        if (!bag) return null;
+        if (!bag.depletion || typeof bag.depletion !== "object" || Array.isArray(bag.depletion)) bag.depletion = {};
+        if (!bag.anchors || typeof bag.anchors !== "object" || Array.isArray(bag.anchors)) bag.anchors = {};
+        return bag;
+    }
+
+    function depletionKey(ax, ay, z) {
+        return (ax | 0) + "," + (ay | 0) + "," + (z | 0);
+    }
+
+    function anchorKey(gx, gy, z) {
+        return (gx | 0) + "," + (gy | 0) + "," + (z | 0);
+    }
+
+    function areaOfCell(st, gx, gy) {
+        const size = st ? (st.size | 0) : 0;
+        if (!(size > 0) || !Number.isFinite(gx) || !Number.isFinite(gy)) return null;
+        const ax = Math.floor(gx / size), ay = Math.floor(gy / size);
+        return { ax: ax, ay: ay, x: gx - ax * size, y: gy - ay * size, size: size };
+    }
+
+    function herdBounds(sp) {
+        const mn = Array.isArray(sp.herd) ? (sp.herd[0] | 0) : 1;
+        const mx = Array.isArray(sp.herd) ? (sp.herd[1] | 0) : mn;
+        const lo = Math.max(1, mn);
+        return [lo, Math.max(lo, mx)];
+    }
+
+    /** { target, scale, cap } for one species. cap = max(herd max, ceil(mean × localCapScale)). */
+    function capOf(sp) {
+        const bounds = herdBounds(sp);
+        const target = (bounds[0] + bounds[1]) / 2;
+        const scale = localCapScale();
+        const scaled = Math.ceil(target * scale - 1e-12);
+        return { target: target, scale: scale, cap: Math.max(bounds[1], scaled), herdMax: bounds[1] };
+    }
+
+    function isSpawnAnchor(st, gx, gy, z) {
+        return (hash32(st.seed, SALT.anchor, gx | 0, gy | 0, (z + 8) | 0) % ANCHOR_STRIDE) === 0;
+    }
+
+    function cellAtWorld(gx, gy) {
+        const WG = WorldGen();
+        if (!WG || typeof WG.cellInfo !== "function") return null;
+        return WG.cellInfo(gx, gy) || null;
+    }
+
+    function habitatSpecies(cell) {
+        if (!cell || !cell.walkable) return [];
+        const out = [];
+        const list = speciesList();
+        for (let i = 0; i < list.length; i++) {
+            const sp = list[i];
+            if ((sp.biomes[cell.biomeId] || 0) > 0 && allowedInRegion(sp, cell.region)) out.push(sp);
+        }
+        return out;
+    }
+
+    function nearCamp(st, gx, gy, z, radius) {
+        const size = st.size | 0;
+        const camps = campsOf(st);
+        for (let i = 0; i < camps.length; i++) {
+            const c = camps[i];
+            if ((c.z || 0) !== (z | 0) || !c.area) continue;
+            const cgx = c.area.x * size + c.x, cgy = c.area.y * size + c.y;
+            if (Math.hypot(gx - cgx, gy - cgy) < radius) return true;
+        }
+        return false;
+    }
+
+    /** True when this species may not stand on the anchor: start radius, camp cells, hostile radius. */
+    function keptOut(st, gx, gy, z, sp, loc) {
+        const minDist = (minDistFor(sp) || 0) + HERD_SPREAD;
+        if (minDist > 0 && distToStart(worldDims(st), gx, gy) < minDist) return true;
+        if (loc && !campRuleOk(st, loc.ax, loc.ay, loc.x, loc.y, sp, z | 0)) return true;
+        if (sp.dangerous && nearCamp(st, gx, gy, z, wildlifeConfig().predatorFreeRadius || 60)) return true;
+        return false;
+    }
+
+    function pickWeighted(st, list, cell, gx, gy, z, window, attempt) {
+        let total = 0;
+        const weights = new Array(list.length);
+        for (let i = 0; i < list.length; i++) {
+            const w = list[i].biomes[cell.biomeId] || 0;
+            weights[i] = w;
+            total += w;
+        }
+        if (!(total > 0)) return null;
+        let cursor = unit01(st.seed, SALT.spawnSpecies, gx | 0, gy | 0, (z + 8) | 0, window | 0, attempt | 0) * total;
+        for (let i = 0; i < list.length; i++) {
+            cursor -= weights[i];
+            if (cursor < 0) return list[i];
+        }
+        return list[list.length - 1];
+    }
+
+    function pickSpawnSpecies(st, gx, gy, z, time, attempt, applyActivity) {
+        const loc = areaOfCell(st, gx, gy);
+        if (!loc) return { sp: null, reason: "bounds", loc: null, cell: null };
+        const cell = cellAtWorld(gx, gy);
+        if (!cell || !cell.walkable) return { sp: null, reason: "habitat", loc: loc, cell: cell };
+        const habitat = habitatSpecies(cell);
+        if (!habitat.length) return { sp: null, reason: "habitat", loc: loc, cell: cell };
+        let pool = habitat;
+        if (applyActivity) {
+            const phase = phaseAt(time, z);
+            pool = [];
+            for (let i = 0; i < habitat.length; i++) if (!inactiveAt(habitat[i], phase)) pool.push(habitat[i]);
+            if (!pool.length) return { sp: null, reason: "inactive", loc: loc, cell: cell, phase: phase };
+        }
+        const open = [];
+        for (let i = 0; i < pool.length; i++) if (!keptOut(st, gx, gy, z, pool[i], loc)) open.push(pool[i]);
+        if (!open.length) return { sp: null, reason: "clearance", loc: loc, cell: cell };
+        const sp = pickWeighted(st, open, cell, gx, gy, z, timeWindowOf(time), attempt);
+        return { sp: sp, reason: sp ? null : "habitat", loc: loc, cell: cell };
+    }
+
+    function groupSizeOf(st, sp, gx, gy, z, window, attempt) {
+        const bounds = herdBounds(sp);
+        const span = bounds[1] - bounds[0] + 1;
+        const roll = Math.floor(unit01(st.seed, SALT.spawnSize, gx | 0, gy | 0, (z + 8) | 0, window | 0, attempt | 0) * span);
+        return bounds[0] + roll;
+    }
+
+    function memberLayout(st, gx, gy, z, sp, n, window, attempt) {
+        const loc = areaOfCell(st, gx, gy);
+        const cells = [{ x: loc.x, y: loc.y }];
+        const rng = mulberry32(hash32(st.seed, SALT.spawnMember, gx | 0, gy | 0, (z + 8) | 0, sp.index, window | 0, attempt | 0));
+        for (let k = 1; k < n; k++) {
+            let x = loc.x, y = loc.y;
+            for (let t = 0; t < MEMBER_TRIES; t++) {
+                const nx = loc.x + Math.floor(rng() * (2 * HERD_SPREAD + 1)) - HERD_SPREAD;
+                const ny = loc.y + Math.floor(rng() * (2 * HERD_SPREAD + 1)) - HERD_SPREAD;
+                if (nx >= 0 && ny >= 0 && nx < loc.size && ny < loc.size) { x = nx; y = ny; break; }
+            }
+            cells.push({ x: x, y: y });
+        }
+        const dirs = [];
+        for (let i = 0; i < cells.length; i++) dirs.push([2, 4, 6, 8][Math.floor(rng() * 4)]);
+        return { cells: cells, dirs: dirs, home: { x: loc.x, y: loc.y }, area: { x: loc.ax, y: loc.ay } };
+    }
+
+    function areaTierOf(st, ax, ay, z) {
+        const W = World();
+        const view = W && typeof W.currentArea === "function" ? W.currentArea() : null;
+        const viewZ = view && typeof view.z === "number" ? view.z : 0;
+        if (view && view.x === ax && view.y === ay && viewZ === (z | 0)) return "A";
+        const camps = campsOf(st);
+        for (let i = 0; i < camps.length; i++) {
+            const c = camps[i];
+            if (c.area && c.area.x === ax && c.area.y === ay && (c.z || 0) === (z | 0)) return "B";
+        }
+        return "D";
+    }
+
+    function depletionRate(st, ax, ay, z, time) {
+        const bag = st ? spawnBag(st, false) : null;
+        if (!bag) return 1;
+        const at = bag.depletion[depletionKey(ax, ay, z)];
+        if (at == null || !Number.isFinite(at)) return 1;
+        const dt = time - at;
+        if (dt >= DEPLETION_RECOVERY_HOURS) return 1;
+        if (dt <= 0) return 0;
+        return dt / DEPLETION_RECOVERY_HOURS;
+    }
+
+    function readAnchorCount(st, id, cap, time) {
+        const bag = spawnBag(st, false);
+        const rec = bag && bag.anchors[id];
+        if (!rec) return { count: cap, next: null, full: true, expired: false };
+        if (Number.isFinite(rec.next) && time >= rec.next) return { count: cap, next: null, full: true, expired: true };
+        if ((rec.count | 0) >= cap) return { count: cap, next: null, full: true, expired: false };
+        return { count: rec.count | 0, next: rec.next | 0, full: false, expired: false };
+    }
+
+    function writeAnchorCount(st, id, count, next, cap) {
+        const bag = spawnBag(st, true);
+        if (!bag) return;
+        if (count >= cap) delete bag.anchors[id];
+        else bag.anchors[id] = { count: count | 0, next: next | 0 };
+    }
+
+    function liveLocalCount(st, gx, gy, z, speciesId) {
+        const W = World();
+        if (!W || typeof W.units !== "function") return 0;
+        const loc = areaOfCell(st, gx, gy);
+        if (!loc) return 0;
+        let n = 0;
+        const units = W.units();
+        for (let i = 0; i < units.length; i++) {
+            const u = units[i];
+            if (!u || !u.data || u.data.kind !== "creature" || u.data.species !== speciesId) continue;
+            if (withdrawnFromWild(u)) continue;
+            if ((u.z || 0) !== (z | 0)) continue;
+            if (!u.area || u.area.x !== loc.ax || u.area.y !== loc.ay) continue;
+            if (Math.max(Math.abs(u.x - loc.x), Math.abs(u.y - loc.y)) > LOCAL_RADIUS) continue;
+            n++;
+        }
+        return n;
+    }
+
+    function blockedByObject(loc) {
+        return !!(loc && window.UF && UF.Objects && typeof UF.Objects.blocksIn === "function" && UF.Objects.blocksIn({ x: loc.ax, y: loc.ay }, loc.x, loc.y));
+    }
+
+    function blankSpawn(gx, gy, z, time, attempt) {
+        return {
+            gx: gx, gy: gy, z: z | 0, time: time, window: timeWindowOf(time), attempt: attempt | 0,
+            anchor: false, anchorId: null, area: null,
+            species: null, members: 0, cap: 0, target: 0, scale: localCapScale(),
+            localCount: 0, rate: 1, tier: null,
+            cells: null, dirs: null, home: null,
+            discarded: true, reason: "unavailable"
+        };
+    }
+
+    /**
+     * The spawn at world cell (gx, gy) in the window containing `time`.
+     * Pure aside from the accept/reject count: the same inputs return the same
+     * descriptor, and the call writes no herd, birth or anchor record.
+     * opts.localCount forces the count used for the cap (tests and callers that
+     * already know it). Omitted, a tier D anchor uses its stored count, which is
+     * the cap when the anchor is full, and any other tier counts live wild
+     * creatures of the drawn species within LOCAL_RADIUS.
+     */
+    function calculateSpawn(gx, gy, time, attempt, opts) {
+        const o = opts && typeof opts === "object" ? opts : {};
+        const st = resolveState(o.state);
+        gx = Math.floor(Number(gx));
+        gy = Math.floor(Number(gy));
+        const z = Number.isFinite(o.z) ? o.z | 0 : 0;
+        const t = Number.isFinite(time) ? Math.floor(time) : gameHour();
+        const nAttempt = attempt | 0;
+        const result = blankSpawn(gx, gy, z, t, nAttempt);
+        if (!st || !(st.size > 0) || !catalog()) { result.reason = "no world"; return result; }
+        if (!Number.isFinite(gx) || !Number.isFinite(gy)) { result.reason = "bounds"; return result; }
+        const loc = areaOfCell(st, gx, gy);
+        if (!loc) { result.reason = "bounds"; return result; }
+        result.area = { x: loc.ax, y: loc.ay };
+        result.tier = areaTierOf(st, loc.ax, loc.ay, z);
+        result.anchor = isSpawnAnchor(st, gx, gy, z);
+        result.anchorId = result.anchor ? anchorKey(gx, gy, z) : null;
+        if (!result.anchor) { result.reason = "notAnchor"; return result; }
+        if (blockedByObject(loc)) { result.reason = "blocked"; return result; }
+        const drawn = pickSpawnSpecies(st, gx, gy, z, t, nAttempt, true);
+        if (!drawn.sp) { result.reason = drawn.reason || "habitat"; return result; }
+        const info = capOf(drawn.sp);
+        let local = Number.isFinite(o.localCount) ? o.localCount : null;
+        if (local == null) {
+            local = result.tier === "D"
+                ? readAnchorCount(st, result.anchorId, info.cap, t).count
+                : liveLocalCount(st, gx, gy, z, drawn.sp.id);
+        }
+        result.species = drawn.sp.id;
+        result.cap = info.cap;
+        result.target = info.target;
+        result.scale = info.scale;
+        result.localCount = local;
+        result.rate = depletionRate(st, loc.ax, loc.ay, z, t);
+        // Cap first: a full anchor is refused before the depletion roll and before any record.
+        if (local >= info.cap) { result.reason = "localCap"; return result; }
+        const members = groupSizeOf(st, drawn.sp, gx, gy, z, result.window, nAttempt);
+        result.members = members;
+        if (local + members > info.cap) { result.reason = "localCap"; return result; }
+        const gate = unit01(st.seed, SALT.spawnRate, gx | 0, gy | 0, (z + 8) | 0, result.window | 0, nAttempt);
+        if (!(result.rate > 0) || gate >= result.rate) { result.reason = "depleted"; return result; }
+        const layout = memberLayout(st, gx, gy, z, drawn.sp, members, result.window, nAttempt);
+        result.cells = layout.cells;
+        result.dirs = layout.dirs;
+        result.home = layout.home;
+        result.discarded = false;
+        result.reason = null;
+        return result;
+    }
+
+    /** Anchor and per-species caps. Seed and starts only: no clock, no live counts. */
+    function designationAt(gx, gy, z, state) {
+        const st = resolveState(state);
+        gx = Math.floor(Number(gx));
+        gy = Math.floor(Number(gy));
+        z = z | 0;
+        const out = { gx: gx, gy: gy, z: z, anchor: false, anchorId: null, species: [], scale: localCapScale() };
+        if (!st || !Number.isFinite(gx) || !Number.isFinite(gy)) return out;
+        if (!isSpawnAnchor(st, gx, gy, z)) return out;
+        out.anchor = true;
+        out.anchorId = anchorKey(gx, gy, z);
+        const cell = cellAtWorld(gx, gy);
+        const loc = areaOfCell(st, gx, gy);
+        const list = habitatSpecies(cell);
+        for (let i = 0; i < list.length; i++) {
+            const sp = list[i];
+            const info = capOf(sp);
+            out.species.push({
+                id: sp.id,
+                cap: info.cap,
+                target: info.target,
+                clear: !(loc && keptOut(st, gx, gy, z, sp, loc))
+            });
+        }
+        return out;
+    }
+
+    function anonymousWild(u) {
+        if (!u || !u.data || u.data.kind !== "creature") return false;
+        if (withdrawnFromWild(u)) return false;
+        const d = u.data;
+        if (d.notable || d.lair || d.quest || d.named) return false;
+        if (Array.isArray(d.inventory) && d.inventory.length > 0) return false;
+        if (d.equipment) {
+            const keys = Object.keys(d.equipment);
+            for (let i = 0; i < keys.length; i++) if (d.equipment[keys[i]]) return false;
+        }
+        return true;
+    }
+
+    // The anchor's own species ignores the clock, so its cap does not change between windows.
+    function headCap(st, gx, gy, z) {
+        const drawn = pickSpawnSpecies(st, gx, gy, z, 0, 0, false);
+        if (!drawn.sp) return null;
+        const info = capOf(drawn.sp);
+        return { sp: drawn.sp, cap: info.cap };
+    }
+
+    /**
+     * combat:kill of an anonymous wild creature. One timestamp per (area, z).
+     * A tier D anchor that is no longer full stores { count, next }; a full one stores nothing.
+     */
+    function noteCombatKill(payload, time) {
+        const target = payload && (payload.target || payload.unit);
+        if (!anonymousWild(target) || !target.area) return null;
+        const W = World();
+        const st = W && W.state;
+        if (!st || !(st.size > 0)) return null;
+        const z = typeof target.z === "number" ? target.z : 0;
+        const t = gameHour(time);
+        syncRemote(t, st);
+        const bag = spawnBag(st, true);
+        const key = depletionKey(target.area.x, target.area.y, z);
+        bag.depletion[key] = t;
+        let anchor = null;
+        if (areaTierOf(st, target.area.x, target.area.y, z) === "D") {
+            const gx = target.area.x * st.size + (target.x | 0);
+            const gy = target.area.y * st.size + (target.y | 0);
+            const id = target.data.anchorId || (isSpawnAnchor(st, gx, gy, z) ? anchorKey(gx, gy, z) : null);
+            if (id) {
+                const parts = id.split(",");
+                const agx = Number(parts[0]), agy = Number(parts[1]), az = Number(parts[2]);
+                const head = headCap(st, agx, agy, az);
+                const cap = head ? head.cap : 1;
+                const cur = readAnchorCount(st, id, cap, t);
+                const count = Math.max(0, cur.count - 1);
+                const next = t + DEPLETION_RECOVERY_HOURS;
+                writeAnchorCount(st, id, count, next, cap);
+                anchor = { id: id, count: count >= cap ? cap : count, cap: cap, next: count >= cap ? null : next };
+            }
+        }
+        return { area: key, time: t, anchor: anchor };
+    }
+
+    /** Drop recovered depletion timestamps and anchors that have refilled to the cap. */
+    function syncRemote(time, state) {
+        const st = resolveState(state);
+        const bag = st ? spawnBag(st, false) : null;
+        if (!bag) return 0;
+        const t = Number.isFinite(time) ? Math.floor(time) : gameHour();
+        let dropped = 0;
+        const depKeys = Object.keys(bag.depletion);
+        for (let i = 0; i < depKeys.length; i++) {
+            const at = bag.depletion[depKeys[i]];
+            if (!Number.isFinite(at) || t - at >= DEPLETION_RECOVERY_HOURS) {
+                delete bag.depletion[depKeys[i]];
+                dropped++;
+            }
+        }
+        const ids = Object.keys(bag.anchors);
+        for (let i = 0; i < ids.length; i++) {
+            const rec = bag.anchors[ids[i]];
+            if (!rec || !Number.isFinite(rec.next) || t >= rec.next) {
+                delete bag.anchors[ids[i]];
+                dropped++;
+                continue;
+            }
+            const parts = ids[i].split(",");
+            const head = headCap(st, Number(parts[0]), Number(parts[1]), Number(parts[2]));
+            if (!head || (rec.count | 0) >= head.cap) {
+                delete bag.anchors[ids[i]];
+                dropped++;
+            }
+        }
+        return dropped;
+    }
+
+    function anchorCensus(gx, gy, z, time, state) {
+        const st = resolveState(state);
+        gx = Math.floor(Number(gx));
+        gy = Math.floor(Number(gy));
+        z = z | 0;
+        const t = Number.isFinite(time) ? Math.floor(time) : gameHour();
+        const anchor = !!(st && isSpawnAnchor(st, gx, gy, z));
+        const loc = st ? areaOfCell(st, gx, gy) : null;
+        const tier = st && loc ? areaTierOf(st, loc.ax, loc.ay, z) : "D";
+        const head = st && anchor ? headCap(st, gx, gy, z) : null;
+        const cap = head ? head.cap : 0;
+        const id = anchorKey(gx, gy, z);
+        if (!anchor) return { anchor: false, tier: tier, full: true, count: 0, cap: 0, next: null, stored: false, species: null };
+        if (tier !== "D") {
+            const live = head ? liveLocalCount(st, gx, gy, z, head.sp.id) : 0;
+            return { anchor: true, tier: tier, full: cap > 0 && live >= cap, count: live, cap: cap, next: null, stored: false, species: head ? head.sp.id : null };
+        }
+        const rec = readAnchorCount(st, id, cap, t);
+        const bag = spawnBag(st, false);
+        if (bag && bag.anchors[id] && rec.full) delete bag.anchors[id];
+        const stored = !!(bag && bag.anchors[id]);
+        return {
+            anchor: true, tier: "D", full: rec.full, count: rec.count, cap: cap,
+            next: rec.full ? null : rec.next, stored: stored, species: head ? head.sp.id : null
+        };
+    }
+
+    //-------------------------------------------------------------------------
     // The public object
 
     const resolveUnit = x => {
@@ -1384,6 +1889,7 @@
 
     const Wildlife = {
         PREY_KINDS, DANGEROUS_KINDS, KINDS, WANDER_EVERY, WANDER_CHANCE, FLEE_EVERY, FLEE_RANGE, HERD_SPREAD,
+        SPAWN_WINDOW_HOURS, ANCHOR_STRIDE, LOCAL_CAP_SCALE_DEFAULT, DEPLETION_RECOVERY_HOURS, LOCAL_RADIUS,
         PREDATOR_EVERY, PREDATOR_SIGHT, PREDATOR_FEAR_RANGE, COLONIST_FEAR_RANGE, HERD_ALARM_RANGE, GRAZE_EVERY,
         ACTIVITY_CYCLES, PREDATOR_PREY, activityOf, shouldSleep, isVegetationAt,
         lastSpawn: null,
@@ -1510,13 +2016,43 @@
             predatorTick(W, frame >>> 0);
             return true;
         },
+        /** ecology.fauna.localCapScale, or 1.5 when the catalog has no ecology block. */
+        localCapScale,
+        /** { target, scale, cap } for a species id. cap uses localCapScale (1.5). */
+        localCap(speciesId) {
+            const sp = speciesById(speciesId);
+            return sp ? capOf(sp) : null;
+        },
+        /**
+         * Spawn descriptor for world cell (gx, gy) at `time` (game hour).
+         * Same seed, cell, z, window and attempt → same descriptor.
+         * Writes nothing. Discards the attempt when the local count has reached the cap.
+         */
+        calculateSpawn: (gx, gy, time, attempt, opts) => calculateSpawn(gx, gy, time, attempt, opts),
+        /** Anchors and caps from the seed and the starts. No clock and no live counts. */
+        designationAt: (gx, gy, z, state) => designationAt(gx, gy, z, state),
+        /** Closed form (time - kill time) / 72 hours. No record → 1. */
+        depletionRate(ax, ay, z, time, state) {
+            const st = resolveState(state);
+            const t = Number.isFinite(time) ? Math.floor(time) : gameHour();
+            return depletionRate(st, ax, ay, z | 0, t);
+        },
+        /** Record a combat:kill. Returns null when the target is not anonymous wildlife. */
+        noteKill: (payload, time) => noteCombatKill(payload, time),
+        /** Tier D count. A full anchor is not stored. */
+        anchorCensus: (gx, gy, z, time, state) => anchorCensus(gx, gy, z, time, state),
+        /** Forget recovered depletion timestamps and anchors that have refilled. */
+        syncRemote: (time, state) => syncRemote(time, state),
     };
     window.DEUS = window.DEUS || {};
     window.UF = window.DEUS;
     window.UF.Wildlife = Wildlife;
 
     // Registered at load: UF_Factions and UF_History load earlier, so their world:created listeners run first.
-    if (window.UF.Events && UF.Events.on) UF.Events.on("world:created", state => spawnWorld(state));
+    if (window.UF.Events && UF.Events.on) {
+        UF.Events.on("world:created", state => spawnWorld(state));
+        UF.Events.on("combat:kill", payload => noteCombatKill(payload));
+    }
 
     //-------------------------------------------------------------------------
     // Checks (UF_Test suite "wildlife"), registered at boot after all plugins load
