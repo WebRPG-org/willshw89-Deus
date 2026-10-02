@@ -57,15 +57,6 @@
  */
 
 (() => {
-window.UF = window.UF || {};
-window.UF.ECS = window.UF.ECS || {
-    hp: new Float32Array(65536),
-    hunger: new Float32Array(65536),
-    stance: new Int32Array(65536),
-    isColonist: new Uint8Array(65536),
-    isWildlife: new Uint8Array(65536)
-};
-
     "use strict";
 
     const catalog = () => window.$ufWorldCatalog || null;
@@ -570,16 +561,6 @@ window.UF.ECS = window.UF.ECS || {
 
     function spawnWorld(st) {
         const W = World();
-        if (W && !W._ecsWildlifeHooked && window.UF && window.UF.Events) {
-            W._ecsWildlifeHooked = true;
-            window.UF.Events.on("world:unitAdded", (u) => {
-                if (u && u.data && u.data.kind === "creature") window.UF.ECS.isWildlife[u.id] = 1;
-            });
-            window.UF.Events.on("world:unitRemoved", (uOrId) => {
-                const id = (typeof uOrId === 'object' && uOrId ? uOrId.id : uOrId);
-                if (id != null) window.UF.ECS.isWildlife[id] = 0;
-            });
-        }
         const t0 = now();
         const report = { herds: 0, creatures: 0, dropped: 0, lairs: 0, lairsSkipped: 0, kit: null, kits: [], placed: [], kitFallback: false, bySpecies: {}, samples: {}, ms: 0, error: null };
         Wildlife.lastSpawn = report;
@@ -826,12 +807,7 @@ window.UF.ECS = window.UF.ECS || {
         const cur = W.currentArea();
         if (!cur) return;
         const phase = currentDayPhase();
-        const maxEcs = W.state.nextUnitId;
-        for (let i = 0; i < maxEcs; i++) {
-            if (!window.UF.ECS.isWildlife[i]) continue;
-            const u = W.unit(i);
-            if (!u) continue;
-
+        for (const u of W.units()) {
             const d = u.data;
             if (!d || d.kind !== "creature" || d.ai !== "wander") continue;
             if (!sameArea(u.area, cur)) continue;
@@ -861,12 +837,7 @@ window.UF.ECS = window.UF.ECS || {
     function grazeTick(W, frame) {
         const cur = W.currentArea();
         if (!cur) return;
-        const maxEcs = W.state.nextUnitId;
-        for (let i = 0; i < maxEcs; i++) {
-            if (!window.UF.ECS.isWildlife[i]) continue;
-            const u = W.unit(i);
-            if (!u) continue;
-
+        for (const u of W.units()) {
             const d = u.data;
             if (!d || d.kind !== "creature" || d.ai !== "wander") continue;
             if (!sameArea(u.area, cur)) continue;
@@ -910,12 +881,7 @@ window.UF.ECS = window.UF.ECS || {
     function wanderTick(W, frame) {
         const cur = W.currentArea();
         if (!cur) return;
-        const maxEcs = W.state.nextUnitId;
-        for (let i = 0; i < maxEcs; i++) {
-            if (!window.UF.ECS.isWildlife[i]) continue;
-            const u = W.unit(i);
-            if (!u) continue;
-
+        for (const u of W.units()) {
             const d = u.data;
             if (!d || d.ai !== "wander" || u.goal) continue;
             if (d.state === "sleep" || d.state === "flee" || d.state === "hunt" || d.state === "feed" || d.state === "retaliate") continue;
@@ -976,13 +942,13 @@ window.UF.ECS = window.UF.ECS || {
         const hunters = huntersByPrey(W);
 
         // Pre-gather potential environmental threats, unit occupancy, and herd members in one pass
+        const allUnits = W.units();
         const threats = [];
         const occupiedSet = new Set();
         const herdMap = new Map();
-        const maxEcs = W.state.nextUnitId;
-        for (let i = 0; i < maxEcs; i++) {
-            const o = W.unit(i);
-            if (!o) continue;
+
+        for (let i = 0; i < allUnits.length; i++) {
+            const o = allUnits[i];
             const d = o.data;
             if (!d || !sameArea(o.area, cur)) continue;
 
@@ -1031,9 +997,8 @@ window.UF.ECS = window.UF.ECS || {
             arr.push(th);
         }
 
-        for (let i = 0; i < maxEcs; i++) {
-            const u = W.unit(i);
-            if (!u) continue;
+        for (let i = 0; i < allUnits.length; i++) {
+            const u = allUnits[i];
             const d = u.data;
             if (!d || d.kind !== "creature" || !sameArea(u.area, cur)) continue;
             if (u.goal) continue; // already moving
@@ -1133,7 +1098,7 @@ window.UF.ECS = window.UF.ECS || {
     }
 
     function readPreyHp(prey, psp) {
-        if (prey && prey.data && typeof window.UF.ECS.hp[prey.id] === "number" && Number.isFinite(window.UF.ECS.hp[prey.id])) return window.UF.ECS.hp[prey.id];
+        if (prey && prey.data && typeof prey.data.hp === "number" && Number.isFinite(prey.data.hp)) return prey.data.hp;
         const cat = psp && psp.combat && psp.combat.hitpoints;
         return (typeof cat === "number" && Number.isFinite(cat)) ? cat : 2;
     }
@@ -1228,10 +1193,7 @@ window.UF.ECS = window.UF.ECS || {
         if (!cur) return;
 
         const preyList = [];
-        const maxEcsPrey = W.state.nextUnitId;
-        for (let i = 0; i < maxEcsPrey; i++) {
-            const o = W.unit(i);
-            if (!o) continue;
+        for (const o of W.units()) {
             if (!o.data || o.data.dead || o.data._isDying || !sameArea(o.area, cur)) continue;
             if (o.data.kit) continue; // preserve starter kit herds for colonies
             const osp = speciesOf(o);
@@ -1248,12 +1210,7 @@ window.UF.ECS = window.UF.ECS || {
             arr.push(p);
         }
 
-        const maxEcs = W.state.nextUnitId;
-        for (let i = 0; i < maxEcs; i++) {
-            if (!window.UF.ECS.isWildlife[i]) continue;
-            const u = W.unit(i);
-            if (!u) continue;
-
+        for (const u of W.units()) {
             const d = u.data;
             if (!d || d.kind !== "creature" || d.ai !== "wander" || !sameArea(u.area, cur)) continue;
             const sp = speciesOf(u);
@@ -1312,7 +1269,7 @@ window.UF.ECS = window.UF.ECS || {
                     const rolled = strikeDamage(W, u, bestPrey, sp, frame);
                     dealt = rolled.damage;
                     remainingHp = hpNow - dealt;
-                    if (bestPrey.data && (dealt !== 0 || typeof window.UF.ECS.hp[bestPrey.id] === "number")) window.UF.ECS.hp[bestPrey.id] = remainingHp;
+                    if (bestPrey.data && (dealt !== 0 || typeof bestPrey.data.hp === "number")) bestPrey.data.hp = remainingHp;
                 }
                 holdPredatorSwing(u, sp);
 
@@ -1454,12 +1411,7 @@ window.UF.ECS = window.UF.ECS || {
             const a = area || (W && W.currentArea());
             if (!W || !a) return null;
             let best = null, bestD = Infinity;
-            const maxEcs = W.state.nextUnitId;
-        for (let i = 0; i < maxEcs; i++) {
-            if (!window.UF.ECS.isWildlife[i]) continue;
-            const u = W.unit(i);
-            if (!u) continue;
-
+            for (const u of W.units()) {
                 if (!u.data || u.data.kind !== "creature" || !sameArea(u.area, a)) continue;
                 if (withdrawnFromWild(u)) continue;
                 const sp = speciesOf(u);
@@ -1505,10 +1457,8 @@ window.UF.ECS = window.UF.ECS || {
             let wild = 0;
             let domestic = 0;
             let captive = 0;
-            const maxEcsPop = W.state.nextUnitId;
-            for (let i = 0; i < maxEcsPop; i++) {
-                const u = W.unit(i);
-                if (!u) continue;
+            for (let i = 0; i < units.length; i++) {
+                const u = units[i];
                 if (!u.data || u.data.kind !== "creature") continue;
                 const rec = u.data.taming;
                 if (rec && rec.status === "domesticated") domestic += 1;
