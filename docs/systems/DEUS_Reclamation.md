@@ -2,7 +2,7 @@
 
 SIM.40.11. The mass ledger in `game/js/sim/ledger.js` is the accounting authority. `game/js/sim/reclaim.js` posts balanced moves for mining, building, deconstruction, collapse, decay and outdoor reclamation. It does not edit the ledger module. A move the ledger table does not contain is not invented.
 
-Masses come from `game/js/sim/materials.js` (`massOf`, `yieldOf`, `reclaimTarget`, `billOfMaterials`) and from the object rows in `game/data/sim/mass_tables.json`. The integer is the catalogue `mu`. The gram size of `mu` is still the unconfirmed proposal in the catalogue (`1 mu = 1 g`). This package conserves that integer. It does not decide the unit.
+Masses come from `game/js/sim/materials.js` (`massOf`, `yieldOf`, `reclaimTarget`, `billOfMaterials`) and from the object rows in `game/data/sim/mass_tables.json`. Stored places, postings, blocks, and public registration results use integer centipounds (`cp`; 100 cp = 1 lb). Postings without `cp` are refused with `E_UNIT` before moving any mass.
 
 ## Posts
 
@@ -12,7 +12,7 @@ Masses come from `game/js/sim/materials.js` (`massOf`, `yieldOf`, `reclaimTarget
 |---|---|
 | `mine(materialId, slices, cause)` | The material's yield list, `slices` times. `identity` stays in place. Soil's yield is identity, so digging soil does not create stone. |
 | `note("build", { elementId, count })` | The bill: each line's item mass becomes an object of the same class. A floor job with no bill posts `massOf(item)` from item form to object form. |
-| `note("deconstruct")` / `note("harvest")` | The object's yield list. The list's mu matches the object's lines, or the post is refused. |
+| `note("deconstruct")` / `note("harvest")` | The object's yield list. The list's cp matches the object's lines, or the post is refused. |
 | `note("collapse")` | The object's collapse list. |
 | `note("decay")` | One step of that pile's reclamation path. |
 | `note("deck")` | Nothing. A roof deck written with no bill is `E_UNPAID`. Mass is not sourced. |
@@ -20,6 +20,8 @@ Masses come from `game/js/sim/materials.js` (`massOf`, `yieldOf`, `reclaimTarget
 | `note("object", { phase: "before" })` | After seal, a new ore class (`ironstone`, `copper_outcrop`, `gold_outcrop`, or any object line whose class is ore) is `E_ORE_OUTPUT` and the placement is refused. Before seal the same call does not refuse: world generation still registers ore. |
 
 `strict: true` throws on an unpaid or unbalanced post. The plugins call the same `note` and, unless `UF.Matter.strict` is set, keep the existing world write when the ledger is not attached.
+
+`snapshot()` writes schema 2 with cp places. `restore()` refuses schema 1 with `E_UNIT_PROVENANCE` before changing the session or ledger; there is no conversion because no player saves exist. A schema 2 snapshot validates place amounts before ledger restoration.
 
 ## Reclamation
 
@@ -55,14 +57,13 @@ node tools/sim/test_reclaim.js
 node tools/sim/test_reclaim_longrun.js
 ```
 
-The long run is the fixture `tools/sim/fixtures/reclaim/schedule.json` (4000 ticks, seeds 1 and 2). Family totals stay on the sealed baseline. Checksums are pinned in `checksums.json`. Injecting one mu of soil on a copy of that run fails at that tick with mineral delta `+1`. A mutated `reclaim.js` that sources one extra mu, or that posts one extra mu, fails `test_reclaim.js`.
+The long run is the fixture `tools/sim/fixtures/reclaim/schedule.json` (4000 ticks, seeds 1 and 2). Family totals stay on the sealed baseline. The reviewed cp checksums are pinned in `test_reclaim_longrun.js`; the older `checksums.json` records the prior field spelling and is not a gate expectation. Injecting one cp of soil on a copy of that run fails at that tick with mineral delta `+1`. A mutated `reclaim.js` that sources or posts one extra cp fails `test_reclaim.js`.
 
 ## Left open
 
 These are not decided here.
 
 - D-1, the calendar. Tick is not converted to a year.
-- D-MU-UNIT, the size of mu.
 - Vein grade for strata ids 38-47 (`OWNER_OPEN`). No ore-rock mass is invented.
 - D-TIN. Tin, and the unmapped share of bronze, are not posted.
 - D-OBJECT-VOXEL. Object posts use the catalogue bill, not a voxel count.

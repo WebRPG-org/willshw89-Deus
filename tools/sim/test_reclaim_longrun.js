@@ -1,6 +1,6 @@
 "use strict";
 // SIM.40.11 long run. Several thousand ticks of mine, build, collapse, decay and reclaim.
-// Family totals stay on the sealed baseline. A one-gram source injected on a copy of the run is caught.
+// Family totals stay on the sealed baseline. A one-cp source injected on a copy of the run is caught.
 //   node tools/sim/test_reclaim_longrun.js
 
 const fs = require("fs");
@@ -15,26 +15,9 @@ const catalogue = JSON.parse(fs.readFileSync(path.join(ROOT, "game", "data", "si
 const masses = JSON.parse(fs.readFileSync(path.join(ROOT, "game", "data", "sim", "mass_tables.json"), "utf8"));
 const interactions = JSON.parse(fs.readFileSync(path.join(ROOT, "game", "data", "sim", "interactions.json"), "utf8"));
 const bag = { catalogue: catalogue, masses: masses, interactions: interactions };
-function adaptForReclaim(raw) {
-    const b = JSON.parse(JSON.stringify(raw));
-    for (const id of Object.keys(b.masses.objects || {})) {
-        const o = b.masses.objects[id];
-        if (o.massCp != null && o.massMu == null) o.massMu = o.massCp;
-        if (o.lines) for (const ln of o.lines) if (ln.cp != null && ln.mu == null) ln.mu = ln.cp;
-        if (o.bill) for (const bl of o.bill) if (bl.cp != null && bl.mu == null) bl.mu = bl.cp;
-        if (o.yield && o.yield.postings) for (const p of o.yield.postings) if (p.cp != null && p.mu == null) p.mu = p.cp;
-        if (o.collapse && o.collapse.postings) for (const p of o.collapse.postings) if (p.cp != null && p.mu == null) p.mu = p.cp;
-    }
-    for (const id of Object.keys(b.masses.items || {})) {
-        const it = b.masses.items[id];
-        if (it.massCp != null && it.massMu == null) it.massMu = it.massCp;
-    }
-    return b;
-}
-const reclaimBag = adaptForReclaim(bag);
 const schedule = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures", "reclaim", "schedule.json"), "utf8"));
-const pins = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures", "reclaim", "checksums.json"), "utf8"));
-const cpPins = { "1": "1afb4f75", "2": "54b9da8d" };
+// Reviewed at base 74a9d7ee: place and checksum field names changed from mu to cp.
+const cpPins = { "1": "0bc6fb75", "2": "df4a146a" };
 
 let passed = 0, failed = 0;
 function check(name, ok, why) {
@@ -45,7 +28,7 @@ function check(name, ok, why) {
 function open() {
     const ledger = createLedger();
     const materials = createMaterials(bag);
-    const session = createReclaim({ ledger: ledger, materials: materials, data: reclaimBag, strict: true });
+    const session = createReclaim({ ledger: ledger, materials: materials, data: bag, strict: true });
     return { ledger: ledger, materials: materials, session: session };
 }
 
@@ -81,7 +64,7 @@ function applyEvent(world, ev) {
         const piles = session.places();
         let pile = null;
         for (let i = 0; i < piles.length; i++) {
-            if (piles[i].cls === "biomass" && piles[i].mu > 0 && !piles[i].done) { pile = piles[i]; break; }
+            if (piles[i].cls === "biomass" && piles[i].cp > 0 && !piles[i].done) { pile = piles[i]; break; }
         }
         if (!pile) return { ok: true, done: true };
         return session.note("decay", { materialId: pile.materialId, cause: "run:decay" });
@@ -100,7 +83,7 @@ function run(seed, inject) {
     let t, i, ev, rep;
     for (t = 1; t <= ticks; t++) {
         if (inject && t === inject.at) {
-            world.ledger.source("debug-explicit", "soil", "strata", inject.mu, "mutant-duplicate");
+            world.ledger.source("debug-explicit", "soil", "strata", inject.cp, "mutant-duplicate");
         }
         for (i = 0; i < schedule.events.length; i++) {
             ev = schedule.events[i];
@@ -129,9 +112,9 @@ function endState(result, label) {
     if (!result.ok) { check(label + " end state", false, "run failed"); return; }
     const world = result.world;
     const piles = world.session.places();
-    const stored = piles.filter(function (p) { return p.exempt && p.cls === "fe_metal" && p.mu === 882; });
-    const rusted = piles.filter(function (p) { return p.cls === "fe_trace" && p.mu === 882; });
-    const gold = piles.filter(function (p) { return p.cls === "au_metal" && p.form === "item" && p.mu === 22; });
+    const stored = piles.filter(function (p) { return p.exempt && p.cls === "fe_metal" && p.cp === 882; });
+    const rusted = piles.filter(function (p) { return p.cls === "fe_trace" && p.cp === 882; });
+    const gold = piles.filter(function (p) { return p.cls === "au_metal" && p.form === "item" && p.cp === 22; });
     const ore = world.ledger.amount("fe_ore", "item") + world.ledger.amount("fe_ore", "object");
     const blocks = world.session.blocks().filter(function (g) { return g.cls === "humus" && g.blocks >= 1; });
     check(label + " exempt iron untouched", stored.length === 1, JSON.stringify(stored));
@@ -145,11 +128,11 @@ function endState(result, label) {
 endState(a, "seed 1");
 endState(c, "seed 2");
 
-check("pinned checksums", (pins["1"] === a.checksum || cpPins["1"] === a.checksum) && (pins["2"] === c.checksum || cpPins["2"] === c.checksum), "seed1 " + a.checksum + " seed2 " + c.checksum + " pins " + JSON.stringify(cpPins));
+check("pinned checksums", cpPins["1"] === a.checksum && cpPins["2"] === c.checksum, "seed1 " + a.checksum + " seed2 " + c.checksum + " pins " + JSON.stringify(cpPins));
 
-const mutant = run(1, { at: 100, mu: 1 });
+const mutant = run(1, { at: 100, cp: 1 });
 const mineral = (mutant.diffs || []).filter(function (d) { return d.family === "mineral"; })[0];
-check("injected gram fails the long run", mutant.ok === false && mutant.tick === 100 && mineral && mineral.delta === 1, "tick " + mutant.tick + " " + JSON.stringify(mutant.diffs));
+check("injected cp fails the long run", mutant.ok === false && mutant.tick === 100 && mineral && mineral.delta === 1, "tick " + mutant.tick + " " + JSON.stringify(mutant.diffs));
 
 console.log("CHECKSUM seed1 " + a.checksum);
 console.log("CHECKSUM seed2 " + (c.checksum || ""));

@@ -26,7 +26,7 @@ Storage is by chunk and layer. The chunk is 16 tiles (PM default). Inside 24 til
 
 ## Saves
 
-`saveChanges` writes manifests, top-level items, units, tombstones and deposits whose revision moved since the last save. A container is one record; its contents are nested in that record. The next save after a quiet tick is empty. Load applies that chain onto a world with the same seed. The placement save does not embed the mass ledger snapshot. The host stores `ledger.snapshot()` beside it.
+`saveChanges` writes format `v: 2` with manifests, top-level items, units, tombstones and deposits whose revision moved since the last save. Item records carry `massCp`. A container is one record; its contents are nested in that record. The next save after a quiet tick is empty. Load applies that chain onto a world with the same seed. `loadChanges` refuses `v: 1` and any blob carrying `massMu` with `E_SAVE` before changing state; no old-save conversion exists. The placement save does not embed the mass ledger snapshot. The host stores `ledger.snapshot()` beside it.
 
 ## Surfaces, spill, collapse
 
@@ -36,7 +36,7 @@ The break posts one existing ledger `transform`. A wooden table goes `wood/objec
 
 Catalog load limits (PM defaults, not an Owner table): table 150 lb, shelf 40 lb. Tests pass an explicit limit.
 
-`massMu` on a catalog row is the integer posted to the ledger. It is not a ruling that one mu equals one pound. Several rows use the SRD pound count so the tests are easy to read. The size of a mu stays the open ledger question.
+`massCp` on a catalog row is derived from `weightOz` by half-up rounding of `weightOz × 100 / 16`. The resulting integer centipounds are posted to the ledger (3 lb = 300 cp; 1 oz = 6 cp; 2 oz = 13 cp). The calculation checks safe-integer range.
 
 Seeded summary counts do not register mass. `place()` does, and only before `seal()`.
 

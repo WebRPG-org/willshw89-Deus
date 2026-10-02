@@ -92,7 +92,7 @@ function createWorld(opts) {
             weightOz: def.weightOz,
             volumeCuIn: def.volumeCuIn,
             exteriorCuIn: def.exteriorCuIn,
-            massMu: def.massMu,
+            massCp: def.massCp,
             ledgerClass: def.ledgerClass,
             ledgerForm: def.ledgerForm,
             slotId: def.slotId,
@@ -392,9 +392,9 @@ function createWorld(opts) {
     }
 
     function postRegister(item) {
-        if (!state.ledger || !item.massMu || item.massPosted) return;
+        if (!state.ledger || !item.massCp || item.massPosted) return;
         if (state.ledger.isSealed()) fail("E_SEALED", "cannot register item mass after the ledger is sealed");
-        state.ledger.register(item.ledgerClass, item.ledgerForm, item.massMu, "place");
+        state.ledger.register(item.ledgerClass, item.ledgerForm, item.massCp, "place");
         item.massPosted = true;
     }
 
@@ -427,13 +427,13 @@ function createWorld(opts) {
             dropToGround(list[i]);
             spilled.push(list[i].id);
         }
-        if (surface.massMu && surface.onSpill) {
+        if (surface.massCp && surface.onSpill) {
             if (state.ledger) {
                 if (!state.ledger.isSealed()) fail("E_NOT_SEALED", "collapse needs a sealed ledger");
-                state.ledger.transform(surface.ledgerClass, surface.ledgerForm, surface.onSpill.cls, surface.onSpill.form, surface.massMu, "collapse");
+                state.ledger.transform(surface.ledgerClass, surface.ledgerForm, surface.onSpill.cls, surface.onSpill.form, surface.massCp, "collapse");
                 if (surface.onSpill.form === "strata") {
                     state.deposits.push({
-                        cls: surface.onSpill.cls, form: surface.onSpill.form, amount: surface.massMu,
+                        cls: surface.onSpill.cls, form: surface.onSpill.form, amount: surface.massCp,
                         tileX: surface.tileX, tileY: surface.tileY, layer: surface.layer
                     });
                     state.depositsDirty = true;
@@ -1160,7 +1160,7 @@ function createWorld(opts) {
                 });
                 const pos = chunk.moved.get(seedKey) || canon;
                 const item = makeItem(def, { massPosted: true });
-                item.massMu = 0;
+                item.massCp = 0;
                 applyCell(item, pos.tileX, pos.tileY, pos.cellX, pos.cellY, layer);
                 item.seedKey = seedKey;
                 item.seedChunk = key;
@@ -1230,14 +1230,14 @@ function createWorld(opts) {
     }
 
     function planLoose(item, mode, plan, spatial, origin, index) {
-        if (mode === "burn" && item.onBurn && item.massMu) {
+        if (mode === "burn" && item.onBurn && item.massCp) {
             plan.push({
                 fromCls: item.ledgerClass, fromForm: item.ledgerForm,
                 toCls: item.onBurn.cls, toForm: item.onBurn.form,
-                amount: item.massMu, cause: "burn-contents"
+                amount: item.massCp, cause: "burn-contents"
             });
             spatial.push({
-                op: "deposit", id: item.id, cls: item.onBurn.cls, form: item.onBurn.form, amount: item.massMu,
+                op: "deposit", id: item.id, cls: item.onBurn.cls, form: item.onBurn.form, amount: item.massCp,
                 tileX: origin.tileX, tileY: origin.tileY, layer: origin.layer
             });
         } else {
@@ -1251,16 +1251,16 @@ function createWorld(opts) {
     function planBody(container, mode, plan, spatial, origin) {
         const outcome = mode === "burn" ? container.onBurn : container.onSpill;
         if (!outcome) fail("E_DESTROY", "no " + mode + " outcome for " + container.typeId);
-        if (container.massMu) {
+        if (container.massCp) {
             plan.push({
                 fromCls: container.ledgerClass, fromForm: container.ledgerForm,
                 toCls: outcome.cls, toForm: outcome.form,
-                amount: container.massMu, cause: mode + "-container"
+                amount: container.massCp, cause: mode + "-container"
             });
         }
         if (outcome.form === "strata") {
             spatial.push({
-                op: "deposit", id: container.id, cls: outcome.cls, form: outcome.form, amount: container.massMu,
+                op: "deposit", id: container.id, cls: outcome.cls, form: outcome.form, amount: container.massCp,
                 tileX: origin.tileX, tileY: origin.tileY, layer: origin.layer
             });
         } else {
@@ -1334,11 +1334,11 @@ function createWorld(opts) {
     }
 
     function rotAway(item) {
-        if (item.massMu && item.onRot) {
+        if (item.massCp && item.onRot) {
             if (!state.ledger || !state.ledger.isSealed()) fail("E_NOT_SEALED", "rot needs a sealed ledger");
-            state.ledger.transform(item.ledgerClass, item.ledgerForm, item.onRot.cls, item.onRot.form, item.massMu, "rot");
+            state.ledger.transform(item.ledgerClass, item.ledgerForm, item.onRot.cls, item.onRot.form, item.massCp, "rot");
             state.deposits.push({
-                cls: item.onRot.cls, form: item.onRot.form, amount: item.massMu,
+                cls: item.onRot.cls, form: item.onRot.form, amount: item.massCp,
                 tileX: item.tileX, tileY: item.tileY, layer: item.layer
             });
             state.depositsDirty = true;
@@ -1439,7 +1439,7 @@ function createWorld(opts) {
             trap: item.trap ? { dc: item.trap.dc, damage: item.trap.damage, disarmed: !!item.trap.disarmed, triggered: !!item.trap.triggered } : null,
             ledgerClass: item.ledgerClass,
             ledgerForm: item.ledgerForm,
-            massMu: item.massMu,
+            massCp: item.massCp,
             weightOz: item.weightOz,
             facing: item.facing,
             armorCategory: item.armorCategory,
@@ -1479,7 +1479,7 @@ function createWorld(opts) {
             trap: item.trap ? { dc: item.trap.dc, damage: item.trap.damage, disarmed: !!item.trap.disarmed, triggered: !!item.trap.triggered } : null,
             ledgerClass: item.ledgerClass,
             ledgerForm: item.ledgerForm,
-            massMu: item.massMu,
+            massCp: item.massCp,
             loadLimitOz: item.loadLimitOz,
             collapseOz: item.collapseOz,
             capOz: item.capOz,
@@ -1525,7 +1525,7 @@ function createWorld(opts) {
 
     function saveChanges() {
         const out = {
-            v: 1,
+            v: 2,
             seed: state.seed,
             manifests: [],
             items: [],
@@ -1597,7 +1597,7 @@ function createWorld(opts) {
         item.trap = snap.trap ? { dc: snap.trap.dc | 0, damage: snap.trap.damage || "1d6", disarmed: !!snap.trap.disarmed, triggered: !!snap.trap.triggered } : null;
         if (snap.ledgerClass) item.ledgerClass = snap.ledgerClass;
         if (snap.ledgerForm) item.ledgerForm = snap.ledgerForm;
-        if (snap.massMu != null) item.massMu = snap.massMu;
+        if (snap.massCp != null) item.massCp = snap.massCp;
         if (snap.loadLimitOz != null) item.loadLimitOz = snap.loadLimitOz;
         if (snap.collapseOz != null) item.collapseOz = snap.collapseOz;
         if (snap.capOz !== undefined) item.capOz = snap.capOz;
@@ -1670,7 +1670,14 @@ function createWorld(opts) {
     }
 
     function loadChanges(blob) {
-        if (!blob || blob.v !== 1) fail("E_SAVE", "unreadable save");
+        function hasLegacyMass(value) {
+            if (!value || typeof value !== "object") return false;
+            for (const key of Object.keys(value)) {
+                if (key === "massMu" || hasLegacyMass(value[key])) return true;
+            }
+            return false;
+        }
+        if (!blob || blob.v !== 2 || hasLegacyMass(blob)) fail("E_SAVE", "unreadable save");
         if (blob.seed !== state.seed) fail("E_SEED", "save seed does not match this world");
         const tombs = blob.tombstones || [];
         for (let i = 0; i < tombs.length; i++) {
