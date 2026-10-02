@@ -34,7 +34,7 @@
  *                                   sprite, and no sprite of another level's event is left; the objects and items layers,
  *                                   the depth planes and the level plate are on the new level; the fog (forced on for the
  *                                   test: it is disabled in play since 2026-09-22) shows this level's explored cells and not
- *                                   another level's, and cells the faction sees now are clear; the minimap shows the level
+ *                                   another level's, and cells the faction sees now are clear.
  *   save_load_keeps_view_and_world  after the switches, a save (DataManager.makeSaveContents) loaded into fresh game objects
  *                                   restores the world state (units with cells and levels, tile and object diffs, level
  *                                   strata, seed) and, after a new Scene_Map, the same level, map, view cell, camera, plate
@@ -260,14 +260,7 @@ function suitePlugin() {
                 }
                 if (z > 0 && sp.visible) bad.push("fog shown above ground");
             }
-            // Minimap.
-            const M = UF.Minimap, hud = s && s._deusMinimap;
-            let mini = "not loaded";
-            if (M) {
-                mini = `activeZ ${M.activeZ}, HUD ${hud ? (hud === before.minimap ? "kept" : "REPLACED") : "none"}`;
-                if (M.activeZ !== z || (before.minimap && hud !== before.minimap) || (hud && hud._baseSprite && hud._baseSprite.bitmap !== M.baseBitmap())) bad.push(`minimap: ${mini}`);
-            }
-            return { ok: bad.length === 0, bad, units: units.length, events: evIds.length, fog, mini };
+            return { ok: bad.length === 0, bad, units: units.length, events: evIds.length, fog };
         }
 
         //------------------------------------------------------------ one switch, measured
@@ -275,7 +268,7 @@ function suitePlugin() {
         async function doSwitch(z, opts = {}) {
             const s0 = scene(), ss0 = s0 && s0._spriteset;
             const before = { px: $gamePlayer.x, py: $gamePlayer.y, dx: $gameMap.displayX(), dy: $gameMap.displayY(),
-                playerSprite: fullSprites(ss0).find(sp => sp._character === $gamePlayer), minimap: s0 && s0._deusMinimap };
+                playerSprite: fullSprites(ss0).find(sp => sp._character === $gamePlayer) };
             const from = L.view(), n0 = L.stats().switches, b0 = builds, sm0 = scenesMade, ssm0 = spritesetsMade;
             const k0 = { ticks: UF.Time ? UF.Time.ticks() : -1, wf: W._frame };
             samples = [];
@@ -298,7 +291,7 @@ function suitePlugin() {
                 ticksMoved: (UF.Time ? UF.Time.ticks() : 0) - k0.ticks, framesMoved: W._frame - k0.wf, maxUpdateMs: round2(Math.max(0, ...smp.map(x => x.ms))),
                 newRecord: L.stats().switches === n0 + 1, last: last ? Object.fromEntries(Object.entries(last).map(([k, v]) => [k, round2(v)])) : null,
                 world: typeof W.viewSwitchStats === "function" ? W.viewSwitchStats() : null,
-                shown: shown ? { ok: shown.ok, bad: shown.bad, units: shown.units, events: shown.events, fog: shown.fog, minimap: shown.mini } : null
+                shown: shown ? { ok: shown.ok, bad: shown.bad, units: shown.units, events: shown.events, fog: shown.fog } : null
             };
             perf.switches.push(Object.assign({ round: opts.round || 0 }, rec));
             if (opts.shot) t.screenshot(opts.shot);
@@ -327,7 +320,7 @@ function suitePlugin() {
         t.check("switch_within_one_frame", recs.every(r => r.newRecord && r.last && r.last.to === r.to && r.last.inPlace === true && r.last.frames <= 1 && r.last.renderFrames <= 1 && Number.isFinite(r.last.ms)),
             recs.map(r => `${fmt(r)}: ${r.last ? `frames ${r.last.frames}, renderFrames ${r.last.renderFrames}, ms ${r.last.ms} (work ${r.last.workMs}: swap ${r.last.swapMs}, rebind ${r.last.rebindMs}, fog ${r.last.fogMs}), in place ${r.last.inPlace}, reused ${r.last.reused}` : "NO lastSwitch"}${r.newRecord ? "" : ", NOT A NEW RECORD"}; worst update ${r.maxUpdateMs} ms`).join("; "));
         t.check("new_level_shown_at_once", recs.every(r => r.shown && r.shown.ok),
-            recs.map(r => `${fmt(r)}: ${r.shown ? (r.shown.ok ? `ok (${r.shown.events} unit events for ${r.shown.units} units; fog ${r.shown.fog}; minimap ${r.shown.minimap})` : `WRONG: ${r.shown.bad.join(" | ")}`) : "not inspected"}`).join("; "));
+            recs.map(r => `${fmt(r)}: ${r.shown ? (r.shown.ok ? `ok (${r.shown.events} unit events for ${r.shown.units} units; fog ${r.shown.fog})` : `WRONG: ${r.shown.bad.join(" | ")}`) : "not inspected"}`).join("; "));
 
         //------------------------------------------------------------ save and load after several switches
         await doSwitch(-1, { round: 5 });

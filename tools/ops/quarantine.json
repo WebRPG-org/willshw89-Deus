@@ -1084,10 +1084,6 @@
       "ms": 640
     },
     {
-      "path": "tools/test_minimap.js",
-      "ms": 70
-    },
-    {
       "path": "tools/test_multi_deficit_settlement.js",
       "ms": 956
     },

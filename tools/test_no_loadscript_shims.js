@@ -16,7 +16,7 @@ const STEMS = [
     "Anim", "Camera", "Colonists", "ColonyOverseer", "Combat", "Core", "DayNight",
     "Doors", "Ecology", "Environment", "FactionMenus", "Factions", "Fire", "Floors",
     "Fog", "Generator", "History", "Interact", "Items", "Jobs", "Levels", "Look",
-    "Minimap", "Movement8D", "NaturalConnections", "Objects", "Ownership",
+    "Movement8D", "NaturalConnections", "Objects", "Ownership",
     "Perspective25D", "Select", "Sheet", "Speech", "Stance", "Talk", "Test", "Tiles",
     "TimeSpeed", "Visuals", "Walls", "Wildlife", "World", "WorldGen"
 ];

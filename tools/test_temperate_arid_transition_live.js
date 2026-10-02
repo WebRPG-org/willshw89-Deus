@@ -63,10 +63,7 @@ const suiteCode = `
             UF.DayNight.setTime(12, 0);
         }
 
-        // Collapse minimap window to keep upper-right map area visible
-        if (window.UF && UF.Minimap) {
-            UF.Minimap.expanded = false;
-        }
+
 
         // Relocate all existing map events and units away from showcase corridor
         for (const ev of map.events()) {

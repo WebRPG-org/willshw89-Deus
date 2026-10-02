@@ -84,10 +84,7 @@ const suiteCode = `
             UF.DayNight.setTime(12, 0);
         }
 
-        // Collapse minimap window to keep view clear
-        if (window.UF && UF.Minimap) {
-            UF.Minimap.expanded = false;
-        }
+
 
         // Relocate all existing map events and units away from the review area
         for (const ev of map.events()) {

@@ -9,13 +9,13 @@
  * Usage: node tools/zrange/run_gates.js [--commit=<rev>] [--z-range=default|<zMin>..<zMax>] [--gates=a,b] [--repeat=n]
  *                                       [--provoke] [--evidence=<dir>]
  *   --z-range   DEUS_Z_RANGE for the gates; "default" (the default) leaves it unset: the game's default range
- *   --gates     names below, comma separated (default: layers_flat,depth,minimap,switch,syntax,palette)
+ *   --gates     names below, comma separated (default: layers_flat,depth,switch,syntax,palette)
  *   --repeat    runs of each gate, each in a fresh clone (default 1)
  *   --provoke   the gates' own provocation modes instead: layers_flat and depth --provoke --jobs 3, switch --mutants,
- *               zrange --provoke-all (minimap, syntax and palette have none and are skipped)
+ *               zrange --provoke-all (syntax and palette have none and are skipped)
  *   --evidence  each run's output goes to <dir>/<sha8>_<gate>_z<range>[_provoke][_run<k>].log, "EXIT=<code>" last
  * Gates: layers_flat  node tools/test_layer_render_flat.js          depth    node tools/test_layer_render_flat.js --suite depth
- *        minimap      node tools/test_minimap.js                    switch   node tools/test_layer_switch_inplace.js
+ *        switch       node tools/test_layer_switch_inplace.js
  *        syntax       node tools/check_deus_syntax.js               palette  node tools/test_palette.js
  *        zrange       node tools/test_zrange.js (it sets its own ranges; DEUS_Z_RANGE is not passed)
  * Prints one line per run (gate, range, run, EXIT, other nw.exe at its start, the tool's result lines); exit 0 when
@@ -39,13 +39,12 @@ const EVIDENCE = arg("evidence", "") ? path.resolve(arg("evidence", "")) : "";
 const GATES = {
     layers_flat: { cmd: ["tools/test_layer_render_flat.js"], provoke: ["--provoke", "--jobs", "3"], timeout: 900 },
     depth: { cmd: ["tools/test_layer_render_flat.js", "--suite", "depth"], provoke: ["--provoke", "--jobs", "3"], timeout: 900 },
-    minimap: { cmd: ["tools/test_minimap.js"], timeout: 300 },
     switch: { cmd: ["tools/test_layer_switch_inplace.js"], provoke: ["--mutants"], timeout: 900 },
     syntax: { cmd: ["tools/check_deus_syntax.js"], timeout: 600, anyRange: true },
     palette: { cmd: ["tools/test_palette.js"], timeout: 300, anyRange: true },
     zrange: { cmd: ["tools/test_zrange.js"], provoke: ["--provoke-all"], timeout: 1800, anyRange: true, ownRanges: true }
 };
-const NAMES = arg("gates", "layers_flat,depth,minimap,switch,syntax,palette").split(",").map(s => s.trim()).filter(Boolean);
+const NAMES = arg("gates", "layers_flat,depth,switch,syntax,palette").split(",").map(s => s.trim()).filter(Boolean);
 const RESULT_LINE = /^(run: RESULT|RESULT|required checks|Checked \d+ DEUS|Palette|PROVOCATIONS|SUMMARY|MUTANTS|CAUGHT|NOT CAUGHT|MUTANT |HARNESS)/;
 
 function git(a, cwd) { return execFileSync("git", a, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], env: Object.assign({}, process.env, { MSYS_NO_PATHCONV: "1" }) }).trim(); }

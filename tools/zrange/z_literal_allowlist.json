@@ -91,24 +91,7 @@
    "class": "content",
    "reason": "content: the underground resources generator runs for the generated cave levels -1 and -2"
   },
-  {
-   "file": "DEUS_Minimap.js",
-   "match": "The tab row shows 5 levels round the active one.",
-   "class": "notZ",
-   "reason": "not a Z literal: the tab row shows 5 tabs (TAB_COUNT), a window over the range"
-  },
-  {
-   "file": "DEUS_Minimap.js",
-   "match": "test's stand-in) has the legacy levels -2..+2.",
-   "class": "doc",
-   "reason": "doc-text: names the legacy range (-2..+2) that saves made before WG.00.17 keep and that every generator version fills; not a bound in code"
-  },
-  {
-   "file": "DEUS_Minimap.js",
-   "match": "const LEGACY_Z_RANGE = Object.freeze({ zMin: -2, zMax: 2 });",
-   "class": "fallback",
-   "reason": "legacy-fallback: the range of a World without the range authority (a pre-WG.00.17 World or a headless test's stand-in); in the game the range comes from UF.World.zRange()"
-  },
+
   {
    "file": "DEUS_Depth.js",
    "match": "* On every view (+2, +1, Ground, -1, -2)",

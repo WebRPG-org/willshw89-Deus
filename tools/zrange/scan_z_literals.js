@@ -17,7 +17,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const FILES = ["DEUS_Levels", "DEUS_World", "DEUS_Fluid", "DEUS_WorldGen", "DEUS_Minimap", "DEUS_Depth", "DEUS_Environment", "DEUS_DayNight",
+const FILES = ["DEUS_Levels", "DEUS_World", "DEUS_Fluid", "DEUS_WorldGen", "DEUS_Depth", "DEUS_Environment", "DEUS_DayNight",
     "DEUS_Ecology", "DEUS_Wildlife", "DEUS_History", "DEUS_Colonists", "DEUS_Doors", "DEUS_Fire", "DEUS_Floors", "DEUS_Items", "DEUS_Jobs",
     "DEUS_Objects", "DEUS_Ownership", "DEUS_Walls", "UF_Households", "DEUS_HistoricalDemographics"].map(n => `${n}.js`);
 

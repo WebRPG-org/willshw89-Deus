@@ -6,7 +6,7 @@
 // tools/run_tests.js. The plugin wraps engine and DEUS functions with timers (per frame: the frame interval, the engine
 // tick, update and render parts, draw calls, UF.Events traffic) and drives a scenario:
 //   --scenario normal (default): steady views +2, +1, Ground and -1 (a fixture cut down to -2 in view), the planes off and
-//                                on, a pan, minimap tab switches, and six level switches with their stalls.
+//                                on, a pan, and six level switches with their stalls.
 //   --scenario stress (Directive 0019-T sec. 2): 1x zoom, every visible cell of the +2 view filled with a unit on the level
 //                                visible there (+2, +1 or the ground through the openings), all of them fighting: walking,
 //                                sword swings, arrows and spells with their effects; 30 s by day, 30 s by night.
@@ -248,7 +248,6 @@ const PLUGIN = String.raw`//====================================================
             if (UF.Fog && UF.Fog.Sprite) tryWrap(UF.Fog.Sprite.prototype, "update", "update.fog");
             if (UF.Fog) tryWrap(UF.Fog, "refresh", "update.fog.refresh");
             if (UF.DayNight && UF.DayNight.GlowLayer) tryWrap(UF.DayNight.GlowLayer.prototype, "update", "update.daynight_glow");
-            if (UF.Minimap) tryWrap(UF.Minimap, "processDirty", "update.minimap.chunks");
         }
         // Count world:* events (each listener of each costs a log line in DEUS_Core's emit).
         const E = window.UF && UF.Events;
@@ -260,7 +259,7 @@ const PLUGIN = String.raw`//====================================================
             };
         }
     }
-    // Instances made per scene: the depth root, the minimap sprite, the depth plane tilemaps.
+    // Instances made per scene: the depth root, the depth plane tilemaps.
     function installSceneWraps(scene) {
         const r = window.UF && UF.Depth && UF.Depth.root ? UF.Depth.root() : null;
         if (r) {
@@ -279,14 +278,7 @@ const PLUGIN = String.raw`//====================================================
                 if (plane._tilemap) { const TP = Object.getPrototypeOf(plane._tilemap); tryWrap(TP, "updateTransform", "depth.plane.tilemapTransform"); }
             }
         }
-        const mm = scene && scene._deusMinimap;
-        if (mm) {
-            const P = Object.getPrototypeOf(mm);
-            tryWrap(P, "update", "update.minimap");
-            tryWrap(P, "updateOverlay", "update.minimap.overlay");
-            tryWrap(P, "drawChrome", "update.minimap.chrome");
-            tryWrap(P, "render", "render.minimap");
-        }
+
         const ss = scene && scene._spriteset;
         if (ss && ss._ufFog) tryWrap(Object.getPrototypeOf(ss._ufFog), "render", "render.fog");
         if (ss && ss._ufGlowLayer) tryWrap(Object.getPrototypeOf(ss._ufGlowLayer), "render", "render.daynight_glow");
@@ -507,17 +499,7 @@ const PLUGIN = String.raw`//====================================================
         for (let i = 0; i < 6; i++) { $gameMap.scrollRight(1); await t.waitFrames(8); }
         for (let i = 0; i < 6; i++) { $gameMap.scrollLeft(1); await t.waitFrames(8); }
         { const fr = recording.frames; recording = null; result.phases.push(summarize("pan_+2", fr, { view: 2, tiles: 12 })); }
-        // 4. Minimap tab switches (a tab visit rebuilds whatever is dirty, 8 chunks a frame).
-        const M = window.UF && UF.Minimap;
-        if (M) {
-            const follow = M.followCameraZ;
-            M.followCameraZ = false;
-            recording = { phase: "minimap_tabs", frames: [], counters: () => ({ minimapDirty: M.stats().dirtyCount }) };
-            for (const z of [1, 0, -1, -2, 2, 1, 0, -1, -2, 2]) { M.activeZ = z; await t.waitFrames(12); }
-            const fr = recording.frames; recording = null;
-            result.phases.push(summarize("minimap_tabs", fr, { visits: 10 }));
-            M.followCameraZ = follow;
-        }
+
         // 5. Level switches: +2 -> +1 -> Ground -> -1 -> Ground -> +1 -> +2, each recorded from the request to 30 frames after.
         for (const z of [1, 0, -1, 0, 1, 2]) {
             const from = L.view(), name = "switch_" + from + "_to_" + z;

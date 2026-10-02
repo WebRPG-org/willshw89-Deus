@@ -18,7 +18,7 @@ const LIVE = "Anim Camera Colonists ColonyOverseer Combat DayNight Doors Ecology
 const ARCHIVED = ["DEUS_PHYSICAL_WORLD_SIMULATION_SPEC.md", "DEUS_VerticalBiomes.md",
     ..."CultureGrowth Dialogue FarmView FireSafety Goals Gumps History_Profile Outposts ProfileTabs Roads Skills Tech AssetInventory".split(" ").map(n => `UF_${n}.md`)];
 const PROTECTED = ["docs/systems/UF_Households.md",
-    ..."CombatU7 DepthDemo LayerOverlays MintingEngine Taming TamedPartyCombat WorldItems Minimap".split(" ").map(n => `docs/systems/DEUS_${n}.md`),
+    ..."CombatU7 DepthDemo LayerOverlays MintingEngine Taming TamedPartyCombat WorldItems".split(" ").map(n => `docs/systems/DEUS_${n}.md`),
     "game/js/plugins/UF_Households.js"];
 const RECONCILED = ["docs/archive/systems/UF_Colonists.md", "docs/archive/systems/DEUS_Colonists_reflex_20260924.md"];
 const MOVES = new Map([
@@ -57,7 +57,7 @@ const MUTANTS = {
     archive_content: { file: "docs/archive/systems/UF_Roads.md", value: s => s + "\ncorrupted archive\n", error: "content changed:" },
     missing_households: { file: PROTECTED[0], value: () => null, error: "missing preserved:" },
     protected_content: { file: PROTECTED[0], value: s => s + "\nchanged\n", error: "content changed:" },
-    missing_l4: { file: "docs/systems/DEUS_Minimap.md", value: () => null, error: "missing preserved:" },
+    missing_l4: { file: "docs/systems/DEUS_CombatU7.md", value: () => null, error: "missing preserved:" },
     corrupt_path: { file: "docs/systems/README.md", value: s => s.replace("(DEUS_World.md)", "(DEUS_Wor1d.md)"), error: "broken Markdown link:" },
     stale_path: { file: "docs/systems/README.md", value: s => s + "\n[world](UF_World.md)\n", error: "stale documentation path:" },
     external_link: { file: "docs/ENGINE_RULES.md", value: s => s + "\n[world](systems/DEUS_Wor1d.md)\n", error: "broken Markdown link:" },
