@@ -156,6 +156,7 @@ function Resolve-DeusLaunchEffort {
         grok   = @{ Floor = 'xhigh'; Cap = 'max' }
         codex  = @{ Floor = 'xhigh'; Cap = 'ultra' }
         gemini = @{ Floor = 'high'; Cap = 'high' }
+        minimax = @{ Floor = 'high'; Cap = 'high' }
     }
     $p = $policy[$Provider]
     if (-not $p) { return @{ Error = "-Effort is not defined for provider $Provider" } }
@@ -185,6 +186,7 @@ function Add-DeusEffortArgument {
             return ($ArgLine -replace ' exec ', " exec $flag ")
         }
         'gemini' { return $ArgLine }
+        'minimax' { return $ArgLine }
     }
     return $ArgLine
 }
