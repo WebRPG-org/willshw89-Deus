@@ -1,0 +1,50 @@
+{
+  "lane": "lane-gq",
+  "taskId": "NAT.02.01",
+  "branch": "task/lane-gq",
+  "writer": "gemini",
+  "reviewer": "grok",
+  "push": true,
+  "allowedPaths": [
+    "game/js/sim/structural/block_reader.js",
+    "game/js/sim/structural/counter.js",
+    "game/js/sim/structural/connectivity.js",
+    "game/js/sim/structural/fall.js",
+    "game/js/sim/structural/queue.js",
+    "game/js/sim/structural/index.js",
+    "tools/test_structural_connectivity.js",
+    "docs/systems/DEUS_Structural.md",
+    "tasks/NAT.02.01/lane-gq/**"
+  ],
+  "gateTests": [
+    {
+      "cmd": "node",
+      "args": [
+        "tools/check_deus_syntax.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_structural_connectivity.js"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_structural_rooted.js",
+        "--baseline"
+      ],
+      "timeoutSec": 900
+    },
+    {
+      "cmd": "node",
+      "args": [
+        "tools/test_structural_collapse.js"
+      ],
+      "timeoutSec": 900
+    }
+  ]
+}

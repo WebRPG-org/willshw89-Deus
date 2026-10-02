@@ -15,7 +15,24 @@ const levelsReader = require("./levels_reader.js");
 const commit = require("./commit.js");
 const occupants = require("./occupants.js");
 
+const connectivity = require("./connectivity.js");
+const fall = require("./fall.js");
+const queue = require("./queue.js");
+const counter = require("./counter.js");
+const block_reader = require("./block_reader.js");
+
 module.exports = {
+    // Pure connectivity (DEC-083)
+    createHeldJob: connectivity.createHeldJob,
+    evaluateHeld: connectivity.evaluateHeld,
+    wouldBeHeld: connectivity.wouldBeHeld,
+    createFallJob: fall.createFallJob,
+    planFall: fall.planFall,
+    createDirtyQueue: queue.createDirtyQueue,
+    createStructuralService: queue.createStructuralService,
+    createBlockFixture: block_reader.createBlockFixture,
+    createOpsCounter: counter.createOpsCounter,
+
     evalCellSupport,
     executeCollapse,
     CELL_VOLUME_CUFT,
@@ -23,7 +40,6 @@ module.exports = {
     // Rooted support (pure; reads geometry through a StrataReader)
     evaluateMember: rooted.evaluateMember,
     createRootedJob: rooted.createRootedJob,
-    createOpsCounter: rooted.createOpsCounter,
     bandOf: rooted.bandOf,
     spanBaseFor: rooted.spanBaseFor,
     spanEffOf: rooted.spanEffOf,

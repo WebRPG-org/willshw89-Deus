@@ -1,6 +1,37 @@
 # DEUS Structural (`game/js/sim/structural/`)
 
-Status: NAT.02.01 part 1 of 6 (lane-en, rooted support topology), 2026-10-01. It is awaiting independent review (grok). It is pure simulation code with no runtime bridge. RMMZ F5 playtest: **not run** (Class C, no F5 evidence required).
+Status: NAT.02.01 part 2 of 6 (lane-gq, pure connectivity), 2026-10-02.
+
+## Pure connectivity (DEC-083)
+
+**Model:** Connectivity-only support (like Minecraft). A block is held if there is a connected path of solid blocks (face neighbours only) to an anchor. An anchor is the world floor or a reader-certified anchor. Capacity, load, weight, HP bands, spans, and materials are ignored. When a component loses its path to an anchor, it falls as a rigid body straight down until it hits the first non-piece solid obstacle or the floor.
+
+**Contract:**
+- `DEFAULTS = { readsPerTick: 512, maxVisits: 65536, maxFallVoxels: 20000, maxActiveJobs: 4, maxCommitsPerTick: 1 }`
+- `createHeldJob(reader, seed, opts)`
+- `evaluateHeld(reader, seed, opts)`
+- `wouldBeHeld(reader, addr, opts)`
+- `createFallJob(reader, component, opts)`
+- `planFall(reader, component, opts)`
+- `createQueue()`
+- `createService(reader, opts)`
+
+**Result:** `verdict` is `"held"`, `"falls"` or `"not_solid"`; `reason` is `"floor"`, `"certified"`, `"unknown_edge"`, `"too_large"`, `"no_anchor"` or `"seed_not_solid"`; `anchor` `[x,y,g]` or null; `visited`; `component` (only for `falls`: exactly the connected solid component, sorted by g, y, x); `watch` (only for `unknown_edge`); `ops {read, visit}`.
+
+**Checks:** `node tools/test_structural_connectivity.js` (presence, 28 named checks, mutants).
+
+**Status:**
+- **Works (headless, fixtures):** pure connectivity, iterative depth-first flood fill, rigid fall calculation, canonical queue and multi-job service.
+- **Not checked:** in-engine translation, save/load, Levels geometry reader.
+
+## Rooted support topology (lane-en)
+**[superseded by DEC-083, code archived by nx3]**
+
+An idealized mechanics topology using the rule *member on bearing*.
+
+## Limits and Constraints
+**[superseded by DEC-083, code archived by nx3]**
+
 
 ## Purpose
 
@@ -13,6 +44,7 @@ The evaluator is pure: it writes nothing, reads no fluid, computes no load, and 
 The legacy `support.js::evalCellSupport` and `collapse.js::executeCollapse` are still exported unchanged. They are the stub that NAT.02.01 replaces (later parts). New code must not use them for support decisions.
 
 ## Model
+**[superseded by DEC-083, code archived by nx3]**
 
 - **Address.** World coordinates `(x, y, z, s)`, with stratum `s` 0..4 (S0 at the bottom). The global stratum index is `g = 5 × (z + 16) + s` (merged D3 §3.2). In `g`, S4 of layer z and S0 of layer z+1 are adjacent.
 - **Occupied geometry.** A voxel reports the span it actually occupies, `lo..hi` in `reader.subunits` (the fixture uses 24, so 1 subunit = 1 inch of a 2 ft stratum). Partial deposits are real geometry:
