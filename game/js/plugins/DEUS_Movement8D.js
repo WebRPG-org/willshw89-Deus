@@ -381,6 +381,112 @@
     ];
     const NEIGHBORS_4 = NEIGHBORS_8.filter(n => !UF_Dir8.isDiagonal(n.d));
 
+    //-----------------------------------------------------------------------------
+    // Zero-Allocation Object Pools for Pathfinding
+    //-----------------------------------------------------------------------------
+    class AStarNode {
+        constructor() {
+            this.x = 0;
+            this.y = 0;
+            this.g = 0;
+            this.h = 0;
+            this.f = 0;
+            this.firstDir = 0;
+            this.parent = null;
+        }
+    }
+
+    class AStarNodePool {
+        constructor(capacity) {
+            this.pool = new Array(capacity);
+            for (let i = 0; i < capacity; i++) {
+                this.pool[i] = new AStarNode();
+            }
+            this.index = 0;
+        }
+        acquire() {
+            if (this.index >= this.pool.length) {
+                this.pool.push(new AStarNode());
+            }
+            return this.pool[this.index++];
+        }
+        releaseAll() {
+            this.index = 0;
+        }
+    }
+
+    class PriorityQueue {
+        constructor(capacity) {
+            this.data = new Array(capacity);
+            this.size = 0;
+        }
+        clear() {
+            this.size = 0;
+        }
+        push(node) {
+            if (this.size >= this.data.length) this.data.push(null);
+            let i = this.size++;
+            this.data[i] = node;
+            while (i > 0) {
+                const p = (i - 1) >> 1;
+                if (this.data[p].f <= this.data[i].f) break;
+                const tmp = this.data[p];
+                this.data[p] = this.data[i];
+                this.data[i] = tmp;
+                i = p;
+            }
+        }
+        pop() {
+            if (this.size === 0) return null;
+            const root = this.data[0];
+            const last = this.data[--this.size];
+            if (this.size > 0) {
+                this.data[0] = last;
+                let i = 0;
+                while (true) {
+                    const left = (i << 1) + 1;
+                    const right = left + 1;
+                    let min = i;
+                    if (left < this.size && this.data[left].f < this.data[min].f) min = left;
+                    if (right < this.size && this.data[right].f < this.data[min].f) min = right;
+                    if (min === i) break;
+                    const tmp = this.data[i];
+                    this.data[i] = this.data[min];
+                    this.data[min] = tmp;
+                    i = min;
+                }
+            }
+            return root;
+        }
+        get length() {
+            return this.size;
+        }
+    }
+
+    class PriorityQueuePool {
+        constructor(capacity) {
+            this.pool = new Array(capacity);
+            for (let i = 0; i < capacity; i++) {
+                this.pool[i] = new PriorityQueue(1000);
+            }
+            this.index = 0;
+        }
+        acquire() {
+            if (this.index >= this.pool.length) {
+                this.pool.push(new PriorityQueue(1000));
+            }
+            const pq = this.pool[this.index++];
+            pq.clear();
+            return pq;
+        }
+        release(pq) {
+            if (this.index > 0) this.index--;
+        }
+    }
+
+    const nodePool = new AStarNodePool(1000);
+    const pqPool = new PriorityQueuePool(10);
+
     // Enhanced findDirectionTo with 8-Directional Octile A* Pathfinding (4 neighbors when FourWay)
     Game_Character.prototype.findDirection8DTo = function(goalX, goalY) {
         const startX = this.x;
@@ -404,9 +510,10 @@
         // Octile A* Search over a localized 24x24 grid window
         const mapW = $gameMap.width();
         const mapH = $gameMap.height();
-        const openList = [];
+        const openList = pqPool.acquire();
         const closedSet = new Set();
         const nodeMap = new Map();
+        nodePool.releaseAll();
 
         const encode = (x, y) => (y * mapW + x);
         const octileDist = (x1, y1, x2, y2) => {
@@ -415,15 +522,14 @@
             return fourWay ? 10 * (adx + ady) : 10 * (adx + ady) + (14 - 20) * Math.min(adx, ady);
         };
 
-        const startNode = {
-            x: startX,
-            y: startY,
-            g: 0,
-            h: octileDist(startX, startY, goalX, goalY),
-            f: octileDist(startX, startY, goalX, goalY),
-            firstDir: 0,
-            parent: null
-        };
+        const startNode = nodePool.acquire();
+        startNode.x = startX;
+        startNode.y = startY;
+        startNode.g = 0;
+        startNode.h = octileDist(startX, startY, goalX, goalY);
+        startNode.f = startNode.h;
+        startNode.firstDir = 0;
+        startNode.parent = null;
 
         openList.push(startNode);
         nodeMap.set(encode(startX, startY), startNode);
@@ -438,12 +544,12 @@
         while (openList.length > 0 && iterations < maxIterations) {
             iterations++;
             // Pop node with lowest f
-            openList.sort((a, b) => a.f - b.f);
-            const current = openList.shift();
+            const current = openList.pop();
             const currKey = encode(current.x, current.y);
             closedSet.add(currKey);
 
             if (current.x === goalX && current.y === goalY) {
+                pqPool.release(openList);
                 return current.firstDir;
             }
 
@@ -477,15 +583,15 @@
                     const firstDir = (current === startNode) ? nb.d : current.firstDir;
 
                     if (!neighborNode) {
-                        neighborNode = {
-                            x: nx,
-                            y: ny,
-                            g: tentativeG,
-                            h: h,
-                            f: tentativeG + h,
-                            firstDir: firstDir,
-                            parent: current
-                        };
+                        neighborNode = nodePool.acquire();
+                        neighborNode.x = nx;
+                        neighborNode.y = ny;
+                        neighborNode.g = tentativeG;
+                        neighborNode.h = h;
+                        neighborNode.f = tentativeG + h;
+                        neighborNode.firstDir = firstDir;
+                        neighborNode.parent = current;
+                        
                         nodeMap.set(nKey, neighborNode);
                         openList.push(neighborNode);
                     } else {
@@ -493,11 +599,27 @@
                         neighborNode.f = tentativeG + h;
                         neighborNode.firstDir = firstDir;
                         neighborNode.parent = current;
+                        
+                        // We must re-push or update priority in pq if needed
+                        // Since we don't have update priority, we can just push it again.
+                        // Or wait, PriorityQueue doesn't support changing priority of an existing element properly if we don't push again.
+                        // Actually, vanilla A* here modifies neighborNode.f without updating the queue, which was broken for Array.sort too?
+                        // Wait, Array.sort() sorts the array on every iteration, so it handles modified elements correctly!
+                        // For a binary heap, modifying neighborNode.f breaks the heap invariant if we don't re-insert or heapify.
+                        // Since we just modified it, we can push it again (duplicates allowed, we already closed older ones).
+                        // Let's check: closedSet.has(nKey) prevents processing old ones! Wait, no, it's not in closedSet yet if we are modifying it.
+                        // If we push duplicate, when the older one with worse `f` is popped later, it might get processed again?
+                        // Yes, if it gets popped we could check if its `g` is > `nodeMap.get(nKey).g` or we just add it to closedSet when popped.
+                        // If we add it to closedSet when popped, the duplicate won't be processed.
+                        // Let's just push it again: openList.push(neighborNode);
+                        // Actually, pushing again is a standard optimization in A* with heaps that lack decrease-key.
+                        openList.push(neighborNode);
                     }
                 }
             }
         }
 
+        pqPool.release(openList);
         return bestNode.firstDir || 0;
     };
 
