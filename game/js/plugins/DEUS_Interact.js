@@ -72,7 +72,7 @@
     const VERBS = { chop: "Chop down", gather: "Gather", pick: "Pick up", quarry: "Quarry", mine: "Mine" };
     const MARKER_COLORS = {
         chop: "#f5c542", gather: "#a3e635", pick: "#e5e7eb", quarry: "#d6d3d1", mine: "#fb923c", dismantle: "#f87171",
-        build: "#38bdf8", dig: "#c08a4a", fish: "#60a5fa", hunt: "#ef4444", haul: "#86efac", eat: "#fde68a", drink: "#7dd3fc", move: "#e2e8f0"
+        build: "#38bdf8", dig: "#c08a4a", dig_down: "#a16207", mine_ceiling: "#fb923c", fish: "#60a5fa", hunt: "#ef4444", haul: "#86efac", eat: "#fde68a", drink: "#7dd3fc", move: "#e2e8f0"
     };
     // 7x7 glyphs, drawn 3 px per cell in the middle of the marker.
     const GLYPHS = {
@@ -84,6 +84,8 @@
         dismantle: ["#.....#", ".#...#.", "..#.#..", "...#...", "..#.#..", ".#...#.", "#.....#"],
         build: ["#######", "#.....#", "#.###.#", "#.#.#.#", "#.###.#", "#.....#", "#######"],
         dig: ["...#...", "...#...", "...#...", "#..#..#", ".#.#.#.", "..###..", "...#..."],
+        dig_down: ["...#...", "...#...", "...#...", "...#...", ".#.#.#.", "..###..", "...#..."],
+        mine_ceiling: ["...#...", "..###..", ".#.#.#.", "...#...", "...#...", "...#...", "...#..."],
         fish: ["....#..", "....#..", "....#..", "....#..", "#...#..", "#...#..", ".###..."],
         hunt: ["...####", ".....##", "....#.#", "...#..#", "..#....", ".#.....", "#......"],
         haul: ["...#...", "....#..", "#####..", "......#", "#####..", "....#..", "...#..."],
@@ -500,6 +502,10 @@
             if (O && O.typeId(STOCKPILE_OBJECT)) add("stockpile", "Stockpile here", () => designate({ type: "build", target, params: { objectId: STOCKPILE_OBJECT } }));
             const d = diggable(area, x, y);
             add("dig", d.ok ? "Dig" : `Dig (${d.reason})`, () => designate({ type: "dig", target }), d.ok);
+            if (J.verticalStratum) {
+                if (J.verticalStratum("dig_down", target)) add("dig_down", "Dig down", () => designate({ type: "dig_down", target }));
+                if (J.verticalStratum("mine_ceiling", target)) add("mine_ceiling", "Mine ceiling", () => designate({ type: "mine_ceiling", target }));
+            }
         }
         if (water) {
             add("fish", "Fish here", () => designate({ type: "fish", target }));
@@ -595,7 +601,7 @@
 
     const Interact = {
         DISMANTLE_WORK, DIG_WORK, FISH_WORK, DIG_STONE_ONE_IN, FISH_CATCH_OF, Z_BELOW_FEET, SIZE,
-        jobTypes: ["dismantle", "dig", "fish"],
+        jobTypes: ["dismantle", "dig", "dig_down", "mine_ceiling", "fish"],
         MenuWindow: Window_UFContextMenu,
         markersEnabled: true,
         optionsFor,

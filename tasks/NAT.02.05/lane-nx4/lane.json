@@ -1,0 +1,22 @@
+{
+    "lane": "lane-nx4",
+    "taskId": "NAT.02.05",
+    "branch": "task/lane-nx4",
+    "writer": "codex",
+    "reviewer": "grok",
+    "push": true,
+    "allowedPaths": [
+        "game/js/plugins/DEUS_Jobs.js",
+        "game/js/plugins/DEUS_Interact.js",
+        "tools/test_dig_vertical.js",
+        "docs/systems/DEUS_Jobs.md",
+        "tasks/NAT.02.05/lane-nx4/**"
+    ],
+    "gateTests": [
+        {
+            "cmd": "node",
+            "args": ["tools/test_dig_vertical.js"],
+            "timeoutSec": 600
+        }
+    ]
+}
