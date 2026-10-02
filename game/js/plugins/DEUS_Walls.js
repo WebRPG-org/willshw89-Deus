@@ -70,30 +70,6 @@
             return { ok: false, code: err && err.code };
         }
     }
-        function wallAt(area, x, y) {
-        const W = World();
-        if (!W || !W.inWorld(area.x, area.y, area.z)) return null;
-        const i = y * W.state.size + x;
-        const maxHp = W.grid("wallMaxHp", area.x, area.y, area.z);
-        if (!maxHp || !maxHp[i]) return null;
-        return {
-            hp: W.grid("wallHp", area.x, area.y, area.z)[i],
-            maxHp: maxHp[i],
-            faction: W.grid("wallFaction", area.x, area.y, area.z)[i]
-        };
-    }
-
-    function ensureWall(area, x, y, hp, faction) {
-        const W = World();
-        if (!W || !W.inWorld(area.x, area.y, area.z)) return;
-        const i = y * W.state.size + x;
-        const maxHp = W.grid("wallMaxHp", area.x, area.y, area.z);
-        if (!maxHp[i]) {
-            W.grid("wallHp", area.x, area.y, area.z)[i] = hp;
-            maxHp[i] = hp;
-            W.grid("wallFaction", area.x, area.y, area.z)[i] = faction || 0;
-        }
-    }
     function collapse(typeId, count, cause) {
         return matterNote("collapse", { elementId: typeId, count: count || 1, cause: cause || "walls:collapse" });
     }
@@ -383,4 +359,3 @@
         }, { isDefault: false });
     }
 })();
-

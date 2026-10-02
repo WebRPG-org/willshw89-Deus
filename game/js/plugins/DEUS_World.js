@@ -683,8 +683,7 @@
             units: {},
             nextUnitId: 1,
             diffs: {},
-            objectDiffs: {},
-            gridData: {}
+            objectDiffs: {}
         };
         zResync();
         buildCache.clear();
@@ -799,14 +798,6 @@
         return viewMemo.level;
     };
     World.isStartArea = (ax, ay) => !!World.state && World.state.startArea.x === ax && World.state.startArea.y === ay;
-    World.grid = function(name, ax, ay, z = 0) {
-        if (!this.state || !this.inWorld(ax, ay, z)) return null;
-        if (!this.state.gridData) this.state.gridData = {};
-        if (!this.state.gridData[name]) this.state.gridData[name] = {};
-        const key = this.levelKey(ax, ay, z);
-        if (!this.state.gridData[name][key]) this.state.gridData[name][key] = new Uint16Array(this.state.size * this.state.size);
-        return this.state.gridData[name][key];
-    };
     World.sameArea = sameArea;
     World.areaKey = areaKey;
 
@@ -4666,4 +4657,3 @@
         UF.Test.suite("spawn", spawnChecks, { isDefault: false });
     }
 })();
-

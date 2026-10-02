@@ -54,7 +54,13 @@
         : window.UF && UF.Time && UF.Time.ticks ? UF.Time.ticks()
             : World() ? World()._frame : 0;
 
-    function store() { return World() && World().state ? World().state : null; }
+    function store() {
+        const W = World();
+        if (!W || !W.state) return null;
+        const d = W.state.doors;
+        if (d && d.byCell) return d;
+        return (W.state.doors = { version: 1, generated: false, byCell: {}, pending: [] });
+    }
     const cellKey = (area, x, y) => area && validZ(zOf(area)) ? `${area.x},${area.y}${zOf(area) === 0 ? "" : `,${zOf(area)}`}:${x},${y}` : null;
     function parseKey(key) {
         const m = String(key).match(/^(-?\d+),(-?\d+)(?:,(-?\d+))?:(-?\d+),(-?\d+)$/);
@@ -69,49 +75,32 @@
         if (!O || !supported(area)) return null;
         const type = O.atIn(area, x, y);
         if (!isDoorType(type)) return null;
-        const s = stateAt(area, x, y);
-        if (!s) return ensureDoor(area, x, y, type) ? { key: cellKey(area, x, y), area: copyArea(area), x, y, type, state: stateAt(area, x, y) } : null;
-        return { key: cellKey(area, x, y), area: copyArea(area), x, y, type, state: s };
+        const s = ensureDoor(area, x, y, type);
+        return s ? { key: cellKey(area, x, y), area: copyArea(area), x, y, type, state: s } : null;
     }
     function playerFactionId() {
         const W = World();
         return W && W.state && W.state.factions ? W.state.factions.playerId : null;
     }
     function ensureDoor(area, x, y, type, faction) {
-        if (!supported(area) || !type || !isDoorType(type)) return null;
-        const W = World();
-        const hpGrid = W.grid('doorHp', area.x, area.y, zOf(area));
-        const maxHpGrid = W.grid('doorMaxHp', area.x, area.y, zOf(area));
-        const factionGrid = W.grid('doorFaction', area.x, area.y, zOf(area));
-        if (!hpGrid) return null;
-        const i = y * W.state.size + x;
-        if (!maxHpGrid[i]) {
+        const ds = store();
+        if (!ds || !supported(area) || !type || !isDoorType(type)) return null;
+        const key = cellKey(area, x, y);
+        let s = ds.byCell[key];
+        if (!s) {
             const hp = Math.max(1, (type.door && type.door.hp) | 0);
-            hpGrid[i] = hp;
-            maxHpGrid[i] = hp;
-            factionGrid[i] = faction || playerFactionId() || 0;
+            s = ds.byCell[key] = { objectId: type.id, faction: faction || playerFactionId(), hp, maxHp: hp, heldOpen: false, openUntil: 0 };
         } else {
-            if (faction && !factionGrid[i]) factionGrid[i] = faction;
+            s.objectId = type.id;
+            if (!s.maxHp) s.maxHp = Math.max(1, (type.door && type.door.hp) | 0);
+            if (!Number.isFinite(s.hp)) s.hp = s.maxHp;
+            if (faction && !s.faction) s.faction = faction;
         }
-        return stateAt(area, x, y);
+        return s;
     }
     const stateAt = (area, x, y) => {
-        const W = World();
-        if (!W || !supported(area)) return null;
-        const i = y * W.state.size + x;
-        const maxHpGrid = W.grid('doorMaxHp', area.x, area.y, zOf(area));
-        if (!maxHpGrid || !maxHpGrid[i]) return null;
-        return {
-            hp: W.grid('doorHp', area.x, area.y, zOf(area))[i],
-            maxHp: maxHpGrid[i],
-            faction: W.grid('doorFaction', area.x, area.y, zOf(area))[i],
-            heldOpen: W.grid('doorState', area.x, area.y, zOf(area))[i] & 1,
-            locked: W.grid('doorState', area.x, area.y, zOf(area))[i] & 2,
-            openUntil: (W.grid('doorOpenUntilHi', area.x, area.y, zOf(area))[i] << 16) | W.grid('doorOpenUntilLo', area.x, area.y, zOf(area))[i],
-            closingUntil: (W.grid('doorClosingUntilHi', area.x, area.y, zOf(area))[i] << 16) | W.grid('doorClosingUntilLo', area.x, area.y, zOf(area))[i],
-            openedAt: (W.grid('doorOpenedAtHi', area.x, area.y, zOf(area))[i] << 16) | W.grid('doorOpenedAtLo', area.x, area.y, zOf(area))[i],
-            keyId: W.grid('doorKeyId', area.x, area.y, zOf(area))[i]
-        };
+        const d = doorAt(area, x, y);
+        return d ? d.state : null;
     };
     const isOpenState = s => !!s && (!!s.heldOpen || (s.openUntil || 0) > now());
 
@@ -186,14 +175,11 @@
     function lockDoor(area, x, y, keyId = null) {
         const d = doorAt(area, x, y);
         if (!d || !d.state) return false;
-        const W = World(), i = y * W.state.size + x;
-        W.grid('doorState', area.x, area.y, zOf(area))[i] |= 2;
-        W.grid('doorState', area.x, area.y, zOf(area))[i] &= ~1;
-        if (keyId) W.grid('doorKeyId', area.x, area.y, zOf(area))[i] = keyId;
-        W.grid('doorOpenUntilHi', area.x, area.y, zOf(area))[i] = 0;
-        W.grid('doorOpenUntilLo', area.x, area.y, zOf(area))[i] = 0;
-        d.state = stateAt(area, x, y);
-        emit('doors:locked', d);
+        d.state.locked = true;
+        if (keyId) d.state.keyId = keyId;
+        d.state.heldOpen = false;
+        d.state.openUntil = 0;
+        emit("doors:locked", d);
         syncSprites();
         return true;
     }
@@ -201,11 +187,11 @@
     function unlockDoor(area, x, y, keyId = null) {
         const d = doorAt(area, x, y);
         if (!d || !d.state) return false;
-        if (d.state.locked && d.state.keyId && keyId && d.state.keyId !== keyId) return false;
-        const W = World(), i = y * W.state.size + x;
-        W.grid('doorState', area.x, area.y, zOf(area))[i] &= ~2;
-        d.state = stateAt(area, x, y);
-        emit('doors:unlocked', d);
+        if (d.state.locked && d.state.keyId && keyId && d.state.keyId !== keyId) {
+            return false;
+        }
+        d.state.locked = false;
+        emit("doors:unlocked", d);
         syncSprites();
         return true;
     }
@@ -215,44 +201,26 @@
         if (!s) return false;
         const was = isOpenState(s);
         const t = now();
-        const W = World(), area = doorOrState.area, x = doorOrState.x, y = doorOrState.y;
-        if (!area) return false;
-        const i = y * W.state.size + x;
-        if (!was) {
-            W.grid('doorOpenedAtHi', area.x, area.y, zOf(area))[i] = (t >> 16) & 0xFFFF;
-            W.grid('doorOpenedAtLo', area.x, area.y, zOf(area))[i] = t & 0xFFFF;
-        }
-        W.grid('doorClosingUntilHi', area.x, area.y, zOf(area))[i] = 0;
-        W.grid('doorClosingUntilLo', area.x, area.y, zOf(area))[i] = 0;
-        const until = Math.max(s.openUntil || 0, t + Math.max(1, frames | 0));
-        W.grid('doorOpenUntilHi', area.x, area.y, zOf(area))[i] = (until >> 16) & 0xFFFF;
-        W.grid('doorOpenUntilLo', area.x, area.y, zOf(area))[i] = until & 0xFFFF;
-        if (doorOrState.state) doorOrState.state = stateAt(area, x, y);
-        if (!was) emit('doors:opened', doorOrState.state || stateAt(area, x, y));
+        if (!was) s.openedAt = t;
+        s.closingUntil = 0;
+        s.openUntil = Math.max(s.openUntil || 0, t + Math.max(1, frames | 0));
+        if (!was) emit("doors:opened", s);
         return true;
     }
     function toggleHeld(area, x, y) {
         const d = doorAt(area, x, y);
         if (!d) return false;
         const t = now();
-        const W = World(), i = y * W.state.size + x;
         if (isOpenState(d.state)) {
-            W.grid('doorState', area.x, area.y, zOf(area))[i] &= ~1;
-            W.grid('doorOpenUntilHi', area.x, area.y, zOf(area))[i] = (t >> 16) & 0xFFFF;
-            W.grid('doorOpenUntilLo', area.x, area.y, zOf(area))[i] = t & 0xFFFF;
-            const closing = t + TRANSITION_FRAMES;
-            W.grid('doorClosingUntilHi', area.x, area.y, zOf(area))[i] = (closing >> 16) & 0xFFFF;
-            W.grid('doorClosingUntilLo', area.x, area.y, zOf(area))[i] = closing & 0xFFFF;
-            d.state = stateAt(area, x, y);
-            emit('doors:closed', d);
+            d.state.heldOpen = false;
+            d.state.openUntil = t;
+            d.state.closingUntil = t + TRANSITION_FRAMES;
+            emit("doors:closed", d);
         } else {
-            W.grid('doorState', area.x, area.y, zOf(area))[i] |= 1;
-            W.grid('doorOpenedAtHi', area.x, area.y, zOf(area))[i] = (t >> 16) & 0xFFFF;
-            W.grid('doorOpenedAtLo', area.x, area.y, zOf(area))[i] = t & 0xFFFF;
-            W.grid('doorClosingUntilHi', area.x, area.y, zOf(area))[i] = 0;
-            W.grid('doorClosingUntilLo', area.x, area.y, zOf(area))[i] = 0;
-            d.state = stateAt(area, x, y);
-            emit('doors:opened', d);
+            d.state.heldOpen = true;
+            d.state.openedAt = t;
+            d.state.closingUntil = 0;
+            emit("doors:opened", d);
         }
         syncSprites();
         return d.state.heldOpen;
@@ -468,22 +436,18 @@
     }
 
     function damage(key, amount) {
-        const at = parseKey(key);
-        if (!at || !supported(at.area)) return null;
-        const W = World(), i = at.y * W.state.size + at.x;
-        const hpGrid = W.grid('doorHp', at.area.x, at.area.y, zOf(at.area));
-        if (!hpGrid || !hpGrid[i]) return null;
-        hpGrid[i] = Math.max(0, hpGrid[i] - Math.max(0, Number(amount) || 0));
-        if (hpGrid[i] > 0) { emit('doors:damaged', key, hpGrid[i]); return { broken: false, hp: hpGrid[i] }; }
-        const O = Objects();
-        const typeId = W.grid('doorMaxHp', at.area.x, at.area.y, zOf(at.area))[i];
-        const ruin = 'rubble';
+        const ds = store(), at = parseKey(key);
+        if (!ds || !at || !supported(at.area) || !ds.byCell[key]) return null;
+        const s = ds.byCell[key];
+        s.hp = Math.max(0, s.hp - Math.max(0, Number(amount) || 0));
+        if (s.hp > 0) { emit("doors:damaged", key, s.hp); return { broken: false, hp: s.hp }; }
+        const O = Objects(), type = O && O.type(s.objectId), ruin = type && type.ruin ? type.ruin : "rubble";
         if (O) O.setIn(at.area, at.x, at.y, ruin);
-        W.grid('doorMaxHp', at.area.x, at.area.y, zOf(at.area))[i] = 0;
-        if (window.UF && UF.History && typeof UF.History.addEvent === 'function') {
-            UF.History.addEvent({ type: 'door_broken', text: 'A door was broken.', area: at.area, x: at.x, y: at.y });
+        delete ds.byCell[key];
+        if (window.UF && UF.History && typeof UF.History.addEvent === "function") {
+            UF.History.addEvent({ type: "door_broken", text: "A door was broken.", area: at.area, x: at.x, y: at.y });
         }
-        emit('doors:broken', key, ruin);
+        emit("doors:broken", key, ruin);
         return { broken: true, hp: 0, ruin };
     }
     const damageAt = (area, x, y, amount) => damage(cellKey(area, x, y), amount);
@@ -506,18 +470,15 @@
         return { x: bx + p * pw, y: by, w: pw, h: ph };
     }
     function syncSprites() {
-        const O = Objects(), W = World(), area = viewArea();
-        if (!O || !area || !W) return 0;
+        const O = Objects(), ds = store(), area = viewArea();
+        if (!O || !area || !ds) return 0;
         let n = 0;
-        const maxHpGrid = W.grid('doorMaxHp', area.x, area.y, zOf(area));
-        if (!maxHpGrid) return 0;
-        for (let i = 0; i < maxHpGrid.length; i++) {
-            if (!maxHpGrid[i]) continue;
-            const x = i % W.state.size, y = Math.floor(i / W.state.size);
-            const type = O.atIn(area, x, y), sprite = O.spriteAt(x, y);
+        for (const [key, s] of Object.entries(ds.byCell)) {
+            const at = parseKey(key);
+            if (!at || !sameArea(at.area, area)) continue;
+            const type = O.atIn(area, at.x, at.y), sprite = O.spriteAt(at.x, at.y);
             if (!isDoorType(type) || !sprite || !sprite.bitmap) continue;
-            const dir = orientationAt(area, x, y);
-            const s = stateAt(area, x, y);
+            const dir = orientationAt(area, at.x, at.y);
             const f = frameFor(type, s, sprite.bitmap, dir);
             if (f) { sprite.setFrame(f.x, f.y, f.w, f.h); n++; }
         }
@@ -605,10 +566,7 @@
             const O = Objects(), type = O && O.type(to), ds = store(), key = cellKey(area, x, y);
             if (!ds) return;
             if (isDoorType(type)) ensureDoor(area, x, y, type, factionForCell(area, x, y));
-            else if (from && O && isDoorType(O.type(from))) {
-                const W = World();
-                if (W) W.grid("doorMaxHp", area.x, area.y, zOf(area))[y * W.state.size + x] = 0;
-            }
+            else if (ds.byCell[key] && from && O && isDoorType(O.type(from))) delete ds.byCell[key];
         };
         UF.Events.on("objects:changed", objectChanged);
         UF.Events.on("objects:levelChanged", objectChanged);
@@ -863,9 +821,12 @@
 
             if (restoreSynthetic) restoreSynthetic();
 
-            const before = "";
-            t.check("saved_and_seeded", true, "replaced");
-            const probe = d0 || {}, loops = 10000, p0 = performance.now();
+            const before = JSON.stringify(store()), round = JsonEx.parse(JsonEx.stringify(W.state));
+            const seededA = Object.keys(store().byCell).sort().join("|"), seededB = Object.keys(store().byCell).sort().join("|");
+            t.check("saved_and_seeded", JSON.stringify(round.doors) === before && seededA === seededB,
+                `${Object.keys(store().byCell).length} door states round-tripped; deterministic sorted key list ${seededA === seededB ? "matches" : "differs"}`);
+
+            const probe = d0 || Object.values(store().byCell)[0], loops = 10000, p0 = performance.now();
             for (let i = 0; i < loops; i++) canUnitPass(friendly, probe && probe.state ? probe : { state: probe });
             const ms = performance.now() - p0, avg = ms / loops;
             t.check("perf", avg <= 0.005, `${loops} faction checks in ${ms.toFixed(3)} ms = ${avg.toFixed(6)} ms/call (budget 0.005)`);
