@@ -14692,7 +14692,8 @@
         "dead_tree": {
           "renewable": false
         }
-      }
+      },
+      "poissonDiskRadius": 1.5
     },
     "levels": {
       "0": {
@@ -14741,6 +14742,16 @@
         "plants": [],
         "biomes": "earth"
       }
+    }
+  },
+  "worldGen": {
+    "voidManifoldThreshold": 0.08
+  },
+  "director": {
+    "wealthPerThreatPoint": 50,
+    "threatThresholds": {
+      "minor": 20,
+      "raid": 100
     }
   }
 }
