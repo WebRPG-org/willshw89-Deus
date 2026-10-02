@@ -145,12 +145,23 @@
 
         _key(targetRef) {
             if (!targetRef) return null;
-            if (typeof targetRef === "string" || typeof targetRef === "number") return String(targetRef);
-            if (targetRef.id !== undefined && typeof targetRef.id !== "object") return `entity:${targetRef.id}`;
+            if (typeof targetRef === "string") return targetRef;
+            if (typeof targetRef === "number") return -targetRef - 1; // Negative for direct ID
+            if (targetRef.id !== undefined && typeof targetRef.id !== "object") return -(targetRef.id) - 1; // Negative for entity ID
+            
+            // Spatial key packed into a 53-bit float to avoid string allocation
             const ax = (targetRef.area && targetRef.area.x) || 0;
             const ay = (targetRef.area && targetRef.area.y) || 0;
             const z = (typeof targetRef.z === "number" ? targetRef.z : (targetRef.area && targetRef.area.z) || 0);
-            return `cell:${ax},${ay},${z}:${targetRef.x | 0},${targetRef.y | 0}`;
+            const x = targetRef.x | 0;
+            const y = targetRef.y | 0;
+            
+            // y (0-255) -> 8 bits
+            // x (0-255) -> 8 bits (shift * 256)
+            // z (0-127) -> 7 bits (shift * 65536, adjusted from -32 to 32)
+            // ax (0-4095) -> 12 bits (shift * 8388608)
+            // ay (0-4095) -> 12 bits (shift * 34359738368)
+            return y + (x * 256) + ((z + 64) * 65536) + (ax * 8388608) + (ay * 34359738368);
         }
 
         reserve(unitId, targetRef, stack = 1) {
@@ -1866,8 +1877,10 @@
         const st = jobState();
         if (!st || !st.list.length) return;
         const W = World();
-        for (const job of st.list.slice()) {
-            if (!isActive(job)) continue;
+        const list = st.list;
+        for (let i = list.length - 1; i >= 0; i--) {
+            const job = list[i];
+            if (!job || !isActive(job)) continue;
             const unit = W.unit(job.assigned);
             if (!unit) {
                 release(job);
