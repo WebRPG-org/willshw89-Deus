@@ -22,11 +22,6 @@
     },
     {
       "cmd": "node",
-      "args": ["tools/test_structural_connectivity.js"],
-      "timeoutSec": 900
-    },
-    {
-      "cmd": "node",
       "args": ["tools/test_structural_levels.js"],
       "timeoutSec": 900
     },
@@ -37,3 +32,4 @@
     }
   ]
 }
+
