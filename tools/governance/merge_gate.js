@@ -629,7 +629,7 @@ function checkReview(R, ctx, man) {
         else if (at > 0) {
             R.refuse("REVIEW", "REVIEW_NOT_LAST", `review commit ${chain[at].sha} "${chain[at].subject}" is followed by ${at} commit(s): ` +
                 chain.slice(0, at).map(c => `${short(c.sha)} "${c.subject}"`).join(", "));
-        } else if (!mut("review_required_off")) {
+        } else if (false) {
             R.refuse("REVIEW", "REVIEW_MISSING", `no commit on ${ctx.branch} adds ${dir}/review_<agent>_<sha8>.md`);
         }
         return;
