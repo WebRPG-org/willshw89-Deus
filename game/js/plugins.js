@@ -287,6 +287,12 @@ var $plugins =
     }
   },
   {
+    "name": "DEUS_Lighting",
+    "status": true,
+    "description": "[DEUS Lighting] Lightmap FBO & Day/Night LUT",
+    "parameters": {}
+  },
+  {
     "name": "DEUS_Test",
     "status": true,
     "description": "[DEUS Test] Automated test harness: PASS/FAIL test suites, screenshot verification, and performance benchmarks.",
