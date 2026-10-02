@@ -674,6 +674,8 @@ function suitePlugin() {
     if (!T || !T.active) return;
     T.suite("build_room_above", async t => {
         const W = UF.World, L = UF.Levels, O = UF.Objects, I = UF.Items, J = UF.Jobs, S = UF.Structural, Fl = UF.Floors, Ix = UF.Interact;
+        const wallId = O.type("wall_wood") ? "wall_wood" : (O.types().find(t => t.build && t.tags && t.tags.includes("wall")) || {}).id;
+        const wallType = wallId ? O.type(wallId) : null;
         const errors0 = t.errorsSoFar().length, consoleErrors = [], realConsoleError = console.error;
         console.error = function(...a) {
             consoleErrors.push(a.map(x => (x && x.stack) || String(x)).join(" ").slice(0, 300));
@@ -707,16 +709,9 @@ function suitePlugin() {
             return true;
         };
         const px = $gamePlayer.x, py = $gamePlayer.y;
-        let cx = -1, cy = -1;
-        for (let r = 6; r <= 60 && cx < 0; r += 2) {
-            for (const [dx, dy] of [[r, 0], [0, -r], [-r, 0], [0, r], [r, r], [-r, r], [r, -r], [-r, -r]]) {
-                if (clear(px + dx, py + dy)) { cx = px + dx; cy = py + dy; break; }
-            }
-        }
-        const wallId = O.type("wall_wood") ? "wall_wood" : (O.types().find(o => o.build && o.tags && o.tags.includes("wall")) || {}).id;
-        const wallType = O.type(wallId);
-        const ring = [];
-        for (let y = cy - 2; y <= cy + 2; y++) for (let x = cx - 2; x <= cx + 2; x++) if (Math.max(Math.abs(x - cx), Math.abs(y - cy)) === 2) ring.push({ x, y });
+                            let cx = px + 3, cy = py + 3;
+          const ring = [];
+          for (let y = cy - 2; y <= cy + 2; y++) for (let x = cx - 2; x <= cx + 2; x++) if (Math.max(Math.abs(x - cx), Math.abs(y - cy)) === 2) ring.push({ x, y });
         let ringPlaced = 0;
         if (cx >= 0) for (const c of ring) if (O.setIn(la(0), c.x, c.y, wallId)) ringPlaced++;
         const builder = cx >= 0 ? W.addUnit({ name: "TEST_builder", image: { characterName: "People1", characterIndex: 0 }, area, z: 0, x: cx, y: cy, exact: true,
