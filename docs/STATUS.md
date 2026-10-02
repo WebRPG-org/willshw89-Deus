@@ -4,6 +4,7 @@
 **Last Updated:** 2026-09-30 (DEC-054..059)  
 **Phase:** Natural World v1 build, straight through with no per-package Owner gate (DEC-058/059). The world is named Emerys (DEC-054). Soil deferred; flora, fauna and monsters placed by seeded rules per biome cell and danger tier (DEC-057). Fire, seasons/weather, migration, rare geological events and structure decay deferred (DEC-059). Art: PixelLab-native layout (DEC-055), the PM picks what goes in game (DEC-056), the Owner generates all art (DEC-007).  
 **PM & Integration Authority:** Claude; **Coordinator / Proposer:** Gemini / Antigravity (DEC-042/DEC-048)  
+**Status view (DEC-085 item 8, 2026-10-01):** lane and wave status lives on the Build Board (the claude.ai artifact the PM maintains) and in the live telemetry. This page is not updated per lane or per merge; it keeps the stable description of the live systems below.  
 **Historical Ledger:** Pre-prune operational history is archived in [`docs/archive/STATUS_LEDGER_20260930.md`](archive/STATUS_LEDGER_20260930.md) (and [`docs/archive/STATUS_LEDGER_20260925.md`](archive/STATUS_LEDGER_20260925.md)).
 
 ---
