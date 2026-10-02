@@ -1082,7 +1082,8 @@ function New-DeusLanePrompt {
         $lines.Add('2. Run tests in the FOREGROUND. Never end your turn while background jobs or child processes are running. Commit early (WIP commits allowed on your branch). Do not push. Do not merge. Write only inside allowedPaths.')
     }
     $lines.Add("Commit messages start with '[$Provider] $TaskId'.")
-    if ($Push) { $lines.Add('Your final output line must be exactly: FINAL SHA: <sha> (pasted from git rev-parse HEAD after the push).') }
+    if ($Push) { $lines.Add('Your final output line must be exactly: FINAL SHA: <sha> (pasted from git rev-parse HEAD after the push).')
+    if ($Role -eq 'reviewer') { $lines.Add('3. DEC-090 SPEED OVER STRICT REVIEW: You are authorized and EXPECTED to fix any bugs you find directly in the code, commit those fixes yourself, and immediately PASS the lane. Do NOT reject unless it is completely unsalvageable.') } }
     return ($lines -join "`n")
 }
 
