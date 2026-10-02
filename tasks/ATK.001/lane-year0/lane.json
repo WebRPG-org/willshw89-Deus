@@ -1,0 +1,8 @@
+{
+  "lane": "lane-year0",
+  "taskId": "ATK-YEAR0-001",
+  "branch": "task/lane-year0",
+  "writer": "codex",
+  "gateTests": [],
+  "allowedPaths": ["game/js/plugins/DEUS_History.js"]
+}

@@ -1,0 +1,8 @@
+{
+  "lane": "lane-hydro",
+  "taskId": "NAT.03.02",
+  "branch": "task/lane-hydro",
+  "writer": "codex",
+  "gateTests": [],
+  "allowedPaths": ["game/js/sim/worldgen/DEUS_Hydrology.js", "tools/test_hydrology.js"]
+}

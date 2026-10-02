@@ -1,0 +1,10 @@
+{
+  "taskId": "WG.PHYSICS.01",
+  "lane": "lane-physics",
+  "provider": "claude",
+  "status": "in-progress",
+  "writerSHA": null,
+  "tests": [
+    { "command": "node tools/test_shadow_check_wg0041.js", "expectStatus": 0 }
+  ]
+}

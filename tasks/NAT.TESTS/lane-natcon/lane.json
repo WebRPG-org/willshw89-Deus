@@ -1,0 +1,8 @@
+{
+  "lane": "lane-natcon",
+  "taskId": "NAT.TESTS",
+  "branch": "task/lane-natcon",
+  "writer": "codex",
+  "gateTests": [],
+  "allowedPaths": ["game/js/plugins/DEUS_Movement8D.js", "tools/test_natural_connections.js"]
+}

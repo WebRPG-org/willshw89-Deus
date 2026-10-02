@@ -1,0 +1,8 @@
+{
+  "lane": "lane-dh",
+  "taskId": "WG.62.03",
+  "branch": "task/lane-dh",
+  "writer": "grok",
+  "gateTests": [],
+  "allowedPaths": ["game/js/sim/geology/caves.js", "game/js/plugins/DEUS_WorldGen.js"]
+}

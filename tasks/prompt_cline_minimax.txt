@@ -1,0 +1,94 @@
+# PROJECT DEUS TASK ASSIGNMENT FOR CLINE / MINIMAX
+# Task ID: NAT.03.01 (lane-bx) — Lean Aquifer & Water Table Kernel
+
+## 1. Objective
+Implement the Lean Aquifer & Water Table Kernel for Project DEUS in `game/js/sim/hydrology/` and verify it with `tools/test_aquifer_seepage.js`.
+Authority: Owner Ruling DEC-038 (Amended & Ratified: Lean Natural World v1 Foundations & Mathematical Calibration).
+
+## 2. Target Worktree & Files
+- Working Directory: `C:\Users\snewt\.deus_worktrees\lane-bx`
+- Target Write Paths:
+  - `game/js/sim/hydrology/aquifer.js`
+  - `game/js/sim/hydrology/index.js`
+  - `tools/test_aquifer_seepage.js`
+  - `tasks/NAT.03.01/lane-bx/REPORT.md`
+
+## 3. Background & Mathematical Calibration (DEC-038 Ratified)
+1. **Stratum-Level Authority (2-ft vertical strata)**:
+   - Groundwater operates at `(x, y, z, stratum)` for stratum $s \in [0..4]$ within each 10-ft Z cell.
+   - Strata volume: $5\text{ ft} \times 5\text{ ft} \times 2\text{ ft} = 50\text{ cu ft}$ per stratum cell.
+   - Depth bands: Deep Earth $[-16 \dots -11]$, Caverns $[-10 \dots -5]$, Lowlands $[-4 \dots +1]$, Uplands $[+2 \dots +6]$, Highlands $[+7 \dots +11]$, Sky $[+12 \dots +15]$.
+   - Rock/material varies per stratum (sandstone, shale, limestone, granite, gravel).
+   - Each stratum cell tracks:
+     - Porosity $\phi$: integer basis points ($0 \dots 10000$, where $10000 = 100.00\%$).
+     - Saturation $S$: integer basis points ($0 \dots 10000$).
+     - Hydraulic conductivity $K$: integer scale $0 \dots 1,000,000$ ($0$ = impermeable granite/shale, $100,000$ = sandstone, $500,000$ = gravel, $1,000,000$ = max).
+     - Hydraulic head $h$: integer millistrata ($1000\text{ units} = 1\text{ stratum} = 2\text{ ft}$).
+2. **Global Elevation Datum & Hydraulic Head**:
+   - Total hydraulic head $h = \text{elevationHead} + \text{pressureHead}$ relative to global bedrock ($Z=-16, s=0$ is datum 0):
+     $$\text{elevationHead}(z, s) = ((z - (-16)) \times 5 + s) \times 1000\text{ millistrata}$$
+3. **Interface Conductivity & Neighbor Darcy Stencil**:
+   - Lateral groundwater transfer across adjacent cells uses the **harmonic mean** of permeabilities:
+     $$K_{\text{interface}} = \begin{cases} 0 & \text{if } K_A = 0 \text{ or } K_B = 0 \\ \left\lfloor \frac{2 \cdot K_A \cdot K_B}{K_A + K_B} \right\rfloor & \text{otherwise} \end{cases}$$
+   - Flow follows hydraulic gradient: $Q \propto K_{\text{interface}} \cdot (h_A - h_B) / \text{distance}$.
+4. **Canonical Undirected Edge & Signed Residual Tracking**:
+   - Residual transfer flow MUST be tracked on canonical undirected interface edges (`signedResidual[edge(A,B)]` where `edge(A,B) = min(A,B) + "<->" + max(A,B)`):
+   $$\text{signedGrossFlow} = \text{calculatedSignedFlow}_{A \to B} + \text{signedResidual}[\text{edge}(A,B)]$$
+   $$\text{integerFlow} = \text{Math.trunc}(\text{signedGrossFlow})$$
+   $$\text{signedResidual}[\text{edge}(A,B)] = \text{signedGrossFlow} - \text{integerFlow}$$
+   - $\text{integerFlow} > 0 \implies \text{transfer from } A \to B$
+   - $\text{integerFlow} < 0 \implies \text{transfer from } B \to A \text{ with magnitude } |\text{integerFlow}|$
+   - Eliminates neighbor processing order bias and ensures flow reversal naturally cancels fractional remainder rather than preserving stale directional debt.
+5. **Double-Sided Clamping Invariant on Every Transfer**:
+   - Every discrete transfer must strictly clamp against both sides:
+     $$\text{transfer} \le \text{donor.availableWater}$$
+     $$\text{transfer} \le \text{receiver.availableCapacity}$$
+   - Where $\text{availableCapacity}$ represents pore capacity for porous strata cells, or open fluid capacity for exposed cavern/void cells.
+   - Strictly eliminates negative water, oversaturation past 10,000 basis points, and phantom mass.
+6. **Event-Driven & Dirty-Region Cadence**:
+   - Zero global per-tick full-world loops.
+   - Resting subterranean aquifers in undisturbed rock are quiescent (static).
+   - Breaches (excavations, collapse voids) mark adjacent aquifer cells as dirty.
+   - Only dirty regions update during hydraulic equilibration cycles until steady state is reached.
+7. **Mass Balance & Conservation**:
+   - Water mass seeping into an open void decrements rock saturation and credits fluid volume in `game/js/sim/ledger.js`.
+   - Authoritative unit: **integer centipounds** ($1\text{ unit} = 0.01\text{ lb}$). Net mass must be 100% conserved.
+8. **Strict Non-Goals / Exclusions**:
+   - Excludes wells, pumps, irrigation, mining jobs, or civic attachments.
+
+## 4. Required Implementation Steps
+1. Create `game/js/sim/hydrology/aquifer.js`:
+   - Data structures for strata-level aquifer storage: `initAquiferState()`, `getStratumWater()`, `setStratumWater()`.
+   - Global datum elevation head: `getGlobalElevationHead(z, s)`.
+   - Harmonic mean permeability: `calcInterfaceConductivity(kA, kB)`.
+   - Canonical undirected edge key & signed residual map: `getSignedResidual(edgeKey)`.
+   - Double-sided clamped transfer: `clamp(flow, donorAvail, receiverCap)`.
+   - Dirty-region tracking: `markDirty(x, y, z, s)`, `stepDirtyRegions(dt, ledger)`.
+   - Mass ledger integration: debits groundwater, credits `liquid_water` in `ledger.js`.
+2. Create `game/js/sim/hydrology/index.js`:
+   - Exports unified `Hydrology` / `Aquifer` API.
+3. Create test suite `tools/test_aquifer_seepage.js`:
+   - Verifies:
+     1. `test_stratum_storage`: Saturated sandstone stratum stores expected fluid mass in centipounds.
+     2. `test_darcy_seepage_breach`: Breaching adjacent cell triggers seepage into void using harmonic mean $K$.
+     3. `test_impermeable_barrier`: Impermeable granite/shale ($K=0$) prevents seepage.
+     4. `test_drawdown_equilibrium`: Continuous drainage depletes local head until equilibrium.
+     5. `test_interface_residuals`: Per-edge residuals accumulate across ticks without neighbor-order bias.
+     6. `test_double_sided_clamping`: Transfers never exceed donor water or receiver pore capacity.
+     7. `test_mass_ledger_conservation`: Transferred groundwater exactly matches credited fluid mass in ledger.
+     8. `test_dirty_region_quiescence`: Untouched cells do not tick; only dirty cells update.
+   - Negative Control Mutants (Rule 4):
+     - `infinite_water`: Drawdown disabled -> test fails.
+     - `leak_free`: Permeability forced to zero -> seepage test fails.
+4. Create completion report `tasks/NAT.03.01/lane-bx/REPORT.md`:
+   - Includes full GAME TRANSLATION block with observed results, test evidence, and mutant kills.
+5. Verify tests pass:
+   ```bash
+   node tools/test_aquifer_seepage.js
+   node tools/check_deus_syntax.js
+   ```
+
+## 5. Absolute Invariants
+- ZERO ART GENERATION (DEC-007).
+- Natural world physics only (DEC-037). Zero factions, zero civics.
+- Engine core is read-only (AGENTS.md Rule 9).
