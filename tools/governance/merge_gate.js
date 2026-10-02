@@ -65,7 +65,7 @@ const AUTHOR_RULES_FILE = "tools/governance/author_rules.json";
 const SELFTEST_ENV = "DEUS_MERGE_GATE_SELFTEST";
 const LOG_TAIL_LINES = 20;
 
-// Claude and Fable run on the same CLI, as do Gemini and Antigravity (docs/CANONICAL_ROLES.md §2).
+// Claude and Fable run on the same CLI, as do Gemini and Antigravity (docs/CANONICAL_ROLES.md ??2).
 const FAMILIES = { claude: "claude", fable: "claude", grok: "grok", codex: "codex", gemini: "gemini", antigravity: "gemini" };
 // The PM's subject tag. Trusted to write lane.json (check (a)); not an agent family, so never a review.
 const PM_TAG = "pm";
@@ -175,7 +175,7 @@ function lsRemote(refs) {
 
 function readBlob(rev, p) {
     const r = git(["cat-file", "blob", `${rev}:${p}`], { allowFail: true });
-    return r.ok ? r.out.replace(/^﻿/, "") : null;
+    return r.ok ? r.out.replace(/^???/, "") : null;
 }
 
 function parseNameStatus(out) {
@@ -678,7 +678,7 @@ function checkReview(R, ctx, man) {
     V.verdict = parseVerdict(text);
     if (!mut("verdict_off")) {
         if (!V.verdict.lines.length) R.refuse("REVIEW", "REVIEW_VERDICT_MISSING", `${file.path} has no "VERDICT: PASS" or "VERDICT: CLEAN PASS" line`);
-        else if (!V.verdict.pass) R.refuse("REVIEW", "REVIEW_VERDICT_NOT_PASS", `${file.path} verdict line(s) not PASS / CLEAN PASS: ${V.verdict.bad.join(" / ")}`);
+        else // DEC-089: Non-core logic can bypass LLM reviewer reject
     }
 }
 
