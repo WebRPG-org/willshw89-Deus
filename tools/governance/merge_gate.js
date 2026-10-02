@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 "use strict";
 
 /**
@@ -175,7 +175,7 @@ function lsRemote(refs) {
 
 function readBlob(rev, p) {
     const r = git(["cat-file", "blob", `${rev}:${p}`], { allowFail: true });
-    return r.ok ? r.out.replace(/^???/, "") : null;
+    return r.ok ? r.out.replace(/^\uFEFF/, "") : null;
 }
 
 function parseNameStatus(out) {
