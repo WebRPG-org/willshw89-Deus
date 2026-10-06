@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "preview_id": "u7-ground-reference-r01-20261006",
+  "status": "reference_only",
+  "owner_request": "upload this to the junk folder",
+  "file": "u7_ground_reference_comparison.png",
+  "sha256": "1fa593c7d8be9fb75ede3622faa7ccd6cf0ff6822336947efa52818bc6b04927",
+  "dimensions": [
+    640,
+    290
+  ],
+  "uploaded_pixels_unchanged": true,
+  "source_game": "Ultima VII: The Black Gate",
+  "display_scale": 3,
+  "native_patch_dimensions": [
+    48,
+    48
+  ],
+  "original_ground_cell_dimensions": [
+    8,
+    8
+  ],
+  "description": "Four terrain-only native ground patches reconstructed from existing local Ultima VII study files. Labels identify original chunk/cell coordinates. Enlarged nearest-neighbor for comparison.",
+  "selected_example": "patch 1, chunk 1794, cell origin 0,10",
+  "scope": "Style reference comparison only; not Endrath game art, a tileset, a generated output or a playable mockup. No game assets packed.",
+  "native_inputs_published": false,
+  "review_url": "https://github.com/willshw89/Deus/tree/main/art/junk/references/2026-10-06-u7-ground-r01",
+  "image_url": "https://raw.githubusercontent.com/willshw89/Deus/main/art/junk/references/2026-10-06-u7-ground-r01/u7_ground_reference_comparison.png"
+}
