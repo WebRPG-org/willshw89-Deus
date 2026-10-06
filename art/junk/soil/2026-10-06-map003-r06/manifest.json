@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "preview_id": "soil-map003-r06-20261006",
+  "status": "temporary_review",
+  "captured_on": "2026-10-06",
+  "map": {
+    "id": 3,
+    "name": "Soil - rooted cluster",
+    "revision": 6,
+    "engine": "RPG Maker MZ 1.10.0"
+  },
+  "capture": "Actual native RPG Maker MZ map; unchanged PNG capture and unscaled crop.",
+  "owner_visual_acceptance": "pending for revision 6",
+  "owner_playtest": "not claimed",
+  "runtime_asset": false,
+  "images": [
+    {
+      "file": "map003_100_percent.png",
+      "role": "native 100% cluster crop",
+      "sha256": "d31c8a9e7b38f8cd0e36ff1c68e7beb91f179629c3b241d85198f13a277d6aed",
+      "bytes": 34125,
+      "width": 480,
+      "height": 336,
+      "scale": 1,
+      "resampled": false,
+      "source": "work/soil_rooted_contact_20261006/map003_100_percent.png",
+      "raw_url": "https://raw.githubusercontent.com/willshw89/Deus/main/art/junk/soil/2026-10-06-map003-r06/map003_100_percent.png"
+    },
+    {
+      "file": "map003_full.png",
+      "role": "full native map capture",
+      "sha256": "5b22d0d527e513797bff2e6b82ed73f4af1b9c413cd250c0dc721070e2b2b69f",
+      "bytes": 56779,
+      "width": 864,
+      "height": 576,
+      "scale": 1,
+      "resampled": false,
+      "source": "work/soil_rooted_contact_20261006/native_full.png",
+      "raw_url": "https://raw.githubusercontent.com/willshw89/Deus/main/art/junk/soil/2026-10-06-map003-r06/map003_full.png"
+    }
+  ]
+}
