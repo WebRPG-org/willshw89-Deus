@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "preview_id": "u7-ground-reference-r01-20261006",
-  "folder": "references/2026-10-06-u7-ground-r01",
-  "review_url": "https://github.com/willshw89/Deus/tree/main/art/junk/references/2026-10-06-u7-ground-r01",
-  "image_url": "https://raw.githubusercontent.com/willshw89/Deus/main/art/junk/references/2026-10-06-u7-ground-r01/u7_ground_reference_comparison.png",
-  "manifest": "references/2026-10-06-u7-ground-r01/manifest.json",
-  "status": "reference_only"
+  "preview_id": "ground-fills-r01-20261006",
+  "folder": "materials/2026-10-06-ground-fills-r01",
+  "review_url": "https://github.com/willshw89/Deus/tree/main/art/junk/materials/2026-10-06-ground-fills-r01",
+  "image_url": "https://raw.githubusercontent.com/willshw89/Deus/main/art/junk/materials/2026-10-06-ground-fills-r01/ground_fills_100_percent.png",
+  "manifest": "materials/2026-10-06-ground-fills-r01/manifest.json",
+  "status": "owner_selected_working_fills"
 }

@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "preview_id": "ground-fills-r01-20261006",
+  "status": "owner_selected_working_fills",
+  "source_game": "Ultima VII: The Black Gate",
+  "provenance": "Direct palette remaps of native U7 ground pixels, not new original drawings",
+  "grid_px": 48,
+  "preview_scale": 1,
+  "files": [
+    {
+      "asset_id": "u7_recolor_20261006_soil_fill",
+      "path": "art/soil/ground/soil_fill.png",
+      "file": "soil_fill.png",
+      "sha256": "cadeb5dea601e404bcf5c28b9710a2becf55f0e64c00714491dbb5fcba1eea17",
+      "canvas": [
+        48,
+        48
+      ],
+      "role": "selected_working_ground_fill",
+      "status": "owner_selected_working_art",
+      "owner_words": "Nah we will use them, nobody owns that configuration of pixels in a 48x48 square",
+      "source_game": "Ultima VII: The Black Gate",
+      "source_patch_sha256": "aea3511955a476bfe35b35b38ce0d5091b3b2058464d3b4f730315ae40446ccd",
+      "source_patch": "chunk 1794, cell origin 0,10; native 6x6 ground cells",
+      "derivation": "Direct U7 palette lookup, five original tones grouped dark/dark/mid/light/light",
+      "ramp": [
+        "#8A9A48",
+        "#6E7A38",
+        "#4A5428"
+      ],
+      "color_counts": {
+        "#8A9A48": 498,
+        "#4A5428": 998,
+        "#6E7A38": 808
+      },
+      "native_layout_preserved": true,
+      "resampled": false,
+      "generation_calls": 0,
+      "original_endrath_drawing": false,
+      "owner_pixel_use_authorized": true,
+      "packed": false,
+      "placed_on_map": false
+    },
+    {
+      "asset_id": "u7_recolor_20261006_soil_dry_fill",
+      "path": "art/soil/ground/soil_dry_fill.png",
+      "file": "soil_dry_fill.png",
+      "sha256": "7afbb367957ec3991f56c328559adf0c7e336be1bdea82485342a82cf393a339",
+      "canvas": [
+        48,
+        48
+      ],
+      "role": "dry_soil_step_under_meadow",
+      "status": "owner_requested_working_art",
+      "owner_words": "Soil under the meadow is the dry step you already have. #6E7A38, #4A5428, #3A2414. It should read as the fill with the light taken out.",
+      "source_game": "Ultima VII: The Black Gate",
+      "direct_parent": "art/soil/ground/soil_fill.png",
+      "direct_parent_sha256": "cadeb5dea601e404bcf5c28b9710a2becf55f0e64c00714491dbb5fcba1eea17",
+      "derivation": "Bright meadow -> mid green; mid meadow -> dark green; dark meadow -> earth brown. Palette only.",
+      "ramp": [
+        "#6E7A38",
+        "#4A5428",
+        "#3A2414"
+      ],
+      "color_counts": {
+        "#6E7A38": 498,
+        "#3A2414": 998,
+        "#4A5428": 808
+      },
+      "native_layout_preserved": true,
+      "resampled": false,
+      "generation_calls": 0,
+      "original_endrath_drawing": false,
+      "owner_pixel_use_authorized": true,
+      "packed": false,
+      "placed_on_map": false
+    },
+    {
+      "asset_id": "u7_recolor_20261006_shore_fill",
+      "path": "art/soil/ground/shore_fill.png",
+      "file": "shore_fill.png",
+      "sha256": "a312b0df5506561993007abc89d406383b9e34ebf4c69481fba7dc1ff164b1ca",
+      "canvas": [
+        48,
+        48
+      ],
+      "role": "selected_working_ground_fill",
+      "status": "owner_selected_working_art",
+      "owner_words": "Nah we will use them, nobody owns that configuration of pixels in a 48x48 square",
+      "source_game": "Ultima VII: The Black Gate",
+      "source_patch_sha256": "aea3511955a476bfe35b35b38ce0d5091b3b2058464d3b4f730315ae40446ccd",
+      "source_patch": "chunk 1794, cell origin 0,10; native 6x6 ground cells",
+      "derivation": "Direct U7 palette lookup, five original tones grouped dark/dark/mid/light/light",
+      "ramp": [
+        "#3E554A",
+        "#2E4548",
+        "#1A2C38"
+      ],
+      "color_counts": {
+        "#3E554A": 498,
+        "#1A2C38": 998,
+        "#2E4548": 808
+      },
+      "native_layout_preserved": true,
+      "resampled": false,
+      "generation_calls": 0,
+      "original_endrath_drawing": false,
+      "owner_pixel_use_authorized": true,
+      "packed": false,
+      "placed_on_map": false
+    },
+    {
+      "asset_id": "u7_recolor_20261006_rock_fill",
+      "path": "art/soil/ground/rock_fill.png",
+      "file": "rock_fill.png",
+      "sha256": "a0edcbae4d98f41be0229f7b35df758345a4b2ae41873de7968d5f036c637f84",
+      "canvas": [
+        48,
+        48
+      ],
+      "role": "selected_working_ground_fill",
+      "status": "owner_selected_working_art",
+      "owner_words": "Nah we will use them, nobody owns that configuration of pixels in a 48x48 square",
+      "source_game": "Ultima VII: The Black Gate",
+      "source_patch_sha256": "aea3511955a476bfe35b35b38ce0d5091b3b2058464d3b4f730315ae40446ccd",
+      "source_patch": "chunk 1794, cell origin 0,10; native 6x6 ground cells",
+      "derivation": "Direct U7 palette lookup, five original tones grouped dark/dark/mid/light/light",
+      "ramp": [
+        "#A8A096",
+        "#807870",
+        "#5C5650"
+      ],
+      "color_counts": {
+        "#A8A096": 498,
+        "#5C5650": 998,
+        "#807870": 808
+      },
+      "native_layout_preserved": true,
+      "resampled": false,
+      "generation_calls": 0,
+      "original_endrath_drawing": false,
+      "owner_pixel_use_authorized": true,
+      "packed": false,
+      "placed_on_map": false
+    },
+    {
+      "asset_id": "u7_recolor_20261006_sand_fill",
+      "path": "art/soil/ground/sand_fill.png",
+      "file": "sand_fill.png",
+      "sha256": "83348433da057988a205ca4cd60cdb04f468796a3db2204aeb87ffd28b18bc83",
+      "canvas": [
+        48,
+        48
+      ],
+      "role": "selected_working_ground_fill",
+      "status": "owner_selected_working_art",
+      "owner_words": "Nah we will use them, nobody owns that configuration of pixels in a 48x48 square",
+      "source_game": "Ultima VII: The Black Gate",
+      "source_patch_sha256": "aea3511955a476bfe35b35b38ce0d5091b3b2058464d3b4f730315ae40446ccd",
+      "source_patch": "chunk 1794, cell origin 0,10; native 6x6 ground cells",
+      "derivation": "Direct U7 palette lookup, five original tones grouped dark/dark/mid/light/light",
+      "ramp": [
+        "#E4D2A4",
+        "#C8B078",
+        "#A88C58"
+      ],
+      "color_counts": {
+        "#E4D2A4": 498,
+        "#A88C58": 998,
+        "#C8B078": 808
+      },
+      "native_layout_preserved": true,
+      "resampled": false,
+      "generation_calls": 0,
+      "original_endrath_drawing": false,
+      "owner_pixel_use_authorized": true,
+      "packed": false,
+      "placed_on_map": false
+    },
+    {
+      "asset_id": "u7_recolor_20261006_ice_fill",
+      "path": "art/soil/ground/ice_fill.png",
+      "file": "ice_fill.png",
+      "sha256": "6958213a39f1733d8beff12398626740736e51bdc16d4dd40250f42f6c5a2d9d",
+      "canvas": [
+        48,
+        48
+      ],
+      "role": "selected_working_ground_fill",
+      "status": "owner_selected_working_art",
+      "owner_words": "Nah we will use them, nobody owns that configuration of pixels in a 48x48 square",
+      "source_game": "Ultima VII: The Black Gate",
+      "source_patch_sha256": "aea3511955a476bfe35b35b38ce0d5091b3b2058464d3b4f730315ae40446ccd",
+      "source_patch": "chunk 1794, cell origin 0,10; native 6x6 ground cells",
+      "derivation": "Direct U7 palette lookup, five original tones grouped dark/dark/mid/light/light",
+      "ramp": [
+        "#E8EEF0",
+        "#C4D4D8",
+        "#98B0B8"
+      ],
+      "color_counts": {
+        "#E8EEF0": 498,
+        "#98B0B8": 998,
+        "#C4D4D8": 808
+      },
+      "native_layout_preserved": true,
+      "resampled": false,
+      "generation_calls": 0,
+      "original_endrath_drawing": false,
+      "owner_pixel_use_authorized": true,
+      "packed": false,
+      "placed_on_map": false
+    }
+  ],
+  "pack_empty": true,
+  "generation_calls_for_recolors": 0,
+  "review_url": "https://github.com/willshw89/Deus/tree/main/art/junk/materials/2026-10-06-ground-fills-r01",
+  "image_url": "https://raw.githubusercontent.com/willshw89/Deus/main/art/junk/materials/2026-10-06-ground-fills-r01/ground_fills_100_percent.png",
+  "limitations": "Flat source fills only; A2 edges/corners and the game pack are not assembled by this step."
+}
