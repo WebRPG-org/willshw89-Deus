@@ -67,11 +67,17 @@
  *   bounds (zoom-aware through DEUS_Camera's screenTileX/Y).
  * - It pans only with an actual pointer: the position TouchInput reports must
  *   be the position of a real mouse/touch event this plugin observed and that
- *   position must be inside the canvas. The engine's start-up origin (0,0),
- *   TouchInput.clear() (focus loss, consumed HUD clicks) and check-driven or
- *   replayed TouchInput._x/_y never pan. Mouse-out of the window, window
- *   blur, touch end/cancel and a hidden page stop it until the next real
- *   pointer event inside the canvas.
+ *   position must be inside the canvas. Held press (2026-10-07): while
+ *   TouchInput.isPressed(), the engine's _onMove keeps the press origin until
+ *   the drag exceeds TouchInput.moveThreshold (10 px) on an axis, so within
+ *   that threshold TouchInput lags the observed pointer by design; the
+ *   pointer still counts as observed and the pan reads its observed position
+ *   (a held pointer moved 1-10 px keeps panning). A larger difference, or any
+ *   difference without a held press, never pans. The engine's start-up
+ *   origin (0,0), TouchInput.clear() (focus loss, consumed HUD clicks) and
+ *   check-driven or replayed TouchInput._x/_y never pan. Mouse-out of the
+ *   window, window blur, touch end/cancel and a hidden page stop it until the
+ *   next real pointer event inside the canvas.
  * - It pauses while UI owns the pointer: Scene_Map.isAnyWindowUnderMouse
  *   (the card, ledger, chronicle, container card, sheet panel, zoom slider,
  *   time and level controls through their aliases), DEUS.Look.isOverUI and
@@ -143,7 +149,9 @@
     let edgePanSpeed = parseEdgePanSpeed(edgePanParams.EdgePanSpeed);
 
     // The last real pointer event this plugin observed (canvas px). TouchInput._x/_y alone are not evidence of a
-    // pointer: they start at (0,0), clear() resets them there, and checks/replays write them directly.
+    // pointer: they start at (0,0), clear() resets them there, and checks/replays write them directly. While a press
+    // is held they also lag this record by up to TouchInput.moveThreshold per axis (the engine's press-origin rule,
+    // see edgePointerWithinHeldPressThreshold).
     const edgePointer = { seen: false, inside: false, x: -1, y: -1 };
     let edgePanLast = null;
 
@@ -339,6 +347,15 @@
         return v;
     }
 
+    /** True while a held press keeps TouchInput within TouchInput.moveThreshold (per axis) of the observed pointer:
+     *  the engine's _onMove keeps the press origin until a drag exceeds that threshold, so within it TouchInput lags
+     *  the observed pointer by design. False without a held press, or beyond the threshold. */
+    function edgePointerWithinHeldPressThreshold() {
+        if (typeof TouchInput === "undefined" || typeof TouchInput.isPressed !== "function" || !TouchInput.isPressed()) return false;
+        const threshold = Number.isFinite(TouchInput.moveThreshold) && TouchInput.moveThreshold >= 0 ? TouchInput.moveThreshold : 0;
+        return Math.abs(TouchInput.x - edgePointer.x) <= threshold && Math.abs(TouchInput.y - edgePointer.y) <= threshold;
+    }
+
     /** "" when edge panning may move the view this frame, else the first reason it must not (for checks and the console). */
     function edgePanBlockReason(scene) {
         if (!edgePanEnabled) return "disabled";
@@ -348,7 +365,11 @@
         if (typeof TouchInput === "undefined") return "no TouchInput";
         if (!edgePointer.seen) return "no pointer event yet";
         if (!edgePointer.inside) return "pointer outside the canvas";
-        if (TouchInput.x !== edgePointer.x || TouchInput.y !== edgePointer.y) return "TouchInput position is not the observed pointer";
+        // Outside the engine's held-press lag, TouchInput must report the observed pointer's position exactly:
+        // replayed or check-driven coordinates never pan.
+        if (!edgePointerWithinHeldPressThreshold()) {
+            if (TouchInput.x !== edgePointer.x || TouchInput.y !== edgePointer.y) return "TouchInput position is not the observed pointer";
+        }
         if (!insideCanvas(TouchInput.x, TouchInput.y)) return "position outside the canvas";
         if (typeof Input !== "undefined" && (Input.isPressed("cameraLeft") || Input.isPressed("cameraRight") || Input.isPressed("cameraUp") || Input.isPressed("cameraDown"))) return "keyboard pan";
         const U = window.UF || null;
@@ -364,11 +385,19 @@
         return "";
     }
 
+    /** The canvas position the pan reads: the observed pointer while a held press keeps TouchInput lagging within the
+     *  threshold, else TouchInput's position (which edgePanBlockReason has required to be the observed pointer). */
+    function edgePanPosition() {
+        if (edgePointerWithinHeldPressThreshold()) return { x: edgePointer.x, y: edgePointer.y };
+        return { x: TouchInput.x, y: TouchInput.y };
+    }
+
     /** One frame of edge panning. Scrolls the view only (never a unit); returns { dx, dy } when it scrolled, else null. */
     function edgePanStep(scene) {
         edgePanLast = null;
         if (edgePanBlockReason(scene)) return null;
-        const v = edgePanVector(TouchInput.x, TouchInput.y);
+        const p = edgePanPosition();
+        const v = edgePanVector(p.x, p.y);
         if (!v.dx && !v.dy) return null;
         const cells = edgePanCellsPerFrame();
         if ($colonyManager && $colonyManager.cameraFollowUnit) $colonyManager.cameraFollowUnit = null;
