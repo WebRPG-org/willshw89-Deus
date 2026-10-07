@@ -10,13 +10,26 @@
  * @param EdgePanSpeed
  * @text Edge Pan Camera Speed
  * @type number
+ * @min 0
+ * @max 48
  * @default 6
- * @desc Kept for older settings; the camera pans with WASD and the arrow keys.
+ * @desc Map pixels per frame the view pans while the pointer rests at a viewport edge. 0 = off. 6 = 0.125 cells/frame at 48 px tiles.
+ *
+ * @param EdgePanEnabled
+ * @text Edge Panning
+ * @type boolean
+ * @on Enabled
+ * @off Disabled
+ * @default true
+ * @desc Pan the view when the pointer rests at a viewport edge. Off keeps WASD / arrow-key panning only.
  *
  * @help
  * The player is an overseer, not a character on the map (VISION V4):
  * - WASD and the arrow keys pan the camera; the protagonist is invisible and
  *   never walks;
+ * - edge panning (2026-10-07): the pointer resting within 16 px of a viewport
+ *   edge pans the VIEW in that direction (corners pan diagonally); it never
+ *   moves the player or a unit. See "Edge panning" below;
  * - left-click on a colonist selects it and opens its card; left-click on the
  *   ground with a colonist selected orders it there (UF.Colonists.order, a
  *   "move" job); right-click deselects (unless UF_Interact opened its menu);
@@ -33,6 +46,51 @@
  * UF.Colonists for older callers.
  *
  * API and checks: docs/systems/UF_ColonyOverseer.md
+ *
+ * Edge panning (parameters EdgePanEnabled / EdgePanSpeed):
+ * - Unit: EdgePanSpeed is MAP PIXELS PER FRAME, the unit the parameter was
+ *   first documented with ("pixels per frame when mouse is near screen edge").
+ *   It is converted to the engine scroll contract's unit, map cells per frame,
+ *   by dividing by the tile size: cells/frame = EdgePanSpeed / tileWidth()
+ *   (tileHeight() for the vertical axis). Default 6 => 6 / 48 = 0.125 cells
+ *   per frame (7.5 cells per second at 60 fps). The keyboard pan keeps its own
+ *   CAM_SPEED of 0.35 cells per frame (16.8 map px at 48 px tiles); while a
+ *   pan key is held the keyboard pans alone, so WASD speed never changes.
+ *   Like WASD the speed is in map cells, so at 2x zoom the view covers twice
+ *   the screen pixels per frame and at 0.5x half; both pans scale together.
+ * - Validation: a missing or blank value, a non-number or a negative value
+ *   falls back to 6; values above 48 (one cell per frame) clamp to 48; 0
+ *   turns edge panning off, as does EdgePanEnabled = false. The runtime API
+ *   validates the same way.
+ * - The view scrolls through $gameMap.scrollLeft/Right/Up/Down, the engine's
+ *   owning contract, so looping maps wrap and non-looping maps stop at their
+ *   bounds (zoom-aware through DEUS_Camera's screenTileX/Y).
+ * - It pans only with an actual pointer: the position TouchInput reports must
+ *   be the position of a real mouse/touch event this plugin observed and that
+ *   position must be inside the canvas. The engine's start-up origin (0,0),
+ *   TouchInput.clear() (focus loss, consumed HUD clicks) and check-driven or
+ *   replayed TouchInput._x/_y never pan. Mouse-out of the window, window
+ *   blur, touch end/cancel and a hidden page stop it until the next real
+ *   pointer event inside the canvas.
+ * - It pauses while UI owns the pointer: Scene_Map.isAnyWindowUnderMouse
+ *   (the card, ledger, chronicle, container card, sheet panel, zoom slider,
+ *   time and level controls through their aliases), DEUS.Look.isOverUI and
+ *   DEUS.Select.pointerOverUI (open windows of the window layer and the
+ *   scene; a talk counts as whole-screen UI), the bag window, an open
+ *   DEUS.Interact context menu, DEUS.Talk, an attached or dragged
+ *   DEUS.ItemDrag item, and a busy $gameMessage. Overseer mode off pauses it.
+ * - Panning the view by edge releases $colonyManager.cameraFollowUnit, as a
+ *   keyboard pan does.
+ * - API (DEUS.Overseer.edgePan): enabled(), setEnabled(bool), toggle(),
+ *   speed() -> map px per frame, setSpeed(px) -> applied value,
+ *   cellsPerFrame() -> { x, y }, parseSpeed(raw), parseEnabled(raw),
+ *   vector(x, y) -> { dx, dy } in -1/0/1 for a canvas position,
+ *   notePointer(x, y) / notePointerGone() (what the TouchInput aliases call),
+ *   pointer() -> { seen, inside, x, y }, blockReason(scene) -> "" or why it
+ *   does not pan now, step(scene) -> { dx, dy } panned this frame or null,
+ *   lastStep(), MARGIN (16 px), MAX_SPEED (48), DEFAULT_SPEED (6). The
+ *   runtime toggle and speed are view state, not saved.
+ * - Checks: suite "overseer" (edge_pan_moves_view, edge_pan_pauses).
  *
  * Replaced core methods (not aliased): Game_Player.prototype.moveByInput (no
  * protagonist walking), Game_Player.prototype.updateScroll (the camera
@@ -53,6 +111,56 @@
     }
 
     const CAM_SPEED = 0.35;   // cells per frame while a pan key is held
+
+    //-----------------------------------------------------------------------------
+    // Edge panning settings (EdgePanEnabled / EdgePanSpeed; see the header for the unit)
+
+    const EDGE_PAN_MARGIN = 16;        // canvas px from an edge that count as "at the edge"
+    const EDGE_PAN_DEFAULT_SPEED = 6;  // map px per frame (the parameter's documented unit)
+    const EDGE_PAN_MAX_SPEED = 48;     // one cell per frame at 48 px tiles
+
+    /** Map px per frame from a raw parameter / API value: blank, non-number or negative -> default; above the cap -> cap. */
+    function parseEdgePanSpeed(raw) {
+        if (raw === undefined || raw === null || String(raw).trim() === "") return EDGE_PAN_DEFAULT_SPEED;
+        const n = Number(raw);
+        if (!Number.isFinite(n) || n < 0) return EDGE_PAN_DEFAULT_SPEED;
+        return Math.min(EDGE_PAN_MAX_SPEED, n);
+    }
+    /** true unless the raw value reads as "false" / 0 (a missing value keeps edge panning on). */
+    function parseEdgePanEnabled(raw) {
+        if (raw === undefined || raw === null || String(raw).trim() === "") return true;
+        const s = String(raw).trim().toLowerCase();
+        return !(s === "false" || s === "0" || s === "off" || s === "no");
+    }
+    function overseerParams() {
+        if (typeof PluginManager === "undefined" || typeof PluginManager.parameters !== "function") return {};
+        const p = PluginManager.parameters("DEUS_ColonyOverseer");
+        if (p && Object.keys(p).length) return p;
+        return PluginManager.parameters("UF_ColonyOverseer") || {};
+    }
+    const edgePanParams = overseerParams();
+    let edgePanEnabled = parseEdgePanEnabled(edgePanParams.EdgePanEnabled);
+    let edgePanSpeed = parseEdgePanSpeed(edgePanParams.EdgePanSpeed);
+
+    // The last real pointer event this plugin observed (canvas px). TouchInput._x/_y alone are not evidence of a
+    // pointer: they start at (0,0), clear() resets them there, and checks/replays write them directly.
+    const edgePointer = { seen: false, inside: false, x: -1, y: -1 };
+    let edgePanLast = null;
+
+    function insideCanvas(x, y) {
+        if (typeof Graphics !== "undefined" && typeof Graphics.isInsideCanvas === "function") return Graphics.isInsideCanvas(x, y);
+        return typeof Graphics !== "undefined" && x >= 0 && x < Graphics.width && y >= 0 && y < Graphics.height;
+    }
+    function notePointer(x, y) {
+        if (typeof x !== "number" || typeof y !== "number" || !Number.isFinite(x) || !Number.isFinite(y)) return;
+        edgePointer.seen = true;
+        edgePointer.x = x;
+        edgePointer.y = y;
+        edgePointer.inside = insideCanvas(x, y);
+    }
+    function notePointerGone() {
+        edgePointer.inside = false;
+    }
     const CARD_W = 380, CARD_H = 240;
     const LOAD_Y = 60;        // the load line ("Carrying 3 logs to the woodpile"), under the job; blank when it carries nothing
     const BELOW_LOAD = 22;    // everything under the load line moved down by this much (2026-09-19, V89)
@@ -182,9 +290,106 @@
     };
     Scene_Map.prototype.processMapTouch = function() {};
 
+    //-----------------------------------------------------------------------------
+    // Edge panning: actual pointer presence (aliases run before the engine's handlers, which keep their behavior)
+
+    const edgePointerFromEvent = function(event) {
+        if (!event || typeof event.pageX !== "number" || typeof Graphics === "undefined" || typeof Graphics.pageToCanvasX !== "function") return;
+        notePointer(Graphics.pageToCanvasX(event.pageX), Graphics.pageToCanvasY(event.pageY));
+    };
+    const edgePointerFromTouches = function(event) {
+        if (!event || !event.changedTouches || typeof Graphics === "undefined" || typeof Graphics.pageToCanvasX !== "function") return;
+        for (const touch of event.changedTouches) notePointer(Graphics.pageToCanvasX(touch.pageX), Graphics.pageToCanvasY(touch.pageY));
+    };
+    function aliasTouchInput(name, before) {
+        if (typeof TouchInput === "undefined" || typeof TouchInput[name] !== "function") return;
+        const original = TouchInput[name];
+        TouchInput[name] = function() {
+            before.apply(this, arguments);
+            return original.apply(this, arguments);
+        };
+    }
+    let edgeListenersInstalled = false;
+    // Leaving the window (mouse-out to nothing), a hidden page: no pointer until the next event inside the canvas.
+    function installEdgePointerListeners() {
+        if (edgeListenersInstalled || typeof document === "undefined" || typeof document.addEventListener !== "function") return;
+        edgeListenersInstalled = true;
+        document.addEventListener("mouseout", event => { if (!event.relatedTarget && !event.toElement) notePointerGone(); });
+        document.addEventListener("mouseleave", () => notePointerGone());
+        document.addEventListener("visibilitychange", () => { if (document.hidden) notePointerGone(); });
+    }
+    aliasTouchInput("_onMouseMove", edgePointerFromEvent);
+    aliasTouchInput("_onMouseDown", edgePointerFromEvent);
+    aliasTouchInput("_onMouseUp", edgePointerFromEvent);
+    aliasTouchInput("_onTouchStart", edgePointerFromTouches);
+    aliasTouchInput("_onTouchMove", edgePointerFromTouches);
+    aliasTouchInput("_onTouchEnd", notePointerGone);
+    aliasTouchInput("_onTouchCancel", notePointerGone);
+    aliasTouchInput("_onLostFocus", notePointerGone);
+    aliasTouchInput("_setupEventHandlers", installEdgePointerListeners);
+
+    /** Pan direction for a canvas position: { dx, dy } in -1 / 0 / 1 (zero outside the canvas or away from the edges). */
+    function edgePanVector(x, y) {
+        const v = { dx: 0, dy: 0 };
+        if (typeof x !== "number" || typeof y !== "number" || typeof Graphics === "undefined" || !insideCanvas(x, y)) return v;
+        if (x < EDGE_PAN_MARGIN) v.dx = -1;
+        else if (x >= Graphics.width - EDGE_PAN_MARGIN) v.dx = 1;
+        if (y < EDGE_PAN_MARGIN) v.dy = -1;
+        else if (y >= Graphics.height - EDGE_PAN_MARGIN) v.dy = 1;
+        return v;
+    }
+
+    /** "" when edge panning may move the view this frame, else the first reason it must not (for checks and the console). */
+    function edgePanBlockReason(scene) {
+        if (!edgePanEnabled) return "disabled";
+        if (!(edgePanSpeed > 0)) return "speed 0";
+        if (!window.$gameMap || !window.$dataMap || typeof $gameMap.scrollLeft !== "function") return "no map";
+        if (!$colonyManager || !$colonyManager.isOverseerMode) return "overseer mode off";
+        if (typeof TouchInput === "undefined") return "no TouchInput";
+        if (!edgePointer.seen) return "no pointer event yet";
+        if (!edgePointer.inside) return "pointer outside the canvas";
+        if (TouchInput.x !== edgePointer.x || TouchInput.y !== edgePointer.y) return "TouchInput position is not the observed pointer";
+        if (!insideCanvas(TouchInput.x, TouchInput.y)) return "position outside the canvas";
+        if (typeof Input !== "undefined" && (Input.isPressed("cameraLeft") || Input.isPressed("cameraRight") || Input.isPressed("cameraUp") || Input.isPressed("cameraDown"))) return "keyboard pan";
+        const U = window.UF || null;
+        if (U && U.ItemDrag && ((typeof U.ItemDrag.hasAttached === "function" && U.ItemDrag.hasAttached()) || (typeof U.ItemDrag.isDragging === "function" && U.ItemDrag.isDragging()))) return "item drag owns the pointer";
+        if (U && U.Interact && typeof U.Interact.isOpen === "function" && U.Interact.isOpen()) return "context menu open";
+        if (U && U.Talk && typeof U.Talk.isOpen === "function" && U.Talk.isOpen()) return "talk open";
+        if (window.$gameMessage && typeof $gameMessage.isBusy === "function" && $gameMessage.isBusy()) return "message busy";
+        if (scene && typeof scene.isAnyWindowUnderMouse === "function" && scene.isAnyWindowUnderMouse()) return "window under the pointer";
+        if (U && U.Look && typeof U.Look.isOverUI === "function" && U.Look.isOverUI()) return "over UI";
+        if (U && U.Select && typeof U.Select.pointerOverUI === "function" && U.Select.pointerOverUI()) return "over UI (select)";
+        const bag = scene && scene._ufBagWindow;
+        if (bag && bag.visible && typeof bag.isPointerInsideCoords === "function" && bag.isPointerInsideCoords(TouchInput.x, TouchInput.y)) return "over the bag";
+        return "";
+    }
+
+    /** One frame of edge panning. Scrolls the view only (never a unit); returns { dx, dy } when it scrolled, else null. */
+    function edgePanStep(scene) {
+        edgePanLast = null;
+        if (edgePanBlockReason(scene)) return null;
+        const v = edgePanVector(TouchInput.x, TouchInput.y);
+        if (!v.dx && !v.dy) return null;
+        const cells = edgePanCellsPerFrame();
+        if ($colonyManager && $colonyManager.cameraFollowUnit) $colonyManager.cameraFollowUnit = null;
+        if (v.dx < 0) $gameMap.scrollLeft(cells.x);
+        else if (v.dx > 0) $gameMap.scrollRight(cells.x);
+        if (v.dy < 0) $gameMap.scrollUp(cells.y);
+        else if (v.dy > 0) $gameMap.scrollDown(cells.y);
+        edgePanLast = v;
+        return v;
+    }
+    /** The speed in the scroll contract's unit, map cells per frame per axis (px / tile size). */
+    function edgePanCellsPerFrame() {
+        const tw = window.$gameMap && typeof $gameMap.tileWidth === "function" ? $gameMap.tileWidth() : 48;
+        const th = window.$gameMap && typeof $gameMap.tileHeight === "function" ? $gameMap.tileHeight() : 48;
+        return { x: tw > 0 ? edgePanSpeed / tw : 0, y: th > 0 ? edgePanSpeed / th : 0 };
+    }
+
     const _Scene_Map_start = Scene_Map.prototype.start;
     Scene_Map.prototype.start = function() {
         _Scene_Map_start.call(this);
+        installEdgePointerListeners();
         if ($gamePlayer) {
             $gamePlayer.setTransparent(true);
             $gamePlayer.setThrough(true);
@@ -231,6 +436,10 @@
         if (Input.isPressed("cameraRight")) $gameMap.scrollRight(CAM_SPEED);
         if (Input.isPressed("cameraUp")) $gameMap.scrollUp(CAM_SPEED);
         if (Input.isPressed("cameraDown")) $gameMap.scrollDown(CAM_SPEED);
+
+        // 1b. Edge panning: an actual pointer at a viewport edge pans the view; the keyboard pan and UI take precedence.
+        if (!isPanning) edgePanStep(this);
+        else edgePanLast = null;
 
         // 2. Left-click: select a colonist, or deselect if clicking away
         if (TouchInput.isTriggered() && !this.isAnyWindowUnderMouse()) {
@@ -534,7 +743,28 @@
         /** The load line's band in the card's contents (for checks that read its pixels). */
         loadRect: () => ({ x: 0, y: LOAD_Y + 13, w: activeColonyWindow ? activeColonyWindow.innerWidth : CARD_W - 24, h: 13 }),
         colonistAt,
-        CARD_W, CARD_H, LOAD_Y
+        CARD_W, CARD_H, LOAD_Y,
+        /** Edge panning (see the header): a toggle, a speed in map px per frame, and what the per-frame step sees. */
+        edgePan: {
+            MARGIN: EDGE_PAN_MARGIN,
+            MAX_SPEED: EDGE_PAN_MAX_SPEED,
+            DEFAULT_SPEED: EDGE_PAN_DEFAULT_SPEED,
+            enabled: () => edgePanEnabled,
+            setEnabled(on) { edgePanEnabled = !!on; return edgePanEnabled; },
+            toggle() { edgePanEnabled = !edgePanEnabled; return edgePanEnabled; },
+            speed: () => edgePanSpeed,
+            setSpeed(px) { edgePanSpeed = parseEdgePanSpeed(px); return edgePanSpeed; },
+            cellsPerFrame: edgePanCellsPerFrame,
+            parseSpeed: parseEdgePanSpeed,
+            parseEnabled: parseEdgePanEnabled,
+            vector: edgePanVector,
+            notePointer,
+            notePointerGone,
+            pointer: () => ({ seen: edgePointer.seen, inside: edgePointer.inside, x: edgePointer.x, y: edgePointer.y }),
+            blockReason: edgePanBlockReason,
+            step: edgePanStep,
+            lastStep: () => (edgePanLast ? { dx: edgePanLast.dx, dy: edgePanLast.dy } : null)
+        }
     };
 
     //-----------------------------------------------------------------------------
@@ -585,8 +815,49 @@
         if (window.UF && UF.Test && UF.Test.active) registerChecks();
     };
 
+    // Edge panning: a simulated pointer (TouchInput._x/_y plus notePointer, so both agree) at the edge with room to scroll
+    // moves the view and nothing else; disabled, and a window under the pointer, leave the view where it is.
+    async function edgePanChecks(t) {
+        const EP = window.UF.Overseer.edgePan;
+        const scene = SceneManager._scene;
+        const was = { x: TouchInput._x, y: TouchInput._y, enabled: EP.enabled(), display: { x: $gameMap.displayX(), y: $gameMap.displayY() },
+            follow: $colonyManager.cameraFollowUnit, player: { x: $gamePlayer.x, y: $gamePlayer.y } };
+        const roomRight = $gameMap.isLoopHorizontal() || $gameMap.displayX() + 1 < $gameMap.width() - $gameMap.screenTileX();
+        const px = roomRight ? Graphics.width - 2 : 1, py = Math.floor(Graphics.height / 2);
+        const panned = async () => {
+            const x0 = $gameMap.displayX();
+            await t.waitFrames(4);
+            return $gameMap.displayX() !== x0;
+        };
+        let w = null;
+        try {
+            EP.setEnabled(true);
+            TouchInput._x = px; TouchInput._y = py;
+            EP.notePointer(px, py);
+            const moved = await panned();
+            t.check("edge_pan_moves_view", moved && $gamePlayer.x === was.player.x && $gamePlayer.y === was.player.y && EP.blockReason(scene) === "",
+                `pointer at (${px},${py}) ${roomRight ? "right" : "left"} edge: displayX ${moved ? "changed" : "unchanged"}, player at (${$gamePlayer.x},${$gamePlayer.y}), block "${EP.blockReason(scene)}", ${EP.speed()} px/frame = ${EP.cellsPerFrame().x.toFixed(4)} cells/frame`);
+            EP.setEnabled(false);
+            const movedOff = await panned();
+            EP.setEnabled(true);
+            w = new Window_Base(new Rectangle(roomRight ? Graphics.width - 120 : 0, py - 40, 120, 80));
+            scene.addWindow(w);
+            const movedUI = await panned();
+            t.check("edge_pan_pauses", !movedOff && !movedUI,
+                `disabled: view ${movedOff ? "MOVED" : "still"}; 120x80 window under the pointer: view ${movedUI ? "MOVED" : "still"} (block "${EP.blockReason(scene)}")`);
+        } finally {
+            if (w && scene._windowLayer) scene._windowLayer.removeChild(w);
+            EP.setEnabled(was.enabled);
+            EP.notePointerGone();
+            TouchInput._x = was.x; TouchInput._y = was.y;
+            $colonyManager.cameraFollowUnit = was.follow;
+            $gameMap.setDisplayPos(was.display.x, was.display.y);
+        }
+    }
+
     function registerChecks() {
         UF.Test.suite("overseer", async t => {
+            await edgePanChecks(t);
             const C = Colonists(), J = Jobs();
             const list = $colonyManager.colonists;
             t.check("adapter_lists_colonists", !!C && list.length >= 2 && list.every(c => c.event && typeof c.name === "string" && c.name && typeof c.hunger === "number"),
