@@ -85,6 +85,12 @@
  *   scene; a talk counts as whole-screen UI), the bag window, an open
  *   DEUS.Interact context menu, DEUS.Talk, an attached or dragged
  *   DEUS.ItemDrag item, and a busy $gameMessage. Overseer mode off pauses it.
+ *   Those predicates test TouchInput's position; during the held-press lag
+ *   above that is the press origin (the position UI consumers act on), so
+ *   the pan then also requires the same UI, read from the scene's own window
+ *   and HUD frames (edgePanUIAt), to be absent under the observed pointer:
+ *   a press beside the zoom slider that slides onto it pauses the pan, and
+ *   TouchInput's press origin and threshold stay the engine's (2026-10-07).
  * - Panning the view by edge releases $colonyManager.cameraFollowUnit, as a
  *   keyboard pan does.
  * - API (DEUS.Overseer.edgePan): enabled(), setEnabled(bool), toggle(),
@@ -355,6 +361,46 @@
         const threshold = Number.isFinite(TouchInput.moveThreshold) && TouchInput.moveThreshold >= 0 ? TouchInput.moveThreshold : 0;
         return Math.abs(TouchInput.x - edgePointer.x) <= threshold && Math.abs(TouchInput.y - edgePointer.y) <= threshold;
     }
+    /** True while that lag is in effect: a held press keeps TouchInput at its press origin and the observed pointer has
+     *  moved off it (within the threshold). The only state in which the position the pan reads differs from the
+     *  position the TouchInput-reading UI predicates test. */
+    function edgePointerLagsHeldPress() {
+        return edgePointerWithinHeldPressThreshold() && (TouchInput.x !== edgePointer.x || TouchInput.y !== edgePointer.y);
+    }
+
+    /** True when a visible display object's frame (w by h px at its x, y) contains the canvas position. */
+    function frameContains(o, x, y, w, h) {
+        return !!o && o.visible && w > 0 && h > 0 && x >= o.x && x < o.x + w && y >= o.y && y < o.y + h;
+    }
+    /** The Overseer's own windows (card, ledger, chronicle, container card) under a canvas position: what this plugin's
+     *  Scene_Map.isAnyWindowUnderMouse answers for TouchInput's position. */
+    function overseerWindowAt(scene, x, y) {
+        const wins = [scene._colonyCard, scene._factionLedgerWindow, scene._ufChronicleWindow, scene._ufContainerCard].filter(w => w && w.visible);
+        return wins.some(w => x >= w.x && x < w.x + w.width && y >= w.y && y < w.y + w.height);
+    }
+    /** UI under a canvas position other than TouchInput's: "" or the block reason. The UI predicates edgePanBlockReason
+     *  consults take no position and this plugin never writes TouchInput, so this reads the same windows and HUD frames
+     *  they test, through their own contracts: the Overseer's windows, DEUS_Camera's zoom slider (its minimized or full
+     *  frame), the DEUS_TimeSpeed, DEUS_Levels and DEUS_Select HUD pieces, DEUS_Sheet's panel, the open windows of the
+     *  window layer and the scene (DEUS.Look.isOverUI / DEUS.Select.pointerOverUI) and the bag. */
+    function edgePanUIAt(scene, x, y) {
+        if (!scene) return "";
+        if (overseerWindowAt(scene, x, y)) return "window under the pointer";
+        const slider = scene._deusZoomSlider || scene._deusScaleCalibrator;
+        if (slider && frameContains(slider, x, y, slider._minimized ? slider._minW : slider._calW, slider._minimized ? slider._minH : slider._calH)) return "window under the pointer";
+        for (const hud of [scene._ufTimeControls, scene._ufLevelPlate, scene._ufSelectToolbar, scene._ufGroupStrip, scene._ufWallPickerWindow]) {
+            if (hud && frameContains(hud, x, y, hud.width, hud.height)) return "window under the pointer";
+        }
+        const sheet = scene._ufSheetWindow;
+        if (sheet && sheet.visible && typeof sheet.isPointerInsideCoords === "function" && sheet.isPointerInsideCoords(x, y)) return "window under the pointer";
+        const openWindow = w => !!w && w.visible && w.width > 0 && w.height > 0 && !(typeof w.isOpen === "function" && !w.isOpen());
+        const layer = scene._windowLayer;
+        if (layer && Array.isArray(layer.children) && layer.children.some(w => openWindow(w) && frameContains(w, x - layer.x, y - layer.y, w.width, w.height))) return "over UI";
+        if (typeof Window !== "undefined" && Array.isArray(scene.children) && scene.children.some(w => w instanceof Window && openWindow(w) && !(w.opacity === 0 && w.contentsOpacity === 0) && frameContains(w, x, y, w.width, w.height))) return "over UI";
+        const bag = scene._ufBagWindow;
+        if (bag && bag.visible && typeof bag.isPointerInsideCoords === "function" && bag.isPointerInsideCoords(x, y)) return "over the bag";
+        return "";
+    }
 
     /** "" when edge panning may move the view this frame, else the first reason it must not (for checks and the console). */
     function edgePanBlockReason(scene) {
@@ -382,6 +428,13 @@
         if (U && U.Select && typeof U.Select.pointerOverUI === "function" && U.Select.pointerOverUI()) return "over UI (select)";
         const bag = scene && scene._ufBagWindow;
         if (bag && bag.visible && typeof bag.isPointerInsideCoords === "function" && bag.isPointerInsideCoords(TouchInput.x, TouchInput.y)) return "over the bag";
+        // Held-press lag: the predicates above answered for TouchInput's press origin, the position UI consumers act
+        // on, while the pan reads the observed pointer (edgePanPosition). The same UI must be absent there too: a press
+        // beside the zoom slider that slides onto it pauses, with TouchInput's press origin and threshold untouched.
+        if (edgePointerLagsHeldPress()) {
+            const underObserved = edgePanUIAt(scene, edgePointer.x, edgePointer.y);
+            if (underObserved) return underObserved;
+        }
         return "";
     }
 
@@ -558,8 +611,7 @@
     };
 
     Scene_Map.prototype.isAnyWindowUnderMouse = function() {
-        const wins = [this._colonyCard, this._factionLedgerWindow, this._ufChronicleWindow, this._ufContainerCard].filter(w => w && w.visible);
-        return wins.some(w => TouchInput.x >= w.x && TouchInput.x < w.x + w.width && TouchInput.y >= w.y && TouchInput.y < w.y + w.height);
+        return overseerWindowAt(this, TouchInput.x, TouchInput.y);
     };
 
     // Free camera: the player never forces a scroll; a followed unit centres the view smoothly using floating coordinates.
