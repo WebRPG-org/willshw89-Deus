@@ -1,7 +1,16 @@
-# Deus index
+# Deus
 
-Source and the playable project live under `game/`, `art/`, and `baseline/`.
-Agent notes are `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.agents/`, and `prompts/`.
-Task files are in `tasks/`. Docs are in `docs/`.
-`Deus.exe` is a committed binary. Do not treat it as source.
-Launch scripts: `launch_demo.bat`, `open_in_rmmz.bat`, `run_tests.bat`, `run_autotest.bat`.
+Pixel-art colony sim. This file is a map of the repo, not a new design doc.
+
+- `game/` playable code
+- `art/` assets
+- `docs/` design notes
+- `tasks/` work items
+- `prompts/` agent prompts
+- `tools/` scripts
+- `archive/` old material
+- `baseline/` reference
+- `launch_demo.bat` starts the demo
+- `run_tests.bat` and `run_autotest.bat` run checks
+
+`Deus.exe` is a built binary in the tree. It is not the source.
