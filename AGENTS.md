@@ -148,3 +148,7 @@ The RMMZ editor keeps the database and plugin list in memory and overwrites the 
 
 ## Dates
 Use absolute dates (2026-09-18), never "today" or "yesterday", in every doc.
+1. After a merge, native play is a separate gate. A source VERIFY is not a playtest.
+2. Push only when the Owner says push.
+3. Art does not open C:\Dev\DEUS.
+4. No new project folder without a catalog row.
