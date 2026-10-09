@@ -1437,3 +1437,17 @@ Every decision item recorded in this log must provide:
 - **DEC-103 (2026-10-02):** The Owner formally approved the remainder of the structural elements for WorldGen Completion (WG.GEO.01), specifically Vertical Geology (caves/seams) and Rule-Driven Spawning & Persistence.
 
 - **DEC-104 (2026-10-02):** Process Management Mandate. When an AI is done with a window, executable, or background process (such as test runners, engine instances, or viewers), it must immediately and explicitly close/terminate it to prevent memory leaks and zombie processes.
+
+
+## 2026-10-09 — Live board amendment (Owner)
+
+These dated rows supersede contrary earlier rules for the topics below. Historical rulings above remain unchanged. The current live board is AGENTS.md, docs/STATUS.md, docs/OWNER_DECISIONS.md, docs/WORK_QUEUE.md, and docs/ART_STANDARD.md.
+
+| Date | Topic | Ruling |
+|---|---|---|
+| 2026-10-09 | Name | The project name is Endrath. |
+| 2026-10-09 | Roles | Gemini is not a role. The PM is this Endrath desk. Fable writes code; this desk commits. Grok reviews Fable's authored commit and does not write the implementation or make that commit. Codex Astra runs the headless test and does not integrate. Art Astra judges pixels in the isolated review project and does not touch the live tree. |
+| 2026-10-09 | Lane state | A lane is open or superseded. WB-001 through WB-010 are superseded. Do not reopen them. |
+| 2026-10-09 | Art-first hold | Coding is waiting. Art parents are the one open block. The six ground parents are not locked. |
+| 2026-10-09 | Editor | The PM plays in the editor. A writer may not save over game/js/plugins.js while that project is open. This is the whole editor rule. |
+| 2026-10-09 | Depth | 8 z-layers, 10 feet each; surface depth is 1 foot; DEPTH_MAX is 10. This depth rule is not yet in code. |
