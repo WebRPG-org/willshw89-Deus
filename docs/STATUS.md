@@ -4,7 +4,7 @@ Updated: 2026-10-09.
 
 - Name: Endrath.
 - Live tree: `C:\Dev\DEUS`.
-- Recorded HEAD: `7f2a376b`, checked before this documentation-only update.
+- Recorded HEAD: `11635cf200d269ace7d0f6c8428f0c8f3caec559`, checked before this documentation-only update.
 - PM: this Endrath desk. Fable writes code; this desk commits.
 
 ## Current work

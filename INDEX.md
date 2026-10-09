@@ -1,3 +1,4 @@
+Archive. AGENTS.md is the live rulebook. Do not follow this file.
 # Deus
 
 Pixel-art colony sim. This file is a map of the repo, not a new design doc.

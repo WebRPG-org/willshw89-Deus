@@ -1,3 +1,4 @@
+Archive. AGENTS.md is the live rulebook. Do not follow this file.
 (The art rules are the live summary at the top of AGENTS.md, imported below.)
 
 @AGENTS.md
