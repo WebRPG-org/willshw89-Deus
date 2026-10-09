@@ -1,3 +1,4 @@
+Archive. AGENTS.md is the live rulebook. Do not follow this file.
 # DEUS — AGENT COMMUNICATION PROTOCOL v1
 **Structured Inter-Agent Communication & Evidence Bus Specification**
 **Integration Authority:** Gemini / Antigravity (DEUS Coordinator)

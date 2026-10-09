@@ -1,3 +1,4 @@
+Archive. AGENTS.md is the live rulebook. Do not follow this file.
 # DEUS — ORGANIZATIONAL OPERATING SYSTEM (v1)
 **Self-Improving Engineering Organization Standard**
 **Integration Authority:** Gemini / Antigravity

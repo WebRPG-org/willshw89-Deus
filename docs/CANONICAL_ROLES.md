@@ -1,3 +1,4 @@
+Archive. AGENTS.md is the live rulebook. Do not follow this file.
 # DEUS — CANONICAL AI ROLES & DIVISION OF LABOR
 **Document ID:** `DEUS-GOV-ROLES-01`  
 **Status:** AUTHORITATIVE & BINDING  

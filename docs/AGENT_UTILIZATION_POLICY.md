@@ -1,3 +1,4 @@
+Archive. AGENTS.md is the live rulebook. Do not follow this file.
 # DEUS — MAXIMUM AGENT UTILIZATION & MULTIAGENT ORCHESTRATION POLICY
 
 **Effective Date:** 2026-09-25  

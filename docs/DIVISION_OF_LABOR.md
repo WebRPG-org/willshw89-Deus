@@ -1,3 +1,4 @@
+Archive. AGENTS.md is the live rulebook. Do not follow this file.
 # DEUS — Division of Labor & Collaborative Roadmap: Gemini & Fable
 **Document ID:** `DEUS-GOV-DIVISION-01`  
 **Status:** Authoritative Governance Contract & Collaborative Roadmap  

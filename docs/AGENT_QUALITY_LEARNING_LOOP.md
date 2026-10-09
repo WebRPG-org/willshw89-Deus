@@ -1,3 +1,4 @@
+Archive. AGENTS.md is the live rulebook. Do not follow this file.
 # DEUS — AGENT QUALITY, CORRECTION & CONTINUOUS-LEARNING LOOP v1
 **Authoritative Operational Architecture & Closed-Loop Quality Standard**
 **Integration Authority:** Gemini / Antigravity (DEUS Coordinator)
