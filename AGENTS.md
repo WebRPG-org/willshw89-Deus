@@ -33,3 +33,5 @@ Eight z-layers. Each step is darker. No #000000. A hold is a repeated stop, not 
 One surface depth is one foot. A z layer is ten feet. DEPTH_MAX is 10. The overflow divisor is 31200. A full cell climbs one z. Lava stays centipounds. This is not in code yet.
 
 One lane, then stop. The desk commits. If origin/main..HEAD is more than the authorized commit, do not push. Paste the list. A writer does not save over game/js/plugins.js while that project is open.
+
+PixelLab output is generation, not paint. A downloaded stamp is catalogued before it is coloured. A mistooled stamp goes to junk and is kept. It is not a ground until the Owner names the parent.
