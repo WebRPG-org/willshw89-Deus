@@ -43,3 +43,5 @@ A clump cut or a resize is not a keep. It stays out of sorted until the Owner na
 A sort is not an approval. PixelLab output lives under C:\Dev_archive\art\stamps\. A new save lands in C:\Dev_archive\art\inbox\YYYY-MM-DD\. A file enters C:\Dev\DEUS\game\img\ only if the game loads it.
 
 There is no icon set. Facesets wait. An icon file is not a stamp and is not sorted into the live tree.
+
+Eight layers, counted 1–8 from the bottom. A layer is not above or below until the build finishes. Water is placed on the lowest open cells. Rock is raised around it. Sea level is the height that leaves. Art stays z0–z7. z0 is the open surface of a column. Each closed step down takes the next shade. Layer 1 is not z0.
