@@ -35,3 +35,11 @@ One surface depth is one foot. A z layer is ten feet. DEPTH_MAX is 10. The overf
 One lane, then stop. The desk commits. If origin/main..HEAD is more than the authorized commit, do not push. Paste the list. A writer does not save over game/js/plugins.js while that project is open.
 
 PixelLab output is generation, not paint. A downloaded stamp is catalogued before it is coloured. A mistooled stamp goes to junk and is kept. It is not a ground until the Owner names the parent.
+
+A stamp is sorted by what it is, not by biome. The folders are tree, stump, timber, flora, grass, rock, ore, wall, door, furniture, workshop, container, item, person, creature, remains, water. Water is a shore prop. Open water is a tile. A file that is none of these stays in object. One file, one folder. The filename stays.
+
+A clump cut or a resize is not a keep. It stays out of sorted until the Owner names it. An unnamed derivative goes to junk and is kept.
+
+A sort is not an approval. PixelLab output lives under C:\Dev_archive\art\stamps\. A new save lands in C:\Dev_archive\art\inbox\YYYY-MM-DD\. A file enters C:\Dev\DEUS\game\img\ only if the game loads it.
+
+There is no icon set. Facesets wait. An icon file is not a stamp and is not sorted into the live tree.
